@@ -66,8 +66,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         }
 
         var valueStore = new Ext.data.Store({
-
-            fields: ["key", "value"],
+            fields: ["key", {name: "value", allowBlank: false}],
             proxy: {
                 type: 'memory'
             },
@@ -123,11 +122,17 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             columnLines: true,
             columns: [
                 {
-                    text: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    text: t("display_name"),
+                    sortable: true,
+                    dataIndex: 'key',
+                    editor: new Ext.form.TextField({}),
+                    renderer: function (value) {
+                        return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+                    },
                     width: 200
                 },
                 {
-                    text: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    text: t("value"), sortable: true, dataIndex: 'value', editor: { xtype : 'textfield', allowBlank : false },
                     width: 200
                 },
                 {
@@ -187,7 +192,34 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             autoHeight: true,
             plugins: [
                 Ext.create('Ext.grid.plugin.CellEditing', {
-                    clicksToEdit: 1
+                    clicksToEdit: 1,
+                    listeners: {
+                        edit: function(editor, e) {
+                            if(!e.record.get('value')) {
+                                e.record.set('value', e.record.get('key'));
+                            }
+                        },
+                        beforeedit: function(editor, e) {
+                            if(e.field === 'value') {
+                                return !!e.value;
+                            }
+                            return true;
+                        },
+                        validateedit: function(editor, e) {
+                            if(e.field !== 'value') {
+                                return true;
+                            }
+
+                            // Iterate to all store data
+                            for(var i=0; i < valueStore.data.length; i++) {
+                                var existingRecord = valueStore.getAt(i);
+                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                    }
                 })]
         });
 

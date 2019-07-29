@@ -65,7 +65,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                 {
                     xtype: "form",
                     title: '<b>' + t("localizedfields") + "</b>",
-                    bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+                    bodyStyle: 'padding: 10px;',
                     defaults: {
                         labelWidth: 140,
                         width: 300
@@ -104,6 +104,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             editable: false
                         },
                         {
+                            xtype: "checkbox",
+                            fieldLabel: t("border"),
+                            name: "border",
+                            checked: this.datax.border,
+                        },
+                        {
                             xtype: "numberfield",
                             fieldLabel: t("width"),
                             name: "width",
@@ -114,6 +120,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: t('tab_position'),
+                            name: 'tabPosition',
+                            value: this.datax.tabPosition,
+                            store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                         },
                         {
                             xtype: "numberfield",
@@ -145,6 +157,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("provide_split_view"),
+                    name: "provideSplitView",
+                    checked: this.datax.provideSplitView
                 }
             ]
         });

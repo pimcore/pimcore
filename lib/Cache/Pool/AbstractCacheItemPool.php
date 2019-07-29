@@ -17,6 +17,7 @@ namespace Pimcore\Cache\Pool;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Contracts\Cache\ItemInterface;
 
 abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 {
@@ -455,5 +456,73 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
         if ($this->deferred) {
             $this->commit();
         }
+    }
+
+    /**
+     * @param string $key
+     * @param callable $callback
+     * @param float|null $beta
+     * @param array|null $metadata
+     *
+     * @return mixed
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
+    {
+        return $this->doGet($this, $key, $callback, $beta, $metadata);
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function delete(string $key): bool
+    {
+        return $this->deleteItem($key);
+    }
+
+    /**
+     * @param PimcoreCacheItemPoolInterface $pool
+     * @param string $key
+     * @param callable $callback
+     * @param float|null $beta
+     * @param array|null $metadata
+     *
+     * @return mixed
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    private function doGet(PimcoreCacheItemPoolInterface $pool, string $key, callable $callback, ?float $beta, array &$metadata = null)
+    {
+        if (0 > $beta = $beta ?? 1.0) {
+            throw new class(sprintf('Argument "$beta" provided to "%s::get()" must be a positive number, %f given.', \get_class($this), $beta)) extends InvalidArgumentException {
+            };
+        }
+
+        $item = $pool->getItem($key);
+        $recompute = !$item->isHit() || INF === $beta;
+        $metadata = $item instanceof PimcoreCacheItemInterface ? $item->getMetadata() : [];
+
+        if (!$recompute && $metadata) {
+            $expiry = $metadata[ItemInterface::METADATA_EXPIRY] ?? false;
+            $ctime = $metadata[ItemInterface::METADATA_CTIME] ?? false;
+
+            if ($recompute = $ctime && $expiry && $expiry <= microtime(true) - $ctime / 1000 * $beta * log(random_int(1, PHP_INT_MAX) / PHP_INT_MAX)) {
+                // force applying defaultLifetime to expiry
+                $item->expiresAt(null);
+            }
+        }
+
+        if ($recompute) {
+            $save = true;
+            $item->set($callback($item, $save));
+            if ($save) {
+                $pool->save($item);
+            }
+        }
+
+        return $item->get();
     }
 }

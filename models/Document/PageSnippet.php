@@ -76,11 +76,6 @@ abstract class PageSnippet extends Model\Document
     protected $inheritedElements = [];
 
     /**
-     * @var bool
-     */
-    protected $legacy = false;
-
-    /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -126,57 +121,76 @@ abstract class PageSnippet extends Model\Document
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
+        try {
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
-                'saveVersionOnly' => true
+            // set date
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            // create version
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the object)
+            if (Config::getSystemConfig()->documents->versions->steps
+                || Config::getSystemConfig()->documents->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
-
-        // set date
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        // create version
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the object)
-        if (Config::getSystemConfig()->documents->versions->steps
-            || Config::getSystemConfig()->documents->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**
-     * @see Document::delete
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
+        $this->beginTransaction();
+
+        try {
+            $versions = $this->getVersions();
+            foreach ($versions as $version) {
+                $version->delete();
+            }
+
+            // remove all tasks
+            $this->getDao()->deleteAllTasks();
+
+            parent::delete(true);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            Logger::error($e);
+            throw $e;
         }
-
-        // remove all tasks
-        $this->getDao()->deleteAllTasks();
-
-        parent::delete();
     }
 
     /**
@@ -443,10 +457,16 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document
+     *
+     * @throws \Exception
      */
     public function getContentMasterDocument()
     {
-        return Document::getById($this->getContentMasterDocumentId());
+        if ($masterDocumentId = $this->getContentMasterDocumentId()) {
+            return Document::getById($masterDocumentId);
+        }
+
+        return null;
     }
 
     /**
@@ -552,40 +572,6 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * returns true if document should be rendered with legacy stack
-     *
-     * @return bool
-     */
-    public function doRenderWithLegacyStack()
-    {
-        return $this->isLegacy();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLegacy()
-    {
-        return $this->legacy;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getLegacy()
-    {
-        return $this->isLegacy();
-    }
-
-    /**
-     * @param bool $legacy
-     */
-    public function setLegacy($legacy)
-    {
-        $this->legacy = (bool) $legacy;
-    }
-
-    /**
      * @param null $hostname
      * @param null $scheme
      *
@@ -614,7 +600,7 @@ abstract class PageSnippet extends Model\Document
         $url = $scheme . $hostname . $this->getFullPath();
 
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
-        if ($site instanceof Site && $site->getMainDomain()) {
+        if ($site instanceof Model\Site && $site->getMainDomain()) {
             $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
         }
 

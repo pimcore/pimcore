@@ -66,7 +66,21 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
-                        return baseUrl + '&width=88&height=20&frame=true" />';
+                        var params = {
+                            width: 88,
+                            height: 88,
+                            frame: true
+                        };
+
+                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
+
+                        if (value.crop) {
+                            var cropParams = Ext.Object.toQueryString(value.crop);
+                            url = Ext.String.urlAppend(url, cropParams);
+                        }
+
+                        url = url + '" />';
+                        return url;
                     }
                 }
             }.bind(this, field.key)
@@ -86,8 +100,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (!this.additionalConfig.condensed) {
             items.push({
                 xtype: "tbspacer",
-                width: 40,
-                height: 16,
+                width: 48,
+                height: 24,
                 cls: "pimcore_icon_droptarget_upload"
             });
 
@@ -217,13 +231,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
-
             componentCls: "object_field",
             tbar: toolbar
         };
 
         if (!this.additionalConfig.condensed) {
-            conf.style = "padding-bottom: 10px;";
+            // conf.style = "padding-bottom: 10px;";
         }
 
         this.component = new Ext.Panel(conf);
@@ -295,11 +308,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var height = null;
 
         if (this.panel) {
-            this.originalWidth = this.panel.getWidth();
-            this.originalHeight = this.panel.getHeight();
+            this.originalWidth = this.panel.initialConfig.width;
+            this.originalHeight = this.panel.initialConfig.height;
 
-            width = this.panel.getWidth() - 10;
-            height = this.panel.getHeight() - 10;
+            width = this.originalWidth - 10;
+            height = this.originalHeight - 10;
         } else {
             width = body.getWidth() - 10;
             height = body.getHeight() - 10;

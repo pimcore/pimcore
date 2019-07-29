@@ -56,13 +56,6 @@ pimcore.settings.document.doctypes = Class.create({
 
         this.store = pimcore.globalmanager.get("document_types_store");
 
-        var legacyCheck = new Ext.grid.column.Check({
-            text: t("legacy_mode"),
-            dataIndex: "legacy",
-            hidden: !pimcore.settings.isLegacyModeAvailable,
-            width: 90
-        });
-
         var typesColumns = [
             {
                 text: t("name"),
@@ -172,7 +165,8 @@ pimcore.settings.document.doctypes = Class.create({
                             var currentRecord = this.grid.getSelection();
                             el.getStore().reload({
                                 params: {
-                                    controllerName: currentRecord[0].data.controller
+                                    controllerName: currentRecord[0].data.controller,
+                                    moduleName: currentRecord[0].data.module
                                 },
                                 callback: function () {
                                     el.expand();
@@ -242,7 +236,6 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all"
                 })
             },
-            legacyCheck,
             {
                 text: t("creationDate"),
                 sortable: true,
@@ -325,13 +318,16 @@ pimcore.settings.document.doctypes = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                }
-            ],
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        text: t('add'),
+                        handler: this.onAdd.bind(this),
+                        iconCls: "pimcore_icon_add"
+                    }
+                ]
+            },
             viewConfig: {
                 forceFit: true
             }

@@ -86,6 +86,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
             var systempropertiesItems = [this.languagesPanel];
 
             if (this.element.type == "page" || this.element.type == "link" || this.element.type == "folder") {
+                this.layout.setTitle(t("navigation") + ' &amp; ' + t("properties"));
                 var items = [{
                     xtype: "textfield",
                     fieldLabel: t("name"),

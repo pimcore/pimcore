@@ -20,7 +20,6 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -41,7 +40,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
 
@@ -53,7 +52,7 @@ class Service extends Model\Element\Service
     protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -111,8 +110,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return mixed
      */
@@ -131,13 +130,16 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -146,11 +148,17 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        $children = $source->getChildren([
+            AbstractObject::OBJECT_TYPE_OBJECT,
+            AbstractObject::OBJECT_TYPE_VARIANT,
+            AbstractObject::OBJECT_TYPE_FOLDER
+        ], true);
+
+        foreach ($children as $child) {
             $this->copyRecursive($new, $child);
         }
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
@@ -168,6 +176,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
+        $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
+        Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -181,14 +191,16 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
         $new->save();
 
-        $this->updateChilds($target, $new);
+        Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
@@ -199,8 +211,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return AbstractObject
      *
@@ -217,15 +229,18 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
-        $new->setChilds($target->getChilds());
+        $new->setChildren($target->getChildren());
         $new->setId($target->getId());
         $new->setPath($target->getRealPath());
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
         $new->setProperties($source->getProperties());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
 
@@ -259,7 +274,8 @@ class Service extends Model\Element\Service
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
-                'purpose' => 'gridview'];
+                'purpose' => 'gridview',
+                'language' => $requestedLanguage];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -275,6 +291,8 @@ class Service extends Model\Element\Service
             $haveHelperDefinition = false;
 
             foreach ($fields as $key) {
+                $brickDescriptor = null;
+                $brickKey = null;
                 $brickType = null;
                 $brickGetter = null;
                 $dataKey = $key;
@@ -460,6 +478,9 @@ class Service extends Model\Element\Service
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
         $cacheKey = 'gridcolumn_config_' . $key;
+        if (isset($context['language'])) {
+            $cacheKey .= '_' . $context['language'];
+        }
         if (Runtime::isRegistered($cacheKey)) {
             $config = Runtime::get($cacheKey);
         } else {
@@ -583,11 +604,8 @@ class Service extends Model\Element\Service
                 }
 
                 foreach ($permission as $p) {
-                    $setting = explode('_', $p);
-                    $c = $setting[0];
-
-                    if ($c == $classId) {
-                        $l = $setting[1];
+                    if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
+                        $l = $setting[2];
 
                         if (is_null($layoutPermissions)) {
                             $layoutPermissions = [];
@@ -699,7 +717,7 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param  Concrete $object
+     * @param AbstractObject $object
      */
     public static function loadAllObjectFields($object)
     {
@@ -711,271 +729,17 @@ class Service extends Model\Element\Service
             foreach ($fd as $def) {
                 $getter = 'get' . ucfirst($def->getName());
                 if (method_exists($object, $getter)) {
-                    $object->$getter();
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param string $filterJson
-     * @param ClassDefinition $class
-     * @param $requestedLanguage
-     *
-     * @return string
-     */
-    public static function getFeatureFilters($filterJson, $class, $requestedLanguage)
-    {
-        $joins = [];
-        $conditions = [];
-
-        if ($filterJson) {
-            $filters = json_decode($filterJson, true);
-            foreach ($filters as $filter) {
-                $operator = '=';
-
-                $filterField = $filter['property'];
-                $filterOperator = $filter['operator'];
-
-                if ($filter['type'] == 'string') {
-                    $operator = 'LIKE';
-                } elseif ($filter['type'] == 'numeric') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
-                } elseif ($filter['type'] == 'date') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
-                    $filter['value'] = strtotime($filter['value']);
-                } elseif ($filter['type'] == 'list') {
-                    $operator = '=';
-                } elseif ($filter['type'] == 'boolean') {
-                    $operator = '=';
-                    $filter['value'] = (int)$filter['value'];
-                }
-
-                $keyParts = explode('~', $filterField);
-
-                if (substr($filterField, 0, 1) != '~') {
-                    continue;
-                }
-
-                $type = $keyParts[1];
-                if ($type != 'classificationstore') {
-                    continue;
-                }
-
-                $fieldName = $keyParts[2];
-                $groupKeyId = explode('-', $keyParts[3]);
-
-                /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
-                $csFieldDefinition = $class->getFieldDefinition($fieldName);
-
-                $language = $requestedLanguage;
-                if (!$csFieldDefinition->isLocalized()) {
-                    $language = 'default';
-                }
-
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
-
-                $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
-                $type = $keyConfig->getType();
-                $definition = json_decode($keyConfig->getDefinition());
-                $field = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                if ($field instanceof ClassDefinition\Data) {
-                    $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
-                    $joins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
-                    $condition = $field->getFilterConditionExt(
-                        $filter['value'],
-                        $operator,
-                        [
-                            'name' => $mappedKey]
-                    );
-
-                    $conditions[$mappedKey] = $condition;
-                }
-            }
-        }
-
-        $result = [
-            'joins' => $joins,
-            'conditions' => $conditions
-        ];
-
-        return $result;
-    }
-
-    /**
-     *
-     * @param string $filterJson
-     * @param ClassDefinition $class
-     *
-     * @return string
-     */
-    public static function getFilterCondition($filterJson, $class)
-    {
-        $systemFields = self::getSystemFields();
-
-        // create filter condition
-        $conditionPartsFilters = [];
-
-        if ($filterJson) {
-            $db = \Pimcore\Db::get();
-            $filters = json_decode($filterJson, true);
-            foreach ($filters as $filter) {
-                $operator = '=';
-
-                $filterField = $filter['property'];
-                $filterOperator = $filter['operator'];
-
-                if ($filter['type'] == 'string') {
-                    $operator = 'LIKE';
-                } elseif ($filter['type'] == 'numeric') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
-                } elseif ($filter['type'] == 'date') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
-                    $filter['value'] = strtotime($filter['value']);
-                } elseif ($filter['type'] == 'list') {
-                    $operator = '=';
-                } elseif ($filter['type'] == 'boolean') {
-                    $operator = '=';
-                    $filter['value'] = (int)$filter['value'];
-                }
-
-                $field = $class->getFieldDefinition($filterField);
-                $brickField = null;
-                $brickType = null;
-                if (!$field) {
-
-                    // if the definition doesn't exist check for a localized field
-                    $localized = $class->getFieldDefinition('localizedfields');
-                    if ($localized instanceof ClassDefinition\Data\Localizedfields) {
-                        $field = $localized->getFieldDefinition($filterField);
-                    }
-
-                    //if the definition doesn't exist check for object brick
-                    $keyParts = explode('~', $filterField);
-
-                    if (substr($filterField, 0, 1) == '~') {
-                        // not needed for now
-//                            $type = $keyParts[1];
-//                            $field = $keyParts[2];
-//                            $keyid = $keyParts[3];
-                    } elseif (count($keyParts) > 1) {
-                        $brickType = $keyParts[0];
-                        $brickKey = $keyParts[1];
-
-                        $key = self::getFieldForBrickType($class, $brickType);
-                        $field = $class->getFieldDefinition($key);
-
-                        if (strpos($brickType, '?') !== false) {
-                            $brickDescriptor = substr($brickType, 1);
-                            $brickDescriptor = json_decode($brickDescriptor, true);
-                            $brickType = $brickDescriptor['containerKey'];
-                        }
-
-                        $brickClass = Objectbrick\Definition::getByKey($brickType);
-
-                        if ($brickDescriptor) {
-                            $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
-                        } else {
-                            $brickField = $brickClass->getFieldDefinition($brickKey);
-                        }
-                    }
-                }
-                if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
-                    // custom field
-                    $db = \Pimcore\Db::get();
-                    $brickPrefix = '';
-
-                    $ommitPrefix = false;
-
-                    if ($brickField instanceof Model\DataObject\ClassDefinition\Data\Checkbox
-                        || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
-                    ) {
-                        $ommitPrefix = true;
-                    }
-
-                    if (!$ommitPrefix) {
-                        if ($brickDescriptor) {
-                            $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
-                        } else {
-                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
-                        }
-                    }
-                    if (is_array($filter['value'])) {
-                        $fieldConditions = [];
-                        foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
-                                    ['brickType' => $brickType]
-                                );
-                        }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
-                    } else {
-                        $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
-                                ['brickType' => $brickType]);
-                    }
-                } elseif ($field instanceof ClassDefinition\Data) {
-                    // custom field
-                    if (is_array($filter['value'])) {
-                        $fieldConditions = [];
-                        foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
-                        }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
-                    } else {
-                        $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
-                    }
-                } elseif (in_array('o_' . $filterField, $systemFields)) {
-                    // system field
-                    if ($filterField == 'fullpath') {
-                        $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
-                    } elseif ($filterField == 'key') {
-                        $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
-                    } else {
-                        if ($filter['type'] == 'date' && $operator == '=') {
-                            //if the equal operator is chosen with the date type, condition has to be changed
-                            $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                            $conditionPartsFilters[] = '`o_' . $filterField . '` BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
-                        } else {
-                            $conditionPartsFilters[] = '`o_' . $filterField . '` ' . $operator . ' ' . $db->quote($filter['value']);
-                        }
+                    $value = $object->$getter();
+                    if ($value instanceof Localizedfield) {
+                        $value->loadLazyData();
+                    } elseif ($value instanceof Objectbrick) {
+                        $value->loadLazyData();
+                    } elseif ($value instanceof Fieldcollection) {
+                        $value->loadLazyData();
                     }
                 }
             }
         }
-
-        $conditionFilters = '1 = 1';
-        if (count($conditionPartsFilters) > 0) {
-            $conditionFilters = '(' . implode(' AND ', $conditionPartsFilters) . ')';
-        }
-        Logger::log('DataObjectController filter condition:' . $conditionFilters);
-
-        return $conditionFilters;
     }
 
     /**
@@ -1146,7 +910,7 @@ class Service extends Model\Element\Service
         $condition = 'classId = ' . $list->quote($classId);
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', $layoutIds) . ')';
+            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
         $list->setCondition($condition);
         $list = $list->load();
@@ -1569,6 +1333,13 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            $user = AdminTool::getCurrentUser();
+            if (!$user->isAdmin()) {
+                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
+            }
+
             if ($context['containerType'] == 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
             } elseif ($context['containerType'] == 'objectbrick') {
@@ -1584,6 +1355,57 @@ class Service extends Model\Element\Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $layout
+     * @param $allowedView
+     * @param $allowedEdit
+     */
+    public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
+    {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            if (is_array($allowedView) && count($allowedView) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedViewDefault = isset($allowedView['default']);
+                    if ($haveAllowedViewDefault) {
+                        unset($allowedView['default']);
+                    }
+                }
+                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
+                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedView),
+                        true
+                    );
+                }
+            }
+            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedEditDefault = isset($allowedEdit['default']);
+                    if ($haveAllowedEditDefault) {
+                        unset($allowedEdit['default']);
+                    }
+                }
+
+                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
+                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedEdit),
+                        true
+                    );
+                }
+            }
+        } else {
+            if (method_exists($layout, 'getChilds')) {
+                $children = $layout->getChildren();
+                if (is_array($children)) {
+                    foreach ($children as $child) {
+                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit);
+                    }
                 }
             }
         }
@@ -1675,6 +1497,10 @@ class Service extends Model\Element\Service
             $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
+            if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
+                    || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+                $object = $object->getObject();
+            }
             $result = call_user_func($className . '::compute', $object, $data);
             Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
@@ -1682,54 +1508,6 @@ class Service extends Model\Element\Service
         }
 
         return null;
-    }
-
-    /** Adds all the query stuff that is needed for displaying, filtering and exporting the feature grid data.
-     * @param $list list
-     * @param $featureJoins
-     * @param $class
-     * @param $featureFilters
-     */
-    public static function addGridFeatureJoins($list, $featureJoins, $class, $featureFilters)
-    {
-        if ($featureJoins) {
-            $me = $list;
-            $list->onCreateQuery(function (QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters, $me) {
-                $db = \Pimcore\Db::get();
-
-                $alreadyJoined = [];
-
-                foreach ($featureJoins as $featureJoin) {
-                    $fieldname = $featureJoin['fieldname'];
-                    $mappedKey = 'cskey_' . $fieldname . '_' . $featureJoin['groupId'] . '_' . $featureJoin['keyId'];
-                    if (isset($alreadyJoined[$mappedKey]) && $alreadyJoined[$mappedKey]) {
-                        continue;
-                    }
-                    $alreadyJoined[$mappedKey] = 1;
-
-                    $table = $me->getDao()->getTableName();
-                    $select->joinLeft(
-                        [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
-                        '('
-                        . $mappedKey . '.o_id = ' . $table . '.o_id'
-                        . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
-                        . ' and ' . $mappedKey . '.groupId=' . $featureJoin['groupId']
-                        . ' and ' . $mappedKey . '.keyId=' . $featureJoin['keyId']
-                        . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
-                        . ')',
-                        [
-                            $mappedKey => 'value'
-                        ]
-                    );
-                }
-
-                $havings = $featureFilters['conditions'];
-                if ($havings) {
-                    $havings = implode(' AND ', $havings);
-                    $select->having($havings);
-                }
-            });
-        }
     }
 
     /**

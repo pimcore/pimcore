@@ -27,6 +27,7 @@ use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
+use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,23 +51,38 @@ class TranslationController extends AdminController
     public function importAction(Request $request)
     {
         $admin = $request->get('admin');
+        $dialect = $request->get('csvSettings', null);
+        $tmpFile = $request->get('importFile');
+
+        if ($dialect) {
+            $dialect = json_decode($dialect);
+        }
+
+        if (!empty($tmpFile)) {
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
+        } else {
+            $tmpFile = $_FILES['Filedata']['tmp_name'];
+        }
 
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         $merge = $request->get('merge');
 
-        $tmpFile = $_FILES['Filedata']['tmp_name'];
-
         $overwrite = $merge ? false : true;
 
         if ($admin) {
-            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
+            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages(), $dialect);
         } else {
             $delta = Translation\Website::importTranslationsFromFile(
                 $tmpFile,
                 $overwrite,
-                $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations()
+                $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations(),
+                $dialect
             );
+        }
+
+        if (is_file($tmpFile)) {
+            @unlink($tmpFile);
         }
 
         $result = [
@@ -93,6 +109,39 @@ class TranslationController extends AdminController
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
+    }
+
+    /**
+     * @Route("/upload-import", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function uploadImportFileAction(Request $request)
+    {
+        $tmpData = file_get_contents($_FILES['Filedata']['tmp_name']);
+
+        //store data for further usage
+        $filename = uniqid('import_translations-');
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
+        File::put($importFile, $tmpData);
+
+        // determine csv settings
+        $dialect = Tool\Admin::determineCsvDialect($importFile);
+
+        //ignore if line terminator is already hex otherwise generate hex for string
+        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
+            $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        }
+
+        return $this->adminJson([
+            'success' => true,
+            'config' => [
+                'tmpFile' => $filename,
+                'csvSettings' => $dialect,
+            ]
+        ]);
     }
 
     /**
@@ -278,10 +327,11 @@ class TranslationController extends AdminController
      * @Route("/translations", methods={"POST"})
      *
      * @param Request $request
+     * @param Translator $translator
      *
      * @return JsonResponse
      */
-    public function translationsAction(Request $request)
+    public function translationsAction(Request $request, Translator $translator)
     {
         $admin = $request->get('admin');
 
@@ -332,20 +382,20 @@ class TranslationController extends AdminController
 
                 return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                try {
-                    $t = $class::getByKey($data['key']);
-                } catch (\Exception $e) {
-                    $t = new $class();
-
-                    $t->setKey($data['key']);
-                    $t->setCreationDate(time());
-                    $t->setModificationDate(time());
-
-                    foreach (Tool::getValidLanguages() as $lang) {
-                        $t->addTranslation($lang, '');
-                    }
-                    $t->save();
+                $t = $class::getByKey($data['key']);
+                if ($t) {
+                    throw new \Exception($translator->trans('identifier_already_exists', [], 'admin'));
                 }
+
+                $t = new $class();
+                $t->setKey($data['key']);
+                $t->setCreationDate(time());
+                $t->setModificationDate(time());
+
+                foreach (Tool::getValidLanguages() as $lang) {
+                    $t->addTranslation($lang, '');
+                }
+                $t->save();
 
                 $return = array_merge(
                     [
@@ -377,14 +427,13 @@ class TranslationController extends AdminController
 
             $joins = [];
 
-            if ($sortingSettings['orderKey']) {
-                $sortingSettings['orderKey'] = preg_replace('/^_/', '', $sortingSettings['orderKey'], 1);
-                if (in_array($sortingSettings['orderKey'], $validLanguages)) {
-                    $sortingSettings['orderKey'] = str_replace('_', '', $sortingSettings['orderKey']); //replace all "_" from key
+            if ($orderKey = $sortingSettings['orderKey']) {
+                if (in_array(trim($orderKey, '_'), $validLanguages)) {
+                    $orderKey = trim($orderKey, '_');
                     $joins[] = [
-                        'language' => $sortingSettings['orderKey'],
+                        'language' => $orderKey,
                     ];
-                    $list->setOrderKey($sortingSettings['orderKey']);
+                    $list->setOrderKey($orderKey);
                 } else {
                     $list->setOrderKey($tableName . '.' . $sortingSettings['orderKey'], false);
                 }
@@ -454,7 +503,6 @@ class TranslationController extends AdminController
         if ($joins) {
             $list->onCreateQuery(
                 function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use (
-                    $list,
                     $joins,
                     $tableName,
                     $filters
@@ -520,15 +568,18 @@ class TranslationController extends AdminController
                 $field = null;
                 $value = null;
 
-                if (!$languageMode && in_array($filter[$propertyField], $validLanguages)
-                    || $languageMode && !in_array($filter[$propertyField], $validLanguages)) {
+                $fieldname = $filter[$propertyField];
+                if (in_array(ltrim($fieldname, '_'), $validLanguages)) {
+                    $fieldname = ltrim($fieldname, '_');
+                }
+
+                if (!$languageMode && in_array($fieldname, $validLanguages)
+                    || $languageMode && !in_array($fieldname, $validLanguages)) {
                     continue;
                 }
 
-                if ($languageMode) {
-                    $fieldname = $filter[$propertyField];
-                } else {
-                    $fieldname = $tableName . '.' . $filter[$propertyField];
+                if (!$languageMode) {
+                    $fieldname = $tableName . '.' . $fieldname;
                 }
 
                 if ($filter['type'] == 'string') {
@@ -554,9 +605,9 @@ class TranslationController extends AdminController
                     $condition = $field . ' ' . $operator . ' ' . $db->quote($value);
 
                     if ($languageMode) {
-                        $conditions[$filter[$propertyField]] = $condition;
+                        $conditions[$fieldname] = $condition;
                         $joins[] = [
-                            'language' => $filter[$propertyField],
+                            'language' => $fieldname,
                         ];
                     } else {
                         $conditionFilters[] = $condition;
@@ -922,7 +973,6 @@ class TranslationController extends AdminController
                     );
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
                     $dom = str_get_html($html);
                     if ($dom) {
 

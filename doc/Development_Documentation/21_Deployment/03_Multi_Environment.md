@@ -14,18 +14,18 @@ Having the variable set, there is a special loading order for all configuration 
 Loading example for `PIMCORE_ENVIRONMENT = dev`: 
 
 ```
-app/config/pimcore/system_dev.php
-var/config/system_dev.php
-app/config/pimcore/system.php
-var/config/system.php
+app/config/pimcore/system_dev.yml
+var/config/system_dev.yml
+app/config/pimcore/system.yml
+var/config/system.yml
 ```
 
 The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name separated by `_`.  If you haven't set the environment
 variable, the loading order of configuration files looks like, below.
 
 ```
-app/config/pimcore/system.php
-var/config/system.php
+app/config/pimcore/system.yml
+var/config/system.yml
 ```
 
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
@@ -150,7 +150,7 @@ Pimcore ships with sensible defaults on which environment to use in which case, 
 if Pimcore is in debug mode and by automatically enabling the kernel debug flag for the `dev` and `test` environments. If
 you need to influence that behaviour (e.g. because you have additional environments) you can do so by changing the environment
 config during the [startup process](../01_Getting_Started/03_Configuration.md). For example, if you want to specify the
-default environment to use when Pimcore's debug mode is enabled by no environment is explicitely defined:
+default environment to use when Pimcore's debug mode is enabled but no environment is explicitly defined:
 
 ```php
 <?php

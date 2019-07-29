@@ -24,15 +24,36 @@ backend permissions this is necessary anyway).
 In the `.htaccess` of the project, the access to this folder has to be restricted with an additional rewrite rule. It is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery. 
 
+**Apache**
 ```.htaccess
 
 ...
 RewriteRule ^protected/.* - [F,L]
+RewriteRule ^var/.*/protected(.*) - [F,L]
+RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
 
 ```
+
+**Nginx**
+Add the following parts to your Nginx configuration directly after the index directive. 
+````
+location ~ ^/protected/.* {
+  return 403;
+}
+
+location ~ ^/var/.*/protected(.*) {
+  return 403;
+}
+
+location ~ ^/cache-buster\-[\d]+/protected(.*) {
+  return 403;
+}
+````
+A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+
 
 Because of this rule, all assets located within `/protected` (also all their thumbnails) are not delivered via the web 
 server anymore. As a consequence also using the direct link for downloading or using the Pimcore generated img tags for 
@@ -51,31 +72,102 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
+**Apache**
 ```.htaccess
  
 ...
 RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
+RewriteRule ^var/.*/protected(.*) - [F,L]
+RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
  
 ```
 
-In the application, there has to be a route and a controller action that handles the request, e.g. like the following:
+**Nginx**
+Add the following parts to your Nginx configuration directly after the index directive. 
+
+````
+rewrite ^(/protected/.*) /app.php$is_args$args last;
+
+location ~ ^/var/.*/protected(.*) {
+  return 403;
+}
+
+location ~ ^/cache-buster\-[\d]+/protected(.*) {
+  return 403;
+}
+````
+A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+
+
+In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+
+```php
+// app/config/routing.yml
+
+// important this has to be the first route in the file!
+asset_protect:
+    path: /protected/{path}
+    defaults: { _controller: MyAssetController:protectedAsset }
+    requirements:
+        path: '.*'
+
+```
+
 
 ```php 
-class MyAssetController extends AbstractController
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Pimcore\Model\Asset;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RouteCollection;
+
+class MyAssetController extends FrontendController
 {
- 
-    /**
-     * @Route("/protected/{path}", requirements={"path"=".*"})
-     */
-    public function protectedAssetAction(Request $request) {
- 
-        $pathToAsset = $request->get("path");
- 
-        //do some checks and return proper response
- 
+    public function protectedAssetAction(Request $request)
+    {
+        // IMPORTANT!
+        // Add your code here to check permission!
+
+
+        // the following code is responsible to deliver asset & thumbnail contents
+        // modify it the way you need it for your use-case
+        $pathInfo = $request->getPathInfo();
+        $asset = Asset::getByPath($pathInfo);
+        if($asset){
+            return new BinaryFileResponse($asset->getFileSystemPath());
+        } elseif(preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
+
+            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
+
+            if(is_file($filePath)){
+                return new BinaryFileResponse($filePath);
+            } else {
+                $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
+                $route = $this->get('router')->getRouteCollection()->get($pimcoreThumbnailRoute);
+                $collection = new RouteCollection();
+                $collection->add($pimcoreThumbnailRoute, $route);
+                $matcher = new UrlMatcher($collection, $this->get('router')->getContext());
+
+                try {
+                    $parameters = $matcher->matchRequest($request);
+                    $response = $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
+                    return $response;
+                } catch(\Exception $e) {
+                    // nothing to do
+                }
+            }
+        }
+
+        throw new AccessDeniedHttpException('Access denied.');
     }
 }
 ```

@@ -17,11 +17,14 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Input extends Model\DataObject\ClassDefinition\Data
+class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -74,6 +77,11 @@ class Input extends Model\DataObject\ClassDefinition\Data
     public $unique;
 
     /**
+     * @var bool
+     */
+    public $showCharCount;
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -94,7 +102,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -108,7 +116,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -122,7 +130,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -136,7 +144,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -150,7 +158,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -227,6 +235,22 @@ class Input extends Model\DataObject\ClassDefinition\Data
     public function setUnique($unique)
     {
         $this->unique = $unique;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowCharCount()
+    {
+        return $this->showCharCount;
+    }
+
+    /**
+     * @param bool $showCharCount
+     */
+    public function setShowCharCount($showCharCount)
+    {
+        $this->showCharCount = $showCharCount;
     }
 
     /**

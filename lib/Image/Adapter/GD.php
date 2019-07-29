@@ -292,25 +292,28 @@ class GD extends Adapter
         $this->preModify();
 
         $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $image = PIMCORE_WEB_ROOT . '/' . $image;
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
             list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+
+            $newImg = $this->createImage($this->getWidth(), $this->getHeight());
+
             if ($mode == 'cropTopLeft') {
-                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                imagealphablending($newImg, true);
-                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                $this->resource = $newImg;
+            } elseif ($mode == 'asTexture') {
+                imagesettile($newImg, $backgroundImage);
+                imagefilledrectangle($newImg, 0, 0, $this->getWidth(), $this->getHeight(), IMG_COLOR_TILED);
             } else {
                 // default behavior (fit)
-                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $backgroundImageWidth, $backgroundImageHeight);
-                imagealphablending($newImg, true);
-                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                $this->resource = $newImg;
             }
+
+            imagealphablending($newImg, true);
+            imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
+
+            $this->resource = $newImg;
         }
 
         $this->postModify();
@@ -436,14 +439,14 @@ class GD extends Adapter
         return $this;
     }
 
-    protected $supportedFormatsCache = [];
+    protected static $supportedFormatsCache = [];
 
     /**
      * @inheritdoc
      */
-    public function supportsFormat(string $format)
+    public function supportsFormat(string $format, bool $force = false)
     {
-        if (!isset($this->supportedFormatsCache[$format])) {
+        if (!isset(self::$supportedFormatsCache[$format]) || $force) {
             $info = gd_info();
             $mappings = [
                 'jpg' => 'JPEG Support',
@@ -455,12 +458,12 @@ class GD extends Adapter
             ];
 
             if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
-                $this->supportedFormatsCache[$format] = true;
+                self::$supportedFormatsCache[$format] = true;
             } else {
-                $this->supportedFormatsCache[$format] = false;
+                self::$supportedFormatsCache[$format] = false;
             }
         }
 
-        return $this->supportedFormatsCache[$format];
+        return self::$supportedFormatsCache[$format];
     }
 }

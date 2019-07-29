@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
@@ -35,7 +35,7 @@ class AbstractOfferItem extends Concrete
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @throws UnsupportedException
      */

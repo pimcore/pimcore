@@ -20,31 +20,17 @@ namespace Pimcore\Model\Element\Note;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Note\Listing\Dao getDao()
+ * @method Model\Element\Note\Listing\Dao getDao()
  * @method Model\Element\Note[] load()
+ * @method int[] loadIdList()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $notes = [];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
+    protected $notes = null;
 
     /**
      * @param $notes
@@ -59,10 +45,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Element\Note[]
      */
     public function getNotes()
     {
+        if ($this->notes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->notes;
     }
 }

@@ -14,21 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 
-class CheckoutManager implements ICheckoutManager
+class CheckoutManager implements CheckoutManagerInterface
 {
     /**
      * Constants for custom environment item names for persisting state of checkout
@@ -36,52 +36,50 @@ class CheckoutManager implements ICheckoutManager
      */
     const CURRENT_STEP = 'checkout_current_step';
     const FINISHED = 'checkout_finished';
-    const TRACK_ECOMMERCE = 'checkout_trackecommerce';
-    const TRACK_ECOMMERCE_UNIVERSAL = 'checkout_trackecommerce_universal';
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
     /**
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     protected $commitOrderProcessors;
 
     /**
      * Payment Provider
      *
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $payment;
 
     /**
      * Needed for effective access to one specific checkout step
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutSteps = [];
 
     /**
      * Needed for preserving order of checkout steps
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutStepOrder = [];
 
     /**
-     * @var ICheckoutStep
+     * @var CheckoutStepInterface
      */
     protected $currentStep;
 
@@ -96,20 +94,20 @@ class CheckoutManager implements ICheckoutManager
     protected $paid = true;
 
     /**
-     * @param ICart $cart
-     * @param IEnvironment $environment
-     * @param IOrderManagerLocator $orderManagers
-     * @param ICommitOrderProcessorLocator $commitOrderProcessors
-     * @param ICheckoutStep[] $checkoutSteps
-     * @param IPayment|null $paymentProvider
+     * @param CartInterface $cart
+     * @param EnvironmentInterface $environment
+     * @param OrderManagerLocatorInterface $orderManagers
+     * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
+     * @param CheckoutStepInterface[] $checkoutSteps
+     * @param PaymentInterface|null $paymentProvider
      */
     public function __construct(
-        ICart $cart,
-        IEnvironment $environment,
-        IOrderManagerLocator $orderManagers,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        CartInterface $cart,
+        EnvironmentInterface $environment,
+        OrderManagerLocatorInterface $orderManagers,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
-        IPayment $paymentProvider = null
+        PaymentInterface $paymentProvider = null
     ) {
         $this->cart = $cart;
         $this->environment = $environment;
@@ -123,7 +121,7 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @param ICheckoutStep[] $checkoutSteps
+     * @param CheckoutStepInterface[] $checkoutSteps
      */
     protected function setCheckoutSteps(array $checkoutSteps)
     {
@@ -138,7 +136,7 @@ class CheckoutManager implements ICheckoutManager
         $this->initializeStepState();
     }
 
-    protected function addCheckoutStep(ICheckoutStep $checkoutStep)
+    protected function addCheckoutStep(CheckoutStepInterface $checkoutStep)
     {
         $this->checkoutStepOrder[] = $checkoutStep;
         $this->checkoutSteps[$checkoutStep->getName()] = $checkoutStep;
@@ -185,9 +183,11 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @inheritdoc
+     * @return AbstractOrder
+     *
+     * @throws UnsupportedException
      */
-    public function startOrderPayment()
+    protected function checkIfPaymentIsPossible()
     {
         if (!$this->isFinished()) {
             throw new UnsupportedException('Checkout is not finished yet.');
@@ -205,6 +205,31 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Order is already committed');
         }
 
+        return $order;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function initOrderPayment()
+    {
+        $order = $this->checkIfPaymentIsPossible();
+
+        $orderManager = $this->orderManagers->getOrderManager();
+        $orderAgent = $orderManager->createOrderAgent($order);
+        $paymentInfo = $orderAgent->initPayment();
+
+        return $paymentInfo;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function startOrderPayment()
+    {
+        $order = $this->checkIfPaymentIsPossible();
+
+        $orderManager = $this->orderManagers->getOrderManager();
         $orderAgent = $orderManager->createOrderAgent($order);
         $paymentInfo = $orderAgent->startPayment();
 
@@ -258,11 +283,6 @@ class CheckoutManager implements ICheckoutManager
         } else {
             $this->cart->delete();
             $this->environment->removeCustomItem(self::CURRENT_STEP . '_' . $this->cart->getId());
-
-            // TODO deprecated?
-            // setting e-commerce tracking information to environment for later use in view
-            $this->environment->setCustomItem(self::TRACK_ECOMMERCE . '_' . $order->getOrdernumber(), $this->generateGaEcommerceCode($order));
-            $this->environment->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . '_' . $order->getOrdernumber(), $this->generateUniversalEcommerceCode($order));
         }
 
         $this->environment->save();
@@ -287,10 +307,6 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Payment is not activated');
         }
 
-        if (!$this->isFinished()) {
-            throw new UnsupportedException('Checkout is not finished yet.');
-        }
-
         // delegate commit order to commit order processor
         $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         $this->updateEnvironmentAfterOrderCommit($order);
@@ -301,12 +317,12 @@ class CheckoutManager implements ICheckoutManager
     /**
      * Verifies if the payment provider is supported for recurring payment
      *
-     * @param IPayment $provider
+     * @param PaymentInterface $provider
      * @param AbstractOrder $sourceOrder
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder, string $customerId)
+    protected function verifyRecurringPayment(PaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
         /* @var OrderManager $orderManager */
@@ -371,7 +387,7 @@ class CheckoutManager implements ICheckoutManager
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder = null)
+    public function commitOrderPayment(StatusInterface $status, AbstractOrder $sourceOrder = null)
     {
         $this->validateCheckoutSteps();
 
@@ -419,150 +435,9 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * TODO deprecated?
-     *
-     * generates classic google analytics e-commerce tracking code
-     *
-     * @param AbstractOrder $order
-     *
-     * @return string
-     *
-     * @throws UnsupportedException
-     */
-    protected function generateGaEcommerceCode(AbstractOrder $order)
-    {
-        $code = '';
-
-        $shipping = 0;
-        $modifications = $order->getPriceModifications();
-        if (null !== $modifications) {
-            foreach ($modifications as $modification) {
-                if ($modification->getName() == 'shipping') {
-                    $shipping = $modification->getAmount();
-                    break;
-                }
-            }
-        }
-
-        $code .= "
-            _gaq.push(['_addTrans',
-              '" . $order->getOrdernumber() . "',  // order ID - required
-              '',                                  // affiliation or store name
-              '" . $order->getTotalPrice() . "',   // total - required
-              '',                                  // tax
-              '" . $shipping . "',                 // shipping
-              '',                                  // city
-              '',                                  // state or province
-              ''                                   // country
-            ]);
-        \n";
-
-        $items = $order->getItems();
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                $category = '';
-                $p = $item->getProduct();
-                if ($p && method_exists($p, 'getCategories')) {
-                    $categories = $p->getCategories();
-                    if ($categories) {
-                        $category = $categories[0];
-                        if (method_exists($category, 'getName')) {
-                            $category = $category->getName();
-                        }
-                    }
-                }
-
-                $code .= "
-                    _gaq.push(['_addItem',
-                        '" . $order->getOrdernumber() . "',                                      // order ID - required
-                        '" . $item->getProductNumber() . "',                                     // SKU/code - required
-                        '" . str_replace(["\n"], [' '], $item->getProductName()) . "', // product name
-                        '" . $category . "',                                                     // category or variation
-                        '" . $item->getTotalPrice() / $item->getAmount() . "',                   // unit price - required
-                        '" . $item->getAmount() . "'                                             // quantity - required
-                    ]);
-                \n";
-            }
-        }
-
-        $code .= "_gaq.push(['_trackTrans']);";
-
-        return $code;
-    }
-
-    /**
-     * TODO deprecated?
-     *
-     * generates universal google analytics e-commerce tracking code
-     *
-     * @param AbstractOrder $order
-     *
-     * @return string
-     *
-     * @throws UnsupportedException
-     */
-    protected function generateUniversalEcommerceCode(AbstractOrder $order)
-    {
-        $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
-
-        $shipping = 0;
-        $modifications = $order->getPriceModifications();
-        if (null !== $modifications) {
-            foreach ($modifications as $modification) {
-                if ($modification->getName() == 'shipping') {
-                    $shipping = $modification->getAmount();
-                    break;
-                }
-            }
-        }
-
-        $code .= "
-            ga('ecommerce:addTransaction', {
-              'id': '" . $order->getOrdernumber() . "',         // Transaction ID. Required.
-              'affiliation': '',                                // Affiliation or store name.
-              'revenue': '" . $order->getTotalPrice() . "',     // Grand Total.
-              'shipping': '" . $shipping . "',                  // Shipping.
-              'tax': ''                                         // Tax.
-            });
-        \n";
-
-        $items = $order->getItems();
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                $category = '';
-                $p = $item->getProduct();
-                if ($p && method_exists($p, 'getCategories')) {
-                    $categories = $p->getCategories();
-                    if ($categories) {
-                        $category = $categories[0];
-                        if (method_exists($category, 'getName')) {
-                            $category = $category->getName();
-                        }
-                    }
-                }
-
-                $code .= "
-                    ga('ecommerce:addItem', {
-                      'id': '" . $order->getOrdernumber() . "',                      // Transaction ID. Required.
-                      'name': '" . str_replace(["\n"], [' '], $item->getProductName()) . "',                      // Product name. Required.
-                      'sku': '" . $item->getProductNumber() . "',                     // SKU/code.
-                      'category': '" . $category . "',                                // Category or variation.
-                      'price': '" . $item->getTotalPrice() / $item->getAmount() . "', // Unit price.
-                      'quantity': '" . $item->getAmount() . "'                        // Quantity.
-                    });
-                \n";
-            }
-        }
-
-        $code .= "ga('ecommerce:send');\n";
-
-        return $code;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function commitStep(ICheckoutStep $step, $data)
+    public function commitStep(CheckoutStepInterface $step, $data)
     {
         $this->validateCheckoutSteps();
 

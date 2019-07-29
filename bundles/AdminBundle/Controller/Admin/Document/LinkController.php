@@ -69,6 +69,11 @@ class LinkController extends DocumentControllerBase
         $data['rawHref'] = $link->getRawHref();
         $data['versionDate'] = $link->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($link)], array_values(class_parents($link))),
+            'interfaces' => array_values(class_implements($link))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
@@ -150,9 +155,7 @@ class LinkController extends DocumentControllerBase
                 if ($data['linktype'] == 'internal' && $data['internalType']) {
                     $target = Element\Service::getElementByPath($data['internalType'], $path);
                     if ($target) {
-                        $data['internal'] = true;
                         $data['internal'] = $target->getId();
-                        $data['internalType'] = $data['internalType'];
                     }
                 }
 

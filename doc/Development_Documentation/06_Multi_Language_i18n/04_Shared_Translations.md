@@ -15,7 +15,7 @@ Available languages are defined within the system languages, see [here](./README
 
 ## Translations case sensitivity
 
-In constrast to previous Pimcore versions, starting from Pimcore 5 translations are case sensitive by default. You can
+Translations are case sensitive by default. You can
 reconfigure Pimcore to handle website and admin translations as case insensitive, however as this implies a performance
 hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
 translation keys with the same casing as they were saved.
@@ -32,6 +32,8 @@ pimcore:
   
 #### Example in Templates / Views
 
+<div class="code-section">
+
 ```php
 <div>
     <?php // there is an helper provided by Pimcore which is compatible with Pimcore 4, but interfaces the Symfony Translator component ?>
@@ -45,6 +47,16 @@ pimcore:
     <a href="/legal"><?= $this->translator()->trans("legal_notice") ?></a>
 </div>
 ```
+
+
+```twig 
+<div>
+    <address>&copy; {{ 'Copyright'|trans }}</address>
+    <a href="/imprint">{{ 'Imprint'|trans }}</a>
+</div>
+```
+
+</div>
 
 #### Example in a Controller
  

@@ -26,25 +26,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of User\Permission\Definition
-     *
-     * @var array
+     * @var array|null
      */
-    public $definitions = [];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
+    protected $definitions = null;
 
     /**
      * @param $definitions
@@ -59,10 +43,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\User\Permission\Definition[]
      */
     public function getDefinitions()
     {
+        if ($this->definitions === null) {
+            $this->getDao()->load();
+        }
+
         return $this->definitions;
     }
 }

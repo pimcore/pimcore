@@ -25,14 +25,11 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * Get the data for the object from database for the given id, or from the ID which is set in the object
-     *
-     * @param int $id
-     * @param bool $throwOnInvalid
+     * @param null $id
      *
      * @throws \Exception
      */
-    public function getById($id = null, bool $throwOnInvalid = false)
+    public function getById($id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -40,15 +37,11 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
 
-        if ($throwOnInvalid) {
-            if ($data['id']) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
-            }
-        } else {
-            $this->assignVariablesToModel($data);
+        if (!$data['id']) {
+            throw new \Exception(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
         }
+
+        $this->assignVariablesToModel($data);
     }
 
     /**
@@ -67,26 +60,22 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($this->db->lastInsertId());
         }
 
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
+        $ts = time();
+        $this->model->setModificationDate($ts);
 
-            $data = [];
-            $type = $this->model->getObjectVars();
+        $data = [];
+        $type = $this->model->getObjectVars();
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('redirects'))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('redirects'))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
                 }
+                $data[$key] = $value;
             }
-
-            $this->db->update('redirects', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->update('redirects', $data, ['id' => $this->model->getId()]);
     }
 
     /**

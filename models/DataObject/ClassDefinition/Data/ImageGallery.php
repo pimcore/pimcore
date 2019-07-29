@@ -19,12 +19,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Model\DataObject\ClassDefinition\Data
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -182,17 +185,18 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
+            $hotspots = [];
             $ids = [];
             $fd = new Hotspotimage();
 
@@ -221,18 +225,18 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param DataObject\Data\ImageGallery $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\ImageGallery
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if (!is_array($data)) {
-            return new DataObject\Data\ImageGallery(null);
+            return $this->createEmptyImageGallery($params);
         }
 
         $images = $data[$this->getName() . '__images'];
@@ -240,7 +244,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
         $hotspots = Serialize::unserialize($hotspots);
 
         if (!$images) {
-            return new DataObject\Data\ImageGallery(null);
+            return $this->createEmptyImageGallery($params);
         }
 
         $resultItems = [];
@@ -261,17 +265,39 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
             $resultItems[] = $itemResult;
         }
 
-        return new DataObject\Data\ImageGallery($resultItems);
+        $imageGallery = new DataObject\Data\ImageGallery($resultItems);
+
+        if (isset($params['owner'])) {
+            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $imageGallery;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @param mixed $params
+     *
+     * @return DataObject\Data\ImageGallery
+     */
+    private function createEmptyImageGallery($params = [])
+    {
+        $imageGallery = new DataObject\Data\ImageGallery(null);
+
+        if (isset($params['owner'])) {
+            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $imageGallery;
+    }
+
+    /**
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -279,13 +305,13 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -302,13 +328,13 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\ImageGallery
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -331,6 +357,8 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     *
+     * @return DataObject\Data\ImageGallery
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -338,7 +366,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param Asset\Image $data
      * @param null|DataObject\AbstractObject $object
@@ -451,7 +479,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      * @param string $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -466,7 +494,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
 
                 if ($dataForResource) {
                     if ($dataForResource['image__hotspots']) {
-                        $dataForResource['image__hotspots'] = unserialize($dataForResource['image__hotspots']);
+                        $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
                     }
                 }
                 $result[] = $dataForResource;

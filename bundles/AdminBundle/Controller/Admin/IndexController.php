@@ -20,13 +20,14 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
+use Pimcore\Maintenance\Executor;
+use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Schedule\Manager\Procedural;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -61,6 +62,7 @@ class IndexController extends AdminController
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
+     * @param Executor $maintenanceExecutor
      *
      * @return ViewModel
      *
@@ -69,7 +71,8 @@ class IndexController extends AdminController
     public function indexAction(
         Request $request,
         SiteConfigProvider $siteConfigProvider,
-        KernelInterface $kernel
+        KernelInterface $kernel,
+        Executor $maintenanceExecutor
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -81,7 +84,7 @@ class IndexController extends AdminController
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
@@ -110,14 +113,14 @@ class IndexController extends AdminController
      * @Route("/index/statistics", name="pimcore_admin_index_statistics", methods={"GET"})
      *
      * @param Request $request
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param KernelInterface $db
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
+    public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
 
         // DB
@@ -218,16 +221,15 @@ class IndexController extends AdminController
     }
 
     /**
-     * Build pimcore.settings data
-     *
      * @param Request $request
      * @param ViewModel $view
      * @param User $user
      * @param KernelInterface $kernel
+     * @param ExecutorInterface $maintenanceExecutor
      *
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor)
     {
         $config = $view->config;
         $settings = new ViewModel([
@@ -239,7 +241,6 @@ class IndexController extends AdminController
             'disableMinifyJs' => \Pimcore::disableMinifyJs(),
             'environment' => $kernel->getEnvironment(),
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
-            'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 
         // languages
@@ -261,7 +262,7 @@ class IndexController extends AdminController
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
-            'document_generatepreviews' => (bool)$config->documents->generatepreview,
+            'document_generatepreviews' => (bool)$config->documents->generate_preview,
             'document_naming_strategy' => $namingStrategy->getName(),
             'asset_disable_tree_preview' => (bool)$config->assets->disable_tree_preview,
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
@@ -272,6 +273,9 @@ class IndexController extends AdminController
             'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
             'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
             'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
+            'asset_tree_paging_limit' => $pimcoreSymfonyConfig['assets']['tree_paging_limit'],
+            'document_tree_paging_limit' => $pimcoreSymfonyConfig['documents']['tree_paging_limit'],
+            'object_tree_paging_limit' => $pimcoreSymfonyConfig['objects']['tree_paging_limit'],
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
@@ -286,7 +290,7 @@ class IndexController extends AdminController
         $this
             ->addSystemVarSettings($settings)
             ->addCsrfToken($settings, $user)
-            ->addMaintenanceSettings($settings)
+            ->addMaintenanceSettings($settings, $maintenanceExecutor)
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
@@ -372,18 +376,15 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
+     * @param ExecutorInterface $maintenanceExecutor
      *
      * @return $this
      */
-    protected function addMaintenanceSettings(ViewModel $settings)
+    protected function addMaintenanceSettings(ViewModel $settings, ExecutorInterface $maintenanceExecutor)
     {
         // check maintenance
         $maintenance_active = false;
-
-        $manager = $this->get(Procedural::class);
-
-        $lastExecution = $manager->getLastExecution();
-        if ($lastExecution) {
+        if ($lastExecution = $maintenanceExecutor->getLastExecution()) {
             if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
                 $maintenance_active = true;
             }

@@ -248,7 +248,7 @@ use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
  
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * List of Votes.
@@ -261,27 +261,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var string|\Zend_Locale
      */
     public $locale;
- 
-    /**
-     * List of valid order keys.
-     *
-     * @var array
-     */
-    public $validOrderKeys = array(
-        'id'
-    );
- 
-    /**
-     * Test if the passed key is valid.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return in_array($key, $this->validOrderKeys);
-    }
  
     /**
      * @return array
@@ -302,10 +281,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->data = $data;
     }
- 
-    /**
-     * Methods for \Zend_Paginator_Adapter_Interface.
-     */
  
     /**
      * get total count.
@@ -522,7 +497,7 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Loads a list for the specicifies parameters, returns an array of ids.
      *
-     * @return array
+     * @return int[]
      * @throws \Exception
      */
     public function loadIdList()
@@ -532,7 +507,7 @@ class Dao extends Listing\Dao\AbstractDao
             $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
  
-            return $objectIds;
+            return array_map('intval', $objectIds);
         } catch (\Exception $e) {
             throw $e;
         }

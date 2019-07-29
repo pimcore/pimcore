@@ -37,6 +37,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
+        this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 
         this.getData();
     },
@@ -52,9 +53,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             items.push(this.getEditPanel());
         }
 
-        var exifPanel = this.getExifPanel();
-        if(exifPanel) {
-            items.push(exifPanel);
+        var embeddedMetaDataPanel = this.embeddedMetaData.getPanel();
+        if(embeddedMetaDataPanel) {
+            items.push(embeddedMetaDataPanel);
         }
 
         if (this.isAllowed("publish")) {
@@ -108,7 +109,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 title: t("edit"),
                 html: '<iframe src="' + url + '" frameborder="0" ' +
                 'style="width: 100%;" id="' + frameId + '"></iframe>',
-                iconCls: "pimcore_icon_edit"
+                iconCls: "pimcore_material_icon_edit pimcore_material_icon"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get(frameId).setStyle({
@@ -118,54 +119,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
 
         return this.editPanel;
-    },
-
-    getExifPanel: function () {
-        if (!this.exifPanel) {
-
-            if(!this.data["imageInfo"] || (!this.data["imageInfo"]["exif"] && !this.data["imageInfo"]["iptc"])) {
-                return false;
-            }
-
-            var exifPanel = new Ext.grid.PropertyGrid({
-                title: 'EXIF',
-                flex: 1,
-                border: true,
-                source: this.data["imageInfo"]["exif"] || [],
-                clicksToEdit: 1000
-            });
-            exifPanel.plugins[0].disable();
-
-            var iptcPanel = new Ext.grid.PropertyGrid({
-                title: 'IPTC',
-                flex: 1,
-                border: true,
-                source: this.data["imageInfo"]["iptc"] || [],
-                clicksToEdit: 1000
-            });
-            iptcPanel.plugins[0].disable();
-
-            var xmpPanel = new Ext.grid.PropertyGrid({
-                title: 'XMP',
-                flex: 1,
-                border: true,
-                source: this.data["imageInfo"]["xmp"] || [],
-                clicksToEdit: 1000
-            });
-            xmpPanel.plugins[0].disable();
-
-            this.exifPanel = new Ext.Panel({
-                title: "EXIF/XMP/IPTC",
-                layout: {
-                    type: 'hbox',
-                    align: 'stretch'
-                },
-                iconCls: "pimcore_icon_exif",
-                items: [exifPanel, xmpPanel, iptcPanel]
-            });
-        }
-
-        return this.exifPanel;
     },
 
     getDisplayPanel: function () {
@@ -229,9 +182,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             if (this.data.imageInfo.dimensions) {
 
+                var dimensions = {};
+                dimensions[t("width")] = this.data.imageInfo.dimensions.width;
+                dimensions[t("height")] = this.data.imageInfo.dimensions.height;
+
                 var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
                     title: t("details"),
-                    source: this.data.imageInfo.dimensions,
+                    source: dimensions,
                     autoHeight: true,
 
                     clicksToEdit: 1000,
@@ -301,7 +258,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             details.push(this.downloadBox);
 
             var thumbnailsStore = new Ext.data.JsonStore({
-                autoLoad: true,
+                autoLoad: false,
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
@@ -437,7 +394,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             this.displayPanel = new Ext.Panel({
                 title: t("view"),
                 layout: "border",
-                iconCls: "pimcore_icon_view",
+                iconCls: "pimcore_material_icon_view pimcore_material_icon",
                 items: [{
                     region: "center",
                     html: '<div id="' + this.previewContainerId + '" class="pimcore_asset_image_preview"></div>',

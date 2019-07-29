@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\Import\Service as ImportService;
@@ -1389,7 +1390,7 @@ class DataObjectHelperController extends AdminController
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
+            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.php', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {
@@ -1488,6 +1489,8 @@ class DataObjectHelperController extends AdminController
     public function importGetFileInfoAction(Request $request, ImportService $importService)
     {
         $importConfigId = $request->get('importConfigId');
+        $dialect = $request->get('dialect');
+        $dialect = json_decode($request->get('dialect'));
         $success = true;
         $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
 
@@ -1496,7 +1499,9 @@ class DataObjectHelperController extends AdminController
 
         $originalFile = $file . '_original';
         // determine type
-        $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        if (empty($dialect)) {
+            $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        }
 
         $count = 0;
         if (($handle = fopen($originalFile, 'r')) !== false) {
@@ -1559,7 +1564,10 @@ class DataObjectHelperController extends AdminController
         } catch (\Exception $e) {
         }
 
-        $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        //ignore if lineterminator is already hex otherwise generate hex for string
+        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
+            $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        }
 
         $selectedGridColumns = [];
         if ($importConfig) {
@@ -1717,121 +1725,6 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return array
-     */
-    protected function extractFieldsAndBricks(Request $request)
-    {
-        $fields = [];
-        $newFields = [];
-
-        $bricks = [];
-        if ($request->get('fields')) {
-            $fields = $request->get('fields');
-
-            foreach ($fields as $f) {
-                $fieldName = $f;
-                $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
-                    // key value, ignore for now
-                } elseif (count($parts) > 1) {
-                    $brickType = $parts[0];
-
-                    if (strpos($brickType, '?') !== false) {
-                        $brickDescriptor = substr($brickType, 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $brickType = $brickDescriptor['containerKey'];
-//                        $fieldName =  $brickDescriptor["brickfield"];
-                    }
-
-                    $bricks[$brickType] = $brickType;
-                }
-                $newFields[] = $fieldName;
-            }
-        }
-
-        return [$fields, $bricks];
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
-    protected function prepareExportList(Request $request)
-    {
-        $requestedLanguage = $this->extractLanguage($request);
-
-        $folder = DataObject\AbstractObject::getById($request->get('folderId'));
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-
-        $className = $class->getName();
-
-        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-
-        if (!empty($folder)) {
-            $conditionFilters = ["o_path LIKE '" . $folder->getRealFullPath() . "%'"];
-        } else {
-            $conditionFilters = [];
-        }
-
-        $featureJoins = [];
-
-        if ($request->get('filter')) {
-            $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
-            $featureFilters = DataObject\Service::getFeatureFilters($request->get('filter'), $class, $requestedLanguage);
-            if ($featureFilters) {
-                $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
-            }
-        }
-        if ($request->get('condition')) {
-            $conditionFilters[] = '(' . $request->get('condition') . ')';
-        }
-
-        /** @var DataObject\Listing\Concrete $list */
-        $list = new $listClass();
-        $objectTableName = $list->getDao()->getTableName();
-        $list->setCondition(implode(' AND ', $conditionFilters));
-
-        //parameters specified in the objects grid
-        $ids = $request->get('ids', []);
-        $quotedIds = [];
-        foreach ($ids as $id) {
-            $quotedIds[] = $list->quote($id);
-        }
-        if (!empty($quotedIds)) {
-            //add a condition if id numbers are specified
-            $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $quotedIds) . ')');
-        }
-
-        $list->setOrder('ASC');
-        $list->setOrderKey('o_id');
-
-        $objectType = $request->get('objecttype');
-        if ($objectType) {
-            if ($objectType == DataObject\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
-            } else {
-                $list->setObjectTypes([$objectType]);
-            }
-        }
-
-        list($fields, $bricks) = $this->extractFieldsAndBricks($request);
-
-        if (!empty($bricks)) {
-            foreach ($bricks as $b) {
-                $list->addObjectbrick($b);
-            }
-        }
-
-        $list->setLocale($requestedLanguage);
-        DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
-
-        return [$list, $fields, $requestedLanguage];
-    }
-
-    /**
      * @param $fileHandle
      *
      * @return string
@@ -1845,12 +1738,16 @@ class DataObjectHelperController extends AdminController
      * @Route("/get-export-jobs", methods={"GET"})
      *
      * @param Request $request
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
-    public function getExportJobsAction(Request $request)
+    public function getExportJobsAction(Request $request, GridHelperService $gridHelperService)
     {
-        list($list, $fields, $requestedLanguage) = $this->prepareExportList($request);
+        $requestedLanguage = $this->extractLanguage($request);
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
 
         $ids = $list->loadIdList();
 
@@ -1899,7 +1796,7 @@ class DataObjectHelperController extends AdminController
         $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
         $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
 
-        list($fields, $bricks) = $this->extractFieldsAndBricks($request);
+        $fields = $request->get('fields');
 
         $addTitles = $request->get('initial');
 
@@ -2090,7 +1987,7 @@ class DataObjectHelperController extends AdminController
                 // check for objects bricks and localized fields
                 if (DataObject\Service::isHelperGridColumnConfig($field)) {
                     if ($helperDefinitions[$field]) {
-                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field);
+                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
                     }
                 } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
@@ -2223,40 +2120,14 @@ class DataObjectHelperController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getBatchJobsAction(Request $request)
+    public function getBatchJobsAction(Request $request, GridHelperService $gridHelperService)
     {
         if ($request->get('language')) {
             $request->setLocale($request->get('language'));
         }
 
-        $folder = DataObject::getById($request->get('folderId'));
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-
-        $conditionFilters = ["(o_path = ? OR o_path LIKE '" . str_replace('//', '/', $folder->getRealFullPath() . '/') . "%')"];
-
-        if ($request->get('filter')) {
-            $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
-        }
-        if ($request->get('condition')) {
-            $conditionFilters[] = ' (' . $request->get('condition') . ')';
-        }
-
-        $className = $class->getName();
-        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-        $list = new $listClass();
-        $list->setCondition(implode(' AND ', $conditionFilters), [$folder->getRealFullPath()]);
-        $list->setOrder('ASC');
-        $list->setOrderKey('o_id');
-
-        if ($request->get('objecttype')) {
-            $objectTypes = [$request->get('objecttype')];
-
-            if ($class->getShowVariants()) {
-                $objectTypes[] = DataObject\AbstractObject::OBJECT_TYPE_VARIANT;
-            }
-
-            $list->setObjectTypes($objectTypes);
-        }
+        $allParams = array_merge($request->request->all(), $request->query->all());
+        $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());
 
         $jobs = $list->loadIdList();
 
@@ -2338,20 +2209,6 @@ class DataObjectHelperController extends AdminController
                                 $csLanguage
                             );
                         }
-                    } else {
-                        $getter = 'get' . ucfirst($field);
-                        $setter = 'set' . ucfirst($field);
-                        $keyValuePairs = $object->$getter();
-
-                        if (!$keyValuePairs) {
-                            $keyValuePairs = new DataObject\Data\KeyValue();
-                            $keyValuePairs->setObjectId($object->getId());
-                            $keyValuePairs->setClass($object->getClass());
-                        }
-
-                        $keyValuePairs->setPropertyWithId($keyid, $value, true);
-
-                        $object->$setter($keyValuePairs);
                     }
                 } elseif (count($parts) > 1) {
                     // check for bricks

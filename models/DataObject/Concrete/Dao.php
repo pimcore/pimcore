@@ -21,6 +21,9 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
  * @property \Pimcore\Model\DataObject\Concrete $model
@@ -143,20 +146,26 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
-            if (method_exists($value, 'load')) {
+            if ($value instanceof CustomResourcePersistingInterface) {
                 // datafield has it's own loader
-                $value = $value->load($this->model);
+                $params = [
+                    'context' => [
+                        'object' => $this->model
+                        ]
+                ];
+                $value = $value->load($this->model, $params);
                 if ($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }
-            } else {
+            }
+            if ($value instanceof ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
                     $multidata = [];
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $multidata[$key . '__' . $fkey] = $data[$key . '__' . $fkey];
                     }
-                    $this->model->setValue($key, $this->model->getClass()->getFieldDefinition($key)->getDataFromResource($multidata));
+                    $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
                     $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model));
                 }
@@ -180,7 +189,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         foreach ($fieldDefinitions as $key => $fd) {
             if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
                 }
@@ -217,7 +226,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($key);
 
-            if (method_exists($fd, 'save')) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                                'isUpdate' => $isUpdate,
@@ -228,7 +237,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
                 $fd->save($this->model, $saveParams);
-            } elseif ($fd->getColumnType()) {
+            }
+            if ($fd instanceof ResourcePersistenceAwareInterface) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model);
@@ -265,9 +275,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd->getQueryColumnType()) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
-                if (!(in_array($key, $untouchable) and !is_array($this->model->getObjectVar($key)))) {
+                if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
                     $fieldValue = $this->model->$method();
                     $insertData = $fd->getDataForQueryResource($fieldValue, $this->model);
@@ -367,7 +377,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         // delete fields wich have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
-            if (method_exists($fd, 'delete')) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
                 $fd->delete($this->model);
             }
         }
@@ -405,12 +415,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getLatestVersion($force = false)
     {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-
-        if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
-            $version = Model\Version::getById($versionData['id']);
-
-            return $version;
+        if ($this->model instanceof DataObject\Concrete) {
+            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(),
+                $this->model->getModificationDate(), $this->model->getVersionCount(), $force);
         }
 
         return;

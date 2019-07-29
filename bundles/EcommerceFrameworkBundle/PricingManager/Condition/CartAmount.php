@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class CartAmount implements ICartAmount
+class CartAmount implements CartAmountInterface
 {
     /**
      * @var float
@@ -26,11 +26,11 @@ class CartAmount implements ICartAmount
     protected $limit;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
@@ -45,7 +45,7 @@ class CartAmount implements ICartAmount
     /**
      * @param float $limit
      *
-     * @return ICartAmount
+     * @return CartAmountInterface
      */
     public function setLimit($limit)
     {
@@ -76,7 +76,7 @@ class CartAmount implements ICartAmount
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

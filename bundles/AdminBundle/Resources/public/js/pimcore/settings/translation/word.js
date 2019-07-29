@@ -65,6 +65,7 @@ pimcore.settings.translation.word = Class.create({
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.exportStore,
             autoHeight: true,
+            border: true,
             style: "margin-bottom: 10px",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columns: {
@@ -97,8 +98,8 @@ pimcore.settings.translation.word = Class.create({
             tbar: [
                 {
                     xtype: "tbspacer",
-                    width: 20,
-                    height: 16,
+                    width: 24,
+                    height: 24,
                     cls: "pimcore_icon_droptarget"
                 },
                 t("elements_to_export"),

@@ -110,6 +110,16 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
 
         });
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            name: "disallowAddRemove",
+            fieldLabel: t("disallow_addremove"),
+            checked: this.datax.disallowAddRemove
+
+        });
+
+
+
         this.layout.on("render", this.layoutRendered.bind(this));
 
         return this.layout;

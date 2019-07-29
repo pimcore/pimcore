@@ -47,7 +47,7 @@ pimcore.document.tree = Class.create({
                 rootVisible: true,
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_documents",
-                treeIconCls: "pimcore_icon_document",
+                treeIconCls: "pimcore_icon_main_tree_document pimcore_icon_material",
                 treeTitle: t('documents'),
                 parentPanel: Ext.getCmp("pimcore_panel_tree_" + this.position)
             };
@@ -80,8 +80,7 @@ pimcore.document.tree = Class.create({
 
     init: function(rootNodeConfig) {
 
-        var itemsPerPage = 100;
-
+        var itemsPerPage = pimcore.settings['document_tree_paging_limit'];
 
         rootNodeConfig.text = t("home");
         rootNodeConfig.id = "" +  rootNodeConfig.id;
@@ -122,6 +121,7 @@ pimcore.document.tree = Class.create({
             id: this.config.treeId,
             title: this.config.treeTitle,
             iconCls: this.config.treeIconCls,
+            cls: this.config['rootVisible'] ? '' : 'pimcore_tree_no_root_node',
             autoScroll:true,
             autoLoad: false,
             animate: false,
@@ -227,7 +227,7 @@ pimcore.document.tree = Class.create({
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeClick: function (tree, record, item, index, event, eOpts ) {
         if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
             if (record.data.permissions.view) {
                 pimcore.helpers.treeNodeThumbnailPreviewHide();
@@ -540,6 +540,18 @@ pimcore.document.tree = Class.create({
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "child")
                     });
 
+                    pasteMenu.push({
+                        text: t("paste_recursive_as_language_variant"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive")
+                    });
+
+                    pasteMenu.push({
+                        text: t("paste_recursive_as_language_variant_updating_references"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references")
+                    });
+
                     pasteInheritanceMenu.push({
                         text: t("paste_recursive_as_childs"),
                         iconCls: "pimcore_icon_paste",
@@ -560,6 +572,18 @@ pimcore.document.tree = Class.create({
                         text: t("paste_as_language_variant"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "child", true)
+                    });
+
+                    pasteInheritanceMenu.push({
+                        text: t("paste_recursive_as_language_variant"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive", true)
+                    });
+
+                    pasteInheritanceMenu.push({
+                        text: t("paste_recursive_as_language_variant_updating_references"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references", true)
                     });
                 }
             }
@@ -866,10 +890,15 @@ pimcore.document.tree = Class.create({
                 var selectContent = "";
 
                 for (var i=0; i<websiteLanguages.length; i++) {
-                    if(data.language != websiteLanguages[i]) {
+                    if(data.language != websiteLanguages[i] && !in_array(websiteLanguages[i], data.translationLinks)) {
                         selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
                         languagestore.push([websiteLanguages[i], selectContent]);
                     }
+                }
+
+                if (languagestore.length < 1) {
+                    pimcore.helpers.showNotification(t("error"), t("paste_no_new_language_error"), "error");
+                    return false;
                 }
 
                 var pageForm = new Ext.form.FormPanel({
@@ -897,7 +926,7 @@ pimcore.document.tree = Class.create({
                     title: t("paste_as_language_variant"),
                     buttons: [{
                         text: t("cancel"),
-                        iconCls: "pimcore_icon_delete",
+                        iconCls: "pimcore_icon_cancel",
                         handler: function () {
                             win.close();
                         }
@@ -932,12 +961,12 @@ pimcore.document.tree = Class.create({
         };
 
         document_types.sort([{property: 'priority', direction: 'DESC'},
-            {property: 'name', direction: 'ASC'}]);
+            {property: 'translatedName', direction: 'ASC'}]);
 
         document_types.each(function (documentMenu, typeRecord) {
             if (typeRecord.get("type") == "page") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "page", typeRecord.get("id"))
                 };
@@ -945,35 +974,35 @@ pimcore.document.tree = Class.create({
             }
             else if (typeRecord.get("type") == "snippet") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "snippet", typeRecord.get("id"))
                 };
                 menuOption = "snippet";
             } else if (typeRecord.get("type") == "email") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                 };
                 menuOption = "email";
             } else if (typeRecord.get("type") == "newsletter") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
                 };
                 menuOption = "newsletter";
             } else if (typeRecord.get("type") == "printpage") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
                 };
                 menuOption = "printPage";
             } else if (typeRecord.get("type") == "printcontainer") {
                 docTypeMenu = {
-                    text: ts(typeRecord.get("name")),
+                    text: typeRecord.get("translatedName"),
                     iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
                 };
@@ -1050,6 +1079,10 @@ pimcore.document.tree = Class.create({
 
     pasteInfo: function (tree, record, type, enableInheritance, language) {
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+
+        if (typeof language !== "string") {
+            language = false;
+        }
 
         if(enableInheritance !== true) {
             enableInheritance = false;
@@ -1243,7 +1276,7 @@ pimcore.document.tree = Class.create({
             }],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }

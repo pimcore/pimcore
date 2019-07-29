@@ -55,14 +55,15 @@ class File
      *
      * @param  $tmpFilename
      * @param null $language
+     * @param string $replacement
      *
      * @return string
      */
-    public static function getValidFilename($tmpFilename, $language = null)
+    public static function getValidFilename($tmpFilename, $language = null, $replacement = '-')
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
         $tmpFilename = strtolower($tmpFilename);
-        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
+        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', $replacement, $tmpFilename);
 
         // keys shouldn't start with a "." (=hidden file) *nix operating systems
         // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
@@ -157,12 +158,47 @@ class File
      */
     public static function mkdir($path, $mode = null, $recursive = true)
     {
+        if (is_dir($path)) {
+            return true;
+        }
+
+        $return = true;
+
         if (!$mode) {
             $mode = self::$defaultMode;
         }
 
         $oldMask = umask(0);
-        $return = @mkdir($path, $mode, $recursive, self::getContext());
+
+        if ($recursive) {
+            // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
+            // https://github.com/pimcore/pimcore/issues/4011
+
+            $parts = preg_split('@(?<![\:\\\\/]|^)[\\\\/]@', $path);
+            $currentPath = '';
+            $lastKey = array_keys($parts)[count($parts) - 1];
+            $parentPath = $parts[0];
+
+            foreach ($parts as $key => $part) {
+                $currentPath .= $part;
+
+                if (!@is_writable($parentPath) && $key != $lastKey) {
+                    // parent directories don't need to be read/writable (open_basedir restriction), see #4315
+                } elseif (!is_dir($currentPath)) {
+                    if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
+                        // the directory was not created by either this or a concurrent process ...
+                        $return = false;
+                        break;
+                    }
+                }
+
+                $parentPath = $currentPath;
+                $currentPath .= '/';
+            }
+        } else {
+            $return = @mkdir($path, $mode, false, self::getContext());
+        }
+
         umask($oldMask);
 
         return $return;

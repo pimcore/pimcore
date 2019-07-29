@@ -28,6 +28,14 @@ services:
     Pimcore\Model\Webservice\Service: ~
 
     #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+    Pimcore\Model\Notification\Service\UserService: ~
+
+    #
     # CONTROLLERS
     #
 
@@ -43,13 +51,11 @@ services:
 
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
-
     #
     # REDIRECTS
     #
 
     Pimcore\Routing\Redirect\Csv: ~
-
 
     #
     # GDPR Services
@@ -69,3 +75,9 @@ services:
 
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~
+
+
+    #
+    # Grid Helper Service
+    #
+    Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~

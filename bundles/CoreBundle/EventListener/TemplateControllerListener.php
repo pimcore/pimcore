@@ -104,13 +104,7 @@ class TemplateControllerListener implements EventSubscriberInterface
 
             $template = new Template([]);
             $template->setOwner($controller);
-            $template->setEngine($engine);
             $templateReference = $guesser->guessTemplateName($controller, $request, $engine);
-
-            if ($templateReference->get('bundle') === PIMCORE_SYMFONY_DEFAULT_BUNDLE) {
-                $templateReference->set('bundle', '');
-            }
-
             $template->setTemplate($templateReference);
 
             // inject Template annotation into the request - will be used by SensioFrameworkExtraBundle

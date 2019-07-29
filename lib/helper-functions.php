@@ -150,6 +150,17 @@ function array_htmlspecialchars($array)
 }
 
 /**
+ * @param string $needle
+ * @param array $haystack
+ *
+ * @return bool
+ */
+function in_arrayi(string $needle, array $haystack)
+{
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/**
  * @param  $node
  *
  * @return array
@@ -243,18 +254,6 @@ function urlencode_ignore_slash($var)
 }
 
 /**
- * @deprecated
- *
- * @param  $filename
- *
- * @return bool
- */
-function is_includeable($filename)
-{
-    return \Pimcore\File::isIncludeable($filename);
-}
-
-/**
  * @param  $val
  *
  * @return int|string
@@ -288,10 +287,10 @@ function formatBytes($bytes, $precision = 2)
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
     $bytes = max($bytes, 0);
-    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1000));
     $pow = min($pow, count($units) - 1);
 
-    $bytes /= pow(1024, $pow);
+    $bytes /= pow(1000, $pow);
 
     return round($bytes, $precision) . ' ' . $units[$pow];
 }
@@ -624,12 +623,21 @@ function var_export_pretty($var, $indent = '')
  *
  * @return string
  */
-function to_php_data_file_format($contents)
+function to_php_data_file_format($contents, $comments = null)
 {
     $contents = var_export_pretty($contents);
-    $contents = "<?php \n\nreturn " . $contents . ";\n";
 
-    return $contents;
+    $export = '<?php ';
+
+    if (!empty($comments)) {
+        $export .= "\n\n";
+        $export .= $comments;
+        $export .= "\n";
+    }
+
+    $export .= "\n\nreturn ".$contents.";\n";
+
+    return $export;
 }
 
 /**

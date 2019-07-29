@@ -62,17 +62,6 @@ pimcore.object.classes.klass = Class.create({
                 isTarget: true
             },
             listeners: this.getTreeNodeListeners(),
-            tbar: {
-                items: [
-                      "->",
-                    {
-                        text: t("configure_custom_layouts"),
-                        iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                        hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
-                        handler: this.configureCustomLayouts.bind(this)
-                    }
-                ]
-            },
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
@@ -84,6 +73,13 @@ pimcore.object.classes.klass = Class.create({
         var displayId = this.data.key ? this.data.key : this.data.id; // because the field-collections use that also
 
         var panelButtons = [];
+
+        panelButtons.push({
+            text: t("configure_custom_layouts"),
+            iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
+            hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
+            handler: this.configureCustomLayouts.bind(this)
+        });
 
         panelButtons.push({
             text: t('reload_definition'),
@@ -269,14 +265,14 @@ pimcore.object.classes.klass = Class.create({
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         // @TODO: ignoredAliases are there for BC reasons, to be removed in v6
-        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href'];
+        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
         ignoredAliases.forEach(function (item) {
             dataComps = array_remove_value(dataComps, item);
         });
 
         var parentRestrictions;
         var groups = [];
-        var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
+        var groupNames = ["text","numeric","date","select","media","relation","geo","crm","structured","other"];
         for (var i = 0; i < dataComps.length; i++) {
             var dataCompName = dataComps[i];
             var dataComp = pimcore.object.classes.data[dataCompName];
@@ -677,7 +673,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.rootPanel = new Ext.form.FormPanel({
             title: '<b>' + t("general_settings") + '</b>',
-            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+            bodyStyle: 'padding: 10px;',
             defaults: {
                 labelWidth: 200
             },
@@ -801,6 +797,17 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("show_applogger_tab"),
                     name: "showAppLoggerTab",
                     checked: this.data.showAppLoggerTab
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("encrypt_data"),
+                    name: "encryption",
+                    style: 'margin: 0',
+                    checked: this.data.encryption
+                }, {
+                    xtype: 'container',
+                    html: t('encrypt_data_description'),
+                    style: 'margin-bottom:10px'
                 },
                 {
                     xtype: "displayfield",

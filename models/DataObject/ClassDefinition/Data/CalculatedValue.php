@@ -18,9 +18,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class CalculatedValue extends Model\DataObject\ClassDefinition\Data
+class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface
 {
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -114,35 +117,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForResource
-     *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return float
-     */
-    public function getDataForResource($data, $object = null, $params = [])
-    {
-        // nothing to do
-    }
-
-    /**
-     * @see Object_Class_Data::getDataFromResource
-     *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return float
-     */
-    public function getDataFromResource($data, $object = null, $params = [])
-    {
-        // nothing to do
-    }
-
-    /**
-     * @see Object_Class_Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -156,7 +131,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -174,7 +149,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Object_Class_Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float $data
      * @param null|DataObject\AbstractObject $object
@@ -187,7 +162,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float $data
      * @param null|DataObject\AbstractObject $object
@@ -280,23 +255,6 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     public function getQueryColumnType()
     {
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * @return null
-     */
-    public function getColumnType()
-    {
-        return null;
-    }
-
-    public function save()
-    {
-        // nothing to do
-    }
-
-    public function load()
-    {
     }
 
     /**
@@ -527,7 +485,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *

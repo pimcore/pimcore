@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DefaultStructuredTable implements IInterpreter
+class DefaultStructuredTable implements InterpreterInterface
 {
     use OptionsResolverTrait;
 

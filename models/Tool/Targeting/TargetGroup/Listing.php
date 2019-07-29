@@ -27,23 +27,9 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list
-     *
-     * @var TargetGroup[]
+     * @var TargetGroup[]|null
      */
-    public $targetGroups = [];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key): bool
-    {
-        return true;
-    }
+    protected $targetGroups = null;
 
     /**
      * @param TargetGroup[] $targetGroups
@@ -62,6 +48,10 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTargetGroups(): array
     {
+        if ($this->targetGroups === null) {
+            $this->getDao()->load();
+        }
+
         return $this->targetGroups;
     }
 }

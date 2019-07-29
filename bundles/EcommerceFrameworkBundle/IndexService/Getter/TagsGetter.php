@@ -20,7 +20,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\Tag;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TagsGetter implements IGetter
+class TagsGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 

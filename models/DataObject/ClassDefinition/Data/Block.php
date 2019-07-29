@@ -20,12 +20,14 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Model\DataObject\ClassDefinition\Data
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
+    use Extension\ColumnType;
 
     /**
      * Static type of this element
@@ -63,13 +65,6 @@ class Block extends Model\DataObject\ClassDefinition\Data
      * @var int
      */
     public $maxItems;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
@@ -113,9 +108,9 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public $fieldDefinitionsCache;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -160,20 +155,20 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
             $count = 0;
 
-            $unserializedData = unserialize($data);
+            $unserializedData = Serialize::unserialize($data);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -210,6 +205,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
+                    if (isset($params['owner'])) {
+                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    }
+
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
@@ -223,21 +223,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
-        return null;
-    }
-
-    /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -283,7 +269,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -333,7 +319,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object
@@ -644,7 +630,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -669,7 +655,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fds[$name];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
@@ -680,7 +666,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
         return;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'block';
@@ -877,27 +863,39 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $this->markLazyloadedFieldAsLoaded($object);
 
+        $lf = $this->getFielddefinition('localizedfields');
+        if ($lf && is_array($data)) {
+            /** @var $item DataObject\Data\BlockElement */
+            foreach ($data as $item) {
+                if (is_array($item)) {
+                    foreach ($item as $itemElement) {
+                        if ($itemElement->getType() == 'localizedfields') {
+                            /** @var $itemElementData DataObject\Localizedfield */
+                            $itemElementData = $itemElement->getData();
+                            $itemElementData->setObject($object);
+
+                            // the localized field needs at least the containerType as this is important
+                            // for lazy loading
+                            $context = $itemElementData->getContext() ? $itemElementData->getContext() : [];
+                            $context['containerType'] = 'block';
+                            $context['containerKey'] = $this->getName();
+                            $itemElementData->setContext($context);
+                        }
+                    }
+                }
+            }
+        }
+
         return $data;
     }
 
-//
-//    public function getTableName($container, $params = []) {
-//        $db = Db::get();
-//        $data = null;
-//
-//        if ($container instanceof DataObject\Concrete) {
-//            return "object_store_" . $container->getClassId();
-//        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
-//
-//            //TODO
-//        } elseif ($container instanceof DataObject\Localizedfield) {
-//            //TODO
-//        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
-//            //TODO
-//        }
-//
-//
-//    }
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function save($object, $params = [])
+    {
+    }
 
     /**
      * @param $object
@@ -917,8 +915,6 @@ class Block extends Model\DataObject\ClassDefinition\Data
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
-            } else {
-                return null;
             }
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
@@ -951,12 +947,20 @@ class Block extends Model\DataObject\ClassDefinition\Data
             //TODO index!!!!!!!!!!!!!!
 
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
-                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = '. $context['index'];
+                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $container, $params);
         }
 
         return $data;
+    }
+
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function delete($object, $params = [])
+    {
     }
 
     /**
@@ -970,7 +974,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $setter = 'set' . ucfirst($this->getName());
@@ -1074,7 +1078,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
                             $blockElement = $item[$fd->getName()];
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
-                                    throw new Element\ValidationException('Block element empty [ '.$fd->getName().' ]');
+                                    throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
                                 } else {
                                     continue;
                                 }

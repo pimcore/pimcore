@@ -61,7 +61,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
     getLayoutShow: function () {
 
         this.getLayoutEdit();
-        this.component.disable();
+        this.component.setReadOnly(true);
 
         return this.component;
     },

@@ -18,7 +18,7 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 
-class DefaultRelations implements IRelationInterpreter
+class DefaultRelations implements RelationInterpreterInterface
 {
     public function interpret($value, $config = null)
     {

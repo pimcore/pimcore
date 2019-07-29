@@ -34,13 +34,6 @@ services:
     # INFRASTRUCTURE
     #
 
-    Pimcore\Model\Schedule\Manager\Procedural:
-        public: true
-        arguments:
-            $pidFileName: 'maintenance.pid'
-        tags:
-            - { name: monolog.logger, channel: pimcore.maintenance }
-
     # creates needed pimcore directories
     Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
         public: false
@@ -78,22 +71,15 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer: ~
+    Pimcore\Controller\Config\ConfigNormalizer:
+        calls:
+            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
+
 
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
-
-
-    #
-    # COMMANDS
-    #
-
-    # auto-register all commands as services
-    Pimcore\Bundle\CoreBundle\Command\:
-        resource: '../../Command'
-        exclude: '../../Command/Bundle/Helper'
 
     #
     # HTTP/REST clients
@@ -104,6 +90,10 @@ services:
         public: true
 
     pimcore.http_client:
+        alias: GuzzleHttp\Client
+        public: true
+
+    GuzzleHttp\Client:
         public: true
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
@@ -167,10 +157,10 @@ services:
         class:  Pimcore\Translation\ExportService\ExportService
 
     Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor:
-        tags: [{name:pimcore.translation.data-extractor, type:object}]
+        tags: [{name: pimcore.translation.data-extractor, type: object}]
 
     Pimcore\Translation\ExportDataExtractorService\DataExtractor\DocumentDataExtractor:
-        tags: [{name:pimcore.translation.data-extractor, type:document}]
+        tags: [{name: pimcore.translation.data-extractor, type: document}]
 
     Pimcore\Translation\ExportService\Exporter\ExporterInterface:
         class: Pimcore\Translation\ExportService\Exporter\Xliff12Exporter
@@ -179,10 +169,10 @@ services:
         class: Pimcore\Translation\ImporterService\ImporterService
 
     Pimcore\Translation\ImporterService\Importer\DataObjectImporter:
-        tags: [{name:pimcore.translation.importer, type:object}]
+        tags: [{name: pimcore.translation.importer, type: object}]
 
     Pimcore\Translation\ImporterService\Importer\DocumentImporter:
-        tags: [{name:pimcore.translation.importer, type:document}]
+        tags: [{name: pimcore.translation.importer, type: document}]
 
     Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface:
         class: Pimcore\Translation\ImportDataExtractor\Xliff12DataExtractor
@@ -190,7 +180,22 @@ services:
     Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface:
         class: Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
 
+    Pimcore\Translation\Escaper\Xliff12Escaper: ~
+
+    Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
+        public: true
+
+    Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
+        public: true
+
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
         abstract: true
         class: Pimcore\Mail\Plugins\RedirectingPlugin
+
+    Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
+        public: true
+
+    Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
+        public: true
+        class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter

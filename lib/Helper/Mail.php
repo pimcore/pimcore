@@ -183,6 +183,11 @@ CSS;
         $text = $mail->getBodyTextMimePart();
         if ($text) {
             $emailLog->setBodyText($text->getBody());
+        } else {
+            // Mail was probably sent as plain text only.
+            if ($text = $mail->getBodyText()) {
+                $emailLog->setBodyText($text);
+            }
         }
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
@@ -398,5 +403,35 @@ CSS;
         $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
 
         return $fileInfo;
+    }
+
+    /**
+     * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
+     *
+     * @param $emailString
+     *
+     * @return array
+     */
+    public static function parseEmailAddressField($emailString)
+    {
+        $cleanedEmails = [];
+        $emailArray = preg_split('/,|;/', $emailString);
+        if ($emailArray) {
+            foreach ($emailArray as $emailStringEntry) {
+                $entryAddress = trim($emailStringEntry);
+                $entryName = null;
+                $matches = [];
+                if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
+                    $entryAddress = trim($matches[2]);
+                    $entryName = trim($matches[1]);
+                }
+
+                if ($entryAddress) {
+                    $cleanedEmails[] = ['email' => $entryAddress, 'name' => $entryName];
+                }
+            }
+        }
+
+        return $cleanedEmails;
     }
 }

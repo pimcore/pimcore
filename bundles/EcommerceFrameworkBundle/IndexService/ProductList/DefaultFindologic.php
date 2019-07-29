@@ -15,13 +15,15 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
-class DefaultFindologic implements IProductList
+class DefaultFindologic implements ProductListInterface
 {
     /**
      * @var string
@@ -39,7 +41,7 @@ class DefaultFindologic implements IProductList
     protected $revision = '0.1';
 
     /**
-     * @var IIndexable[]
+     * @var IndexableInterface[]
      */
     protected $products = null;
 
@@ -49,7 +51,7 @@ class DefaultFindologic implements IProductList
     protected $tenantName;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
+     * @var FindologicConfigInterface
      */
     protected $tenantConfig;
 
@@ -61,7 +63,7 @@ class DefaultFindologic implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int
@@ -141,9 +143,9 @@ class DefaultFindologic implements IProductList
     protected $timeout = 3;
 
     /**
-     * @param IConfig $tenantConfig
+     * @param ConfigInterface $tenantConfig
      */
-    public function __construct(IConfig $tenantConfig)
+    public function __construct(ConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -346,7 +348,7 @@ class DefaultFindologic implements IProductList
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function load()
     {
@@ -380,8 +382,9 @@ class DefaultFindologic implements IProductList
                     $id = $item['id'];
                     break;
 
+                case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
-                    // NOT POSSIBLE
+                    throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
                     break;
             }
 
@@ -715,7 +718,7 @@ class DefaultFindologic implements IProductList
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     protected function doLoadGroupByValues()
     {

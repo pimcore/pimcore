@@ -14,203 +14,108 @@
 
 namespace Pimcore\Image;
 
-use Pimcore\File;
-use Pimcore\Tool\Console;
+use Pimcore\Exception\ImageOptimizationFailedException;
+use Pimcore\Image\Optimizer\OptimizerInterface;
 
-class Optimizer
+class Optimizer implements ImageOptimizerInterface
 {
+    /**
+     * @var OptimizerInterface[]
+     */
+    private $optimizers = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function optimizeImage($path)
+    {
+        $optimizedImages = [];
+        $workingPath = $path;
+
+        if (!stream_is_local($path)) {
+            $workingPath = $this->createOutputImage();
+            copy($path, $workingPath);
+        }
+
+        $extension = pathinfo($workingPath, PATHINFO_EXTENSION);
+
+        foreach ($this->optimizers as $optimizer) {
+            if ($optimizer->supports($path)) {
+                try {
+                    $optimizedFile = $optimizer->optimizeImage($workingPath, $this->createOutputImage($extension));
+
+                    $optimizedImages[] = [
+                        'filesize' => filesize($optimizedFile),
+                        'path' => $optimizedFile,
+                        'optimizer' => $optimizer,
+                    ];
+                } catch (ImageOptimizationFailedException $ex) {
+                }
+            }
+        }
+
+        // order by filesize
+        usort($optimizedImages, function ($a, $b) {
+            if ($a['filesize'] == $b['filesize']) {
+                return 0;
+            }
+
+            return ($a['filesize'] < $b['filesize']) ? -1 : 1;
+        });
+
+        // first entry is the smallest -> use this one
+        if (count($optimizedImages)) {
+            copy($optimizedImages[0]['path'], $path);
+        }
+
+        // cleanup
+        foreach ($optimizedImages as $tmpFile) {
+            unlink($tmpFile['path']);
+        }
+
+        if (!stream_is_local($path)) {
+            unlink($workingPath);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerOptimizer(OptimizerInterface $optimizer)
+    {
+        if (in_array($optimizer, $this->optimizers)) {
+            throw new \InvalidArgumentException(sprintf('Optimizer of class %s has already been registered',
+                get_class($optimizer)));
+        }
+
+        $this->optimizers[] = $optimizer;
+    }
+
+    /**
+     * @param null $type
+     *
+     * @return string
+     */
+    private function createOutputImage($type = null): string
+    {
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.uniqid('optimize', true);
+        if ($type) {
+            $file .= '.'.$type;
+        }
+
+        return $file;
+    }
+
     /**
      * @param $path
      */
     public static function optimize($path)
     {
-        $workingPath = $path;
-        if (!stream_is_local($path)) {
-            $workingPath = self::getTempFile();
-            copy($path, $workingPath);
-        }
-        $format = getimagesize($workingPath);
+        @trigger_error(
+            'Usage of Pimcore\Image\Optimizer::optimize is deprecated and will be removed with Pimcore 6.0. Please use the Service: Pimcore\Image\Optimizer instead.',
+            E_USER_DEPRECATED
+        );
 
-        if (is_array($format) && array_key_exists('mime', $format)) {
-            $format = strtolower(str_replace('image/', '', $format['mime']));
-
-            $optimizedFiles = [];
-            $supportedOptimizers = [
-                'png' => ['pngcrush', 'zopflipng', 'pngout', 'advpng'],
-                'jpeg' => ['jpegoptim', 'cjpeg']
-            ];
-
-            if (isset($supportedOptimizers[$format])) {
-                foreach ($supportedOptimizers[$format] as $optimizer) {
-                    $optimizerMethod = 'optimize' . $optimizer;
-                    $optimizedFile = self::$optimizerMethod($workingPath);
-                    if ($optimizedFile && file_exists($optimizedFile)) {
-                        $optimizedFiles[] = [
-                            'filesize' => filesize($optimizedFile),
-                            'path' => $optimizedFile,
-                            'optimizer' => $optimizer,
-                        ];
-                    }
-                }
-
-                // order by filesize
-                usort($optimizedFiles, function ($a, $b) {
-                    if ($a['filesize'] == $b['filesize']) {
-                        return 0;
-                    }
-
-                    return ($a['filesize'] < $b['filesize']) ? -1 : 1;
-                });
-
-                // first entry is the smallest -> use this one
-                if (count($optimizedFiles)) {
-                    copy($optimizedFiles[0]['path'], $path);
-                }
-
-                // cleanup
-                foreach ($optimizedFiles as $tmpFile) {
-                    unlink($tmpFile['path']);
-                }
-
-                if (!stream_is_local($path)) {
-                    unlink($workingPath);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizePngcrush($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('pngcrush');
-        if ($bin) {
-            $newFile = self::getTempFile('png');
-            Console::exec($bin . ' ' . escapeshellarg($path) . ' ' . $newFile, null, 60);
-            if (file_exists($newFile)) {
-                return $newFile;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizeZopflipng($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('zopflipng');
-        if ($bin) {
-            $newFile = self::getTempFile('png');
-            Console::exec($bin . ' ' . escapeshellarg($path) . ' ' . $newFile, null, 60);
-            if (file_exists($newFile)) {
-                return $newFile;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizePngout($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('pngout', false);
-        if ($bin) {
-            $newFile = self::getTempFile('png');
-            Console::exec($bin . ' ' . escapeshellarg($path) . ' ' . $newFile, null, 60);
-            if (file_exists($newFile)) {
-                return $newFile;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizeAdvpng($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('advpng');
-        if ($bin) {
-            $newFile = self::getTempFile('png');
-            copy($path, $newFile);
-            Console::exec($bin . ' -z4 ' . $newFile, null, 60);
-
-            return $newFile;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizeCjpeg($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('cjpeg');
-        if ($bin) {
-            $newFile = self::getTempFile('jpg');
-            Console::exec($bin . ' -outfile ' . $newFile . ' ' . escapeshellarg($path), null, 60);
-            if (file_exists($newFile)) {
-                return $newFile;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $path
-     *
-     * @return null|string
-     */
-    public static function optimizeJpegoptim($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable('jpegoptim');
-        if ($bin) {
-            $newFile = self::getTempFile('jpg');
-            $additionalParams = '';
-            if (filesize($path) > 10000) {
-                $additionalParams = ' --all-progressive';
-            }
-            $content = Console::exec($bin . $additionalParams . ' -o --strip-all --max=85 --stdout ' . escapeshellarg($path), null, 60);
-            if ($content) {
-                File::put($newFile, $content);
-            }
-
-            return $newFile;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected static function getTempFile($type = '')
-    {
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid();
-        if ($type) {
-            $file .= '.' . $type;
-        }
-
-        return $file;
+        \Pimcore::getContainer()->get(Optimizer::class)->optimizeImage($path);
     }
 }

@@ -16,9 +16,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
-class IndexFieldSelection extends Data
+class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Data\Extension\ColumnType;
+    use Data\Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -118,7 +123,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -144,7 +149,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -162,7 +167,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -176,7 +181,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -198,7 +203,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -220,7 +225,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object

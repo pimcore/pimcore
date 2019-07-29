@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use Pimcore\Cache;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -89,14 +90,18 @@ class Item extends Model\AbstractModel
      *
      * @param $id
      *
-     * @return Element\Recyclebin\Item
+     * @return self|null
      */
     public static function getById($id)
     {
-        $item = new self();
-        $item->getDao()->getById($id);
+        try {
+            $item = new self();
+            $item->getDao()->getById($id);
 
-        return $item;
+            return $item;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -106,6 +111,7 @@ class Item extends Model\AbstractModel
      */
     public function restore($user = null)
     {
+        $dummy = null;
         $raw = file_get_contents($this->getStoreageFile());
         $element = Serialize::unserialize($raw);
 
@@ -125,6 +131,20 @@ class Item extends Model\AbstractModel
             if ($indentElement) {
                 $element->setKey($element->getKey().'_restore');
             }
+
+            // create an empty object first and clone it
+            // see https://github.com/pimcore/pimcore/issues/4219
+            Model\Version::disable();
+            $className = get_class($element);
+            $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $dummy->setId($element->getId());
+            $dummy->setPath($element->getPath());
+            $dummy->setKey($element->getKey());
+            if ($element instanceof DataObject\Concrete) {
+                $dummy->setOmitMandatoryCheck(true);
+            }
+            $dummy->save(['isRecycleBinRestore' => true]);
+            Model\Version::enable();
         }
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
@@ -134,7 +154,15 @@ class Item extends Model\AbstractModel
             }
         }
 
-        $this->restoreChilds($element);
+        try {
+            $this->restoreChilds($element);
+        } catch (\Exception $e) {
+            Logger::error($e);
+            if ($dummy) {
+                $dummy->delete();
+            }
+            throw $e;
+        }
         $this->delete();
     }
 
@@ -151,7 +179,7 @@ class Item extends Model\AbstractModel
         $this->setPath($this->getElement()->getRealFullPath());
         $this->setDate(time());
 
-        $this->loadChilds($this->getElement());
+        $this->loadChildren($this->getElement());
 
         if ($user instanceof Model\User) {
             $this->setDeletedby($user->getName());
@@ -211,7 +239,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Element\ElementInterface $element
      */
-    public function loadChilds(Element\ElementInterface $element)
+    public function loadChildren(Element\ElementInterface $element)
     {
         $this->amount++;
 
@@ -229,16 +257,16 @@ class Item extends Model\AbstractModel
         // with the property _fulldump set, because this would cause major issues in wakeUp()
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
                 $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
-                $childs = $element->getChilds();
+                $childs = $element->getChildren();
             }
 
             foreach ($childs as $child) {
-                $this->loadChilds($child);
+                $this->loadChildren($child);
             }
         }
     }
@@ -262,6 +290,7 @@ class Item extends Model\AbstractModel
         $restoreBinaryData($element, $this);
 
         if ($element instanceof DataObject\Concrete) {
+            $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
         $element->save();
@@ -269,9 +298,9 @@ class Item extends Model\AbstractModel
         if (method_exists($element, 'getChilds')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
-                $childs = $element->o_childs;
+                $childs = $element->getObjectVar('o_childs');
             } else {
-                $childs = $element->getChilds();
+                $childs = $element->getChildren();
             }
             foreach ($childs as $child) {
                 $this->restoreChilds($child);

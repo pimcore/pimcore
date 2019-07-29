@@ -18,9 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class StructuredTable extends Model\DataObject\ClassDefinition\Data
+class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -57,20 +61,6 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
      * @var object
      */
     public $rows;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = null;
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = null;
 
     /**
      * Type for the generated phpdoc
@@ -236,18 +226,18 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
         $resourceData = [];
-        if (!empty($data)) {
+        if ($data instanceof DataObject\Data\StructuredTable) {
             $data = $data->getData();
 
             foreach ($this->getRows() as $r) {
@@ -262,7 +252,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -280,17 +270,23 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
             }
         }
 
-        return new DataObject\Data\StructuredTable($structuredData);
+        $structuredTable = new DataObject\Data\StructuredTable($structuredData);
+
+        if (isset($params['owner'])) {
+            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $structuredTable;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -298,13 +294,13 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -330,13 +326,13 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\StructuredTable
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -371,21 +367,21 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data) {
+        if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->getHtmlTable($this->rows, $this->cols);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

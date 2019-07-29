@@ -41,7 +41,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
@@ -112,7 +112,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function supports(Request $request)
     {
-        return true;
+        return $request->attributes->get('_route') === 'pimcore_admin_login_check'
+            || Authentication::authenticateSession($request);
     }
 
     /**
@@ -138,7 +139,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function getCredentials(Request $request)
     {
-        $credentials = null;
+        $credentials = [];
 
         if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
             $username = $request->get('username');
@@ -172,6 +173,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 ];
             }
         }
+
+        return $credentials;
     }
 
     /**

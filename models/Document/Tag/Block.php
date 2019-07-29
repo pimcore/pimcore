@@ -166,19 +166,6 @@ class Block extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * Alias for loop
-     *
-     * @deprecated
-     * @see loop()
-     *
-     * @return bool
-     */
-    public function enumerate()
-    {
-        return $this->loop();
-    }
-
-    /**
      * @inheritDoc
      */
     protected function getEditmodeElementAttributes(array $options): array
@@ -387,7 +374,7 @@ class Block extends Model\Document\Tag implements BlockInterface
      */
     public function getElements()
     {
-        $document = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document::getById($this->getDocumentId());
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

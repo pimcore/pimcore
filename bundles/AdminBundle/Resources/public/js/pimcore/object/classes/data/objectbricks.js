@@ -60,6 +60,12 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
                 name: "maxItems",
                 value: this.datax.maxItems,
                 minValue: 0
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("border"),
+                name: "border",
+                checked: this.datax.border,
             }
         ]);
         

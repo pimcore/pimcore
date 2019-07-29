@@ -54,20 +54,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function __construct()
     {
-        $this->objectTypeObject = true;
         $this->initDao('\\Pimcore\\Model\\DataObject\\Listing\\Concrete');
-    }
-
-    /**
-     * @todo remove always true
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
     }
 
     /**

@@ -26,11 +26,11 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method Document[] load()
  * @method int getTotalCount()
  * @method int getCount()
- * @method int loadIdList()
+ * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -40,11 +40,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $objectTypeDocument = false;
 
     /**
-     * Contains the results of the list
-     *
-     * @var array
+     * @var array|null
      */
-    public $documents = null;
+    protected $documents = null;
 
     /**
      * @var bool
@@ -52,47 +50,18 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $unpublished = false;
 
     /**
-     * Valid order keys
-     *
-     * @var array
-     */
-    public $validOrderKeys = [
-        'creationDate',
-        'modificationDate',
-        'id',
-        'key',
-        'index'
-    ];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * Returns documents, also loads the rows if these aren't loaded.
-     *
-     * @return array
+     * @return Document[]
      */
     public function getDocuments()
     {
         if ($this->documents === null) {
-            $this->load();
+            $this->getDao()->load();
         }
 
         return $this->documents;
     }
 
     /**
-     * Assign documents to the listing.
-     *
      * @param array $documents
      *
      * @return Listing
@@ -150,7 +119,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
+     * Methods for AdapterInterface
      */
 
     /**

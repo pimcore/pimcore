@@ -306,22 +306,22 @@ pimcore.helpers.recordElement = function (id, type, name) {
 
 };
 
-pimcore.helpers.openElement = function (id, type, subtype) {
+pimcore.helpers.openElement = function (idOrPath, type, subtype) {
     if (typeof subtype != "undefined") {
         if (type == "document") {
-            pimcore.helpers.openDocument(id, subtype);
+            pimcore.helpers.openDocument(idOrPath, subtype);
         }
         else if (type == "asset") {
-            pimcore.helpers.openAsset(id, subtype);
+            pimcore.helpers.openAsset(idOrPath, subtype);
         }
         else if (type == "object") {
-            pimcore.helpers.openObject(id, subtype);
+            pimcore.helpers.openObject(idOrPath, subtype);
         }
     } else {
         Ext.Ajax.request({
             url: "/admin/element/get-subtype",
             params: {
-                id: id,
+                id: idOrPath,
                 type: type
             },
             success: function (response) {
@@ -333,6 +333,18 @@ pimcore.helpers.openElement = function (id, type, subtype) {
                 }
             }
         });
+    }
+};
+
+pimcore.helpers.closeElement = function (id, type) {
+    if (type == "document") {
+        pimcore.helpers.closeDocument(id);
+    }
+    else if (type == "asset") {
+        pimcore.helpers.closeAsset(id);
+    }
+    else if (type == "object") {
+        pimcore.helpers.closeObject(id);
     }
 };
 
@@ -493,7 +505,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
                             height: 600,
                             html: stack,
                             autoScroll: true,
-                            bodyStyle: "padding: 10px; background:#fff;",
+                            bodyStyle: "padding: 10px;",
                             buttonAlign: "center",
                             shadow: false,
                             closable: true,
@@ -531,7 +543,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
             detailedInfo
         ],
         autoScroll: true,
-        bodyStyle: "padding: 10px; background:#fff;",
+        bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,
         closable: false,
@@ -565,7 +577,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             maxHeight: 500,
             html: text,
             autoScroll: true,
-            bodyStyle: "padding: 10px; background:#fff;",
+            bodyStyle: "padding: 10px;",
             buttonAlign: "center",
             shadow: false,
             closable: false,
@@ -807,7 +819,7 @@ pimcore.helpers.closeAllElements = function (except, tabPanel) {
         tabs.each(function (item, index, length) {
             window.setTimeout(function () {
                 if (!in_array(item, exceptions)) {
-                    tabPanel.remove(item);
+                    item.close();
                 }
             }, 100 * index);
         });
@@ -1132,7 +1144,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var content = styleContainer.dom.innerHTML;
     var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
-    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: 100% 100% !important; }\n");
     styleContainer.dom.innerHTML = content;
 
     return classname;
@@ -1171,7 +1183,7 @@ pimcore.helpers.openDocumentByPath = function (path) {
 pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
     if (data[name]) {
         var newList = [];
-        for (i = 0; i < data[name].length; i++) {
+        for (var i = 0; i < data[name].length; i++) {
             newList.push(data[name][i][name]);
         }
         data[name] = newList;
@@ -1943,7 +1955,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                if (data.records.length === 1 && data.records[0].data.type === "folder") {
+                if (data.records.length === 1 && data.records[0].data.type !== "folder") {
                     return Ext.dd.DropZone.prototype.dropAllowed;
                 }
             }.bind(this),
@@ -1955,10 +1967,10 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 }
 
                 data = data.records[0].data;
-                if (data.type != "folder" && (data.elementType == "asset" || data.elementType == "document" || data.elementType == "object")) {
-                    internalTypeField.setValue(record.data.elementType);
+                if (data.type !== "folder") {
+                    internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
-                    fieldPath.setValue(record.data.path);
+                    fieldPath.setValue(data.path);
                     return true;
                 }
                 return false;
@@ -2135,6 +2147,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
+    var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
@@ -2244,14 +2257,24 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var openButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
+        openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
             searchButton.disable();
+            openButton.disable();
 
             poster.hide();
             poster.setValue("");
@@ -2303,7 +2326,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton]
+            items: [fieldPath, searchButton, openButton]
         }, poster, {
             xtype: "textfield",
             name: "title",
@@ -2339,8 +2362,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
-        width: 500,
+    window = new Ext.Window({
+        width: 510,
         height: 370,
         title: t("video"),
         items: [form],
@@ -2362,12 +2385,10 @@ pimcore.helpers.showAbout = function () {
     var html = '<div class="pimcore_about_window">';
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
-    html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
-    html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br>a proud member of the <a href="http://elements.at" target="_blank">elements group</a>';
+    html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
+    html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
-    html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a> | ';
-    html += '<a href="https://pimcore.com/en/about/team" target="_blank">Team</a>';
+    html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
 
@@ -2526,8 +2547,6 @@ pimcore.helpers.hideRedundantSeparators = function (menu) {
 pimcore.helpers.initMenuTooltips = function () {
 
     var items = jQuery("[data-menu-tooltip]:not(.initialized)");
-    jQuery('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
-
     items.mouseenter(function (e) {
         jQuery("#pimcore_tooltip").show();
         jQuery("#pimcore_tooltip").removeClass('right');
@@ -2549,6 +2568,10 @@ pimcore.helpers.initMenuTooltips = function () {
 };
 
 pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) {
+
+    if(targets && targets.count() > 0) {
+        gridView.mask();
+    }
     targets.each(function (record) {
         var el = gridView.getRow(record);
         if (el) {
@@ -2560,7 +2583,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
+    if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
 
@@ -2592,8 +2615,9 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
         params: {
             source: Ext.encode(source),
             targets: elementData,
-            context: Ext.encode(context)
-
+            context: Ext.encode(context),
+            loadEditModeData: config.loadEditModeData,
+            idProperty: config.idProperty
         },
         success: function (response) {
             try {
@@ -2623,28 +2647,32 @@ pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, res
     store.ignoreDataChanged = true;
     store.each(function (record, id) {
         var recordId = record.data[config.idProperty];
+
         if (typeof responseData[recordId] != "undefined") {
-            record.set(config.pathProperty, responseData[recordId], {dirty: false});
+
+            if(config.loadEditModeData) {
+                for(var i = 0; i < config.fields.length; i++) {
+                    record.set(config.fields[i], responseData[recordId][config.fields[i]], {dirty: false});
+                }
+                if(responseData[recordId]['$$nicepath']) {
+                    record.set(config.pathProperty, responseData[recordId]['$$nicepath'], {dirty: false});
+                }
+            } else {
+                record.set(config.pathProperty, responseData[recordId], {dirty: false});
+            }
 
             var el = gridView.getRow(record);
             if (el) {
                 el = Ext.fly(el);
                 el.removeCls("grid_nicepath_requested");
             }
+
         }
     }, this);
     store.ignoreDataChanged = false;
 
+    gridView.unmask();
     gridView.updateLayout();
-
-};
-
-pimcore.helpers.isValidPassword = function (pass) {
-    var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
-    if (!pass.match(passRegExp)) {
-        return false;
-    }
-    return true;
 };
 
 pimcore.helpers.csvExportWarning = function (callback) {
@@ -2718,7 +2746,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
         title: t('export_csv'),
         width: 600,
         height: 450,
-        bodyStyle: "padding: 10px; background:#fff;",
+        bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,
         closable: true,
@@ -2919,11 +2947,13 @@ pimcore.helpers.clearDataCache = function() {
 
 pimcore.helpers.showQuickSearch = function () {
 
-    // close all windows
+    // close all windows, tooltips and previews
     // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
     Ext.WindowManager.each(function (win) {
         win.close();
     });
+    pimcore.helpers.treeNodeThumbnailPreviewHide();
+    jQuery("#pimcore_tooltip").hide();
 
     var quicksearchContainer = Ext.get('pimcore_quicksearch');
     quicksearchContainer.show();
@@ -3101,4 +3131,36 @@ pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
     return true;
 };
 
+pimcore.helpers.openProfile = function () {
+    try {
+        pimcore.globalmanager.get("profile").activate();
+    }
+    catch (e) {
+        pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+    }
+};
 
+pimcore.helpers.copyStringToClipboard = function (str) {
+    var selection = document.getSelection(),
+        prevSelection = (selection.rangeCount > 0) ? selection.getRangeAt(0) : false,
+        el;
+
+    // create element and insert string
+    el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+
+    // insert element, select all text and copy
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    // restore previous selection
+    if (prevSelection) {
+        selection.removeAllRanges();
+        selection.addRange(prevSelection);
+    }
+};

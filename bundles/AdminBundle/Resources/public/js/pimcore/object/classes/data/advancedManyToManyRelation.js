@@ -56,7 +56,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
     },
 
     getIconClass: function () {
-        return "pimcore_icon_multihrefMetadata";
+        return "pimcore_icon_advancedManyToManyRelation";
     },
 
     getLayout: function ($super) {
@@ -111,6 +111,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
+                classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
                 if (success) {
                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
                 }
@@ -188,14 +189,14 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             {
                 xtype: "displayfield",
                 hideLabel: true,
-                value: t('lazy_loading_warning'),
+                value: t('lazy_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
             },
             {
                 xtype: 'textfield',
                 width: 600,
-                fieldLabel: t("path_formatter_class"),
+                fieldLabel: t("path_formatter_service"),
                 name: 'pathFormatterClass',
                 value: this.datax.pathFormatterClass
             },
@@ -364,6 +365,35 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         this.stores = {};
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("enable_batch_edit_columns"),
+            name: "enableBatchEdit",
+            value: this.datax.enableBatchEdit
+        });
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("allow_multiple_assignments"),
+            name: "allowMultipleAssignments",
+            value: this.datax.allowMultipleAssignments
+        });
+
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_admin_async_load"),
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
+        }
 
 
         return this.layout;
@@ -564,6 +594,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
                     objectsAllowed: source.datax.objectsAllowed,
+                    classes: source.datax.classes,
                     assetsAllowed: source.datax.assetsAllowed,
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
@@ -574,5 +605,5 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.multihrefMetadata = pimcore.object.classes.data.advancedManyToManyRelation;

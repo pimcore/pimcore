@@ -6,7 +6,7 @@ CREATE TABLE `application_logs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  `message` varchar(1024) DEFAULT NULL,
+  `message` TEXT NULL,
   `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
   `fileobject` varchar(1024) DEFAULT NULL,
   `info` varchar(1024) DEFAULT NULL,
@@ -27,14 +27,14 @@ CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
-  `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '',
-  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
-  `customSettings` text,
+  `customSettings` longtext,
   `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -47,13 +47,14 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
-  `cid` int(11) DEFAULT NULL,
-  `name` varchar(190) DEFAULT NULL,
-  `language` varchar(190) DEFAULT NULL,
+  `cid` int(11) NOT NULL,
+  `name` varchar(190) NOT NULL,
+  `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
-  KEY `cid` (`cid`),
-	INDEX `name` (`name`)
+  PRIMARY KEY (`cid`, `name`, `language`),
+	INDEX `name` (`name`),
+	INDEX `cid` (`cid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;
@@ -84,7 +85,7 @@ CREATE TABLE `classes` (
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
-	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id` varchar(64) NOT NULL,
 	`classId` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,
@@ -115,8 +116,8 @@ CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
-  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '',
-  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
@@ -156,7 +157,6 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -174,7 +174,6 @@ CREATE TABLE `documents_newsletter` (
   `trackingParameterName` varchar(255) DEFAULT NULL,
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -183,7 +182,7 @@ CREATE TABLE `documents_hardlink` (
   `id` int(11) unsigned NOT NULL default '0',
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
-  `childsFromSource` tinyint(1) DEFAULT NULL,
+  `childrenFromSource` tinyint(1) DEFAULT NULL,
   PRIMARY KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -210,7 +209,6 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -223,7 +221,6 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -248,7 +245,6 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -366,8 +362,8 @@ CREATE TABLE `objects` (
   `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
-  `o_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci default '',
-  `o_path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `o_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
+  `o_path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` int(11) unsigned DEFAULT NULL,
@@ -662,7 +658,7 @@ CREATE TABLE `users` (
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
-  `classes` varchar(255) DEFAULT NULL,
+  `classes` text DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
@@ -769,10 +765,14 @@ CREATE TABLE `versions` (
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
+  `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
+  `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
-  KEY `date` (`date`)
+  KEY `ctype_cid` (`ctype`, `cid`),
+  KEY `date` (`date`),
+  KEY `binaryFileHash` (`binaryFileHash`),
+  KEY `binaryFileId` (`binaryFileId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
@@ -861,11 +861,17 @@ CREATE TABLE `quantityvalue_units` (
   `group` varchar(50) DEFAULT NULL,
   `abbreviation` varchar(20) NOT NULL,
   `longname` varchar(250) DEFAULT NULL,
-  `baseunit` varchar(10) DEFAULT NULL,
+  `baseunit` INT(11) UNSIGNED DEFAULT NULL,
   `factor` double DEFAULT NULL,
   `conversionOffset` DOUBLE NULL DEFAULT NULL,
   `reference` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `converter` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_baseunit`
+    FOREIGN KEY (`baseunit`)
+    REFERENCES `quantityvalue_units` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `element_workflow_state`;
@@ -950,6 +956,23 @@ CREATE TABLE `importconfig_shares` (
 	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
 	INDEX `data.sharedRoleIds` (`importConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;
+
+DROP TABLE IF EXISTS `notifications`;
+CREATE TABLE `notifications` (
+  `id` INT(11)  AUTO_INCREMENT PRIMARY KEY,
+  `type` VARCHAR(20) DEFAULT 'info' NOT NULL,
+  `title` VARCHAR(250) DEFAULT '' NOT NULL,
+  `message` TEXT NOT NULL,
+  `sender` INT(11) NULL,
+  `recipient` INT(11) NOT NULL,
+  `read` TINYINT(1) default '0' NOT NULL,
+  `creationDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `modificationDate` TIMESTAMP NULL,
+  `linkedElementType` ENUM('document', 'asset', 'object') NULL,
+  `linkedElement` INT(11) NULL
 )
 DEFAULT CHARSET=utf8mb4;
 ;

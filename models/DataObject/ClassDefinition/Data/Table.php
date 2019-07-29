@@ -18,10 +18,14 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Table extends Model\DataObject\ClassDefinition\Data
+class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -65,6 +69,16 @@ class Table extends Model\DataObject\ClassDefinition\Data
      * @var int
      */
     public $data;
+
+    /**
+     * @var bool
+     */
+    public $columnConfigActivated = false;
+
+    /**
+     * @var array
+     */
+    public $columnConfig = [];
 
     /**
      * Type for the column to query
@@ -216,7 +230,7 @@ class Table extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param int $data
+     * @param string $data
      *
      * @return $this
      */
@@ -228,7 +242,58 @@ class Table extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @return bool
+     */
+    public function isColumnConfigActivated(): bool
+    {
+        return $this->columnConfigActivated;
+    }
+
+    /**
+     * @param bool $columnConfigActivated
+     */
+    public function setColumnConfigActivated(bool $columnConfigActivated): void
+    {
+        $this->columnConfigActivated = $columnConfigActivated;
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumnConfig(): array
+    {
+        return $this->columnConfig;
+    }
+
+    /**
+     * @param array $columnConfig
+     */
+    public function setColumnConfig(array $columnConfig): void
+    {
+        $this->columnConfig = $columnConfig;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function convertDataToValueArray(array $data)
+    {
+        $valueArray = [];
+        foreach ($data as $entry) {
+            if (is_array($entry)) {
+                $valueArray[] = $this->convertDataToValueArray($entry);
+            } else {
+                $valueArray[] = $entry;
+            }
+        }
+
+        return $valueArray;
+    }
+
+    /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -238,25 +303,50 @@ class Table extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if (is_array($data)) {
+            //make sure only array values are stored to DB
+            $data = $this->convertDataToValueArray($data);
+        }
+
         return Serialize::serialize($data);
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        return Serialize::unserialize((string) $data);
+        $unserializedData = Serialize::unserialize((string) $data);
+
+        //set array keys based on column configuration if set
+        $columnConfig = $this->getColumnConfig();
+        if ($this->isColumnConfigActivated() && $columnConfig) {
+            $dataWithKeys = [];
+            foreach ($unserializedData as $row) {
+                $indexedRow = [];
+                $index = 0;
+                foreach ($row as $col) {
+                    $indexedRow[$columnConfig[$index]['key']] = $col;
+                    $index++;
+                }
+
+                $dataWithKeys[] = $indexedRow;
+            }
+
+            return $dataWithKeys;
+        } else {
+            return $unserializedData;
+        }
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -283,7 +373,7 @@ class Table extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -293,6 +383,11 @@ class Table extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
+        if (is_array($data)) {
+            //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
+            return $this->convertDataToValueArray($data);
+        }
+
         return $data;
     }
 
@@ -309,7 +404,7 @@ class Table extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -319,7 +414,6 @@ class Table extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         // check for empty data
         $checkData = '';
         if (is_array($data)) {
@@ -351,7 +445,7 @@ class Table extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object
@@ -361,7 +455,12 @@ class Table extends Model\DataObject\ClassDefinition\Data
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        $versionPreview = $this->getDiffVersionPreview($data, $object, $params);
+        if (is_array($versionPreview) && $versionPreview['html']) {
+            return $versionPreview['html'];
+        }
+
+        return '';
     }
 
     /**
@@ -471,14 +570,28 @@ class Table extends Model\DataObject\ClassDefinition\Data
         if ($data) {
             $html = '<table>';
 
-            foreach ($data as $row) {
+            if ($this->isColumnConfigActivated()) {
                 $html .= '<tr>';
 
+                $index = 0;
+                $columConfig = $this->getColumnConfig();
+
+                foreach (current($data) as $cellData) {
+                    $html .= '<th>';
+                    $html .= htmlentities($columConfig[$index]['label']);
+                    $html .= '</td>';
+                    $index++;
+                }
+                $html .= '</tr>';
+            }
+
+            foreach ($data as $row) {
+                $html .= '<tr>';
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
-                        $html .= $cell;
-                        $html .= '</th>';
+                        $html .= htmlentities($cell);
+                        $html .= '</td>';
                     }
                 }
                 $html .= '</tr>';

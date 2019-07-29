@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
 /**
  * @method CartItem[] load()
@@ -54,7 +55,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[]
+     * @return CartItemInterface[]
      */
     public function getCartItems()
     {
@@ -66,7 +67,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $cartItems
+     * @param CartItemInterface[] $cartItems
      *
      * @return void
      */

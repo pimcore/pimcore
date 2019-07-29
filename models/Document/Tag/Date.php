@@ -27,7 +27,7 @@ class Date extends Model\Document\Tag
     /**
      * Contains the date
      *
-     * @var \Zend_Date|\DateTime
+     * @var \Carbon\Carbon
      */
     public $date;
 
@@ -70,12 +70,20 @@ class Date extends Model\Document\Tag
      */
     public function frontend()
     {
-        if (!isset($this->options['format']) || !$this->options['format']) {
-            $this->options['format'] = \DateTime::ISO8601;
+        $format = null;
+
+        if (isset($this->options['outputFormat']) && $this->options['outputFormat']) {
+            $format = $this->options['outputFormat'];
+        } elseif (isset($this->options['format']) && $this->options['format']) {
+            $format = $this->options['format'];
+        } else {
+            $format = \DateTime::ISO8601;
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($this->options['format']);
+            $result = $this->date->formatLocalized($format);
+
+            return $result;
         }
     }
 
@@ -183,11 +191,7 @@ class Date extends Model\Document\Tag
      */
     protected function setDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $this->date = new \Pimcore\Date($timestamp);
-        } else {
-            $this->date = new \Carbon\Carbon();
-            $this->date->setTimestamp($timestamp);
-        }
+        $this->date = new \Carbon\Carbon();
+        $this->date->setTimestamp($timestamp);
     }
 }

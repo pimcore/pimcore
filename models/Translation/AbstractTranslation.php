@@ -71,7 +71,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public function setKey($key)
     {
-        $this->key = self::getValidTranslationKey($key);
+        $this->key = $key;
 
         return $this;
     }
@@ -94,16 +94,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         $this->translations = $translations;
 
         return $this;
-    }
-
-    /**
-     * @return int
-     *
-     * @deprecated use getCreationDate or getModificationDate instead
-     */
-    public function getDate()
-    {
-        return $this->getModificationDate();
     }
 
     /**
@@ -193,26 +183,11 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @static
-     *
-     * @param $key
-     *
-     * @return string
-     */
-    protected static function getValidTranslationKey($key)
-    {
-        return $key;
-    }
-
-    /**
      * @param $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
      *
-     * @return static
-     *
-     * @throws \Exception
-     * @throws \Exception
+     * @return static|null
      */
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {
@@ -222,16 +197,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         $translation = new static();
-
         $idOriginal = $id;
-
         $languages = static::getLanguages();
 
         try {
-            $translation->getDao()->getByKey(self::getValidTranslationKey($id));
+            $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
             if (!$create) {
-                throw new \Exception($e->getMessage());
+                return null;
             } else {
                 $translation->setKey($id);
                 $translation->setCreationDate(time());
@@ -272,16 +245,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
      * @param string $language
      *
-     * @return string
-     *
-     * @throws \Exception
+     * @return string|null
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if (!$language) {
             $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
             if (!$language) {
-                throw new \Exception("Couldn't determine current language.");
+                return null;
             }
         }
 
@@ -326,12 +297,13 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param $file - path to the csv file
      * @param bool $replaceExistingTranslations
      * @param array $languages
+     * @param array $dialect
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null)
+    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null, $dialect = null)
     {
         $delta = [];
 
@@ -356,8 +328,11 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original';
             File::put($importFileOriginal, $tmpData);
 
-            // determine csv type
-            $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original');
+            // determine csv type if not set
+            if (empty($dialect)) {
+                $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original');
+            }
+
             //read data
             if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations', 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {

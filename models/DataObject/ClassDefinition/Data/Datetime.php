@@ -18,9 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Model\DataObject\ClassDefinition\Data
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -60,9 +64,9 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     public $useCurrentDate;
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -81,13 +85,13 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -106,9 +110,9 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -120,9 +124,9 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -138,28 +142,24 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     /**
      * @param $timestamp
      *
-     * @return \DateTime|\Pimcore\Date
+     * @return \Carbon\Carbon()
      */
     protected function getDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $date = new \Pimcore\Date($timestamp);
-        } else {
-            $date = new \Carbon\Carbon();
-            $date->setTimestamp($timestamp);
-        }
+        $date = new \Carbon\Carbon();
+        $date->setTimestamp($timestamp);
 
         return $date;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -187,7 +187,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *
@@ -203,9 +203,9 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -213,11 +213,11 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
+
+        return '';
     }
 
     /**
@@ -233,9 +233,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
 

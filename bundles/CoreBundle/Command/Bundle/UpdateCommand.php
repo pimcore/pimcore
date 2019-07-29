@@ -17,12 +17,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends AbstractBundleCommand
 {
+    /**
+     * @var PostStateChange
+     */
+    private $postStateChangeHelper;
+
+    public function __construct(PimcoreBundleManager $bundleManager, PostStateChange $postStateChangeHelper)
+    {
+        parent::__construct($bundleManager);
+
+        $this->postStateChangeHelper = $postStateChangeHelper;
+    }
+
     protected function configure()
     {
         $this
@@ -30,28 +44,36 @@ class UpdateCommand extends AbstractBundleCommand
             ->configureDescriptionAndHelp('Updates a bundle')
             ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to update')
             ->configureFailWithoutErrorOption();
+
+        PostStateChange::configureStateChangeCommandOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         // sets up installer with console output writer
         $installer = $this->setupInstaller($bundle);
 
-        if (!$installer->canBeUpdated()) {
+        if ($installer === null) {
+            $this->io->error(sprintf(' No updates found for bundle "%s"', $bundle->getName()));
+        } elseif (!$installer->canBeUpdated()) {
             $this->io->success(sprintf('No pending updates for bundle "%s"', $bundle->getName()));
 
             return 0;
         }
 
         try {
-            $bm->update($bundle);
+            $this->bundleManager->update($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully updated', $bundle->getName()));
         } catch (\Exception $e) {
             return $this->handlePrerequisiteError($e->getMessage());
         }
+
+        $this->postStateChangeHelper->runPostStateChangeCommands(
+            $this->io,
+            $this->getApplication()->getKernel()->getEnvironment()
+        );
     }
 }

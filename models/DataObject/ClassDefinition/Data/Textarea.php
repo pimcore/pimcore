@@ -17,11 +17,14 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Textarea extends Model\DataObject\ClassDefinition\Data
+class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -39,6 +42,21 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
      * @var int
      */
     public $height;
+
+    /**
+     * @var int
+     */
+    public $maxLength;
+
+    /**
+     * @var bool
+     */
+    public $showCharCount;
+
+    /**
+     * @var bool
+     */
+    public $excludeFromSearchIndex = false;
 
     /**
      * Type for the column to query
@@ -102,7 +120,57 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @return int
+     */
+    public function getMaxLength()
+    {
+        return $this->maxLength;
+    }
+
+    /**
+     * @param int $maxLength
+     */
+    public function setMaxLength($maxLength)
+    {
+        $this->maxLength = $maxLength;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowCharCount()
+    {
+        return $this->showCharCount;
+    }
+
+    /**
+     * @param bool $showCharCount
+     */
+    public function setShowCharCount($showCharCount)
+    {
+        $this->showCharCount = $showCharCount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExcludeFromSearchIndex(): bool
+    {
+        return $this->excludeFromSearchIndex;
+    }
+
+    /**
+     * @param bool $excludeFromSearchIndex
+     */
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    {
+        $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
+        return $this;
+    }
+
+    /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -116,7 +184,7 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -130,7 +198,7 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -144,7 +212,7 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -158,7 +226,7 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -171,7 +239,8 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
         return $data;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+    /**
+     * Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      *
      * @param $data
@@ -195,5 +264,41 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
         } else {
             return '';
         }
+    }
+
+    /**
+     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
+     *
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        if ($this->isExcludeFromSearchIndex()) {
+            return '';
+        } else {
+            return parent::getDataForSearchIndex($object, $params);
+        }
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
+            if (mb_strlen($data) > $this->getMaxLength()) {
+                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'");
+            }
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck);
     }
 }

@@ -20,9 +20,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\CheckoutTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class PricingManagerLocator extends CheckoutTenantAwareServiceLocator implements IPricingManagerLocator
+class PricingManagerLocator extends CheckoutTenantAwareServiceLocator implements PricingManagerLocatorInterface
 {
-    public function getPricingManager(string $tenant = null): IPricingManager
+    public function getPricingManager(string $tenant = null): PricingManagerInterface
     {
         return $this->locate($tenant);
     }

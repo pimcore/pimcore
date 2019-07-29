@@ -29,7 +29,8 @@
     bottom: 4px;
     right: 0;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/plus-circle.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/plus-circle.svg) center center no-repeat;
+    background-size: cover;
 }
 
 
@@ -44,7 +45,8 @@
     bottom: 4px;
     right: 0;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat;
+    background-size: cover;
 }
 
 .bundle_ecommerce_pricing_icon_rule_disabled {
@@ -77,7 +79,8 @@
     top: 4px;
     right: 0;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/camera.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/camera.svg) center center no-repeat;
+    background-size: cover;
 }
 .bundle_ecommerce_pricing_icon_conditionToken {
     background: url("/bundles/pimcoreadmin/img/flat-color-icons/sms.svg") no-repeat center center !important;

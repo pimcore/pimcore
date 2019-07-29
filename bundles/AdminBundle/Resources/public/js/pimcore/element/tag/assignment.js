@@ -72,9 +72,11 @@ pimcore.element.tag.assignment = Class.create({
             }.bind(this, gridStore));
 
             this.grid = Ext.create('Ext.grid.Panel', {
+                title: t('assigned_tags'),
+                region: 'west',
+                width: 460,
                 trackMouseOver: true,
                 store: gridStore,
-                region: 'center',
                 columnLines: true,
                 stripeRows: true,
                 columns: {
@@ -105,22 +107,7 @@ pimcore.element.tag.assignment = Class.create({
                             }]
                         }
                     ]
-                }
-
-            });
-
-            var treePanel = Ext.create("Ext.Panel", {
-                items: [tree.getLayout()],
-                layout: "border",
-                region: 'center'
-            });
-
-            var gridPanel = Ext.create("Ext.Panel", {
-                title: t('assigned_tags'),
-                items: [this.grid],
-                layout: "border",
-                region: 'west',
-                width: 460,
+                },
                 buttons: [{
                     text: t("apply_tags"),
                     iconCls: "pimcore_icon_apply",
@@ -130,6 +117,13 @@ pimcore.element.tag.assignment = Class.create({
                     iconCls: "pimcore_icon_apply",
                     handler: this.prepareBatchUpdate.bind(this, true)
                 }]
+
+            });
+
+            var treePanel = Ext.create("Ext.Panel", {
+                items: [tree.getLayout()],
+                layout: "border",
+                region: 'center'
             });
 
             this.layout = Ext.create("Ext.Panel", {
@@ -137,9 +131,9 @@ pimcore.element.tag.assignment = Class.create({
                     tooltip: t('tags')
                 },
                 region: "center",
-                iconCls: "pimcore_icon_element_tags",
+                iconCls: "pimcore_material_icon_tags pimcore_material_icon",
                 layout: 'border',
-                items: [gridPanel, treePanel],
+                items: [this.grid, treePanel],
                 listeners: {
                     activate: function () {
                         gridStore.load();

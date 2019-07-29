@@ -56,6 +56,20 @@ class DataObjectImporter extends AbstractElementImporter
                 }
             }
         }
+
+        if ($attribute->getType() === Attribute::TYPE_BLOCK) {
+            list($blockName, $blockIndex, $dummy, $fieldname) = explode('-', $attribute->getName());
+            /** @var $blockData array */
+            $blockData = $element->{'get' . $blockName}();
+            $blockItem = $blockData[$blockIndex];
+            $blockItemData = $blockItem['localizedfields'];
+            if (!$blockItemData) {
+                $blockItemData = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', new DataObject\Localizedfield());
+            }
+            /** @var $localizedFieldData DataObject\Localizedfield */
+            $localizedFieldData = $blockItemData->getData();
+            $localizedFieldData->setLocalizedValue($fieldname, $attribute->getContent(), $targetLanguage);
+        }
     }
 
     /**

@@ -25,6 +25,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     const ORDER_STATE_COMMITTED = 'committed';
     const ORDER_STATE_CANCELLED = 'cancelled';
     const ORDER_STATE_PAYMENT_PENDING = 'paymentPending';
+    const ORDER_STATE_PAYMENT_INIT = 'paymentInit';
     const ORDER_STATE_PAYMENT_AUTHORIZED = 'paymentAuthorized';
     const ORDER_STATE_ABORTED = 'aborted';
     const ORDER_PAYMENT_STATE_ABORTED_BUT_RESPONSE = 'abortedButResponseReceived';

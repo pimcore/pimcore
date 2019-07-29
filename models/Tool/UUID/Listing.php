@@ -25,16 +25,4 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        $resource = new Model\Tool\UUID\Dao();
-        $cols = $resource->getValidTableColumns(Model\Tool\UUID\Dao::TABLE_NAME);
-
-        return in_array($key, $cols);
-    }
 }

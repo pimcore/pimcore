@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -70,10 +71,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
-            return $this->redirect('/install');
-        }
-
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');
@@ -116,7 +113,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/lostpassword")
      * @TemplatePhp()
      */
-    public function lostpasswordAction(Request $request)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
     {
         $view = $this->buildLoginPageViewModel();
         $view->success = false;
@@ -171,6 +168,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 } catch (\Exception $e) {
                     $view->error = 'could not send email';
                 }
+            }
+
+            if ($view->error) {
+                $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }
 
@@ -230,12 +231,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $view = $this->buildLoginPageViewModel();
 
-        $session = $request->getSession();
-        $authException = $session->get(Security::AUTHENTICATION_ERROR);
-        if ($authException instanceof AuthenticationException) {
-            $session->remove(Security::AUTHENTICATION_ERROR);
+        if ($request->hasSession()) {
+            $session = $request->getSession();
+            $authException = $session->get(Security::AUTHENTICATION_ERROR);
+            if ($authException instanceof AuthenticationException) {
+                $session->remove(Security::AUTHENTICATION_ERROR);
 
-            $view->error = $authException->getMessage();
+                $view->error = $authException->getMessage();
+            }
+        } else {
+            $view->error = 'No session available, it either timed out or cookies are not enabled.';
         }
 
         return $view;

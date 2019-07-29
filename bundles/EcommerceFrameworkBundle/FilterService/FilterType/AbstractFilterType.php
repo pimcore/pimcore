@@ -15,10 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractFilterType
 {
@@ -40,6 +42,11 @@ abstract class AbstractFilterType
     protected $template;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * @param $translator TranslatorInterface
      * @param EngineInterface $templatingEngine
      * @param string $template for rendering the filter frontend
@@ -48,12 +55,14 @@ abstract class AbstractFilterType
     public function __construct(
         TranslatorInterface $translator,
         EngineInterface $templatingEngine,
+        RequestStack $requestStack,
         string $template,
         array $options = []
     ) {
         $this->translator = $translator;
         $this->templatingEngine = $templatingEngine;
         $this->template = $template;
+        $this->request = $requestStack->getCurrentRequest();
 
         $this->processOptions($options);
     }
@@ -102,12 +111,12 @@ abstract class AbstractFilterType
      * @abstract
      *
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList $productList
+     * @param ProductListInterface $productList
      * @param $currentFilter
      *
      * @return string
      */
-    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter);
+    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
@@ -115,22 +124,22 @@ abstract class AbstractFilterType
      * @abstract
      *
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList $productList
+     * @param ProductListInterface $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      *
      * @return array
      */
-    abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false);
+    abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false);
 
     /**
      * calls prepareGroupByValues of productlist if necessary
      *
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList $productList
+     * @param ProductListInterface $productList
      */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
         //by default do thing here
     }

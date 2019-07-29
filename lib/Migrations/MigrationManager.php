@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Migrations;
 
 use Doctrine\DBAL\Migrations\Version as DoctrineVersion;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class MigrationManager
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $connection;
 
@@ -38,7 +38,7 @@ class MigrationManager
     private $configurationFactory;
 
     public function __construct(
-        Connection $connection,
+        ConnectionInterface $connection,
         ConfigurationFactory $configurationFactory
     ) {
         $this->connection = $connection;
@@ -136,7 +136,7 @@ class MigrationManager
         if ($includePrevious) {
             $migrations = $configuration->getMigrations();
             foreach ($migrations as $migration) {
-                if (version_compare($migration->getVersion(), $version->getVersion(), '<')) {
+                if ($migration->getVersion() < $version->getVersion()) {
                     if (!$configuration->hasVersionMigrated($migration)) {
                         $configuration->getOutputWriter()->write(sprintf(
                             '  <info>--</info> Marking version <comment>%s</comment> as migrated',

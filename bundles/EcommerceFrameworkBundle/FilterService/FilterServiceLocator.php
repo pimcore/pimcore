@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\AssortmentTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class FilterServiceLocator extends AssortmentTenantAwareServiceLocator implements IFilterServiceLocator
+class FilterServiceLocator extends AssortmentTenantAwareServiceLocator implements FilterServiceLocatorInterface
 {
     public function getFilterService(string $tenant = null): FilterService
     {

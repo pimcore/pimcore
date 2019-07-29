@@ -19,10 +19,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Consent extends Model\DataObject\ClassDefinition\Data
+class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -68,7 +71,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     public $width;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Consent $data
      * @param null|DataObject\AbstractObject $object
@@ -92,7 +95,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -103,16 +106,20 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if (is_array($data) && $data[$this->getName() . '__consent'] !== null) {
-            $data = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
+            $consent = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
         } else {
-            $data = new DataObject\Data\Consent();
+            $consent = new DataObject\Data\Consent();
         }
 
-        return $data;
+        if (isset($params['owner'])) {
+            $consent->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $consent;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Consent $data
      * @param null|DataObject\AbstractObject $object
@@ -130,7 +137,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Consent $data
      * @param null|DataObject\AbstractObject $object
@@ -153,7 +160,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -266,7 +273,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param DataObject\Data\Consent $data
      * @param null|DataObject\AbstractObject $object

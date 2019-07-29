@@ -59,8 +59,19 @@ class EmailController extends AdminController
                 }
 
                 $filterTerm = str_replace('%', '*', $filterTerm);
-                $filterTerm = str_replace('@', '#', $filterTerm);
                 $filterTerm = htmlspecialchars($filterTerm, ENT_QUOTES);
+
+                if (strpos($filterTerm, '@')) {
+                    $parts = explode(' ', $filterTerm);
+                    $parts = array_map(function ($part) {
+                        if (strpos($part, '@')) {
+                            $part = '"' . $part . '"';
+                        }
+
+                        return $part;
+                    }, $parts);
+                    $filterTerm = implode(' ', $parts);
+                }
 
                 $condition = '( MATCH (`from`,`to`,`cc`,`bcc`,`subject`,`params`) AGAINST (' . $list->quote($filterTerm) . ' IN BOOLEAN MODE) )';
 
@@ -271,22 +282,16 @@ class EmailController extends AdminController
                 $mail->setBodyText($text);
             }
 
-            $mail->setFrom($emailLog->getFrom());
-
-            foreach ($emailLog->getToAsArray() as $entry) {
-                $mail->addTo($entry['email'], $entry['name']);
-            }
-
-            foreach ($emailLog->getCcAsArray() as $entry) {
-                $mail->addCc($entry['email'], $entry['name']);
-            }
-
-            foreach ($emailLog->getBccAsArray() as $entry) {
-                $mail->addBcc($entry['email']);
-            }
-
-            foreach ($emailLog->getReplyToAsArray() as $entry) {
-                $mail->addReplyTo($entry['email']);
+            foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
+                $getter = 'get' . $field;
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
+                if (!empty($values)) {
+                    list($value) = $values;
+                    if ($value) {
+                        $prefix = ($field === 'From') ? 'set' : 'add';
+                        $mail->{$prefix . $field}($value['email'], $value['name']);
+                    }
+                }
             }
 
             $mail->setSubject($emailLog->getSubject());
@@ -348,9 +353,19 @@ class EmailController extends AdminController
         $mail = new Mail();
 
         if ($from = $request->get('from')) {
-            $mail->setFrom($from);
+            $addressArray = \Pimcore\Helper\Mail::parseEmailAddressField($from);
+            if ($addressArray) {
+                //use the first address only
+                list($cleanedFromAddress) = $addressArray;
+                $mail->setFrom($cleanedFromAddress['email'], $cleanedFromAddress['name']);
+            }
         }
-        $mail->addTo($request->get('to'));
+
+        $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
+        foreach ($toAddresses as $cleanedToAddress) {
+            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name']);
+        }
+
         $mail->setSubject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 

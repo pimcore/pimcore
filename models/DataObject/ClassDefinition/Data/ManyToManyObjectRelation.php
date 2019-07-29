@@ -18,11 +18,14 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
 
     /**
      * Static type of this element
@@ -73,6 +76,16 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     public $visibleFields;
 
     /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
+
+    /**
+     * @var array
+     */
+    public $visibleFieldDefinitions = [];
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
@@ -81,15 +94,9 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -118,22 +125,21 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
-        $objects = [];
+        $objects = [
+            'dirty' => false,
+            'data' => []
+        ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = DataObject::getById($object['dest_id']);
                 if ($o instanceof DataObject\Concrete) {
-                    $objects[] = $o;
+                    $objects['data'][] = $o;
+                } else {
+                    $objects['dirty'] = true;
                 }
             }
         }
@@ -142,15 +148,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
+     *
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -174,7 +183,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -203,7 +212,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -213,7 +222,6 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         //if not set, return null
         if ($data === null or $data === false) {
             return null;
@@ -237,7 +245,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      * @param null $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -251,28 +259,33 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
             return $pathes;
         }
+
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
+            $paths = [];
             foreach ($data as $o) {
                 if ($o instanceof Element\ElementInterface) {
-                    $pathes[] = $o->getRealFullPath();
+                    $paths[] = $o->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
+
+        return null;
     }
 
     /**
@@ -526,15 +539,14 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -543,8 +555,10 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
@@ -680,16 +694,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
         $classIds = $this->getClasses();
 
-        if (!$classIds) {
-            $classIds;
+        if (empty($classIds)) {
+            return;
         }
 
         $classId = $classIds[0]['classes'];
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } else {
+        } elseif (is_string($classId)) {
             $class = DataObject\ClassDefinition::getByName($classId);
+        } else {
+            return;
         }
 
         $this->visibleFieldDefinitions = [];
@@ -852,7 +868,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
                     ]
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params)
             ];
 
             $newData = [];
@@ -924,4 +940,22 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     {
         return $this->visibleFields;
     }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading(): bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
 }
+
+class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');

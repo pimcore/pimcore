@@ -17,11 +17,13 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+
 interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
     /**
-     * @param $context array
-     * @param $fieldDefinition Data
+     * @param array $context
+     * @param Data $fieldDefinition
      *
      * @return mixed
      */

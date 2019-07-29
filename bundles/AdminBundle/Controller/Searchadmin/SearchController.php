@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -44,7 +45,7 @@ class SearchController extends AdminController
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -68,10 +69,6 @@ class SearchController extends AdminController
         $subtypes = explode(',', $allParams['subtype']);
         $classnames = explode(',', $allParams['class']);
 
-        if ($allParams['type'] == 'object' && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = ['object', 'variant', 'folder'];
-        }
-
         $offset = intval($allParams['start']);
         $limit = intval($allParams['limit']);
 
@@ -88,6 +85,7 @@ class SearchController extends AdminController
             $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
+        $queryCondition = '';
         if (!empty($query)) {
             $queryCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
 
@@ -143,10 +141,10 @@ class SearchController extends AdminController
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
-                ? DataObject\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
+                ? $gridHelperService->getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ? DataObject\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
+                ? $gridHelperService->getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
             $join = '';
@@ -224,9 +222,8 @@ class SearchController extends AdminController
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        // do not sort per default, it is VERY SLOW
-        //$searcherList->setOrder("desc");
-        //$searcherList->setOrderKey("modificationdate");
+        $searcherList->setOrderKey($queryCondition, false);
+        $searcherList->setOrder('DESC');
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
@@ -402,6 +399,9 @@ class SearchController extends AdminController
         // it is not allowed to have * behind another *
         $query = preg_replace('#[*]+#', '*', $query);
 
+        // no boolean operators at the end of the query
+        $query = rtrim($query, '+- ');
+
         return $query;
     }
 
@@ -431,12 +431,15 @@ class SearchController extends AdminController
             $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
-        $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . " IN BOOLEAN MODE) AND type != 'folder') ";
+        $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
+        $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";
 
         $queryCondition = implode(' AND ', $conditionParts);
 
         $searcherList->setCondition($queryCondition);
         $searcherList->setLimit(50);
+        $searcherList->setOrderKey($matchCondition, false);
+        $searcherList->setOrder('DESC');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $searcherList,

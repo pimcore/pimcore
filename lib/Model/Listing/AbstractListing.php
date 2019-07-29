@@ -80,13 +80,39 @@ abstract class AbstractListing extends AbstractModel
     protected $conditionParams = [];
 
     /**
-     * @abstract
-     *
+     * @var array
+     */
+    protected $conditionVariableTypes = [];
+
+    /**
+     * @return array
+     */
+    public function getConditionVariableTypes(): array
+    {
+        if (!$this->conditionVariables) {
+            $this->getCondition();
+        }
+
+        return $this->conditionVariableTypes;
+    }
+
+    /**
+     * @param array $conditionVariableTypes
+     */
+    public function setConditionVariableTypes(array $conditionVariableTypes): void
+    {
+        $this->conditionVariableTypes = $conditionVariableTypes;
+    }
+
+    /**
      * @param  $key
      *
      * @return bool
      */
-    abstract public function isValidOrderKey($key);
+    public function isValidOrderKey($key)
+    {
+        return true;
+    }
 
     /**
      * @return int
@@ -186,24 +212,17 @@ abstract class AbstractListing extends AbstractModel
         $this->orderKey = [];
 
         if (is_string($orderKey) && !empty($orderKey)) {
-            if ($this->isValidOrderKey($orderKey)) {
-                $this->orderKey[] = $orderKey;
-            }
-        } elseif (is_array($orderKey) && !empty($orderKey)) {
-            $this->orderKey = [];
-            foreach ($orderKey as $o) {
-                if ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = $o;
-                }
-            }
+            $orderKey = [$orderKey];
         }
 
-        if ($quote) {
-            $tmpKeys = [];
-            foreach ($this->orderKey as $key) {
-                $tmpKeys[] = '`' . $key . '`';
+        if (is_array($orderKey)) {
+            foreach ($orderKey as $o) {
+                if ($quote === false) {
+                    $this->orderKey[] = $o;
+                } elseif ($this->isValidOrderKey($o)) {
+                    $this->orderKey[] = '`' . $o . '`';
+                }
             }
-            $this->orderKey = $tmpKeys;
         }
 
         return $this;
@@ -256,6 +275,7 @@ abstract class AbstractListing extends AbstractModel
     public function getCondition()
     {
         $conditionString = '';
+        $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
         $db = \Pimcore\Db::get();
 
@@ -285,6 +305,20 @@ abstract class AbstractListing extends AbstractModel
         $params = array_merge((array) $this->getConditionVariablesFromSetCondition(), $params);
 
         $this->setConditionVariables($params);
+
+        foreach ($params as $pkey => $param) {
+            if (is_array($param)) {
+                if (isset($param[0]) && is_string($param[0])) {
+                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+                } else {
+                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
+                }
+            } else {
+                $conditionVariableTypes[$pkey] = \PDO::PARAM_STR;
+            }
+        }
+
+        $this->setConditionVariableTypes($conditionVariableTypes);
 
         $condition = $this->condition . $conditionString;
 

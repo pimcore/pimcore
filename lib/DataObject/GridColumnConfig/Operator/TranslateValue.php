@@ -17,7 +17,7 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslateValue extends AbstractOperator
 {
@@ -28,12 +28,17 @@ class TranslateValue extends AbstractOperator
 
     private $prefix;
 
+    private $locale;
+
     public function __construct(TranslatorInterface $translator, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
         $this->translator = $translator;
         $this->prefix = $config->prefix;
+        if (null != $context && isset($context['language'])) {
+            $this->locale = $context['language'];
+        }
     }
 
     public function getLabeledValue($element)
@@ -41,8 +46,15 @@ class TranslateValue extends AbstractOperator
         $childs = $this->getChilds();
         if ($childs[0]) {
             $value = $childs[0]->getLabeledValue($element);
-            if ($value->value) {
-                $value->value = $this->translator->trans($this->prefix . $value->value, []);
+            if (strval($value->value) != '') {
+                $currentLocale = $this->translator->getLocale();
+                if (null != $this->locale) {
+                    $this->translator->setLocale($this->locale);
+                }
+
+                $value->value = $this->translator->trans($this->prefix . strval($value->value), []);
+
+                $this->translator->setLocale($currentLocale);
             }
 
             return $value;

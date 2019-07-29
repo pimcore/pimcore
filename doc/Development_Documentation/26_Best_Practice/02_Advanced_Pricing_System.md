@@ -14,7 +14,7 @@ To accomplish that, you need to create your own price system implementation.
 ##### Implementation of Custom Price Systems
 
 To implement custom price systems, you need to implement the interface 
-[`IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
+[`PriceSystemInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/PriceSystemInterface.php) 
 or extend any shipped implementation from the framework like for example the 
 [`AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php). 
 
@@ -26,7 +26,7 @@ Following example implements a price system that retrieves prices from an extra 
 
 namespace AppBundle\Ecommerce\Pricing;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Db;
@@ -36,11 +36,11 @@ class MyPriceSystem extends AttributePriceSystem {
     /**
      * Calculates prices from product
      *
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      * @return Decimal
      */
-    protected function calculateAmount(ICheckoutable $product, $products): Decimal
+    protected function calculateAmount(CheckoutableInterface $product, $products): Decimal
     {
         // Get Product ID
         $productId = $product->getId();
@@ -137,11 +137,11 @@ Following sample implementation does that by using a sql query:
 
 ```
 
-To tell the product list that sorting should be done based on prices, use `IProductList::ORDERKEY_PRICE` as order key 
+To tell the product list that sorting should be done based on prices, use `ProductListInterface::ORDERKEY_PRICE` as order key 
 as follows: 
 ```php 
 $products = $factory->getIndexService()->getProductListForCurrentTenant();
-$products->setOrderKey(IProductList::ORDERKEY_PRICE);
+$products->setOrderKey(ProductListInterface::ORDERKEY_PRICE);
 ```
 
 To filter for Prices use the method `addPriceCondition()` as follows: 

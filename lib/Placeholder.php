@@ -35,7 +35,7 @@ class Placeholder
      *
      * @var string
      */
-    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', '\\Pimcore\\Placeholder\\', '\\Website\\Placeholder\\'];
+    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', '\\Pimcore\\Placeholder\\', '\\Website\\Placeholder\\', '\\AppBundle\\Placeholder\\'];
 
     /**
      * Contains the document object
@@ -92,48 +92,6 @@ class Placeholder
     public static function getPlaceholderClassPrefixes()
     {
         return array_reverse(self::$placeholderClassPrefixes);
-    }
-
-    /**
-     * Sets a custom website class prefix for the Placeholder Classes
-     *
-     * @static
-     *
-     * @param $string
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function setWebsiteClassPrefix($string)
-    {
-        self::addPlaceholderClassPrefix($string);
-    }
-
-    /**
-     * Returns the website class prefix for the Placeholder Classes
-     *
-     * @static
-     *
-     * @return string
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function getWebsiteClassPrefix()
-    {
-        return self::$placeholderClassPrefixes[1];
-    }
-
-    /**
-     * Set a custom Placeholder prefix
-     *
-     * @throws \Exception
-     *
-     * @param string $prefix
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function setPlaceholderPrefix($prefix)
-    {
-        self::addPlaceholderClassPrefix($prefix);
     }
 
     /**
@@ -196,7 +154,13 @@ class Placeholder
                     //try to create the json config object
                     try {
                         $configJsonString = str_replace(['&quot;', "'"], '"', $placeholderConfigString);
-                        $placeholderConfig = new \Pimcore\Config\Config(json_decode($configJsonString, true), null, ['ignoreconstants' => true]);
+                        $configArray = json_decode($configJsonString, true);
+                        if ($configArray === null && json_last_error() !== JSON_ERROR_NONE) {
+                            throw new \Exception('The JSON string in the PlaceholderConfig could not be converted.');
+                        } elseif (!is_array($configArray)) {
+                            throw new \Exception('The JSON string in the PlaceholderConfig should be an array.');
+                        }
+                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;

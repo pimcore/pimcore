@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-class Soundex implements IInterpreter
+class Soundex implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {

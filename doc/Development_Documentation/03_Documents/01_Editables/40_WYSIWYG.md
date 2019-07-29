@@ -9,7 +9,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | Name            | Type    | Description                                                                        |
 |-----------------|---------|------------------------------------------------------------------------------------|
 | `customConfig`  | string  | Path to JavaScript file with configuration for CKEditor                            |
-| `enterMode`     | integer | Set it to 2 if you don't want to add the P-tag                                     |
+| `enterMode`     | integer | Set it to `CKEDITOR.CKEDITOR.ENTER_BR` if you don't want to add a `<p>`-tag on pressing enter key  |
 | `height`        | integer | Minimum height of the field in pixels                                              |
 | `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |

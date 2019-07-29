@@ -20,12 +20,17 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
 
     /**
      * Static type of this element
@@ -201,15 +206,9 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param Asset | Document | DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getType($data);
@@ -226,30 +225,33 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param bool $notRelationTable
-     *
-     * @return Asset|Document|DataObject\AbstractObject
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
+    public function loadData($data, $object = null, $params = [])
     {
         // data from relation table
         $data = is_array($data) ? $data : [];
         $data = current($data);
 
+        $result = [
+            'dirty' => false,
+            'data' => null
+        ];
+
         if ($data['dest_id'] && $data['type']) {
-            return Element\Service::getElementById($data['type'], $data['dest_id']);
+            $element = Element\Service::getElementById($data['type'], $data['dest_id']);
+            if ($element instanceof Element\ElementInterface) {
+                $result['data'] = $element;
+            } else {
+                $result['dirty'] = true;
+            }
         }
 
-        return null;
+        return $result;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -259,7 +261,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        $rData = $this->getDataForResource($data, $object, $params);
+        $rData = $this->prepareDataForPersistence($data, $object, $params);
 
         $return = [];
         $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
@@ -269,13 +271,13 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -291,11 +293,11 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
             return $r;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -329,7 +331,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
      * @param null $object
      * @param array $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -337,7 +339,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param Document | Asset | DataObject\AbstractObject $data
      * @param null|DataObject\AbstractObject $object
@@ -568,7 +570,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
      * @param $object
      * @param array $params
      *
-     * @return null|DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|DataObject\Objectbrick\Data\
+     * @return null|Element\ElementInterface
      */
     public function preGetData($object, $params = [])
     {
@@ -576,7 +578,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -585,12 +587,14 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -740,3 +744,5 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
         return $value1 == $value2;
     }
 }
+
+class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');

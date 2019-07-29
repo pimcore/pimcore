@@ -261,7 +261,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         win.getComponent("language").show();
                         win.getComponent("info").hide();
                     } else {
-                        win.getComponent("language").hide();
+                        win.getComponent("language").setValue("").hide();
                         win.getComponent("info").show();
                     }
                 }
@@ -328,7 +328,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }
@@ -336,6 +336,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
+                    if(!win.getComponent("translation").getValue() || !win.getComponent("language").getValue()) {
+                        Ext.MessageBox.alert(t("error"), t("target_document_invalid"));
+                        return false;
+                    }
 
                     Ext.Ajax.request({
                         url: "/admin/document/translation-add",
@@ -355,6 +359,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         });
 
         win.show();
+    },
+
+    showDocumentOverview: function () {
+
+        new pimcore.document.document_language_overview(this);
     },
 
     createTranslation: function (inheritance) {
@@ -472,7 +481,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             items: [pageForm],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }
@@ -542,6 +551,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
                 });
             });
+
+            if(Object.keys(me.data["translations"]).length) {
+                //add menu for All Translations
+                translationsMenu.push({
+                    text: t("all_translations"),
+                    iconCls: "pimcore_icon_translations",
+                    handler: function () {
+                        Ext.iterate(me.data["translations"], function (language, documentId) {
+                            pimcore.helpers.openElement(documentId, "document");
+                        });
+                    }
+                });
+            }
         }
 
         if(this.data["unlinkTranslations"]) {
@@ -569,7 +591,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         return {
             tooltip: t("translation"),
-            iconCls: "pimcore_icon_translations",
+            iconCls: "pimcore_material_icon_translation pimcore_material_icon",
             scale: "medium",
             menu: [{
                 text: t("new_document"),
@@ -599,6 +621,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 menu: unlinkTranslationsMenu,
                 hidden: !unlinkTranslationsMenu.length,
                 iconCls: "pimcore_icon_delete"
+            }, {
+                text: t("document_language_overview"),
+                handler: this.showDocumentOverview.bind(this),
+                iconCls: "pimcore_icon_page"
             }]
         };
     },

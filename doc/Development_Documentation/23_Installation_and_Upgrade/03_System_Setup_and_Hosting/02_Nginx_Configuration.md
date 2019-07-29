@@ -10,9 +10,9 @@ Below is the configuration for a Nginx server (just the server part, the http et
 
 Assumptions - change them to match your environment/distro:
 
-- Pimcore 5 was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
+- Pimcore was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
 - Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/logs`.
-- PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore5.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
+- PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
 
@@ -23,7 +23,7 @@ Assumptions - change them to match your environment/distro:
 # }
 
 upstream php-pimcore5 {
-    server unix:/var/run/php/pimcore5.sock;
+    server unix:/var/run/php/pimcore.sock;
 }
 
 server {
@@ -34,6 +34,33 @@ server {
 
     access_log  /var/log/access.log;
     error_log   /var/log/error.log error;
+
+    # Protected Assets
+    #
+    ### 1. Option - Restricting access to certain assets completely
+    #
+    # location ~ ^/protected/.* {
+    #   return 403;
+    # }
+    # location ~ ^/var/.*/protected(.*) {
+    #   return 403;
+    # }
+    #
+    # location ~ ^/cache-buster\-[\d]+/protected(.*) {
+    #   return 403;
+    # }
+    #
+    ### 2. Option - Checking permissions before delivery
+    #
+    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    #
+    # location ~ ^/var/.*/protected(.*) {
+    #   return 403;
+    # }
+    #
+    # location ~ ^/cache-buster\-[\d]+/protected(.*) {
+    #   return 403;
+    # }
 
     # Pimcore Head-Link Cache-Busting
     rewrite ^/cache-buster-(?:\d+)/(.*) /$1 last;
@@ -74,7 +101,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -84,7 +111,6 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        add_header "X-UA-Compatible" "IE=edge";
         try_files $uri /app.php$is_args$args;
     }
 
@@ -99,7 +125,8 @@ server {
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
-        include fastcgi.conf;
+        # include fastcgi.conf if needed
+        #include fastcgi.conf;
         # Bypass the fact that try_files resets $fastcgi_path_info
         # see: http://trac.nginx.org/nginx/ticket/321
         set $path_info $fastcgi_path_info;

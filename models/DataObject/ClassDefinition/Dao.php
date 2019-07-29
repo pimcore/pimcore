@@ -33,53 +33,58 @@ class Dao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
-     * @var array
-     */
-    protected $_sqlChangeLog = [];
-
-    /**
      * @var mixed
      */
     protected $tableDefinitions = null;
 
     /**
-     * @param null $id
+     * @param mixed $id
      *
-     * @return string
+     * @return string|null
      */
-    public function getNameById($id = null)
+    public function getNameById($id)
     {
-        $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+        $name = null;
+        try {
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+            }
+        } catch (\Exception $e) {
+        }
 
         return $name;
     }
 
     /**
-     * @param null $name
+     * @param string $name
      *
-     * @return string
+     * @return mixed|null
      */
-    public function getIdByName($name = null)
+    public function getIdByName($name)
     {
-        $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+        $id = null;
+        try {
+            if (!empty($name)) {
+                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+            }
+        } catch (\Exception $e) {
+        }
 
         return $id;
     }
 
-    /** Updates the class definition
+    /**
      * @param bool $isUpdate
-     *
-     * @return bool|void
      *
      * @throws \Exception
      */
     public function save($isUpdate = true)
     {
         if (!$this->model->getId() || !$isUpdate) {
-            return $this->create();
-        } else {
-            return $this->update();
+            $this->create();
         }
+
+        $this->update();
     }
 
     /**
@@ -106,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
         $objectView = 'object_' . $this->model->getId();
 
         // create object table if not exists
-        $protectedColums = ['oo_id', 'oo_classId', 'oo_className'];
+        $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
@@ -133,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
           `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
           `ownername` varchar(70) NOT NULL DEFAULT '',
           `position` varchar(70) NOT NULL DEFAULT '0',
-          PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
+          PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`, `index`),
           KEY `index` (`index`),
           KEY `src_id` (`src_id`),
           KEY `dest_id` (`dest_id`),
@@ -143,6 +148,8 @@ class Dao extends Model\Dao\AbstractDao
           KEY `type` (`type`),
           KEY `ownername` (`ownername`)
         ) DEFAULT CHARSET=utf8mb4;");
+
+        $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 
         $existingColumns = $this->getValidTableColumns($objectTable, false); // no caching of table definition
         $existingDatastoreColumns = $this->getValidTableColumns($objectDatastoreTable, false); // no caching of table definition
@@ -155,43 +162,42 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-
-                // if a datafield requires more than one column in the query table
-                if (is_array($value->getQueryColumnType())) {
-                    foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                        $protectedColums[] = $key . '__' . $fkey;
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                    // if a datafield requires more than one column in the datastore table => only for non-relation types
+                    if (!$value->isRelationType()) {
+                        if (is_array($value->getColumnType())) {
+                            foreach ($value->getColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                            }
+                        } elseif ($value->getColumnType()) {
+                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                            $protectedDatastoreColumns[] = $key;
+                        }
                     }
+
+                    $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                // if a datafield requires more than one column in the datastore table => only for non-relation types
-                if (!$value->isRelationType() && is_array($value->getColumnType())) {
-                    foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                        $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                    // if a datafield requires more than one column in the query table
+                    if (is_array($value->getQueryColumnType())) {
+                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedColumns[] = $key . '__' . $fkey;
+                        }
+                    } elseif ($value->getQueryColumnType()) {
+                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                        $protectedColumns[] = $key;
                     }
-                }
 
-                // everything else
-                //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
-                if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                    $protectedColums[] = $key;
+                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
                 }
-                if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
-                    $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
-                    $protectedDatastoreColumns[] = $key;
-                }
-                //                }
-
-                // add indices
-                $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
-                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
             }
         }
 
         // remove unused columns in the table
-        $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColums);
+        $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColumns);
         $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns);
 
         // remove / cleanup unused relations
@@ -219,13 +225,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return bool
+     * @return void
      */
     public function create()
     {
         $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
-//        $this->model->setId($this->db->lastInsertId());
-        $this->save();
     }
 
     /**

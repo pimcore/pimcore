@@ -13,35 +13,72 @@
 
 pimcore.registerNS("pimcore.settings.robotstxt");
 pimcore.settings.robotstxt = Class.create({
+    onFileSystem: false,
+    data: {},
 
     initialize: function(id) {
-
-        this.site = "";
-        this.data = {data: ""};
-
         this.getTabPanel();
         this.load();
     },
 
     load: function () {
+        this.panel.setLoading(true);
+
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
-            params: {
-                site: this.site
-            },
             success: function (response) {
 
                 try {
                     var data = Ext.decode(response.responseText);
-                    if(data.success && this.editArea instanceof Ext.form.TextArea) {
-                        this.data = data;
-                        this.editArea.setValue(this.data.data);
+                    if(data.success) {
+                        this.data = data.data;
+                        this.onFileSystem = data.onFileSystem;
+
+                        this.loadSites();
                     }
                 } catch (e) {
 
                 }
             }.bind(this)
         });
+    },
+
+    loadSites: function() {
+        this.formPanel = new Ext.form.Panel({
+            layout: 'fit'
+        });
+
+        var items = [];
+
+        pimcore.globalmanager.get("sites").load(function(records) {
+            Ext.each(records, function(record) {
+                items.push(this.getEditPanel(record))
+            }.bind(this));
+
+
+            var buttons = [];
+
+            if (this.onFileSystem) {
+                buttons.push(t("robots_txt_exists_on_filesystem"));
+            }
+
+            buttons.push({
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                disabled: this.onFileSystem,
+                handler: this.save.bind(this)
+            });
+
+            this.formPanel.add({
+                xtype: 'tabpanel',
+                layout: 'fit',
+                items: items,
+                buttons: buttons
+            });
+
+            this.panel.add(this.formPanel);
+            this.panel.setLoading(false);
+        }.bind(this));
     },
 
     activate: function () {
@@ -59,7 +96,7 @@ pimcore.settings.robotstxt = Class.create({
                 border: false,
                 layout: "fit",
                 closable:true,
-                items: [this.getEditPanel()]
+                items: []
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -77,73 +114,40 @@ pimcore.settings.robotstxt = Class.create({
         return this.panel;
     },
 
-    getEditPanel: function () {
+    getEditPanel: function (siteRecord) {
+        var editArea = new Ext.form.TextArea({
+            xtype: "textarea",
+            name: 'data['+siteRecord.get('id')+']',
+            value: this.data.hasOwnProperty(siteRecord.get('id')) ? this.data[siteRecord.getId('id')] : '',
+            width: "100%",
+            height: "100%",
+            style: "font-family: 'Courier New', Courier, monospace;",
+            disabled: this.onFileSystem
+        });
 
-        if (!this.editPanel) {
+        var editPanel = new Ext.Panel({
+            title: siteRecord.get('domain'),
+            layout: 'fit',
+            iconCls: 'pimcore_icon_robots',
+            bodyStyle: "padding: 10px;",
+            items: [editArea]
+        });
 
-            if(this.data.onFileSystem) {
-                this.editArea = new Ext.Panel({
-                    bodyStyle: "padding:50px;",
-                    html: t("robots_txt_exists_on_filesystem")
-                });
-            } else {
-                this.editArea = new Ext.form.TextArea({
-                    xtype: "textarea",
-                    name: "data",
-                    value: this.data.data,
-                    width: "100%",
-                    height: "100%",
-                    style: "font-family: 'Courier New', Courier, monospace;"
-                });
-            }
+        editPanel.on("bodyresize", function (el, width, height) {
+            editArea.setWidth(width-20);
+            editArea.setHeight(height-20);
+        });
 
-            this.editPanel = new Ext.Panel({
-                bodyStyle: "padding: 10px;",
-                items: [this.editArea],
-                tbar: ["->", {
-                    xtype: 'tbtext',
-                    text: t("select_site")
-                }, {
-                    xtype: "combo",
-                    store: pimcore.globalmanager.get("sites"),
-                    valueField: "id",
-                    displayField: "domain",
-                    triggerAction: "all",
-                    editable: false,
-                    listeners: {
-                        "select": function (el) {
-                            this.site = el.getValue();
-                            this.load();
-                        }.bind(this)
-                    }
-                }],
-                buttons: [{
-                    text: t("save"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: this.save.bind(this)
-                }]
-            });
-            this.editPanel.on("bodyresize", function (el, width, height) {
-                this.editArea.setWidth(width-20);
-                this.editArea.setHeight(height-20);
-            }.bind(this));
-        }
-
-        return this.editPanel;
+        return editPanel;
     },
 
 
     save : function () {
-
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
             method: "PUT",
-            params: {
-                data: this.editArea.getValue(),
-                site: this.site
-            },
+            params: this.formPanel.form.getFieldValues(),
             success: function (response) {
-
                 try {
                     var data = Ext.decode(response.responseText);
                     if(data.success) {

@@ -21,6 +21,7 @@ class Attribute
     const TYPE_SETTINGS = 'settings';
     const TYPE_LOCALIZED_FIELD = 'localizedfield';
     const TYPE_BRICK_LOCALIZED_FIELD = 'localizedbrick';
+    const TYPE_BLOCK = 'block';
 
     /**
      * @var string

@@ -44,7 +44,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php if (!$this->isImportPreview || !$this->isNew) { ?>
             <td><?= $this->object1->getRealFullPath(); ?></td>
         <?php } ?>
-        <td><?= $this->object2->getRealFullPath(); ?></td>
+        <td<?php if ($this->object1->getRealFullPath() !== $this->object2->getRealFullPath()) { ?> class="modified"<?php } ?>><?= $this->object2->getRealFullPath(); ?></td>
     </tr>
     <tr class="system">
         <td>Published</td>
@@ -52,7 +52,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php if (!$this->isImportPreview || !$this->isNew) { ?>
             <td><?= json_encode($this->object1->getPublished()); ?></td>
         <?php } ?>
-        <td><?= json_encode($this->object2->getPublished()); ?></td>
+        <td<?php if ($this->object1->getPublished() !== $this->object2->getPublished()) { ?> class="modified"<?php } ?>><?= json_encode($this->object2->getPublished()); ?></td>
     </tr>
     <tr class="system">
         <td>Id</td>
@@ -291,12 +291,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         unset($fieldItems2[$fkey1]);
                     }
                     foreach ($fieldKeys1 as $fkey => $fieldKey1) {
-                        $v1 = null;
                         $v2 = null;
-                        if($fieldItem1 instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\NumFields) {
-                            $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
-                        }
-
                         $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
 
                         if(!empty($ffkey2) && isset($fieldKeys2[$fkey])) {

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -110,7 +111,7 @@ class Service extends Model\AbstractModel
      * @param $list array | \Pimcore\Model\Listing\AbstractListing
      * @param string $idGetter
      *
-     * @return array
+     * @return int[]
      */
     public static function getIdList($list, $idGetter = 'getId')
     {
@@ -239,6 +240,91 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param $data
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public static function filterUnpublishedAdvancedElements($data)
+    {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+            $publishedList = [];
+            $mapping = [];
+            foreach ($data as $advancedElement) {
+                if (!$advancedElement instanceof DataObject\Data\ObjectMetadata
+                    && !$advancedElement instanceof DataObject\Data\ElementMetadata) {
+                    throw new \Exception('only supported for advanced many-to-many (+object) relations');
+                }
+
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = 'object';
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if (!$elementId) {
+                    continue;
+                }
+                if ($elementType == 'asset') {
+                    // there is no published flag for assets
+                    continue;
+                }
+                $mapping[$elementType][$elementId] = true;
+            }
+
+            $db = Db::get();
+            $publishedMapping = [];
+
+            // now do the query;
+            foreach ($mapping as $elementType => $idList) {
+                $idList = array_keys($mapping[$elementType]);
+                switch ($elementType) {
+                    case 'document':
+                        $idColumn = 'id';
+                        $publishedColumn = 'published';
+                        break;
+                    case 'object':
+                        $idColumn = 'o_id';
+                        $publishedColumn = 'o_published';
+                        break;
+                    default:
+                        throw new \Exception('unknown type');
+                }
+                $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
+                $publishedIds = $db->fetchCol($query);
+                $publishedMapping[$elementType] = $publishedIds;
+            }
+
+            foreach ($data as $advancedElement) {
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = 'object';
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if ($elementType == 'asset') {
+                    $publishedList[] = $advancedElement;
+                }
+
+                if (isset($publishedMapping[$elementType]) && in_array($elementId, $publishedMapping[$elementType])) {
+                    $publishedList[] = $advancedElement;
+                }
+            }
+
+            return $publishedList;
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    /**
      * @static
      *
      * @param  string $type
@@ -337,18 +423,19 @@ class Service extends Model\AbstractModel
      *
      * @param  string $type
      * @param  int $id
+     * @param  bool $force
      *
      * @return ElementInterface
      */
-    public static function getElementById($type, $id)
+    public static function getElementById($type, $id, $force = false)
     {
         $element = null;
         if ($type == 'asset') {
-            $element = Asset::getById($id);
+            $element = Asset::getById($id, $force);
         } elseif ($type == 'object') {
-            $element = DataObject::getById($id);
+            $element = DataObject::getById($id, $force);
         } elseif ($type == 'document') {
-            $element = Document::getById($id);
+            $element = Document::getById($id, $force);
         }
 
         return $element;
@@ -387,73 +474,6 @@ class Service extends Model\AbstractModel
     public static function getType($element)
     {
         return self::getElementType($element);
-    }
-
-    /**
-     * Schedules element with this id for sanity check to be cleaned of broken relations
-     *
-     * @static
-     *
-     * @param  ElementInterface $element
-     */
-    public static function scheduleForSanityCheck($element)
-    {
-        $type = self::getElementType($element);
-        $sanityCheck = new Sanitycheck($element->getId(), $type);
-        $sanityCheck->save();
-    }
-
-    public static function runSanityCheck()
-    {
-        $sanityCheck = Sanitycheck::getNext();
-        $count = 0;
-        while ($sanityCheck) {
-            $count++;
-            if ($count % 10 == 0) {
-                \Pimcore::collectGarbage();
-            }
-
-            $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
-            if ($element) {
-                try {
-                    self::performSanityCheck($element);
-                } catch (\Exception $e) {
-                    Logger::error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . self::getType($element) . ' ] failed');
-                }
-                $sanityCheck->delete();
-            } else {
-                $sanityCheck->delete();
-            }
-            $sanityCheck = Sanitycheck::getNext();
-
-            // reduce load on server
-            Logger::debug('Now timeout for 3 seconds');
-            sleep(3);
-        }
-    }
-
-    /**
-     * @static
-     *
-     * @param ElementInterface $element
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no getter latestVersion
-     */
-    protected static function performSanityCheck($element)
-    {
-        if ($latestVersion = $element->getLatestVersion()) {
-            if ($latestVersion->getDate() > $element->getModificationDate()) {
-                return;
-            }
-        }
-
-        $element->setUserModification(0);
-        $element->save();
-
-        if ($version = $element->getLatestVersion(true)) {
-            $version->setNote('Sanitycheck');
-            $version->save();
-        }
     }
 
     /**
@@ -515,26 +535,27 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param ElementInterface $target the parent element
+     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no method getChilds
      */
-    protected function updateChilds($target, $new)
+    protected function updateChildren($target, $new)
     {
-        if (is_array($target->getChilds())) {
+        if (is_array($target->getChildren())) {
             //check in case of recursion
             $found = false;
-            foreach ($target->getChilds() as $child) {
+            foreach ($target->getChildren() as $child) {
+                /**
+                 * @var ElementInterface $child
+                 */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
                 }
             }
             if (!$found) {
-                $target->setChilds(array_merge($target->getChilds(), [$new]));
+                $target->setChildren(array_merge($target->getChildren(), [$new]));
             }
         } else {
-            $target->setChilds([$new]);
+            $target->setChildren([$new]);
         }
     }
 
@@ -593,10 +614,10 @@ class Service extends Model\AbstractModel
         }
 
         // get workspaces
-        $workspaces = $user->{'getWorkspaces'.ucfirst($type)}();
+        $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
         foreach ($user->getRoles() as $roleId) {
             $role = Model\User\Role::getById($roleId);
-            $workspaces = array_merge($workspaces, $role->{'getWorkspaces'.ucfirst($type)}());
+            $workspaces = array_merge($workspaces, $role->{'getWorkspaces' . ucfirst($type)}());
         }
 
         $forbidden = [];
@@ -624,6 +645,12 @@ class Service extends Model\AbstractModel
      */
     public static function renewReferences($data, $initial = true, $key = null)
     {
+        if ($data instanceof \__PHP_Incomplete_Class) {
+            Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
+
+            return null;
+        }
+
         if (is_array($data)) {
             foreach ($data as $dataKey => &$value) {
                 $value = self::renewReferences($value, false, $dataKey);
@@ -657,13 +684,13 @@ class Service extends Model\AbstractModel
                 if ($data instanceof Model\AbstractModel) {
                     $properties = $data->getObjectVars();
                     foreach ($properties as $name => $value) {
-                        $data->setObjectVar($name, self::renewReferences($value, false, $name));
+                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
                     }
                 } else {
                     $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
                     foreach ($properties as $name => $value) {
                         if (method_exists($data, 'setObjectVar')) {
-                            $data->setObjectVar($name, self::renewReferences($value, false, $name));
+                            $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
                         } else {
                             $data->$name = self::renewReferences($value, false, $name);
                         }
@@ -831,7 +858,7 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv, $childsList) {
+            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv) {
                 $where = $cv['where'];
                 if ($where) {
                     $select->where($where);
@@ -894,9 +921,8 @@ class Service extends Model\AbstractModel
         $key = str_replace('/', '-', $key);
 
         if ($type == 'document') {
-            // no spaces & utf8 for documents / clean URLs
-            $key = \Pimcore\Tool\Transliteration::toASCII($key);
-            $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
+            // replace URL reserved characters with a hyphen
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
         }
 
         if ($type == 'asset') {
@@ -904,7 +930,7 @@ class Service extends Model\AbstractModel
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
-            // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
+            // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
             $key = trim($key);

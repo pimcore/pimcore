@@ -49,17 +49,19 @@ class Document extends Model\Asset
                     $this->setCustomSetting('document_page_count', $pageCount);
                 }
             } catch (\Exception $e) {
+                // nothing to do
             }
-
-            unlink($tmpFile);
         }
 
         parent::update($params);
     }
 
-    public function delete()
+    /**
+     * @inheritdoc
+     */
+    public function delete(bool $isNested = false)
     {
-        parent::delete();
+        parent::delete($isNested);
         $this->clearThumbnails(true);
     }
 
@@ -117,7 +119,7 @@ class Document extends Model\Asset
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
-     * @return mixed|string
+     * @return Document\ImageThumbnail
      */
     public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
     {

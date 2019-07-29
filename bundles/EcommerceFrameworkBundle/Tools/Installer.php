@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\Migration\InstallMigration;
 use Pimcore\Migrations\MigrationManager;
@@ -139,7 +139,7 @@ class Installer extends MigrationInstaller
 
     public function __construct(
         BundleInterface $bundle,
-        Connection $connection,
+        ConnectionInterface $connection,
         MigrationManager $migrationManager
     ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
@@ -227,7 +227,7 @@ class Installer extends MigrationInstaller
             $class->setId($classId);
 
             $data = file_get_contents($path);
-            $success = Service::importClassDefinitionFromJson($class, $data);
+            $success = Service::importClassDefinitionFromJson($class, $data, false, true);
 
             if (!$success) {
                 throw new AbortMigrationException(sprintf(
@@ -246,9 +246,7 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($fieldCollections as $key => $path) {
-            try {
-                $fieldCollection = Fieldcollection\Definition::getByKey($key);
-
+            if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
                 if ($fieldCollection) {
                     $this->outputWriter->write(sprintf(
                         '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
@@ -257,7 +255,7 @@ class Installer extends MigrationInstaller
 
                     continue;
                 }
-            } catch (\Exception $e) {
+            } else {
                 $fieldCollection = new Fieldcollection\Definition();
                 $fieldCollection->setKey($key);
             }
@@ -282,18 +280,14 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($bricks as $key => $path) {
-            try {
-                $brick = Objectbrick\Definition::getByKey($key);
+            if ($brick = Objectbrick\Definition::getByKey($key)) {
+                $this->outputWriter->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
+                    $key
+                ));
 
-                if ($brick) {
-                    $this->outputWriter->write(sprintf(
-                        '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
-                        $key
-                    ));
-
-                    continue;
-                }
-            } catch (\Exception $e) {
+                continue;
+            } else {
                 $brick = new Objectbrick\Definition();
                 $brick->setKey($key);
             }

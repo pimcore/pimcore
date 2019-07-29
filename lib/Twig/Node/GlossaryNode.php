@@ -17,11 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
-use Twig_Compiler;
+use Twig\Compiler;
+use Twig\Node\Node;
 
-class GlossaryNode extends \Twig_Node
+class GlossaryNode extends Node
 {
-    public function compile(Twig_Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler->addDebugInfo($this);
         $compiler

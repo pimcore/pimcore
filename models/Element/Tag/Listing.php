@@ -20,31 +20,17 @@ namespace Pimcore\Model\Element\Tag;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Tag\Listing\Dao getDao()
+ * @method Model\Element\Tag\Listing\Dao getDao()
  * @method Model\Element\Tag[] load()
+ * @method int[] loadIdList()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Tag
-     *
-     * @var array
+     * @var array|null
      */
-    public $tags = [];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
+    protected $tags = null;
 
     /**
      * @param $tags
@@ -59,10 +45,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Element\Tag[]
      */
     public function getTags()
     {
+        if ($this->tags === null) {
+            $this->getDao()->load();
+        }
+
         return $this->tags;
     }
 }

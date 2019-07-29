@@ -55,12 +55,17 @@ trait ObjectVarTrait
     /**
      * @param $var mixed
      * @param $value mixed
+     * @param $silent bool
      *
      * @return $this
      */
-    public function setObjectVar($var, $value)
+    public function setObjectVar($var, $value, bool $silent = false)
     {
         if (!property_exists($this, $var)) {
+            if ($silent) {
+                return $this;
+            }
+
             throw new \Exception('property ' . $var . ' does not exist');
         }
         $this->$var = $value;

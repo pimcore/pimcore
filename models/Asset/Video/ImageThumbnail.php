@@ -157,7 +157,7 @@ class ImageThumbnail
 
                 $converter = \Pimcore\Video::getInstance();
                 $converter->load($this->asset->getFileSystemPath());
-                $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-image-cache/video_' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
+                $path = $this->asset->getImageThumbnailSavePath() . '/video-image-cache__' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
 
                 if (!is_dir(dirname($path))) {
                     File::mkdir(dirname($path));
@@ -180,6 +180,13 @@ class ImageThumbnail
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
+                        // The path can be remote. In that case, the processor will create a local copy of the asset, which is the video itself.
+                        // That is not what is intended, as we are tying to generate a thumbnail based on the already existing video still that
+                        // the converter created earlier. To prevent the processor from doing that, we will create a local copy here if needed
+                        if (!stream_is_local($path)) {
+                            $path = $this->asset->getTemporaryFile();
+                        }
+
                         $path = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),

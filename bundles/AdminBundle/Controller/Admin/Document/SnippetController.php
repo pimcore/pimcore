@@ -73,6 +73,11 @@ class SnippetController extends DocumentControllerBase
         $data = $snippet->getObjectVars();
         $data['versionDate'] = $snippet->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($snippet)], array_values(class_parents($snippet))),
+            'interfaces' => array_values(class_implements($snippet))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $snippet
@@ -101,7 +106,14 @@ class SnippetController extends DocumentControllerBase
         try {
             if ($request->get('id')) {
                 $snippet = Document\Snippet::getById($request->get('id'));
-                $snippet = $this->getLatestVersion($snippet);
+
+                $snippetSession = $this->getFromSession($snippet);
+
+                if ($snippetSession) {
+                    $snippet = $snippetSession;
+                } else {
+                    $snippet = $this->getLatestVersion($snippet);
+                }
 
                 $snippet->setUserModification($this->getAdminUser()->getId());
 

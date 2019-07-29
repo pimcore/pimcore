@@ -25,7 +25,7 @@ use Doctrine\DBAL\Migrations\Provider\SchemaDiffProvider;
 use Doctrine\DBAL\Migrations\Provider\SchemaDiffProviderInterface;
 use Doctrine\DBAL\Migrations\SkipMigrationException;
 use Doctrine\DBAL\Types\Type;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Migration\DryRunMigrationInterface;
 use Pimcore\Migrations\Migration\PimcoreMigrationInterface;
@@ -61,7 +61,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     private $migration;
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $connection;
 

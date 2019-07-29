@@ -70,7 +70,7 @@ pimcore.settings.email.log = Class.create({
                 layout: 'fit',
                 items: [this.grid],
                 closable: this.document ? false : true,
-                iconCls: 'pimcore_icon_email pimcore_icon_overlay_go',
+                iconCls: this.document ? 'pimcore_material_icon_email_sent pimcore_material_icon' : 'pimcore_icon_email pimcore_icon_overlay_go',
                 listeners: {
                     activate: function() {
                         this.store.load();
@@ -116,32 +116,47 @@ pimcore.settings.email.log = Class.create({
                 text: t('email_log_from'),
                 sortable: false,
                 dataIndex: 'from',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_reply_to'),
                 sortable: false,
                 dataIndex: 'replyTo',
                 flex: 120,
-                hidden: true
+                hidden: true,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_to'),
                 sortable: false,
                 dataIndex: 'to',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_cc'),
                 sortable: false,
                 dataIndex: 'cc',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_bcc'),
                 sortable: false,
                 dataIndex: 'bcc',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_subject'),
@@ -191,7 +206,6 @@ pimcore.settings.email.log = Class.create({
                 dataIndex: 'emailLogExistsText',
                 menuText: t('text'),
                 text: t('text'),
-                hidden: true,
                 items : [{
                     icon: '/bundles/pimcoreadmin/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
@@ -382,7 +396,7 @@ pimcore.settings.email.log = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 '->',
                 {

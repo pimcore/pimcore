@@ -91,7 +91,7 @@ $regionArray = $locale->getDisplayRegions();
                 <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order.order-items') ?>
 
                 <?php if($order->getComment()): ?>
-                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translateAdmin('bundle_ecommerce.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
+                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translateAdmin('bundle_ecommerce.back-office.order.comment.user') ?>" data-content="<?= nl2br($this->escape($order->getComment())) ?>">
                         <span class="glyphicon glyphicon-comment"></span>
                     </button>
                 <?php endif; ?>
@@ -314,18 +314,18 @@ $regionArray = $locale->getDisplayRegions();
                                 $address = [];
                                 if($order->getCustomerCompany())
                                 {
-                                    echo sprintf('<h4>%1$s</h4>', nl2br($order->getCustomerCompany()));
+                                    echo sprintf('<h4>%1$s</h4>', nl2br($this->escape($order->getCustomerCompany())));
                                 }
                                 if($order->getCustomerFirstname() || $order->getCustomerLastname())
                                 {
-                                    echo sprintf('%1$s %2$s<br/>', $order->getCustomerFirstname(), $order->getCustomerLastname());
+                                    echo sprintf('%1$s %2$s<br/>', $this->escape($order->getCustomerFirstname()), $this->escape($order->getCustomerLastname()));
                                 }
                                 ?>
-                                <?= $order->getCustomerStreet() ?><br/>
-                                <?= $order->getCustomerZip().' - '.$order->getCustomerCity() ?><br/>
+                                <?= $this->escape($order->getCustomerStreet()) ?><br/>
+                                <?= $this->escape($order->getCustomerZip()) . ' - ' . $this->escape($order->getCustomerCity()) ?><br/>
                                 <?= strtoupper($regionArray[$order->getCustomerCountry()]) ?><br/>
                                 <?php if($order->getCustomer() && method_exists($order->getCustomer(), 'email')): ?>
-                                    <?= sprintf('<a href="mailto:%1$s">%1$s</a>', $order->getCustomer()->getEmail()) ?>
+                                    <?= sprintf('<a href="mailto:%1$s">%1$s</a>', $this->escape($order->getCustomer()->getEmail())) ?>
                                 <?php endif; ?>
                             </address>
                         </div>
@@ -346,15 +346,15 @@ $regionArray = $locale->getDisplayRegions();
                                 $address = [];
                                 if($order->getDeliveryCompany())
                                 {
-                                    echo sprintf('<h4>%1$s</h4>', nl2br($order->getDeliveryCompany()));
+                                    echo sprintf('<h4>%1$s</h4>', nl2br($this->escape($order->getDeliveryCompany())));
                                 }
                                 if($order->getDeliveryFirstname() || $order->getDeliveryLastname())
                                 {
-                                    echo sprintf('%1$s %2$s<br/>', $order->getDeliveryFirstname(), $order->getDeliveryLastname());
+                                    echo sprintf('%1$s %2$s<br/>', $this->escape($order->getDeliveryFirstname()), $this->escape($order->getDeliveryLastname()));
                                 }
                                 ?>
-                                <?= $order->getDeliveryStreet() ?><br/>
-                                <?= $order->getDeliveryZip().' - '.$order->getDeliveryCity() ?><br/>
+                                <?= $this->escape($order->getDeliveryStreet()) ?><br/>
+                                <?= $this->escape($order->getDeliveryZip()) . ' - ' . $this->escape($order->getDeliveryCity()) ?><br/>
                                 <?= strtoupper($regionArray[$order->getDeliveryCountry()]) ?><br/>
                             </address>
                         </div>

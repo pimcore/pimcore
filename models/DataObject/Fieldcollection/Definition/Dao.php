@@ -87,19 +87,21 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if (is_array($value->getColumnType())) {
-                // if a datafield requires more than one field
-                foreach ($value->getColumnType() as $fkey => $fvalue) {
-                    $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                    $protectedColums[] = $key . '__' . $fkey;
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if (is_array($value->getColumnType())) {
+                    // if a datafield requires more than one field
+                    foreach ($value->getColumnType() as $fkey => $fvalue) {
+                        $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $protectedColums[] = $key . '__' . $fkey;
+                    }
+                } else {
+                    if ($value->getColumnType()) {
+                        $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                        $protectedColums[] = $key;
+                    }
                 }
-            } else {
-                if ($value->getColumnType()) {
-                    $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
-                    $protectedColums[] = $key;
-                }
+                $this->addIndexToField($value, $table, 'getColumnType', true, false, true);
             }
-            $this->addIndexToField($value, $table, 'getColumnType', true, false, true);
 
             if ($value instanceof  DataObject\ClassDefinition\Data\Localizedfields) {
                 $value->classSaved(
@@ -116,5 +118,13 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
         $this->tableDefinitions = null;
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $classDefinition
+     */
+    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    {
+        $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);
     }
 }

@@ -26,31 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list.
-     *
-     * @var array
+     * @var array|null
      */
-    public $list = [];
+    protected $list = null;
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * @return array
+     * @return Model\DataObject\Classificationstore\CollectionConfig[]
      */
     public function getList()
     {
+        if ($this->list === null) {
+            $this->getDao()->load();
+        }
+
         return $this->list;
     }
 

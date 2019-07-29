@@ -44,7 +44,7 @@ class Factory
 
         $database = isset($connectionOptions['database']) ? $connectionOptions['database'] : null;
         if (null === $database) {
-            throw new \PHPUnit_Framework_SkippedTestError('Test redis DB is not configured (env var PIMCORE_TEST_CACHE_REDIS_DATABASE)');
+            throw new \PHPUnit\Framework\SkippedTestError('Test redis DB is not configured (env var PIMCORE_TEST_CACHE_REDIS_DATABASE)');
         }
 
         $connection = ConnectionFactory::createConnection($connectionOptions);
@@ -75,7 +75,7 @@ class Factory
      */
     public function createFilesystemAdapterProxyItemPool($defaultLifetime = 0)
     {
-        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime, \Pimcore::getKernel()->getCacheDir());
+        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime, \Pimcore::getKernel()->getCacheDir() . '/pimcore');
 
         return $this->createSymfonyProxyItemPool($filesystemAdapter);
     }

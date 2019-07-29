@@ -23,31 +23,19 @@ use Pimcore\Model\Search\Backend\Data;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $entries;
+    protected $entries = null;
 
     /**
-     * @var array
-     */
-    public $validOrderKeys = [
-        'id',
-        'fullpath',
-        'maintype',
-        'type',
-        'subtype',
-        'published',
-        'creationDate',
-        'modificationDate',
-        'userOwner',
-        'userModification'
-    ];
-
-    /**
-     * @return array
+     * @return Data[]
      */
     public function getEntries()
     {
+        if ($this->entries === null) {
+            $this->getDao()->load();
+        }
+
         return $this->entries;
     }
 
@@ -69,19 +57,5 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     public function __construct()
     {
         $this->initDao('\\Pimcore\\Model\\Search\\Backend\\Data\\Listing');
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        if (in_array($key, $this->validOrderKeys)) {
-            return true;
-        }
-
-        return false;
     }
 }

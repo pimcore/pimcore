@@ -190,13 +190,13 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             var columns = [
                 {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
+                        return '<div style="height: 16px;" class="pimcore_icon_'
                             + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
                 {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
-                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
+                {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         if(record.data.subtype == "image") {

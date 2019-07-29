@@ -152,8 +152,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected function handleVersion(Request $request, Document $document)
     {
         if ($request->get('v')) {
-            try {
-                $version = Version::getById($request->get('v'));
+            if ($version = Version::getById($request->get('v'))) {
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
@@ -162,7 +161,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
                     $document = $version->getData();
                 }
-            } catch (\Exception $e) {
+            } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
                     'version' => $request->get('v'),
                     'document' => $document->getFullPath()
@@ -229,22 +228,22 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // for version preview
         if ($request->get('pimcore_version')) {
             // TODO there was a check with a registry flag here - check if the master request handling is sufficient
-            try {
-                $version = Version::getById($request->get('pimcore_version'));
+            if ($version = Version::getById($request->get('pimcore_version'))) {
                 $document = $version->getData();
 
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
                     'version' => $version->getId(),
                     'document' => $document->getFullPath()
                 ]);
-            } catch (\Exception $e) {
+            } else {
                 $this->logger->warning('Failed to load {version} for document {document} from pimcore_version parameter', [
                     'version' => $request->get('pimcore_version'),
                     'document' => $document->getFullPath()
                 ]);
 
-                // TODO throw a less generic excdption in getById() and only catch that one here
-                throw new NotFoundHttpException($e->getMessage());
+                throw new NotFoundHttpException(
+                    sprintf('Failed to load %s for document %s from pimcore_version parameter',
+                        $request->get('pimcore_version'), $document->getFullPath()));
             }
         }
 

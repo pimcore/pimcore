@@ -28,6 +28,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Video extends Model\Asset
 {
+    use Model\Asset\MetaData\EmbeddedMetaDataTrait;
     /**
      * @var string
      */
@@ -40,23 +41,32 @@ class Video extends Model\Asset
      */
     protected function update($params = [])
     {
+        if ($this->getDataChanged() || !$this->getCustomSetting('duration') || !$this->getCustomSetting('embeddedMetaDataExtracted')) {
+            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
+            // because the file is written in parent::update();
+            $tmpFile = $this->getTemporaryFile();
 
-        // only do this if the file exists and contains data
-        if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
-            try {
-                $this->setCustomSetting('duration', $this->getDurationFromBackend());
-            } catch (\Exception $e) {
-                Logger::err('Unable to get duration of video: ' . $this->getId());
+            if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
+                try {
+                    $this->setCustomSetting('duration', $this->getDurationFromBackend($tmpFile));
+                } catch (\Exception $e) {
+                    Logger::err('Unable to get duration of video: ' . $this->getId());
+                }
             }
+
+            $this->handleEmbeddedMetaData(true, $tmpFile);
         }
 
         $this->clearThumbnails();
         parent::update($params);
     }
 
-    public function delete()
+    /**
+     * @inheritdoc
+     */
+    public function delete(bool $isNested = false)
     {
-        parent::delete();
+        parent::delete($isNested);
         $this->clearThumbnails(true);
     }
 
@@ -69,18 +79,11 @@ class Video extends Model\Asset
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
 
-            // video thumbnails and image previews
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . '/video-image-cache/video_' . $this->getId() . '__*');
-            if (is_array($files)) {
-                foreach ($files as $file) {
-                    unlink($file);
-                }
-            }
-
             $imageFiles = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
             $videoFiles = glob($this->getVideoThumbnailSavePath() . '/video-thumb__' . $this->getId() . '__*');
+            $imageCacheFiles = glob($this->getImageThumbnailSavePath() . '/video-image-cache__' . $this->getId() . '__thumbnail_*');
 
-            $files = array_merge($imageFiles, $videoFiles);
+            $files = array_merge($imageFiles, $videoFiles, $imageCacheFiles);
             foreach ($files as $file) {
                 recursiveDelete($file);
             }
@@ -153,7 +156,7 @@ class Video extends Model\Asset
      * @param null $timeOffset
      * @param null $imageAsset
      *
-     * @return mixed|string
+     * @return Video\ImageThumbnail
      *
      * @throws \Exception
      */
@@ -169,15 +172,21 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return null
+     * @param string|null $filePath
+     *
+     * @return string|null
      *
      * @throws \Exception
      */
-    protected function getDurationFromBackend()
+    protected function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
+            if (!$filePath) {
+                $filePath = $this->getFileSystemPath();
+            }
+
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath());
+            $converter->load($filePath, ['asset' => $this]);
 
             return $converter->getDuration();
         }
@@ -194,7 +203,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath());
+            $converter->load($this->getFileSystemPath(), ['asset' => $this]);
 
             return $converter->getDimensions();
         }

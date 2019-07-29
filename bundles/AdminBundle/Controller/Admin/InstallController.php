@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Tool\Requirements;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,11 +30,11 @@ class InstallController extends AdminController
      * @Route("/check", methods={"GET", "POST"})
      *
      * @param Request $request
-     * @param Connection $db
+     * @param ConnectionInterface $db
      *
      * @return Response
      */
-    public function checkAction(Request $request, Connection $db)
+    public function checkAction(Request $request, ConnectionInterface $db)
     {
         $checksPHP = Requirements::checkPhp();
         $checksFS = Requirements::checkFilesystem();

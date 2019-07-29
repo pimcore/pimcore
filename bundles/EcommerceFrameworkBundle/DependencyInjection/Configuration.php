@@ -17,14 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\DefaultWorkerConfigMapper;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -115,10 +116,6 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-                ->booleanNode('use_legacy_class_mapping')
-                    ->info('If true, the bundle will alias legacy class names (OnlineShop\Framework\*) to the new namespace')
-                    ->defaultFalse()
-                ->end()
                ->integerNode('decimal_scale')
                     ->info('Default scale used for Decimal objects')
                     ->min(0)
@@ -298,7 +295,13 @@ class Configuration implements ConfigurationInterface
                                         ->cannotBeEmpty()
                                         ->defaultValue(CartPriceCalculatorFactory::class)
                                     ->end()
-                                    ->append($this->buildOptionsNode('factory_options'))
+                                    ->append($this->buildOptionsNode(
+                                        'factory_options',
+                                        [
+                                            'class' => CartPriceCalculator::class
+                                        ],
+                                        "'class' defines a class name of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
+                                    ))
                                     ->arrayNode('modificators')
                                         ->info('List price modificators for cart, e.g. for shipping-cost, special discounts, etc. Key is name of modificator.')
                                         ->useAttributeAsKey('name')
@@ -1140,9 +1143,13 @@ class Configuration implements ConfigurationInterface
         return $trackingManager;
     }
 
-    private function buildOptionsNode(string $name = 'options', array $defaultValue = []): NodeDefinition
+    private function buildOptionsNode(string $name = 'options', array $defaultValue = [], string $documentation = null): NodeDefinition
     {
         $node = new VariableNodeDefinition($name);
+        if ($documentation) {
+            $node->info($documentation);
+        }
+
         $node
             ->defaultValue($defaultValue)
             ->treatNullLike([])

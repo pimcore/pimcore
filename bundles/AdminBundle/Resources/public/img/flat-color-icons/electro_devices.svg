@@ -1,4 +1,7 @@
-<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-    <path fill="#3F51B5" d="M39,43H9c-2.2,0-4-1.8-4-4V9c0-2.2,1.8-4,4-4h30c2.2,0,4,1.8,4,4v30C43,41.2,41.2,43,39,43z"/>
-    <path fill="#80DEEA" d="M33.2,5l-9.8,10.1L36,19.3L22.8,31.7l4.3,2.4L15,37l2.3-12.5l2.4,4.3l8-7.8L15,16.8L25.9,5H33.2z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<circle fill="#2878F0" cx="12" cy="12" r="10"/>
+<polygon fill="#FFFFFF" points="17,11 14,11 14,4 7,13 10,13 10,20 "/>
 </svg>

@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
  */
-class Config extends Model\AbstractModel
+class Config extends Model\AbstractModel implements \JsonSerializable
 {
     /**
      * @var string
@@ -110,6 +110,21 @@ class Config extends Model\AbstractModel
     public $creationDate;
 
     /**
+     * @var bool
+     */
+    public $shareGlobally;
+
+    /**
+     * @var string[]
+     */
+    public $sharedUserNames;
+
+    /**
+     * @var string[]
+     */
+    public $sharedRoleNames;
+
+    /**
      * @param $name
      *
      * @return null|Config
@@ -119,22 +134,28 @@ class Config extends Model\AbstractModel
         try {
             $report = new self();
             $report->getDao()->getByName($name);
+
+            return $report;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $report;
     }
 
     /**
+     * @param Model\User|null $user
+     *
      * @return array
      */
-    public static function getReportsList()
+    public static function getReportsList(Model\User $user = null)
     {
         $reports = [];
 
         $list = new Config\Listing();
-        $items = $list->load();
+        if ($user) {
+            $items = $list->getDao()->loadForGivenUser($user);
+        } else {
+            $items = $list->getDao()->load();
+        }
 
         foreach ($items as $item) {
             $reports[] = [
@@ -300,7 +321,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param \string[] $dataSourceConfig
+     * @param string[] $dataSourceConfig
      */
     public function setDataSourceConfig($dataSourceConfig)
     {
@@ -308,7 +329,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
     public function getDataSourceConfig()
     {
@@ -452,5 +473,132 @@ class Config extends Model\AbstractModel
     public function setReportClass($reportClass)
     {
         $this->reportClass = $reportClass;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShareGlobally()
+    {
+        return $this->shareGlobally;
+    }
+
+    /**
+     * @param bool $shareGlobally
+     */
+    public function setShareGlobally($shareGlobally): void
+    {
+        $this->shareGlobally = $shareGlobally;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getSharedUserIds()
+    {
+        $sharedUserIds = [];
+        if ($this->sharedUserNames) {
+            foreach ($this->sharedUserNames as $username) {
+                $user = Model\User::getByName($username);
+                if ($user) {
+                    $sharedUserIds[] = $user->getId();
+                }
+            }
+        }
+
+        return $sharedUserIds;
+    }
+
+    /**
+     * @param int[] $sharedUserIds
+     */
+    public function setSharedUserIds($sharedUserIds): void
+    {
+        $userNames = [];
+        if ($sharedUserIds) {
+            foreach ($sharedUserIds as $id) {
+                $user = Model\User::getById($id);
+                if ($user) {
+                    $userNames[] = $user->getName();
+                }
+            }
+        }
+        $this->sharedUserNames = $userNames;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getSharedRoleIds()
+    {
+        $sharedRoleIds = [];
+        if ($this->sharedRoleNames) {
+            foreach ($this->sharedRoleNames as $name) {
+                $role = Model\User\Role::getByName($name);
+                if ($role) {
+                    $sharedRoleIds[] = $role->getId();
+                }
+            }
+        }
+
+        return $sharedRoleIds;
+    }
+
+    /**
+     * @param int[] $sharedRoleIds
+     */
+    public function setSharedRoleIds($sharedRoleIds): void
+    {
+        $roleNames = [];
+        if ($sharedRoleIds) {
+            foreach ($sharedRoleIds as $id) {
+                $role = Model\User\Role::getById($id);
+                if ($role) {
+                    $roleNames[] = $role->getName();
+                }
+            }
+        }
+        $this->sharedRoleNames = $roleNames;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSharedUserNames()
+    {
+        return $this->sharedUserNames;
+    }
+
+    /**
+     * @param string[] $sharedUserNames
+     */
+    public function setSharedUserNames($sharedUserNames): void
+    {
+        $this->sharedUserNames = $sharedUserNames;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSharedRoleNames()
+    {
+        return $this->sharedRoleNames;
+    }
+
+    /**
+     * @param string[] $sharedRoleNames
+     */
+    public function setSharedRoleNames($sharedRoleNames): void
+    {
+        $this->sharedRoleNames = $sharedRoleNames;
+    }
+
+    public function jsonSerialize()
+    {
+        $data = $this->getObjectVars();
+        $data['sharedUserIds'] = $this->getSharedUserIds();
+        $data['sharedRoleIds'] = $this->getSharedRoleIds();
+
+        return $data;
     }
 }

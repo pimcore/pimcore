@@ -70,6 +70,11 @@ class EmailController extends DocumentControllerBase
         $data = $email->getObjectVars();
         $data['versionDate'] = $email->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($email)], array_values(class_parents($email))),
+            'interfaces' => array_values(class_implements($email))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email

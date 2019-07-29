@@ -29,31 +29,19 @@ class Listing extends Model\Listing\AbstractListing
     protected static $cacheLimit = 5000;
 
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $translations = [];
+    protected $translations = null;
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * @return array
+     * @return \Pimcore\Model\Translation\AbstractTranslation[]
      */
     public function getTranslations()
     {
+        if ($this->translations === null) {
+            $this->getDao()->load();
+        }
+
         return $this->translations;
     }
 

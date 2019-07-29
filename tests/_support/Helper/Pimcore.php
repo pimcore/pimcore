@@ -13,8 +13,8 @@ use Pimcore\Config;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
-use Pimcore\Model\Tool\Setup;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module\Symfony
@@ -39,6 +39,9 @@ class Pimcore extends Module\Symfony
 
             // purge class directory on boot - depends on connect_db
             'purge_class_directory' => true,
+
+            // initializes objects from definitions, only if connect_db and initialize_db
+            'setup_objects' => false
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -161,10 +164,13 @@ class Pimcore extends Module\Symfony
 
         $connection = $this->getDbConnection();
 
-        $connected = false;
         if ($this->config['initialize_db']) {
             // (re-)initialize DB
             $connected = $this->initializeDb($connection);
+            if ($this->config['setup_objects']) {
+                $this->debug('[DB] Initializing objects');
+                $this->kernel->getContainer()->get(ClassDefinitionManager::class)->createOrUpdateClassDefinitions();
+            }
         } else {
             // just try to connect without initializing the DB
             $this->connectDb($connection);

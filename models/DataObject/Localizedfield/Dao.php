@@ -21,6 +21,9 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
 
 /**
@@ -34,6 +37,11 @@ class Dao extends Model\Dao\AbstractDao
      * @var null
      */
     protected $tableDefinitions = null;
+
+    /**
+     * @var DataObject\Concrete\Dao\InheritanceHelper
+     */
+    protected $inheritanceHelper;
 
     /**
      * @return string
@@ -82,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
         // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
-        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
+        if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
             $this->delete(false);
         }
@@ -131,7 +139,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             foreach ($fieldDefinitions as $fd) {
-                if (method_exists($fd, 'save')) {
+                if ($fd instanceof CustomResourcePersistingInterface) {
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
                     if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'objectbrick') {
@@ -143,18 +151,32 @@ class Dao extends Model\Dao\AbstractDao
                         'language' => $language,
                     ];
 
-                    $fd->save($this->model, $childParams);
-                } else {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ((isset($params['saveRelationalData'])
+                                && $params['saveRelationalData']['saveLocalizedRelations']
+                                && $container instanceof DataObject\Fieldcollection\Definition
+                                && !$container instanceof DataObject\Objectbrick\Definition
+                            )
+                            || ($this->model->isLanguageDirty($language) || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                            $fd->save($this->model, $childParams);
+                        }
+                    } else {
+                        $fd->save($this->model, $childParams);
+                    }
+                }
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                     }
                 }
@@ -240,13 +262,17 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd->getQueryColumnType()) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
-                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                        if (!in_array($key, $untouchable)) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
-                            $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+                            $insertData = $fd->getDataForQueryResource(
+                                $localizedValue,
+                                $object,
+                                $this->getFieldDefinitionParams($key, $language)
+                            );
                             $isEmpty = $fd->isEmpty($localizedValue);
 
                             if (is_array($insertData)) {
@@ -386,10 +412,10 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if (method_exists($fd, 'delete')) {
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
-                        if ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') {
+                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }
 
@@ -411,7 +437,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $db = Db::get();
 
-        if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($this->model->allLanguagesAreDirty() ||
+            ($container instanceof DataObject\Fieldcollection\Definition
+            && !$container instanceof DataObject\Objectbrick\Definition)
+            ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
@@ -508,7 +537,7 @@ class Dao extends Model\Dao\AbstractDao
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
                 if ($fd) {
-                    if (method_exists($fd, 'load')) {
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         // datafield has it's own loader
                         $params['language'] = $row['language'];
                         $params['object'] = $object;
@@ -516,25 +545,27 @@ class Dao extends Model\Dao\AbstractDao
                             $params['context'] = [];
                         }
                         $params['context']['object'] = $object;
-                        $value = $fd->load($this->model, $params);
-                        if ($value === 0 || !empty($value)) {
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                        } else {
+                            $value = $fd->load($this->model, $params);
+                            if ($value === 0 || !empty($value)) {
+                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                            }
                         }
-                    } else {
+                    }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                             }
-                            $value = $fd->getDataFromResource($multidata);
+                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         } else {
-                            $value = $fd->getDataFromResource($row[$key]);
+                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        }
-
-                        if ($value instanceof DataObject\OwnerAwareFieldInterface) {
-                            $value->setOwner($this->model, $key, $row['language']);
                         }
                     }
                 }
@@ -680,6 +711,8 @@ QUERY;
             );
         }
 
+        $this->handleEncryption($this->model->getClass(), [$table]);
+
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
 
@@ -700,23 +733,23 @@ QUERY;
 
         $localizedFieldDefinition = $container->getFielddefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFielddefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value->getColumnType()) {
-                $key = $value->getName();
+            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if ($value->getColumnType()) {
+                    $key = $value->getName();
 
-                if (is_array($value->getColumnType())) {
-                    // if a datafield requires more than one field
-                    foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($table, $key.'__'.$fkey, $fvalue, '', 'NULL');
-                        $protectedColumns[] = $key.'__'.$fkey;
-                    }
-                } else {
-                    if ($value->getColumnType()) {
+                    if (is_array($value->getColumnType())) {
+                        // if a datafield requires more than one field
+                        foreach ($value->getColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedColumns[] = $key . '__' . $fkey;
+                        }
+                    } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
                         $protectedColumns[] = $key;
                     }
+
+                    $this->addIndexToField($value, $table, 'getColumnType', true, true);
                 }
-                //TODO
-                $this->addIndexToField($value, $table, 'getColumnType', true, true);
             }
         }
 
@@ -738,6 +771,8 @@ QUERY;
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
+
+                $this->handleEncryption($this->model->getClass(), [$queryTable]);
 
                 // create object table if not exists
                 $protectedColumns = ['ooo_id', 'language'];
@@ -764,7 +799,7 @@ QUERY;
                 // add non existing columns in the table
                 if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
                     foreach ($fieldDefinitions as $value) {
-                        if ($value->getQueryColumnType()) {
+                        if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
                             $key = $value->getName();
 
                             // if a datafield requires more than one column in the query table
@@ -773,16 +808,13 @@ QUERY;
                                     $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                     $protectedColumns[] = $key.'__'.$fkey;
                                 }
-                            }
-
-                            // everything else
-                            if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
+                            } elseif ($value->getQueryColumnType()) {
                                 $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
                                 $protectedColumns[] = $key;
                             }
 
                             // add indices
-                            $this->addIndexToField($value, $queryTable);
+                            $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
                         }
                     }
                 }
@@ -790,10 +822,27 @@ QUERY;
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
             }
+        }
 
+        if ($container instanceof DataObject\ClassDefinition) {
             $this->createLocalizedViews();
         }
 
         $this->tableDefinitions = null;
+    }
+
+    /**
+     * @param string $fieldname
+     * @param string $language
+     *
+     * @return array
+     */
+    private function getFieldDefinitionParams(string $fieldname, string $language)
+    {
+        return [
+            'owner' => $this->model,
+            'fieldname' => $fieldname,
+            'language' => $language,
+        ];
     }
 }

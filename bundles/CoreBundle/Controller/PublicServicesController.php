@@ -14,17 +14,20 @@
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Pimcore\Config;
+use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PublicServicesController extends FrameworkController
+class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
@@ -38,11 +41,14 @@ class PublicServicesController extends FrameworkController
         $filename = $request->get('filename');
         $asset = Asset::getById($assetId);
 
-        if ($asset && $asset->getPath() == ('/' . $request->get('prefix'))) {
+        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
+
+        if ($asset && $asset->getPath() == ('/' . $prefix)) {
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {
                 $page = 1; // default
+                $imageThumbnail = null;
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
 
@@ -77,7 +83,8 @@ class PublicServicesController extends FrameworkController
                     $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
                     $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
-                    $thumbnailFile = $asset->getImageThumbnail($thumbnailConfig, $page)->getFileSystemPath();
+                    $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 } elseif ($asset instanceof Asset\Image) {
                     //check if high res image is called
 
@@ -93,10 +100,11 @@ class PublicServicesController extends FrameworkController
                         $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                     }
 
-                    $thumbnailFile = $asset->getThumbnail($thumbnailConfig)->getFileSystemPath();
+                    $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 }
 
-                if ($thumbnailFile && file_exists($thumbnailFile)) {
+                if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
 
                     // set appropriate caching headers
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
@@ -104,7 +112,8 @@ class PublicServicesController extends FrameworkController
 
                     return new BinaryFileResponse($thumbnailFile, 200, [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
-                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime)
+                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                        'Content-Type' => $imageThumbnail->getMimeType()
                     ]);
                 }
             } catch (\Exception $e) {
@@ -125,16 +134,14 @@ class PublicServicesController extends FrameworkController
     public function robotsTxtAction(Request $request)
     {
         // check for site
-        $site = null;
-        try {
-            $domain = \Pimcore\Tool::getHostname();
-            $site = Site::getByDomain($domain);
-        } catch (\Exception $e) {
-        }
+        $domain = \Pimcore\Tool::getHostname();
+        $site = Site::getByDomain($domain);
 
-        $siteSuffix = '-default';
+        $config = Config::getRobotsConfig()->toArray();
+
+        $siteId = 'default';
         if ($site instanceof Site) {
-            $siteSuffix = '-' . $site->getId();
+            $siteId = $site->getId();
         }
 
         // send correct headers
@@ -143,9 +150,8 @@ class PublicServicesController extends FrameworkController
 
         // check for configured robots.txt in pimcore
         $content = '';
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-        if (is_file($robotsPath)) {
-            $content = file_get_contents($robotsPath);
+        if (array_key_exists($siteId, $config)) {
+            $content = $config[$siteId];
         }
 
         if (empty($content)) {
@@ -198,5 +204,23 @@ class PublicServicesController extends FrameworkController
         } else {
             Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
         }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function customAdminEntryPointAction(Request $request)
+    {
+        $url = $this->generateUrl('pimcore_admin_login');
+        $redirect = new RedirectResponse($url);
+
+        $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
+        if (isset($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
+            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
+        }
+
+        return $redirect;
     }
 }

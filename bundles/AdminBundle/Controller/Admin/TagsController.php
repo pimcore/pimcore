@@ -288,7 +288,7 @@ class TagsController extends AdminController
     /**
      * @param \Pimcore\Model\DataObject\AbstractObject $object
      *
-     * @return mixed
+     * @return int[]
      */
     private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher)
     {
@@ -319,7 +319,7 @@ class TagsController extends AdminController
     /**
      * @param \Pimcore\Model\Asset $asset
      *
-     * @return mixed
+     * @return int[]
      */
     private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher)
     {
@@ -350,7 +350,7 @@ class TagsController extends AdminController
     /**
      * @param \Pimcore\Model\Document $document
      *
-     * @return mixed
+     * @return int[]
      */
     private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher)
     {

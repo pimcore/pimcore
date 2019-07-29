@@ -25,27 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Object|Class
-     *
-     * @var array
+     * @var array|null
      */
-    public $classes;
+    protected $classes = null;
 
     /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * @return array
+     * @return Model\DataObject\ClassDefinition[]
      */
     public function getClasses()
     {
+        if ($this->classes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->classes;
     }
 

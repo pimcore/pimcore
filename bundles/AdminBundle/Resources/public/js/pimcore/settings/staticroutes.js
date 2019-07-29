@@ -70,7 +70,6 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'defaults'},
                 {name:'siteId'},
                 {name:'priority', type:'int'},
-                {name:'legacy', type:'bool'},
                 {name:'creationDate'},
                 {name:'modificationDate'}
             ], null, {
@@ -94,13 +93,6 @@ pimcore.settings.staticroutes = Class.create({
                     }
                 }.bind(this)
             }
-        });
-
-        var legacyCheck = new Ext.grid.column.Check({
-            text: t("legacy_mode"),
-            dataIndex: "legacy",
-            hidden: !pimcore.settings.isLegacyModeAvailable,
-            width: 90
         });
 
         var typesColumns = [
@@ -185,7 +177,8 @@ pimcore.settings.staticroutes = Class.create({
                             var currentRecord = this.grid.getSelection();
                             el.getStore().reload({
                                 params:{
-                                    controllerName:currentRecord[0].data.controller
+                                    controllerName:currentRecord[0].data.controller,
+                                    moduleName: currentRecord[0].data.module
                                 },
                                 callback: function() {
                                     el.expand();
@@ -207,7 +200,6 @@ pimcore.settings.staticroutes = Class.create({
                 mode:"local",
                 triggerAction:"all"
             })},
-            legacyCheck,
             {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
@@ -264,20 +256,23 @@ pimcore.settings.staticroutes = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            tbar:[
-                {
-                    text:t('add'),
-                    handler:this.onAdd.bind(this),
-                    iconCls:"pimcore_icon_add"
-                },
-                "->",
-                {
-                    text:t("filter") + "/" + t("search"),
-                    xtype:"tbtext",
-                    style:"margin: 0 10px 0 0;"
-                },
-                this.filterField
-            ],
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        text:t('add'),
+                        handler:this.onAdd.bind(this),
+                        iconCls:"pimcore_icon_add"
+                    },
+                    "->",
+                    {
+                        text:t("filter") + "/" + t("search"),
+                        xtype:"tbtext",
+                        style:"margin: 0 10px 0 0;"
+                    },
+                    this.filterField
+                ]
+            },
             viewConfig:{
                 forceFit:true
             }

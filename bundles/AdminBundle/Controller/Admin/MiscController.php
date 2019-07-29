@@ -20,6 +20,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
+use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,8 +68,9 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
+        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
         $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, 'AppBundle');
+        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
 
         $result = array_map(function ($controller) {
             return [
@@ -93,12 +95,17 @@ class MiscController extends AdminController
      */
     public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
     {
+        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
-            $bundle = 'AppBundle';
+            $bundle = $routingDefaults['bundle'];
         }
 
         $controller = $request->get('controllerName');
+        if (empty($controller)) {
+            $controller = $routingDefaults['controller'];
+        }
+
         $actions = $provider->getActions($controller, $bundle);
 
         $result = array_map(function ($action) {
@@ -163,7 +170,8 @@ class MiscController extends AdminController
             }
         }
 
-        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';');
+        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
+        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;
@@ -195,21 +203,25 @@ class MiscController extends AdminController
             }
         }
 
-        $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
-        $contentType = 'text/javascript';
-        if ($fileExtension == 'css') {
-            $contentType = 'text/css';
+        if (!empty($scriptsContent)) {
+            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
+            $contentType = 'text/javascript';
+            if ($fileExtension == 'css') {
+                $contentType = 'text/css';
+            }
+
+            $lifetime = 86400;
+
+            $response = new Response($scriptsContent);
+            $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
+            $response->headers->set('Pragma', '');
+            $response->headers->set('Content-Type', $contentType);
+            $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
+
+            return $response;
+        } else {
+            throw $this->createNotFoundException();
         }
-
-        $lifetime = 86400;
-
-        $response = new Response($scriptsContent);
-        $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
-        $response->headers->set('Pragma', '');
-        $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
-
-        return $response;
     }
 
     /**

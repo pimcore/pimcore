@@ -18,11 +18,12 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
-use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * @method \Pimcore\Model\Staticroute\Dao getDao()
+ * @method Staticroute\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Staticroute extends AbstractModel
 {
@@ -80,11 +81,6 @@ class Staticroute extends AbstractModel
      * @var int
      */
     public $priority = 1;
-
-    /**
-     * @var bool
-     */
-    public $legacy = false;
 
     /**
      * @var int
@@ -159,8 +155,6 @@ class Staticroute extends AbstractModel
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
             } catch (\Exception $e) {
-                Logger::error($e);
-
                 return null;
             }
         }
@@ -189,8 +183,6 @@ class Staticroute extends AbstractModel
         try {
             $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
-            Logger::warn($e);
-
             return null;
         }
 
@@ -395,22 +387,6 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @return bool
-     */
-    public function getLegacy()
-    {
-        return $this->legacy;
-    }
-
-    /**
-     * @param bool $legacy
-     */
-    public function setLegacy($legacy)
-    {
-        $this->legacy = (bool)$legacy;
-    }
-
-    /**
      * @param string $name
      *
      * @return $this
@@ -471,13 +447,9 @@ class Staticroute extends AbstractModel
             if ($siteId < 1) {
                 continue;
             }
-            try {
-                $site = Site::getById($siteId);
-                if ($site) {
-                    $result[] = $siteId;
-                }
-            } catch (\Exception $e) {
-                // cleanup
+
+            if ($site = Site::getById($siteId)) {
+                $result[] = $siteId;
             }
         }
 

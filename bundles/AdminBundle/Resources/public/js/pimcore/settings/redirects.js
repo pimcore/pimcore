@@ -286,7 +286,7 @@ pimcore.settings.redirects = Class.create({
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     xtype: "splitbutton",
@@ -368,7 +368,7 @@ pimcore.settings.redirects = Class.create({
                                         maxHeight: 500,
                                         html: message,
                                         autoScroll: true,
-                                        bodyStyle: "padding: 10px; background:#fff;",
+                                        bodyStyle: "padding: 10px;",
                                         buttonAlign: "center",
                                         shadow: false,
                                         closable: false,
@@ -388,6 +388,23 @@ pimcore.settings.redirects = Class.create({
                             }
                         )
                     }
+                },
+                {
+                    text: t("redirects_expired_cleanup"),
+                    iconCls: "pimcore_icon_cleanup",
+                    handler: function () {
+                        Ext.MessageBox.show({
+                            title: t('redirects_expired_cleanup'),
+                            msg: t('redirects_cleanup_warning'),
+                            buttons: Ext.Msg.OKCANCEL,
+                            icon: Ext.MessageBox.INFO,
+                            fn: function (button) {
+                                if (button == "ok") {
+                                    this.cleanupExpiredRedirects();
+                                }
+                            }.bind(this)
+                        });
+                    }.bind(this)
                 },
                 "->",
                 {
@@ -428,6 +445,25 @@ pimcore.settings.redirects = Class.create({
 
 
         return this.grid;
+    },
+
+    cleanupExpiredRedirects: function () {
+        Ext.Ajax.request({
+            url: '/admin/redirects/cleanup',
+            method: 'DELETE',
+            success: function (response) {
+                try{
+                    var data = Ext.decode(response.responseText);
+                    if (data && data.success) {
+                        this.store.reload();
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), t("redirects_cleanup_error"), "error");
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(t("error"), t("redirects_cleanup_error"), "error");
+                }
+            }.bind(this)
+        });
     },
 
     updateRows: function () {

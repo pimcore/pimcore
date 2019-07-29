@@ -44,6 +44,10 @@ pimcore.object.classes.data.externalImage = Class.create(pimcore.object.classes.
         return "pimcore_icon_externalImage";
     },
 
+    getGroup: function () {
+        return "media";
+    },
+
     getLayout: function ($super) {
 
         $super();

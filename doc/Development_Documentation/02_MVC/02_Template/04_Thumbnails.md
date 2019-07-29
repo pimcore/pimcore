@@ -16,11 +16,11 @@ please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_
 
     // Use directly on the asset object - myThumbnail is the name of the thumbnail configured in thumbnail configuration
     $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail("myThumbnail")->getHTML();
+    echo $asset->getThumbnail("myThumbnail")->getHtml();
     
     // Use directly on the asset object using dynamic configuration 
     $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
+    echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHtml();
 ?>
  
  

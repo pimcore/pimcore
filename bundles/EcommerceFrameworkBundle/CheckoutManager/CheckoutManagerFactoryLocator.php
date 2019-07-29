@@ -20,9 +20,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\CheckoutTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class CheckoutManagerFactoryLocator extends CheckoutTenantAwareServiceLocator implements ICheckoutManagerFactoryLocator
+class CheckoutManagerFactoryLocator extends CheckoutTenantAwareServiceLocator implements CheckoutManagerFactoryLocatorInterface
 {
-    public function getCheckoutManagerFactory(string $tenant = null): ICheckoutManagerFactory
+    public function getCheckoutManagerFactory(string $tenant = null): CheckoutManagerFactoryInterface
     {
         return $this->locate($tenant);
     }

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Image\Adapter;
 
+use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
@@ -456,7 +457,10 @@ class Imagick extends Adapter
             }
 
             $this->resource->readImage($this->imagePath);
-            $this->setColorspaceToRGB();
+
+            if (!$this->isPreserveColor()) {
+                $this->setColorspaceToRGB();
+            }
         }
 
         $width = (int)$width;
@@ -625,23 +629,31 @@ class Imagick extends Adapter
      * @param null|string $mode
      *
      * @return $this
+     *
+     * @throws \ImagickException
      */
     public function setBackgroundImage($image, $mode = null)
     {
         $this->preModify();
 
         $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $image = PIMCORE_WEB_ROOT . '/' . $image;
 
         if (is_file($image)) {
             $newImage = new \Imagick();
-            $newImage->readimage($image);
 
-            if ($mode == 'cropTopLeft') {
-                $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+            if ($mode == 'asTexture') {
+                $newImage->newImage($this->getWidth(), $this->getHeight(), new \ImagickPixel());
+                $texture = new \Imagick($image);
+                $newImage = $newImage->textureImage($texture);
             } else {
-                // default behavior (fit)
-                $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+                $newImage->readimage($image);
+                if ($mode == 'cropTopLeft') {
+                    $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+                } else {
+                    // default behavior (fit)
+                    $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+                }
             }
 
             $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
@@ -937,7 +949,6 @@ class Imagick extends Adapter
                         'width' => $matches[1],
                         'height' => $matches[2]
                     ];
-                    break;
                 }
                 $i++;
             }
@@ -958,27 +969,53 @@ class Imagick extends Adapter
         return parent::getVectorRasterDimensions();
     }
 
-    protected $supportedFormatsCache = [];
+    protected static $supportedFormatsCache = [];
 
     /**
      * @inheritdoc
      */
-    public function supportsFormat(string $format)
+    public function supportsFormat(string $format, bool $force = false)
     {
-        if (!isset($this->supportedFormatsCache[$format])) {
-            try {
-                // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;
-                $image = new \Imagick();
-                $image->newImage(100, 100, new \ImagickPixel('red'));
-                $image->writeImage($format . ':' . $tmpFile);
-                $this->supportedFormatsCache[$format] = true;
-                unlink($tmpFile);
-            } catch (\Exception $e) {
-                $this->supportedFormatsCache[$format] = false;
+        if ($force) {
+            return $this->checkFormatSupport($format);
+        }
+
+        if (!isset(self::$supportedFormatsCache[$format])) {
+
+            // since determining if an image format is supported is quite expensive we use two-tiered caching
+            // in-process caching (static variable) and the shared cache
+            $cacheKey = 'imagick_format_' . $format;
+            if (($cachedValue = Cache::load($cacheKey)) !== false) {
+                self::$supportedFormatsCache[$format] = (bool) $cachedValue;
+            } else {
+                self::$supportedFormatsCache[$format] = $this->checkFormatSupport($format);
+
+                // we cache the status as an int, so that we know if the status was cached or not, with bool that wouldn't be possible, since load() returns false if item doesn't exists
+                Cache::save((int) self::$supportedFormatsCache[$format], $cacheKey, [], null, 999, true);
             }
         }
 
-        return $this->supportedFormatsCache[$format];
+        return self::$supportedFormatsCache[$format];
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return bool
+     */
+    protected function checkFormatSupport(string $format): bool
+    {
+        try {
+            // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
+            $image = new \Imagick();
+            $image->newImage(1, 1, new \ImagickPixel('red'));
+            $image->writeImage($format . ':' . $tmpFile);
+            unlink($tmpFile);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

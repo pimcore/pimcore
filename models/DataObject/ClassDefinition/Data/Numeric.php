@@ -17,10 +17,17 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Numeric extends Model\DataObject\ClassDefinition\Data
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType {
+        getColumnType as public genericGetColumnType;
+    }
+    use Extension\QueryColumnType {
+        getQueryColumnType as public genericGetQueryColumnType;
+    }
 
     const DECIMAL_SIZE_DEFAULT = 64;
     const DECIMAL_PRECISION_DEFAULT = 0;
@@ -290,7 +297,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
             return $this->buildDecimalColumnType();
         }
 
-        return parent::getColumnType();
+        return $this->genericGetColumnType();
     }
 
     /**
@@ -306,7 +313,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
             return $this->buildDecimalColumnType();
         }
 
-        return parent::getQueryColumnType();
+        return $this->genericGetQueryColumnType();
     }
 
     public function isDecimalType(): bool
@@ -355,7 +362,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -373,7 +380,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -391,7 +398,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -405,7 +412,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -419,7 +426,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -433,7 +440,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -461,7 +468,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
         }
 
         if (!$this->isEmpty($data) && !is_numeric($data)) {
-            throw new Model\Element\ValidationException('invalid numeric data [' . $data . ']');
+            throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data . '] ');
         }
 
         if (!$this->isEmpty($data) && !$omitMandatoryCheck) {
@@ -559,5 +566,21 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
         }
 
         return (float) $value;
+    }
+
+    /**
+     * @param $object
+     * @param $data
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function preSetData($object, $data, $params = [])
+    {
+        if (!is_null($data) && $this->getDecimalPrecision()) {
+            $data = round($data, $this->getDecimalPrecision());
+        }
+
+        return $data;
     }
 }

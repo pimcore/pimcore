@@ -36,7 +36,7 @@ pimcore.object.classes.layout.iframe = Class.create(pimcore.object.classes.layou
 
         this.layout = new Ext.Panel({
             title: '<b>' + this.getTypeName() + '</b>',
-            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+            bodyStyle: 'padding: 10px;',
             items: [
                 {
                     xtype: "form",

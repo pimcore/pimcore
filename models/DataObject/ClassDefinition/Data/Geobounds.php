@@ -18,9 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
+class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -60,13 +64,13 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -88,13 +92,13 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geobounds|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -102,20 +106,26 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             $ne = new DataObject\Data\Geopoint($data[$this->getName() . '__NElongitude'], $data[$this->getName() . '__NElatitude']);
             $sw = new DataObject\Data\Geopoint($data[$this->getName() . '__SWlongitude'], $data[$this->getName() . '__SWlatitude']);
 
-            return new DataObject\Data\Geobounds($ne, $sw);
+            $geobounds = new DataObject\Data\Geobounds($ne, $sw);
+
+            if (isset($params['owner'])) {
+                $geobounds->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $geobounds;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -123,13 +133,13 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -142,7 +152,7 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             ];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -158,7 +168,7 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -179,7 +189,7 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|DataObject\AbstractObject $object

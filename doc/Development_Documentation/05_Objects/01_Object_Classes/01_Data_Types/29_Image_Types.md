@@ -41,11 +41,22 @@ This one allows you to enter an external image URL which is then shown as a prev
 
 ![External Image Field](../../../img/classes-datatypes-image3.jpg)
 
+
+
+<div class="code-section">
+
 ```php
 <?php if ($object->getExternalImage() instanceof Pimcore\Model\DataObject\Data\ExternalImage) {?>
     <img src="<?= $object->getExternalImage()->getUrl() ?>" />
 <?php } ?>
 ```
+
+```twig
+{% if object.getExternalImage() is instanceof('\\Pimcore\\Model\\DataObject\\Data\\ExternalImage') %}
+    <img src="{{ object.getExternalImage().getUrl() }}" />
+{% endif %}
+```
+</div>
 
 ## Image Gallery
 

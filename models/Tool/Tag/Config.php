@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Tool\Tag;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -99,11 +98,11 @@ class Config extends Model\AbstractModel
         try {
             $tag = new self();
             $tag->getDao()->getByName($name);
+
+            return $tag;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $tag;
     }
 
     /**
@@ -349,25 +348,5 @@ class Config extends Model\AbstractModel
     public function setDisabled($disabled)
     {
         $this->disabled = $disabled;
-    }
-
-    public static function markExpiredTagsAsDisabled()
-    {
-        $currentTime = new \Carbon\Carbon();
-        $tags = new Config\Listing();
-
-        foreach ($tags->load() as $tag) {
-            foreach ($tag->getItems() as $itemKey => $item) {
-                try {
-                    if ($item['date'] && $currentTime->getTimestamp() > $item['date']) {
-                        //disable tag item if expired
-                        $tag->items[$itemKey]['disabled'] = true;
-                        $tag->save();
-                    }
-                } catch (\Exception $e) {
-                    Logger::debug('Unable to process tag' . $tag->name . ', reason: '.$e->getMessage());
-                }
-            }
-        }
     }
 }

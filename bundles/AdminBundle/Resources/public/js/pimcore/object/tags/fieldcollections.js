@@ -79,8 +79,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         var panelConf = {
             autoHeight: true,
-            border: true,
+            border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
+            bodyStyle: 'padding-top: 5px',
             componentCls: "object_field",
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
@@ -90,12 +91,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         this.component = new Ext.Panel(panelConf);
-
-        this.component.addListener("render", function() {
-            if(this.object.data.metaData[this.getName()] && this.object.data.metaData[this.getName()].hasParentValue) {
-                this.addInheritanceSourceButton(this.object.data.metaData[this.getName()]);
-            }
-        }.bind(this));
 
         this.component.on("destroy", function() {
             pimcore.eventDispatcher.unregisterTarget(this.eventDispatcherKey);
@@ -116,7 +111,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     initData: function (response) {
-
         var collectionData = Ext.decode(response.responseText);
         this.fieldcollections = collectionData.fieldcollections;
         this.layoutDefinitions = collectionData.layoutDefinitions;
@@ -124,6 +118,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         if(this.data.length < 1) {
             this.component.add(this.getControls());
         } else {
+            Ext.suspendLayouts();
             for (var i=0; i<this.data.length; i++) {
                 this.addBlockElement(
                     i,
@@ -135,6 +130,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     this.data[i].data,
                     true);
             }
+            Ext.resumeLayouts();
         }
 
         this.component.updateLayout();
@@ -224,8 +220,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             });
 
             if (title) {
-                items.push('->');
-
                 items.push({
                     xtype: "tbtext",
                     text: ts(title)
@@ -375,10 +369,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
-            bodyStyle: "padding:10px;",
+            cls: 'pimcore_fieldcollection_item',
+            bodyStyle: "padding: 5px 5px 5px 0px;",
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
-            border: false,
+            border: true,
             items: items,
             disabled: this.fieldConfig.noteditable
         });

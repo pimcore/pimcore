@@ -225,8 +225,7 @@ Ext.define('pimcore.settings.translationEditor', {
         var eConfig = {};
 
         eConfig.toolbarGroups = [
-            {name: 'clipboard', groups: ['sourcedialog', 'clipboard', 'undo', 'find']},
-            {name: 'basicstyles', groups: ['basicstyles', 'list']},
+            {name: 'basicstyles', groups: ['undo', 'find', 'basicstyles', 'list']},
             '/',
             {name: 'paragraph', groups: ['align', 'indent']},
             {name: 'blocks'},

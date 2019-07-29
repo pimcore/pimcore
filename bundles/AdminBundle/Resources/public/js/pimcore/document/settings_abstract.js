@@ -19,7 +19,7 @@ pimcore.document.settings_abstract = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template","legacy"];
+        var allowedFields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -33,11 +33,17 @@ pimcore.document.settings_abstract = Class.create({
         }
     },
 
-    getContentMasterFields: function () {
+    getContentMasterFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
+
         return {
             xtype:'fieldset',
             title: t('content_master_document'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             labelWidth: 200,
             defaultType: 'textfield',
@@ -145,11 +151,17 @@ pimcore.document.settings_abstract = Class.create({
         };
     },
 
-    getPathAndKeyFields: function () {
+    getPathAndKeyFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
+
         return {
             xtype:'fieldset',
             title: t('path') + ", " + t('key') + " & " + t('id'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             defaultType: 'textfield',
             defaults: {
@@ -179,7 +191,11 @@ pimcore.document.settings_abstract = Class.create({
         };
     },
 
-    getControllerViewFields: function () {
+    getControllerViewFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
 
         var docTypeStore = new Ext.data.Store({
             proxy: {
@@ -192,7 +208,9 @@ pimcore.document.settings_abstract = Class.create({
             },
             fields: ["id","module","controller","action","template",{
                name: 'name',
-               convert: function(v, rec) { return rec['data']['group'] +' > '+ rec['data']['name'] }
+               convert: function(v, rec) {
+                   return (rec['data']['group'] ? t(rec['data']['group']) + ' > ' : '') + t(rec['data']['name']);
+               }
             }]
 
         });
@@ -205,25 +223,22 @@ pimcore.document.settings_abstract = Class.create({
         var updateComboBoxes = function (el) {
             var moduleEl =  Ext.getCmp("pimcore_document_settings_module_" + this.document.id);
             var controllerEl =  Ext.getCmp("pimcore_document_settings_controller_" + this.document.id);
-            controllerEl.getStore().reload({
-                params: {
-                    moduleName: moduleEl.getValue()
-                }
-            });
+            controllerEl.getStore().getProxy().extraParams.moduleName =  moduleEl.getValue();
+            controllerEl.getStore().reload();
 
             var actionEl =  Ext.getCmp("pimcore_document_settings_action_" + this.document.id);
-            actionEl.getStore().reload({
-                params: {
-                    moduleName: moduleEl.getValue(),
-                    controllerName: controllerEl.getValue()
-                }
-            });
+            actionEl.getStore().getProxy().extraParams = {
+                moduleName: moduleEl.getValue(),
+                controllerName: controllerEl.getValue()
+            };
+            actionEl.getStore().reload();
 
         }.bind(this);
 
         var fieldSet = new Ext.form.FieldSet({
             title: t('controller') + ", " + t('action') + " & " + t('template'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             defaults: {
                 labelWidth: 320,
@@ -247,14 +262,14 @@ pimcore.document.settings_abstract = Class.create({
                 },
                 {
                     xtype:'combo',
-                    fieldLabel: t('bundle') + "(" + t('optional') + ")",
+                    fieldLabel: t('bundle') + " (" + t('optional') + ")",
                     itemId: "bundle",
                     displayField: 'name',
                     valueField: 'name',
                     name: "module",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
-                        autoLoad: true,
+                        autoLoad: false,
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
@@ -279,11 +294,10 @@ pimcore.document.settings_abstract = Class.create({
                     displayField: 'name',
                     valueField: 'name',
                     name: "controller",
-                    queryMode: "local",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-controllers",
@@ -317,7 +331,7 @@ pimcore.document.settings_abstract = Class.create({
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-actions",
@@ -334,7 +348,6 @@ pimcore.document.settings_abstract = Class.create({
                     }),
                     triggerAction: "all",
                     id: "pimcore_document_settings_action_" + this.document.id,
-                    queryMode: "local",
                     value: this.document.data.action,
                     matchFieldWidth: false,
                     listConfig: {
@@ -348,10 +361,10 @@ pimcore.document.settings_abstract = Class.create({
                     valueField: 'path',
                     name: "template",
                     disableKeyFilter: true,
-                    queryMode: "local",
+                    queryMode: "remote",
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-templates",
@@ -370,14 +383,6 @@ pimcore.document.settings_abstract = Class.create({
                     }
                 }
             ]
-        });
-
-        fieldSet.add({
-            xtype: "checkbox",
-            fieldLabel: t("legacy_mode"),
-            name: "legacy",
-            checked: this.document.data.legacy,
-            hidden: !pimcore.settings.isLegacyModeAvailable
         });
 
         return fieldSet;

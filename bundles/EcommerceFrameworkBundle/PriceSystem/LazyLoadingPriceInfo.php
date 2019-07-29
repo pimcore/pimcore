@@ -20,10 +20,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 /**
  * Base implementation for a lazy loading price info
  */
-class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
+class LazyLoadingPriceInfo extends AbstractPriceInfo implements PriceInfoInterface
 {
     /**
-     * @var IPriceInfo[]
+     * @var PriceInfoInterface[]
      */
     protected $priceRegistry = [];
 
@@ -37,7 +37,7 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
      *
      * @todo is this necessary?
      */
-    public function getPrice(): IPrice
+    public function getPrice(): PriceInterface
     {
         parent::getPrice();
     }

@@ -26,31 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Glossary
-     *
-     * @var array
+     * @var array|null
      */
-    public $glossary = [];
+    protected $glossary = null;
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * @return array
+     * @return Model\Glossary[]
      */
     public function getGlossary()
     {
+        if ($this->glossary === null) {
+            $this->getDao()->load();
+        }
+
         return $this->glossary;
     }
 

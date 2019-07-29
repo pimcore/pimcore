@@ -25,28 +25,28 @@ class AbstractSetProductEntry
     private $quantity;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     private $product;
 
-    public function __construct(ICheckoutable $product, $quantity = 1)
+    public function __construct(CheckoutableInterface $product, $quantity = 1)
     {
         $this->product = $product;
         $this->quantity = $quantity;
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return void
      */
-    public function setProduct(ICheckoutable $product)
+    public function setProduct(CheckoutableInterface $product)
     {
         $this->product = $product;
     }
 
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {

@@ -18,14 +18,13 @@
 namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
  */
 class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 
     public function getHref()
     {
@@ -35,7 +34,7 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
             ) {
                 // link target is child of hardlink source
                 $c = Model\Document\Hardlink\Service::wrap($this->getObject());
-                if ($c) {
+                if ($c instanceof WrapperInterface) {
                     $hardLink = $this->getHardLinkSource();
                     $c->setHardLinkSource($hardLink);
 

@@ -17,12 +17,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InstallCommand extends AbstractBundleCommand
 {
+    /**
+     * @var PostStateChange
+     */
+    private $postStateChangeHelper;
+
+    public function __construct(PimcoreBundleManager $bundleManager, PostStateChange $postStateChangeHelper)
+    {
+        parent::__construct($bundleManager);
+
+        $this->postStateChangeHelper = $postStateChangeHelper;
+    }
+
     protected function configure()
     {
         $this
@@ -31,22 +45,28 @@ class InstallCommand extends AbstractBundleCommand
             ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to install')
             ->configureFailWithoutErrorOption()
         ;
+
+        PostStateChange::configureStateChangeCommandOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         // sets up installer with console output writer
         $this->setupInstaller($bundle);
 
         try {
-            $bm->install($bundle);
+            $this->bundleManager->install($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully installed', $bundle->getName()));
         } catch (\Exception $e) {
             return $this->handlePrerequisiteError($e->getMessage());
         }
+
+        $this->postStateChangeHelper->runPostStateChangeCommands(
+            $this->io,
+            $this->getApplication()->getKernel()->getEnvironment()
+        );
     }
 }

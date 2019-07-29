@@ -15,28 +15,28 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Exception;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
-use Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
+use Symfony\Component\Lock\Exception\NotSupportedException;
 
-class Agent implements IOrderAgent
+class Agent implements OrderAgentInterface
 {
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
@@ -46,17 +46,17 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var IPaymentManager
+     * @var PaymentManagerInterface
      */
     protected $paymentManager;
 
     /**
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $paymentProvider;
 
@@ -67,8 +67,8 @@ class Agent implements IOrderAgent
 
     public function __construct(
         Order $order,
-        IEnvironment $environment,
-        IPaymentManager $paymentManager
+        EnvironmentInterface $environment,
+        PaymentManagerInterface $paymentManager
     ) {
         $this->order = $order;
         $this->environment = $environment;
@@ -245,7 +245,7 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return IPayment
+     * @return PaymentInterface
      */
     public function getPaymentProvider()
     {
@@ -288,12 +288,12 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      * @param Order $sourceOrder
      *
      * @return $this
      */
-    public function setPaymentProvider(IPayment $paymentProvider, Order $sourceOrder = null)
+    public function setPaymentProvider(PaymentInterface $paymentProvider, Order $sourceOrder = null)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -317,7 +317,7 @@ class Agent implements IOrderAgent
 
         // update authorizedData
         $authorizedData = $paymentProvider->getAuthorizedData();
-        foreach ((array)$authorizedData as $field => $value) { 
+        foreach ((array)$authorizedData as $field => $value) {
             $setter = 'setAuth_' . $field;
             if (method_exists($providerData, $setter)) {
                 $providerData->{$setter}($value);
@@ -353,13 +353,57 @@ class Agent implements IOrderAgent
         $currentPaymentInformation = null;
         if ($paymentInformation) {
             foreach ($paymentInformation as $paymentInfo) {
-                if ($paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_PENDING) {
+                if ($paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_PENDING || $paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_INIT) {
                     return $paymentInfo;
                 }
             }
         }
 
         return null;
+    }
+
+    /**
+     * @param Order $order
+     * @param string $paymentState
+     *
+     * @return PaymentInfo
+     *
+     * @throws UnsupportedException
+     */
+    protected function createNewOrderInformation(Order $order, string $paymentState)
+    {
+        $paymentInformationCollection = $order->getPaymentInfo();
+        if (empty($paymentInformationCollection)) {
+            $paymentInformationCollection = new Fieldcollection();
+            $order->setPaymentInfo($paymentInformationCollection);
+        }
+
+        $currentPaymentInformation = new PaymentInfo();
+        $currentPaymentInformation->setPaymentStart(new \DateTime());
+        $currentPaymentInformation->setPaymentState($paymentState);
+        $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
+
+        $paymentInformationCollection->add($currentPaymentInformation);
+
+        return $currentPaymentInformation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function initPayment()
+    {
+        $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
+
+        if (!empty($currentPaymentInformation)) {
+            throw new NotSupportedException('There is an existing Payment Information with State ' . $currentPaymentInformation->getPaymentState());
+        }
+
+        $order = $this->getOrder();
+        $currentPaymentInformation = $this->createNewOrderInformation($order, order::ORDER_STATE_PAYMENT_INIT);
+        $order->save(['versionNote' => 'Agent::initPayment - save order to add new PaymentInformation.']);
+
+        return $currentPaymentInformation;
     }
 
     /**
@@ -375,6 +419,8 @@ class Agent implements IOrderAgent
         $order = $this->getOrder();
         $currentInternalPaymentId = $this->generateInternalPaymentId();
 
+        $orderSaveNeeded = false;
+
         //create new payment information when
         // a) no payment information is available or
         // b) internal payment id does not fit anymore (which is a hint that order has changed)
@@ -387,21 +433,22 @@ class Agent implements IOrderAgent
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' - cancelled due to change of order fingerprint');
 
             $currentPaymentInformation = null;
+
+            $orderSaveNeeded = true;
         }
 
         if (empty($currentPaymentInformation)) {
-            $paymentInformationCollection = $order->getPaymentInfo();
-            if (empty($paymentInformationCollection)) {
-                $paymentInformationCollection = new Fieldcollection();
-                $order->setPaymentInfo($paymentInformationCollection);
-            }
+            $currentPaymentInformation = $this->createNewOrderInformation($order, $order::ORDER_STATE_PAYMENT_PENDING);
+            $orderSaveNeeded = true;
+        }
 
-            $currentPaymentInformation = new PaymentInfo();
-            $currentPaymentInformation->setPaymentStart(new \DateTime());
+        if ($currentPaymentInformation->getPaymentState() == $order::ORDER_STATE_PAYMENT_INIT) {
             $currentPaymentInformation->setPaymentState($order::ORDER_STATE_PAYMENT_PENDING);
-            $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
+            $orderSaveNeeded = true;
+        }
 
-            $paymentInformationCollection->add($currentPaymentInformation);
+        if ($orderSaveNeeded) {
+            $order->save(['versionNote' => 'Agent::startPayment - save order to update PaymentInformation.']);
         }
 
         return $currentPaymentInformation;
@@ -472,14 +519,14 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param IStatus $status
+     * @param StatusInterface $status
      *
      * @return $this
      *
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function updatePayment(IStatus $status)
+    public function updatePayment(StatusInterface $status)
     {
         //log this for documentation
         \Pimcore\Log\Simple::log('update-payment', 'Update payment called with status: ' . print_r($status, true));
@@ -571,10 +618,10 @@ class Agent implements IOrderAgent
     /**
      * Hook to extract and save additional information in payment information
      *
-     * @param IStatus $status
+     * @param StatusInterface $status
      * @param PaymentInfo $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(IStatus $status, PaymentInfo $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(StatusInterface $status, PaymentInfo $currentPaymentInformation)
     {
     }
 

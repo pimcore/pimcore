@@ -86,6 +86,10 @@ class StringContains extends AbstractOperator
      */
     public function contains($value)
     {
+        $needle = $this->getSearch();
+        if (empty($needle)) {
+            return false;
+        }
         if ($this->getInsensitive()) {
             return stripos($value, $this->getSearch()) !== false;
         } else {

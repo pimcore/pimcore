@@ -18,12 +18,11 @@
 namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
  */
 class Printpage extends Model\Document\Printpage implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 }

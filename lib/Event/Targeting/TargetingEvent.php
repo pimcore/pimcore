@@ -26,7 +26,7 @@ class TargetingEvent extends Event
     /**
      * @var VisitorInfo
      */
-    private $visitorInfo;
+    protected $visitorInfo;
 
     public function __construct(VisitorInfo $visitorInfo)
     {

@@ -97,6 +97,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.fieldConfig.fieldtype = "panel";
 
         var wrapperConfig = {
+            bodyCls: "pimcore_object_tag_classification_store",
             border: true,
             style: "margin-bottom: 10px",
             layout: "fit"
@@ -118,7 +119,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var tbarItems = [];
 
-        if (!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable && !this.fieldConfig.disallowAddRemove) {
             tbarItems.push(
                 {
                     xtype: 'button',
@@ -461,7 +462,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         };
 
         var tools = [];
-        if (!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable && !this.fieldConfig.disallowAddRemove) {
             tools.push(
                 {
                     type: 'close',

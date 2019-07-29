@@ -16,6 +16,9 @@ if(typeof window['t'] !== 'function') {
     window.t = function(v) { return v; };
 }
 
+
+Ext.form.field.Date.prototype.startDay = 1;
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 
@@ -267,7 +270,7 @@ Ext.define('pimcore.tree.View', {
 
     doUpdatePaging: function(node) {
 
-        if (node.data.expanded) {
+        if (node.data.expanded && node.needsPaging) {
 
             node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
                     node: node,
@@ -390,6 +393,8 @@ Ext.define('pimcore.data.PagingTreeStore', {
                     offset: data.offset,
                     limit: data.limit
                 }
+            } else {
+                node.needsPaging = false;
             }
 
             me.superclass.onProxyLoad.call(this, operation);

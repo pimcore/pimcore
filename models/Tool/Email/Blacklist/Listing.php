@@ -26,25 +26,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $items = [];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
+    protected $items = null;
 
     /**
      * @param $items
@@ -59,10 +43,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Tool\Email\Blacklist[]
      */
     public function getItems()
     {
+        if ($this->items === null) {
+            $this->getDao()->load();
+        }
+
         return $this->items;
     }
 }

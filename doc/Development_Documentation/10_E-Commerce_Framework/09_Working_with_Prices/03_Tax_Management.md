@@ -38,18 +38,18 @@ other aspects.
 
 
 ### Tax Calculation with `TaxCalculationService`
-The actual tax calculation is done in the `TaxCalculationService::updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET)` 
+The actual tax calculation is done in the `TaxCalculationService::updateTaxes(PriceInterface $price, $calculationMode = self::CALCULATION_FROM_NET)` 
 method. It updates taxes in given price object by using its tax entries, tax combination mode and net or gross amount 
 based on the given `$calculationMode`.
 
 The calculation is done by the framework in two places:
  - By Price Systems when creating the `PriceInfo` objects
- - By `IPrice` objects when `setAmount`, `setGrossAmount` or `setNetAmount` is called and `$recalc` is set to true.
+ - By `PriceInterface` objects when `setAmount`, `setGrossAmount` or `setNetAmount` is called and `$recalc` is set to true.
 
 
-### The `IPrice` object
-Every price in the E-Commerce Framework comes down to an `IPrice` object. Therefore also all calculated taxes and all
-necessary information for calculating taxes is stored in `IPrice` objects. Following methods are important:
+### The `PriceInterface` object
+Every price in the E-Commerce Framework comes down to an `PriceInterface` object. Therefore also all calculated taxes and all
+necessary information for calculating taxes is stored in `PriceInterface` objects. Following methods are important:
 - `getTaxEntries()`, `setTaxEntries($taxEntries)`: Sets and gets tax entries for price. Each price can have one or more 
    tax entries based on the tax laws. Each of these tax entries contain percent rate and calculated amount. 
    The order of the tax entries is important.
@@ -59,7 +59,7 @@ necessary information for calculating taxes is stored in `IPrice` objects. Follo
    - `TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER`: For each tax rate calculate tax amount, add it to total price and 
       then calculate tax amount for next tax rate based on new total sum.
    - `TaxEntry::CALCULATION_MODE_FIXED`: Amounts and percent rates are fixed and cannot be (re)calculated based on 
-      information within the `IPrice` object. This mode is needed for `subTotal` and `grandTotal` in `CartPriceCalculator`.   
+      information within the `PriceInterface` object. This mode is needed for `subTotal` and `grandTotal` in `CartPriceCalculator`.   
 - `getGrossAmount()`, `setGrossAmount($grossAmount, $recalc = false)`: Sets and gets gross amount of price. If `$recalc` 
    is set to `true`, corresponding net price is calculated based on tax entries and tax entry combination mode.
 - `getNetAmount()`, `setNetAmount($netAmount, $recalc = false)`: Sets and gets net amount of price. If `$recalc` is set 
@@ -80,7 +80,7 @@ selection.
 
 ### Tax Calculation in `CartPriceModificators`
 The `CartPriceModificators` themselves can decide if the modification should be done as net or gross amount since the 
-interface `IModificatedPrice` extends `IPrice` and therefore all tax related information as explained above.
+interface `ModificatedPriceInterface` extends `PriceInterface` and therefore all tax related information as explained above.
 The method `getTaxClassForPriceModification` in Price Systems can be used to delegate the tax class selection to Price 
 Systems.
 

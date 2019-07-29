@@ -15,7 +15,6 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
@@ -289,29 +288,11 @@ class Tool
      */
     public static function getRoutingDefaults()
     {
-        $config = Config::getSystemConfig();
+        $container = \Pimcore::getContainer();
+        $routingDefaults = $container->getParameter('pimcore.routing.defaults');
+        $routingDefaults['module'] = $routingDefaults['bundle'];
 
-        if ($config) {
-            // system default
-            $routingDefaults = [
-                'controller' => 'Default',
-                'action' => 'default',
-                'module' => PIMCORE_SYMFONY_DEFAULT_BUNDLE
-            ];
-
-            // get configured settings for defaults
-            $systemRoutingDefaults = $config->documents->toArray();
-
-            foreach ($routingDefaults as $key => $value) {
-                if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
-                    $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
-                }
-            }
-
-            return $routingDefaults;
-        } else {
-            return [];
-        }
+        return $routingDefaults;
     }
 
     /**
@@ -375,18 +356,6 @@ class Tool
         return \Pimcore::getContainer()
             ->get('pimcore.http.request_helper')
             ->isFrontendRequestByAdmin($request);
-    }
-
-    /**
-     * @deprecated Just a BC compatibility method
-     *
-     * @param Request|null $request
-     *
-     * @return bool
-     */
-    public static function isFrontentRequestByAdmin(Request $request = null)
-    {
-        return self::isFrontendRequestByAdmin($request);
     }
 
     /**
@@ -650,51 +619,6 @@ class Tool
     }
 
     /**
-     * @deprecated Use the Pimcore\Cache\Symfony\CacheClearer service
-     *
-     * @param Container|null $container
-     */
-    public static function clearSymfonyCache(Container $container = null)
-    {
-        if (count(func_get_args()) > 1) {
-            @trigger_error(
-                sprintf(
-                    'The $envSpecific flag for Tool::clearSymfonyCache is not supported anymore. Please use the %s service instead.',
-                    CacheClearer::class
-                ),
-                E_USER_DEPRECATED
-            );
-        }
-
-        if (!$container) {
-            $container = \Pimcore::getContainer();
-        }
-
-        $kernel = $container->get('kernel');
-
-        $clearer = $container->get(CacheClearer::class);
-        $clearer->clear($kernel->getEnvironment());
-    }
-
-    /**
-     * @deprecated Will be removed in Pimcore 6
-     */
-    public static function getSymfonyCacheDirRemoveTempLocation(string $realCacheDir): string
-    {
-        @trigger_error(
-            sprintf(
-                'The Tool::getSymfonyCacheDirRemoveTempLocation() method is deprecated and will be removed in Pimcore 6. Please use the %s service instead.',
-                CacheClearer::class
-            ),
-            E_USER_DEPRECATED
-        );
-
-        // the temp cache dir name must not be longer than the real one to avoid exceeding
-        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
-        return substr($realCacheDir, 0, -1) . ('~' === substr($realCacheDir, -1) ? '+' : '~');
-    }
-
-    /**
      * @static
      *
      * @param $class
@@ -772,22 +696,5 @@ class Tool
         }
 
         die($message);
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        if (class_exists('Pimcore\\Tool\\Legacy')) {
-            return forward_static_call_array('Pimcore\\Tool\\Legacy::' . $name, $arguments);
-        }
-
-        throw new \Exception('Call to undefined static method ' . $name . ' on class Pimcore\\Tool');
     }
 }

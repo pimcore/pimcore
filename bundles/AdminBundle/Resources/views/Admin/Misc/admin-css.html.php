@@ -23,7 +23,7 @@
             $treetype = $cv["treetype"] ? $cv["treetype"] : "object";
             ?>
     .pimcore_<?= $treetype ?>_customview_icon_<?= $cv["id"]; ?> {
-        background: url(<?= $cv["icon"]; ?>) left center no-repeat !important;
+        background: url(<?= $cv["icon"]; ?>) center center no-repeat !important;
     }
     <?php } ?>
 
@@ -66,6 +66,10 @@
         $interfaceColor = $systemConfig->branding->color_admin_interface;
     ?>
         #pimcore_signet {
+            background-color: <?= $interfaceColor ?> !important;
+        }
+
+        #pimcore_avatar {
             background-color: <?= $interfaceColor ?> !important;
         }
 

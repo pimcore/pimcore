@@ -80,14 +80,14 @@ abstract class Data
                     $noteList[] = Element\Service::getNoteData($note);
                 }
             }
-            $this->notes = $noteList;
+            $this->{'notes'} = $noteList;
         }
     }
 
     /**
-     * @param $value
+     * @param array $value
      *
-     * @return array
+     * @return \Pimcore\Model\Property[]
      */
     private function mapProperties($value)
     {
@@ -99,7 +99,8 @@ abstract class Data
                     $newProperty = new Model\Property();
                     $vars = get_object_vars($property);
                     foreach ($vars as $varName => $varValue) {
-                        $newProperty->$varName = $property->$varName;
+                        $method = 'set' . ucfirst($varName);
+                        $newProperty->$method($property->$varName);
                     }
                     $result[] = $newProperty;
                 } else {
@@ -123,7 +124,7 @@ abstract class Data
     {
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
-            $method = 'set' . $key;
+            $method = 'set' . ucfirst($key);
             if (method_exists($object, $method)) {
                 if ($object instanceof Element\ElementInterface && $key == 'properties') {
                     $value = $this->mapProperties($value);
@@ -137,7 +138,7 @@ abstract class Data
             $object->setProperties(null);
         }
 
-        if (is_array($this->properties)) {
+        if (isset($this->properties) && is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 

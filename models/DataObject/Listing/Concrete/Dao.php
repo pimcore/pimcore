@@ -43,7 +43,9 @@ class Dao extends Model\DataObject\Listing\Dao
      */
     protected $totalCount = 0;
 
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
@@ -94,7 +96,7 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return array
+     * @return int[]
      *
      * @throws
      */
@@ -110,7 +112,7 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @param $e
      *
-     * @return array
+     * @return int[]
      *
      * @throws
      * @throws \Exception

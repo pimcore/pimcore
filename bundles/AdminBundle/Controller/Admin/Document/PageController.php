@@ -19,12 +19,10 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -82,6 +80,11 @@ class PageController extends DocumentControllerBase
         $data = $page->getObjectVars();
         $data['versionDate'] = $page->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
+            'interfaces' => array_values(class_implements($page))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page
@@ -111,24 +114,7 @@ class PageController extends DocumentControllerBase
             if ($request->get('id')) {
                 $page = Document\Page::getById($request->get('id'));
 
-                // check if there's a document in session which should be used as data-source
-                // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
-                // outdated and unused data elements in this document (eg. entries of area-blocks)
-                $pageSession = Session::useSession(function (AttributeBagInterface $session) use ($page) {
-                    $documentKey = 'document_' . $page->getId();
-                    $useForSaveKey = 'document_' . $page->getId() . '_useForSave';
-
-                    if ($session->has($documentKey) && $session->has($useForSaveKey)) {
-                        if ($session->get($useForSaveKey)) {
-                            // only use the page from the session once
-                            $session->remove($useForSaveKey);
-
-                            return $session->get($documentKey);
-                        }
-                    }
-
-                    return null;
-                }, 'pimcore_documents');
+                $pageSession = $this->getFromSession($page);
 
                 if ($pageSession) {
                     $page = $pageSession;

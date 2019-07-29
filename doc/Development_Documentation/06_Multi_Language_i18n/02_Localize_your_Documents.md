@@ -19,7 +19,7 @@ Since the language is a simple property you can access it like every other prope
  $language = $this->document->getProperty("language");
   
  // in your view
- $this->getLocale():
+ $this->getLocale();
  // or 
  $language = $this->document->getProperty("language");
   

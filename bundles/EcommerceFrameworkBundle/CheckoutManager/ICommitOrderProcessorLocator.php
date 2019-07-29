@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-interface ICommitOrderProcessorLocator
-{
-    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CommitOrderProcessorLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasCommitOrderProcessor(string $tenant): bool;
+class_exists(CommitOrderProcessorLocatorInterface::class);
+
+if (false) {
+    /**
+     * @deprecated use CommitOrderProcessorLocatorInterface instead.
+     */
+    interface ICommitOrderProcessorLocator
+    {
+    }
 }

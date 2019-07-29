@@ -132,7 +132,7 @@ class Config extends Model\AbstractModel
             } catch (\Exception $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
 
-                return false;
+                return null;
             }
         } elseif (is_array($config)) {
             // check if it is a legacy config or a new one
@@ -166,9 +166,7 @@ class Config extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->setName($name);
-                $thumbnail->getDao()->getByName();
-
+                $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (\Exception $e) {
                 return null;
@@ -191,17 +189,26 @@ class Config extends Model\AbstractModel
      */
     public static function getPreviewConfig($hdpi = false)
     {
-        $thumbnail = new self();
-        $thumbnail->setName('pimcore-system-treepreview');
-        $thumbnail->addItem('scaleByWidth', [
-            'width' => 400
-        ]);
-        $thumbnail->addItem('setBackgroundImage', [
-            'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
-            'mode' => 'cropTopLeft'
-        ]);
-        $thumbnail->setQuality(60);
-        $thumbnail->setFormat('PJPEG');
+        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $thumbnail = null;
+
+        if ($customPreviewImageThumbnail) {
+            $thumbnail = self::getByName($customPreviewImageThumbnail);
+        }
+
+        if (!$thumbnail) {
+            $thumbnail = new self();
+            $thumbnail->setName('pimcore-system-treepreview');
+            $thumbnail->addItem('scaleByWidth', [
+                'width' => 400
+            ]);
+            $thumbnail->addItem('setBackgroundImage', [
+                'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
+                'mode' => 'asTexture'
+            ]);
+            $thumbnail->setQuality(60);
+            $thumbnail->setFormat('PJPEG');
+        }
 
         if ($hdpi) {
             $thumbnail->setHighResolution(2);
@@ -494,7 +501,7 @@ class Config extends Model\AbstractModel
     /**
      * This is just for compatibility, this method will be removed with the next major release
      *
-     * @depricated
+     * @deprecated
      * @static
      *
      * @param $config
@@ -600,16 +607,22 @@ class Config extends Model\AbstractModel
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
                         $arg = $transformation['arguments'];
+
+                        $forceResize = false;
+                        if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
+                            $forceResize = true;
+                        }
+
                         if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                             $dimensions['width'] = $arg['width'];
                             $dimensions['height'] = $arg['height'];
                         } elseif ($transformation['method'] == 'scaleByWidth') {
-                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic()) {
+                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
                                 $dimensions['width'] = $arg['width'];
                             }
                         } elseif ($transformation['method'] == 'scaleByHeight') {
-                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic()) {
+                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
                                 $dimensions['height'] = $arg['height'];
                             }
@@ -617,7 +630,7 @@ class Config extends Model\AbstractModel
                             $x = $dimensions['width'] / $arg['width'];
                             $y = $dimensions['height'] / $arg['height'];
 
-                            if ($x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
+                            if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
                                 continue;
                             }
 

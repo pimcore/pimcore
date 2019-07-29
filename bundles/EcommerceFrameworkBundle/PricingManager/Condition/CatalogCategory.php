@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class CatalogCategory extends AbstractObjectListCondition implements ICategory
+class CatalogCategory extends AbstractObjectListCondition implements CategoryInterface
 {
     /**
      * @var AbstractCategory[]
@@ -35,7 +35,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @param AbstractCategory[] $categories
      *
-     * @return ICategory
+     * @return CategoryInterface
      */
     public function setCategories(array $categories)
     {
@@ -78,7 +78,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {
@@ -115,11 +115,11 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         foreach ($environment->getCategories() as $category) {
             /* @var AbstractCategory $category */

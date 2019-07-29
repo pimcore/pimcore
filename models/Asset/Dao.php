@@ -17,17 +17,15 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 /**
  * @property \Pimcore\Model\Asset $model
  */
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
@@ -77,95 +75,70 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * Create a the new object in database, an get the new assigned ID
-     *
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            $this->db->insert('assets', [
-                'filename' => $this->model->getFilename(),
-                'path' => $this->model->getRealPath(),
-                'parentId' => $this->model->getParentId()
-            ]);
+        $this->db->insert('assets', [
+            'filename' => $this->model->getFilename(),
+            'path' => $this->model->getRealPath(),
+            'parentId' => $this->model->getParentId()
+        ]);
 
-            $this->model->setId($this->db->lastInsertId());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->model->setId($this->db->lastInsertId());
     }
 
-    /**
-     * Update data from object to the database
-     *
-     * @throws \Exception
-     */
     public function update()
     {
-        try {
-            $this->model->setModificationDate(time());
+        $this->model->setModificationDate(time());
 
-            $asset = $this->model->getObjectVars();
+        $asset = $this->model->getObjectVars();
 
-            foreach ($asset as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('assets'))) {
-                    if (is_array($value)) {
-                        $value = \Pimcore\Tool\Serialize::serialize($value);
-                    }
-                    $data[$key] = $value;
+        foreach ($asset as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('assets'))) {
+                if (is_array($value)) {
+                    $value = Serialize::serialize($value);
+                }
+                $data[$key] = $value;
+            }
+        }
+
+        // metadata
+        $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        $metadata = $this->model->getMetadata();
+        $data['hasMetaData'] = 0;
+        if (!empty($metadata)) {
+            foreach ($metadata as $metadataItem) {
+                $metadataItem['cid'] = $this->model->getId();
+                unset($metadataItem['config']);
+
+                if ($metadataItem['data'] instanceof Model\Element\ElementInterface) {
+                    $metadataItem['data'] = $metadataItem['data']->getId();
+                }
+
+                $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
+
+                if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
+                    $this->db->insert('assets_metadata', $metadataItem);
+                    $data['hasMetaData'] = 1;
                 }
             }
+        }
 
-            // metadata
-            $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
-            $metadata = $this->model->getMetadata();
-            $data['hasMetaData'] = 0;
-            if (!empty($metadata)) {
-                foreach ($metadata as $metadataItem) {
-                    $metadataItem['cid'] = $this->model->getId();
-                    unset($metadataItem['config']);
+        $this->db->insertOrUpdate('assets', $data);
 
-                    if ($metadataItem['data'] instanceof Model\Element\ElementInterface) {
-                        $metadataItem['data'] = $metadataItem['data']->getId();
-                    }
-
-                    if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
-                        $this->db->insert('assets_metadata', $metadataItem);
-                        $data['hasMetaData'] = 1;
-                    }
-                }
-            }
-
-            $this->db->insertOrUpdate('assets', $data);
-
-            // tree_locks
-            $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'asset']);
-            if ($this->model->getLocked()) {
-                $this->db->insert('tree_locks', [
-                    'id' => $this->model->getId(),
-                    'type' => 'asset',
-                    'locked' => $this->model->getLocked()
-                ]);
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        // tree_locks
+        $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'asset']);
+        if ($this->model->getLocked()) {
+            $this->db->insert('tree_locks', [
+                'id' => $this->model->getId(),
+                'type' => 'asset',
+                'locked' => $this->model->getLocked()
+            ]);
         }
     }
 
-    /**
-     * Remove the object from database
-     *
-     * @throws \Exception
-     */
     public function delete()
     {
-        try {
-            $this->db->delete('assets', ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('assets', ['id' => $this->model->getId()]);
     }
 
     public function updateWorkspaces()
@@ -178,11 +151,13 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @internal
+     *
      * @param $oldPath
      *
      * @return array
      */
-    public function updateChildsPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
         $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($oldPath . '%'));
@@ -328,20 +303,18 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
-        if ($this->model instanceof Folder) {
-            $versionCount = $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
-        } else {
-            $db = Db::get();
-            $versionCount = $db->fetchOne(
-                'SELECT GREATEST(a.versionCount, IFNULL(v.versionCount, 0)) FROM assets as a LEFT JOIN versions as v
-                        ON ctype="asset" AND v.cid=a.id WHERE a.id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
+        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
+
+        if (!$this->model instanceof Folder) {
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'asset'", $this->model->getId());
+            $versionCount = max($versionCount, $versionCount2);
         }
 
         return (int) $versionCount;
     }
 
     /**
-     * quick test if there are childs
+     * quick test if there are children
      *
      * @return bool
      */
@@ -365,7 +338,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * returns the amount of directly childs (not recursivly)
+     * returns the amount of directly children (not recursivly)
      *
      * @param Model\User $user
      *
@@ -465,7 +438,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') AND `' . $type . '`=1 ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
@@ -473,14 +446,14 @@ class Dao extends Model\Element\Dao
 
             // exception for list permission
             if (empty($permissionsParent) && $type == 'list') {
-                // check for childs with permissions
+                // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
                     $path = '/';
                 }
 
-                $permissionsChilds = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
-                if ($permissionsChilds) {
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
+                if ($permissionsChildren) {
                     return true;
                 }
             }
@@ -489,6 +462,12 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    public function updateCustomSettings()
+    {
+        $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
+        $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
 
     /**

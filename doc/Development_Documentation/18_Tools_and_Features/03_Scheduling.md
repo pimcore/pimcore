@@ -36,7 +36,7 @@ And the effect in the database:
 '7', '76', 'object', '1474034700', 'publish', NULL, '1'
 ```
 
-When the `pimcore/cli/maintenance.php` script will finish processing jobs you could see the changes.
+When the `./bin/console pimcore:maintenance -j scheduledtasks` script will finish processing jobs you could see the changes.
 
 In the edit object view:
 

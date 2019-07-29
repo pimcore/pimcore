@@ -65,7 +65,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + this.id;
 
-        var iconClass = "pimcore_icon_asset";
+        var iconClass = "pimcore_icon_asset_default pimcore_icon_" + this.data.fileExtension;
         if (this.data.type == "folder") {
             iconClass = "pimcore_icon_folder";
         }
@@ -149,7 +149,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     },{
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this, "scheduler")
+                        handler: this.save.bind(this, "scheduler"),
+                        hidden: !this.isAllowed("settings")
                     }
                     ]
                 });
@@ -164,7 +165,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (this.isAllowed("delete") && !this.data.locked) {
                 this.toolbarButtons.remove = new Ext.Button({
                     tooltip: t('delete'),
-                    iconCls: "pimcore_icon_delete",
+                    iconCls: "pimcore_material_icon_delete pimcore_material_icon",
                     scale: "medium",
                     handler: this.remove.bind(this)
                 });
@@ -174,7 +175,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (this.isAllowed("rename") && !this.data.locked) {
                 this.toolbarButtons.rename = new Ext.Button({
                     tooltip: t('rename'),
-                    iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                    iconCls: "pimcore_material_icon_rename pimcore_material_icon",
                     scale: "medium",
                     handler: this.rename.bind(this)
                 });
@@ -184,7 +185,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
                     tooltip: t("upload_new_version"),
-                    iconCls: "pimcore_icon_upload",
+                    iconCls: "pimcore_material_icon_upload pimcore_material_icon",
                     scale: "medium",
                     handler: function () {
                         pimcore.elementservice.replaceAsset(this.data.id, function () {
@@ -197,7 +198,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             buttons.push({
                 tooltip: t("download"),
-                iconCls: "pimcore_icon_download",
+                iconCls: "pimcore_material_icon_download pimcore_material_icon",
                 scale: "medium",
                 handler: function () {
                     pimcore.helpers.download("/admin/asset/download?id=" + this.data.id);
@@ -206,7 +207,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             buttons.push({
                 tooltip: t('reload'),
-                iconCls: "pimcore_icon_reload",
+                iconCls: "pimcore_material_icon_reload pimcore_material_icon",
                 scale: "medium",
                 handler: this.reload.bind(this)
             });
@@ -214,24 +215,26 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             if (pimcore.elementservice.showLocateInTreeButton("asset")) {
                 buttons.push({
                     tooltip: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_material_icon_locate pimcore_material_icon",
                     scale: "medium",
                     handler: this.selectInTree.bind(this)
                 });
             }
 
             buttons.push({
+                xtype: "splitbutton",
                 tooltip: t("show_metainfo"),
-                iconCls: "pimcore_icon_info",
+                iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
-                handler: this.showMetaInfo.bind(this)
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
             });
 
             // only for videos and images
             if (this.isAllowed("publish") && in_array(this.data.type,["image","video"]) || this.data.mimetype == "application/pdf") {
                 buttons.push({
                     tooltip: t("clear_thumbnails"),
-                    iconCls: "pimcore_icon_menu_clear_thumbnails",
+                    iconCls: "pimcore_material_icon_clear_thumbnails pimcore_material_icon",
                     scale: "medium",
                     handler: function () {
                         Ext.Ajax.request({
@@ -259,7 +262,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 id: "asset_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "main-toolbar",
+                cls: "pimcore_main_toolbar",
                 items: buttons,
                 overflowHandler: 'scroller'
             });
@@ -410,42 +413,60 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         pimcore.helpers.closeAsset(this.id);
     },
 
+    getMetaInfo: function() {
+        return {
+            id: this.data.id,
+            path: this.data.path + this.data.filename,
+            public_url: this.data.url,
+            type: this.data.type + " (MIME: " + this.data.mimetype + ")",
+            size: this.data.filesizeFormatted,
+            modificationdate: this.data.modificationDate,
+            creationdate: this.data.creationDate,
+            usermodification: this.data.userModification,
+            userowner: this.data.userOwner,
+            deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
+        };
+    },
+
     showMetaInfo: function() {
+        var metainfo = this.getMetaInfo();
 
         new pimcore.element.metainfo([
             {
                 name: "id",
-                value: this.data.id
-            },
-            {
+                value: metainfo.id
+            }, {
                 name: "path",
-                value: this.data.path + this.data.filename
+                value: metainfo.path
+            }, {
+                name: "public_url",
+                value: metainfo.public_url
             }, {
                 name: "type",
-                value: this.data.type
+                value: metainfo.type
             }, {
-                name: "mimetype",
-                value: this.data.mimetype
+                name: "size",
+                value: metainfo.size
             }, {
                 name: "modificationdate",
                 type: "date",
-                value: this.data.modificationDate
+                value: metainfo.modificationdate
             }, {
                 name: "creationdate",
                 type: "date",
-                value: this.data.creationDate
+                value: metainfo.creationdate
             }, {
                 name: "usermodification",
                 type: "user",
-                value: this.data.userModification
+                value: metainfo.usermodification
             }, {
                 name: "userowner",
                 type: "user",
-                value: this.data.userOwner
+                value: metainfo.userowner
             },
             {
                 name: "deeplink",
-                value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
+                value: metainfo.deeplink
             }
         ], "asset");
     },

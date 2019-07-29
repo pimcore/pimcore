@@ -19,10 +19,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Model\DataObject\ClassDefinition\Data
+class Fieldcollections extends Data implements CustomResourcePersistingInterface
 {
     /**
      * Static type of this element
@@ -74,6 +75,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     public $collapsible;
 
     /**
+     * @var bool
+     */
+    public $border = false;
+
+    /**
      * @return bool
      */
     public function getLazyLoading()
@@ -94,13 +100,13 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -115,39 +121,35 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    $collectionData = [];
 
-                $collectionData = [];
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (!$fd instanceof CalculatedValue) {
-                        $value = $item->{'get' . $fd->getName()}();
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if (!$fd instanceof CalculatedValue) {
+                            $value = $item->{'get' . $fd->getName()}();
+                            $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
+                        }
                     }
-                }
 
-                $calculatedChilds = [];
-                self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+                    $calculatedChilds = [];
+                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
 
-                if ($calculatedChilds) {
-                    foreach ($calculatedChilds as $fd) {
-                        $data = new DataObject\Data\CalculatedValue($fd->getName());
-                        $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
-                        $data = $fd->getDataForEditmode($data, $object, $params);
-                        $collectionData[$fd->getName()] = $data;
+                    if ($calculatedChilds) {
+                        foreach ($calculatedChilds as $fd) {
+                            $data = new DataObject\Data\CalculatedValue($fd->getName());
+                            $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
+                            $data = $fd->getDataForEditmode($data, $object, $params);
+                            $collectionData[$fd->getName()] = $data;
+                        }
                     }
-                }
 
-                $editmodeData[] = [
-                    'data' => $collectionData,
-                    'type' => $item->getType(),
-                    'oIndex' => $idx,
-                    'title' => $collectionDef->getTitle()
-                ];
+                    $editmodeData[] = [
+                        'data' => $collectionData,
+                        'type' => $item->getType(),
+                        'oIndex' => $idx,
+                        'title' => $collectionDef->getTitle()
+                    ];
+                }
             }
         }
 
@@ -155,7 +157,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -198,9 +200,10 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
-                $collection->setValues($collectionData);
+                $collection->setObject($object);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
+                $collection->setValues($collectionData);
 
                 $values[] = $collection;
 
@@ -214,7 +217,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object
@@ -270,14 +273,10 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
+                    }
                 }
             }
         }
@@ -315,7 +314,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return null|DataObject\Fieldcollection
@@ -338,8 +337,9 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
-    public function delete($object)
+    public function delete($object, $params = [])
     {
         $container = new DataObject\Fieldcollection(null, $this->getName());
         $container->delete($object);
@@ -366,9 +366,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
-                try {
-                    DataObject\Fieldcollection\Definition::getByKey($allowedTypes[$i]);
-                } catch (\Exception $e) {
+                if (!DataObject\Fieldcollection\Definition::getByKey($allowedTypes[$i])) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
                 }
@@ -402,25 +400,21 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 $wsDataItem->value = [];
                 $wsDataItem->type = $item->getType();
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $el = new Webservice\Data\DataObject\Element();
+                        $el->name = $fd->getName();
+                        $el->type = $fd->getFieldType();
+                        $el->value = $fd->getForWebserviceExport($item, $params);
+                        if ($el->value == null && self::$dropNullValues) {
+                            continue;
+                        }
 
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $el = new Webservice\Data\DataObject\Element();
-                    $el->name = $fd->getName();
-                    $el->type = $fd->getFieldType();
-                    $el->value = $fd->getForWebserviceExport($item, $params);
-                    if ($el->value == null && self::$dropNullValues) {
-                        continue;
+                        $wsDataItem->value[] = $el;
                     }
 
-                    $wsDataItem->value[] = $el;
+                    $wsData[] = $wsDataItem;
                 }
-
-                $wsData[] = $wsDataItem;
             }
         }
 
@@ -509,15 +503,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $getter = 'get' . ucfirst($fd->getName());
-                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $getter = 'get' . ucfirst($fd->getName());
+                        $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
+                    }
                 }
             }
         }
@@ -543,15 +533,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $getter = 'get' . ucfirst($fd->getName());
-                    $tags = $fd->getCacheTags($item->$getter(), $tags);
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $getter = 'get' . ucfirst($fd->getName());
+                        $tags = $fd->getCacheTags($item->$getter(), $tags);
+                    }
                 }
             }
         }
@@ -580,19 +566,17 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                         continue;
                     }
 
-                    try {
-                        $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                    } catch (\Exception $e) {
-                        continue;
-                    }
-
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        try {
-                            $getter = 'get' . ucfirst($fd->getName());
-                            $fd->checkValidity($item->$getter());
-                        } catch (Model\Element\ValidationException $ve) {
-                            $ve->addContext($this->getName() . '-' . $idx);
-                            $validationExceptions[] = $ve;
+                    if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            try {
+                                $getter = 'get' . ucfirst($fd->getName());
+                                if (!$fd instanceof CalculatedValue) {
+                                    $fd->checkValidity($item->$getter());
+                                }
+                            } catch (Model\Element\ValidationException $ve) {
+                                $ve->addContext($this->getName() . '-' . $idx);
+                                $validationExceptions[] = $ve;
+                            }
                         }
                     }
                 }
@@ -621,7 +605,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
         }
 
         $data = $object->getObjectVar($this->getName());
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+        if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
             $data = $this->load($object, ['force' => true]);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
@@ -684,9 +668,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}' . "\n";
+        $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -753,17 +735,13 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 $type = $item->getType();
                 $html .= '<tr><th><b>' . $type . '</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>';
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $title = !empty($fd->title) ? $fd->title : $fd->getName();
-                    $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
-                    $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
-                    $html .= '</td></tr>';
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $title = !empty($fd->title) ? $fd->title : $fd->getName();
+                        $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
+                        $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
+                        $html .= '</td></tr>';
+                    }
                 }
             }
 
@@ -819,17 +797,13 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (method_exists($fd, 'rewriteIds')) {
-                        $d = $fd->rewriteIds($item, $idMapping, $params);
-                        $setter = 'set' . ucfirst($fd->getName());
-                        $item->$setter($d);
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if (method_exists($fd, 'rewriteIds')) {
+                            $d = $fd->rewriteIds($item, $idMapping, $params);
+                            $setter = 'set' . ucfirst($fd->getName());
+                            $item->$setter($d);
+                        }
                     }
                 }
             }
@@ -857,9 +831,9 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     public function classSaved($class, $params = [])
     {
         if (is_array($this->allowedTypes)) {
-            foreach ($this->allowedTypes as $allowedType) {
-                $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
-                if ($definition) {
+            foreach ($this->allowedTypes as $i => $allowedType) {
+                if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
+                    $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
@@ -870,6 +844,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                             }
                         }
                     }
+
+                    $definition->getDao()->classSaved($class);
+                } else {
+                    Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
+                    unset($this->allowedTypes[$i]);
                 }
             }
         }
@@ -905,6 +884,22 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     public function getDisallowReorder()
     {
         return $this->disallowReorder;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 
     /**

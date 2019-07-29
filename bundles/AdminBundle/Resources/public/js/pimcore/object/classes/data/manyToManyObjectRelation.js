@@ -54,7 +54,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
     },
 
     getIconClass: function () {
-        return "pimcore_icon_objects";
+        return "pimcore_icon_manyToManyObjectRelation";
     },
 
     getLayout: function ($super) {
@@ -102,14 +102,14 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             {
                 xtype: "displayfield",
                 hideLabel: true,
-                value: t('lazy_loading_warning'),
+                value: t('lazy_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
             },
             {
                 xtype: 'textfield',
                 width: 600,
-                fieldLabel: t("path_formatter_class"),
+                fieldLabel: t("path_formatter_service"),
                 name: 'pathFormatterClass',
                 value: this.datax.pathFormatterClass
             }
@@ -204,6 +204,20 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         });
         this.specificPanel.add(this.fieldSelect);
 
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_admin_async_load"),
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
+        }
 
         return this.layout;
     },
@@ -228,5 +242,5 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;

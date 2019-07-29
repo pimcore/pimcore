@@ -124,38 +124,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the "to" receivers as array
-     *
-     * @return array
-     */
-    public function getToAsArray()
-    {
-        return $this->getAsArray('To');
-    }
-
-    /**
-     * Helper to return receivers as array
-     *
-     * @param $key
-     *
-     * @return array
-     */
-    protected function getAsArray($key)
-    {
-        $emailAddresses = preg_split('/,|;/', $this->{'get' . ucfirst($key)}());
-
-        foreach ($emailAddresses as $key => $emailAddress) {
-            if ($validAddress = self::validateEmailAddress(trim($emailAddress))) {
-                $emailAddresses[$key] = $validAddress;
-            } else {
-                unset($emailAddresses[$key]);
-            }
-        }
-
-        return $emailAddresses;
-    }
-
-    /**
      * Helper to validate a email address
      *
      * @static
@@ -201,18 +169,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the "from" email address as array
-     *
-     * @return array
-     */
-    public function getFromAsArray()
-    {
-        $emailAddresses = preg_split('/,|;/', $this->getFrom());
-
-        return $emailAddresses;
-    }
-
-    /**
      * Sets the "replyTo" email address
      *
      * @param string $replyTo
@@ -234,22 +190,6 @@ class Email extends Model\Document\PageSnippet
     public function getReplyTo()
     {
         return $this->replyTo;
-    }
-
-    /**
-     * Returns the "replyTo" email address as array
-     *
-     * @return array
-     */
-    public function getReplyToAsArray()
-    {
-        if (empty($this->getReplyTo())) {
-            return null;
-        }
-
-        $emailAddresses = preg_split('/,|;/', $this->getReplyTo());
-
-        return $emailAddresses;
     }
 
     /**
@@ -277,16 +217,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the carbon copy receivers as array
-     *
-     * @return array
-     */
-    public function getCcAsArray()
-    {
-        return $this->getAsArray('Cc');
-    }
-
-    /**
      * Sets the blind carbon copy receivers (multiple receivers should be separated with a ",")
      *
      * @param string $bcc
@@ -308,15 +238,5 @@ class Email extends Model\Document\PageSnippet
     public function getBcc()
     {
         return $this->bcc;
-    }
-
-    /**
-     * Returns the blind carbon copy receivers as array
-     *
-     * @return array
-     */
-    public function getBccAsArray()
-    {
-        return $this->getAsArray('Bcc');
     }
 }

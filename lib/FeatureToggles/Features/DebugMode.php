@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\FeatureToggles\Features;
 
+use Pimcore\Config;
 use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureContextInterface;
 use Pimcore\FeatureToggles\FeatureState;
@@ -76,10 +77,8 @@ final class DebugMode extends Feature
             if (defined('PIMCORE_DEBUG')) {
                 $debug = true;
             } else {
-                $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-
-                if (file_exists($debugModeFile)) {
-                    $conf = include $debugModeFile;
+                $conf = Config::getDebugDevModeConfig();
+                if ($conf && is_array($conf) && isset($conf['active'])) {
                     $debug = $conf['active'];
 
                     // enable debug mode only for a comma-separated list of IP addresses/ranges

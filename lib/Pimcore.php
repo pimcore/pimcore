@@ -20,7 +20,6 @@ use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\FeatureToggles\FeatureState;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -59,29 +58,9 @@ class Pimcore
      */
     public static function initConfiguration()
     {
-        $conf = null;
-
-        // init configuration
-        try {
-            $conf = Config::getSystemConfig(true);
-
-            // set timezone
-            if ($conf instanceof \Pimcore\Config\Config) {
-                if ($conf->general->timezone) {
-                    date_default_timezone_set($conf->general->timezone);
-                }
-            }
-
-            if (!defined('PIMCORE_DEVMODE')) {
-                define('PIMCORE_DEVMODE', (bool) $conf->general->devmode);
-            }
-        } catch (\Exception $e) {
-            $m = "Couldn't load system configuration";
-            Logger::err($m);
-
-            if (!defined('PIMCORE_DEVMODE')) {
-                define('PIMCORE_DEVMODE', false);
-            }
+        $dev = self::inDevMode();
+        if (!defined('PIMCORE_DEVMODE')) {
+            define('PIMCORE_DEVMODE', $dev);
         }
 
         $debug = self::inDebugMode();
@@ -94,7 +73,7 @@ class Pimcore
             error_reporting(E_ALL & ~E_NOTICE);
         }
 
-        return $conf;
+        return true;
     }
 
     public static function setFeatureManager(FeatureManagerInterface $featureManager)
@@ -257,6 +236,8 @@ class Pimcore
      * Accessing the container this way is discouraged as dependencies should be wired through the container instead of
      * needing to access the container directly. This exists mainly for compatibility with legacy code.
      *
+     * @internal
+     *
      * @return ContainerInterface
      */
     public static function getContainer()
@@ -295,43 +276,6 @@ class Pimcore
         self::$autoloader = $autoloader;
     }
 
-    /** Add $keepItems to the list of items which are protected from garbage collection.
-     * @param $keepItems
-     *
-     * @deprecated
-     */
-    public static function addToGloballyProtectedItems($keepItems)
-    {
-        if (is_string($keepItems)) {
-            $keepItems = [$keepItems];
-        }
-        if (is_array($keepItems)) {
-            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
-            $longRunningHelper->addPimcoreRuntimeCacheProtectedItems($keepItems);
-        } else {
-            throw new \InvalidArgumentException('keepItems must be an instance of array');
-        }
-    }
-
-    /** Items to be deleted.
-     * @param $deleteItems
-     *
-     * @deprecated
-     */
-    public static function removeFromGloballyProtectedItems($deleteItems)
-    {
-        if (is_string($deleteItems)) {
-            $deleteItems = [$deleteItems];
-        }
-
-        if (is_array($deleteItems)) {
-            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
-            $longRunningHelper->removePimcoreRuntimeCacheProtectedItems($deleteItems);
-        } else {
-            throw new \InvalidArgumentException('deleteItems must be an instance of array');
-        }
-    }
-
     /**
      * Forces a garbage collection.
      *
@@ -359,13 +303,15 @@ class Pimcore
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
 
-        // write and clean up cache
-        if (php_sapi_name() != 'cli') {
+        // Check if this is a cache warming run and if this runs on an installed instance. If this is a cache warmup
+        // we can't use self::isInstalled() as it will refer to the wrong caching dir.
+        if (self::getKernel()->getCacheDir() === self::getContainer()->getParameter('kernel.cache_dir') && self::isInstalled()) {
+            // write and clean up cache
             Cache::shutdown();
-        }
 
-        // release all open locks from this process
-        Model\Tool\Lock::releaseAll();
+            // release all open locks from this process
+            Model\Tool\Lock::releaseAll();
+        }
     }
 
     public static function disableMinifyJs(): bool
@@ -413,30 +359,5 @@ class Pimcore
                 }
             }
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isLegacyModeAvailable()
-    {
-        return class_exists('Pimcore\\Legacy');
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return mixed
-     *
-     * @throws Exception
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        if (self::isLegacyModeAvailable()) {
-            return forward_static_call_array('Pimcore\\Legacy::' . $name, $arguments);
-        }
-
-        throw new \Exception('Call to undefined static method ' . $name . ' on class Pimcore');
     }
 }

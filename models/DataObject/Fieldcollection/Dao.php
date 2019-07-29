@@ -20,6 +20,8 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
@@ -30,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param DataObject\Concrete $object
      * @param $params mixed
      *
-     * @return whether an insert should be done
+     * @return array
      */
     public function save(DataObject\Concrete $object, $params = [])
     {
@@ -48,9 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if (!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -73,27 +73,38 @@ class Dao extends Model\Dao\AbstractDao
                 $collection->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (method_exists($fd, 'load')) {
-                        // datafield has it's own loader
-                        $value = $fd->load(
-                            $collection,
-                            [
-                                'context' => [
-                                    'object' => $object,
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $type,
-                                    'fieldname' => $this->model->getFieldname(),
-                                    'index' => $result['index']
-                            ]]
-                        );
-                        if ($value === 0 || !empty($value)) {
-                            $collection->setValue($key, $value);
-
-                            if ($collection instanceof DataObject\DirtyIndicatorInterface) {
-                                $collection->markFieldDirty($key, false);
+                    if ($fd instanceof CustomResourcePersistingInterface) {
+                        $doLoad = true;
+                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                                $doLoad = false;
                             }
                         }
-                    } else {
+
+                        if ($doLoad) {
+                            // datafield has it's own loader
+                            $value = $fd->load(
+                                $collection,
+                                [
+                                    'context' => [
+                                        'object' => $object,
+                                        'containerType' => 'fieldcollection',
+                                        'containerKey' => $type,
+                                        'fieldname' => $this->model->getFieldname(),
+                                        'index' => $result['index']
+                                    ]]
+                            );
+
+                            if ($value === 0 || !empty($value)) {
+                                $collection->setValue($key, $value);
+
+                                if ($collection instanceof DataObject\DirtyIndicatorInterface) {
+                                    $collection->markFieldDirty($key, false);
+                                }
+                            }
+                        }
+                    }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
@@ -126,7 +137,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param DataObject\Concrete $object
      * @param $saveMode true if called from save method
      *
-     * @return whether relational data should be inserted or not
+     * @return array
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
@@ -135,10 +146,7 @@ class Dao extends Model\Dao\AbstractDao
         $hasLocalizedFields = false;
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                /** @var $definition Definition */
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if (!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -183,7 +191,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if (method_exists($fd, 'delete')) {
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $fd->delete(
                             $object,
                             [
@@ -199,8 +207,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        if (!$this->model->isFieldDirty('_self')) {
-            return false;
+        if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            return [];
         }
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
             . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
@@ -208,11 +216,11 @@ class Dao extends Model\Dao\AbstractDao
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
-            if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
-                return false;
+                return ['saveLocalizedRelations' => true];
             }
         }
 
@@ -223,6 +231,6 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
 
-        return true;
+        return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }
 }

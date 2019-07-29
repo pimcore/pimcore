@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class Cart extends AbstractCart implements ICart
+class Cart extends AbstractCart implements CartInterface
 {
     /**
      * @return string
@@ -103,13 +103,13 @@ class Cart extends AbstractCart implements ICart
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
-                /* @var ICart $cart */
+                /* @var CartInterface $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
 
-                $mod = $cart->getModificationDate();
-                $cart->setModificationDate($mod);
+                //call getter to make sure modification date is set too (not only timestamp)
+                $cart->getModificationDate();
 
                 $dataList = new CartCheckoutData\Listing();
                 $dataList->setCondition('cartId = ' . $dataList->quote($cart->getId()));
@@ -147,7 +147,11 @@ class Cart extends AbstractCart implements ICart
             }
             $this->items = $items;
             $this->setIgnoreReadonly();
+
+            $dateBackup = $this->getModificationDate();
             $this->modified();
+            $this->setModificationDate($dateBackup);
+
             $this->unsetIgnoreReadonly();
         }
 

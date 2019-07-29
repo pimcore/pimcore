@@ -52,19 +52,21 @@ class Text
                 preg_match('/[0-9]+/', $matches[2][$i], $idMatches);
                 preg_match('/asset|object|document/', $matches[3][$i], $typeMatches);
 
+                $linkAttr = null;
+                $path = null;
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
+                $oldTag = $matches[0][$i];
 
                 if ($element instanceof Element\ElementInterface) {
-                    $path = '';
-                    $oldTag = $matches[0][$i];
-
                     if ($matches[1][$i] == 'a') {
                         $linkAttr = 'href';
                         $path = $element->getFullPath();
 
-                        if ($element instanceof Document) {
+                        if (($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
+                            $path = null;
+                        } elseif ($element instanceof Document) {
                             // get parameters
                             preg_match('/href="([^"]+)*"/', $oldTag, $oldHref);
                             if ($oldHref[1] && (strpos($oldHref[1], '?') !== false || strpos($oldHref[1], '#') !== false)) {
@@ -84,7 +86,7 @@ class Text
                                 );
                             } else {
                                 // no object path without link generator!
-                                $path = '';
+                                $path = null;
                             }
                         }
                     } elseif ($matches[1][$i] == 'img') {
@@ -145,15 +147,23 @@ class Text
                         }
                     }
 
-                    $pattern = '/'.$linkAttr.'="[^"]*"/';
-                    $replacement = $linkAttr . '="' . $path . '"';
-                    $newTag = preg_replace($pattern, $replacement, $oldTag);
+                    if ($path) {
+                        $pattern = '/' . $linkAttr . '="[^"]*"/';
+                        $replacement = $linkAttr . '="' . $path . '"';
+                        $newTag = preg_replace($pattern, $replacement, $oldTag);
 
-                    $text = str_replace($oldTag, $newTag, $text);
-                } else {
-                    // remove the img tag if there is an internal broken link
+                        $text = str_replace($oldTag, $newTag, $text);
+                    }
+                }
+
+                if (!$path) {
+                    // in case there's a broken internal reference/link
                     if ($matches[1][$i] == 'img') {
-                        $text = str_replace($matches[0][$i], '', $text);
+                        // remove the entire tag for images
+                        $text = str_replace($oldTag, '', $text);
+                    } elseif ($matches[1][$i] == 'a') {
+                        // just display the text for links
+                        $text = preg_replace('@' . preg_quote($oldTag, '@') . '([^\<]+)\</a\>@i', '$1', $text);
                     }
                 }
             }
@@ -174,8 +184,6 @@ class Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
-            include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
             $html = str_get_html($text);
             if (!$html) {
                 return $text;
@@ -368,14 +376,31 @@ class Text
      */
     public static function detectEncoding($text)
     {
+        // Detect UTF-8, UTF-16 and UTF-32 by BOM
+        $utf32_big_endian_bom = chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
+        $utf32_little_endian_bom = chr(0xFF) . chr(0xFE) . chr(0x00) . chr(0x00);
+        $utf16_big_endian_bom = chr(0xFE) . chr(0xFF);
+        $utf16_little_endian_bom = chr(0xFF) . chr(0xFE);
+        $utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
+
+        $first2bytes = substr($text, 0, 2);
+        $first3bytes = substr($text, 0, 3);
+        $first4bytes = substr($text, 0, 3);
+
+        if ($first3bytes === $utf8_bom) {
+            return 'UTF-8';
+        } elseif ($first4bytes === $utf32_big_endian_bom) {
+            return 'UTF-32BE';
+        } elseif ($first4bytes === $utf32_little_endian_bom) {
+            return 'UTF-32LE';
+        } elseif ($first2bytes === $utf16_big_endian_bom) {
+            return 'UTF-16BE';
+        } elseif ($first2bytes === $utf16_little_endian_bom) {
+            return 'UTF-16LE';
+        }
+
         if (function_exists('mb_detect_encoding')) {
             $encoding = mb_detect_encoding($text, [
-                'UTF-32',
-                'UTF-32BE',
-                'UTF-32LE',
-                'UTF-16',
-                'UTF-16BE',
-                'UTF-16LE',
                 'UTF-8',
                 'UTF-7',
                 'UTF7-IMAP',

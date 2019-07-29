@@ -43,8 +43,8 @@ services:
         arguments:
             $templating: '@templating'
             $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
+            $responseStack: '@Pimcore\Http\ResponseStack'
         calls:
-            - [setResponseStack, ['@Pimcore\Http\ResponseStack']] # TODO Pimcore 6 add as constructor dependency
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: pimcore }
@@ -78,6 +78,7 @@ services:
         public: true
 
     Pimcore\Document\Renderer\DocumentRenderer:
+        public: true
         arguments:
             $fragmentRenderer: '@fragment.renderer.inline'
 

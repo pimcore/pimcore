@@ -81,56 +81,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @deprecated
-     *
-     * @param int $days
-     *
-     * @return array
-     */
-    public function getOutdatedVersionsDays($days)
-    {
-        $deadline = time() - (intval($days) * 86400);
-
-        $this->disableSlowQueryLog();
-        $versionIds = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?', [$this->model->getCid(), $this->model->getCtype(), $deadline]);
-        $this->enableSlowQueryLog();
-
-        return $versionIds;
-    }
-
-    /**
-     * @param $steps
-     *
-     * @return array
-     */
-    public function getOutdatedVersionsSteps($steps)
-    {
-        $this->disableSlowQueryLog();
-        $versionIds = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT ' . intval($steps) . ',1000000', [$this->model->getCid(), $this->model->getCtype()]);
-        $this->enableSlowQueryLog();
-
-        return $versionIds;
-    }
-
-    protected function disableSlowQueryLog()
-    {
-        try {
-            $this->db->query('SET @@session.long_query_time = 300000;');
-        } catch (\Exception $e) {
-            Logger::err($e);
-        }
-    }
-
-    protected function enableSlowQueryLog()
-    {
-        try {
-            $this->db->query('SET @@session.long_query_time=@@global.long_query_time;');
-        } catch (\Exception $e) {
-            Logger::err($e);
-        }
-    }
-
-    /**
      * @param Model\Version $version
      *
      * @return bool
@@ -140,6 +90,34 @@ class Dao extends Model\Dao\AbstractDao
         $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
 
         return (bool) $exists;
+    }
+
+    /**
+     * @param string $hash
+     *
+     * @return string
+     */
+    public function getBinaryFileIdForHash(string $hash): ?string
+    {
+        $hash = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
+        if (!$hash) {
+            $hash = null;
+        }
+
+        return $hash;
+    }
+
+    /**
+     * @param string|null $hash
+     *
+     * @return bool
+     */
+    public function isBinaryHashInUse(?string $hash): bool
+    {
+        $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);
+        $returnValue = ($count > 1);
+
+        return $returnValue;
     }
 
     /**
@@ -162,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if ($elementType['days'] > 0) {
+                if (isset($elementType['days']) && $elementType['days'] > 0) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
                     $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);

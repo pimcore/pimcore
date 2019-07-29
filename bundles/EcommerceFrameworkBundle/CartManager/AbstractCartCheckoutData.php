@@ -19,11 +19,11 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
     protected $key;
     protected $data;
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
-    public function setCart(ICart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
     }

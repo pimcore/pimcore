@@ -80,7 +80,7 @@ class Service
     }
 
     /**
-     * this is used to get childs below a hardlink by a path
+     * this is used to get children below a hardlink by a path
      * for example: the requested path is /de/service/contact but /de/service is a hardlink to /en/service
      * then $hardlink would be /en/service and $path /de/service/contact and this function returns then /en/service/contact
      *

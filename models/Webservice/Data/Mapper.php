@@ -84,7 +84,7 @@ abstract class Mapper
      */
     public static function map($object, $apiclass, $type, $options = null)
     {
-        if ($object instanceof \Zend_Date || $object instanceof \DateTimeInterface) {
+        if ($object instanceof \DateTimeInterface) {
             $object = $object->getTimestamp();
         } elseif (is_object($object)) {
             if (Tool::classExists($apiclass)) {
@@ -98,9 +98,9 @@ abstract class Mapper
             }
         } elseif (is_array($object)) {
             $tmpArray = [];
-            foreach ($object as $v) {
+            foreach ($object as $k => $v) {
                 $className = self::findWebserviceClass($v, $type);
-                $tmpArray[] = self::map($v, $className, $type);
+                $tmpArray[$k] = self::map($v, $className, $type);
             }
             $object = $tmpArray;
         }

@@ -34,11 +34,10 @@ pimcore.element.properties = Class.create({
                     {
                         name:"translatedName",
                         convert: function(v, rec){
-                            return ts(rec.name);
+                            return ts(rec.data.name);
                         }
                     }
                 ],
-
                 proxy: {
                     type: 'ajax',
                     url: '/admin/element/get-predefined-properties?elementType=' + this.type,
@@ -46,12 +45,16 @@ pimcore.element.properties = Class.create({
                         type: 'json',
                         rootProperty: "properties"
                     }
-                }
-                });
+                },
+                sorters: [{
+                    property: 'translatedName',
+                    direction: 'ASC'
+                }],
+            });
 
             var predefinedcombo = new Ext.form.ComboBox({
                 name: "type",
-                displayField:'name',
+                displayField:'translatedName',
                 valueField: "id",
                 store: predefinedPropertiesStore,
                 editable: false,
@@ -392,7 +395,7 @@ pimcore.element.properties = Class.create({
                 title: t('properties'),
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_properties",
+                iconCls: "pimcore_material_icon_properties pimcore_material_icon",
                 items: [this.propertyGrid]
             });
         }

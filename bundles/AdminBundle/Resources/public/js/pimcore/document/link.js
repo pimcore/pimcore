@@ -171,21 +171,21 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
-                iconCls: "pimcore_icon_unpublish",
+                iconCls: "pimcore_material_icon_unpublish pimcore_material_icon",
                 scale: "medium",
                 handler: this.unpublish.bind(this)
             });
 
             this.toolbarButtons.remove = new Ext.Button({
                 tooltip: t('delete'),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_material_icon_delete pimcore_material_icon",
                 scale: "medium",
                 handler: this.remove.bind(this)
             });
 
             this.toolbarButtons.rename = new Ext.Button({
                 tooltip: t('rename'),
-                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                iconCls: "pimcore_material_icon_rename pimcore_material_icon",
                 scale: "medium",
                 handler: this.rename.bind(this)
             });
@@ -210,7 +210,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
             buttons.push({
                 tooltip: t('reload'),
-                iconCls: "pimcore_icon_reload",
+                iconCls: "pimcore_material_icon_reload pimcore_material_icon",
                 scale: "medium",
                 handler: this.reload.bind(this)
             });
@@ -218,7 +218,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             if (pimcore.elementservice.showLocateInTreeButton("document")) {
                 buttons.push({
                     tooltip: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_material_icon_locate pimcore_material_icon",
                     scale: "medium",
                     handler: this.selectInTree.bind(this)
                 });
@@ -237,7 +237,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 id: "document_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "main-toolbar",
+                cls: "pimcore_main_toolbar",
                 items: buttons,
                 overflowHandler: 'scroller'
             });
@@ -363,23 +363,97 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         }
                     }.bind(this)
                 });
-            });
 
-            var openButton = new Ext.Button({
-                iconCls: "pimcore_icon_open",
-                style: "margin-left: 5px",
-                handler: function() {
-                    if (linkTypeField.getValue() == "internal") {
-                        pimcore.helpers.openElement(pathField.getValue(), internalTypeField.getValue());
-                    } else {
-                        window.open(pathField.getValue(), "_blank");
-                    }
-                }.bind(this)
-            });
+                el.getEl().on("contextmenu", function(e) {
+                    var menu = new Ext.menu.Menu();
+                    menu.add(new Ext.menu.Item({
+                        text: t('empty'),
+                        iconCls: "pimcore_icon_delete",
+                        handler: function (item) {
+                            item.parentMenu.destroy();
+                            pathField.setValue("");
+                            internalTypeField.setValue("");
+                            linkTypeField.setValue("");
+                        }.bind(this)
+                    }));
+
+                    menu.add(new Ext.menu.Item({
+                        text: t('open'),
+                        iconCls: "pimcore_icon_open",
+                        handler: function (item) {
+                            item.parentMenu.destroy();
+                            if(linkTypeField.getValue() === 'internal') {
+                                pimcore.helpers.openElement(pathField.getValue(), internalTypeField.getValue());
+                            } else {
+                                window.open(pathField.getValue(), "_blank");
+                            }
+                        }.bind(this)
+                    }));
+
+                    menu.add(new Ext.menu.Item({
+                        text: t('search'),
+                        iconCls: "pimcore_icon_search",
+                        handler: function (item) {
+                            item.parentMenu.destroy();
+                            pimcore.helpers.itemselector(false, function (data) {
+                                pathField.setValue(data.fullpath);
+                                linkTypeField.setValue('internal');
+                                internalTypeField.setValue(data.type);
+                            }.bind(this), {type: ['document', 'asset', 'object']})
+
+                        }.bind(this)
+                    }));
+
+                    menu.showAt(e.getXY());
+
+                    e.stopEvent();
+                }.bind(this));
+
+            }.bind(this));
+
+            var items = [
+                pathField,
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_open",
+                    style: "margin-left: 5px",
+                    handler: function() {
+                        if (pathField.getValue()) {
+                            if(linkTypeField.getValue() === 'internal') {
+                                pimcore.helpers.openElement(pathField.getValue(), internalTypeField.getValue());
+                            } else {
+                                window.open(pathField.getValue(), "_blank");
+                            }
+                        }
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    style: "margin-left: 5px",
+                    handler: function () {
+                        pathField.setValue("");
+                        internalTypeField.setValue("");
+                        linkTypeField.setValue("");
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    style: "margin-left: 5px",
+                    handler: function () {
+                        pimcore.helpers.itemselector(false, function (data) {
+                            pathField.setValue(data.fullpath);
+                            linkTypeField.setValue('internal');
+                            internalTypeField.setValue(data.type);
+                        }.bind(this), {type: ['document', 'asset', 'object']})
+                    }.bind(this)
+                }
+            ];
 
             this.panel = new Ext.form.FormPanel({
                 title: t('settings'),
-                iconCls: "pimcore_icon_settings",
+                iconCls: "pimcore_material_icon_settings pimcore_material_icon",
                 autoHeight: true,
                 labelWidth: 200,
                 defaultType: 'textfield',
@@ -391,10 +465,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     {
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
-                        items: [
-                            pathField,
-                            openButton
-                        ]
+                        items: items
 
                     },
                     new Ext.toolbar.Spacer({

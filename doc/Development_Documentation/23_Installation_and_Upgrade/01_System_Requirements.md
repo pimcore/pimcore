@@ -9,7 +9,7 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 7.1
+### PHP >= 7.2
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -62,9 +62,13 @@ All permissions on database level, specifically:
 
 #### System Variables
 ```
+[mysqld]
 innodb_file_format = Barracuda
 innodb_large_prefix = 1
 innodb_file_per_table = 1
+
+[mariadb]
+plugin_load_add = ha_archive # optional but recommended, starting from mariadb 10.1 archive format is no more activated by default (check and adapt for mysql or other database software)
 ```
 
 ### Redis (optional but recommended for caching)
@@ -104,6 +108,7 @@ On Debian based systems, you can use the following command to install all requir
 - exiftool
 - SQIP - SVG Placeholder
 - [facedetect](https://github.com/wavexx/facedetect) 
+- [Graphviz](https://www.graphviz.org/)
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 

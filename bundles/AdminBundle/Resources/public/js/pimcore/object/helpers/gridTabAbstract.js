@@ -84,7 +84,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var batchSelectedMenu = new Ext.menu.Item({
             text: t("batch_change_selected"),
-            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
@@ -106,7 +106,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var batchAppendSelectedMenu = new Ext.menu.Item({
             text: t("batch_append_selected"),
-            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
@@ -151,7 +151,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             for (var i=0; i<selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex,jobs, append);
+            this.batchOpen(columnIndex,jobs, append, true);
 
         } else {
 
@@ -167,13 +167,18 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
+            var fields = this.getGridConfig().columns;
+            var fieldKeys = Object.keys(fields);
+
             var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
                 folderId: this.element.id,
                 objecttype: this.objecttype,
-                language: this.gridLanguage
+                "fields[]": fieldKeys,
+                language: this.gridLanguage,
+                batch: true //to avoid limit on batch edit/append all
             };
 
 
@@ -183,7 +188,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append);
+                        this.batchOpen(columnIndex, rdata.jobs, append, false);
                     }
 
                 }.bind(this,columnIndex)
@@ -192,7 +197,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     },
 
-    batchOpen: function (columnIndex, jobs, append) {
+    batchOpen: function (columnIndex, jobs, append, onlySelected) {
 
         columnIndex = columnIndex-1;
 
@@ -243,7 +248,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             ]
         });
-        var title = append ? t("batch_append_to") + " " + fieldInfo.text : t("batch_edit_field") + " " + fieldInfo.text;
+        var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
+        var appendTitle = onlySelected ? "batch_append_selected_to" : "batch_append_to";
+        var title = append ? t(appendTitle) + " " + fieldInfo.text : t(batchTitle) + " " + fieldInfo.text;
         this.batchWin = new Ext.Window({
             autoScroll: true,
             modal: false,
@@ -483,6 +490,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var filters = "";
         var condition = "";
+        var searchQuery = this.searchField.getValue();
 
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
@@ -515,7 +523,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             language: this.gridLanguage,
             "ids[]": ids,
             "fields[]": fieldKeys,
-            settings: settings
+            settings: settings,
+            query: searchQuery,
+            batch: true // to avoid limit for export
         };
 
 
@@ -629,7 +639,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                             {
                                 class: proxy.extraParams.class,
                                 objectId: proxy.extraParams.objectId,
-                                "fields[]": proxy.extraParams["fields[]"]
+                                "fields[]": proxy.extraParams["fields[]"],
+                                language: proxy.extraParams.language
                             }
                         );
                         proxy.setExtraParam("condition", field.getValue());
@@ -651,6 +662,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (button) {
 
                 this.sqlEditor.setValue("");
+                this.searchField.setValue("");
 
                 // reset base params, because of the condition
                 var proxy = this.store.getProxy();
@@ -658,7 +670,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     {
                         class: proxy.extraParams.class,
                         objectId: proxy.extraParams.objectId,
-                        "fields[]": proxy.extraParams["fields[]"]
+                        "fields[]": proxy.extraParams["fields[]"],
+                        language: proxy.extraParams.language
                     }
                 );
 

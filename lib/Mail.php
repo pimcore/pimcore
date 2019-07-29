@@ -492,31 +492,31 @@ class Mail extends \Swift_Message
 
         if ($document instanceof Model\Document\Email) {
             if (!$this->recipientsCleared) {
-                $to = $document->getToAsArray();
+                $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
                 if (!empty($to)) {
                     foreach ($to as $toEntry) {
-                        $this->addTo($toEntry);
+                        $this->addTo($toEntry['email'], $toEntry['name']);
                     }
                 }
 
-                $cc = $document->getCcAsArray();
+                $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
                 if (!empty($cc)) {
                     foreach ($cc as $ccEntry) {
-                        $this->addCc($ccEntry);
+                        $this->addCc($ccEntry['email'], $ccEntry['name']);
                     }
                 }
 
-                $bcc = $document->getBccAsArray();
+                $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
                 if (!empty($bcc)) {
                     foreach ($bcc as $bccEntry) {
-                        $this->addBcc($bccEntry);
+                        $this->addBcc($bccEntry['email'], $bccEntry['name']);
                     }
                 }
 
-                $replyTo = $document->getReplyToAsArray();
+                $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
                 if (!empty($replyTo)) {
                     foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo($replyToEntry);
+                        $this->addReplyTo($replyToEntry['email'], $replyToEntry['name']);
                     }
                 }
             }
@@ -524,19 +524,11 @@ class Mail extends \Swift_Message
 
         if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             //if more than one "from" email address is defined -> we set the first one
-            $fromArray = $document->getFromAsArray();
+            $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
             if (!empty($fromArray)) {
                 list($from) = $fromArray;
                 if ($from) {
-                    $fromAddress = $from;
-                    $fromName = null;
-
-                    if (preg_match('/(.*)<(.*)>/', $from, $matches)) {
-                        $fromAddress = trim($matches[2]);
-                        $fromName = trim($matches[1]);
-                    }
-
-                    $this->setFrom($fromAddress, $fromName);
+                    $this->setFrom($from['email'], $from['name']);
                 }
             }
         }
@@ -618,6 +610,11 @@ class Mail extends \Swift_Message
             $mailer = \Pimcore::getContainer()->get('mailer');
         }
 
+        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
+            // set default "from" address
+            $this->setFrom('no-reply@' . $hostname);
+        }
+
         $event = new MailEvent($this, [
             'mailer' => $mailer
         ]);
@@ -626,7 +623,13 @@ class Mail extends \Swift_Message
 
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
-            $mailer->send($this);
+            try {
+                $failedRecipients = [];
+                $mailer->send($this, $failedRecipients);
+            } catch (\Exception $e) {
+                $mailer->getTransport()->stop();
+                throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
+            }
         }
 
         if ($this->loggingIsEnabled()) {
@@ -761,8 +764,6 @@ class Mail extends \Swift_Message
         } else {
             //creating text version from html email if html2text is installed
             try {
-                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = str_get_html($htmlContent);
                 if ($html) {

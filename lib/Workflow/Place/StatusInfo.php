@@ -16,7 +16,7 @@ namespace Pimcore\Workflow\Place;
 
 use Pimcore\Workflow\Manager;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusInfo
 {
@@ -103,13 +103,19 @@ class StatusInfo
             }
         }
 
-        $uniquePlaces = [];
+        return $this->filterPlaces($places);
+    }
 
-        /**
-         * multiple parallel workflows with the same places should not result in multiple status labels
-         *
-         * @var PlaceConfig $place
-         */
+    /**
+     * Multiple parallel workflows with the same places should not result in multiple status labels
+     *
+     * @param PlaceConfig[] $places
+     *
+     * @return PlaceConfig[]
+     */
+    protected function filterPlaces(array $places): array
+    {
+        $uniquePlaces = [];
         foreach ($places as $place) {
             $uniquePlaces[$place->getPlace()] = $place;
         }

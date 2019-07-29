@@ -85,14 +85,76 @@ Optional parameter `inheritance` decides whether to enable inheritance or not (d
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
 * **Request body**: JSON-encoded object data in the same format as returned by get object by id for the data segment but 
-with missing id field or id set to 0
+with missing id field. Check the example below for the correct structure.
 * **Returns**: JSON-encoded object id
+
+**Example:**
+```json
+{
+	"className": "Product",
+	"parentId": <SOME_PARENT_ID>,     
+	"key": "Grey t-shirt",
+	"elements": [       
+	    {         
+	        "type": "input",         
+	        "value": "Grey T-Shirt",         
+	        "name": "name",         
+	        "language": null
+        },{
+             "type": "multiselect",         
+             "value": "grey",
+             "name": "color",
+             "language": null
+        }     
+    ],
+	"notes": [
+        {
+            "type": "warning",
+            "title": "API test",
+            "description": "<b>Testing the api</b>",
+            "data": []
+        }
+    ]
+}
+```
 
 ### Update existing Object
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
-* **Request body**: Same as for create object but with object id
+* **Request body**: JSON-encoded object data in the same format as returned by get object by id for the data segment but 
+  with missing id field. Check the example below for the correct structure.
 * **Returns**: JSON-encoded success value
+
+**Example:**
+```json
+{
+	"className": "Product",
+	"parentId": <SOME_PARENT_ID>, 
+	"id": 8812,    
+	"key": "Grey t-shirt",
+	"elements": [       
+	    {         
+	        "type": "input",         
+	        "value": "Grey T-Shirt",         
+	        "name": "name",         
+	        "language": null
+        },{
+             "type": "multiselect",         
+             "value": "grey",
+             "name": "color",
+             "language": null
+        }     
+    ],
+	"notes": [
+        {
+            "type": "warning",
+            "title": "API test",
+            "description": "<b>Testing the api</b>",
+            "data": []
+        }
+    ]
+}
+```
 
 ### Check Object exists
 * **Method**: GET or POST
@@ -178,6 +240,16 @@ condense parameter is set to true then only non-existing object ids are returned
 * **Request body**: JSON-encoded asset data in the same format as returned by get asset by id for the data segment but with missing id field or id set to 0
 * **Returns**: JSON-encoded asset id
 
+**Example:**
+```json
+{
+	"data": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsBAMAAACLU5NGAAAAG1BMVEXMzMyWlpa...",
+	"parentId": 7, 
+	"type": "image",    
+	"filename": "rest-uploaded-file.jpg",
+}
+```
+
 ### Update Existing Asset
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/asset?apikey=[API-KEY]`
@@ -250,9 +322,9 @@ condense parameter is set to true then only non-existing object ids are returned
     * **groupBy**: group by key
 
 
-### Search  Objects
+### Search Objects
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&q={"type":%20"folder"}
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&q={"o_type":%20"folder"}
 * **Returns**: A list of object id/type pairs matching the given criteria.
 * **Parameters**:
     * **q**: ["Query Filter](./01_Query_Filters.md)

@@ -20,7 +20,9 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Property\Predefined\Dao getDao()
+ * @method Predefined\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Predefined extends Model\AbstractModel
 {
@@ -88,13 +90,12 @@ class Predefined extends Model\AbstractModel
     {
         try {
             $property = new self();
-            $property->setId($id);
-            $property->getDao()->getById();
+            $property->getDao()->getById($id);
+
+            return $property;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $property;
     }
 
     /**
@@ -114,9 +115,7 @@ class Predefined extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $property = new self();
-                $property->setKey($key);
-                $property->getDao()->getByKey();
-
+                $property->getDao()->getByKey($key);
                 \Pimcore\Cache\Runtime::set($cacheKey, $property);
             } catch (\Exception $e) {
                 return null;

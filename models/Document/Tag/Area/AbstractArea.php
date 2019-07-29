@@ -18,12 +18,11 @@
 namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Templating\Model\ViewModelInterface;
-use Pimcore\View;
 
 abstract class AbstractArea
 {
     /**
-     * @var ViewModelInterface|View
+     * @var ViewModelInterface
      */
     protected $view;
 
@@ -43,7 +42,7 @@ abstract class AbstractArea
     protected $params = [];
 
     /**
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return $this
      */
@@ -55,7 +54,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return ViewModelInterface|View
+     * @return ViewModelInterface
      */
     public function getView()
     {
@@ -100,28 +99,6 @@ abstract class AbstractArea
     public function getAllParams()
     {
         return $this->params;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param $key
-     *
-     * @return mixed
-     */
-    public function _getParam($key)
-    {
-        return $this->getParam($key);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function _getAllParams()
-    {
-        return $this->getAllParams();
     }
 
     /**

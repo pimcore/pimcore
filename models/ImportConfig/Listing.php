@@ -26,29 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of ImportConfig
-     *
-     * @var array
+     * @var array|null
      */
-    public $importconfigs = [];
+    protected $importconfigs = null;
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
-     * @return array
+     * @return Model\ImportConfig[]
      */
     public function getImportconfigs(): array
     {
+        if ($this->importconfigs === null) {
+            $this->getDao()->load();
+        }
+
         return $this->importconfigs;
     }
 

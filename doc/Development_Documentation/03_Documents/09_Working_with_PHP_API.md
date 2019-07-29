@@ -120,7 +120,7 @@ If you'd like to get also all the unpublished documents, set the following flag:
 | Method                  | Arguments                           | Description                                                                                 |
 |-------------------------|-------------------------------------|---------------------------------------------------------------------------------------------|
 | `getTotalCount()`       |                                     | Returns total number of selected rows.                                                      |
-| `getPaginatorAdapter()` |                                     | List implements `\Zend_Paginator_Adapter_Interface`, you could use the list as a paginator. |
+| `getPaginatorAdapter()` |                                     | List implements `\Iterator`, you could use the list as a paginator. |
 | `getItems()`            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
 | `loadIdList()`          |                                     | Returns complete array with id as a row.                                                    |
 

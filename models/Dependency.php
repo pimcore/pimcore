@@ -145,18 +145,6 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param array $requiredBy
-     *
-     * @return $this
-     */
-    public function setRequiredBy($requiredBy)
-    {
-        $this->requiredBy = $requiredBy;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getSourceType()

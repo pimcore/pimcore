@@ -149,7 +149,6 @@
                                         "style": "",
                                         "permissions": "",
                                         "datatype": "data",
-                                        "columnType": "",
                                         "invisible": false,
                                         "visibleGridView": false,
                                         "visibleSearch": false
@@ -348,8 +347,6 @@
                                         "style": "",
                                         "permissions": null,
                                         "datatype": "data",
-                                        "columnType": null,
-                                        "queryColumnType": null,
                                         "relationType": false,
                                         "invisible": false,
                                         "visibleGridView": false,
@@ -405,7 +402,6 @@
                                 "style": "",
                                 "permissions": "",
                                 "datatype": "data",
-                                "columnType": "",
                                 "invisible": false,
                                 "visibleGridView": false,
                                 "visibleSearch": false
@@ -463,8 +459,6 @@
                                 "style": "",
                                 "permissions": null,
                                 "datatype": "data",
-                                "columnType": null,
-                                "queryColumnType": null,
                                 "relationType": false,
                                 "invisible": false,
                                 "visibleGridView": false,

@@ -18,10 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Checkbox extends Model\DataObject\ClassDefinition\Data
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -33,7 +36,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     /**
      * @var bool
      */
-    public $defaultValue = 0;
+    public $defaultValue;
 
     /**
      * Type for the column to query
@@ -57,7 +60,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     public $phpdocType = 'boolean';
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDefaultValue()
     {
@@ -65,19 +68,22 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param int $defaultValue
+     * @param $defaultValue
      *
      * @return $this
      */
     public function setDefaultValue($defaultValue)
     {
-        $this->defaultValue = (int)$defaultValue;
+        if (!is_numeric($defaultValue)) {
+            $defaultValue = null;
+        }
+        $this->defaultValue = $defaultValue;
 
         return $this;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -87,15 +93,11 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if (is_bool($data)) {
-            $data = (int)$data;
-        }
-
-        return $data;
+        return is_null($data) ? null : (int)$data;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param bool $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -113,7 +115,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -127,7 +129,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -137,11 +139,13 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        return $this->getDataForResource($data, $object, $params);
+        $value = $this->getDataForResource($data, $object, $params);
+
+        return $value;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -151,15 +155,11 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data === 'false') {
-            return false;
-        }
-
-        return (bool)$this->getDataFromResource($data, $object, $params);
+        return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param bool $data
      * @param null|DataObject\AbstractObject $object
@@ -323,5 +323,13 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty($data)
+    {
+        return $data === null;
     }
 }

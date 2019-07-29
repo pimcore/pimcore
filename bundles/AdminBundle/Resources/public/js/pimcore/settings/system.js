@@ -214,6 +214,12 @@ pimcore.settings.system = Class.create({
                                 width: 330,
                                 value: this.getValue("branding.color_admin_interface"),
                                 name: 'branding.color_admin_interface'
+                            }, {
+                                xtype: "checkbox",
+                                fieldLabel: t('invert_colors_on_login_screen'),
+                                width: 330,
+                                checked: this.getValue("branding.login_screen_invert_colors"),
+                                name: 'branding.login_screen_invert_colors'
                             }]
                         }, {
                             xtype: 'fieldset',
@@ -287,7 +293,7 @@ pimcore.settings.system = Class.create({
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
-                            value: t('valid_languages_frontend_description'),
+                            value: t('valid_languages_frontend_description') + " <br /><br />" + t('delete_language_note'),
                             cls: "pimcore_extra_label_bottom"
                         },
                             {
@@ -550,11 +556,6 @@ pimcore.settings.system = Class.create({
                                             value: this.getValue("email.smtp.port")
                                         },
                                         {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "email.smtp.name",
-                                            value: this.getValue("email.smtp.name")
-                                        },
-                                        {
                                             fieldLabel: t("email_smtp_auth_method"),
                                             xtype: "combo",
                                             width: 425,
@@ -682,55 +683,6 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype: 'fieldset',
-                        title: t('mysql_database'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 400},
-                        items: [
-                            {
-                                fieldLabel: t('adapter'),
-                                disabled: true,
-                                name: 'database.adapter',
-                                value: this.getValue("database.adapter")
-                            }, {
-                                fieldLabel: t('host'),
-                                disabled: true,
-                                name: 'database.params.host',
-                                value: this.getValue("database.params.host")
-                            },
-                            {
-                                fieldLabel: t('username'),
-                                disabled: true,
-                                name: 'database.params.username',
-                                value: this.getValue("database.params.username")
-                            },
-                            {
-                                fieldLabel: t('password'),
-                                disabled: true,
-                                inputType: "password",
-                                name: 'database.params.password',
-                                value: this.getValue("database.params.password")
-                            },
-                            {
-                                fieldLabel: t('database_name'),
-                                disabled: true,
-                                name: 'database.params.dbname',
-                                value: this.getValue("database.params.dbname")
-                            },
-                            {
-                                fieldLabel: t('port'),
-                                disabled: true,
-                                name: 'database.params.port',
-                                value: this.getValue("database.params.port")
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        xtype: 'fieldset',
                         title: t('documents'),
                         collapsible: true,
                         collapsed: true,
@@ -766,15 +718,6 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('default_controller'),
-                                name: 'documents.default_controller',
-                                value: this.getValue("documents.default_controller")
-                            },
-                            {
-                                fieldLabel: t('default_action'),
-                                name: 'documents.default_action',
-                                value: this.getValue("documents.default_action")
-                            }, {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 style: "margin-top: 10px;",
@@ -1182,8 +1125,9 @@ pimcore.settings.system = Class.create({
                                     name: "newsletter.method",
                                     value: this.getValue("newsletter.method"),
                                     store: [
-                                        ["mail", "mail"],
-                                        ["smtp", "smtp"]
+                                        ["sendmail", "Sendmail"],
+                                        ["smtp", "SMTP"],
+                                        ["null", t("none")]
                                     ],
                                     listeners: {
                                         select: this.emailMethodSelected.bind(this, "newsletter")
@@ -1225,11 +1169,6 @@ pimcore.settings.system = Class.create({
                                             fieldLabel: t("email_smtp_port"),
                                             name: "newsletter.smtp.port",
                                             value: this.getValue("newsletter.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "newsletter.smtp.name",
-                                            value: this.getValue("newsletter.smtp.name")
                                         },
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
@@ -1312,6 +1251,9 @@ pimcore.settings.system = Class.create({
     },
 
     save: function () {
+
+        this.layout.mask();
+
         var values = this.layout.getForm().getFieldValues();
 
         Ext.Ajax.request({
@@ -1321,6 +1263,9 @@ pimcore.settings.system = Class.create({
                 data: Ext.encode(values)
             },
             success: function (response) {
+
+                this.layout.unmask();
+
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -1338,7 +1283,7 @@ pimcore.settings.system = Class.create({
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
-            }
+            }.bind(this)
         });
     },
 

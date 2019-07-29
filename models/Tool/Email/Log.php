@@ -396,50 +396,9 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * Sets the creation date (unix timestamp)
-     *
-     * @param int $creationDate
-     *
-     * @return $this
-     *
-     * @todo: creationDate not found in class
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * Returns the creation date as unix timestamp
-     *
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * Saves the email log entry (forwards to $this->update())
-     */
     public function save()
     {
-        // set date
-        if (!(int)$this->getId()) {
-            $this->getDao()->create();
-        }
-        $this->update();
-    }
-
-    /**
-     * Updates and save the email log entry to the db and the file-system
-     */
-    protected function update()
-    {
-        $this->getDao()->update();
+        $this->getDao()->save();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
             File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }
@@ -480,16 +439,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Returns the "to" recipients as array
-     *
-     * @return array
-     */
-    public function getToAsArray()
-    {
-        return $this->buildArray($this->getTo());
-    }
-
-    /**
      * @param $cc
      *
      * @return $this
@@ -512,16 +461,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Returns the carbon copy recipients as array
-     *
-     * @return array
-     */
-    public function getCcAsArray()
-    {
-        return $this->buildArray($this->getCc());
-    }
-
-    /**
      * @param $bcc
      *
      * @return $this
@@ -541,16 +480,6 @@ class Log extends Model\AbstractModel
     public function getBcc()
     {
         return $this->bcc;
-    }
-
-    /**
-     * Returns the blind carbon copy recipients as array
-     *
-     * @return array
-     */
-    public function getBccAsArray()
-    {
-        return $this->buildArray($this->getBcc());
     }
 
     /**
@@ -598,16 +527,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Returns the "replyTo" email addresses as array
-     *
-     * @return array
-     */
-    public function getReplyToAsArray()
-    {
-        return $this->buildArray($this->getReplyTo());
-    }
-
-    /**
      * @param $html
      *
      * @return $this
@@ -649,33 +568,5 @@ class Log extends Model\AbstractModel
     public function getBodyText()
     {
         return $this->bodyText;
-    }
-
-    /**
-     * Helper to get the recipients as array
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    protected function buildArray($data)
-    {
-        if (is_null($data)) {
-            return [];
-        }
-
-        $dataArray = [];
-        $tmp = explode(',', trim($data));
-
-        foreach ($tmp as $entry) {
-            $entry = trim($entry);
-            $tmp2 = explode(' ', $entry);
-            $dataArray[] = [
-                'email' => trim($tmp2[0]),
-                'name' => str_replace(['(', ')'], '', $tmp2[1])
-            ];
-        }
-
-        return $dataArray;
     }
 }

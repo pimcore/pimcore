@@ -2,9 +2,10 @@
     /**
      * @var \Pimcore\Model\Element\ElementInterface $element
      */
+    $element = $this->element;
     $this->get("translate")->setDomain("admin");
 ?>
-<div class="data-table <?= $cls ?>">
+<div class="data-table <?= $this->cls ?>">
     <table>
         <?php if($element instanceof \Pimcore\Model\DataObject) { ?>
             <tr>

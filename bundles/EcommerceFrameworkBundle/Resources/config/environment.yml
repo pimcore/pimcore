@@ -10,7 +10,11 @@ services:
     # Predefined core environment implementations. Options will be set from configuration.
     #
 
-    Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment: '@pimcore_ecommerce.environment'
+    Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface: '@pimcore_ecommerce.environment'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment:
+        alias: Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface
+        # deprecated: 'The "%alias_id%" is deprecated, use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface instead'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
         arguments:

@@ -45,7 +45,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
-                        return baseUrl + '&width=88&height=20&frame=true" />';
+                        return baseUrl + '&width=88&height=88&frame=true" />';
                     }
 
                 }
@@ -72,8 +72,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 items:
                     [{
                         xtype: "tbspacer",
-                        width: 40,
-                        height: 16,
+                        width: 48,
+                        height: 24,
                         cls: "pimcore_icon_droptarget_upload"
 
                     },

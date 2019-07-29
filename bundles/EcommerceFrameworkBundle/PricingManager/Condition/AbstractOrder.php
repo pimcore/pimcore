@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
-abstract class AbstractOrder implements ICondition
+abstract class AbstractOrder implements ConditionInterface
 {
     /**
      * Persistent cache for all conditions inheriting from AbstractOrder
@@ -31,12 +31,12 @@ abstract class AbstractOrder implements ICondition
     private static $cache = [];
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      * @param string $field
      *
      * @return mixed
      */
-    private function getData(IRule $rule, $field)
+    private function getData(RuleInterface $rule, $field)
     {
         if (!array_key_exists($rule->getId(), self::$cache)) {
             $query = <<<'SQL'
@@ -50,27 +50,27 @@ SELECT 1
 	, orderItem.oo_id as "orderItem"
 	, `order`.orderdate
 
-FROM object_query_%2$d as `order`
+FROM object_query_%2$s as `order`
 
     -- ordered products
-    JOIN object_relations_%2$d as orderItems
+    JOIN object_relations_%2$s as orderItems
         ON( 1
             AND orderItems.fieldname = "items"
             AND orderItems.src_id = `order`.oo_id
         )
 
 	-- order item
-	JOIN object_%1$d as orderItem
+	JOIN object_%1$s as orderItem
 		ON ( 1
     	    AND orderItem.o_id = orderItems.dest_id
 		)
 
 	-- add active price rules
-	JOIN object_collection_PricingRule_%1$d as priceRule
+	JOIN object_collection_PricingRule_%1$s as priceRule
 		ON( 1
 			AND priceRule.o_id = orderItem.oo_id
 			AND priceRule.fieldname = "PricingRules"
-			AND priceRule.ruleId = %3$d
+			AND priceRule.ruleId = %3$s
 		)
 
 WHERE 1
@@ -93,21 +93,21 @@ SQL;
     }
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
      * @return int
      */
-    protected function getSoldCount(IRule $rule)
+    protected function getSoldCount(RuleInterface $rule)
     {
         return (int)$this->getData($rule, 'soldCount');
     }
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
      * @return Decimal
      */
-    protected function getSalesAmount(IRule $rule): Decimal
+    protected function getSalesAmount(RuleInterface $rule): Decimal
     {
         return Decimal::create($this->getData($rule, 'salesAmount'));
     }

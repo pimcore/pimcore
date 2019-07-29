@@ -18,13 +18,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Model\DataObject\ClassDefinition\Data
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -68,6 +71,11 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
      * @var string
      */
     public $toolbarConfig = '';
+
+    /**
+     * @var bool
+     */
+    public $excludeFromSearchIndex = false;
 
     /**
      * @return int
@@ -130,7 +138,25 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @return bool
+     */
+    public function isExcludeFromSearchIndex(): bool
+    {
+        return $this->excludeFromSearchIndex;
+    }
+
+    /**
+     * @param bool $excludeFromSearchIndex
+     */
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    {
+        $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
+        return $this;
+    }
+
+    /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -144,7 +170,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -158,7 +184,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -181,7 +207,24 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
+     *
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        if ($this->isExcludeFromSearchIndex()) {
+            return '';
+        } else {
+            return parent::getDataForSearchIndex($object, $params);
+        }
+    }
+
+    /**
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -195,7 +238,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -319,8 +362,6 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
-        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
         $data = $this->getDataFromObjectParam($object, $params);
         $html = str_get_html($data);
         if ($html) {

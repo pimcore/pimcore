@@ -12,6 +12,7 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
+use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -34,12 +35,12 @@ class TestHelper
     public static function checkDbSupport()
     {
         if (!static::supportsDbTests()) {
-            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB is not connected');
+            throw new \PHPUnit\Framework\SkippedTestError('Not running test as DB is not connected');
         }
     }
 
     /**
-     * @param  array $properties
+     * @param \Pimcore\Model\Property[] $properties
      *
      * @return array
      *
@@ -53,22 +54,22 @@ class TestHelper
 
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
-                if ($value->type == 'asset' || $value->type == 'object' || $value->type == 'document') {
-                    if ($value->data instanceof ElementInterface) {
-                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getId();
+                if (in_array($value->getType(), ['document', 'asset', 'object'])) {
+                    if ($value->getData() instanceof ElementInterface) {
+                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData()->getId();
                     } else {
-                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ': null';
+                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ': null';
                     }
-                } elseif ($value->type == 'date') {
-                    if ($value->data instanceof \DateTimeInterface) {
-                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getTimestamp();
+                } elseif ($value->getType() === 'date') {
+                    if ($value->getData() instanceof \DateTimeInterface) {
+                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData()->getTimestamp();
                     }
-                } elseif ($value->type == 'bool') {
-                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . (bool)$value->data;
-                } elseif ($value->type == 'text' || $value->type == 'select') {
-                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data;
+                } elseif ($value->getType() === 'bool') {
+                    $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . (bool)$value->getData();
+                } elseif (in_array($value->getType(), ['text', 'select'])) {
+                    $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData();
                 } else {
-                    throw new \Exception('Unknown property of type [ ' . $value->type . ' ]');
+                    throw new \Exception('Unknown property of type [ ' . $value->getType() . ' ]');
                 }
             }
         }
@@ -167,8 +168,6 @@ class TestHelper
                 }
 
                 if ($document instanceof Document\Page) {
-                    $d['name'] = $document->getName();
-                    $d['keywords'] = $document->getKeywords();
                     $d['title'] = $document->getTitle();
                     $d['description'] = $document->getDescription();
                 }
@@ -235,7 +234,7 @@ class TestHelper
         // plus omit fields which don't have get method
         $getter = 'get' . ucfirst($key);
 
-        if (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
+        if (method_exists($object, $getter) && $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
             if ($object->$getter()) {
                 /** @var ObjectModel\Fieldcollection $collection */
                 $collection = $object->$getter();
@@ -260,7 +259,7 @@ class TestHelper
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password or $fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -275,7 +274,7 @@ class TestHelper
                     return serialize($returnValue);
                 }
             }
-        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
+        } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
             $data = $object->$getter();
             $lData = [];
 
@@ -286,7 +285,9 @@ class TestHelper
             $localeService = \Pimcore::getContainer()->get('pimcore.locale');
             $localeBackup = $localeService->getLocale();
 
-            foreach ($data->getItems() as $language => $values) {
+            $validLanguages = Tool::getValidLanguages();
+
+            foreach ($validLanguages as $language) {
                 /** @var ObjectModel\ClassDefinition\Data $nestedFd */
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
                     $localeService->setLocale($language);
@@ -297,9 +298,9 @@ class TestHelper
             $localeService->setLocale($localeBackup);
 
             return serialize($lData);
-        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\Data\Link) {
+        } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) and !$fd instanceof ObjectModel\ClassDefinition\Data\Password and !$fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
+        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
             return $fd->getForCsvExport($object);
         }
     }
@@ -748,9 +749,9 @@ class TestHelper
     public static function getAssetCount()
     {
         $list = new Asset\Listing();
-        $childs = $list->load();
+        $children = $list->getAssets();
 
-        return count($childs);
+        return count($children);
     }
 
     /**

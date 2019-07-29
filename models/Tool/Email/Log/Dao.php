@@ -52,6 +52,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
+        if (!$this->model->getId()) {
+            $this->create();
+        }
+
         $data = [];
 
         $emailLog = $this->model->getObjectVars();
@@ -95,29 +99,13 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete(self::$dbTable, ['id' => $this->model->getId()]);
     }
 
-    /**
-     * just an alias for $this->save();
-     */
-    public function update()
-    {
-        $this->save();
-    }
-
-    /**
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            $this->db->insert(self::$dbTable, []);
+        $this->db->insert(self::$dbTable, []);
 
-            $date = time();
-            $this->model->setId($this->db->lastInsertId());
-            $this->model->setCreationDate($date);
-            $this->model->setModificationDate($date);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $date = time();
+        $this->model->setId($this->db->lastInsertId());
+        $this->model->setModificationDate($date);
     }
 
     /**

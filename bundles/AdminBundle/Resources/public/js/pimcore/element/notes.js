@@ -51,7 +51,7 @@ pimcore.element.notes = Class.create({
                 '/admin/element/note-list?',
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
                 itemsPerPage,
-                {autoLoad: false}
+                {autoLoad: false, remoteFilter: false}
             );
 
             // only when used in element context
@@ -104,7 +104,7 @@ pimcore.element.notes = Class.create({
             }
 
             var tbar = Ext.create('Ext.Toolbar', {
-                cls: 'main-toolbar',
+                cls: this.inElementContext ? '' : 'pimcore_main_toolbar',
                 items: tbarItems
             });
 
@@ -120,8 +120,8 @@ pimcore.element.notes = Class.create({
                         return "";
                     }
                 },
-                {text: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200},
-                {text: t("description"), sortable: true, dataIndex: 'description', filter: 'string'},
+                {text: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200, renderer: Ext.util.Format.htmlEncode},
+                {text: t("description"), sortable: true, dataIndex: 'description', filter: 'string', renderer: Ext.util.Format.htmlEncode},
                 {text: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
@@ -192,6 +192,9 @@ pimcore.element.notes = Class.create({
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
                         this.showDetailedData(grid, rowIndex, event);
+                    }.bind(this),
+                    beforerender: function () {
+                        this.store.setRemoteFilter(true);
                     }.bind(this)
 
                 }
@@ -210,7 +213,7 @@ pimcore.element.notes = Class.create({
                 tabConfig: {
                     tooltip: t('notes_events')
                 },
-                iconCls: "pimcore_icon_notes",
+                iconCls: this.inElementContext ? 'pimcore_material_icon_notes pimcore_material_icon' : "pimcore_icon_notes",
                 items: [this.grid, this.detailView],
                 layout: "border",
                 closable: !this.inElementContext

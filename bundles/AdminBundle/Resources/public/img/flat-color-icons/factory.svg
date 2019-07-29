@@ -1,10 +1,7 @@
-<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-    <path fill="#BF360C" d="M41.2,5h-7.3L32,43h11L41.2,5z"/>
-    <path fill="#E64A19" d="M33,23h-4v-6l-12,6v-6L5,23v20h28V23z"/>
-    <rect x="9" y="27" fill="#FFC107" width="4" height="4"/>
-    <rect x="17" y="27" fill="#FFC107" width="4" height="4"/>
-    <rect x="25" y="27" fill="#FFC107" width="4" height="4"/>
-    <rect x="9" y="35" fill="#FFC107" width="4" height="4"/>
-    <rect x="17" y="35" fill="#FFC107" width="4" height="4"/>
-    <rect x="25" y="35" fill="#FFC107" width="4" height="4"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<polygon fill="#A3A5A7" points="2,22 2,8 7,12 7,8 12,12 12,8 17,12 18,2 21,2 22,12 22,22 "/>
+<path fill="#0C0F12" d="M4,18v2h4v-2H4 M4,14v2h10v-2H4 M10,18v2h4v-2H10 M16,14v2h4v-2H16 M16,18v2h4v-2H16"/>
 </svg>

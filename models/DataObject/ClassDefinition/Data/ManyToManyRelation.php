@@ -19,12 +19,17 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
 
     /**
      * Static type of this element
@@ -209,16 +214,9 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -247,17 +245,14 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
-        $elements = [];
+        $elements = [
+            'dirty' => false,
+            'data' => []
+        ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element['type'] == 'object') {
@@ -269,7 +264,9 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $elements[] = $e;
+                    $elements['data'][] = $e;
+                } else {
+                    $elements['dirty'] = true;
                 }
             }
         }
@@ -278,15 +275,18 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
     }
 
     /**
-     * @param $data
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
+     *
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -311,13 +311,13 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -336,27 +336,26 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
                 }
             }
             if (empty($return)) {
-                $return = false;
+                $return = null;
             }
 
             return $return;
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         //if not set, return null
         if ($data === null or $data === false) {
             return null;
@@ -409,19 +408,19 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
-     *
-     * @todo $pathes is not defined, should be definied as empty array
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
+            $pathes = [];
+
             foreach ($data as $e) {
                 if ($e instanceof Element\ElementInterface) {
                     $pathes[] = get_class($e) . $e->getRealFullPath();
@@ -430,6 +429,8 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
 
             return implode('<br />', $pathes);
         }
+
+        return null;
     }
 
     /**
@@ -708,14 +709,14 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
 
@@ -729,8 +730,10 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
@@ -1051,4 +1054,14 @@ class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations
 
         return;
     }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading(): bool
+    {
+        return true;
+    }
 }
+
+class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');

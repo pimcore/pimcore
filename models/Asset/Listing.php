@@ -29,42 +29,12 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
-     * List of assets
-     *
-     * @var array
+     * @var array|null
      */
-    public $assets = null;
-
-    /**
-     * List of valid order keys
-     *
-     * @var array
-     */
-    public $validOrderKeys = [
-        'creationDate',
-        'modificationDate',
-        'id',
-        'filename',
-        'type',
-        'parentId',
-        'path',
-        'mimetype'
-    ];
-
-    /**
-     * Test if the passed key is valid
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
+    protected $assets = null;
 
     /**
      * @return Model\Asset[]
@@ -72,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public function getAssets()
     {
         if ($this->assets === null) {
-            $this->load();
+            $this->getDao()->load();
         }
 
         return $this->assets;
@@ -92,7 +62,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
+     * Methods for AdapterInterface
      */
 
     /**

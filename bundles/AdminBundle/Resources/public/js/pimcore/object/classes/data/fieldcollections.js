@@ -133,6 +133,12 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                     fieldLabel: t("collapsed"),
                     name: "collapsed",
                     checked: this.datax.collapsed
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("border"),
+                    name: "border",
+                    checked: this.datax.border,
                 }
             ]
 

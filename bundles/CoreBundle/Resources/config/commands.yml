@@ -1,0 +1,93 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\CoreBundle\Command\:
+        resource: '../../Command'
+        exclude: '../../Command/Bundle/Helper'
+        tags: ['console.command']
+
+    Pimcore\Bundle\CoreBundle\Command\InternalNewsletterDocumentSendCommand:
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: console.command, command: 'internal:newsletter-document-send' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
+        arguments:
+            - '@Pimcore\Cache\Symfony\CacheClearer'
+            - '@Pimcore\Tool\AssetsInstaller'
+            - '@Symfony\Component\EventDispatcher\EventDispatcherInterface'
+
+    Pimcore\Bundle\CoreBundle\Command\OptimizeImageThumbnailsCommand:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+        tags:
+            - { name: console.command, command: 'pimcore:thumbnails:optimize-images' }
+
+    Pimcore\Bundle\CoreBundle\Command\MaintenanceCommand:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+            - '@logger'
+        tags:
+            - { name: console.command, command: 'pimcore:maintenance' }
+            - { name: console.command, command: 'maintenance' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\DisableCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:disable' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\EnableCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:enable' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\InstallCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:install' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\UninstallCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:uninstall' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\UpdateCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:update' }
+
+    Pimcore\Bundle\CoreBundle\Command\Targeting\MigrateElementNamesCommand:
+        arguments:
+            - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
+        tags:
+            - { name: console.command, command: 'pimcore:targeting:migrate-element-names' }
+
+    Pimcore\Bundle\CoreBundle\Command\ClassesRebuildCommand:
+        calls:
+            - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:classes-rebuild' }
+
+    Pimcore\Bundle\CoreBundle\Command\CustomLayoutRebuildCommand:
+        calls:
+            - [setClassLayoutDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager']]
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }

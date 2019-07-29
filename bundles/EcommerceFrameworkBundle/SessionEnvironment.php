@@ -22,7 +22,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionEnvironment extends Environment implements IEnvironment
+class SessionEnvironment extends Environment implements EnvironmentInterface
 {
     const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
     const SESSION_KEY_USERID = 'userid';
@@ -63,7 +63,7 @@ class SessionEnvironment extends Environment implements IEnvironment
 
         $this->customItems = $sessionBag->get(self::SESSION_KEY_CUSTOM_ITEMS, []);
 
-        $this->userId = $sessionBag->get(self::SESSION_KEY_USERID);
+        $this->userId = $sessionBag->get(self::SESSION_KEY_USERID, self::USER_ID_NOT_SET);
 
         $this->currentAssortmentTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_TENANT);
         $this->currentAssortmentSubTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);

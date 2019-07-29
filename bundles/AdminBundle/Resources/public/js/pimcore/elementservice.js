@@ -157,12 +157,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
-
+                var refreshParentNodes = [];
                 for (var index = 0; index < affectedNodes.length; index++) {
                     var node = affectedNodes[index];
                     try {
                         if (node) {
-                            node.remove();
+                            refreshParentNodes[node.parentNode.id] = node.parentNode.id;
                         }
                     } catch (e) {
                         console.log(e);
@@ -173,6 +173,10 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                             });
                         }
                     }
+                }
+
+                for (var parentNodeId in refreshParentNodes) {
+                    pimcore.elementservice.refreshNodeAllTrees(elementType, parentNodeId);
                 }
 
                 if(this.deleteWindow) {
@@ -186,14 +190,23 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     successHandler();
                 }
             }.bind(this, id, successHandler),
-            update: function (currentStep, steps, percent) {
+            update: function (currentStep, steps, percent, response) {
                 if(this.deleteProgressBar) {
                     var status = currentStep / steps;
                     this.deleteProgressBar.updateProgress(status, percent + "%");
                 }
+
+                if(response && response['deleted']) {
+                    var ids = Object.keys(response['deleted']);
+                    ids.forEach(function (id) {
+                        pimcore.helpers.closeElement(id, elementType);
+                    })
+                }
             }.bind(this),
             failure: function (id, message) {
-                this.deleteWindow.close();
+                if (this.deleteWindow) {
+                    this.deleteWindow.close();
+                }
 
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error", t(message));
                 for (var index = 0; index < affectedNodes.length; index++) {
@@ -689,6 +702,7 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
 
             if(in_array(response["type"], ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"])) {
                 pimcore.helpers.openDocument(response.id, response.type);
+                pimcore.plugin.broker.fireEvent("postAddDocumentTree", response.id);
             }
         }  else {
             pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
@@ -708,6 +722,7 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
             if (rdata.id && rdata.type) {
                 if (rdata.type == "object") {
                     pimcore.helpers.openObject(rdata.id, rdata.type);
+                    pimcore.plugin.broker.fireEvent("postAddObjectTree", rdata.id);
                 }
             }
         }  else {
@@ -777,11 +792,17 @@ pimcore.elementservice.setElementPublishedState = function(options) {
                         }
                     }
                 }
-                if (published) {
-                    delete node.data.cls;
-                } else {
-                    node.data.cls = "pimcore_unpublished";
+
+                if(!node.data['cls']) {
+                    node.data['cls'] = '';
                 }
+
+                if (published) {
+                    node.data.cls = node.data.cls.replace(/pimcore_unpublished/g, '');
+                } else {
+                    node.data.cls += " pimcore_unpublished";
+                }
+
                 node.data.published = published;
             }
         } catch (e) {
@@ -924,7 +945,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
         return {
             text: t('actions'),
             scale: "medium",
-            iconCls: 'pimcore_icon_workflow_action',
+            iconCls: 'pimcore_material_icon_workflow pimcore_material_icon',
             cls: 'pimcore_workflow_button',
             menu: {
                 xtype: 'menu',

@@ -47,6 +47,10 @@ pimcore.object.classes.data.imageGallery = Class.create(pimcore.object.classes.d
         return "pimcore_icon_imageGallery";
     },
 
+    getGroup: function () {
+        return "media";
+    },
+
     getLayout: function ($super) {
 
         $super();

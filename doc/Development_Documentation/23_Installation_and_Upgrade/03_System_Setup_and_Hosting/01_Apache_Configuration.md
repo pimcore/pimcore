@@ -9,7 +9,7 @@ Allowoverride All
 which enables `.htaccess` support. 
 
 All the necessary rewrite rules, which are needed for Pimcore to work, are in the `.htaccess` of the install package, 
-see [https://github.com/pimcore/pimcore/blob/master/web/.htaccess](https://github.com/pimcore/pimcore/blob/master/web/.htaccess). 
+see [https://github.com/pimcore/skeleton/blob/master/web/.htaccess](https://github.com/pimcore/skeleton/blob/master/web/.htaccess). 
 
 #### Example 
 ```

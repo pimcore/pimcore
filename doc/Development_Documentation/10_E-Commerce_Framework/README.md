@@ -48,15 +48,10 @@ Following aspects are short cuts into the documentation for start working with t
 - [Architecture Overview](./01_Architecture_Overview.md)
 - [Installation](./03_Installation.md) and [Configuration](./04_Configuration)
 - [Indexing and Listing Products](./05_Index_Service/README.md)
-- [Filtering Products](./07_Filter_Service.md)
+- [Filtering Products](./07_Filter_Service/README.md)
 - [Working with Prices](./09_Working_with_Prices/README.md)
 - [Working with Carts](./11_Cart_Manager.md)
 - [Setting up Checkouts](./13_Checkout_Manager/README.md)
 - [Integrating Payment Functionality](./15_Payment/README.md)
 - [Working with Orders](./17_Order_Manager/README.md)
 - [Tracking Manager](./19_Tracking_Manager.md)
-
-
-## Migration from former E-Commerce Framework Plugin
-If you are migrating a project from the former E-Commerce Framework Plugin have a look at the 
-[migration notes](../23_Installation_and_Upgrade/09_Upgrade_Notes/03_Ecommerce_Framework.md). 

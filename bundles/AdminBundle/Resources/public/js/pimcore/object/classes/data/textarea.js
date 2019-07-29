@@ -77,6 +77,22 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("height"),
                 name: "height",
                 value: datax.height
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("max_length"),
+                name: "maxLength",
+                value: datax.maxLength
+            },{
+                xtype: "checkbox",
+                fieldLabel: t("show_charcount"),
+                name: "showCharCount",
+                value: datax.showCharCount
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("exclude_from_search_index"),
+                name: "excludeFromSearchIndex",
+                checked: datax.excludeFromSearchIndex
             }
         ];
 

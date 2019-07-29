@@ -181,7 +181,7 @@ class FullPageCacheListener
         $excludePatterns = [];
 
         // only enable GET method
-        if (!$request->isMethod('GET')) {
+        if (!$request->isMethodCacheable()) {
             return $this->disable();
         }
 
@@ -271,6 +271,12 @@ class FullPageCacheListener
         if (Tool\Frontend::hasWebpSupport()) {
             $appendKey .= 'webp';
         }
+
+        if ($request->isXmlHttpRequest()) {
+            $appendKey .= 'xhr';
+        }
+
+        $appendKey .= $request->getMethod();
 
         $this->defaultCacheKey = 'output_' . md5(\Pimcore\Tool::getHostname() . $requestUri . $appendKey);
         $cacheKeys = [

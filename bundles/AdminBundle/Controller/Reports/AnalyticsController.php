@@ -105,10 +105,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     {
         $siteId = $request->get('site');
 
-        try {
-            return Site::getById($siteId);
-        } catch (\Exception $e) {
-        }
+        return Site::getById($siteId);
     }
 
     /**

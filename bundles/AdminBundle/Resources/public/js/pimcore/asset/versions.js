@@ -43,10 +43,15 @@ pimcore.asset.versions = Class.create({
 
             this.store = new Ext.data.Store({
                 model: modelName,
-                sorters: [{
-                    property: 'id',
-                    direction: 'DESC'
-                }],
+                sorters: [
+                    {
+                        property: 'versionCount',
+                        direction: 'DESC'
+                    },
+                    {
+                        property: 'id',
+                        direction: 'DESC'
+                    }],
                 proxy: {
                     type: 'ajax',
                     url: "/admin/element/get-versions",
@@ -128,7 +133,7 @@ pimcore.asset.versions = Class.create({
                 bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_versions",
+                iconCls: "pimcore_material_icon_versions pimcore_material_icon",
                 items: [grid,preview]
             });
 

@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\TagHandlerInterface;
-use Pimcore\ExtensionManager;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -49,6 +48,11 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      * @var array
      */
     public $currentIndex;
+
+    /**
+     * @var bool
+     */
+    protected $blockStarted;
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -576,18 +580,14 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      * @param null $idMapper
      *
      * @throws \Exception
-     *
-     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))
-            and ($data->currentIndex == null or is_numeric($data->currentIndex))) {
+        if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
+            && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
             $indices = $data->indices;
-            if ($indices instanceof \stdclass) {
-                $indices = (array) $indices;
-            }
+            $indices = json_decode(json_encode($indices), true);
 
             $this->indices = $indices;
             $this->current = $data->current;
@@ -598,111 +598,13 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return bool
-     */
-    public function isCustomAreaPath()
-    {
-        $options = $this->getOptions();
-
-        return array_key_exists('areaDir', $options);
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @param $name
-     *
-     * @return bool
-     */
-    public function isBrickEnabled($name)
-    {
-        return $this->getTagHandler()->isBrickEnabled($this, $name);
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return string
-     */
-    public function getAreaDirectory()
-    {
-        $options = $this->getOptions();
-
-        return PIMCORE_PROJECT_ROOT . '/' . trim($options['areaDir'], '/');
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @param $name
-     *
-     * @return string
-     */
-    public function getPathForBrick($name)
-    {
-        if ($this->isCustomAreaPath()) {
-            return $this->getAreaDirectory() . '/' . $name;
-        }
-
-        return ExtensionManager::getPathForExtension($name, 'brick');
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @param $name
-     *
-     * @throws \Exception
-     */
-    public function getBrickConfig($name)
-    {
-        if ($this->isCustomAreaPath()) {
-            $path = $this->getAreaDirectory();
-
-            return ExtensionManager::getBrickConfig($name, $path);
-        }
-
-        return ExtensionManager::getBrickConfig($name);
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return array
-     */
-    public function getAreaDirs()
-    {
-        if ($this->isCustomAreaPath()) {
-            return ExtensionManager::getBrickDirectories($this->getAreaDirectory());
-        }
-
-        return ExtensionManager::getBrickDirectories();
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return array|mixed
-     */
-    public function getBrickConfigs()
-    {
-        if ($this->isCustomAreaPath()) {
-            return ExtensionManager::getBrickConfigs($this->getAreaDirectory());
-        }
-
-        return ExtensionManager::getBrickConfigs();
-    }
-
-    /**
      * @param string $name
      *
      * @return Areablock\Item[]
      */
     public function getElement(string $name)
     {
-        $document = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document::getById($this->getDocumentId());
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

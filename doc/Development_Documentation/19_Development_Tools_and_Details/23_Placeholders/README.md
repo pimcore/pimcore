@@ -51,13 +51,13 @@ Pimcore ships with two placeholder implementations.
 ### Create your own Placeholders
 
 You can also create your own placeholder. By default it is assumed that your individual placeholders 
-are located in `/website/lib/Website/Placeholder/YourPlaceholder.php`.
+are located in `/AppBundle/Placeholder/YourPlaceholder.php`.
 
 If you want to change the default placeholder location you can call 
 `Pimcore\Placeholder::addPlaceholderClassPrefix(...)` to change the location (make sure you set them 
 before any individual placeholder is called).
-E.g. for `\Pimcore\Placeholder::addPlaceholderClassPrefix('Website\Tool\');` -> the placeholder location 
-would be `/website/lib/Website/Tool/YourPlaceholder.php`
+E.g. for `\Pimcore\Placeholder::addPlaceholderClassPrefix('MyBundle\Tool\');` -> the placeholder location 
+would be `/MyBundle/Tool/YourPlaceholder.php`
 
 Now we assume that we want to create a simple Placeholder that replaces the data of a person.
 
@@ -73,7 +73,7 @@ replacements.
 ```php
 <?php
   
-namespace Website\Placeholder;
+namespace AppBundle\Placeholder;
 use Pimcore\Placeholder;
 class Person extends Placeholder\AbstractPlaceholder
 {
@@ -123,7 +123,6 @@ class Person extends Placeholder\AbstractPlaceholder
 
 ```php
 public function ownPlaceholderAction(){
-    $this->disableViewAutoRender();
     $text = '%Person(salutation); %Person(firstName); %Person(lastName); thank you for your order.';
     $placeholder = new \Pimcore\Placeholder();
  

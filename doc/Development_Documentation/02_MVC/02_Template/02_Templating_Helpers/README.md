@@ -20,6 +20,7 @@ Following an overview of some helpers provided by the Symfony Templating Compone
 - `translator()` 
 - `url()` 
 - `path()` 
+- `device()`
 
 For more information please have a look into the docs of the [Symfony PHP Templating Compontent](http://symfony.com/doc/3.4/templating/PHP.html). 
   
@@ -159,6 +160,9 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
 | `$default`         | Default if no device can be detected |
 
 ##### Example
+
+<div class="code-section">
+
 ```php
 <?php
     $device = $this->device("phone"); // first argument is the default setting
@@ -176,6 +180,19 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
     Here is some desktop specific content
 <?php } ?>
 ```
+
+```twig
+{% if pimcore_device()->isPhone() %}
+    This is my phone content
+{% elseif pimcore_device()->isTablet() %}
+    This text is shown on a tablet
+{% elseif pimcore_device()->isDesktop() %}
+    This is for default desktop Browser
+{% endif %}
+```
+
+</div>
+   
 For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
 
@@ -269,6 +286,32 @@ echo $this->inc($doc, [
   
 <!-- disable caching -->
 <?= $this->inc(123, null, false) ?>
+```
+
+When passing parameters to something included with pimcore_inc(), these parameters are not automatically passed to Twig.
+The parameters are passed as attributes to the included document, and should be passed to Twig via the document's controller action.
+
+Example:
+
+index.html.twig
+```php
+{{ pimcore_inc('/some/other/document', { 'parameterToPass': parameterToPass }) }}
+``` 
+
+IndexController.php (whatever controller / method is designated for /some/other/document in the document tree)
+```php
+public function otherDocumentAction(Request $request) {
+    $this->viewParameters->add([
+        'parameterToPass' => $request->get('parameterToPass')
+    ]);
+}
+```
+
+someOtherDocument.html.twig (whatever Twig template is actually for /some/other/document in the document tree)
+```twig
+...
+{{ parameterToPass }}
+...
 ```
 
 

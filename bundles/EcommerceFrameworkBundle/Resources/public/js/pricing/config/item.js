@@ -154,7 +154,6 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
             autoScroll: true,
             //border:false,
             items: [{
-                border: true,
                 style: "margin-bottom: 10px",
                 cls: "object_localizedfields_panel",
                 xtype: 'panel',
@@ -257,6 +256,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
             title: t("actions"),
             autoScroll: true,
             forceLayout: true,
+            bodyStyle: 'padding: 0 10px 10px 10px;',
             tbar: [{
                 iconCls: "pimcore_icon_add",
                 menu: addMenu
@@ -1279,6 +1279,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
             id: myId,
             type: 'Gift',
             forceLayout: true,
+            border: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, iconCls),
@@ -1351,6 +1352,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
             id: myId,
             type: 'CartDiscount',
             forceLayout: true,
+            border: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, iconCls),
@@ -1402,6 +1404,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
             id: myId,
             type: 'ProductDiscount',
             forceLayout: true,
+            border: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, iconCls),
@@ -1453,6 +1456,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
             id: myId,
             type: 'FreeShipping',
             forceLayout: true,
+            border: true,
             style: "margin: 10px 0 0 0",
 //            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, iconCls)

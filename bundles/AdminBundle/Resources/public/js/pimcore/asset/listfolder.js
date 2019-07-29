@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.asset.listfolder");
 pimcore.asset.listfolder = Class.create({
 
     onlyDirectChildren: false,
+    onlyUnreferenced: false,
 
     initialize: function (element) {
         this.element = element;
@@ -56,13 +57,14 @@ pimcore.asset.listfolder = Class.create({
             }
         });
 
-        var readerFields = ['id', 'fullpath','type', 'creationDate', 'modificationDate', 'size', 'idPath'];
+        var readerFields = ['id', 'fullpath', 'filename', 'type', 'creationDate', 'modificationDate', 'size', 'idPath'];
 
         this.selectionColumn = new Ext.selection.CheckboxModel();
 
         var typesColumns = [
             {text: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
-            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
+            {text: t("filename"), sortable: true, dataIndex: 'filename', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
+            {text: t("fullpath"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
             {text: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
 
@@ -79,7 +81,7 @@ pimcore.asset.listfolder = Class.create({
         }});
 
         typesColumns.push(
-            {text: t("size"), sortable: false, dataIndex: 'size', editable: false, filter: 'string'}
+            {text: t("size"), sortable: false, dataIndex: 'size', editable: false}
         );
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
@@ -100,11 +102,24 @@ pimcore.asset.listfolder = Class.create({
             boxLabel: t("only_children"),
             listeners: {
                 "change" : function (field, checked) {
-                    this.grid.filters.clearFilters();
-
                     this.store.getProxy().setExtraParam("only_direct_children", checked);
-
                     this.onlyDirectChildren = checked;
+
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        });
+
+        this.checkboxOnlyUnreferenced = new Ext.form.Checkbox({
+            name: "onlyUnreferenced",
+            style: "margin-bottom: 5px; margin-left: 5px",
+            checked: this.onlyUnreferenced,
+            boxLabel: t("only_unreferenced"),
+            listeners: {
+                "change" : function (field, checked) {
+                    this.store.getProxy().setExtraParam("only_unreferenced", checked);
+                    this.onlyUnreferenced = checked;
+
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
@@ -112,7 +127,7 @@ pimcore.asset.listfolder = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', {
             title: "List",
-            iconCls: "pimcore_icon_table_tab",
+            iconCls: "pimcore_material_icon_list pimcore_material_icon",
             frame: false,
             autoScroll: true,
             store: this.store,
@@ -129,6 +144,7 @@ pimcore.asset.listfolder = Class.create({
             listeners: {
                 activate: function() {
                     this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
+                    this.store.getProxy().setExtraParam("only_unreferenced", this.onlyUnreferenced);
                     this.store.load();
                 }.bind(this),
                 rowdblclick: function(grid, record, tr, rowIndex, e, eOpts ) {
@@ -140,6 +156,8 @@ pimcore.asset.listfolder = Class.create({
             tbar: [
                 "->"
                 ,this.checkboxOnlyDirectChildren
+                , "-"
+                ,this.checkboxOnlyUnreferenced
                 , "-"
                 ,{
                     text: t("download_selected_as_zip"),

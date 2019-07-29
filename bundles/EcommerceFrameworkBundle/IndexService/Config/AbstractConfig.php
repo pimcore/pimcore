@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Config\Config;
 use Pimcore\Model\DataObject\AbstractObject;
 
-abstract class AbstractConfig implements IConfig
+abstract class AbstractConfig implements ConfigInterface
 {
     /**
      * @var string
@@ -59,7 +59,7 @@ abstract class AbstractConfig implements IConfig
     protected $filterTypes;
 
     /**
-     * @var IWorker
+     * @var WorkerInterface
      */
     protected $tenantWorker;
 
@@ -94,6 +94,16 @@ abstract class AbstractConfig implements IConfig
 
         $this->filterTypes = $filterTypes;
         $this->processOptions($options);
+    }
+
+    /**
+     * Attribute configuration
+     *
+     * @return array
+     */
+    public function getAttributeConfig()
+    {
+        return $this->attributeConfig;
     }
 
     /**
@@ -167,7 +177,7 @@ abstract class AbstractConfig implements IConfig
     /**
      * @inheritdoc
      */
-    public function setTenantWorker(IWorker $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker)
     {
         $this->checkTenantWorker($tenantWorker);
         $this->tenantWorker = $tenantWorker;
@@ -177,9 +187,9 @@ abstract class AbstractConfig implements IConfig
      * Checks if tenant worker matches prerequisites (config wrapped in worker is this instance and instance has no
      * worker set yet).
      *
-     * @param IWorker $tenantWorker
+     * @param WorkerInterface $tenantWorker
      */
-    protected function checkTenantWorker(IWorker $tenantWorker)
+    protected function checkTenantWorker(WorkerInterface $tenantWorker)
     {
         if (null !== $this->tenantWorker) {
             throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));
@@ -253,21 +263,22 @@ abstract class AbstractConfig implements IConfig
     }
 
     /**
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function isActive(IIndexable $object)
+    public function isActive(IndexableInterface $object)
     {
         return true;
     }
 
     /**
-     * @param IIndexable $object
+     * @param IndexableInterface $object
+     * @param null $subObjectId
      *
      * @return AbstractCategory[]
      */
-    public function getCategories(IIndexable $object)
+    public function getCategories(IndexableInterface $object, $subObjectId = null)
     {
         return $object->getCategories();
     }
@@ -276,11 +287,11 @@ abstract class AbstractConfig implements IConfig
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
-    public function createSubIdsForObject(IIndexable $object)
+    public function createSubIdsForObject(IndexableInterface $object)
     {
         return [$object->getId() => $object];
     }
@@ -288,12 +299,12 @@ abstract class AbstractConfig implements IConfig
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param array $subIds
      *
      * @return mixed
      */
-    public function getSubIdsToCleanup(IIndexable $object, array $subIds)
+    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds)
     {
         return [];
     }
@@ -302,12 +313,12 @@ abstract class AbstractConfig implements IConfig
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param $subId
      *
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(IIndexable $object, $subId)
+    public function createVirtualParentIdForSubId(IndexableInterface $object, $subId)
     {
         return $object->getOSParentId();
     }
@@ -332,7 +343,7 @@ abstract class AbstractConfig implements IConfig
      *
      * @param $objectId
      *
-     * @return IIndexable | array
+     * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId)
     {

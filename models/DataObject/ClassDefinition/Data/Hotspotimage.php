@@ -25,6 +25,9 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -117,13 +120,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -154,13 +157,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Hotspotimage|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -207,6 +210,10 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
             $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
 
+            if (isset($params['owner'])) {
+                $value->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
             return $value;
         }
 
@@ -214,13 +221,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -228,13 +235,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -280,13 +287,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Hotspotimage
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -333,19 +340,21 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param Asset\Image $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getImage()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
+
+        return null;
     }
 
     /**
@@ -503,7 +512,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
         if ($dataForResource) {
             if ($dataForResource['image__hotspots']) {
-                $dataForResource['image__hotspots'] = unserialize($dataForResource['image__hotspots']);
+                $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
             }
 
             return $dataForResource;

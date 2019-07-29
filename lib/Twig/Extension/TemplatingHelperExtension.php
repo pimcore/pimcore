@@ -19,12 +19,14 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\HelperInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Delegates calls to PHP templating helpers. Use this only with templating helpers which do not rely
  * on PHP rendering!
  */
-class TemplatingHelperExtension extends \Twig_Extension
+class TemplatingHelperExtension extends AbstractExtension
 {
     /**
      * @var PhpEngine
@@ -50,6 +52,7 @@ class TemplatingHelperExtension extends \Twig_Extension
             'inlineScript' => 'pimcore_inline_script',
             'placeholder' => 'pimcore_placeholder',
             'cache' => 'pimcore_cache',
+            'device' => 'pimcore_device',
             'pimcoreUrl' => [
                 'name' => 'pimcore_url',
                 'is_safe' => null
@@ -80,7 +83,7 @@ class TemplatingHelperExtension extends \Twig_Extension
                 return $this->callHelper($helperName, func_get_args());
             };
 
-            $functions[] = new \Twig_Function($functionName, $callable, $options);
+            $functions[] = new TwigFunction($functionName, $callable, $options);
         }
 
         return $functions;

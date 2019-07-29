@@ -1,0 +1,245 @@
+{
+    "id": "52",
+    "description": null,
+    "parentClass": null,
+    "listingParentClass": null,
+    "useTraits": null,
+    "listingUseTraits": null,
+    "allowInherit": true,
+    "allowVariants": false,
+    "showVariants": false,
+    "layoutDefinitions": {
+        "fieldtype": "panel",
+        "labelWidth": 100,
+        "layout": null,
+        "name": "pimcore_root",
+        "type": null,
+        "region": null,
+        "title": null,
+        "width": null,
+        "height": null,
+        "collapsible": false,
+        "collapsed": false,
+        "bodyStyle": null,
+        "datatype": "layout",
+        "permissions": null,
+        "childs": [
+            {
+                "fieldtype": "panel",
+                "labelWidth": 100,
+                "layout": null,
+                "name": "Layout",
+                "type": null,
+                "region": null,
+                "title": "",
+                "width": null,
+                "height": null,
+                "collapsible": false,
+                "collapsed": false,
+                "bodyStyle": "",
+                "datatype": "layout",
+                "permissions": null,
+                "childs": [
+                    {
+                        "columns": [
+                            {
+                                "type": "text",
+                                "position": 1,
+                                "key": "meta",
+                                "id": "extModel1242-1",
+                                "label": "meta"
+                            }
+                        ],
+                        "fieldtype": "advancedManyToManyRelation",
+                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
+                        "optimizedAdminLoading": false,
+                        "allowMultipleAssignments": false,
+                        "width": "",
+                        "height": "",
+                        "maxItems": "",
+                        "assetUploadPath": "",
+                        "queryColumnType": "text",
+                        "relationType": true,
+                        "objectsAllowed": true,
+                        "assetsAllowed": true,
+                        "assetTypes": [],
+                        "documentsAllowed": true,
+                        "documentTypes": [],
+                        "lazyLoading": true,
+                        "classes": [],
+                        "pathFormatterClass": "",
+                        "name": "onlyOneManyToMany",
+                        "title": "onlyOneManyToMany",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false,
+                        "columnKeys": [
+                            "meta"
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "type": "text",
+                                "position": 1,
+                                "key": "meta",
+                                "id": "extModel1109-1",
+                                "label": "meta"
+                            }
+                        ],
+                        "fieldtype": "advancedManyToManyRelation",
+                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
+                        "optimizedAdminLoading": true,
+                        "allowMultipleAssignments": true,
+                        "width": "",
+                        "height": "",
+                        "maxItems": "",
+                        "assetUploadPath": "",
+                        "queryColumnType": "text",
+                        "relationType": true,
+                        "objectsAllowed": true,
+                        "assetsAllowed": true,
+                        "assetTypes": [],
+                        "documentsAllowed": true,
+                        "documentTypes": [],
+                        "lazyLoading": true,
+                        "classes": [],
+                        "pathFormatterClass": "",
+                        "name": "multipleManyToMany",
+                        "title": "multipleManyToMany",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false,
+                        "columnKeys": [
+                            "meta"
+                        ]
+                    },
+                    {
+                        "allowedClassId": "RelationTest",
+                        "visibleFields": null,
+                        "columns": [
+                            {
+                                "type": "text",
+                                "position": 1,
+                                "key": "meta",
+                                "id": "extModel1242-1",
+                                "label": "meta"
+                            }
+                        ],
+                        "fieldtype": "advancedManyToManyObjectRelation",
+                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
+                        "enableBatchEdit": false,
+                        "allowMultipleAssignments": false,
+                        "width": "",
+                        "height": "",
+                        "maxItems": "",
+                        "queryColumnType": "text",
+                        "relationType": true,
+                        "optimizedAdminLoading": false,
+                        "lazyLoading": true,
+                        "classes": [],
+                        "pathFormatterClass": "",
+                        "name": "onlyOneManyToManyObject",
+                        "title": "onlyOneManyToManyObject",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false,
+                        "columnKeys": [
+                            "meta"
+                        ]
+                    },
+                    {
+                        "allowedClassId": "RelationTest",
+                        "visibleFields": null,
+                        "columns": [
+                            {
+                                "type": "text",
+                                "position": 1,
+                                "key": "meta",
+                                "id": "extModel1109-1",
+                                "label": "meta"
+                            }
+                        ],
+                        "fieldtype": "advancedManyToManyObjectRelation",
+                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
+                        "enableBatchEdit": false,
+                        "allowMultipleAssignments": true,
+                        "width": "",
+                        "height": "",
+                        "maxItems": "",
+                        "queryColumnType": "text",
+                        "relationType": true,
+                        "optimizedAdminLoading": false,
+                        "lazyLoading": true,
+                        "classes": [],
+                        "pathFormatterClass": "",
+                        "name": "multipleManyToManyObject",
+                        "title": "multipleManyToManyObject",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": null,
+                        "datatype": "data",
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false,
+                        "columnKeys": [
+                            "meta"
+                        ]
+                    }
+                ],
+                "locked": false
+            }
+        ],
+        "locked": false
+    },
+    "icon": null,
+    "previewUrl": null,
+    "group": null,
+    "linkGeneratorReference": null,
+    "propertyVisibility": {
+        "grid": {
+            "id": true,
+            "key": false,
+            "path": true,
+            "published": true,
+            "modificationDate": true,
+            "creationDate": true
+        },
+        "search": {
+            "id": true,
+            "key": false,
+            "path": true,
+            "published": true,
+            "modificationDate": true,
+            "creationDate": true
+        }
+    }
+}

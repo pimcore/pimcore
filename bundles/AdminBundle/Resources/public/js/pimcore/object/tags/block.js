@@ -76,6 +76,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         if(this.data.length < 1) {
             this.component.add(this.getControls());
         } else {
+            Ext.suspendLayouts();
             for (var i=0; i<this.data.length; i++) {
                 this.addBlockElement(
                     i,
@@ -85,6 +86,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
                     this.data[i].data,
                     true);
             }
+            Ext.resumeLayouts();
         }
 
         this.component.updateLayout();
@@ -248,7 +250,10 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         // var items = this.getRecursiveLayout(this.layoutDefinitions[type]).items;
         var fieldConfig = this.fieldConfig;
 
-        var items = this.getRecursiveLayout(fieldConfig, undefined, undefined, undefined, undefined, undefined, true);
+        var context = this.getContext();
+        context["subContainerType"] = "block";
+        context["subContainerKey"] = fieldConfig.name;
+        var items = this.getRecursiveLayout(fieldConfig, undefined, context, undefined, undefined, undefined, true);
 
         items = items.items;
 
