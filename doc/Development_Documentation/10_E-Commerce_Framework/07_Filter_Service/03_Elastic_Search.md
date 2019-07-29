@@ -52,16 +52,12 @@ pimcore_ecommerce_framework:
 
 ## Filter for nested documents
 
-In some cases it is necessary to store an array of objects, but in a way so thea can be queried independently of each other, i.e. if you want 
-to store the keys of a classification store dataobject field in your product. The data in your index may look as follows:
+In some cases it is necessary to store an array of objects, but in a way so that they can be queried independently of each other, i.e. if you want 
+to store the keys of a classification store dataobject field. The data in your index may look as follows:
 
 ```json
 {
-   ...
    "_source": {
-       "system": {
-          ...
-       },
        "attributes": {  
          "my_attributes": [  
             {  
@@ -85,7 +81,7 @@ to store the keys of a classification store dataobject field in your product. Th
 }
 ```
 
-The mapping for the field `my_attributes` now must be defined as nested, to let elastic search know about the sub-documents:
+To utilize the `nested` document functionality the mapping type of the field `my_attributes` must be defined as `nested`, to let elastic search know about the sub-documents:
 
 ```yaml
  attributes:
@@ -99,7 +95,7 @@ The mapping for the field `my_attributes` now must be defined as nested, to let 
         locale: '%%locale%%'
 ```
 
-Now you can create your a filter for the nested documents, which has to be defined in a nested manner as well:
+Now you can create a filter for the nested document field, which has to be defined in a nested manner as well:
 
 ```php
 class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelect
@@ -110,7 +106,10 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
 
         $nestedPath = "attributes.my_attributes";
 
-        $subAggregationField = $nestedPath . ".name.keyword";
+        // first group by id
+        $subAggregationField = $nestedPath . ".id";
+        
+        // then group by value
         $subSubAggregationField = $nestedPath . ".value.keyword";
 
         $productList->prepareGroupByValuesWithConfig($this->getField($filterDefinition), true, false, [
@@ -171,7 +170,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
     
 ```
 
-#### Futher information
+### Futher information
 Read more about 
 
 - [_nested documents_ ](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
