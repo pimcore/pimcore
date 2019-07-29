@@ -405,26 +405,37 @@ pimcore.settings.user.user.settings = Class.create({
             items: adminItems
         });
 
-
-        var availPermsItems = [];
-        // add available permissions
+        var itemsPerSection = [];
+        var sectionArray = [];
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
-            availPermsItems.push({
+            let section = this.data.availablePermissions[i].category;
+            if(!section){
+                section = "default";
+            }
+            if (!itemsPerSection[section]) {
+                itemsPerSection[section] = [];
+            }
+            itemsPerSection[section].push({
                 xtype: "checkbox",
-                boxLabel: t(this.data.availablePermissions[i].key),
+                fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
-                labelStyle: "width: 200px;"
+                labelWidth: 200
             });
         }
+        for (var key in itemsPerSection) {
+            let title = t("permissions");
+            if (key && key != "default") {
+                title += " " + t(key);
+            }
 
-        this.permissionsSet = new Ext.form.FieldSet({
-            collapsible: true,
-            title: t("permissions"),
-            items: availPermsItems,
-            hidden: this.currentUser.admin
-        });
-
+            sectionArray.push(new Ext.form.FieldSet({
+                collapsible: true,
+                title: title,
+                items: itemsPerSection[key],
+                collapsed: true,
+            }));
+        }
 
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
@@ -465,7 +476,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.generalSet, this.adminSet, this.permissionsSet, this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel],
+            items: array_merge([this.generalSet, this.adminSet], sectionArray, [this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel]),
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

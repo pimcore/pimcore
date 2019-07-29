@@ -31,6 +31,11 @@ class Definition extends Model\AbstractModel
     public $key;
 
     /**
+     * @var string
+     */
+    public $category;
+
+    /**
      * @param array
      */
     public function __construct($data = [])
@@ -57,6 +62,24 @@ class Definition extends Model\AbstractModel
     {
         $this->key = $key;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Definition
+     */
+    public function setCategory(string $category): Definition
+    {
+        $this->category = $category;
         return $this;
     }
 
