@@ -44,6 +44,7 @@ class WebsiteConfig extends Helper
     public function __invoke($key = null, $default = null)
     {
         $locale = $this->requestHelper->getCurrentRequest()->getLocale();
+
         return Config::getWebsiteConfigValue($key, $default, $locale);
     }
 }
