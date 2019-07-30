@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
@@ -42,6 +43,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @var Asset\Service
      */
@@ -59,9 +62,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'asset')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'asset')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'asset');
         }
         Element\Editlock::lock($request->get('id'), 'asset');
 
