@@ -19,15 +19,15 @@ use Pimcore\Model\User;
 
 trait ElementEditLockHelperTrait
 {
-    protected function getEditLockResponse(string $id, string $type) {
-
+    protected function getEditLockResponse(string $id, string $type)
+    {
         $editLock = Editlock::getByElement($id, $type);
         $user = User::getById($editLock->getUserId());
 
         $editLock = object2array($editLock);
         unset($editLock['sessionId']);
 
-        if($user) {
+        if ($user) {
             $editLock['user'] = [
                 'name' => $user->getName()
             ];
