@@ -23,7 +23,7 @@ pimcore.document.newsletters.plaintextPanel = Class.create({
         if (this.layout == null) {
 
             this.layout = new Ext.FormPanel({
-                title: t('plaintext'),
+                title: t('plain_text'),
                 border: false,
                 autoScroll: true,
                 bodyStyle:'padding:0 10px 0 10px;',
@@ -51,7 +51,7 @@ pimcore.document.newsletters.plaintextPanel = Class.create({
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
-                                        el.labelEl.update(t("plain text") + " (" + el.getValue().length + "):");
+                                        el.labelEl.update(t("plain_text") + " (" + el.getValue().length + "):");
                                     }
                                 }
                             }
