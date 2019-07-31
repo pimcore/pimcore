@@ -37,7 +37,14 @@ class Newsletter extends Model\Document\PageSnippet
      * @var string
      */
     protected $subject = '';
-
+    
+    /**
+     * Contains the plain text part of the email
+     *
+     * @var string
+     */
+    protected $plaintext = '';
+    
     /**
      * Contains the from email address
      *
@@ -108,6 +115,30 @@ class Newsletter extends Model\Document\PageSnippet
         $this->from = $from;
 
         return $this;
+    }
+    
+    /**
+     * Contains the email plain text part
+     *
+     * @param string $plaintext
+     *
+     * @return $this
+     */
+    public function setPlaintext($plaintext)
+    {
+        $this->plaintext = $plaintext;
+
+        return $this;
+    }
+
+    /**
+     * Returns the email plain text part
+     *
+     * @return string
+     */
+    public function getPlaintext()
+    {
+        return $this->plaintext;
     }
 
     /**
