@@ -1821,6 +1821,10 @@
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg) center center no-repeat;
 }
 
+.pimcore_material_icon_text {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat;
+}
+
 .pimcore_material_icon_workflow {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-directions-24px.svg) center center no-repeat;
 }
