@@ -24,7 +24,26 @@ use Pimcore\Model\DataObject\Listing\Concrete;
 
 class IndexUpdater
 {
+
     use CliTrait;
+
+    /**
+     * Checks if a session has to be started to accommodate the needs of the pricing system before sending output.
+     *
+     * Stop-Gap solution until later refactoring:
+     * @TODO Pimcore 7 - check if this is necessary when having monolog logging
+     */
+    private static function startSession() {
+        // Only necessary if this instance runs in CLI and doesn't have a session yet.
+        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
+            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
+            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
+            // pricing environment.
+            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+            $session = \Pimcore::getKernel()->getContainer()->get('session');
+            $session->start();
+        }
+    }
 
     /**
      * Runs update index for all tenants
@@ -42,16 +61,7 @@ class IndexUpdater
             $updater->createOrUpdateIndexStructures();
         }
 
-        // Check if this was triggered in cli. If so do some preparation to properly work.
-        // TODO Pimcore 7 - check if this is necessary when having monolog logging
-        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
-            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
-            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
-            // pricing environment.
-            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-            $session = \Pimcore::getKernel()->getContainer()->get('session');
-            $session->start();
-        }
+        self::startSession();
 
         $page = 0;
         $pageSize = 100;
@@ -108,6 +118,8 @@ class IndexUpdater
             $tenants = [$tenants];
         }
 
+        self::startSession();
+
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
             self::log($loggername, 'Processing preparation queue for tenant: ' . $tenant);
@@ -160,6 +172,8 @@ class IndexUpdater
         if (!is_array($tenants)) {
             $tenants = [$tenants];
         }
+
+        self::startSession();
 
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
