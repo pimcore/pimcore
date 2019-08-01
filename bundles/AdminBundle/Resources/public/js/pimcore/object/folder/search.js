@@ -357,7 +357,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
                     var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].text == 'ID' || columnName[cellIndex].text == 'Path') {
+                    if(columnName[cellIndex].dataIndex == 'id' || columnName[cellIndex].dataIndex == 'fullpath') {
                         var data = this.store.getAt(rowIndex);
                         pimcore.helpers.openObject(data.get("id"), data.get("type"));
                     }
