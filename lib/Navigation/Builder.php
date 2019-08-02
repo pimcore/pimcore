@@ -229,9 +229,11 @@ class Builder
 
     /**
      * @param Document $parentDocument
+     *
      * @return Document[]
      */
-    protected function getChildren(Document $parentDocument) : array {
+    protected function getChildren(Document $parentDocument): array
+    {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
         return $parentDocument->getChildren();

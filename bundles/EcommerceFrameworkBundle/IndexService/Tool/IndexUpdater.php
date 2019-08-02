@@ -24,16 +24,17 @@ use Pimcore\Model\DataObject\Listing\Concrete;
 
 class IndexUpdater
 {
-
     use CliTrait;
 
     /**
      * Checks if a session has to be started to accommodate the needs of the pricing system before sending output.
      *
      * Stop-Gap solution until later refactoring:
+     *
      * @TODO Pimcore 7 - check if this is necessary when having monolog logging
      */
-    private static function startSession() {
+    private static function startSession()
+    {
         // Only necessary if this instance runs in CLI and doesn't have a session yet.
         if (self::isCli() && session_status() == PHP_SESSION_NONE) {
             // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is

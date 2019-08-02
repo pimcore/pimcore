@@ -75,11 +75,13 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $category
+     *
      * @return Definition
      */
     public function setCategory(string $category): Definition
     {
         $this->category = $category;
+
         return $this;
     }
 
