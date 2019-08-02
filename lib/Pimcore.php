@@ -11,14 +11,8 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 use Pimcore\Cache;
-use Pimcore\Config;
-use Pimcore\FeatureToggles\Feature;
-use Pimcore\FeatureToggles\FeatureManager;
-use Pimcore\FeatureToggles\FeatureManagerInterface;
-use Pimcore\FeatureToggles\Features\DebugMode;
-use Pimcore\FeatureToggles\Features\DevMode;
-use Pimcore\FeatureToggles\FeatureState;
 use Pimcore\File;
 use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,9 +26,14 @@ class Pimcore
     public static $adminMode;
 
     /**
-     * @var FeatureManagerInterface
+     * @var bool|null
      */
-    private static $featureManager;
+    protected static $debugMode = null;
+
+    /**
+     * @var bool|null
+     */
+    protected static $devMode = null;
 
     /**
      * @var bool
@@ -52,98 +51,66 @@ class Pimcore
     private static $autoloader;
 
     /**
-     * @static
      *
-     * @return \Pimcore\Config\Config|null
      */
     public static function initConfiguration()
     {
-        $dev = self::inDevMode();
-        if (!defined('PIMCORE_DEVMODE')) {
-            define('PIMCORE_DEVMODE', $dev);
-        }
-
-        $debug = self::inDebugMode();
-        if (!defined('PIMCORE_DEBUG')) {
-            define('PIMCORE_DEBUG', $debug);
-        }
-
         // custom error logging when debug flag is set
-        if (self::inDebugMode(DebugMode::ERROR_REPORTING)) {
+        if (self::inDebugMode()) {
             error_reporting(E_ALL & ~E_NOTICE);
         }
-
-        return true;
-    }
-
-    public static function setFeatureManager(FeatureManagerInterface $featureManager)
-    {
-        self::$featureManager = $featureManager;
-    }
-
-    public static function getFeatureManager(): FeatureManagerInterface
-    {
-        if (null === static::$featureManager) {
-            $featureManager = new FeatureManager(null, [
-                DebugMode::getDefaultInitializer(),
-                DevMode::getDefaultInitializer()
-            ]);
-
-            static::$featureManager = $featureManager;
-        }
-
-        return static::$featureManager;
-    }
-
-    public static function isFeatureEnabled(Feature $feature): bool
-    {
-        return static::getFeatureManager()->isEnabled($feature);
     }
 
     /**
-     * @param DebugMode|int|null $flag
-     *
      * @return bool
      */
-    public static function inDebugMode($flag = null): bool
+    public static function inDebugMode(): bool
     {
-        if (is_int($flag)) {
-            $flag = new DebugMode($flag);
-        }
-
-        if (null !== $flag && !$flag instanceof DebugMode) {
-            throw new \InvalidArgumentException(sprintf('Flag must be an integer or an instance of %s', DebugMode::class));
-        }
-
-        return static::getFeatureManager()->isEnabled($flag ?? DebugMode::ALL());
+        return (bool) self::$debugMode;
     }
 
     /**
-     * @param DevMode|int|null $flag
-     *
-     * @return bool
+     * @internal
+     * @return bool|null
      */
-    public static function inDevMode($flag = null): bool
+    public static function getDebugMode(): ?bool
     {
-        if (is_int($flag)) {
-            $flag = new DevMode($flag);
-        }
-
-        if (null !== $flag && !$flag instanceof DevMode) {
-            throw new \InvalidArgumentException(sprintf('Flag must be an integer or an instance of %s', DevMode::class));
-        }
-
-        return static::getFeatureManager()->isEnabled($flag ?? DevMode::ALL());
+        return self::$debugMode;
     }
 
     /**
-     * Sets debug mode (overrides the PIMCORE_DEBUG constant and the debug mode from config)
-     *
+     * @internal
      * @param bool $debugMode
      */
-    public static function setDebugMode(bool $debugMode = true)
+    public static function setDebugMode(bool $debugMode): void
     {
-        self::getFeatureManager()->setState(FeatureState::fromFeature($debugMode ? DebugMode::ALL() : DebugMode::NONE()));
+        self::$debugMode = $debugMode;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function inDevMode(): bool
+    {
+        return (bool) self::$devMode;
+    }
+
+    /**
+     * @internal
+     * @return bool|null
+     */
+    public static function getDevMode(): ?bool
+    {
+        return self::$devMode;
+    }
+
+    /**
+     * @internal
+     * @param bool $devMode
+     */
+    public static function setDevMode(bool $devMode): void
+    {
+        self::$devMode = $devMode;
     }
 
     /**
@@ -316,12 +283,12 @@ class Pimcore
 
     public static function disableMinifyJs(): bool
     {
-        if (self::inDevMode(DevMode::UNMINIFIED_JS)) {
+        if (self::inDevMode()) {
             return true;
         }
 
         // magic parameter for debugging ExtJS stuff
-        if (array_key_exists('unminified_js', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+        if (array_key_exists('unminified_js', $_REQUEST) && self::inDebugMode()) {
             return true;
         }
 
@@ -331,7 +298,7 @@ class Pimcore
     public static function initLogger()
     {
         // special request log -> if parameter pimcore_log is set
-        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {
             $requestLogName = date('Y-m-d_H-i-s');
             if (!empty($_REQUEST['pimcore_log'])) {
                 // slashed are not allowed, replace them with hyphens
