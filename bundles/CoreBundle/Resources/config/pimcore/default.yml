@@ -202,18 +202,18 @@ pimcore:
     context:
         profiler:
             routes:
-                - { path: ^/_(profiler|wdt) }
+                - { path: ^/_(profiler|wdt)(/.*)?$ }
         admin:
             routes:
-                - { path: ^/admin }
+                - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
         webservice:
             routes:
-                - { path: ^/webservice }
+                - { path: ^/webservice(/.*)?$ }
                 - { route: ^pimcore_webservice }
         plugin:
             routes:
-                - { path: ^/plugin }
+                - { path: ^/plugin(/.*)?$ }
     admin:
         session:
             attribute_bags:
