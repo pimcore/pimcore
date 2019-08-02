@@ -21,43 +21,32 @@ pimcore.document.newsletters.plaintextPanel = Class.create({
     getLayout: function () {
 
         if (this.layout == null) {
-
             this.layout = new Ext.FormPanel({
                 title: t('plain_text'),
                 border: false,
                 autoScroll: true,
                 bodyStyle:'padding:0 10px 0 10px;',
                 iconCls: "pimcore_material_icon_text pimcore_material_icon",
-                items: [
-                    {
+                items: [{
                     xtype:'fieldset',
-                        title: t('plain_text_email_part'),
-                        itemId: "plaintextPanel",
-                        collapsible: true,
-                        autoHeight:true,
-                        defaults: {
-                            labelWidth: 200
-                        },
-                        defaultType: 'textarea',
-                        items :[
-                            {
-                                fieldLabel: t('plain_text') + " (" + this.document.data.plaintext.length + ")",
-                                maxLength: 4000,
-                                height: 700,
-                                width: 1400,
-                                name: 'plaintext',
-                                itemId: 'plaintext',
-                                value: this.document.data.plaintext,
-                                enableKeyEvents: true,
-                                listeners: {
-                                    "keyup": function (el) {
-                                        el.labelEl.update(t("plain_text") + " (" + el.getValue().length + "):");
-                                    }
-                                }
-                            }
-                        ]
-                    }    
-                ]
+                    title: t('plain_text_email_part'),
+                    itemId: "plaintextPanel",
+                    collapsible: false,
+                    items: [{
+                        xtype: 'textarea',
+                        maxLength: 4000,
+                        height: 700,
+                        width: 1400,
+                        name: 'plaintext',
+                        value: this.document.data.plaintext,
+                        enableKeyEvents: true,
+                        listeners: {
+                            "keyup": function (el) {
+                                this.layout.getComponent('plaintextPanel').titleCmp.update(t("plain_text_email_part") + " (" + el.getValue().length + "):");
+                            }.bind(this)
+                        }
+                    }]
+                }]
             });
         }
 
@@ -74,5 +63,4 @@ pimcore.document.newsletters.plaintextPanel = Class.create({
         var plaintext = this.getLayout().getForm().getFieldValues();
         return plaintext;
     }
-
 });
