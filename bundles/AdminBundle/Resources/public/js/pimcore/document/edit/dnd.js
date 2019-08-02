@@ -22,7 +22,6 @@ pimcore.document.edit.dnd = Class.create({
 
         parentExt.dd.DragDropMgr.notifyOccluded = true;
         this.dndManager = parentExt.dd.DragDropMgr;
-        var iFrameElement = parent.Ext.get('document_iframe_' + window.editWindow.document.id);
 
         body.addListener('mousemove', this.ddMouseMove.bind(this));
         body.addListener('mouseup', this.ddMouseUp.bind(this));
@@ -95,8 +94,6 @@ pimcore.document.edit.dnd = Class.create({
         var doc = (window.contentDocument || window.document);
         scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop;
         scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft;
-
-        var xy = e.getXY();
 
         if (this.dndManager.dragCurrent) {
             e.xy = [e.pageX + this.iframeOffset[0] - scrollLeft, e.pageY + this.iframeOffset[1] - scrollTop];
