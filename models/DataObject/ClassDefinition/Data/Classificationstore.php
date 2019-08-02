@@ -584,29 +584,29 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $storeData->setFieldname($this->getName());
             $storeData->setObject($object);
             $activeGroupsLocal = [];
-            $activeGroupsRemote = $value->activeGroups;
-            if (is_array($activeGroupsRemote)) {
+            $activeGroupsRemote = $value["activeGroups"];
+
+            if ($activeGroupsRemote instanceof \stdClass) {
+                $activeGroupsRemote = get_object_vars($activeGroupsRemote);
                 foreach ($activeGroupsRemote as $data) {
-                    $remoteId = $data->id;
-                    $localId = $idMapper->getMappedId('csGroup', $remoteId);
+                    $localId = $idMapper  ? $idMapper->getMappedId('csGroup', $data["id"]) : $data["id"];
                     $activeGroupsLocal[$localId] = $localId;
                 }
             }
 
             $storeData->setActiveGroups($activeGroupsLocal);
 
-            $groupsRemote = $value->groups;
-            if (is_array($groupsRemote)) {
+            $groupsRemote = $value["groups"];
+            if ($groupsRemote instanceof \stdClass) {
+                $groupsRemote = get_object_vars($groupsRemote);
                 foreach ($groupsRemote as $remoteGroupData) {
-                    $remoteGroupId = $remoteGroupData->id;
-                    $localGroupId = $idMapper->getMappedId('csGroup', $remoteGroupId);
-                    $remoteKeys = $remoteGroupData->keys;
+                    $localGroupId = $idMapper ? $idMapper->getMappedId('csGroup', $remoteGroupData["id"]) : $remoteGroupData["id"];
+                    $remoteKeys = $remoteGroupData["keys"];
                     $remoteKeys = (array) $remoteKeys;
 
                     foreach ($remoteKeys as $language => $keyList) {
                         foreach ($keyList as $keyData) {
-                            $remoteKeyId = $keyData->id;
-                            $localKeyId = $idMapper->getMappedId('csKey', $remoteKeyId);
+                            $localKeyId = $idMapper ? $idMapper->getMappedId('csKey', $keyData->id): $keyData->id;
                             $keyConfig = DataObject\Classificationstore\KeyConfig::getById($localKeyId);
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
                             $value = $keyData->value;
