@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
