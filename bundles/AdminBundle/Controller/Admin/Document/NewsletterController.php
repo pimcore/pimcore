@@ -192,6 +192,12 @@ class NewsletterController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
+        
+        // plaintext
+        if ($request->get('plaintext')) {
+            $plaintext = $this->decodeJson($request->get('plaintext'));
+            $page->setValues($plaintext);    
+        }
     }
 
     /**
