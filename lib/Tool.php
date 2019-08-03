@@ -491,8 +491,9 @@ class Tool
             $ip = $_SERVER['REMOTE_ADDR'];
         }
 
-        $ips = explode(",", $ip);
+        $ips = explode(',', $ip);
         $ip = trim(array_shift($ips));
+
         return $ip;
     }
 

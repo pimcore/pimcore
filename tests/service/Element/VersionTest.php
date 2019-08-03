@@ -10,6 +10,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class VersionTest
+ *
  * @package Pimcore\Tests\Service\Element
  *
  */
@@ -20,19 +21,18 @@ class VersionTest extends TestCase
      */
     public function testDisable()
     {
-
         $savedObject = TestHelper::createEmptyObject();
         $objectId = $savedObject->getId();
 
-        $query = "select count(*) from versions where cid = " . $objectId . " and ctype='object'";
+        $query = 'select count(*) from versions where cid = ' . $objectId . " and ctype='object'";
         $db = Db::get();
 
         $initialCount = $db->fetchOne($query);
-        $this->assertEquals(1, $initialCount, "initial count must be 1");
+        $this->assertEquals(1, $initialCount, 'initial count must be 1');
 
         $savedObject->save();
         $countAfterSave = $db->fetchOne($query);
-        $this->assertEquals(2, $countAfterSave, "expected a new version");
+        $this->assertEquals(2, $countAfterSave, 'expected a new version');
 
         // disable versioning, version count should remain the same
         Version::disable();
@@ -52,20 +52,18 @@ class VersionTest extends TestCase
      */
     public function testCondense()
     {
-        /** @var  $savedObject Unittest */
+        /** @var $savedObject Unittest */
 
         // create target object
         $randomText = TestHelper::generateRandomString(10000);
 
-        /** @var  $targetObject Unittest */
+        /** @var $targetObject Unittest */
         $targetObject = TestHelper::createEmptyObject();
         $targetObject->setInput($randomText);
         $targetObject->save();
 
-
         // create source object
-        /** @var  $sourceObject Unittest */
-
+        /** @var $sourceObject Unittest */
         $sourceObject = TestHelper::createEmptyObject();
 
         Version::setCondenseVersion(true);
@@ -76,10 +74,10 @@ class VersionTest extends TestCase
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
         $content = file_get_contents($latestVersion1->getFilePath());
-        $this->assertTrue(strpos($content, $randomText) === FALSE, "random text shouldn't be there");
+        $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
 
         $multihref = $sourceObjectFromDb->getMultihref();
-        $this->assertEquals(1, count($multihref), "expected 1 target element");
+        $this->assertEquals(1, count($multihref), 'expected 1 target element');
 
         Version::setCondenseVersion(false);
 
@@ -87,23 +85,22 @@ class VersionTest extends TestCase
         $sourceObject->save();
         $latestVersion2 = $this->getNewestVersion($sourceObject->getId());
         $content = file_get_contents($latestVersion2->getFilePath());
-        $this->assertTrue(strpos($content, $randomText) !== FALSE, "expected random text to be there");
+        $this->assertTrue(strpos($content, $randomText) !== false, 'expected random text to be there');
 
         Version::setCondenseVersion(true);
         // save again
         $sourceObject->save();
         $latestVersion3 = $this->getNewestVersion($sourceObject->getId());
         $content = file_get_contents($latestVersion3->getFilePath());
-        $this->assertTrue(strpos($content, $randomText) === FALSE, "random text shouldn't be there");
-
+        $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
 
         // compare file size
         $size1 = filesize($latestVersion1->getFilePath());
         $size2 = filesize($latestVersion2->getFilePath());
         $size3 = filesize($latestVersion3->getFilePath());
         codecept_debug($latestVersion3->getFilePath());
-        $this->assertTrue($size1 < $size2, "Expected that condensed version is smaller (1)");
-        $this->assertTrue($size3 < $size2, "Expected that condensed version is smaller (2)");
+        $this->assertTrue($size1 < $size2, 'Expected that condensed version is smaller (1)');
+        $this->assertTrue($size3 < $size2, 'Expected that condensed version is smaller (2)');
     }
 
     /**
@@ -133,9 +130,9 @@ class VersionTest extends TestCase
     {
     }
 
-
     /**
      * @param $id
+     *
      * @return Version
      */
     protected function getNewestVersion($id)
@@ -143,10 +140,11 @@ class VersionTest extends TestCase
         $list = new Version\Listing();
         $list->setCondition("ctype = 'object' and cid = " . $id);
         $list->setLimit(1);
-        $list->setOrderKey("id");
-        $list->setOrder("DESC");
+        $list->setOrderKey('id');
+        $list->setOrder('DESC');
         $list = $list->load();
         $version = $list[0];
+
         return $version;
     }
 }

@@ -25,6 +25,7 @@ class ElementDescriptor
 
     /**
      * ElementDescriptor constructor.
+     *
      * @param string $type
      * @param int $id
      */
@@ -44,11 +45,13 @@ class ElementDescriptor
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -60,14 +63,15 @@ class ElementDescriptor
         return $this->id;
     }
 
-
     /**
      * @param int $id
+     *
      * @return $this
      */
     public function setId(int $id)
     {
         $this->id = $id;
+
         return $this;
     }
 }

@@ -69,8 +69,8 @@ class Newsletter
         if ($sendingContainer && $sendingContainer->getParams()) {
             $mail->setParams($sendingContainer->getParams());
         }
-        
-        if(strlen(trim($newsletterDocument->getPlaintext())) > 0) {
+
+        if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
             $mail->setBodyText(trim($newsletterDocument->getPlaintext()));
         }
 

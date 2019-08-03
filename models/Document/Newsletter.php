@@ -37,14 +37,14 @@ class Newsletter extends Model\Document\PageSnippet
      * @var string
      */
     protected $subject = '';
-    
+
     /**
      * Contains the plain text part of the email
      *
      * @var string
      */
     protected $plaintext = '';
-    
+
     /**
      * Contains the from email address
      *
@@ -116,7 +116,7 @@ class Newsletter extends Model\Document\PageSnippet
 
         return $this;
     }
-    
+
     /**
      * Contains the email plain text part
      *

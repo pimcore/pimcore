@@ -987,6 +987,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param string $environment
      */
     public static function setEnvironment($environment)
@@ -1069,6 +1070,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param string $varName
      * @param mixed $default
      *
@@ -1087,7 +1089,7 @@ class Config
      */
     public static function initDebugDevMode()
     {
-        if(defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
+        if (defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
             $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
         } else {
             // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
@@ -1125,12 +1127,10 @@ class Config
                 if ($debug && isset($conf['devmode'])) {
                     $devMode = $conf['devmode'];
                 }
-
-
             }
         }
 
-        if(\Pimcore::getDebugMode() === null) {
+        if (\Pimcore::getDebugMode() === null) {
             \Pimcore::setDebugMode($debug);
 
             /**
@@ -1139,7 +1139,7 @@ class Config
             define('PIMCORE_DEBUG', $debug);
         }
 
-        if(\Pimcore::getDevMode() === null) {
+        if (\Pimcore::getDevMode() === null) {
             \Pimcore::setDevMode($devMode);
 
             /**

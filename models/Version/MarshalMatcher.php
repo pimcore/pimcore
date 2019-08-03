@@ -23,19 +23,18 @@ use Pimcore\Model\Element\Service;
 
 class MarshalMatcher extends TypeMatcher
 {
-
     private $sourceType;
 
     private $sourceId;
 
     /**
      * MarshalMatcher constructor.
+     *
      * @param $sourceType
      * @param $sourceId
      */
     public function __construct($sourceType, $sourceId)
     {
-
         $this->sourceType = $sourceType;
         $this->sourceId = $sourceId;
     }
@@ -43,7 +42,7 @@ class MarshalMatcher extends TypeMatcher
     /**
      * @param mixed $element
      *
-     * @return boolean
+     * @return bool
      */
     public function matches($element)
     {
@@ -52,11 +51,10 @@ class MarshalMatcher extends TypeMatcher
             if ($elementType == $this->sourceType && $element->getId() == $this->sourceId) {
                 return false;
             }
+
             return true;
         }
+
         return false;
-
     }
-
-
 }

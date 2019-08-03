@@ -28,17 +28,17 @@ class UnmarshalMatcher extends TypeMatcher
     {
     }
 
-
     /**
      * @param mixed $element
      *
-     * @return boolean
+     * @return bool
      */
     public function matches($element)
     {
         if ($element instanceof ElementDescriptor) {
             return true;
         }
+
         return false;
     }
 }

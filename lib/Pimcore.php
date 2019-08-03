@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 use Pimcore\Cache;
 use Pimcore\File;
 use Pimcore\Model;
@@ -50,9 +49,6 @@ class Pimcore
      */
     private static $autoloader;
 
-    /**
-     *
-     */
     public static function initConfiguration()
     {
         // custom error logging when debug flag is set
@@ -71,6 +67,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return bool|null
      */
     public static function getDebugMode(): ?bool
@@ -80,6 +77,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @param bool $debugMode
      */
     public static function setDebugMode(bool $debugMode): void
@@ -97,6 +95,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @return bool|null
      */
     public static function getDevMode(): ?bool
@@ -106,6 +105,7 @@ class Pimcore
 
     /**
      * @internal
+     *
      * @param bool $devMode
      */
     public static function setDevMode(bool $devMode): void

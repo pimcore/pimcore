@@ -584,29 +584,29 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $storeData->setFieldname($this->getName());
             $storeData->setObject($object);
             $activeGroupsLocal = [];
-            $activeGroupsRemote = $value["activeGroups"];
+            $activeGroupsRemote = $value['activeGroups'];
 
             if ($activeGroupsRemote instanceof \stdClass) {
                 $activeGroupsRemote = get_object_vars($activeGroupsRemote);
                 foreach ($activeGroupsRemote as $data) {
-                    $localId = $idMapper  ? $idMapper->getMappedId('csGroup', $data["id"]) : $data["id"];
+                    $localId = $idMapper ? $idMapper->getMappedId('csGroup', $data['id']) : $data['id'];
                     $activeGroupsLocal[$localId] = $localId;
                 }
             }
 
             $storeData->setActiveGroups($activeGroupsLocal);
 
-            $groupsRemote = $value["groups"];
+            $groupsRemote = $value['groups'];
             if ($groupsRemote instanceof \stdClass) {
                 $groupsRemote = get_object_vars($groupsRemote);
                 foreach ($groupsRemote as $remoteGroupData) {
-                    $localGroupId = $idMapper ? $idMapper->getMappedId('csGroup', $remoteGroupData["id"]) : $remoteGroupData["id"];
-                    $remoteKeys = $remoteGroupData["keys"];
+                    $localGroupId = $idMapper ? $idMapper->getMappedId('csGroup', $remoteGroupData['id']) : $remoteGroupData['id'];
+                    $remoteKeys = $remoteGroupData['keys'];
                     $remoteKeys = (array) $remoteKeys;
 
                     foreach ($remoteKeys as $language => $keyList) {
                         foreach ($keyList as $keyData) {
-                            $localKeyId = $idMapper ? $idMapper->getMappedId('csKey', $keyData->id): $keyData->id;
+                            $localKeyId = $idMapper ? $idMapper->getMappedId('csKey', $keyData->id) : $keyData->id;
                             $keyConfig = DataObject\Classificationstore\KeyConfig::getById($localKeyId);
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
                             $value = $keyData->value;

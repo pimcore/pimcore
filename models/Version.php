@@ -35,7 +35,6 @@ use Pimcore\Tool\Serialize;
  */
 class Version extends AbstractModel
 {
-
     /** @var bool for now&testing, make it possible to disable it */
     protected static $condenseVersion = true;
 
@@ -252,9 +251,9 @@ class Version extends AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
     }
 
-
     /**
      * @param ElementInterface $data
+     *
      * @return mixed
      */
     public function marshalData($data)
@@ -273,39 +272,46 @@ class Version extends AbstractModel
                     if ($currentValue instanceof ElementInterface) {
                         $elementType = Service::getType($currentValue);
                         $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
                         return $descriptor;
                     }
+
                     return $currentValue;
                 }
             ),
             new MarshalMatcher($sourceType, $sourceId)
         );
         $newData = $copier->copy($data);
+
         return $newData;
     }
 
     /**
      * @param $data
+     *
      * @return mixed
      */
-    public function unmarshalData($data) {
+    public function unmarshalData($data)
+    {
         $copier = new DeepCopy();
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     if ($currentValue instanceof ElementDescriptor) {
                         $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
                         return $value;
                     }
+
                     return $currentValue;
                 }
             ),
             new UnmarshalMatcher()
         );
         $newData = $copier->copy($data);
+
         return $newData;
     }
-
 
     /**
      * Delete this Version
@@ -728,6 +734,4 @@ class Version extends AbstractModel
     {
         self::$condenseVersion = $condenseVersion;
     }
-
-
 }
