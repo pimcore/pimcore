@@ -94,6 +94,12 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             delete specificConfig.width;
 
+            var editorMode = "inline";
+            var editorModes = ["inline", "replace"];
+            if (typeof specificConfig.editorMode == "string" && editorModes.indexOf(specificConfig.editorMode) > -1) {
+                editorMode = specificConfig.editorMode;
+            }
+
             eConfig.language = pimcore.settings["language"];
             eConfig.entities = false;
             eConfig.entities_greek = false;
@@ -106,7 +112,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             eConfig = mergeObject(eConfig, specificConfig);
 
-            this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
+            this.ckeditor = CKEDITOR[editorMode](this.textarea, eConfig);
 
             this.ckeditor.on('change', this.checkValue.bind(this));
 

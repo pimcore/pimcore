@@ -78,6 +78,14 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $excludeFromSearchIndex = false;
 
     /**
+     * The mode of the editor.
+     * It can be inline or replace (classic mode).
+     * 
+     * @var string
+     */
+    public $editorMode = 'inline';
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -153,6 +161,22 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditorMode(): string
+    {
+        return $this->editorMode;
+    }
+
+    /**
+     * @param string $editorMode
+     */
+    public function setEditorMode(string $editorMode)
+    {
+        $this->editorMode = $editorMode;
     }
 
     /**

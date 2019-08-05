@@ -156,6 +156,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             onNodeDrop : this.onNodeDrop.bind(this)
         });
 
+        var editorMode = "inline";
+        if(this.fieldConfig.editorMode) {
+            editorMode = this.fieldConfig.editorMode;
+        }
+
         var eConfig = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
@@ -202,7 +207,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         try {
-            this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
+            this.ckeditor = CKEDITOR[editorMode](this.editableDivId, eConfig);
 
             // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {

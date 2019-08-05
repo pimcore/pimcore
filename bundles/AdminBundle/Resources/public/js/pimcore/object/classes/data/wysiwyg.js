@@ -35,7 +35,7 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
 
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                        "visibleGridView","visibleSearch","style"];
+                                        "visibleGridView","visibleSearch","style", "editorMode"];
 
         this.treeNode = treeNode;
     },
