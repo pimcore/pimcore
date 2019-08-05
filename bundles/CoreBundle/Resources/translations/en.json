@@ -827,6 +827,7 @@
   "bundle_ecommerce_pricing_config_condition_sold_count":  "Count",
   "bundle_ecommerce_pricing_config_condition_sold_count_cart":  "Count Cart",
   "bundle_ecommerce_pricing_config_condition_voucherToken":  "Voucher",
+  "error_message": "Error Message",
   "bundle_ecommerce_pricing_config_condition_tenant": "Tenant",
   "bundle_ecommerce_pricing_config_condition_targetgroup": "Target Group",
   "bundle_ecommerce_pricing_config_condition_targetgroup_threshold": "Threshold",

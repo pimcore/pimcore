@@ -26,7 +26,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterfac
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -74,6 +76,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      * @var ModificatedPriceInterface[]
      */
     protected $modifications = [];
+
+    /**
+     * @var RuleInterface[]
+     */
+    protected $appliedPricingRules = [];
 
     /**
      * @var PricingManagerInterface
@@ -253,7 +260,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         if (!$ignorePricingRules) {
             // apply pricing rules
-            $this->getPricingManager()->applyCartRules($this->cart);
+            $this->appliedPricingRules = $this->getPricingManager()->applyCartRules($this->cart);
 
             //check if some pricing rule needs recalculation of sums
             if (!$this->isCalculated) {
@@ -379,4 +386,34 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         return $this;
     }
+
+    /**
+     * @return RuleInterface[]
+     * @throws UnsupportedException
+     */
+    public function getAppliedPricingRules(): array
+    {
+        if(!$this->isCalculated) {
+            $this->calculate();
+        }
+
+        $itemRules = [];
+
+        foreach($this->cart->getItems() as $item) {
+            $priceInfo = $item->getPriceInfo();
+            if($priceInfo instanceof PriceInfoInterface) {
+                $itemRules = array_merge($itemRules, $priceInfo->getRules());
+            }
+        }
+
+        $itemRules = array_merge($this->appliedPricingRules, $itemRules);
+        $uniqueItemRules = [];
+        foreach($itemRules as $rule) {
+            $uniqueItemRules[$rule->getId()] = $rule;
+        }
+
+        return array_values($uniqueItemRules);
+    }
+
+
 }

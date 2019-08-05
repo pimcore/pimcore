@@ -153,6 +153,12 @@ interface RuleInterface
     public function executeOnCart(EnvironmentInterface $environment);
 
     /**
+     * @param string $typeClass
+     * @return ConditionInterface[]
+     */
+    public function getConditionsByType(string $typeClass): array;
+
+    /**
      * @param int $prio
      *
      * @return RuleInterface

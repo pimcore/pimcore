@@ -416,4 +416,22 @@ class Rule extends AbstractModel implements RuleInterface
 
         return Factory::getInstance()->getEnvironment()->getSystemLocale();
     }
+
+    /**
+     * @param string $typeClass
+     * @return ConditionInterface[]
+     */
+    public function getConditionsByType(string $typeClass): array {
+
+        $conditions = [];
+
+        $rootCondition = $this->getCondition();
+        if($rootCondition instanceof BracketInterface) {
+            $conditions = $rootCondition->getConditionsByType($typeClass);
+        } else if($rootCondition instanceof $typeClass) {
+            $conditions[] = $rootCondition;
+        }
+
+        return $conditions;
+    }
 }

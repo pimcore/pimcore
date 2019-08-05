@@ -18,10 +18,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
 
-abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements CartInterface
+abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     /**
      * @var bool
@@ -874,7 +876,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
                 return true;
             }
         } else {
-            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', 7);
+            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
     }
 
@@ -894,6 +896,14 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
         }
 
         return $tokens;
+    }
+
+    /**
+     * @return PricingManagerTokenInformation[]
+     */
+    public function getPricingManagerTokenInformationDetails(): array {
+        $voucherService = Factory::getInstance()->getVoucherService();
+        return $voucherService->getPricingManagerTokenInformationDetails($this);
     }
 
     /**
