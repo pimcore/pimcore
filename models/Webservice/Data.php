@@ -80,7 +80,7 @@ abstract class Data
                     $noteList[] = Element\Service::getNoteData($note);
                 }
             }
-            $this->notes = $noteList;
+            $this->{'notes'} = $noteList;
         }
     }
 
@@ -138,7 +138,7 @@ abstract class Data
             $object->setProperties(null);
         }
 
-        if (is_array($this->properties)) {
+        if (isset($this->properties) && is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 

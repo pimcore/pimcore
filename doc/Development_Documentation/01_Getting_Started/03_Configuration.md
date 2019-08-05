@@ -75,23 +75,10 @@ for a list of defined constants.
 There is one special constant `PIMCORE_PROJECT_ROOT` which is used to resolve the root directory (see [Directory Structure](./02_Directory_Structure.md))
 of the application.
 In constrast to the remaining constants, this constant is not defined in `constants.php` as it is already needed to resolve
-the path to the `constants.php` file itself. Instead, it is defined in Pimcore's entry points such as `app.php` in the following
-way:
+the path to the `constants.php` file itself. Instead, it is defined in Pimcore's bootstrapping class `\Pimcore\Bootstrap::setProjectRoot()`. 
 
-```php
-<?php
 
-if (!defined('PIMCORE_PROJECT_ROOT')) {
-    define(
-        'PIMCORE_PROJECT_ROOT',
-        getenv('PIMCORE_PROJECT_ROOT')
-            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-            ?: realpath(__DIR__ . '/..')
-    );
-}
-```
-
-This means, you can influence the project root through an env variable (or by defining a constant before loading the entry
+You can change the project root through an env variable (or by defining a constant before loading the entry
 point) if needed and Pimcore will fall back to its standard value if not defined. If you use Pimcore's standard directory
 layout as shipped in the zip file, you don't have to set anything, but if you need some kind of special setup you have full
 control over the used paths here.

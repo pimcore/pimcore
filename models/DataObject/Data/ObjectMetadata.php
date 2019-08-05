@@ -27,6 +27,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
+    /** @var DataObject\AbstractObject */
+    protected $object;
+
     /**
      * @var int
      */
@@ -167,7 +170,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if ($this->getObjectId()) {
             $object = DataObject\Concrete::getById($this->getObjectId());
             if (!$object) {
-                throw new \Exception('object '  . $this->getObjectId() . ' does not exist anymore');
+                throw new \Exception('object ' . $this->getObjectId() . ' does not exist anymore');
             }
 
             return $object;
@@ -256,5 +259,30 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     public function setObjectId($objectId)
     {
         $this->objectId = $objectId;
+    }
+
+    public function __wakeup()
+    {
+        if ($this->object) {
+            $this->objectId = $this->object->getId();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['object'];
+        $vars = parent::__sleep();
+
+        foreach ($vars as $value) {
+            if (!in_array($value, $blockedVars)) {
+                $finalVars[] = $value;
+            }
+        }
+
+        return $finalVars;
     }
 }

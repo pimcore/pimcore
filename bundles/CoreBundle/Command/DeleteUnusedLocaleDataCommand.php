@@ -16,30 +16,15 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Db\ConnectionInterface;
+use Pimcore\Db;
 use Pimcore\Tool;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteUnusedLocaleDataCommand extends AbstractCommand
 {
-    /**
-     * @var ConnectionInterface
-     */
-    private $db;
-
     use DryRun;
-
-    /**
-     * @param ConnectionInterface $db
-     */
-    public function __construct(ConnectionInterface $db)
-    {
-        parent::__construct();
-
-        $this->db = $db;
-    }
 
     protected function configure()
     {
@@ -62,6 +47,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $db = Db::get();
         $skipLocales = [];
         if ($input->getOption('skip-locales')) {
             $skipLocales = explode(',', $input->getOption('skip-locales'));
@@ -70,29 +56,28 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
         $languageList = [];
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as $language) {
-            $languageList[] = $this->db->quote($language);
+            $languageList[] = $db->quote($language);
         }
 
-        $tables = $this->db->fetchAll("SHOW TABLES LIKE '%object_localized_data_%'");
+        $tables = $db->fetchAll("SHOW TABLES LIKE '%object_localized_data_%'");
 
         foreach ($tables as $table) {
             $printLine = false;
             $table = current($table);
-            $classId = str_replace('object_localized_data_','', $table);
+            $classId = str_replace('object_localized_data_', '', $table);
 
-
-            $result = $this->db->fetchAll('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
+            $result = $db->fetchAll('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
             $result = ($result ? $result : []);
 
             //delete data from object_localized_data_classID tables
             foreach ($result as $res) {
                 $language = $res['language'];
                 if (!in_array($language, $skipLocales) && !in_array($language, $validLanguages)) {
-                    $sqlDeleteData = 'Delete FROM object_localized_data_' . $classId  . ' WHERE `language` = ' . $this->db->quote($language);
+                    $sqlDeleteData = 'Delete FROM object_localized_data_' . $classId  . ' WHERE `language` = ' . $db->quote($language);
                     $printLine = true;
                     if (!$this->isDryRun()) {
                         $output->writeln($sqlDeleteData);
-                        $this->db->query($sqlDeleteData);
+                        $db->query($sqlDeleteData);
                     } else {
                         $output->writeln($this->dryRunMessage($sqlDeleteData));
                     }
@@ -100,20 +85,20 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             }
 
             //drop unused localized view e.g. object_localized_classId_*
-            $existingViews = $this->db->fetchAll("SHOW TABLES LIKE '%object_localized_{$classId}%'");
+            $existingViews = $db->fetchAll("SHOW TABLES LIKE '%object_localized_{$classId}%'");
 
-            if(is_array($existingViews)) {
+            if (is_array($existingViews)) {
                 foreach ($existingViews as $existingView) {
                     $localizedView = current($existingView);
-                    $existingLanguage = str_replace('object_localized_'.$classId.'_','',$localizedView);
+                    $existingLanguage = str_replace('object_localized_'.$classId.'_', '', $localizedView);
 
-                    if(!in_array($existingLanguage, $validLanguages)) {
+                    if (!in_array($existingLanguage, $validLanguages)) {
                         $sqlDropView = 'DROP VIEW IF EXISTS object_localized_' . $classId . '_' .$existingLanguage;
                         $printLine = true;
 
                         if (!$this->isDryRun()) {
                             $output->writeln($sqlDropView);
-                            $this->db->query($sqlDropView);
+                            $db->query($sqlDropView);
                         } else {
                             $output->writeln($this->dryRunMessage($sqlDropView));
                         }
@@ -122,19 +107,19 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             }
 
             //drop unused localized table e.g. object_localized_query_classId_*
-            $existingTables = $this->db->fetchAll("SHOW TABLES LIKE '%object_localized_query_{$classId}%'");
-            if(is_array($existingTables)) {
+            $existingTables = $db->fetchAll("SHOW TABLES LIKE '%object_localized_query_{$classId}%'");
+            if (is_array($existingTables)) {
                 foreach ($existingTables as $existingTable) {
                     $localizedTable = current($existingTable);
-                    $existingLanguage = str_replace('object_localized_query_'.$classId.'_','',$localizedTable);
+                    $existingLanguage = str_replace('object_localized_query_'.$classId.'_', '', $localizedTable);
 
-                    if(!in_array($existingLanguage, $validLanguages)) {
+                    if (!in_array($existingLanguage, $validLanguages)) {
                         $sqlDropTable = 'DROP TABLE IF EXISTS object_localized_query_' . $classId . '_' .$existingLanguage;
                         $printLine = true;
 
                         if (!$this->isDryRun()) {
                             $output->writeln($sqlDropTable);
-                            $this->db->query($sqlDropTable);
+                            $db->query($sqlDropTable);
                         } else {
                             $output->writeln($this->dryRunMessage($sqlDropTable));
                         }

@@ -58,6 +58,8 @@ class PayPalSmartPaymentButton extends AbstractPayment
      */
     protected $environment;
 
+    protected $authorizedData;
+
     public function __construct(array $options, EnvironmentInterface $environment)
     {
         $this->processOptions(
@@ -261,6 +263,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
             '',
             $statusResponse->result->status == 'COMPLETED' ? StatusInterface::STATUS_CLEARED : StatusInterface::STATUS_CANCELLED,
             [
+                'transactionId' => $statusResponse->result->purchase_units[0]->payments->captures[0]->id
             ]
         );
     }

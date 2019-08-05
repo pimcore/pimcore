@@ -76,7 +76,7 @@ XML;
 XML;
 
         // output
-        if ($this->getParam('validate')) {
+        if ($request->get('validate')) {
             $doc = new \DOMDocument();
             $doc->loadXML($xml);
 

@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.bulkimport");
-pimcore.object.bulkimport = Class.create({
+pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
 
 
     uploadUrl: '/admin/class/bulk-import',
@@ -150,10 +150,6 @@ pimcore.object.bulkimport = Class.create({
         return this.window;
     },
 
-    getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
-        return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
-    },
-
     applyData: function() {
         var store = this.gridPanel.getStore();
         var records = store.getRange();
@@ -173,18 +169,7 @@ pimcore.object.bulkimport = Class.create({
             });
         }
 
-        this.values.sort(function(data1, data2){
-            var value1 = this.getPrio(data1);
-            var value2 = this.getPrio(data2);
-
-            if (value1 > value2) {
-                return 1;
-            } else if (value1 < value2) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }.bind(this));
+        this.sortValues();
 
         this.commitData(0);
 
@@ -251,29 +236,6 @@ pimcore.object.bulkimport = Class.create({
                     pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });
-        }
-    },
-
-    getPrio: function(data) {
-        switch (data.type) {
-            case "fieldcollection":
-                return 0;
-            case "class":
-                return 1;
-            case "customlayout":
-                return 2;
-            case "objectbrick":
-                return 3;
-        }
-        return 0;
-    },
-
-    selectAll: function(value) {
-        var store = this.gridPanel.getStore();
-        var records = store.getRange();
-        for (var i = 0; i < records.length; i++) {
-            var currentData = records[i];
-            currentData.set("checked", value);
         }
     }
 });

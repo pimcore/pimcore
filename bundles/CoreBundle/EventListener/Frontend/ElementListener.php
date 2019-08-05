@@ -241,8 +241,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                     'document' => $document->getFullPath()
                 ]);
 
-                // TODO throw a less generic excdption in getById() and only catch that one here
-                throw new NotFoundHttpException($e->getMessage());
+                throw new NotFoundHttpException(
+                    sprintf('Failed to load %s for document %s from pimcore_version parameter',
+                        $request->get('pimcore_version'), $document->getFullPath()));
             }
         }
 

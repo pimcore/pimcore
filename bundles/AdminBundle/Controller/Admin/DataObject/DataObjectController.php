@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -44,6 +45,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @var DataObject\Service
      */
@@ -364,13 +367,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'object');
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
         $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        if ($objectFromDatabase === null) {
+            return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
+        }
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
@@ -440,8 +444,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['metaData'] = $this->metaData;
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
 
-            $objectData['general']['versionDate'] = $object->getModificationDate();
-            $objectData['general']['versionCount'] = $object->getVersionCount();
+            // this used for the "this is not a published version" hint
+            // and for adding the published icon to version overview
+            $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
+            $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
@@ -511,8 +517,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
-
-            $data = $this->filterLocalizedFields($object, $data);
 
             DataObject\Service::removeObjectFromSession($object->getId());
 
@@ -700,43 +704,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param DataObject\AbstractObject $object
-     * @param $objectData
-     *
-     * @return mixed
-     */
-    protected function filterLocalizedFields(DataObject\AbstractObject $object, $objectData)
-    {
-        if (!($object instanceof DataObject\Concrete)) {
-            return $objectData;
-        }
-
-        $user = Tool\Admin::getCurrentUser();
-        if ($user->getAdmin()) {
-            return $objectData;
-        }
-
-        $fieldDefinitions = $object->getClass()->getFieldDefinitions();
-        if ($fieldDefinitions) {
-            $languageAllowedView = DataObject\Service::getLanguagePermissions($object, $user, 'lView');
-            $languageAllowedEdit = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-
-            foreach ($fieldDefinitions as $key => $fd) {
-                if ($fd->getFieldtype() == 'localizedfields') {
-                    foreach ($objectData['data'][$key]['data'] as $language => $languageData) {
-                        if (!is_null($languageAllowedView) && !$languageAllowedView[$language]) {
-                            unset($objectData['data'][$key]['data'][$language]);
-                        }
-                    }
-                }
-            }
-            $this->setLayoutPermission($objectData['layout'], $languageAllowedView, $languageAllowedEdit);
-        }
-
-        return $objectData;
-    }
-
-    /**
      * @Route("/get-folder", methods={"GET"})
      *
      * @param Request $request
@@ -748,9 +715,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'object');
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
@@ -963,7 +928,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $deletedItems = [];
             foreach ($list as $object) {
-                $deletedItems[] = $object->getRealFullPath();
+                $deletedItems[$object->getId()] = $object->getRealFullPath();
                 if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
                 }
@@ -1083,9 +1048,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->setUserModification($this->getAdminUser()->getId());
 
                 try {
+                    $isIndexUpdate = isset($values['index']) && is_int($values['index']);
+
+                    if ($isIndexUpdate) {
+                        // Ensure the update sort index is already available in the postUpdate eventListener
+                        $object->setIndex($values['index']);
+                    }
+
                     $object->save();
 
-                    if (isset($values['index']) && is_int($values['index'])) {
+                    if ($isIndexUpdate) {
                         $this->updateIndexesOfObjectSiblings($object, $values['index']);
                     }
 
@@ -1126,9 +1098,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
+                $updateLatestVersionIndex = function ($objectId, $modificationDate, $versionCount, $newIndex) {
                     if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
-                        $objectId, $modificationDate
+                        $objectId, $modificationDate, $versionCount
                     )) {
 
                         // don't renew references (which means loading the target elements)
@@ -1172,7 +1144,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 $db = Db::get();
                 $siblings = $db->fetchAll(
-                    'SELECT o_id, o_modificationDate FROM objects'
+                    'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
                     ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
                     [$updatedObject->getParentId(), $updatedObject->getId()]
                 );
@@ -1183,7 +1155,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $index++;
                     }
 
-                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
+                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
                     $index++;
 
                     DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);

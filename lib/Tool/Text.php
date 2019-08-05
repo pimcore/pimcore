@@ -52,19 +52,21 @@ class Text
                 preg_match('/[0-9]+/', $matches[2][$i], $idMatches);
                 preg_match('/asset|object|document/', $matches[3][$i], $typeMatches);
 
+                $linkAttr = null;
+                $path = null;
                 $id = $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
+                $oldTag = $matches[0][$i];
 
                 if ($element instanceof Element\ElementInterface) {
-                    $path = '';
-                    $oldTag = $matches[0][$i];
-
                     if ($matches[1][$i] == 'a') {
                         $linkAttr = 'href';
                         $path = $element->getFullPath();
 
-                        if ($element instanceof Document) {
+                        if (($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
+                            $path = null;
+                        } elseif ($element instanceof Document) {
                             // get parameters
                             preg_match('/href="([^"]+)*"/', $oldTag, $oldHref);
                             if ($oldHref[1] && (strpos($oldHref[1], '?') !== false || strpos($oldHref[1], '#') !== false)) {
@@ -84,7 +86,7 @@ class Text
                                 );
                             } else {
                                 // no object path without link generator!
-                                $path = '';
+                                $path = null;
                             }
                         }
                     } elseif ($matches[1][$i] == 'img') {
@@ -145,15 +147,23 @@ class Text
                         }
                     }
 
-                    $pattern = '/'.$linkAttr.'="[^"]*"/';
-                    $replacement = $linkAttr . '="' . $path . '"';
-                    $newTag = preg_replace($pattern, $replacement, $oldTag);
+                    if ($path) {
+                        $pattern = '/' . $linkAttr . '="[^"]*"/';
+                        $replacement = $linkAttr . '="' . $path . '"';
+                        $newTag = preg_replace($pattern, $replacement, $oldTag);
 
-                    $text = str_replace($oldTag, $newTag, $text);
-                } else {
-                    // remove the img tag if there is an internal broken link
+                        $text = str_replace($oldTag, $newTag, $text);
+                    }
+                }
+
+                if (!$path) {
+                    // in case there's a broken internal reference/link
                     if ($matches[1][$i] == 'img') {
-                        $text = str_replace($matches[0][$i], '', $text);
+                        // remove the entire tag for images
+                        $text = str_replace($oldTag, '', $text);
+                    } elseif ($matches[1][$i] == 'a') {
+                        // just display the text for links
+                        $text = preg_replace('@' . preg_quote($oldTag, '@') . '([^\<]+)\</a\>@i', '$1', $text);
                     }
                 }
             }

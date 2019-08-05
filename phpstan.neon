@@ -1,0 +1,52 @@
+parameters:
+    reportUnmatchedIgnoredErrors: false
+
+    symfony:
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
+
+    excludes_analyse:
+        - '**/DependencyInjection/Configuration.php'
+        - '**/migrations/Version*.php'
+        - '**/External/AdminerController.php'
+        - '**/Generator/DoctrineCrudGenerator.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php'
+        - '**/Processor/PdfReactor8.php'
+        - '**/simple_html_dom.php'
+        - '**/PDFreactor.class.php'
+        - '**/Document/MigrateTagNamingStrategyCommand.php'
+
+    ignoreErrors:
+        - '/(snappy|lz4)_(un)?compress/'
+        - '/Instantiated class COM not found/'
+        - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
+        - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
+        - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
+        - '/Matcher::__construct\(\).*TypeMatcher/'
+        -
+            message: '/method object::(pimcoreUrl|translateAdmin)/'
+            path: '**/*.html.php'
+        -
+            message: '#Using \$this outside a class\.#'
+            path: '**/*.html.php'
+        -
+            message: '#Undefined variable: \$(this|view|app)#'
+            path: '**/*.html.php'
+        -
+            message: '#Using \$this outside a class\.#'
+            path: '**/*.js.php'
+        -
+            message: '#Undefined variable: \$(this|view|app)#'
+            path: '**/*.js.php'
+        -
+            message: '/Zend_Log/'
+            path: '**/Log/ApplicationLogger.php'
+        -
+            message: '/ALPHACHANNEL_REMOVE/'
+            path: '**/Imagick.php'
+        -
+            message: '/an undefined static method.*getParameter\(\)./'
+            path: '**/Controller/Controller.php'
+        -
+            message: '/__construct\(\) does not call parent constructor/'
+            path: '**/Migrations/Version.php'

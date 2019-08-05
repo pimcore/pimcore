@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 /**
  * @property \Pimcore\Model\Asset $model
@@ -75,97 +75,70 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * Create a the new object in database, an get the new assigned ID
-     *
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            $this->db->insert('assets', [
-                'filename' => $this->model->getFilename(),
-                'path' => $this->model->getRealPath(),
-                'parentId' => $this->model->getParentId()
-            ]);
+        $this->db->insert('assets', [
+            'filename' => $this->model->getFilename(),
+            'path' => $this->model->getRealPath(),
+            'parentId' => $this->model->getParentId()
+        ]);
 
-            $this->model->setId($this->db->lastInsertId());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->model->setId($this->db->lastInsertId());
     }
 
-    /**
-     * Update data from object to the database
-     *
-     * @throws \Exception
-     */
     public function update()
     {
-        try {
-            $this->model->setModificationDate(time());
+        $this->model->setModificationDate(time());
 
-            $asset = $this->model->getObjectVars();
+        $asset = $this->model->getObjectVars();
 
-            foreach ($asset as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('assets'))) {
-                    if (is_array($value)) {
-                        $value = \Pimcore\Tool\Serialize::serialize($value);
-                    }
-                    $data[$key] = $value;
+        foreach ($asset as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('assets'))) {
+                if (is_array($value)) {
+                    $value = Serialize::serialize($value);
+                }
+                $data[$key] = $value;
+            }
+        }
+
+        // metadata
+        $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        $metadata = $this->model->getMetadata();
+        $data['hasMetaData'] = 0;
+        if (!empty($metadata)) {
+            foreach ($metadata as $metadataItem) {
+                $metadataItem['cid'] = $this->model->getId();
+                unset($metadataItem['config']);
+
+                if ($metadataItem['data'] instanceof Model\Element\ElementInterface) {
+                    $metadataItem['data'] = $metadataItem['data']->getId();
+                }
+
+                $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
+
+                if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
+                    $this->db->insert('assets_metadata', $metadataItem);
+                    $data['hasMetaData'] = 1;
                 }
             }
+        }
 
-            // metadata
-            $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
-            $metadata = $this->model->getMetadata();
-            $data['hasMetaData'] = 0;
-            if (!empty($metadata)) {
-                foreach ($metadata as $metadataItem) {
-                    $metadataItem['cid'] = $this->model->getId();
-                    unset($metadataItem['config']);
+        $this->db->insertOrUpdate('assets', $data);
 
-                    if ($metadataItem['data'] instanceof Model\Element\ElementInterface) {
-                        $metadataItem['data'] = $metadataItem['data']->getId();
-                    }
-
-                    $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
-
-                    if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
-                        $this->db->insert('assets_metadata', $metadataItem);
-                        $data['hasMetaData'] = 1;
-                    }
-                }
-            }
-
-            $this->db->insertOrUpdate('assets', $data);
-
-            // tree_locks
-            $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'asset']);
-            if ($this->model->getLocked()) {
-                $this->db->insert('tree_locks', [
-                    'id' => $this->model->getId(),
-                    'type' => 'asset',
-                    'locked' => $this->model->getLocked()
-                ]);
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        // tree_locks
+        $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'asset']);
+        if ($this->model->getLocked()) {
+            $this->db->insert('tree_locks', [
+                'id' => $this->model->getId(),
+                'type' => 'asset',
+                'locked' => $this->model->getLocked()
+            ]);
         }
     }
 
-    /**
-     * Remove the object from database
-     *
-     * @throws \Exception
-     */
     public function delete()
     {
-        try {
-            $this->db->delete('assets', ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('assets', ['id' => $this->model->getId()]);
     }
 
     public function updateWorkspaces()
@@ -489,6 +462,12 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    public function updateCustomSettings()
+    {
+        $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
+        $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
 
     /**

@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
@@ -42,6 +43,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @var Asset\Service
      */
@@ -59,9 +62,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'asset')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'asset')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'asset');
         }
         Element\Editlock::lock($request->get('id'), 'asset');
 
@@ -567,7 +568,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 /**
                  * @var $asset Asset
                  */
-                $deletedItems[] = $asset->getRealFullPath();
+                $deletedItems[$asset->getId()] = $asset->getRealFullPath();
                 if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }
@@ -934,11 +935,13 @@ class AssetController extends ElementControllerBase implements EventedController
                             if (isset($imageData['focalPoint'])) {
                                 $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
                                 $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                                $asset->removeCustomSetting('disableFocalPointDetection');
                             }
                         } else {
                             // wipe all data
                             $asset->removeCustomSetting('focalPointX');
                             $asset->removeCustomSetting('focalPointY');
+                            $asset->setCustomSetting('disableFocalPointDetection', true);
                         }
                     }
 
@@ -1547,7 +1550,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
-            $conditionFilters[] .= ' (
+            $conditionFilters[] = ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -1789,11 +1792,11 @@ class AssetController extends ElementControllerBase implements EventedController
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] .= ' (
+                $conditionFilters[] = ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -1866,11 +1869,11 @@ class AssetController extends ElementControllerBase implements EventedController
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
-                $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
+                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
-                    $conditionFilters[] .= ' (
+                    $conditionFilters[] = ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -2329,7 +2332,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] .= ' (
+                $conditionFilters[] = ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1

@@ -277,16 +277,19 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (className, classIdentifier, classes) {
 
-        var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9]+/);
+        var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9_]+/);
+        var underscoresRegresult = className.match(/^(query|store|relations)_[^_]+$/);
 
-        if (className.length <= 2 || classNameRegresult != className
+        if (className.length <= 2 || classNameRegresult != className ||underscoresRegresult
             || in_array(className.toLowerCase(), this.forbiddennames)) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
 
-        var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9]+/);
-        if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier) {
+        var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9][a-zA-Z0-9_]*/);
+        var underscoresRegresult = classIdentifier.match(/^(query|store|relations)_[^_]+$/);
+
+        if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier || underscoresRegresult) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }

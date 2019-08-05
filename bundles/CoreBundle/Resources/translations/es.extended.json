@@ -706,5 +706,8 @@
     "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
     "path_formatter_service": "Formatter Service / Class",
     "tab_position": "Tab Position",
-    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
+    "invert_colors_on_login_screen": "Invert Colors on Login Screen",
+    "activate_column_configuration": "Activate Column Configuration",
+    "table_column_configuration": "Column Configuration",
+    "delete_language_note": "Note: Removing language from the list will not delete its respective data. Please use console command 'pimcore:locale:delete-unused-tables' for cleanup."
 }

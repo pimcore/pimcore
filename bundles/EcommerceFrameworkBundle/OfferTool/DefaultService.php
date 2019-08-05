@@ -46,11 +46,11 @@ class DefaultService implements ServiceInterface
     public function __construct(string $offerClass, string $offerItemClass, string $parentFolderPath)
     {
         if (!class_exists($offerClass)) {
-            throw new \InvalidArgumentException(sprintf('Offer class "%s" does not exist.'));
+            throw new \InvalidArgumentException(sprintf('Offer class "%s" does not exist.', $offerClass));
         }
 
         if (!class_exists($offerItemClass)) {
-            throw new \InvalidArgumentException(sprintf('Offer item class "%s" does not exist.'));
+            throw new \InvalidArgumentException(sprintf('Offer item class "%s" does not exist.', $offerItemClass));
         }
 
         $this->offerClass = $offerClass;
@@ -267,7 +267,7 @@ class DefaultService implements ServiceInterface
     {
         $env = Factory::getInstance()->getEnvironment();
 
-        if (@class_exists('Object_Customer')) {
+        if (@class_exists('\Pimcore\Model\DataObject\Customer')) {
             $customer = \Pimcore\Model\DataObject\Customer::getById($env->getCurrentUserId());
             $offer->setCustomer($customer);
         }

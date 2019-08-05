@@ -93,24 +93,18 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 
     /**
      * Save object to database
-     *
-     * @return bool
-     *
-     * @todo update() don't returns anything
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     public function update()

@@ -27,7 +27,7 @@ class Geobounds implements OwnerAwareFieldInterface
     /**
      * @var Geopoint
      */
-    protected $nortEast;
+    protected $northEast;
 
     /**
      * @var Geopoint
@@ -35,13 +35,13 @@ class Geobounds implements OwnerAwareFieldInterface
     protected $southWest;
 
     /**
-     * @param null $nortEast
+     * @param null $northEast
      * @param null $southWest
      */
-    public function __construct($nortEast = null, $southWest = null)
+    public function __construct($northEast = null, $southWest = null)
     {
-        if ($nortEast) {
-            $this->setNorthEast($nortEast);
+        if ($northEast) {
+            $this->setNorthEast($northEast);
         }
         if ($southWest) {
             $this->setSouthWest($southWest);
@@ -54,17 +54,17 @@ class Geobounds implements OwnerAwareFieldInterface
      */
     public function getNorthEast()
     {
-        return $this->nortEast;
+        return $this->northEast;
     }
 
     /**
-     * @param $nortEast
+     * @param $northEast
      *
      * @return $this
      */
-    public function setNorthEast($nortEast)
+    public function setNorthEast($northEast)
     {
-        $this->nortEast = $nortEast;
+        $this->northEast = $northEast;
         $this->markMeDirty();
 
         return $this;
@@ -97,14 +97,14 @@ class Geobounds implements OwnerAwareFieldInterface
     public function __toString()
     {
         $string = '';
-        if ($this->nortEast) {
-            $string .= $this->nortEast;
+        if ($this->northEast) {
+            $string .= $this->northEast;
         }
         if (!empty($string)) {
             $string .= ' - ';
         }
-        if ($this->nortEast) {
-            $string .= $this->nortWest;
+        if ($this->southWest) {
+            $string .= $this->southWest;
         }
 
         return $string;

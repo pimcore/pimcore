@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -169,7 +168,7 @@ class Renderlet extends Model\Document\Tag
 
                 return $content;
             } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+                if (\Pimcore::inDebugMode()) {
                     return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
                 }
                 Logger::error($e);
@@ -301,6 +300,7 @@ class Renderlet extends Model\Document\Tag
             $this->type = $data->type;
             $this->subtype = $data->subtype;
             if (is_numeric($this->id)) {
+                $id = null;
                 if ($idMapper) {
                     $id = $idMapper->getMappedId($this->type, $this->id);
                 }

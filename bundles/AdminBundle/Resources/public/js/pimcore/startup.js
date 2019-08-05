@@ -751,7 +751,7 @@ Ext.onReady(function () {
                                 rootId: treeConfig.rootId,
                                 rootVisible: treeConfig.showroot,
                                 treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
-                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id,
+                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " pimcore_icon_material",
                                 treeTitle: ts(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}

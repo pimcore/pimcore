@@ -55,8 +55,3 @@ Following aspects are short cuts into the documentation for start working with t
 - [Integrating Payment Functionality](./15_Payment/README.md)
 - [Working with Orders](./17_Order_Manager/README.md)
 - [Tracking Manager](./19_Tracking_Manager.md)
-
-
-## Migration from former E-Commerce Framework Plugin
-If you are migrating a project from the former E-Commerce Framework Plugin have a look at the 
-[migration notes](../23_Installation_and_Upgrade/09_Upgrade_Notes/03_Ecommerce_Framework.md). 

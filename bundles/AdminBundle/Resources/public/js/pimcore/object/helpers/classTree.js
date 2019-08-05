@@ -192,7 +192,7 @@ pimcore.object.helpers.classTree = Class.create({
 
     addLayoutChild: function (type, initData) {
 
-        var nodeLabel = t(type);
+        var nodeLabel = type;
 
         if (initData) {
             if (initData.title) {
@@ -208,7 +208,7 @@ pimcore.object.helpers.classTree = Class.create({
             expandable: initData.childs.length,
             allowDrag: false,
             iconCls: "pimcore_icon_" + type,
-            text: nodeLabel
+            text: t(nodeLabel)
         };
 
         newNode = this.appendChild(newNode);

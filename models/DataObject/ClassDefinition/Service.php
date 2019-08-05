@@ -125,8 +125,8 @@ class Service
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
-        unset($fieldCollection->key);
-        unset($fieldCollection->fieldDefinitions);
+        $fieldCollection->setKey(null);
+        $fieldCollection->setFieldDefinitions(null);
 
         $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
 
@@ -162,8 +162,8 @@ class Service
      */
     public static function generateObjectBrickJson($objectBrick)
     {
-        unset($objectBrick->key);
-        unset($objectBrick->fieldDefinitions);
+        $objectBrick->setKey(null);
+        $objectBrick->setFieldDefinitions(null);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -335,7 +335,7 @@ class Service
      */
     public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
     {
-        $tableDefinition = $tableDefinitions[$table];
+        $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
             if ($colDefinition) {

@@ -29,13 +29,13 @@ matrix:
       sudo: required
       php: 7.2
       env:
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
 
     - os: linux
       sudo: required
       php: 7.3
       env:
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
 
     # Other Tests
     - os: linux
@@ -59,6 +59,32 @@ matrix:
           - PIMCORE_TEST_GROUP=cache.core.redis
           - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
 
+    # Test Stan
+    - os: linux
+      php: 7.2
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+    - os: linux
+      php: 7.3
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+
+    # Test Stan Symfony ^4.0
+    - os: linux
+      php: 7.2
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - SYMFONY_VERSION="^4.0"
+    - os: linux
+      php: 7.3
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - SYMFONY_VERSION="^4.0"
+
     # Test Docs
     - os: linux
       php: 7.2
@@ -70,6 +96,7 @@ matrix:
       cache:
         directories:
           - tmp-docs/pimcore-docs/vendor
+  fast_finish: true
 
 cache:
   directories:
@@ -77,7 +104,9 @@ cache:
 
 env:
   global:
+    - COMPOSER_MEMORY_LIMIT=-1
     - TASK_TESTS=1
+    - TASK_STAN=0
     - TASK_DOCS=0
     - PIMCORE_ENVIRONMENT=test
     - PIMCORE_TEST=1
@@ -85,6 +114,7 @@ env:
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^3.4
+    - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 
 before_install:
   - mysql --version
@@ -94,13 +124,18 @@ before_install:
 
 install:
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-tests.sh; fi
+  - if [ $TASK_STAN == 1 ]; then .travis/setup-tests.sh; fi
   - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
 
+
 before_script:
+  - yes | pecl install imagick
   - phpenv config-rm xdebug.ini
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
+  - if [ $TASK_STAN == 1 ]; then .travis/setup-php.sh; fi
 
 script:
   - if [ $TASK_TESTS == 1 ]; then .travis/run-tests.sh; fi
   - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi
+  - if [ $TASK_STAN == 1 ]; then .travis/run-stan.sh; fi

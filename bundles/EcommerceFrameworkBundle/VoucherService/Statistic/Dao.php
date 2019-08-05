@@ -39,7 +39,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
             return $result;
         } catch (\Exception $e) {
-            //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
     }

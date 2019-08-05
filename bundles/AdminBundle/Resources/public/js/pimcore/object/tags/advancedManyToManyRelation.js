@@ -929,5 +929,5 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     }
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.tags.multihrefMetadata = pimcore.object.tags.advancedManyToManyRelation;

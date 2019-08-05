@@ -39,6 +39,11 @@ class Dao extends Model\Dao\AbstractDao
     protected $tableDefinitions = null;
 
     /**
+     * @var DataObject\Concrete\Dao\InheritanceHelper
+     */
+    protected $inheritanceHelper;
+
+    /**
      * @return string
      */
     public function getTableName()

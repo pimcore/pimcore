@@ -195,5 +195,27 @@ pimcore.element.abstract = Class.create({
         } else {
             this.tabPanel.add(this.tab);
         }
+    },
+
+    getMetaInfoMenuItems: function() {
+        var metainfo = this.getMetaInfo();
+
+        return [
+            {
+                text: t("metainfo_copy_id"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.id)
+            },
+            {
+                text: t("metainfo_copy_fullpath"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.path)
+            },
+            {
+                text: t("metainfo_copy_deeplink"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.deeplink)
+            }
+        ];
     }
 });

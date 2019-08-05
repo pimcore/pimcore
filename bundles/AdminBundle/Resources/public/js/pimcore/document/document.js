@@ -261,7 +261,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         win.getComponent("language").show();
                         win.getComponent("info").hide();
                     } else {
-                        win.getComponent("language").hide();
+                        win.getComponent("language").setValue("").hide();
                         win.getComponent("info").show();
                     }
                 }
@@ -336,6 +336,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
+                    if(!win.getComponent("translation").getValue() || !win.getComponent("language").getValue()) {
+                        Ext.MessageBox.alert(t("error"), t("target_document_invalid"));
+                        return false;
+                    }
 
                     Ext.Ajax.request({
                         url: "/admin/document/translation-add",

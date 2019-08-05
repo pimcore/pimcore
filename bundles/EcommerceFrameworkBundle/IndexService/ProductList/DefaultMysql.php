@@ -536,7 +536,7 @@ class DefaultMysql implements ProductListInterface
             $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, ProductListInterface::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName), $countValues);
         } else {
             throw new \Exception('Not supported yet');
         }
@@ -876,7 +876,8 @@ class DefaultMysql implements ProductListInterface
     public function __wakeup()
     {
         if (empty($this->resource)) {
-            $this->resource = new DefaultMysql\Dao($this);
+            $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
+            $this->resource = new DefaultMysql\Dao($this, $this->logger);
         }
     }
 

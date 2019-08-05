@@ -306,22 +306,22 @@ pimcore.helpers.recordElement = function (id, type, name) {
 
 };
 
-pimcore.helpers.openElement = function (id, type, subtype) {
+pimcore.helpers.openElement = function (idOrPath, type, subtype) {
     if (typeof subtype != "undefined") {
         if (type == "document") {
-            pimcore.helpers.openDocument(id, subtype);
+            pimcore.helpers.openDocument(idOrPath, subtype);
         }
         else if (type == "asset") {
-            pimcore.helpers.openAsset(id, subtype);
+            pimcore.helpers.openAsset(idOrPath, subtype);
         }
         else if (type == "object") {
-            pimcore.helpers.openObject(id, subtype);
+            pimcore.helpers.openObject(idOrPath, subtype);
         }
     } else {
         Ext.Ajax.request({
             url: "/admin/element/get-subtype",
             params: {
-                id: id,
+                id: idOrPath,
                 type: type
             },
             success: function (response) {
@@ -333,6 +333,18 @@ pimcore.helpers.openElement = function (id, type, subtype) {
                 }
             }
         });
+    }
+};
+
+pimcore.helpers.closeElement = function (id, type) {
+    if (type == "document") {
+        pimcore.helpers.closeDocument(id);
+    }
+    else if (type == "asset") {
+        pimcore.helpers.closeAsset(id);
+    }
+    else if (type == "object") {
+        pimcore.helpers.closeObject(id);
     }
 };
 
@@ -2135,6 +2147,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
+    var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
@@ -2244,14 +2257,24 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var openButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
+        openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
             searchButton.disable();
+            openButton.disable();
 
             poster.hide();
             poster.setValue("");
@@ -2303,7 +2326,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton]
+            items: [fieldPath, searchButton, openButton]
         }, poster, {
             xtype: "textfield",
             name: "title",
@@ -2339,8 +2362,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
-        width: 500,
+    window = new Ext.Window({
+        width: 510,
         height: 370,
         title: t("video"),
         items: [form],
@@ -2362,7 +2385,7 @@ pimcore.helpers.showAbout = function () {
     var html = '<div class="pimcore_about_window">';
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
-    html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
+    html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
@@ -3117,3 +3140,27 @@ pimcore.helpers.openProfile = function () {
     }
 };
 
+pimcore.helpers.copyStringToClipboard = function (str) {
+    var selection = document.getSelection(),
+        prevSelection = (selection.rangeCount > 0) ? selection.getRangeAt(0) : false,
+        el;
+
+    // create element and insert string
+    el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+
+    // insert element, select all text and copy
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    // restore previous selection
+    if (prevSelection) {
+        selection.removeAllRanges();
+        selection.addRange(prevSelection);
+    }
+};

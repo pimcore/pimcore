@@ -14,11 +14,38 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
+use Pimcore\Console\CliTrait;
+use Pimcore\Log\Simple;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Listing\Concrete;
 
 class IndexUpdater
 {
+    use CliTrait;
+
+    /**
+     * Checks if a session has to be started to accommodate the needs of the pricing system before sending output.
+     *
+     * Stop-Gap solution until later refactoring:
+     *
+     * @TODO Pimcore 7 - check if this is necessary when having monolog logging
+     */
+    private static function startSession()
+    {
+        // Only necessary if this instance runs in CLI and doesn't have a session yet.
+        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
+            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
+            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
+            // pricing environment.
+            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+            $session = \Pimcore::getKernel()->getContainer()->get('session');
+            $session->start();
+        }
+    }
+
     /**
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
@@ -35,22 +62,30 @@ class IndexUpdater
             $updater->createOrUpdateIndexStructures();
         }
 
+        self::startSession();
+
         $page = 0;
         $pageSize = 100;
         $count = $pageSize;
 
-        while ($count > 0) {
-            self::log($loggername, '=========================');
-            self::log($loggername, 'Update Index Page: ' . $page);
-            self::log($loggername, '=========================');
+        /** @var Concrete $products */
+        $products = new $objectListClass();
+        $products->setUnpublished(true);
+        $products->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $products->setIgnoreLocalizedFields(true);
+        $products->setCondition($condition);
 
-            $products = new $objectListClass();
-            $products->setUnpublished(true);
+        $totalCount = $products->getTotalCount();
+        $totalPages = ceil($totalCount / $pageSize);
+
+        while ($count > 0) {
             $products->setOffset($page * $pageSize);
             $products->setLimit($pageSize);
-            $products->setObjectTypes(['object', 'folder', 'variant']);
-            $products->setIgnoreLocalizedFields(true);
-            $products->setCondition($condition);
+            $products->load();
+
+            self::log($loggername, '=========================');
+            self::log($loggername, sprintf('Update Index Page: %d (%d/%d - %.2f %%)', $page, $page, $totalPages, ($page / $totalPages * 100)));
+            self::log($loggername, '=========================');
 
             foreach ($products as $p) {
                 self::log($loggername, 'Updating product ' . $p->getId());
@@ -58,7 +93,7 @@ class IndexUpdater
             }
             $page++;
 
-            $count = count($products->getObjects());
+            $count = $products->getCount();
 
             \Pimcore::collectGarbage();
         }
@@ -72,7 +107,7 @@ class IndexUpdater
      * @param string $loggername
      * @param int $preparationItemsPerRound - number of items to prepare per round
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200)
     {
@@ -83,6 +118,8 @@ class IndexUpdater
         if (!is_array($tenants)) {
             $tenants = [$tenants];
         }
+
+        self::startSession();
 
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
@@ -125,7 +162,7 @@ class IndexUpdater
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200)
     {
@@ -136,6 +173,8 @@ class IndexUpdater
         if (!is_array($tenants)) {
             $tenants = [$tenants];
         }
+
+        self::startSession();
 
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
@@ -172,7 +211,7 @@ class IndexUpdater
 
     private static function log($loggername, $message)
     {
-        \Pimcore\Log\Simple::log($loggername, $message);
+        Simple::log($loggername, $message);
         echo $message . "\n";
     }
 }

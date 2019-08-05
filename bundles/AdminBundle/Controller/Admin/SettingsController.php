@@ -331,7 +331,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
-        $values = Config::getSystemConfig(true);
+        $values = Config::getSystemConfig();
 
         $timezones = \DateTimeZone::listIdentifiers();
 

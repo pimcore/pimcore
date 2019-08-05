@@ -401,7 +401,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore_Date
+     * @return null|string
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -444,6 +444,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
-        $this->saltlcoation = $masterDefinition->saltlcoation;
+        $this->saltlocation = $masterDefinition->saltlocation;
     }
 }

@@ -20,7 +20,9 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Document\DocType\Dao getDao()
+ * @method DocType\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class DocType extends Model\AbstractModel
 {

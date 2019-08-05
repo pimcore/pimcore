@@ -501,16 +501,15 @@ class Thumbnail
         }
 
         $isLowQualityPreview = false;
-        $lowQualityPreviewFile = $this->getAsset()->getLowQualityPreviewFileSystemPath();
         if (
             (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            && file_exists($lowQualityPreviewFile)
+            && ($previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri())
             && !Tool::isFrontendRequestByAdmin()
         ) {
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
-            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($lowQualityPreviewFile));
+            $attributes['src'] = $previewDataUri;
             unset($attributes['srcset']);
         }
 

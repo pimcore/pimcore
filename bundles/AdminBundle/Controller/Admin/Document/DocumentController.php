@@ -356,7 +356,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $deletedItems = [];
             foreach ($documents as $document) {
-                $deletedItems[] = $document->getRealFullPath();
+                $deletedItems[$document->getId()] = $document->getRealFullPath();
                 if ($document->isAllowed('delete') && !$document->isLocked()) {
                     $document->delete();
                 }
@@ -1449,6 +1449,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $targetDocument = Document::getByPath($request->get('targetPath'));
 
         if ($sourceDocument && $targetDocument) {
+            if (empty($sourceDocument->getProperty('language'))) {
+                throw new \Exception(sprintf('Source Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
+            }
+
+            if (empty($targetDocument->getProperty('language'))) {
+                throw new \Exception(sprintf('Target Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
+            }
+
             $service = new Document\Service;
             if ($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
                 throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');

@@ -57,7 +57,7 @@ class PimcoreUrl extends Helper
             $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
         }
 
-        return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH, $encode);
     }
 
     /**
@@ -66,11 +66,18 @@ class PimcoreUrl extends Helper
      * @param string|null $name
      * @param array $parameters
      * @param int $referenceType
+     * @param bool $encode
      *
      * @return string
      */
-    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
     {
+        if ($encode !== true) {
+            // encoding is default anyway, so we only set it when really necessary, to minimize the risk of
+            // side-effects when using parameters for that purpose (other routers may not be aware of param `encode`
+            $parameters['encode'] = $encode;
+        }
+
         // if name is an array, treat it as parameters
         if (is_array($name)) {
             if (is_array($parameters)) {

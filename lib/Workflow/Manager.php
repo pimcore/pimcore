@@ -21,7 +21,7 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Workflow\Exception\InvalidARgumentException;
+use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
@@ -201,7 +201,8 @@ class Manager
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
-        } catch (InvalidARgumentException $e) { // workflow does not apply to given subject
+        } catch (InvalidArgumentException $e) {
+            // workflow does not apply to given subject
             return null;
         }
 

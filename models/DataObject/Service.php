@@ -1333,6 +1333,13 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            $user = AdminTool::getCurrentUser();
+            if (!$user->isAdmin()) {
+                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
+            }
+
             if ($context['containerType'] == 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
             } elseif ($context['containerType'] == 'objectbrick') {
@@ -1348,6 +1355,57 @@ class Service extends Model\Element\Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $layout
+     * @param $allowedView
+     * @param $allowedEdit
+     */
+    public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
+    {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            if (is_array($allowedView) && count($allowedView) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedViewDefault = isset($allowedView['default']);
+                    if ($haveAllowedViewDefault) {
+                        unset($allowedView['default']);
+                    }
+                }
+                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
+                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedView),
+                        true
+                    );
+                }
+            }
+            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedEditDefault = isset($allowedEdit['default']);
+                    if ($haveAllowedEditDefault) {
+                        unset($allowedEdit['default']);
+                    }
+                }
+
+                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
+                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedEdit),
+                        true
+                    );
+                }
+            }
+        } else {
+            if (method_exists($layout, 'getChilds')) {
+                $children = $layout->getChildren();
+                if (is_array($children)) {
+                    foreach ($children as $child) {
+                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit);
+                    }
                 }
             }
         }
