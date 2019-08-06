@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 
-interface HandlePendingPaymentsStrategy
+interface HandlePendingPaymentsStrategyInterface
 {
 
     /**

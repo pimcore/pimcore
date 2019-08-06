@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
@@ -35,8 +35,8 @@ interface CheckoutManagerInterface extends \Pimcore\Bundle\EcommerceFrameworkBun
     public function startOrderPaymentWithPaymentProvider(AbstractRequest $paymentConfig): StartPaymentResponseInterface;
 
     /**
-     * @param HandlePendingPaymentsStrategy $handlePendingPaymentsStrategy
+     * @param HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy
      */
-    public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategy $handlePendingPaymentsStrategy): void;
+    public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy): void;
 
 }

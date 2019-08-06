@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -32,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager implements CheckoutManagerInterface
 {
     /**
-     * @var HandlePendingPaymentsStrategy
+     * @var HandlePendingPaymentsStrategyInterface
      */
     protected $handlePendingPaymentsStrategy = null;
 
@@ -60,17 +60,17 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
 
 
     /**
-     * @return HandlePendingPaymentsStrategy
+     * @return HandlePendingPaymentsStrategyInterface
      */
-    public function getHandlePendingPaymentsStrategy(): HandlePendingPaymentsStrategy
+    public function getHandlePendingPaymentsStrategy(): HandlePendingPaymentsStrategyInterface
     {
         return $this->handlePendingPaymentsStrategy;
     }
 
     /**
-     * @param HandlePendingPaymentsStrategy $handlePendingPaymentsStrategy
+     * @param HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy
      */
-    public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategy $handlePendingPaymentsStrategy): void
+    public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy): void
     {
         $this->handlePendingPaymentsStrategy = $handlePendingPaymentsStrategy;
     }

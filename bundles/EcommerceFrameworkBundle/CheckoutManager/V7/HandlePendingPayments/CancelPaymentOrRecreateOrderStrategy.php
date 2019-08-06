@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 
-class CancelPaymentOrRecreateOrderStrategy implements HandlePendingPaymentsStrategy
+class CancelPaymentOrRecreateOrderStrategy implements HandlePendingPaymentsStrategyInterface
 {
 
     /**
