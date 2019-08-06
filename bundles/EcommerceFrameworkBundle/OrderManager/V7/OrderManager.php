@@ -131,7 +131,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         }
 
         $order->setPriceModifications($modificationItems);
-        $order->setCartModificationTimestamp($cart->getModificationDate()->getTimestamp());
+        $order->setCartHash($this->calculateCartHash($cart));
 
         $order = $this->setCurrentCustomerToOrder($order);
 
@@ -169,7 +169,23 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
      * @throws UnsupportedException
      */
     public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool {
-        return $cart->getModificationDate()->getTimestamp() !== $order->getCartModificationTimestamp();
+        return $this->calculateCartHash($cart) !== $order->getCartHash();
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return int
+     */
+    protected function calculateCartHash(CartInterface $cart): int {
+        $hashString = "";
+
+        $hashString .= $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asString();
+        $hashString .= $cart->getItemCount();
+        $hashString .= $cart->getItemAmount();
+        $hashString .= count($cart->getGiftItems());
+        $hashString .= implode($cart->getVoucherTokenCodes());
+
+        return crc32($hashString);
     }
 
 
