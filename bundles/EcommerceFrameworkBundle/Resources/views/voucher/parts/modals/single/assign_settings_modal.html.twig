@@ -1,0 +1,41 @@
+<div id="assignsettings" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- dialog body -->
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body-content">
+                <h3>{{ 'bundle_ecommerce_voucherservice_modal_assign-headline'|trans([],'admin') }}</h3>
+                <div class="row">
+                    <div class="col col-sm-8">
+                        <table class="table current-data table-only-body">
+                            <tbody>
+                            {% for name, setting in settings %}
+                                <tr>
+                                    <td>{{ name|trans([],'admin') }}</td>
+                                    <td>
+                                        {% if setting matches '/^\\d+$/' %}
+                                            {{ setting|number_format(0, ',', ' ') }}
+                                        {% else %}
+                                            {{ setting }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if generateWarning %}
+                            <div class="alert alert-danger">{{ generateWarning|trans([],'admin') }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- dialog buttons -->
+            <div class="modal-footer">
+                <a href="{{ path("pimcore_ecommerce_backend_voucher_generate", urlParams) }}" class="btn btn-primary js-loading" data-msg="{{ ('bundle_ecommerce_voucherservice_modal_assign-infotext')|trans([],'admin') }}">{{ ('bundle_ecommerce_voucherservice_modal_assign-submit')|trans([],'admin') }}</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ ('bundle_ecommerce_voucherservice_modal_cancel')|trans([],'admin') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
