@@ -44,8 +44,8 @@ services:
 
     pimcore.app_logger:
         public: true
-        alias: '@pimcore.app_logger.default'
+        alias: pimcore.app_logger.default
 
     pimcore.app_logger.default:
         public: true
-        alias: '@Pimcore\Log\ApplicationLogger'
+        alias: Pimcore\Log\ApplicationLogger
