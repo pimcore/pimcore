@@ -267,7 +267,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         ];
 
         $arrContext = [
-            'itemChangeAmount' => 'default', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
+            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
         ];
 
         $arrTimeline = [];

@@ -329,17 +329,17 @@
                     </div>
                     {% for item in group %}
                         <!-- Panel -->
-                        <article class="panel panel-{{ item['context'] }}">
+                        <article class="panel border rounded border-{{ item['context'] }}">
                             <!-- Icon -->
-                            <div class="panel-heading icon">
+                            <div class="panel-heading icon card-header alert-{{ item['context'] }}">
                                 <span class="{{ item['icon'] }}" title="{{ ('bundle_ecommerce.back-office.order.history.' ~ item['type']|lower)|trans([],'admin') }}"></span>
                             </div>
                             <!-- /Icon -->
 
                             <!-- Body -->
-                            <div class="panel-body">
+                            <div class="card-body ">
                                 <div class="media ng-scope">
-                                    <img src="{{ item['avatar'] }}" width="30" class="rounded-circle pull-left mr-2" title="{{ item['user'] }}">
+                                    <img src="{{ item['avatar'] }}" width="40" class="rounded-circle pr-2 mr-2" title="{{ item['user'] }}">
                                     <div class="media-body">
                                         <h6 class="media-heading">
                                             {{ item['title'] ~ ' -' }}
@@ -364,7 +364,7 @@
                 <!-- /Separator -->
 
                 <article class="panel panel-default panel-outline">
-                    <div class="panel-heading icon">
+                    <div class="panel-heading icon alert-secondary">
                         <i class="fa fa-shopping-cart"></i>
                     </div>
                     <div class="panel-body">
