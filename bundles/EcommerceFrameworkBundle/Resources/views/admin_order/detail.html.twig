@@ -10,6 +10,7 @@
 {% set order = orderAgent.getOrder() %}
 {% set currency = orderAgent.getCurrency() %}
 {% set regionArray = locale.getDisplayRegions() %}
+{% set urlParams = app.request.query.all %}
 
 {% block content %}
     <div class="order-detail row mt-3">
@@ -18,7 +19,7 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <div class="row font-weight-bold">
-                        {% set urlList = path("pimcore_ecommerce_backend_admin-order_list") %}
+                        {% set urlList = path("pimcore_ecommerce_backend_admin-order_list",urlParams) %}
                         <div class="col-sm-6">
                             <a href="{{ urlList }}">{{ ('bundle_ecommerce.back-office.order-list')|trans([],'admin') }}</a>
                             <span class="fa fa-chevron-right"></span>

@@ -7,7 +7,7 @@
     {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/picker.date.js')) %}
 {%- endspaceless %}
 
-
+{% set urlParams = app.request.query.all %}
 {% block content %}
     <div class="page-header mt-5">
         <h1>{{ 'bundle_ecommerce.back-office.order-list'|trans([],'admin') }}</h1>
@@ -92,7 +92,7 @@
 
         <tr>
             <td>
-                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}, null, true) %}
+                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), null, true) %}
                 <a href="{{ urlDetail }}">{{ item.getOrderNumber() }}</a>
             </td>
             <td>
