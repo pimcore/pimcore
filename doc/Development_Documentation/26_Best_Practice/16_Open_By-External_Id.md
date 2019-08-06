@@ -1,6 +1,10 @@
 # Open By External Id
 
-Add a menu entry and a shortcut similar to the default Open Data Object (ctrl + shift + o) to the admin ui.
+There are 2 different approaches:
+
+1) You can either hook directly into the the default Pimcore id resolver by using [this](https://pimcore.com/docs/6.x/Development_Documentation/Extending_Pimcore/Event_API_and_Event_Manager.html#page_Hook-into-the-Open-Document-Asset-Data-Object-dialog) event
+
+2) Or add an independent menu entry and a shortcut similar to the default Open Data Object (ctrl + shift + o) to the admin ui.
 
 ![menu](img/open_by_external_id_menu.png)
 ![messageBox](img/open_by_external_id_message-box.png)
