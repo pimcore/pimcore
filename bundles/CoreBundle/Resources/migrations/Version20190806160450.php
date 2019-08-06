@@ -13,6 +13,11 @@ use Pimcore\Model\DataObject\DefinitionModifier;
  */
 class Version20190806160450 extends AbstractPimcoreMigration
 {
+    public function doesSqlMigrations(): bool
+    {
+        return false;
+    }
+
     /**
      * @param Schema $schema
      */
