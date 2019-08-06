@@ -20,8 +20,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\FormResponse;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\FormResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -287,16 +288,11 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
     }
 
     /**
-     * Starts payment
-     *
-     * @param OrderAgentInterface $orderAgent
-     * @param PriceInterface $price
-     * @param array $config
-     * @return StartPaymentResponseInterface
+     * @inheritDoc
      */
-    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, array $config): StartPaymentResponseInterface
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
-        $response = $this->initPayment($price, $config);
+        $response = $this->initPayment($price, $config->asArray());
         return new FormResponse($orderAgent->getOrder(), $response);
     }
 

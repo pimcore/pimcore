@@ -25,7 +25,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager implements CheckoutManagerInterface
@@ -129,15 +130,9 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
     }
 
     /**
-     * Starts payment for checkout and also starts payment provider
-     * - only possible if payment provider is configured
-     *
-     *
-     * @return StartPaymentResponseInterface
-     *
-     * @throws UnsupportedException
+     * @inheritDoc
      */
-    public function startOrderPaymentWithPaymentProvider(array $paymentConfig): StartPaymentResponseInterface
+    public function startOrderPaymentWithPaymentProvider(AbstractRequest $paymentConfig): StartPaymentResponseInterface
     {
         parent::startOrderPayment();
 

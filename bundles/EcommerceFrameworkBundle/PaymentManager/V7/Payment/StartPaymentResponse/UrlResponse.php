@@ -12,37 +12,34 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse;
-
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
-class SnippetResponse extends AbstractResponse
+class UrlResponse extends AbstractResponse
 {
-
     /**
      * @var string
      */
-    protected $snippet;
+    protected $url;
 
     /**
-     * SnippetResponse constructor.
+     * UrlResponse constructor.
      * @param AbstractOrder $order
-     * @param string $snippet
+     * @param string $url
      */
-    public function __construct(AbstractOrder $order, string $snippet)
+    public function __construct(AbstractOrder $order, string $url)
     {
         parent::__construct($order);
-        $this->snippet = $snippet;
+        $this->url = $url;
     }
 
     /**
      * @return string
      */
-    public function getSnippet(): string
+    public function getUrl(): string
     {
-        return $this->snippet;
+        return $this->url;
     }
-
 }

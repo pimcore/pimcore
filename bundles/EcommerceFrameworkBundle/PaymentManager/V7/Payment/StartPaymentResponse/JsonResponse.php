@@ -12,38 +12,40 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Symfony\Component\Form\FormBuilderInterface;
 
-class FormResponse extends AbstractResponse
+class JsonResponse extends AbstractResponse
 {
 
     /**
-     * @var FormBuilderInterface
+     * @var string
      */
-    protected $form;
+    protected $jsonString;
 
     /**
-     * FormResponse constructor.
+     * JsonResponse constructor.
      * @param AbstractOrder $order
-     * @param FormBuilderInterface $form
+     * @param string $jsonString
      */
-    public function __construct(AbstractOrder $order, FormBuilderInterface $form)
+    public function __construct(AbstractOrder $order, string $jsonString)
     {
         parent::__construct($order);
-        $this->form = $form;
+        $this->jsonString = $jsonString;
     }
 
+
     /**
-     * @return FormBuilderInterface
+     * @return string
      */
-    public function getForm(): FormBuilderInterface
+    public function getJsonString(): string
     {
-        return $this->form;
+        return $this->jsonString;
     }
+
+
 
 
 }
