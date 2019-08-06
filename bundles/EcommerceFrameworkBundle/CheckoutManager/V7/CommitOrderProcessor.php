@@ -47,6 +47,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $this->processOptions($resolver->resolve($options));
 
         $this->eventDispatcher = $eventDispatcher;
+        $this->applicationLogger = $applicationLogger;
     }
 
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
