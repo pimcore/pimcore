@@ -389,31 +389,30 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
     /**
      * @return RuleInterface[]
+     *
      * @throws UnsupportedException
      */
     public function getAppliedPricingRules(): array
     {
-        if(!$this->isCalculated) {
+        if (!$this->isCalculated) {
             $this->calculate();
         }
 
         $itemRules = [];
 
-        foreach($this->cart->getItems() as $item) {
+        foreach ($this->cart->getItems() as $item) {
             $priceInfo = $item->getPriceInfo();
-            if($priceInfo instanceof PriceInfoInterface) {
+            if ($priceInfo instanceof PriceInfoInterface) {
                 $itemRules = array_merge($itemRules, $priceInfo->getRules());
             }
         }
 
         $itemRules = array_merge($this->appliedPricingRules, $itemRules);
         $uniqueItemRules = [];
-        foreach($itemRules as $rule) {
+        foreach ($itemRules as $rule) {
             $uniqueItemRules[$rule->getId()] = $rule;
         }
 
         return array_values($uniqueItemRules);
     }
-
-
 }

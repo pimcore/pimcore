@@ -129,13 +129,12 @@ interface EnvironmentInterface extends ComponentInterface
      */
     public function getCurrentCheckoutTenant();
 
-
     /**
      * Set the default currency in a multi-currency environment.
+     *
      * @param Currency $currency
      */
     public function setDefaultCurrency(Currency $currency);
-
 
     /**
      * Returns instance of default currency

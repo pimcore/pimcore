@@ -419,16 +419,17 @@ class Rule extends AbstractModel implements RuleInterface
 
     /**
      * @param string $typeClass
+     *
      * @return ConditionInterface[]
      */
-    public function getConditionsByType(string $typeClass): array {
-
+    public function getConditionsByType(string $typeClass): array
+    {
         $conditions = [];
 
         $rootCondition = $this->getCondition();
-        if($rootCondition instanceof BracketInterface) {
+        if ($rootCondition instanceof BracketInterface) {
             $conditions = $rootCondition->getConditionsByType($typeClass);
-        } else if($rootCondition instanceof $typeClass) {
+        } elseif ($rootCondition instanceof $typeClass) {
             $conditions[] = $rootCondition;
         }
 

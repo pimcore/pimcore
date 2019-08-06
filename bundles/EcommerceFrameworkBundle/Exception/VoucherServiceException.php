@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
  */
 class VoucherServiceException extends \Exception
 {
-
     const ERROR_CODE_TOKEN_ALREADY_IN_USE = 1;
     const ERROR_CODE_TOKEN_ALREADY_RESERVED = 2;
     const ERROR_CODE_TOKEN_RESERVATION_NOT_POSSIBLE = 3;
@@ -28,6 +27,5 @@ class VoucherServiceException extends \Exception
     const ERROR_CODE_ONLY_TOKEN_PER_CART_CANNOT_BE_ADDED = 6;
     const ERROR_CODE_ONLY_TOKEN_PER_CART_ALREADY_ADDED = 7;
     const ERROR_CODE_NO_MORE_USAGES = 8;
-    const ERROR_CODE_NOT_FOUND_IN_CART = 9; 
-
+    const ERROR_CODE_NOT_FOUND_IN_CART = 9;
 }

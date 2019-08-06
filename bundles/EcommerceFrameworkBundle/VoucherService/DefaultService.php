@@ -177,23 +177,25 @@ class DefaultService implements VoucherServiceInterface
     /**
      * @param CartInterface $cart
      * @param string|null $locale
+     *
      * @return PricingManagerTokenInformation[]
+     *
      * @throws UnsupportedException
      */
-    public function getPricingManagerTokenInformationDetails(CartInterface $cart, string $locale = null): array {
-
-        if(empty($cart->getVoucherTokenCodes())) {
+    public function getPricingManagerTokenInformationDetails(CartInterface $cart, string $locale = null): array
+    {
+        if (empty($cart->getVoucherTokenCodes())) {
             return [];
         }
 
-        if(null == $locale) {
+        if (null == $locale) {
             $locale = $this->currentLocale;
         }
 
         // get all valid rules configured in system
         $validRules = Factory::getInstance()->getPricingManager()->getValidRules();
         $validRulesAssoc = [];
-        foreach($validRules as $rule) {
+        foreach ($validRules as $rule) {
             $validRulesAssoc[$rule->getId()] = $rule;
         }
 
@@ -202,31 +204,28 @@ class DefaultService implements VoucherServiceInterface
 
         // filter applied rules for voucher conditions
         $appliedRulesWithVoucherCondition = [];
-        foreach($appliedRules as $appliedRule) {
+        foreach ($appliedRules as $appliedRule) {
             $conditions = $appliedRule->getConditionsByType(VoucherToken::class);
-            if($conditions) {
+            if ($conditions) {
                 $appliedRulesWithVoucherCondition[$appliedRule->getId()] = $conditions;
             }
         }
 
         // calculate not applied rules with voucher conditions
-        $notAppliedRules = array_udiff($validRules, $appliedRules, function($rule1, $rule2) {
+        $notAppliedRules = array_udiff($validRules, $appliedRules, function ($rule1, $rule2) {
             return strcmp($rule1->getId(), $rule2->getId());
         });
         $notAppliedRulesWithVoucherCondition = [];
-        foreach($notAppliedRules as $notAppliedRule) {
+        foreach ($notAppliedRules as $notAppliedRule) {
             $conditions = $notAppliedRule->getConditionsByType(VoucherToken::class);
-            if($conditions) {
+            if ($conditions) {
                 $notAppliedRulesWithVoucherCondition[$notAppliedRule->getId()] = $conditions;
             }
-
         }
-
 
         $tokenInformationList = [];
 
-        foreach($cart->getVoucherTokenCodes() as $tokenCode) {
-
+        foreach ($cart->getVoucherTokenCodes() as $tokenCode) {
             $tokenInformation = new PricingManagerTokenInformation();
             $tokenInformation->setTokenCode($tokenCode);
             $tokenInformation->setTokenObject(VoucherServiceToken::getByCode($tokenCode));
@@ -235,37 +234,34 @@ class DefaultService implements VoucherServiceInterface
             $appliedPricingRules = [];
             $errorMessages = [];
 
-            foreach($notAppliedRulesWithVoucherCondition as $ruleId => $conditions) {
-                foreach($conditions as $condition) {
+            foreach ($notAppliedRulesWithVoucherCondition as $ruleId => $conditions) {
+                foreach ($conditions as $condition) {
                     /**
                      * @var $condition VoucherToken
                      */
-                    if($condition->checkVoucherCode($tokenCode)) {
+                    if ($condition->checkVoucherCode($tokenCode)) {
                         $errorMessages[] = $condition->getErrorMessage($locale);
                         $notAppliedPricingRules[] = $validRulesAssoc[$ruleId];
                     }
                 }
             }
 
-            if(!$errorMessages) {
+            if (!$errorMessages) {
                 $hasRule = false;
-                foreach($appliedRulesWithVoucherCondition as $ruleId => $conditions) {
-
-                    foreach($conditions as $condition) {
+                foreach ($appliedRulesWithVoucherCondition as $ruleId => $conditions) {
+                    foreach ($conditions as $condition) {
                         /**
                          * @var $condition VoucherToken
                          */
-                        if($condition->checkVoucherCode($tokenCode)) {
+                        if ($condition->checkVoucherCode($tokenCode)) {
                             $hasRule = true;
                             $appliedPricingRules[] = $validRulesAssoc[$ruleId];
                             break;
                         }
                     }
-
                 }
 
                 $tokenInformation->setHasNoValidRule(!$hasRule);
-
             }
 
             $tokenInformation->setErrorMessages($errorMessages);
@@ -276,9 +272,7 @@ class DefaultService implements VoucherServiceInterface
         }
 
         return $tokenInformationList;
-
     }
-
 
     /**
      * @param null $seriesId

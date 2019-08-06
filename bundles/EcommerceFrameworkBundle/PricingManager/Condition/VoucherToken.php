@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
@@ -181,10 +180,11 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @param string $locale
+     *
      * @return string
      */
-    public function getErrorMessage(string $locale): string {
+    public function getErrorMessage(string $locale): string
+    {
         return $this->errorMessages[$locale];
     }
-
 }

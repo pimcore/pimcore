@@ -146,15 +146,17 @@ class Bracket implements BracketInterface
 
     /**
      * @param string $typeClass
+     *
      * @return ConditionInterface[]
      */
-    public function getConditionsByType(string $typeClass): array {
+    public function getConditionsByType(string $typeClass): array
+    {
         $conditions = [];
 
-        foreach($this->conditions as $condition) {
-            if($condition instanceof BracketInterface) {
+        foreach ($this->conditions as $condition) {
+            if ($condition instanceof BracketInterface) {
                 $conditions = array_merge($condition->getConditionsByType($typeClass));
-            } else if($condition instanceof $typeClass) {
+            } elseif ($condition instanceof $typeClass) {
                 $conditions[] = $condition;
             }
         }

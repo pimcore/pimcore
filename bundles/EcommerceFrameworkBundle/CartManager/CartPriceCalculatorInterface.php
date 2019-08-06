@@ -103,6 +103,7 @@ interface CartPriceCalculatorInterface
      * Returns all applied PricingRules on Cart-Level
      *
      * @return RuleInterface[]
+     *
      * @throws UnsupportedException
      */
     public function getAppliedPricingRules(): array;

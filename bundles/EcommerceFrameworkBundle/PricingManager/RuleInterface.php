@@ -154,6 +154,7 @@ interface RuleInterface
 
     /**
      * @param string $typeClass
+     *
      * @return ConditionInterface[]
      */
     public function getConditionsByType(string $typeClass): array;

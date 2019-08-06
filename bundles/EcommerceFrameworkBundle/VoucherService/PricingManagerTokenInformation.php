@@ -1,14 +1,11 @@
 <?php
 
-
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
-
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 class PricingManagerTokenInformation
 {
-
     /**
      * Entered voucher token code
      *
@@ -149,5 +146,4 @@ class PricingManagerTokenInformation
     {
         $this->appliedRules = $appliedRules;
     }
-
 }

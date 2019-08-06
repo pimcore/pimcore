@@ -901,8 +901,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @return PricingManagerTokenInformation[]
      */
-    public function getPricingManagerTokenInformationDetails(): array {
+    public function getPricingManagerTokenInformationDetails(): array
+    {
         $voucherService = Factory::getInstance()->getVoucherService();
+
         return $voucherService->getPricingManagerTokenInformationDetails($this);
     }
 

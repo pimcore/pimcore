@@ -81,6 +81,7 @@ interface VoucherServiceInterface
      *
      * @param CartInterface $cart
      * @param string|null $locale
+     *
      * @return PricingManagerTokenInformation[]
      */
     public function getPricingManagerTokenInformationDetails(CartInterface $cart, string $locale = null): array;

@@ -30,15 +30,14 @@ interface BracketInterface extends ConditionInterface
      */
     public function addCondition(ConditionInterface $condition, $operator);
 
-
     /**
      * Returns all defined conditions with given type
      *
      * @param string $typeClass
+     *
      * @return ConditionInterface[]
      */
     public function getConditionsByType(string $typeClass): array;
-
 }
 
 class_alias(BracketInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket');
