@@ -31,8 +31,12 @@ services:
         arguments:
             - '@pimcore_ecommerce.locator.order_manager'
             - '@event_dispatcher'
+            - '@Pimcore\Log\ApplicationLogger'
             - [] # options
-
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore_ecommerce }
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy:
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy: ~
