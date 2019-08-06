@@ -107,6 +107,11 @@ interface CartPriceCalculatorInterface
      * @throws UnsupportedException
      */
     public function getAppliedPricingRules(): array;
+
+    /**
+     * @return bool
+     */
+    public function isCalculated(): bool;
 }
 
 class_alias(CartPriceCalculatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator');
