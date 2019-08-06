@@ -17,18 +17,27 @@ use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
+class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor implements LoggerAwareInterface
 {
+
+    use LoggerAwareTrait;
 
     /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
-    public function __construct(OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, array $options = [])
+    /**
+     * @var ApplicationLogger
+     */
+    protected $applicationLogger;
+
+    public function __construct(OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
     {
         $this->orderManagers = $orderManagers;
 
@@ -38,6 +47,21 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $this->processOptions($resolver->resolve($options));
 
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
+    {
+        $this->logger->info('Payment Provider Response received. ' . print_r($paymentResponseParams, true));
+
+        // check if order is already committed and payment information with same internal payment id has same state
+        // if so, do nothing and return order
+        if ($committedOrder = $this->committedOrderWithSamePaymentExists($paymentResponseParams, $paymentProvider)) {
+            return $committedOrder;
+        }
+
+        $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
+
+        return $this->commitOrderPayment($paymentStatus, $paymentProvider);
     }
 
 
@@ -65,7 +89,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
 
         if (empty($order)) {
             $message = 'No order found for payment status: ' . print_r($paymentStatus, true);
-            Logger::error($message);
+            $this->logger->error($message);
             throw new \Exception($message);
         }
 
@@ -76,15 +100,12 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
         if ($order->getOrderState() === $order::ORDER_STATE_COMMITTED) {
-            // only when we receive an unsuccessful payment request after order is already committed
-            // do not overwrite status if order is already committed. normally this shouldn't happen at all.
-            $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
-
             $message = 'Order with ID ' . $order->getId() . ' got payment status after it was already committed.';
-            $logger->critical($message,
+            $this->applicationLogger->critical($message,
                 [
                     'fileObject' => new FileObject(print_r($paymentStatus, true)),
-                    'relatedObject' => $order
+                    'relatedObject' => $order,
+                    'component' => self::LOGGER_NAME
                 ]
             );
             Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -120,7 +141,17 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     {
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
 
-        $order = parent::commitOrder($order);
+        $this->processOrder($order);
+
+        $order->setOrderState(AbstractOrder::ORDER_STATE_COMMITTED);
+        $order->save(['versionNote' => 'CommitOrderProcessor::commitOrder - set state to committed before sending confirmation mail.']);
+
+        try {
+            $this->sendConfirmationMail($order);
+        } catch (\Exception $e) {
+            $this->logger->error('Error during sending confirmation e-mail: ' . $e);
+        }
+
 
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
 
@@ -146,15 +177,9 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
                 $mail->addTo($order->getCustomer()->getEmail());
                 $mail->send();
             } else {
-                Logger::err('No Customer found!');
+                $this->logger->error('No Customer found!');
             }
         }
     }
-
-    public function cleanUpPendingOrders()
-    {
-        parent::cleanUpPendingOrders(); // TODO: Change the autogenerated stub
-    }
-
 
 }
