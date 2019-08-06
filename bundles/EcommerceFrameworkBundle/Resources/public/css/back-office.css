@@ -133,6 +133,7 @@ a {
 
 .picker__holder {
     min-width: 300px;
+    overflow: hidden;
 }
 
 /*
