@@ -357,15 +357,21 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
             for(var c=0; c<conditions[i].items.length; c++)
             {
                 var item = conditions[i].items.getAt(c);
+
                 try {
                     // workaround for pimcore.object.tags.objects
                     if(item.reference)
                     {
                         condition[ item.reference.getName() ] = item.reference.getValue();
                     }
+                    else if(item.form)
+                    {
+                        condition[ item.name ] = item.getForm().getFieldValues();
+                    }
                     else
                     {
                         condition[ item.getName() ] = item.getValue();
+
                     }
                 } catch (e){}
 
@@ -1056,8 +1062,27 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
 
         // check params
         if(typeof data == "undefined") {
-            data = {};
+            data = {
+                error_messages: {}
+            };
         }
+
+
+        var langTabs = [];
+        Ext.each(pimcore.settings.websiteLanguages, function(lang){
+            var tab = {
+                title: pimcore.available_languages[ lang ],
+                items: [{
+                    xtype: "textfield",
+                    name: lang,
+                    fieldLabel: t("error_message"),
+                    width: 600,
+                    value: data.error_messages[ lang ]
+                }]
+            };
+
+            langTabs.push( tab );
+        });
 
         // create item
         var myId = Ext.id();
@@ -1079,13 +1104,9 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                     height: 200,
                     width: 600,
                     columns: [],
-
-                    // ?
                     columnType: null,
                     datatype: "data",
                     fieldtype: "objects",
-
-                    // ??
                     index: false,
                     invisible: false,
                     lazyLoading: false,
@@ -1101,7 +1122,22 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                     tooltip: "",
                     visibleGridView: false,
                     visibleSearch: false
-                }).getLayoutEdit()
+                }).getLayoutEdit(),
+                Ext.create('Ext.form.Panel', {
+                    style: "margin-bottom: 10px",
+                    cls: "object_localizedfields_panel",
+                    name: 'error_messages',
+                    isFormPanel: true,
+                    items: [{
+                        xtype: "tabpanel",
+                        style: "margin-bottom: 30px",
+                        defaults: {
+                            autoHeight: true,
+                            bodyStyle: 'padding:10px;'
+                        },
+                        items: langTabs
+                    }]
+                })
             ]
         });
 

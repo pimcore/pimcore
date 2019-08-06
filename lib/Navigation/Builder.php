@@ -229,6 +229,18 @@ class Builder
 
     /**
      * @param Document $parentDocument
+     *
+     * @return Document[]
+     */
+    protected function getChildren(Document $parentDocument): array
+    {
+        // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
+        // e.g. for custom filtering and other very specific use-cases
+        return $parentDocument->getChildren();
+    }
+
+    /**
+     * @param Document $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback
      *
@@ -237,7 +249,7 @@ class Builder
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [])
     {
         $pages = [];
-        $childs = $parentDocument->getChildren();
+        $childs = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 
         if (!is_array($childs)) {

@@ -18,6 +18,7 @@
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
@@ -67,6 +68,10 @@ class DefaultValue extends AbstractValue
             $brickClass = Objectbrick\Definition::getByKey($brickType);
             $context = ['object' => $object, 'outerFieldname' => $key];
             $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
+        }
+
+        if(!$fieldDefinition instanceof Data) {
+            return $this->getDefaultValue($value);
         }
 
         if ($fieldDefinition->isEmpty($value)) {

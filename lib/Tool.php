@@ -15,8 +15,6 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\FeatureToggles\Features\DebugMode;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -387,7 +385,7 @@ class Tool
         ]);
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
             return false;
         }
 
@@ -480,12 +478,23 @@ class Tool
     public static function getClientIp(Request $request = null)
     {
         $request = self::resolveRequest($request);
-
-        if (null === $request) {
-            return null;
+        if ($request) {
+            return $request->getClientIp();
         }
 
-        return $request->getClientIp();
+        // fallback to $_SERVER variables
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+        $ips = explode(',', $ip);
+        $ip = trim(array_shift($ips));
+
+        return $ip;
     }
 
     /**

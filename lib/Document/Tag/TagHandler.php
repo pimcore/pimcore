@@ -83,9 +83,6 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      */
     protected $brickTemplateCache = [];
 
-    /**
-     *
-     */
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     /**
@@ -282,7 +279,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
 
         echo $brick->getHtmlTagClose($info);
 
-        if($brickInfoRestoreValue === null) {
+        if ($brickInfoRestoreValue === null) {
             $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);
         } else {
             $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $brickInfoRestoreValue);
