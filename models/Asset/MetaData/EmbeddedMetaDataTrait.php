@@ -145,71 +145,74 @@ trait EmbeddedMetaDataTrait
 
         $data = [];
 
-        $chunkSize = 1024;
-        if (!is_int($chunkSize)) {
-            throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
-        }
+        if (is_file($filePath)) {
 
-        if ($chunkSize < 12) {
-            throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
-        }
-
-        if (($file_pointer = fopen($filePath, 'rb')) === false) {
-            throw new \RuntimeException('Could not open file for reading');
-        }
-
-        $tag = '<x:xmpmeta';
-        $tagLength = strlen($tag);
-        $buffer = false;
-
-        // find open tag
-        while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
-            if (strlen($chunk) <= $tagLength) {
-                break;
+            $chunkSize = 1024;
+            if (!is_int($chunkSize)) {
+                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
             }
-            if (($position = strpos($chunk, $tag)) === false) {
-                // if open tag not found, back up just in case the open tag is on the split.
-                fseek($file_pointer, $tagLength * -1, SEEK_CUR);
-            } else {
-                $buffer = substr($chunk, $position);
-            }
-        }
 
-        if ($buffer !== false) {
-            $tag = '</x:xmpmeta>';
+            if ($chunkSize < 12) {
+                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
+            }
+
+            if (($file_pointer = fopen($filePath, 'rb')) === false) {
+                throw new \RuntimeException('Could not open file for reading');
+            }
+
+            $tag = '<x:xmpmeta';
             $tagLength = strlen($tag);
-            $offset = 0;
-            while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
-                    $chunkSize)) !== false && !empty($chunk)) {
-                $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
-                $buffer .= $chunk;
-            }
+            $buffer = false;
 
-            if ($position === false) {
-                // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
-                throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
-            } else {
-                $buffer = substr($buffer, 0, $position + $tagLength);
-            }
-
-            $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
-            $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
-
-            $xml = @simplexml_load_string($buffer);
-            if ($xml) {
-                if ($xml->rdf____RDF->rdf____Description) {
-                    foreach ($xml->rdf____RDF->rdf____Description as $description) {
-                        $data = array_merge($data, object2array($description));
-                    }
+            // find open tag
+            while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
+                if (strlen($chunk) <= $tagLength) {
+                    break;
+                }
+                if (($position = strpos($chunk, $tag)) === false) {
+                    // if open tag not found, back up just in case the open tag is on the split.
+                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                } else {
+                    $buffer = substr($chunk, $position);
                 }
             }
 
-            if (isset($data['@attributes'])) {
-                unset($data['@attributes']);
-            }
-        }
+            if ($buffer !== false) {
+                $tag = '</x:xmpmeta>';
+                $tagLength = strlen($tag);
+                $offset = 0;
+                while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
+                        $chunkSize)) !== false && !empty($chunk)) {
+                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $buffer .= $chunk;
+                }
 
-        fclose($file_pointer);
+                if ($position === false) {
+                    // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
+                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
+                } else {
+                    $buffer = substr($buffer, 0, $position + $tagLength);
+                }
+
+                $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
+                $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
+
+                $xml = @simplexml_load_string($buffer);
+                if ($xml) {
+                    if ($xml->rdf____RDF->rdf____Description) {
+                        foreach ($xml->rdf____RDF->rdf____Description as $description) {
+                            $data = array_merge($data, object2array($description));
+                        }
+                    }
+                }
+
+                if (isset($data['@attributes'])) {
+                    unset($data['@attributes']);
+                }
+            }
+
+            fclose($file_pointer);
+        }
 
         // remove namespace prefixes if possible
         $resultData = [];
