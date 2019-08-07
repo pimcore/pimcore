@@ -696,8 +696,8 @@ class Menu extends AbstractRenderer
     /**
      * Renders a normal menu (called from {@link renderMenu()})
      *
-     * @param  Container $container     container to render
-     * @param  string                    $ulClasses       CSS class for UL levels
+     * @param  Container                 $container     container to render
+     * @param  string|string[]           $ulClasses     CSS class for UL levels
      * @param  string                    $indent        initial indentation
      * @param  string                    $innerIndent   inner indentation
      * @param  int|null                  $minDepth      minimum depth
@@ -733,7 +733,6 @@ class Menu extends AbstractRenderer
         $renderParentClass
     ) {
         $html = '';
-        $ulClass = $ulClasses;
 
         // find deepest active
         if ($found = $this->findActive($container, $minDepth, $maxDepth)) {
@@ -744,10 +743,8 @@ class Menu extends AbstractRenderer
         }
 
         // create iterator
-        $iterator = new \RecursiveIteratorIterator(
-            $container,
-                            \RecursiveIteratorIterator::SELF_FIRST
-        );
+        $iterator = new \RecursiveIteratorIterator($container,\RecursiveIteratorIterator::SELF_FIRST);
+        
         if (is_int($maxDepth)) {
             $iterator->setMaxDepth($maxDepth);
         }
@@ -758,10 +755,11 @@ class Menu extends AbstractRenderer
             $depth = $iterator->getDepth();
             $isActive = $page->isActive(true);
 
-
-            //set ulCLass depth wise
-            if(is_array($ulClasses)) {
+            // Set ulClass depth wise if array of classes is supplied.
+            if (\is_array($ulClasses)) {
                 $ulClass = $ulClasses[$depth] ?? $ulClasses['default'];
+            } else {
+                $ulClass = (string) $ulClasses;
             }
 
             if ($depth < $minDepth || !$this->accept($page)) {
