@@ -47,7 +47,7 @@
                 <div class="card-header">
                     <span class="fa fa-list-alt"></span> {{ ('bundle_ecommerce.back-office.order.order-items')|trans([],'admin') }}
                     {% if order.getComment() %}
-                        <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ (order.getComment()|escape)|nl2br }}">
+                        <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ order.getComment()|nl2br }}">
                             <span class="fa fa-comment"></span>
                         </button>
                     {% endif %}
@@ -236,17 +236,17 @@
                                 <address>
                                     {% set address = [] %}
                                     {% if order.getCustomerCompany() %}
-                                        {{ '<h4>%1$s</h4>'|format((order.getCustomerCompany()|escape)|nl2br) }}
+                                        <h4>{{ order.getCustomerCompany()|nl2br }}</h4>
                                     {% endif %}
-                                    {% if order.getCustomerFirstname()or order.getCustomerLastname() %}
-                                        {{ ('%1$s %2$s'|format(order.getCustomerFirstname()|escape, order.getCustomerLastname()|escape)) }}
+                                    {% if order.getCustomerFirstname() or order.getCustomerLastname() %}
+                                        {{ order.getCustomerFirstname() ~ ' ' ~ order.getCustomerLastname() }}<br/>
                                     {% endif %}
-                                    {{ order.getCustomerStreet()|escape }}<br/>
-                                    {{ order.getCustomerZip()|escape ~ ' - ' ~ order.getCustomerCity()|escape }}<br/>
+                                    {{ order.getCustomerStreet() }}<br/>
+                                    {{ order.getCustomerZip() ~ ' - ' ~ order.getCustomerCity() }}<br/>
                                     {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
 
                                     {% if order.getCustomer() and attribute(order.getCustomer(), 'email') is defined %}
-                                        {{ '<a href="mailto:%1$s">%1$s</a>'|format(order.getCustomer().getEmail()|escape) | raw }}
+                                        {{ '<a href="mailto:%1$s">%1$s</a>'|format(order.getCustomer().getEmail()) | raw }}
                                     {% endif %}
                                 </address>
                             </div>
@@ -265,13 +265,13 @@
                                     <address>
                                         {% set address = [] %}
                                         {% if order.getDeliveryCompany() %}
-                                            {{ '<h4>%1$s</h4>'|format(order.getDeliveryCompany()|escape|nl2br) }}
+                                            <h4>{{ order.getDeliveryCompany()|nl2br }}</h4>
                                         {% endif %}
                                         {% if order.getDeliveryFirstname() or order.getDeliveryLastname() %}
-                                            {{ ('%1$s %2$s')|format(order.getDeliveryFirstname()|escape,order.getDeliveryLastname()|escape) }}<br/>
+                                            {{ order.getDeliveryFirstname() ~ ' ' ~ order.getDeliveryLastname() }}<br/>
                                         {% endif %}
-                                        {{ order.getDeliveryStreet()|escape }}<br/>
-                                        {{ order.getDeliveryZip()|escape ~ ' - ' ~ order.getDeliveryCity()|escape }}<br/>
+                                        {{ order.getDeliveryStreet() }}<br/>
+                                        {{ order.getDeliveryZip() ~ ' - ' ~ order.getDeliveryCity() }}<br/>
                                         {{ regionArray[order.getDeliveryCountry()]|upper }}<br/>
                                     </address>
                                 </div>

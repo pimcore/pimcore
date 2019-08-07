@@ -7,6 +7,12 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20190807121356 extends AbstractPimcoreMigration
 {
+
+    public function doesSqlMigrations(): bool
+    {
+        return false;
+    }
+
     /**
      * @param Schema $schema
      */
@@ -27,7 +33,7 @@ class Version20190807121356 extends AbstractPimcoreMigration
                 $translation->setKey($key);
                 $translation->setCreationDate(time());
                 $translation->setModificationDate(time());
-                $translation->setValue('en',$value);
+                $translation->addTranslation("en",$value);
                 $translation->save();
             }
         }
