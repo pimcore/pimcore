@@ -853,6 +853,7 @@
   "bundle_ecommerce_clear_config_cache": "Clear configuration cache",
   "bundle_ecommerce_back-office_order": "Back Office - Ordering",
   "bundle_ecommerce_vouchertoolkit_tab": "Voucher Details",
+  "bundle_ecommerce_order_tab": "Order Details",
   "thumbnail": "Thumbnail",
   "download_thumbnail": "Download Thumbnail",
   "no_thumbnail_selected": "No thumbnail selected",
