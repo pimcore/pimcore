@@ -146,7 +146,6 @@ trait EmbeddedMetaDataTrait
         $data = [];
 
         if (is_file($filePath)) {
-
             $chunkSize = 1024;
             if (!is_int($chunkSize)) {
                 throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');

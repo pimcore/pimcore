@@ -94,11 +94,11 @@ class DataObjectImporter extends AbstractElementImporter
             list($fieldCollectionField, $index, $field) = explode(DataObjectDataExtractor::FIELD_COLLECTIONS_DELIMITER, $attribute->getName());
 
             /** @var DataObject\Fieldcollection $fieldCollection */
-            $fieldCollection = $element->{"get" . $fieldCollectionField}();
-            if($fieldCollection){
+            $fieldCollection = $element->{'get' . $fieldCollectionField}();
+            if ($fieldCollection) {
                 $item = $fieldCollection->get($index);
                 /** @var DataObject\Localizedfield $localizedFields */
-                if($item && method_exists($item, 'getLocalizedfields') && ($localizedFields = $item->getLocalizedfields())){
+                if ($item && method_exists($item, 'getLocalizedfields') && ($localizedFields = $item->getLocalizedfields())) {
                     $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
                 }
             }

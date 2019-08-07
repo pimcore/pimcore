@@ -163,6 +163,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param AttributeSet $result
      * @param array|null $exportAttributes
      */
+
     /**
      * @param Localizedfields $fd
      * @param $definition
@@ -207,8 +208,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor
-    {
+    ): DataObjectDataExtractor {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);
@@ -284,8 +284,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor
-    {
+    ): DataObjectDataExtractor {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);
@@ -341,14 +340,14 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param DataObject\Concrete $object
      * @param AttributeSet $result
      * @param array|null $exportAttributes
+     *
      * @return DataObjectDataExtractor
      */
     protected function addLocalizedFieldsInFieldCollections(
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor
-    {
+    ): DataObjectDataExtractor {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);

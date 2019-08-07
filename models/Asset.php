@@ -1343,14 +1343,14 @@ class Asset extends Element\AbstractElement
      */
     public function getChecksum($type = 'md5')
     {
-        if(!in_array($type, hash_algos())) {
+        if (!in_array($type, hash_algos())) {
             throw new \Exception(sprintf('Hashing algorithm `%s` is not supported', $type));
         }
 
         $file = $this->getFileSystemPath();
         if (is_file($file)) {
             return hash_file($type, $file);
-        } elseif(\is_resource($this->getStream())) {
+        } elseif (\is_resource($this->getStream())) {
             return hash($type, $this->getData());
         }
 

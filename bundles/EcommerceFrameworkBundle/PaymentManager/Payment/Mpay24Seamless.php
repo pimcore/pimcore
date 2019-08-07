@@ -7,7 +7,6 @@ use Mpay24\Mpay24Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\AbstractPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
@@ -75,7 +74,7 @@ class Mpay24Seamless extends AbstractPayment
         $resolver->setAllowedTypes('partial', 'string');
         $resolver->setAllowedTypes('testSystem', 'bool');
         $resolver->setAllowedTypes('debugMode', 'bool');
-        
+
         $notEmptyValidator = function ($value) {
             return !empty($value);
         };
@@ -148,7 +147,7 @@ class Mpay24Seamless extends AbstractPayment
 
         // Each line is optional so only add the lines that you need
         $tokenizerConfig = [
-            'language'          => $this->getProviderCompatibleLocale($request),
+            'language' => $this->getProviderCompatibleLocale($request),
             'internalPaymentId' => $paymentInfo->getInternalPaymentId(),
 
         ];
@@ -160,6 +159,7 @@ class Mpay24Seamless extends AbstractPayment
         $params['tokenizer'] = $tokenizer;
         $params['paymentMethods'] = $this->ecommerceConfig['payment_methods'];
         $params['enabledPaymentMethods'] = isset($config['enabledPaymentMethods']) ? $config['enabledPaymentMethods'] : array_keys($params['paymentMethods']);
+
         return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
     }
 
@@ -225,10 +225,10 @@ class Mpay24Seamless extends AbstractPayment
 
             // All fields are optional, but most of them are highly recommended
             //@see https://docs.mpay24.com/docs/paypal for extensions (payment - method specific)
-            $customerName = $order->getCustomer() ? $order->getCustomer()->getLastname()." ".$order->getCustomer()->getFirstname() : "";
+            $customerName = $order->getCustomer() ? $order->getCustomer()->getLastname().' '.$order->getCustomer()->getFirstname() : '';
             $additional = [
-                "customerID" => $order->getCustomer() ? $order->getCustomer()->getId() : "", // ensure GDPR compliance
-                "customerName" => $customerName, // ensure GDPR compliance
+                'customerID' => $order->getCustomer() ? $order->getCustomer()->getId() : '', // ensure GDPR compliance
+                'customerName' => $customerName, // ensure GDPR compliance
                 'order' =>
                     [
                         'description' => sprintf(
@@ -256,14 +256,13 @@ class Mpay24Seamless extends AbstractPayment
             $result = $mpay24->paymentPage($mdxi);
             */
 
-
             //add information on item level
             $additional = [];
             // @note: for item-level transmission of price information, the MPAY24 vendor folder currently must
             // be manually updated on every upgrade:
             // @see https://github.com/mpay24/mpay24-php/pull/79#issuecomment-383528608
-            // if payment with Paypal won't work, then deactivate this line (although this line is very cool)           
-            //$additional = $this->addOrderItemPositions($order, $paymentType, $additional);           
+            // if payment with Paypal won't work, then deactivate this line (although this line is very cool)
+            //$additional = $this->addOrderItemPositions($order, $paymentType, $additional);
 
             $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(), $payment, $additional);
 
@@ -302,10 +301,10 @@ class Mpay24Seamless extends AbstractPayment
     private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional): array
     {
         $checkSum = 0.0;
-        $checkSumVat= 0.0;
+        $checkSumVat = 0.0;
 
-        $orderTotalPrice = round($order->getTotalPrice(),2);
-        $orderTotalVat   = round($orderTotalPrice - $order->getTotalNetPrice(), 2);
+        $orderTotalPrice = round($order->getTotalPrice(), 2);
+        $orderTotalVat = round($orderTotalPrice - $order->getTotalNetPrice(), 2);
 
         $pos = 1;
         $additional['order']['shoppingCart'] = [];
@@ -315,15 +314,15 @@ class Mpay24Seamless extends AbstractPayment
             $checkSum += $totalPrice;
 
             $itemPrice = round($totalPrice / $orderItem->getAmount(), 2);
-            $itemVat =  round($vat / $orderItem->getAmount(), 2);
+            $itemVat = round($vat / $orderItem->getAmount(), 2);
             $checkSumVat += $itemVat * $orderItem->getAmount();
 
             $additional['order']['shoppingCart']['item-'.$pos] = [
                 'productNr' => $orderItem->getProduct()->getOSProductNumber(),
                 'description' => $orderItem->getProduct()->getOSName(),
                 'quantity' => $orderItem->getAmount(),
-                'tax' => round($itemVat * 100,2),
-                'amount' => round($itemPrice * 100,2),
+                'tax' => round($itemVat * 100, 2),
+                'amount' => round($itemPrice * 100, 2),
             ];
             $pos++;
         }
