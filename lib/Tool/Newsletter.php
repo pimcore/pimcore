@@ -70,6 +70,10 @@ class Newsletter
             $mail->setParams($sendingContainer->getParams());
         }
 
+        if (strlen(trim($newsletterDocument->getPlaintext())) > 0) {
+            $mail->setBodyText(trim($newsletterDocument->getPlaintext()));
+        }
+
         $contentHTML = $mail->getBodyHtmlRendered();
         $contentText = $mail->getBodyTextRendered();
 
@@ -115,6 +119,8 @@ class Newsletter
 
         $mail->setBodyHtml($contentHTML);
         $mail->setBodyText($contentText);
+        // Adds the plain text part to the message, that it becomes a multipart email
+        $mail->addPart($contentText, 'text/plain');
         $mail->setSubject($mail->getSubjectRendered());
 
         return $mail;
@@ -137,8 +143,6 @@ class Newsletter
 
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
-            // Getting bounces
-            $mail->setReturnPath(key($mail->getFrom()));
 
             $mailer = null;
             // check if newsletter specific mailer is needed

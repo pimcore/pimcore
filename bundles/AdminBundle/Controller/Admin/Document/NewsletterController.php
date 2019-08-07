@@ -40,6 +40,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class NewsletterController extends DocumentControllerBase
 {
+    use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -51,9 +53,7 @@ class NewsletterController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'document');
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
@@ -192,6 +192,12 @@ class NewsletterController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
+
+        // plaintext
+        if ($request->get('plaintext')) {
+            $plaintext = $this->decodeJson($request->get('plaintext'));
+            $page->setValues($plaintext);
+        }
     }
 
     /**

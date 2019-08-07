@@ -136,12 +136,14 @@ class PricingManager implements PricingManagerInterface
     /**
      * @param CartInterface $cart
      *
-     * @return PricingManagerInterface
+     * @return RuleInterface[]
      */
-    public function applyCartRules(CartInterface $cart)
+    public function applyCartRules(CartInterface $cart): array
     {
+        $appliedRules = [];
+
         if (!$this->enabled) {
-            return $this;
+            return $appliedRules;
         }
 
         // configure environment
@@ -190,6 +192,7 @@ class PricingManager implements PricingManagerInterface
 
             // execute rule
             $rule->executeOnCart($env);
+            $appliedRules[] = $rule;
 
             // is this a stop rule?
             if ($rule->getBehavior() === 'stopExecute') {
@@ -197,7 +200,7 @@ class PricingManager implements PricingManagerInterface
             }
         }
 
-        return $this;
+        return $appliedRules;
     }
 
     /**

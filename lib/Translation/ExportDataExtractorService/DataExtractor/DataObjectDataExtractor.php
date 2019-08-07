@@ -27,6 +27,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     const EXPORTABLE_TAGS = ['input', 'textarea', 'wysiwyg'];
 
     const BRICK_DELIMITER = '|';
+    const FIELD_COLLECTIONS_DELIMITER = '|';
+    const BLOCK_DELIMITER = '|';
 
     /**
      * @var array
@@ -93,7 +95,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
         $this->addLocalizedFields($object, $result, $exportAttributes)
             ->addLocalizedFieldsInBricks($object, $result, $exportAttributes)
-            ->addBlocks($object, $result, $exportAttributes);
+            ->addBlocks($object, $result, $exportAttributes)
+            ->addLocalizedFieldsInFieldCollections($object, $result, $exportAttributes);
 
         DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
 
@@ -137,6 +140,10 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
              */
             foreach ($definitions as $definition) {
                 if (!$this->isFieldExportable($object->getClassName(), $definition, $exportAttributes)) {
+                    if ($definition->getFieldtype() === Attribute::TYPE_BLOCK) {
+                        $this->addBlocksInLocalizedfields($fd, $definition, $object, $result, $exportAttributes);
+                    }
+
                     continue;
                 }
 
@@ -152,6 +159,42 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
+     * @param Localizedfields $fd
+     * @param AttributeSet $result
+     * @param array|null $exportAttributes
+     */
+    /**
+     * @param Localizedfields $fd
+     * @param $definition
+     * @param DataObject\Concrete $object
+     * @param AttributeSet $result
+     * @param array|null $exportAttributes
+     */
+    protected function addBlocksInLocalizedfields(Localizedfields $fd, $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null)
+    {
+        $locale = str_replace('-', '_', $result->getSourceLanguage());
+        if (!Tool::isValidLanguage($locale)) {
+            $locale = \Locale::getPrimaryLanguage($locale);
+        }
+
+        $blockElements = $object->{'get' . ucfirst($definition->getName())}($locale);
+
+        if ($blockElements) {
+            foreach ($blockElements as $index => $blockElementFields) {
+                /** @var DataObject\Data\BlockElement $blockElement */
+                foreach ($blockElementFields as $blockElement) {
+                    $content = $blockElement->getData();
+
+                    if (!empty($content)) {
+                        $name = $definition->getName() . self::BLOCK_DELIMITER . $index . self::BLOCK_DELIMITER . $blockElement->getName() . self::BLOCK_DELIMITER . $locale;
+                        $result->addAttribute(Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD, $name, $content);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @param DataObject\Concrete $object
      * @param AttributeSet $result
      * @param array|null $exportAttributes
@@ -164,7 +207,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor {
+    ): DataObjectDataExtractor
+    {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);
@@ -180,7 +224,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
 
                     /** @var $blockItems array */
-                    $blocks = $object->{'get'.ucfirst($fd->getName())}();
+                    $blocks = $object->{'get' . ucfirst($fd->getName())}();
 
                     if ($blocks) {
                         /** @var $blockItem DataObject\Data\BlockElement */
@@ -211,9 +255,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                                             );
 
                                             if (!empty($content)) {
-                                                $name = $fd->getName(
-                                                    ).'-'.$blockIdx.'-localizedfield-'.$blockLocalizedFieldDefinition->getName(
-                                                    );
+                                                $name = $fd->getName() . self::BLOCK_DELIMITER . $blockIdx . self::BLOCK_DELIMITER . 'localizedfield' . self::BLOCK_DELIMITER . $blockLocalizedFieldDefinition->getName();
                                                 $result->addAttribute(Attribute::TYPE_BLOCK, $name, $content);
                                             }
                                         }
@@ -242,7 +284,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         DataObject\Concrete $object,
         AttributeSet $result,
         array $exportAttributes = null
-    ): DataObjectDataExtractor {
+    ): DataObjectDataExtractor
+    {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {
             $locale = \Locale::getPrimaryLanguage($locale);
@@ -254,13 +297,13 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     continue;
                 }
 
-                $brickContainerGetter = 'get'.ucfirst($fieldDefinition->getName());
+                $brickContainerGetter = 'get' . ucfirst($fieldDefinition->getName());
                 if (!$brickContainer = $object->$brickContainerGetter()) {
                     continue;
                 }
 
                 foreach ($fieldDefinition->getAllowedTypes() ?: [] as $brickType) {
-                    $brickGetter = 'get'.ucfirst($brickType);
+                    $brickGetter = 'get' . ucfirst($brickType);
 
                     /**
                      * @var DataObject\Objectbrick\Data\AbstractData $brick
@@ -285,6 +328,78 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                         if (!empty($content)) {
                             $name = $fieldDefinition->getName() . self::BRICK_DELIMITER . $brickType . self::BRICK_DELIMITER . $fd->getName();
                             $result->addAttribute(Attribute::TYPE_BRICK_LOCALIZED_FIELD, $name, $content);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param AttributeSet $result
+     * @param array|null $exportAttributes
+     * @return DataObjectDataExtractor
+     */
+    protected function addLocalizedFieldsInFieldCollections(
+        DataObject\Concrete $object,
+        AttributeSet $result,
+        array $exportAttributes = null
+    ): DataObjectDataExtractor
+    {
+        $locale = str_replace('-', '_', $result->getSourceLanguage());
+        if (!Tool::isValidLanguage($locale)) {
+            $locale = \Locale::getPrimaryLanguage($locale);
+        }
+
+        if ($fieldDefinitions = $object->getClass()->getFieldDefinitions()) {
+            foreach ($fieldDefinitions as $fieldDefinition) {
+                if (!$fieldDefinition instanceof Data\Fieldcollections) {
+                    continue;
+                }
+
+                $getter = 'get' . ucfirst($fieldDefinition->getName());
+
+                /** @var DataObject\Fieldcollection $fieldCollection */
+                if (!$fieldCollection = $object->$getter()) {
+                    continue;
+                }
+
+                $itemFieldDefinitions = $fieldCollection->getItemDefinitions();
+                if (empty($itemFieldDefinitions)) {
+                    continue;
+                }
+
+                $items = $fieldCollection->getItems();
+                $items = $items ?: [];
+
+                /** @var DataObject\Fieldcollection\Data\AbstractData $item */
+                foreach ($items as $item) {
+                    $type = $item->getType();
+
+                    /** @var DataObject\Fieldcollection\Definition $definition */
+                    $definition = $itemFieldDefinitions[$type] ?: null;
+                    if (is_null($definition)) {
+                        continue;
+                    }
+
+                    if (!$localizedFieldsDefinition = $definition->getFieldDefinition('localizedfields')) {
+                        continue;
+                    }
+
+                    /** @var DataObject\Localizedfield $localizedFields */
+                    if (!$localizedFields = $item->getLocalizedfields()) {
+                        continue;
+                    }
+
+                    foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
+                        $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
+
+                        if (!empty($content)) {
+                            $name = $fieldDefinition->getName() . self::FIELD_COLLECTIONS_DELIMITER . $item->getIndex() . self::FIELD_COLLECTIONS_DELIMITER . $fd->getName();
+                            $result->addAttribute(Attribute::TYPE_FIELD_COLLECTION_LOCALIZED_FIELD, $name, $content);
                         }
                     }
                 }

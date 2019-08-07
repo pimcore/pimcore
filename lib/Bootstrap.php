@@ -48,6 +48,16 @@ class Bootstrap
 
         // determines if we're in Pimcore\Console mode
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
+        if ($pimcoreConsole) {
+            $input = new ArgvInput();
+            if (!defined('PIMCORE_DEBUG') && $input->hasParameterOption(['--no-debug', ''])) {
+                /**
+                 * @deprecated
+                 */
+                define('PIMCORE_DEBUG', false);
+                \Pimcore::setDebugMode(false);
+            }
+        }
 
         self::bootstrap();
 
@@ -59,15 +69,6 @@ class Bootstrap
         putenv('SHELL_VERBOSITY=0');
         $_ENV['SHELL_VERBOSITY'] = 0;
         $_SERVER['SHELL_VERBOSITY'] = 0;
-
-        if ($pimcoreConsole) {
-            $input = new ArgvInput();
-            $debug = \Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
-
-            if (!defined('PIMCORE_DEBUG')) {
-                define('PIMCORE_DEBUG', $debug);
-            }
-        }
 
         /** @var \Pimcore\Kernel $kernel */
         $kernel = self::kernel();
@@ -127,6 +128,7 @@ class Bootstrap
             $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         }
 
+        Config::initDebugDevMode();
         self::defineConstants();
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);

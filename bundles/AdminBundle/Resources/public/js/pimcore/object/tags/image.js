@@ -32,7 +32,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         return {
             text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
+            renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
@@ -45,6 +45,17 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
+                        // unfortunately we have to use a timeout here to adjust the height of grids configured
+                        // with autoHeight: true, there are no other events that would work, see also: https://github.com/pimcore/pimcore/pull/4337/files
+                        if(view['refreshTimeout']) {
+                            window.clearTimeout(view.refreshTimeout);
+                            delete view.refreshTimeout;
+                        }
+
+                        view.refreshTimeout = window.setTimeout(function () {
+                            view.refresh();
+                        }, 500);
+
                         return baseUrl + '&width=88&height=88&frame=true" />';
                     }
 

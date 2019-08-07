@@ -17,11 +17,17 @@
 
 namespace Pimcore\Model;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+use Pimcore\Model\Version\ElementDescriptor;
+use Pimcore\Model\Version\MarshalMatcher;
+use Pimcore\Model\Version\UnmarshalMatcher;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -29,6 +35,9 @@ use Pimcore\Tool\Serialize;
  */
 class Version extends AbstractModel
 {
+    /** @var bool for now&testing, make it possible to disable it */
+    protected static $condenseVersion = true;
+
     /**
      * @var int
      */
@@ -181,7 +190,10 @@ class Version extends AbstractModel
             $this->setSerialized(true);
 
             $data->_fulldump = true;
-            $dataString = Serialize::serialize($data);
+
+            $condensedData = $this->marshalData($data);
+
+            $dataString = Serialize::serialize($condensedData);
 
             // revert all changed made by __sleep()
             if (method_exists($data, '__wakeup')) {
@@ -204,6 +216,7 @@ class Version extends AbstractModel
 
         // check if directory exists
         $saveDir = dirname($this->getFilePath());
+
         if (!is_dir($saveDir)) {
             File::mkdir($saveDir);
         }
@@ -236,6 +249,68 @@ class Version extends AbstractModel
             }
         }
         \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
+    }
+
+    /**
+     * @param ElementInterface $data
+     *
+     * @return mixed
+     */
+    public function marshalData($data)
+    {
+        if (!self::isCondenseVersionEnabled()) {
+            return $data;
+        }
+
+        $sourceType = Service::getType($data);
+        $sourceId = $data->getId();
+
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof ElementInterface) {
+                        $elementType = Service::getType($currentValue);
+                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                        return $descriptor;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new MarshalMatcher($sourceType, $sourceId)
+        );
+        $newData = $copier->copy($data);
+
+        return $newData;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return mixed
+     */
+    public function unmarshalData($data)
+    {
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof ElementDescriptor) {
+                        $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                        return $value;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new UnmarshalMatcher()
+        );
+        $newData = $copier->copy($data);
+
+        return $newData;
     }
 
     /**
@@ -310,6 +385,8 @@ class Version extends AbstractModel
 
                 return;
             }
+
+            $data = $this->unmarshalData($data);
         }
 
         if ($data instanceof Concrete) {
@@ -640,5 +717,21 @@ class Version extends AbstractModel
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isCondenseVersionEnabled()
+    {
+        return self::$condenseVersion;
+    }
+
+    /**
+     * @param bool $condenseVersion
+     */
+    public static function setCondenseVersion($condenseVersion)
+    {
+        self::$condenseVersion = $condenseVersion;
     }
 }

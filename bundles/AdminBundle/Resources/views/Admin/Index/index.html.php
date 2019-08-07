@@ -379,6 +379,7 @@ $scripts = array(
     "pimcore/document/emails/settings.js",
     "pimcore/document/newsletters/settings.js",
     "pimcore/document/newsletters/sendingPanel.js",
+    "pimcore/document/newsletters/plaintextPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
     "pimcore/document/newsletters/addressSourceAdapters/report.js",

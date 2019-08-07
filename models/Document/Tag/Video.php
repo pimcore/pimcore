@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -437,7 +436,7 @@ class Video extends Model\Document\Tag
         }
 
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+        if (!\Pimcore::inDebugMode()) {
             $message = '';
         }
 

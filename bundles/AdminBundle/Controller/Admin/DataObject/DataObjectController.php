@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -44,6 +45,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @var DataObject\Service
      */
@@ -364,9 +367,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'object');
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
@@ -714,9 +715,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'object');
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
