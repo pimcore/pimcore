@@ -19,6 +19,7 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <div class="row font-weight-bold">
+                        {% set urlParams = urlParams|merge({"id":null}) %}
                         {% set urlList = path("pimcore_ecommerce_backend_admin-order_list",urlParams) %}
                         <div class="col-sm-6">
                             <a href="{{ urlList }}">{{ ('bundle_ecommerce.back-office.order-list')|trans([],'admin') }}</a>
@@ -46,7 +47,7 @@
                 <div class="card-header">
                     <span class="fa fa-list-alt"></span> {{ ('bundle_ecommerce.back-office.order.order-items')|trans([],'admin') }}
                     {% if order.getComment() %}
-                        <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ pimcore_escape(order.getComment())|nl2br }}">
+                        <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ (order.getComment()|escape)|nl2br }}">
                             <span class="fa fa-comment"></span>
                         </button>
                     {% endif %}
@@ -235,7 +236,7 @@
                                 <address>
                                     {% set address = [] %}
                                     {% if order.getCustomerCompany() %}
-                                        {{ '<h4>%1$s</h4>'|format(pimcore_escape(order.getCustomerCompany())|nl2br) }}
+                                        {{ '<h4>%1$s</h4>'|format((order.getCustomerCompany()|escape)|nl2br) }}
                                     {% endif %}
                                     {% if order.getCustomerFirstname()or order.getCustomerLastname() %}
                                         {{ ('%1$s %2$s'|format(order.getCustomerFirstname()|escape, order.getCustomerLastname()|escape)) }}
