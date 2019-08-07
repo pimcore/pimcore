@@ -516,7 +516,7 @@ class Menu extends AbstractRenderer
 
         // UL class
         if (isset($options['ulClass']) && $options['ulClass'] !== null) {
-            $options['ulClass'] = (string) $options['ulClass'];
+            $options['ulClass'] = $options['ulClass'];
         } else {
             $options['ulClass'] = $this->getUlClass();
         }
@@ -697,7 +697,7 @@ class Menu extends AbstractRenderer
      * Renders a normal menu (called from {@link renderMenu()})
      *
      * @param  Container $container     container to render
-     * @param  string                    $ulClass       CSS class for first UL
+     * @param  string                    $ulClasses       CSS class for UL levels
      * @param  string                    $indent        initial indentation
      * @param  string                    $innerIndent   inner indentation
      * @param  int|null                  $minDepth      minimum depth
@@ -719,7 +719,7 @@ class Menu extends AbstractRenderer
      */
     protected function _renderMenu(
         Container $container,
-        $ulClass,
+        $ulClasses,
         $indent,
         $innerIndent,
         $minDepth,
@@ -733,6 +733,7 @@ class Menu extends AbstractRenderer
         $renderParentClass
     ) {
         $html = '';
+        $ulClass = $ulClasses;
 
         // find deepest active
         if ($found = $this->findActive($container, $minDepth, $maxDepth)) {
@@ -756,6 +757,13 @@ class Menu extends AbstractRenderer
         foreach ($iterator as $page) {
             $depth = $iterator->getDepth();
             $isActive = $page->isActive(true);
+
+
+            //set ulCLass depth wise
+            if(is_array($ulClasses)) {
+                $ulClass = ($ulClasses[$depth] ? $ulClasses[$depth] : $ulClasses['default']);
+            }
+
             if ($depth < $minDepth || !$this->accept($page)) {
                 // page is below minDepth or not accepted by visibilty
                 continue;
@@ -805,7 +813,7 @@ class Menu extends AbstractRenderer
                 $attribs = [];
 
                 // start new ul tag
-                if (0 == $depth) {
+                if ((is_string($ulClasses) && 0 == $depth) || is_array($ulClasses)) {
                     $attribs = [
                         'class' => $ulClass,
                         'id' => $ulId,
