@@ -10,3 +10,15 @@
 - New method in `RuleInterface`: `public function getConditionsByType(string $typeClass): array` - default implementation in `Rule` available
 - New method in `VoucherServiceInterface`: `public function getPricingManagerTokenInformationDetails(CartInterface $cart, string $locale = null): array;` - default implementation in `DefaultService` available
 - Changed return type of `applyCartRules(CartInterface $cart)` in `PricingManagerInterface` - from `PricingManagerInterface` to `array`
+
+### E-Commerce Back Office
+- Following views are migrated from .php to .twig (with snake_case naming)
+ ```
+ bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/detail.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/itemCancel.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/itemComplaint.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/itemEdit.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/list.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/back-office.html.php
+ ```
