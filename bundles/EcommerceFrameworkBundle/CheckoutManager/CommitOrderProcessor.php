@@ -43,6 +43,12 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
     public function __construct(OrderManagerLocatorInterface $orderManagers, array $options = [])
     {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->orderManagers = $orderManagers;
 
         $resolver = new OptionsResolver();

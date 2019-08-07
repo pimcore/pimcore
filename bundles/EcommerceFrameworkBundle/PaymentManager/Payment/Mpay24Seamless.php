@@ -6,8 +6,12 @@ use Mpay24\Mpay24;
 use Mpay24\Mpay24Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\SnippetResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -23,9 +27,8 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @see https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/introduction
  *
- * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
-class Mpay24Seamless extends AbstractPayment
+class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     /**
      * @var string[]
@@ -162,6 +165,17 @@ class Mpay24Seamless extends AbstractPayment
 
         return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $snippet = $this->initPayment($price, $config->asArray());
+        return new SnippetResponse($orderAgent->getOrder(), $snippet);
+    }
+
 
     /**
      * Get payment redirect URL after payment form has been submitted with a post.
@@ -462,4 +476,5 @@ class Mpay24Seamless extends AbstractPayment
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
     }
+
 }

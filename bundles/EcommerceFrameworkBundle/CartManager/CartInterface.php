@@ -50,6 +50,8 @@ interface CartInterface
      * default implementation checks if order object exists and if order state is PAYMENT_PENDING
      *
      * @return bool
+     * @deprecated use checkout implementation V7 instead
+     *
      */
     public function isCartReadOnly();
 

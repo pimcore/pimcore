@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 /**
  * Class VoucherServiceException
  */
-class VoucherServiceException extends \Exception
+class VoucherServiceException extends AbstractEcommerceException
 {
     const ERROR_CODE_TOKEN_ALREADY_IN_USE = 1;
     const ERROR_CODE_TOKEN_ALREADY_RESERVED = 2;

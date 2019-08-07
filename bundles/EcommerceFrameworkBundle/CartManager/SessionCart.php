@@ -192,5 +192,6 @@ class SessionCart extends AbstractCart implements CartInterface
 
         $this->setModificationDate($timestampBackup);
         $this->unsetIgnoreReadonly();
+
     }
 }

@@ -19,8 +19,25 @@ services:
             - [] # checkout steps
             - '@?' # payment provider
             - [] # options
+            - '@?'
+            - '@event_dispatcher'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor:
         arguments:
             - '@pimcore_ecommerce.locator.order_manager'
             - [] # options
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor:
+        arguments:
+            - '@pimcore_ecommerce.locator.order_manager'
+            - '@event_dispatcher'
+            - '@Pimcore\Log\ApplicationLogger'
+            - [] # options
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore_ecommerce }
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy:
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy: ~
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\AlwaysRecreateOrderStrategy: ~

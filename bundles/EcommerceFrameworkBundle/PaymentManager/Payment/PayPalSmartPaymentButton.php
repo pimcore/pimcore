@@ -23,12 +23,16 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\JsonResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PayPalSmartPaymentButton extends AbstractPayment
+class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const CAPTURE_STRATEGY_MANUAL = 'manual';
     const CAPTURE_STRATEGY_AUTOMATIC = 'automatic';
@@ -153,6 +157,16 @@ class PayPalSmartPaymentButton extends AbstractPayment
         ];
 
         return $requestBody;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $json = $this->initPayment($price, $config->asArray());
+        return new JsonResponse($orderAgent->getOrder(), $json);
     }
 
     /**
@@ -363,4 +377,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
 
         return 'https://www.paypal.com/sdk/js?client-id=' . $this->clientId . '&currency=' . $currency->getShortName();
     }
+
+
 }
