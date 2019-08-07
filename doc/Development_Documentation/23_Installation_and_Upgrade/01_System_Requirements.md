@@ -59,6 +59,8 @@ All permissions on database level, specifically:
 - Execute
 - Create view
 - Show view
+- Create routine
+- Alter routine
 
 #### System Variables
 ```
