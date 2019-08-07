@@ -761,7 +761,7 @@ class Menu extends AbstractRenderer
 
             //set ulCLass depth wise
             if(is_array($ulClasses)) {
-                $ulClass = ($ulClasses[$depth] ? $ulClasses[$depth] : $ulClasses['default']);
+                $ulClass = $ulClasses[$depth] ?? $ulClasses['default'];
             }
 
             if ($depth < $minDepth || !$this->accept($page)) {
