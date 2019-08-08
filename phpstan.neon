@@ -19,6 +19,7 @@ parameters:
     ignoreErrors:
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
+        - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'

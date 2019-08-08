@@ -321,9 +321,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             if (this.batchErrors.length > 0) {
                 var jobErrors = [];
                 for (var i = 0; i < this.batchErrors.length; i++) {
-                    jobErrors.push(this.batchErrors[i].job);
+                    jobErrors.push(this.batchErrors[i].job + ' - ' + this.batchErrors[i].error);
                 }
-                Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
+                Ext.Msg.alert(t("error"), t("error_jobs") + ":<br>" + jobErrors.join("<br>"));
             }
 
             return;
@@ -353,7 +353,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     }
                 } catch (e) {
                     this.batchErrors.push({
-                        job: currentJob
+                        job: currentJob,
+                        error: (typeof(rdata.message) !== "undefined" && rdata.message) ?
+                            rdata.message : 'Not Successful'
                     });
                 }
 

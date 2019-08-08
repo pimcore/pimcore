@@ -26,7 +26,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Event\Ecommerce\CheckoutManagerEvents;
+use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager implements CheckoutManagerInterface
 {
@@ -94,12 +97,19 @@ class CheckoutManager implements CheckoutManagerInterface
     protected $paid = true;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * CheckoutManager constructor.
      * @param CartInterface $cart
      * @param EnvironmentInterface $environment
      * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
-     * @param CheckoutStepInterface[] $checkoutSteps
+     * @param array $checkoutSteps
      * @param PaymentInterface|null $paymentProvider
+     * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(
         CartInterface $cart,
@@ -107,8 +117,15 @@ class CheckoutManager implements CheckoutManagerInterface
         OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
+        EventDispatcherInterface $eventDispatcher,
         PaymentInterface $paymentProvider = null
     ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->cart = $cart;
         $this->environment = $environment;
 
@@ -116,6 +133,7 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->commitOrderProcessors = $commitOrderProcessors;
 
         $this->payment = $paymentProvider;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->setCheckoutSteps($checkoutSteps);
     }
@@ -163,6 +181,10 @@ class CheckoutManager implements CheckoutManagerInterface
         if (null === $this->currentStep && !$this->isFinished()) {
             $this->currentStep = $this->checkoutStepOrder[0];
         }
+
+        $event = new CheckoutManagerStepsEvent($this, $this->currentStep);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::INITIALIZE_STEP_STATE, $event);
+        $this->currentStep = $event->getCurrentStep();
     }
 
     /**
@@ -201,6 +223,8 @@ class CheckoutManager implements CheckoutManagerInterface
         $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
+
+
         if ($order->getOrderState() === AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new UnsupportedException('Order is already committed');
         }
@@ -236,7 +260,7 @@ class CheckoutManager implements CheckoutManagerInterface
         // always set order state to payment pending when calling start payment
         if ($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
             $order->setOrderState($order::ORDER_STATE_PAYMENT_PENDING);
-            $order->save();
+            $order->save(['versionNote' => 'CheckoutManager::startOrderPayment - set order state to ' . $order::ORDER_STATE_PAYMENT_PENDING . '.']);
         }
 
         return $paymentInfo;
@@ -270,11 +294,11 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @param AbstractOrder $order
      */
-    protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order)
+    protected function updateEnvironmentAfterOrderCommit(?AbstractOrder $order)
     {
         $this->validateCheckoutSteps();
 
-        if (empty($order->getOrderState())) {
+        if (empty($order) || empty($order->getOrderState())) {
             // if payment not successful -> set current checkout step to last step and checkout to not finished
             // last step must be committed again in order to restart payment or e.g. commit without payment?
             $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
@@ -308,8 +332,13 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         // delegate commit order to commit order processor
-        $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
-        $this->updateEnvironmentAfterOrderCommit($order);
+        try {
+            $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
+        } catch (\Exception $e) {
+            throw $e;
+        } finally {
+            $this->updateEnvironmentAfterOrderCommit($order);
+        }
 
         return $order;
     }
@@ -441,6 +470,10 @@ class CheckoutManager implements CheckoutManagerInterface
     {
         $this->validateCheckoutSteps();
 
+        $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::PRE_COMMIT_STEP, $event);
+        $data = $event->getArgument('data');
+
         // get index of current step and index of step to commit
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
         $index = array_search($step, $this->checkoutStepOrder);
@@ -480,6 +513,9 @@ class CheckoutManager implements CheckoutManagerInterface
             $this->cart->save();
             $this->environment->save();
         }
+
+        $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::POST_COMMIT_STEP, $event);
 
         return $result;
     }

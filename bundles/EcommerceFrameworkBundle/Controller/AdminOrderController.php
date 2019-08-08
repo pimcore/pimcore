@@ -23,8 +23,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
-use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\TemplateControllerInterface;
 use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +45,7 @@ use Zend\Paginator\Paginator;
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends AdminController implements EventedControllerInterface
+class AdminOrderController extends AdminController implements EventedControllerInterface, TemplateControllerInterface
 {
     use TemplateControllerTrait;
 
@@ -71,19 +72,20 @@ class AdminOrderController extends AdminController implements EventedControllerI
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
+
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @inheritDoc
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        // nothing to do
     }
 
     /**
      * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list", methods={"GET"})
-     * @TemplatePhp()
      */
     public function listAction(Request $request)
     {
@@ -158,12 +160,19 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $paginator->setItemCountPerPage(10);
         $paginator->setCurrentPageNumber($request->get('page', 1));
 
-        return ['paginator' => $paginator];
+        return [
+            'paginator' => $paginator,
+            'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
+            'listPricingRule' => new \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing(),
+            'defaultCurrency' => \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getEnvironment()->getDefaultCurrency(),
+            'formatter' => \Pimcore::getContainer()->get('pimcore.locale.intl_formatter')
+        ];
     }
 
     /**
      * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail", methods={"GET"})
-     * @TemplatePhp()
+     *
+     * @return Response
      */
     public function detailAction(Request $request)
     {
@@ -254,17 +263,19 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
         // create timeline
         $arrIcons = [
-            'itemChangeAmount' => 'glyphicon glyphicon-pencil', 'itemCancel' => 'glyphicon glyphicon-remove', 'itemComplaint' => 'glyphicon glyphicon-alert'
+            'itemChangeAmount' => 'fa fa-pen', 'itemCancel' => 'fa fa-times', 'itemComplaint' => 'fa fa-exclamation-triangle'
         ];
 
         $arrContext = [
-            'itemChangeAmount' => 'default', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
+            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
         ];
 
         $arrTimeline = [];
         $date = new \DateTime();
         foreach ($orderAgent->getFullChangeLog() as $note) {
             /* @var \Pimcore\Model\Element\Note $note */
+
+            $quantity = null;
 
             // get avatar
             $user = User::getById($note->getUser());
@@ -282,25 +293,45 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 : null
             ;
 
+            if(isset($note->getData()["quantity"])) {
+                $quantity = $note->getData()["quantity"]["data"];
+            } else if(isset($note->getData()["amount.new"])) {
+                $quantity = $note->getData()["amount.new"]["data"];
+            }
+
             // add
             $arrTimeline[$group][] = [
-                'icon' => $arrIcons[$note->getTitle()], 'context' => $arrContext[$note->getTitle()] ?: 'default', 'type' => $note->getTitle(), 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM), 'avatar' => $avatar, 'user' => $user ? $user->getName() : null, 'message' => $note->getData()['message']['data'], 'title' => $title ?: $note->getTitle()
+                'icon' => $arrIcons[$note->getTitle()],
+                'context' => $arrContext[$note->getTitle()] ?: 'default',
+                'type' => $note->getTitle(),
+                'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM),
+                'avatar' => $avatar,
+                'user' => $user ? $user->getName() : null,
+                'message' => $note->getData()['message']['data'],
+                'title' => $title ?: $note->getTitle(),
+                'quantity' => $quantity
             ];
         }
 
+
+
         return [
+            'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'orderAgent' => $orderAgent,
             'timeLine' => $arrTimeline,
             'geoAddressInvoice' => $geoAddressInvoice,
             'arrCustomerAccount' => $arrCustomerAccount,
             'geoAddressDelivery' => $geoAddressDelivery,
-            'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig
+            'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
+            'formatter' => \Pimcore::getContainer()->get('pimcore.locale.intl_formatter'),
+            'locale' => \Pimcore::getContainer()->get('pimcore.locale')
         ];
     }
 
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
-     * @TemplatePhp()
+     *
+     * @return Response
      */
     public function itemCancelAction(Request $request)
     {
@@ -332,7 +363,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
     /**
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit", methods={"GET", "POST"})
-     * @TemplatePhp()
+     *
+     * @return Response
      */
     public function itemEditAction(Request $request)
     {
@@ -363,7 +395,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
     /**
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint", methods={"GET", "POST"})
-     * @TemplatePhp()
+     *
+     * @return Response
      */
     public function itemComplaintAction(Request $request)
     {

@@ -70,7 +70,7 @@ class DefaultValue extends AbstractValue
             $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
         }
 
-        if(!$fieldDefinition instanceof Data) {
+        if (!$fieldDefinition instanceof Data) {
             return $this->getDefaultValue($value);
         }
 
