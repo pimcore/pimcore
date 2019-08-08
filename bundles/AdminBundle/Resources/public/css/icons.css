@@ -452,6 +452,14 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/bar_chart.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_custom_report_group_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/area_chart.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_custom_report_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/bar_chart.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_site {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/home.svg) center center no-repeat !important;
 }
