@@ -14,14 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
-
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 
 class PaymentNotSuccessfulException extends AbstractEcommerceException
 {
-
     /**
      * @var AbstractOrder
      */
@@ -34,6 +31,7 @@ class PaymentNotSuccessfulException extends AbstractEcommerceException
 
     /**
      * PaymentNotSuccessfulException constructor.
+     *
      * @param AbstractOrder $order
      * @param StatusInterface $status
      * @param string $message
@@ -44,6 +42,4 @@ class PaymentNotSuccessfulException extends AbstractEcommerceException
         $this->order = $order;
         $this->status = $status;
     }
-
-
 }

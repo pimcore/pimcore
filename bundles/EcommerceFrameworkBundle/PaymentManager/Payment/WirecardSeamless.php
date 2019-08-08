@@ -303,16 +303,15 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
         return $this->templatingEngine->render($this->partial, $params);
     }
 
-
     /**
      * @inheritDoc
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $snippet = $this->initPayment($price, $config->asArray());
+
         return new SnippetResponse($orderAgent->getOrder(), $snippet);
     }
-
 
     public function getInitPaymentRedirectUrl($config)
     {
@@ -927,5 +926,4 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         return null;
     }
-
 }

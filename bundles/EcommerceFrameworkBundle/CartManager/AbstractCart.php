@@ -26,10 +26,8 @@ use Pimcore\Model\AbstractModel;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
-
     const CART_READ_ONLY_MODE_STRICT = 'strict';
     const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
-
 
     /**
      * @var bool
@@ -123,7 +121,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         $this->unsetIgnoreReadonly();
     }
 
-
     /**
      * @param string $currentReadonlyMode
      */
@@ -132,10 +129,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         $this->currentReadonlyMode = $currentReadonlyMode;
     }
 
-
-
     /**
      * @deprecated use checkout implementation V7 instead
+     *
      * @return bool
      */
     public function getIgnoreReadonly()
@@ -171,8 +167,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * @return bool
+     *
      * @throws InvalidConfigException
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     *
      * @deprecated use checkout implementation V7 instead
      */
     public function isCartReadOnly()
@@ -181,6 +179,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
             case self::CART_READ_ONLY_MODE_STRICT:
                 $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+
                 return !empty($order) && !empty($order->getOrderState());
 
             case self::CART_READ_ONLY_MODE_DEACTIVATED:
@@ -197,6 +196,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @return bool
      *
      * @throws \Exception
+     *
      * @deprecated use checkout implementation V7 instead
      */
     protected function checkCartIsReadOnly()

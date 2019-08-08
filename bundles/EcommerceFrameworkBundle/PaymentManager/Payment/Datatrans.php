@@ -293,6 +293,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $response = $this->initPayment($price, $config->asArray());
+
         return new FormResponse($orderAgent->getOrder(), $response);
     }
 
@@ -828,6 +829,4 @@ XML;
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
         $orderListing->setOrder('DESC');
     }
-
-
 }

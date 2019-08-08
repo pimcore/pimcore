@@ -28,13 +28,13 @@ class Version20190806160450 extends AbstractPimcoreMigration
 
             try {
                 $definition = ClassDefinition::getByName('OnlineShopOrder');
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
-            if($definition) {
-
+            if ($definition) {
                 $fields = [];
 
-                if(!$definition->getFieldDefinition('cartHash')) {
+                if (!$definition->getFieldDefinition('cartHash')) {
                     $fieldDefinition = new ClassDefinition\Data\Numeric();
                     $fieldDefinition->setName('cartHash');
                     $fieldDefinition->setTitle('Cart Hash');
@@ -45,7 +45,7 @@ class Version20190806160450 extends AbstractPimcoreMigration
                     $fields[] = $fieldDefinition;
                 }
 
-                if(!$definition->getFieldDefinition('successorOrder')) {
+                if (!$definition->getFieldDefinition('successorOrder')) {
                     $fieldDefinition = new ClassDefinition\Data\ManyToOneRelation();
                     $fieldDefinition->setName('successorOrder');
                     $fieldDefinition->setTitle('Successor Order');
@@ -57,19 +57,16 @@ class Version20190806160450 extends AbstractPimcoreMigration
                     $fields[] = $fieldDefinition;
                 }
 
-
                 $layout = $definition->getLayoutDefinitions();
 
                 $modifier = new DefinitionModifier();
                 $modifier->appendFields($layout, 'cartId', $fields);
 
                 $definition->save();
-
             } else {
                 $this->writeMessage(' ... nothing to do because OnlineShopOrder does not exist.');
             }
         }
-
     }
 
     /**
@@ -78,6 +75,5 @@ class Version20190806160450 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         $this->writeMessage("No automatic downgrading due to possible data loss. Please manually remove fields 'cartHash' and 'successorOrder' from OnlineShopOrder class definition.");
-
     }
 }

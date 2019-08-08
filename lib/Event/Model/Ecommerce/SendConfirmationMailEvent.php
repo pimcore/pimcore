@@ -14,16 +14,10 @@
 
 namespace Pimcore\Event\Model\Ecommerce;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\EventDispatcher\Event;
-
 
 class SendConfirmationMailEvent extends Event
 {
@@ -51,6 +45,7 @@ class SendConfirmationMailEvent extends Event
 
     /**
      * SendConfirmationMailEvent constructor.
+     *
      * @param CommitOrderProcessorInterface $commitOrderProcessor
      * @param AbstractOrder $order
      * @param string $confirmationMailConfig
@@ -125,5 +120,4 @@ class SendConfirmationMailEvent extends Event
     {
         $this->skipDefaultBehaviour = $skipDefaultBehaviour;
     }
-
 }

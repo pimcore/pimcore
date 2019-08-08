@@ -159,13 +159,13 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
         return $requestBody;
     }
 
-
     /**
      * @inheritDoc
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $json = $this->initPayment($price, $config->asArray());
+
         return new JsonResponse($orderAgent->getOrder(), $json);
     }
 
@@ -377,6 +377,4 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
 
         return 'https://www.paypal.com/sdk/js?client-id=' . $this->clientId . '&currency=' . $currency->getShortName();
     }
-
-
 }

@@ -144,16 +144,15 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
         return $snippet;
     }
 
-
     /**
      * @inheritDoc
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $snippet = $this->initPayment($price, $config->asArray());
+
         return new SnippetResponse($orderAgent->getOrder(), $snippet);
     }
-
 
     /**
      * @inheritdoc
@@ -286,5 +285,4 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
 
         return new \Klarna_Checkout_Order($connector, $uri);
     }
-
 }

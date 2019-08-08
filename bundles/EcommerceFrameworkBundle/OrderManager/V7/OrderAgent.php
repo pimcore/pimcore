@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
-
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
@@ -30,7 +29,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent extends Agent
 {
-
     public function __construct(
         Order $order,
         EnvironmentInterface $environment,
@@ -55,39 +53,32 @@ class OrderAgent extends Agent
         $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_INIT_PAYMENT, $event);
         $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
 
-        if($currentPaymentInformation) {
-
-            if($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_PENDING) {
+        if ($currentPaymentInformation) {
+            if ($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_PENDING) {
                 throw new PaymentNotAllowedException(
                     'Init payment not allowed because there is currently a payment pending. Cancel payment or recreate order.',
                     $order
                 );
             }
 
-            if($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_INIT) {
-
+            if ($currentPaymentInformation->getPaymentState() == order::ORDER_STATE_PAYMENT_INIT) {
                 $internalPaymentIdForCurrentOrderVersion = $this->generateInternalPaymentId();
 
                 //if order fingerprint changed, abort initialized payment and create new payment information (so set it to null)
-                if($currentPaymentInformation->getInternalPaymentId() != $internalPaymentIdForCurrentOrderVersion) {
-
+                if ($currentPaymentInformation->getInternalPaymentId() != $internalPaymentIdForCurrentOrderVersion) {
                     $currentPaymentInformation->setPaymentState($order::ORDER_STATE_ABORTED);
                     $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' - aborted be because order changed after payment was initialized.');
                     $order->save(['versionNote' => 'Agent::initPayment - save order to abort existing PaymentInformation.']);
 
                     $currentPaymentInformation = null;
                 }
-
             }
-
         }
 
         //if no payment information available, create new one
-        if(empty($currentPaymentInformation)) {
-
+        if (empty($currentPaymentInformation)) {
             $currentPaymentInformation = $this->createNewOrderInformation($order, order::ORDER_STATE_PAYMENT_INIT);
             $order->save(['versionNote' => 'Agent::initPayment - save order to add new PaymentInformation.']);
-
         }
 
         $this->eventDispatcher->dispatch(OrderAgentEvents::POST_INIT_PAYMENT, new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]));
@@ -120,5 +111,4 @@ class OrderAgent extends Agent
 
         return $currentPaymentInformation;
     }
-
 }

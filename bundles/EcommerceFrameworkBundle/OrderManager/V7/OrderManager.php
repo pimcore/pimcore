@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
@@ -33,7 +32,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager implements OrderManagerInterface
 {
-
     /**
      * @var EventDispatcherInterface
      */
@@ -105,8 +103,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $cartIsLockedDueToPayments = $event->getArgument('cartIsLockedDueToPayments');
         $orderNeedsUpdate = $event->getArgument('orderNeedsUpdate');
 
-
-        if($orderNeedsUpdate && $cartIsLockedDueToPayments) {
+        if ($orderNeedsUpdate && $cartIsLockedDueToPayments) {
             throw new OrderUpdateNotPossibleException('Order cannot be updated from cart due to pending payments. Cancel payment or recreate order.');
         }
 
@@ -158,26 +155,30 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
         $this->eventDispatcher->dispatch(OrderManagerEvents::POST_UPDATE_ORDER, new OrderManagerEvent($cart, $order, $this));
 
-
         return $order;
     }
 
     /**
      * @param CartInterface $cart
      * @param AbstractOrder $order
+     *
      * @return bool
+     *
      * @throws UnsupportedException
      */
-    public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool {
+    public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool
+    {
         return $this->calculateCartHash($cart) !== $order->getCartHash();
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return int
      */
-    protected function calculateCartHash(CartInterface $cart): int {
-        $hashString = "";
+    protected function calculateCartHash(CartInterface $cart): int
+    {
+        $hashString = '';
 
         $hashString .= $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asString();
         $hashString .= $cart->getItemCount();
@@ -187,8 +188,6 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
         return crc32($hashString);
     }
-
-
 
     /**
      * @param CartInterface $cart
@@ -217,16 +216,16 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         return null;
     }
 
-
     /**
      * @param AbstractOrder $sourceOrder
+     *
      * @return AbstractOrder
      */
     public function recreateOrder(CartInterface $cart): AbstractOrder
     {
         $sourceOrder = $this->getOrderFromCart($cart);
 
-        if($sourceOrder) {
+        if ($sourceOrder) {
             //create new order object
             $tempOrdernumber = $this->createOrderNumber();
             $order = $this->getNewOrderObject();
@@ -246,17 +245,16 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $sourceOrder->save(['versionNote' => 'OrderManager::recreateOrder - save successor order.']);
         }
 
-
         return $this->getOrCreateOrderFromCart($cart);
     }
 
     /**
      * @param AbstractOrder $sourceOrder
+     *
      * @return AbstractOrder
      */
     public function recreateOrderBasedOnSourceOrder(AbstractOrder $sourceOrder): AbstractOrder
     {
-
         $tempOrdernumber = $this->createOrderNumber();
         $order = clone $sourceOrder;
 
@@ -285,12 +283,13 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
     /**
      * @param array $sourceItems
      * @param AbstractOrder $newOrder
+     *
      * @return array
      */
-    protected function cloneItems(array $sourceItems, AbstractOrder $newOrder): array {
+    protected function cloneItems(array $sourceItems, AbstractOrder $newOrder): array
+    {
         $items = [];
-        foreach($sourceItems as $sourceItem) {
-
+        foreach ($sourceItems as $sourceItem) {
             $newItem = clone $sourceItem;
             $newItem->setId(null);
 
@@ -300,27 +299,28 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
             $items[] = $newItem;
         }
+
         return $items;
     }
 
-
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function cartHasPendingPayments(CartInterface $cart): bool
     {
         $order = $this->getOrderFromCart($cart);
-        if($order) {
-            if($order->getOrderState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
+        if ($order) {
+            if ($order->getOrderState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
                 return true;
             }
 
             $orderAgent = $this->createOrderAgent($order);
             $paymentInfo = $orderAgent->getCurrentPendingPaymentInfo();
 
-            if($paymentInfo) {
-                if($paymentInfo->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
+            if ($paymentInfo) {
+                if ($paymentInfo->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING) {
                     return true;
                 }
             }
@@ -329,15 +329,17 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         return false;
     }
 
-
     /**
      * @param CartItemInterface $item
      * @param $parent
      * @param bool $isGiftItem
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
+     *
      * @throws \Exception
      */
-    protected function createOrderItem(CartItemInterface $item, $parent, $isGiftItem = false) {
+    protected function createOrderItem(CartItemInterface $item, $parent, $isGiftItem = false)
+    {
         $orderItem = parent::createOrderItem($item, $parent, $isGiftItem);
 
         $event = new OrderManagerItemEvent($item, $isGiftItem, $orderItem);

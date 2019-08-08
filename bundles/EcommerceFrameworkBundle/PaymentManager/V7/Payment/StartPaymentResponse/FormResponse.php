@@ -14,13 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class FormResponse extends AbstractResponse
 {
-
     /**
      * @var FormBuilderInterface
      */
@@ -28,6 +26,7 @@ class FormResponse extends AbstractResponse
 
     /**
      * FormResponse constructor.
+     *
      * @param AbstractOrder $order
      * @param FormBuilderInterface $form
      */
@@ -44,6 +43,4 @@ class FormResponse extends AbstractResponse
     {
         return $this->form;
     }
-
-
 }

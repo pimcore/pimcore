@@ -14,37 +14,39 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 interface OrderManagerInterface extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface
 {
-
     /**
      * @param AbstractOrder $sourceOrder
+     *
      * @return AbstractOrder
      */
     public function recreateOrder(CartInterface $cart): AbstractOrder;
 
     /**
      * @param AbstractOrder $sourceOrder
+     *
      * @return AbstractOrder
      */
     public function recreateOrderBasedOnSourceOrder(AbstractOrder $sourceOrder): AbstractOrder;
 
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function cartHasPendingPayments(CartInterface $cart): bool;
 
-
     /**
      * @param CartInterface $cart
      * @param AbstractOrder $order
+     *
      * @return bool
+     *
      * @throws UnsupportedException
      */
     public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool;

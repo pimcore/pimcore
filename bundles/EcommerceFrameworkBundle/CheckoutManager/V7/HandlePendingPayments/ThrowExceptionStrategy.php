@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -22,24 +21,23 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterfac
 
 class ThrowExceptionStrategy implements HandlePendingPaymentsStrategyInterface
 {
-
     /**
      * @param AbstractOrder $order
      * @param CartInterface $cart
      * @param OrderManagerInterface $orderManager
+     *
      * @return AbstractOrder
+     *
      * @throws PaymentNotAllowedException
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function handlePaymentNotAllowed(AbstractOrder $order, CartInterface $cart, OrderManagerInterface $orderManager): AbstractOrder
     {
-
         throw new PaymentNotAllowedException(
             'Payment not allowed since there is a payment pending. Cancel payment or recreate order.',
             $order,
             $cart,
             $orderManager->orderNeedsUpdate($cart, $order)
         );
-
     }
 }

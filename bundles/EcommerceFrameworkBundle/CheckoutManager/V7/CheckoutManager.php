@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
@@ -57,8 +56,6 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
         $this->setCheckoutSteps($checkoutSteps);
     }
 
-
-
     /**
      * @return HandlePendingPaymentsStrategyInterface
      */
@@ -74,8 +71,6 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
     {
         $this->handlePendingPaymentsStrategy = $handlePendingPaymentsStrategy;
     }
-
-
 
     /**
      * @return AbstractOrder
@@ -100,10 +95,9 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
         // create order
         $order = $orderManager->getOrderFromCart($this->getCart());
 
-        if($order) {
-
+        if ($order) {
             $notAllowedOrderStates = [AbstractOrder::ORDER_STATE_ABORTED, AbstractOrder::ORDER_STATE_CANCELLED, AbstractOrder::ORDER_STATE_COMMITTED];
-            if(in_array($order->getOrderState(), $notAllowedOrderStates)) {
+            if (in_array($order->getOrderState(), $notAllowedOrderStates)) {
                 throw new PaymentNotAllowedException(
                     "Payment not allowed since orderState set to '" . $order->getOrderState() . "'. Fix orderState or recreate order.",
                     $order,
@@ -112,16 +106,13 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
                 );
             }
 
-            if($orderManager->cartHasPendingPayments($this->cart)) {
-
+            if ($orderManager->cartHasPendingPayments($this->cart)) {
                 $order = $this->getHandlePendingPaymentsStrategy()->handlePaymentNotAllowed(
                     $order,
                     $this->cart,
                     $orderManager
                 );
-
             }
-
         }
 
         $order = $orderManager->getOrCreateOrderFromCart($this->getCart());

@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterfac
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Symfony\Component\EventDispatcher\Event;
 
-
 class CheckoutManagerStepsEvent extends Event
 {
     use ArgumentsAwareTrait;
@@ -77,5 +76,4 @@ class CheckoutManagerStepsEvent extends Event
     {
         $this->checkoutManager = $checkoutManager;
     }
-
 }

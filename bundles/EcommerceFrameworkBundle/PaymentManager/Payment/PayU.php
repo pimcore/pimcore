@@ -257,9 +257,9 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $url = $this->initPayment($price, $config->asArray());
+
         return new UrlResponse($orderAgent->getOrder(), $url);
     }
-
 
     /**
      * Executes payment
@@ -374,6 +374,4 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     {
         return $orderData;
     }
-
-
 }

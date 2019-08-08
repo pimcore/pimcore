@@ -103,6 +103,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
     /**
      * CheckoutManager constructor.
+     *
      * @param CartInterface $cart
      * @param EnvironmentInterface $environment
      * @param OrderManagerLocatorInterface $orderManagers
@@ -222,8 +223,6 @@ class CheckoutManager implements CheckoutManagerInterface
         // create order
         $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
-
-
 
         if ($order->getOrderState() === AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new UnsupportedException('Order is already committed');

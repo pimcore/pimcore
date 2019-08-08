@@ -525,6 +525,7 @@ class Agent implements OrderAgentInterface
 
         $event = new OrderAgentEvent($this, ['fingerPrint' => $fingerPrint, 'fingerPrintParts' => $fingerprintParts]);
         $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_INIT_PAYMENT, $event);
+
         return $event->getArgument('fingerPrint');
     }
 

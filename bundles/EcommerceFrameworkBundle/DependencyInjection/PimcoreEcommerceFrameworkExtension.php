@@ -307,11 +307,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             ]);
 
             if (!empty($tenantConfig['factory_options'])) {
-
                 $factoryConfig = $tenantConfig['factory_options'];
 
                 $locatorMapping = [];
-                if($factoryConfig['handle_pending_payments_strategy']) {
+                if ($factoryConfig['handle_pending_payments_strategy']) {
                     $locatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
                 }
 

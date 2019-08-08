@@ -166,16 +166,15 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
         return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
     }
 
-
     /**
      * @inheritDoc
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $snippet = $this->initPayment($price, $config->asArray());
+
         return new SnippetResponse($orderAgent->getOrder(), $snippet);
     }
-
 
     /**
      * Get payment redirect URL after payment form has been submitted with a post.
@@ -476,5 +475,4 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
     }
-
 }

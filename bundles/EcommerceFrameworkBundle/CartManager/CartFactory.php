@@ -57,7 +57,6 @@ class CartFactory implements CartFactoryInterface
             AbstractCart::CART_READ_ONLY_MODE_STRICT,
             AbstractCart::CART_READ_ONLY_MODE_DEACTIVATED
         ]);
-
     }
 
     public function getCartClassName(EnvironmentInterface $environment): string
@@ -90,7 +89,7 @@ class CartFactory implements CartFactoryInterface
             $cart->setId($id);
         }
 
-        if($cart instanceof AbstractCart) {
+        if ($cart instanceof AbstractCart) {
             $cart->setCurrentReadonlyMode($this->options['cart_readonly_mode']);
         }
 

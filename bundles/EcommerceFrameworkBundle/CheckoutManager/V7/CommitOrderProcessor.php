@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
-
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotSuccessfulException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -15,7 +13,6 @@ use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
-use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -24,7 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor implements LoggerAwareInterface
 {
-
     use LoggerAwareTrait;
 
     /**
@@ -65,7 +61,6 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         return $this->commitOrderPayment($paymentStatus, $paymentProvider);
     }
 
-
     /**
      * @inheritdoc
      */
@@ -77,7 +72,6 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $event = new CommitOrderProcessorEvent($this, null, ['paymentStatus' => $paymentStatus]);
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT, $event);
         $paymentStatus = $event->getArgument('paymentStatus');
-
 
         // check if order is already committed and payment information with same internal payment id has same state
         // if so, do nothing and return order
@@ -117,7 +111,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         if (in_array($paymentStatus->getStatus(), [StatusInterface::STATUS_CLEARED, StatusInterface::STATUS_AUTHORIZED])) {
             // only when payment state is committed or authorized -> proceed and commit order
             $order = $this->commitOrder($order);
-        } else if($paymentStatus->getStatus() == StatusInterface::STATUS_PENDING) {
+        } elseif ($paymentStatus->getStatus() == StatusInterface::STATUS_PENDING) {
             $order->setOrderState(AbstractOrder::ORDER_STATE_PAYMENT_PENDING);
             $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to Pending since payment is still pending.']);
         } else {
@@ -153,7 +147,6 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             $this->logger->error('Error during sending confirmation e-mail: ' . $e);
         }
 
-
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
 
         return $order;
@@ -164,10 +157,10 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
      */
     protected function sendConfirmationMail(AbstractOrder $order)
     {
-        $event =  new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
+        $event = new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS, $event);
 
-        if(!$event->doSkipDefaultBehaviour()) {
+        if (!$event->doSkipDefaultBehaviour()) {
             $params = [];
             $params['order'] = $order;
             $params['customer'] = $order->getCustomer();
@@ -182,5 +175,4 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             }
         }
     }
-
 }

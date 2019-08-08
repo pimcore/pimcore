@@ -14,20 +14,18 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 
 interface HandlePendingPaymentsStrategyInterface
 {
-
     /**
      * @param AbstractOrder $order
      * @param CartInterface $cart
      * @param OrderManagerInterface $orderManager
+     *
      * @return AbstractOrder
      */
     public function handlePaymentNotAllowed(AbstractOrder $order, CartInterface $cart, OrderManagerInterface $orderManager): AbstractOrder;
-
 }

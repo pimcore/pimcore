@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -22,26 +21,22 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterfac
 
 class CancelPaymentOrRecreateOrderStrategy implements HandlePendingPaymentsStrategyInterface
 {
-
     /**
      * @param AbstractOrder $order
      * @param CartInterface $cart
      * @param OrderManagerInterface $orderManager
+     *
      * @return AbstractOrder
      */
     public function handlePaymentNotAllowed(AbstractOrder $order, CartInterface $cart, OrderManagerInterface $orderManager): AbstractOrder
     {
-
-        if($orderManager->orderNeedsUpdate($cart, $order)) {
-
+        if ($orderManager->orderNeedsUpdate($cart, $order)) {
             return $orderManager->recreateOrder($cart);
-
         } else {
-
             $orderAgent = $orderManager->createOrderAgent($order);
             $orderAgent->cancelStartedOrderPayment();
 
-            if($orderManager->cartHasPendingPayments($cart)) {
+            if ($orderManager->cartHasPendingPayments($cart)) {
                 throw new PaymentNotAllowedException(
                     'There are still pending payments after started payment was cancelled. Try recreate order.',
                     $order,
@@ -52,6 +47,5 @@ class CancelPaymentOrRecreateOrderStrategy implements HandlePendingPaymentsStrat
                 return $order;
             }
         }
-
     }
 }

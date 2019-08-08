@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class UrlResponse extends AbstractResponse
@@ -26,6 +25,7 @@ class UrlResponse extends AbstractResponse
 
     /**
      * UrlResponse constructor.
+     *
      * @param AbstractOrder $order
      * @param string $url
      */

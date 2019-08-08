@@ -743,8 +743,8 @@ class Menu extends AbstractRenderer
         }
 
         // create iterator
-        $iterator = new \RecursiveIteratorIterator($container,\RecursiveIteratorIterator::SELF_FIRST);
-        
+        $iterator = new \RecursiveIteratorIterator($container, \RecursiveIteratorIterator::SELF_FIRST);
+
         if (is_int($maxDepth)) {
             $iterator->setMaxDepth($maxDepth);
         }

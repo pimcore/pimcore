@@ -175,7 +175,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
             $this->paymentProvider
         );
 
-        if($checkoutManager instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface) {
+        if ($checkoutManager instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface) {
             $checkoutManager->setHandlePendingPaymentsStrategy($this->handlePendingPaymentStrategy);
         }
 

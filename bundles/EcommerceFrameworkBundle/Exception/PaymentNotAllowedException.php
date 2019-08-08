@@ -14,13 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class PaymentNotAllowedException extends AbstractEcommerceException
 {
-
     /**
      * @var AbstractOrder
      */
@@ -31,7 +29,6 @@ class PaymentNotAllowedException extends AbstractEcommerceException
      */
     protected $cart;
 
-
     /**
      * @var bool
      */
@@ -39,6 +36,7 @@ class PaymentNotAllowedException extends AbstractEcommerceException
 
     /**
      * PaymentNotAllowedException constructor.
+     *
      * @param string $message
      * @param AbstractOrder $order
      * @param CartInterface $cart
@@ -52,6 +50,4 @@ class PaymentNotAllowedException extends AbstractEcommerceException
         $this->cart = $cart;
         $this->orderNeedsUpdate = $orderNeedsUpdate;
     }
-
-
 }

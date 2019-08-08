@@ -14,13 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest;
 
-
 class AbstractRequest implements \ArrayAccess
 {
-
     public function __construct($data = [])
     {
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $this->{$key} = $value;
         }
     }
@@ -36,6 +34,7 @@ class AbstractRequest implements \ArrayAccess
 
     /**
      * @param $name
+     *
      * @return mixed
      */
     public function &get($name)
@@ -45,6 +44,7 @@ class AbstractRequest implements \ArrayAccess
 
     /**
      * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -63,6 +63,7 @@ class AbstractRequest implements \ArrayAccess
 
     /**
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)

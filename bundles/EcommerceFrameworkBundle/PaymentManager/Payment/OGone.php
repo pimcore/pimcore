@@ -220,16 +220,15 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
         return $form;
     }
 
-
     /**
      * @inheritDoc
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
         $form = $this->initPayment($price, $config->asArray());
+
         return new FormResponse($orderAgent->getOrder(), $form);
     }
-
 
     /**
      * Handles response of payment provider and creates payment status object. Fingerprint must match.
@@ -503,6 +502,4 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
         }
         throw new \Exception(sprintf('Algorithm "%s" not available in OGone payment provider.', $encryptionType));
     }
-
-
 }

@@ -14,12 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 abstract class AbstractResponse implements StartPaymentResponseInterface
 {
-
     /**
      * @var AbstractOrder
      */
@@ -27,6 +25,7 @@ abstract class AbstractResponse implements StartPaymentResponseInterface
 
     /**
      * AbstractResponse constructor.
+     *
      * @param AbstractOrder $order
      */
     public function __construct(AbstractOrder $order)
@@ -41,6 +40,4 @@ abstract class AbstractResponse implements StartPaymentResponseInterface
     {
         return $this->order;
     }
-
-
 }

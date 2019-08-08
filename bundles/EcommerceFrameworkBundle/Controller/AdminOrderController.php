@@ -293,10 +293,10 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 : null
             ;
 
-            if(isset($note->getData()["quantity"])) {
-                $quantity = $note->getData()["quantity"]["data"];
-            } else if(isset($note->getData()["amount.new"])) {
-                $quantity = $note->getData()["amount.new"]["data"];
+            if (isset($note->getData()['quantity'])) {
+                $quantity = $note->getData()['quantity']['data'];
+            } elseif (isset($note->getData()['amount.new'])) {
+                $quantity = $note->getData()['amount.new']['data'];
             }
 
             // add
@@ -312,8 +312,6 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 'quantity' => $quantity
             ];
         }
-
-
 
         return [
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),

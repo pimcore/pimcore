@@ -44,14 +44,10 @@ final class CommitOrderProcessorEvents
      */
     const POST_COMMIT_ORDER = 'pimcore.ecommerce.commitorderprocessor.postCommitOrder';
 
-
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
      *
      * @var string
      */
     const SEND_CONFIRMATION_MAILS = 'pimcore.ecommerce.commitorderprocessor.sendConfirmationMails';
-
-
-
 }

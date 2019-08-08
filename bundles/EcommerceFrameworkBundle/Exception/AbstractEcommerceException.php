@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
-
 class AbstractEcommerceException extends \Exception
 {
-
 }

@@ -14,10 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest;
 
-
 class QPayRequest extends AbstractRequest
 {
-
     protected $language;
     protected $successURL;
     protected $cancelURL;
@@ -171,5 +169,4 @@ class QPayRequest extends AbstractRequest
     {
         $this->orderIntent = $orderIntent;
     }
-
 }

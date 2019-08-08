@@ -14,10 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
-
 class OrderUpdateNotPossibleException extends AbstractEcommerceException
 {
-
-
-
 }

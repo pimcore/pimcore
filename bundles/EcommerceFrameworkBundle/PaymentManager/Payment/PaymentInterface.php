@@ -86,6 +86,7 @@ interface PaymentInterface
 
     /**
      * Payment supports recurring payment
+     *
      * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
      *
      * @return bool
@@ -95,6 +96,7 @@ interface PaymentInterface
     /**
      * @param AbstractOrder $sourceOrder
      * @param $paymentBrick
+     *
      * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
      *
      * @return mixed
@@ -103,6 +105,7 @@ interface PaymentInterface
 
     /**
      * @param Concrete $orderListing
+     *
      * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
      *
      * @return Concrete

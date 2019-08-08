@@ -14,9 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
 interface StartPaymentResponseInterface
 {
-
 }
-

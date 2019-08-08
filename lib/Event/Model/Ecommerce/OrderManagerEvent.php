@@ -20,7 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Symfony\Component\EventDispatcher\Event;
 
-
 class OrderManagerEvent extends Event
 {
     use ArgumentsAwareTrait;
@@ -42,6 +41,7 @@ class OrderManagerEvent extends Event
 
     /**
      * OrderManagerEvent constructor.
+     *
      * @param CartInterface $cart
      * @param AbstractOrder $order
      * @param OrderManagerInterface $orderManager
@@ -102,6 +102,4 @@ class OrderManagerEvent extends Event
     {
         $this->orderManager = $orderManager;
     }
-
-
 }

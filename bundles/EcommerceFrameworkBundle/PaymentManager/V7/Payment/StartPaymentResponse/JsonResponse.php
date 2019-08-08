@@ -14,12 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class JsonResponse extends AbstractResponse
 {
-
     /**
      * @var string
      */
@@ -27,6 +25,7 @@ class JsonResponse extends AbstractResponse
 
     /**
      * JsonResponse constructor.
+     *
      * @param AbstractOrder $order
      * @param string $jsonString
      */
@@ -36,7 +35,6 @@ class JsonResponse extends AbstractResponse
         $this->jsonString = $jsonString;
     }
 
-
     /**
      * @return string
      */
@@ -44,8 +42,4 @@ class JsonResponse extends AbstractResponse
     {
         return $this->jsonString;
     }
-
-
-
-
 }

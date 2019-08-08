@@ -198,6 +198,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
 
     /**
      * @throws UnsupportedException
+     *
      * @return AbstractOrderItem[]
      */
     public function getGiftItems()

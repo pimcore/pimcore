@@ -44,7 +44,6 @@ final class OrderManagerEvents
      */
     const POST_CREATE_ORDER_ITEM = 'pimcore.ecommerce.ordermanager.postCreateOrderItem';
 
-
     /**
      * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent")
      *

@@ -14,13 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse;
 
-
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class SnippetResponse extends AbstractResponse
 {
-
     /**
      * @var string
      */
@@ -28,6 +25,7 @@ class SnippetResponse extends AbstractResponse
 
     /**
      * SnippetResponse constructor.
+     *
      * @param AbstractOrder $order
      * @param string $snippet
      */
@@ -44,5 +42,4 @@ class SnippetResponse extends AbstractResponse
     {
         return $this->snippet;
     }
-
 }

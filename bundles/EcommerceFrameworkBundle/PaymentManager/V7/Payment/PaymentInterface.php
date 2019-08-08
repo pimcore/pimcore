@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
@@ -22,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface PaymentInterface extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface
 {
-
     /**
      * Start payment
      *
      * @param PriceInterface $price
      * @param array $config
+     *
      * @deprecated use startPayment instead.
      *
      * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
@@ -41,8 +40,8 @@ interface PaymentInterface extends \Pimcore\Bundle\EcommerceFrameworkBundle\Paym
      * @param OrderAgentInterface $orderAgent
      * @param PriceInterface $price
      * @param AbstractRequest $config
+     *
      * @return StartPaymentResponseInterface
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface;
-
 }

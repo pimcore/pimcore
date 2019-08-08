@@ -14,18 +14,13 @@
 
 namespace Pimcore\Event\Model\Ecommerce;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Symfony\Component\EventDispatcher\Event;
-
 
 class OrderAgentEvent extends Event
 {
     use ArgumentsAwareTrait;
-
 
     /**
      * @var OrderAgentInterface
@@ -34,6 +29,7 @@ class OrderAgentEvent extends Event
 
     /**
      * OrderAgentEvent constructor.
+     *
      * @param OrderAgentInterface $orderAgent
      * @param array $arguments
      */
@@ -58,5 +54,4 @@ class OrderAgentEvent extends Event
     {
         $this->orderAgent = $orderAgent;
     }
-
 }
