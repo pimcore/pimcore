@@ -23,4 +23,15 @@
  bundles/EcommerceFrameworkBundle/Resources/views/AdminOrder/list.html.php
  bundles/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php
  bundles/EcommerceFrameworkBundle/Resources/views/back-office.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/voucherCodeTabError.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/voucherCodeTabPattern.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/voucherCodeTabSingle.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/statistics.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/usageStatisticScript.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/modals/cleanupReservationsModal.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/modals/pattern/cleanupModal.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/modals/pattern/generateModal.html.php
+ bundles/EcommerceFrameworkBundle/Resources/views/Voucher/parts/modals/single/assignSettingsModal.html.php
+ 
  ```
