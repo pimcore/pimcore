@@ -528,7 +528,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getGiftItems()
     {
         //make sure that cart is calculated
-        $this->getPriceCalculator()->calculate();
+        if (!$this->getPriceCalculator()->isCalculated()) {
+            $this->getPriceCalculator()->calculate();
+        }
 
         return $this->giftItems;
     }
@@ -541,7 +543,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getGiftItem($itemKey)
     {
         //make sure that cart is calculated
-        $this->getPriceCalculator()->calculate();
+        if (!$this->getPriceCalculator()->isCalculated()) {
+            $this->getPriceCalculator()->calculate();
+        }
 
         return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[$itemKey] : null;
     }

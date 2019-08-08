@@ -415,4 +415,12 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         return array_values($uniqueItemRules);
     }
+
+    /**
+     * @return bool
+     */
+    public function isCalculated(): bool
+    {
+        return $this->isCalculated;
+    }
 }
