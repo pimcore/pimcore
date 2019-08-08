@@ -67,7 +67,7 @@ class LocaleListener implements EventSubscriberInterface
                 }
             }
 
-            setlocale(LC_ALL, $localeList);
+            setlocale(LC_ALL ^ LC_NUMERIC ^ LC_MONETARY, $localeList);
         }
     }
 
