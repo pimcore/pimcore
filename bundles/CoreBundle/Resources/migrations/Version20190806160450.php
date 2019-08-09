@@ -62,6 +62,7 @@ class Version20190806160450 extends AbstractPimcoreMigration
                 $modifier = new DefinitionModifier();
                 $modifier->appendFields($layout, 'cartId', $fields);
 
+                $definition->setLayoutDefinitions($layout);
                 $definition->save();
             } else {
                 $this->writeMessage(' ... nothing to do because OnlineShopOrder does not exist.');
