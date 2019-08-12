@@ -81,7 +81,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -365,7 +365,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         } elseif ($request->get('id')) {
             $document = Document::getById($request->get('id'));
-            if ($document->isAllowed('delete')) {
+            if ($document && $document->isAllowed('delete')) {
                 try {
                     if ($document->isLocked()) {
                         throw new \Exception('prevented deleting document, because it is locked: ID: ' . $document->getId());
@@ -381,7 +381,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -931,8 +931,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 }
             } else {
                 Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
-
-                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+                throw $this->createAccessDeniedHttpException();
             }
         }
 
@@ -1172,7 +1171,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $this->adminJson($nodeConfig);
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

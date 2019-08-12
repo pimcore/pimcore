@@ -521,11 +521,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             DataObject\Service::removeObjectFromSession($object->getId());
 
             return $this->adminJson($data);
-        } else {
-            Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
-
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -765,11 +763,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData = $event->getArgument('data');
 
             return $this->adminJson($objectData);
-        } else {
-            Logger::debug('prevented getting folder id [ ' . $object->getId() . ' ] because of missing permissions');
-
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -939,7 +935,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $object = DataObject::getById($request->get('id'));
             if ($object) {
                 if (!$object->isAllowed('delete')) {
-                    return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+                    throw $this->createAccessDeniedHttpException();
                 } elseif ($object->isLocked()) {
                     return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
                 } else {
@@ -1485,7 +1481,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1563,7 +1559,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -2090,9 +2086,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 return $this->adminJson(['success' => false, 'message' => 'source object not found']);
             }
         } else {
-            Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
-
-            return $this->adminJson(['error' => false, 'message' => 'missing_permission']);
+            throw $this->createAccessDeniedHttpException();
         }
 
         return $this->adminJson(['success' => $success, 'message' => $message]);

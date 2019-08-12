@@ -1,4 +1,6 @@
 {
+  "access_denied": "Access Denied!",
+  "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
   "quicksearch": "Quick Search",
   "you_can_only_drop_one_element_here": "You can only drop one element here!",
   "grid_options": "Grid Options",

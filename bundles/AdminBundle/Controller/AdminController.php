@@ -22,6 +22,7 @@ use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -80,8 +81,20 @@ abstract class AdminController extends Controller implements AdminControllerInte
                 ]
             );
 
-            throw new AccessDeniedHttpException('Attempt to access ' . $permission . ', but has no permission to do so.');
+            throw $this->createAccessDeniedHttpException();
         }
+    }
+
+    /**
+     * @param string $message
+     * @param \Throwable|null $previous
+     * @param int $code
+     * @param array $headers
+     * @return AccessDeniedHttpException
+     */
+    protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []) :AccessDeniedHttpException {
+
+        return new AccessDeniedHttpException($message, $previous, $code, $headers);
     }
 
     /**

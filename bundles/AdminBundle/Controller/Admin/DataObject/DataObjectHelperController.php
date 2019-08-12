@@ -876,9 +876,9 @@ class DataObjectHelperController extends AdminController
                 . ' and objectId != ' . $objectId . ' and objectId != 0');
 
             return $this->adminJson(['success' => true]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -935,9 +935,9 @@ class DataObjectHelperController extends AdminController
             }
 
             return $this->adminJson(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1114,7 +1114,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

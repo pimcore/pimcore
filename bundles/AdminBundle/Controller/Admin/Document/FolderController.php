@@ -77,7 +77,7 @@ class FolderController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

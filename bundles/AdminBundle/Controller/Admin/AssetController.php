@@ -156,7 +156,7 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -577,19 +577,20 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         } elseif ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
-
-            if (!$asset->isAllowed('delete')) {
-                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
-            } elseif ($asset->isLocked()) {
-                return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
-            } else {
-                $asset->delete();
-
-                return $this->adminJson(['success' => true]);
+            if ($asset && $asset->isAllowed('delete')) {
+                if ($asset->isLocked()) {
+                    return $this->adminJson([
+                        'success' => false,
+                        'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()
+                    ]);
+                } else {
+                    $asset->delete();
+                    return $this->adminJson(['success' => true]);
+                }
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1001,7 +1002,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1750,8 +1751,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         } else {
             Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
-
-            return $this->adminJson(['error' => false, 'message' => 'missing_permission']);
+            throw $this->createAccessDeniedHttpException();
         }
 
         Tool\Session::writeClose();

@@ -201,6 +201,8 @@ Ext.onReady(function () {
                     pimcore.viewport.add(pimcore.maintenanceWindow);
                     pimcore.maintenanceWindow.show();
                 }
+            } else if (response.status === 403) {
+                pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error", errorMessage);
             } else {
                 //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
                 // be saved due to HTTP 500 Response)
