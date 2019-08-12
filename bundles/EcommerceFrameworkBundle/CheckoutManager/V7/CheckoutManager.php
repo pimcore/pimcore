@@ -98,7 +98,7 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
         if ($order) {
             $notAllowedOrderStates = [AbstractOrder::ORDER_STATE_ABORTED, AbstractOrder::ORDER_STATE_CANCELLED, AbstractOrder::ORDER_STATE_COMMITTED];
             if (in_array($order->getOrderState(), $notAllowedOrderStates)) {
-                // recreate order if trying to start a payment with an aborted, cancelled or commited order
+                // recreate order if trying to start a payment with an aborted, cancelled or committed order
                 $orderManager->recreateOrder($this->cart);
             } elseif ($orderManager->cartHasPendingPayments($this->cart)) {
                 $order = $this->getHandlePendingPaymentsStrategy()->handlePaymentNotAllowed(
