@@ -754,10 +754,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 // for internal use ID.
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
-                            else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                                    rdata.message, rdata.stack, rdata.code);
-                            }
                         } catch (e) {
                             pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }

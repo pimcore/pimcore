@@ -91,28 +91,22 @@ class FolderController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $folder = Document\Folder::getById($request->get('id'));
-                $folder->setModificationDate(time());
-                $folder->setUserModification($this->getAdminUser()->getId());
+        if ($request->get('id')) {
+            $folder = Document\Folder::getById($request->get('id'));
+            $folder->setModificationDate(time());
+            $folder->setUserModification($this->getAdminUser()->getId());
 
-                if ($folder->isAllowed('publish')) {
-                    $this->setValuesToDocument($request, $folder);
-                    $folder->save();
+            if ($folder->isAllowed('publish')) {
+                $this->setValuesToDocument($request, $folder);
+                $folder->save();
 
-                    return $this->adminJson(['success' => true]);
-                }
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
-            }
-            throw $e;
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

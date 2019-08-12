@@ -186,6 +186,48 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
+        var jsonData = null;
+        try {
+            jsonData = Ext.decode(response.responseText);
+        } catch (e) {
+
+        }
+
+        var date = new Date();
+        var errorMessage = "Timestamp: " + date.toString() + "\n";
+        var errorDetailMessage = "\n" + response.responseText;
+
+        try {
+            errorMessage += "Status: " + response.status + " | " + response.statusText + "\n";
+            errorMessage += "URL: " + options.url + "\n";
+
+            if (options["params"] && options["params"].length > 0) {
+                errorMessage += "Params:\n";
+                Ext.iterate(options.params, function (key, value) {
+                    errorMessage += ("-> " + key + ": " + value.substr(0, 500) + "\n");
+                });
+            }
+
+            if (options["method"]) {
+                errorMessage += "Method: " + options.method + "\n";
+            }
+
+            if(jsonData) {
+                if (jsonData['message']) {
+                    errorDetailMessage = jsonData['message'];
+                }
+
+                if(jsonData['traceString']) {
+                    errorDetailMessage += "\nTrace: \n" + jsonData['traceString'];
+                }
+            }
+
+            errorMessage += "Message: " + errorDetailMessage;
+        } catch (e) {
+            errorMessage += "\n\n";
+            errorMessage += response.responseText;
+        }
+
         if (!response.aborted && options["ignoreErrors"] !== true) {
             if (response.status === 503) {
                 //show wait info
@@ -202,52 +244,18 @@ Ext.onReady(function () {
                     pimcore.maintenanceWindow.show();
                 }
             } else if (response.status === 403) {
-                pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error", errorMessage);
+                if(jsonData && jsonData['type'] === 'ValidationException') {
+                    pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
+                } else {
+                    pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
+                }
             } else {
-                //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
-                // be saved due to HTTP 500 Response)
-                var date = new Date();
-                var errorMessage = "Timestamp: " + date.toString() + "\n";
-                var errorDetailMessage = "\n" + response.responseText;
-
-                try {
-                    errorMessage += "Status: " + response.status + " | " + response.statusText + "\n";
-                    errorMessage += "URL: " + options.url + "\n";
-
-                    if (options["params"] && options["params"].length > 0) {
-                        errorMessage += "Params:\n";
-                        Ext.iterate(options.params, function (key, value) {
-                            errorMessage += ("-> " + key + ": " + value.substr(0, 500) + "\n");
-                        });
-                    }
-
-                    if (options["method"]) {
-                        errorMessage += "Method: " + options.method + "\n";
-                    }
-
-                    try {
-                        var json = Ext.util.JSON.decode(response.responseText);
-
-                        if (json) {
-                            if ('undefined' !== typeof json.message && json.message.length > 0) {
-                                errorDetailMessage = json.message;
-                            }
-
-                            if(json['traceString']) {
-                                errorDetailMessage += "\nTrace: \n" + json['traceString'];
-                            }
-                        }
-                    } catch (e) {
-                        // noop, just fall back to generic error message (whole response text)
-                    }
-
-                    errorMessage += "Message: " + errorDetailMessage;
-                } catch (e) {
-                    errorMessage += "\n\n";
-                    errorMessage += response.responseText;
+                var message = t("error_general");
+                if(jsonData['message']) {
+                    message = jsonData['message'] + "<br><br>" + t("error_general");
                 }
 
-                pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
+                pimcore.helpers.showNotification(t("error"), message, "error", errorMessage);
             }
         }
 

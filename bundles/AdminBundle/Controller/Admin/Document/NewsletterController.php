@@ -112,75 +112,46 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        try {
-            if ($request->get('id')) {
-                /** @var Document\Newsletter $page */
-                $page = Document\Newsletter::getById($request->get('id'));
-                $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getAdminUser()->getId());
+        if ($request->get('id')) {
+            /** @var Document\Newsletter $page */
+            $page = Document\Newsletter::getById($request->get('id'));
+            $page = $this->getLatestVersion($page);
+            $page->setUserModification($this->getAdminUser()->getId());
 
-                if ($request->get('task') === 'unpublish') {
-                    $page->setPublished(false);
-                }
-
-                if ($request->get('task') === 'publish') {
-                    $page->setPublished(true);
-                }
-                // only save when publish or unpublish
-                if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
-                    ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->save();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson([
-                            'success' => true,
-                            'data' => [
-                                'versionDate' => $page->getModificationDate(),
-                                'versionCount' => $page->getVersionCount()
-                            ]
-                        ]);
-                    } catch (Exception $e) {
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                } elseif ($page->isAllowed('save')) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->saveVersion();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson(['success' => true]);
-                    } catch (Exception $e) {
-                        if ($e instanceof Element\ValidationException) {
-                            throw $e;
-                        }
-
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                }
+            if ($request->get('task') === 'unpublish') {
+                $page->setPublished(false);
             }
-        } catch (Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
+
+            if ($request->get('task') === 'publish') {
+                $page->setPublished(true);
+            }
+            // only save when publish or unpublish
+            if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
+                ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
+                $this->setValuesToDocument($request, $page);
+
+                $page->save();
+                $this->saveToSession($page);
+
                 return $this->adminJson([
-                    'success' => false,
-                    'type' => 'ValidationException',
-                    'message' => $e->getMessage(),
-                    'stack' => $e->getTraceAsString(),
-                    'code' => $e->getCode()
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $page->getModificationDate(),
+                        'versionCount' => $page->getVersionCount()
+                    ]
                 ]);
+            } elseif ($page->isAllowed('save')) {
+                $this->setValuesToDocument($request, $page);
+                $page->saveVersion();
+                $this->saveToSession($page);
+
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
             }
-            throw $e;
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

@@ -348,10 +348,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
-                    else {
-                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                            rdata.message, rdata.stack, rdata.code);
-                    }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
@@ -370,7 +366,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             failure: function () {
                 this.tab.unmask();
-            },
+            }.bind(this),
             params: this.getSaveData(only)
         });
     },

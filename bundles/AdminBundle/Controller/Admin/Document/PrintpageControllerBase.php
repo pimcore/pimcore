@@ -125,7 +125,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             }
 
             // only save when publish or unpublish
-            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
 
                 //check, if to cleanup existing elements of document
                 $config = Config::getWeb2PrintConfig();
@@ -135,35 +135,25 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 $this->setValuesToDocument($request, $page);
 
-                try {
-                    $page->save();
+                $page->save();
 
-                    return $this->adminJson(['success' => true,
-                                             'data' => ['versionDate' => $page->getModificationDate(),
-                                                        'versionCount' => $page->getVersionCount()]]);
-                } catch (\Exception $e) {
-                    Logger::err($e);
-
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                }
+                return $this->adminJson([
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $page->getModificationDate(),
+                        'versionCount' => $page->getVersionCount()
+                    ]
+                ]);
+            } elseif ($page->isAllowed('save')) {
+                $this->setValuesToDocument($request, $page);
+                $page->saveVersion();
+                return $this->adminJson(['success' => true]);
             } else {
-                if ($page->isAllowed('save')) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->saveVersion();
-
-                        return $this->adminJson(['success' => true]);
-                    } catch (\Exception $e) {
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                }
+                throw $this->createAccessDeniedHttpException();
             }
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**
