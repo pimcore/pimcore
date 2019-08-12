@@ -93,8 +93,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @return AccessDeniedHttpException
      */
     protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []) :AccessDeniedHttpException {
-
-        return new AccessDeniedHttpException($message, $previous, $code, $headers);
+        // $headers parameter not supported by Symfony 3.4
+        return new AccessDeniedHttpException($message, $previous, $code);
     }
 
     /**
