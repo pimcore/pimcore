@@ -242,19 +242,23 @@ class TestDataHelper extends Module
     {
         $result = [];
 
-        $hotspot1 = new \stdClass();
-        $hotspot1->name = 'hotspot1';
-        $hotspot1->width = '10';
-        $hotspot1->height = '20';
-        $hotspot1->top = '30';
-        $hotspot1->left = '40';
+        $hotspot1 = [
+            "name" => 'hotspot1',
+            "width" => 10,
+            "height" => 20,
+            "top" => 30,
+            "left" => 40
+        ];
         $result[] = $hotspot1;
 
-        $hotspot2 = clone $hotspot1;
-        $hotspot2->width = '10';
-        $hotspot2->height = '50';
-        $hotspot2->top = '20';
-        $hotspot2->left = '40';
+        $hotspot2 = [
+            "name" => 'hotspot2',
+            "width" => 10,
+            "height" => 50,
+            "top" => 20,
+            "left" => 40
+        ];
+
         $result[] = $hotspot2;
 
         return $result;
