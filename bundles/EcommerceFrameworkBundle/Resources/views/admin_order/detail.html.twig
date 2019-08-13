@@ -243,7 +243,9 @@
                                     {% endif %}
                                     {{ order.getCustomerStreet() }}<br/>
                                     {{ order.getCustomerZip() ~ ' - ' ~ order.getCustomerCity() }}<br/>
-                                    {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
+                                    {% if(order.getCustomerCountry()) %}
+                                        {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
+                                    {% endif %}
 
                                     {% if order.getCustomer() and attribute(order.getCustomer(), 'email') is defined %}
                                         {{ '<a href="mailto:%1$s">%1$s</a>'|format(order.getCustomer().getEmail()) | raw }}
