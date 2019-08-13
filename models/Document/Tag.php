@@ -709,4 +709,15 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         return $name;
     }
+
+    /**
+     * @param $data
+     * @return object
+     */
+    public function sanitizeWebserviceData($data) {
+        if (is_array($data)) {
+            $data = (object) $data;
+        }
+        return $data;
+    }
 }

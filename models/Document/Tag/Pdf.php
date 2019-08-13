@@ -254,7 +254,7 @@ HTML;
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id) {
             $asset = Asset::getById($data->id);
             if (!$asset) {

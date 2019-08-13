@@ -925,7 +925,7 @@ class Video extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id) {
             if ($data->type == 'asset') {
                 $this->id = $data->id;

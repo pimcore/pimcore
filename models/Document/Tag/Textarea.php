@@ -124,7 +124,7 @@ class Textarea extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {

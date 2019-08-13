@@ -512,12 +512,11 @@ class Link extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        if ($wsElement->value->data instanceof \stdClass) {
-            $wsElement->value->data = (array)$wsElement->value->data;
-        }
 
-        if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
-            $this->data = $wsElement->value->data;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
+
+        if (empty($data->data) or $data->data instanceof \stdClass) {
+            $this->data = $data->data instanceof \stdClass ? get_object_vars($data->data) : null;
             if ($this->data['internal']) {
                 if (intval($this->data['internalId']) > 0) {
                     $id = $this->data['internalId'];
