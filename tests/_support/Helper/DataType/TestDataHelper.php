@@ -243,20 +243,20 @@ class TestDataHelper extends Module
         $result = [];
 
         $hotspot1 = [
-            "name" => 'hotspot1',
-            "width" => 10,
-            "height" => 20,
-            "top" => 30,
-            "left" => 40
+            'name' => 'hotspot1',
+            'width' => 10,
+            'height' => 20,
+            'top' => 30,
+            'left' => 40
         ];
         $result[] = $hotspot1;
 
         $hotspot2 = [
-            "name" => 'hotspot2',
-            "width" => 10,
-            "height" => 50,
-            "top" => 20,
-            "left" => 40
+            'name' => 'hotspot2',
+            'width' => 10,
+            'height' => 50,
+            'top' => 20,
+            'left' => 40
         ];
 
         $result[] = $hotspot2;

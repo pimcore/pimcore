@@ -18,7 +18,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed;

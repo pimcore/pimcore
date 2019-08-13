@@ -1300,7 +1300,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'treeData' => $treeData
             ]);
         } elseif ($request->get('task') == 'session') {
-
             Tool\Session::useSession(function (AttributeBagInterface $session) use ($object) {
                 $key = 'object_' . $object->getId();
                 $session->set($key, $object);

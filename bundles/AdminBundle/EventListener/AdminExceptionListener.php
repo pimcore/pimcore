@@ -69,7 +69,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $data['traceString'] = $ex->getTraceAsString();
             }
 
-            if($ex instanceof ValidationException) {
+            if ($ex instanceof ValidationException) {
                 $data['type'] = 'ValidationException';
                 $code = 403;
 
@@ -165,6 +165,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
     /**
      * @param \Exception $e
+     *
      * @return \Exception
      */
     protected function getInnerStack(\Exception $e)

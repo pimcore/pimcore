@@ -332,6 +332,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     *
      * @return DataObject\Data\Hotspotimage
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
@@ -366,6 +367,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param array $params
      *
      * @return string
+     *
      * @throws \Exception
      */
     public function getForCsvExport($object, $params = [])
@@ -504,6 +506,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param mixed $params
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getForWebserviceExport($object, $params = [])
@@ -609,6 +612,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param array $params
      *
      * @return Element\ElementInterface
+     *
      * @throws \Exception
      */
     public function rewriteIds($object, $idMapping, $params = [])

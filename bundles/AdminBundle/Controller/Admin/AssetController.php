@@ -585,6 +585,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     ]);
                 } else {
                     $asset->delete();
+
                     return $this->adminJson(['success' => true]);
                 }
             }
@@ -954,7 +955,6 @@ class AssetController extends ElementControllerBase implements EventedController
                         'versionCount' => $asset->getVersionCount()
                     ]
                 ]);
-
             } else {
                 throw $this->createAccessDeniedHttpException();
             }

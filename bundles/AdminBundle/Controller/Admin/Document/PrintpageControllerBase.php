@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Session;
@@ -147,6 +146,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             } elseif ($page->isAllowed('save')) {
                 $this->setValuesToDocument($request, $page);
                 $page->saveVersion();
+
                 return $this->adminJson(['success' => true]);
             } else {
                 throw $this->createAccessDeniedHttpException();
