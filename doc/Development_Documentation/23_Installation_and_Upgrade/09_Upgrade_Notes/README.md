@@ -1,5 +1,17 @@
 # Upgrade Notes
 
+## 6.1.2
+- Sessions: the native PHP session mechanism is now the default (instead of `session.handler.native_file`). 
+To use the former handler use the following config: 
+```yaml
+framework:
+    session:
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions"
+```
+If you have configured your own session handler nothing will change. 
+
+
 ## 6.1.0 
 
 ### E-Commerce Framework Refactorings
