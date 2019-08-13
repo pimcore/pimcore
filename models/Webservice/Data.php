@@ -146,7 +146,6 @@ abstract class Data
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 
-                $dat = $propertyWs['data'];
                 $type = $propertyWs['type'];
                 if (in_array($type, ['object', 'document', 'asset'])) {
                     $id = $propertyWs['data'];
