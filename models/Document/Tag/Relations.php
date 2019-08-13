@@ -353,6 +353,31 @@ class Relations extends Model\Document\Tag implements \Iterator
 
         return $var;
     }
+
+    /**
+     * Returns the current tag's data for web service export
+     *
+     * @param $document
+     * @param mixed $params
+     * @abstract
+     *
+     * @return array
+     */
+    public function getForWebserviceExport($document = null, $params = [])
+    {
+        $elements = $this->getElements();
+        if (is_array($elements)) {
+            $result = [];
+            foreach ($elements as $element) {
+                $result[] = [
+                    "type" => Element\Service::getType($element),
+                    "id" => $element->getId()
+                ];
+            }
+            return $result;
+        }
+        return null;
+    }
 }
 
 class_alias(Relations::class, 'Pimcore\Model\Document\Tag\Multihref');

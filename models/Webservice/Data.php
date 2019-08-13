@@ -39,6 +39,10 @@ abstract class Data
             $blockedKeys[] = 'data';
         }
 
+        if ($object instanceof Model\Document\Tag\Relations) {
+            $blockedKeys[] = 'value';
+        }
+
         foreach ($keys as $key => $value) {
             $method = 'get' . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
