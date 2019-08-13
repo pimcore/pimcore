@@ -192,13 +192,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig.height = this.fieldConfig.height;
         }
 
+        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
+            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
+        }
+
         if(this.fieldConfig.toolbarConfig) {
             var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
             eConfig = mergeObject(eConfig, elementCustomConfig);
-        }
-
-        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
         }
 
         try {
