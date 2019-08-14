@@ -46,7 +46,9 @@ pimcore.settings.fileexplorer.file = Class.create({
 
             this.textarea = new Ext.form.TextArea({
                 value: response.content,
-                style: "font-family:courier"
+                fieldStyle: {
+                    "fontFamily": "courier"
+                }
             });
 
             var isNew = false;
