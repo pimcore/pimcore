@@ -246,7 +246,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         $data = array_merge($data, $insertDataArray);
                     }
                 } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model);
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model,
+                        [
+                            'owner' => $this->model
+                        ]);
                     $data[$key] = $insertData;
                 }
             }
