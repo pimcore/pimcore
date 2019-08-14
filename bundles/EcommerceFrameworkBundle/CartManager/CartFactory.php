@@ -95,4 +95,11 @@ class CartFactory implements CartFactoryInterface
 
         return $cart;
     }
+
+    /**
+     * @return string
+     */
+    public function getCartReadOnlyMode(): string {
+        return $this->options['cart_readonly_mode'];
+    }
 }

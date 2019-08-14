@@ -21,9 +21,25 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 
 interface CartFactoryInterface
 {
+    /**
+     * @param EnvironmentInterface $environment
+     * @return string
+     */
     public function getCartClassName(EnvironmentInterface $environment): string;
 
+    /**
+     * @param EnvironmentInterface $environment
+     * @param string $name
+     * @param string|null $id
+     * @param array $options
+     * @return CartInterface
+     */
     public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface;
+
+    /**
+     * @return string
+     */
+    public function getCartReadOnlyMode(): string;
 }
 
 class_alias(CartFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartFactory');
