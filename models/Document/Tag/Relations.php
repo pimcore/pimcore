@@ -270,7 +270,7 @@ class Relations extends Model\Document\Tag implements \Iterator
                 $data = $this->sanitizeWebserviceData($data);
                 if ($data->id !== null) {
                     $resultItem = [];
-                    $resultItem["type"] = $data->type;
+                    $resultItem['type'] = $data->type;
 
                     if (!is_numeric($data->id)) {
                         throw new \Exception('cannot get values from web service import - id is not valid');
@@ -279,7 +279,7 @@ class Relations extends Model\Document\Tag implements \Iterator
                     if ($idMapper) {
                         $data->id = $idMapper->getMappedId($data->type, $data->id);
                     }
-                    $resultItem["id"] = $data->id;
+                    $resultItem['id'] = $data->id;
 
                     if ($data->type == 'asset') {
                         $element = Asset::getById($data->id);
@@ -321,7 +321,6 @@ class Relations extends Model\Document\Tag implements \Iterator
             $this->elementIds = $result;
         }
     }
-
 
     /**
      * @return array
@@ -426,12 +425,14 @@ class Relations extends Model\Document\Tag implements \Iterator
             $result = [];
             foreach ($elements as $element) {
                 $result[] = [
-                    "type" => Element\Service::getType($element),
-                    "id" => $element->getId()
+                    'type' => Element\Service::getType($element),
+                    'id' => $element->getId()
                 ];
             }
+
             return $result;
         }
+
         return null;
     }
 }

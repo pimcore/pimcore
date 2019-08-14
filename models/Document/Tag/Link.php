@@ -512,7 +512,6 @@ class Link extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-
         $data = $this->sanitizeWebserviceData($wsElement->value);
 
         if (empty($data->data) or $data->data instanceof \stdClass) {
