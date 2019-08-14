@@ -254,7 +254,7 @@ class Snippet extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id !== null) {
             $this->id = $data->id;
             if (is_numeric($this->id)) {

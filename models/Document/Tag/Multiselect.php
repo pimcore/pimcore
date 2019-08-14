@@ -121,9 +121,11 @@ class Multiselect extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if ($data->values === null or is_array($data->values)) {
-            $this->values = $data->values;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
+        if ($data->values === null) {
+            $this->values = null;
+        } else if ($data->values instanceof  \stdClass) {
+            $this->values = get_object_vars($data->values);
         } else {
             throw new \Exception('cannot get values from web service import - invalid data');
         }
