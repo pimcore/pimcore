@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -28,6 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class EmailController extends DocumentControllerBase
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -40,9 +42,7 @@ class EmailController extends DocumentControllerBase
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'document');
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
@@ -86,7 +86,7 @@ class EmailController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -100,65 +100,45 @@ class EmailController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $page = Document\Email::getById($request->get('id'));
+        if ($request->get('id')) {
+            $page = Document\Email::getById($request->get('id'));
 
-                $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getAdminUser()->getId());
+            $page = $this->getLatestVersion($page);
+            $page->setUserModification($this->getAdminUser()->getId());
 
-                if ($request->get('task') == 'unpublish') {
-                    $page->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $page->setPublished(true);
-                }
-                // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $page->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->save();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson(['success' => true,
-                                                 'data' => ['versionDate' => $page->getModificationDate(),
-                                                            'versionCount' => $page->getVersionCount()]]);
-                    } catch (\Exception $e) {
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                } else {
-                    if ($page->isAllowed('save')) {
-                        $this->setValuesToDocument($request, $page);
-
-                        try {
-                            $page->saveVersion();
-                            $this->saveToSession($page);
-
-                            return $this->adminJson(['success' => true]);
-                        } catch (\Exception $e) {
-                            if ($e instanceof Element\ValidationException) {
-                                throw $e;
-                            }
-
-                            Logger::err($e);
-
-                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                        }
-                    }
-                }
+            if ($request->get('task') == 'unpublish') {
+                $page->setPublished(false);
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+            if ($request->get('task') == 'publish') {
+                $page->setPublished(true);
             }
-            throw $e;
+            // only save when publish or unpublish
+            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+                $this->setValuesToDocument($request, $page);
+
+                $page->save();
+                $this->saveToSession($page);
+
+                return $this->adminJson([
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $page->getModificationDate(),
+                        'versionCount' => $page->getVersionCount()
+                    ]
+                ]);
+            } elseif ($page->isAllowed('save')) {
+                $this->setValuesToDocument($request, $page);
+
+                $page->saveVersion();
+                $this->saveToSession($page);
+
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
+            }
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

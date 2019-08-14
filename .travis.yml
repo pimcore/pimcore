@@ -9,7 +9,7 @@ services:
   - redis
 
 addons:
-  mariadb: '10.1'
+  mariadb: '10.3'
   hosts:
     - pimcore-test.dev
 
@@ -88,22 +88,12 @@ matrix:
     # Test Docs
     - os: linux
       php: 7.2
-      services: ~
-      addons: ~
       env:
         - TASK_TESTS=0
         - TASK_DOCS=1
       cache:
         directories:
           - tmp-docs/pimcore-docs/vendor
-  allow_failures:
-    - env:
-        - TASK_TESTS=0
-        - TASK_STAN=1
-    - env:
-        - TASK_TESTS=0
-        - TASK_STAN=1
-        - SYMFONY_VERSION="^4.0"
   fast_finish: true
 
 cache:
@@ -126,8 +116,6 @@ env:
 
 before_install:
   - mysql --version
-  - mysql -e "SET GLOBAL innodb_file_format=Barracuda;"
-  - mysql -e "SET GLOBAL innodb_large_prefix=1;"
   - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 install:

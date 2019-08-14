@@ -11,11 +11,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
-body {
-    padding-top: 70px;
+a {
+    color: #428bca;
+    text-decoration: none;
 }
 
+.table th, .table td {
+    padding: 0.5rem;
+}
 
 .order-detail .tabpanel-customer-info {
     margin-bottom: 20px;
@@ -91,7 +94,7 @@ body {
     border-left-color: transparent;
 }
 
-.timeline .panel .panel-heading.icon * { font-size: 20px; vertical-align: middle; line-height: 40px; }
+.timeline .panel .panel-heading.icon * { font-size: 18px; vertical-align: middle; line-height: 40px; }
 .timeline .panel .panel-heading.icon {
     position: absolute;
     left: -59px;
@@ -124,6 +127,14 @@ body {
 
 }
 
+.fa {
+    line-height: 1.5;
+}
+
+.picker__holder {
+    min-width: 300px;
+    overflow: hidden;
+}
 
 /*
 .count-circle {

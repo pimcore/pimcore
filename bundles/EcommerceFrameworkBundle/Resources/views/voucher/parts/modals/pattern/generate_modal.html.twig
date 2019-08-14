@@ -1,0 +1,37 @@
+<div class="modal fade" id="generate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body-content">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="clearfix"></div>
+                <h3>{{ ('bundle_ecommerce_voucherservice_modal_generate-headline')|trans([],'admin') }}</h3>
+                <div class="row">
+                    <div class="col col-sm-10">
+                        <table class="table current-data table-only-body">
+                            <tbody>
+                            {% for name, setting in settings %}
+                            <tr>
+                                <td>{{ name|trans([],'admin') }}</td>
+                                <td>
+                                    {% if setting matches '/^\\d+$/' %}
+                                        {{ setting|number_format(0, ',', ' ') }}
+                                    {% else %}
+                                        {{ setting }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ path('pimcore_ecommerce_backend_voucher_generate', urlParams) }}" class="btn btn-primary js-loading" data-msg="{{ ('bundle_ecommerce_voucherservice_modal_generate-infotext')|trans([],'admin') }}">
+                    {{ ('bundle_ecommerce_voucherservice_modal_generate-submit-button')|trans([],'admin') }}
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ ('bundle_ecommerce_voucherservice_modal_cancel')|trans([],'admin') }}</button>
+            </div>
+        </div>
+    </div>
+</div>

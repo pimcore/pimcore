@@ -33,6 +33,7 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
 
 # Doctrine Configuration
 doctrine:
@@ -202,18 +203,18 @@ pimcore:
     context:
         profiler:
             routes:
-                - { path: ^/_(profiler|wdt) }
+                - { path: ^/_(profiler|wdt)(/.*)?$ }
         admin:
             routes:
-                - { path: ^/admin }
+                - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
         webservice:
             routes:
-                - { path: ^/webservice }
+                - { path: ^/webservice(/.*)?$ }
                 - { route: ^pimcore_webservice }
         plugin:
             routes:
-                - { path: ^/plugin }
+                - { path: ^/plugin(/.*)?$ }
     admin:
         session:
             attribute_bags:

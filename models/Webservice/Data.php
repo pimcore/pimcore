@@ -39,6 +39,10 @@ abstract class Data
             $blockedKeys[] = 'data';
         }
 
+        if ($object instanceof Model\Document\Tag\Relations) {
+            $blockedKeys[] = 'value';
+        }
+
         foreach ($keys as $key => $value) {
             $method = 'get' . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
@@ -142,7 +146,6 @@ abstract class Data
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 
-                $dat = $propertyWs['data'];
                 $type = $propertyWs['type'];
                 if (in_array($type, ['object', 'document', 'asset'])) {
                     $id = $propertyWs['data'];

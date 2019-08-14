@@ -68,16 +68,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if ($filter['creation_to'] && $filter['creation_from']) {
-                $this->addConditionParam("Date(timestamp) BETWEEN STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
-                $this->addConditionParam("STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
-            } else {
-                if ($filter['creation_from']) {
-                    $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
-                }
-                if ($filter['creation_to']) {
-                    $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
-                }
+            if ($filter['creation_from']) {
+                $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
+            }
+
+            if ($filter['creation_to']) {
+                $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
             if ($this->isValidOrderKey($filter['sort_criteria'])) {

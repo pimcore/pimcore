@@ -28,6 +28,11 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
+     * @var null
+     */
+    protected $tableDefinitions = null;
+
+    /**
      * @param DataObject\Concrete $object
      * @param $ownertype
      * @param $ownername

@@ -64,7 +64,7 @@ above extends `Pimcore\Model\DataObject\Concrete` and that its methods don't ove
 with existing methods of `Pimcore\Model\DataObject\Concrete` or any magic functions of `Pimcore\Model\DataObject\Concrete`
 or its parent classes.
 
-Starting from Pimcore 5.4.0, it is also possible to use class inheritance and traits for listing data object model.
+It is also possible to use class inheritance and traits for listing data object model.
 </div>
 
 ### Hooks available when using class inheritance

@@ -85,6 +85,12 @@ class OrderManager implements OrderManagerInterface
         VoucherServiceInterface $voucherService,
         array $options = []
     ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->environment = $environment;
         $this->orderAgentFactory = $orderAgentFactory;
         $this->voucherService = $voucherService;
@@ -343,7 +349,7 @@ class OrderManager implements OrderManagerInterface
         $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
         $order->setCurrency($currency->getShortName());
 
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - save order to add items.']);
 
         // for each cart item and cart sub item create corresponding order items
         $orderItems = $this->applyOrderItems($cart->getItems(), $order);
@@ -356,7 +362,7 @@ class OrderManager implements OrderManagerInterface
         $order->setGiftItems($orderGiftItems);
 
         $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - final save.']);
 
         $this->cleanupZombieOrderItems($order);
 

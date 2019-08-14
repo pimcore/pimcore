@@ -35,16 +35,16 @@ pimcore.settings.user.role.settings = Class.create({
         });
 
         this.perspectivesField = Ext.create('Ext.ux.form.MultiSelect', {
-            name:"perspectives",
-            triggerAction:"all",
-            editable:false,
-            fieldLabel:t("perspectives"),
-            width:400,
+            name: "perspectives",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("perspectives"),
+            width: 400,
             minHeight: 100,
             store: perspectivesStore,
             displayField: "name",
             valueField: "name",
-            value:this.data.role.perspectives ? this.data.role.perspectives.join(",") : null
+            value: this.data.role.perspectives ? this.data.role.perspectives.join(",") : null
         });
 
         generalItems.push(this.perspectivesField);
@@ -52,14 +52,21 @@ pimcore.settings.user.role.settings = Class.create({
 
         this.generalSet = new Ext.form.FieldSet({
             collapsible: true,
-            title:t("general"),
-            items:generalItems
+            title: t("general"),
+            items: generalItems
         });
 
-        var availPermsItems = [];
-        // add available permissions
+        var itemsPerSection = [];
+        var sectionArray = [];
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
-            availPermsItems.push({
+            let section = this.data.availablePermissions[i].category;
+            if(!section){
+                section = "default";
+            }
+            if (!itemsPerSection[section]) {
+                itemsPerSection[section] = [];
+            }
+            itemsPerSection[section].push({
                 xtype: "checkbox",
                 fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
@@ -67,22 +74,29 @@ pimcore.settings.user.role.settings = Class.create({
                 labelWidth: 200
             });
         }
+        for (var key in itemsPerSection) {
+            let title = t("permissions");
+            if (key && key != "default") {
+                title += " " + t(key);
+            }
 
-        this.permissionsSet = new Ext.form.FieldSet({
-            collapsible: true,
-            title: t("permissions"),
-            items: availPermsItems
-        });
+            sectionArray.push(new Ext.form.FieldSet({
+                collapsible: true,
+                title: title,
+                items: itemsPerSection[key],
+                collapsed: true,
+            }));
+        }
 
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
-            title:t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
-            items:[{
+            title: t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
+            items: [{
                 xtype: "multiselect",
                 name: "docTypes",
-                triggerAction:"all",
-                editable:false,
-                fieldLabel:t("document_types"),
+                triggerAction: "all",
+                editable: false,
+                fieldLabel: t("document_types"),
                 width: 400,
                 displayField: "name",
                 valueField: "id",
@@ -91,9 +105,9 @@ pimcore.settings.user.role.settings = Class.create({
             }, {
                 xtype: "multiselect",
                 name: "classes",
-                triggerAction:"all",
-                editable:false,
-                fieldLabel:t("classes"),
+                triggerAction: "all",
+                editable: false,
+                fieldLabel: t("classes"),
                 width: 400,
                 displayField: "text",
                 valueField: "id",
@@ -106,7 +120,7 @@ pimcore.settings.user.role.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.generalSet, this.permissionsSet, this.typesSet, this.websiteTranslationSettings.getPanel()],
+            items: array_merge([this.generalSet], sectionArray, [this.typesSet, this.websiteTranslationSettings.getPanel()]),
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

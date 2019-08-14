@@ -18,7 +18,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed;
@@ -40,6 +39,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class NewsletterController extends DocumentControllerBase
 {
+    use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -51,9 +52,7 @@ class NewsletterController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'document');
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
@@ -98,7 +97,7 @@ class NewsletterController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -112,75 +111,46 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        try {
-            if ($request->get('id')) {
-                /** @var Document\Newsletter $page */
-                $page = Document\Newsletter::getById($request->get('id'));
-                $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getAdminUser()->getId());
+        if ($request->get('id')) {
+            /** @var Document\Newsletter $page */
+            $page = Document\Newsletter::getById($request->get('id'));
+            $page = $this->getLatestVersion($page);
+            $page->setUserModification($this->getAdminUser()->getId());
 
-                if ($request->get('task') === 'unpublish') {
-                    $page->setPublished(false);
-                }
-
-                if ($request->get('task') === 'publish') {
-                    $page->setPublished(true);
-                }
-                // only save when publish or unpublish
-                if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
-                    ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->save();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson([
-                            'success' => true,
-                            'data' => [
-                                'versionDate' => $page->getModificationDate(),
-                                'versionCount' => $page->getVersionCount()
-                            ]
-                        ]);
-                    } catch (Exception $e) {
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                } elseif ($page->isAllowed('save')) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->saveVersion();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson(['success' => true]);
-                    } catch (Exception $e) {
-                        if ($e instanceof Element\ValidationException) {
-                            throw $e;
-                        }
-
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                }
+            if ($request->get('task') === 'unpublish') {
+                $page->setPublished(false);
             }
-        } catch (Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
+
+            if ($request->get('task') === 'publish') {
+                $page->setPublished(true);
+            }
+            // only save when publish or unpublish
+            if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
+                ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
+                $this->setValuesToDocument($request, $page);
+
+                $page->save();
+                $this->saveToSession($page);
+
                 return $this->adminJson([
-                    'success' => false,
-                    'type' => 'ValidationException',
-                    'message' => $e->getMessage(),
-                    'stack' => $e->getTraceAsString(),
-                    'code' => $e->getCode()
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $page->getModificationDate(),
+                        'versionCount' => $page->getVersionCount()
+                    ]
                 ]);
+            } elseif ($page->isAllowed('save')) {
+                $this->setValuesToDocument($request, $page);
+                $page->saveVersion();
+                $this->saveToSession($page);
+
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
             }
-            throw $e;
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -192,6 +162,12 @@ class NewsletterController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
+
+        // plaintext
+        if ($request->get('plaintext')) {
+            $plaintext = $this->decodeJson($request->get('plaintext'));
+            $page->setValues($plaintext);
+        }
     }
 
     /**

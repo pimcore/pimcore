@@ -934,8 +934,6 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
-
-        return $this->adminJson(false);
     }
 
     /**
@@ -1070,8 +1068,6 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
-
-        return $this->adminJson(false);
     }
 
     /**
@@ -1727,118 +1723,112 @@ class SettingsController extends AdminController
      */
     public function websiteSettingsAction(Request $request)
     {
-        try {
-            if ($request->get('data')) {
-                $this->checkPermission('website_settings');
+        if ($request->get('data')) {
+            $this->checkPermission('website_settings');
 
-                $data = $this->decodeJson($request->get('data'));
+            $data = $this->decodeJson($request->get('data'));
 
-                if (is_array($data)) {
-                    foreach ($data as &$value) {
-                        $value = trim($value);
-                    }
+            if (is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
                 }
-
-                if ($request->get('xaction') == 'destroy') {
-                    $id = $data['id'];
-                    $setting = WebsiteSetting::getById($id);
-                    $setting->delete();
-
-                    return $this->adminJson(['success' => true, 'data' => []]);
-                } elseif ($request->get('xaction') == 'update') {
-                    // save routes
-                    $setting = WebsiteSetting::getById($data['id']);
-
-                    switch ($setting->getType()) {
-                        case 'document':
-                        case 'asset':
-                        case 'object':
-                            if (isset($data['data'])) {
-                                $path = $data['data'];
-                                $element = null;
-                                if ($path != null) {
-                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
-                                }
-                                $data['data'] = $element;
-                            }
-                            break;
-                    }
-
-                    $setting->setValues($data);
-                    $setting->save();
-
-                    $data = $this->getWebsiteSettingForEditMode($setting);
-
-                    return $this->adminJson(['data' => $data, 'success' => true]);
-                } elseif ($request->get('xaction') == 'create') {
-                    unset($data['id']);
-
-                    // save route
-                    $setting = new WebsiteSetting();
-                    $setting->setValues($data);
-
-                    $setting->save();
-
-                    return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
-                }
-            } else {
-                // get list of routes
-
-                $list = new WebsiteSetting\Listing();
-
-                $limit = $request->get('limit');
-                $start = $request->get('start');
-
-                $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-
-                if ($request->get('filter')) {
-                    $filter = $request->get('filter');
-                    $list->setFilter(function ($row) use ($filter) {
-                        foreach ($row as $value) {
-                            if (strpos($value, $filter) !== false) {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    });
-                }
-
-                $list->setOrder(function ($a, $b) use ($sortingSettings) {
-                    if (!$sortingSettings) {
-                        return 0;
-                    }
-                    $orderKey = $sortingSettings['orderKey'];
-                    if ($a[$orderKey] == $b[$orderKey]) {
-                        return 0;
-                    }
-
-                    $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
-                    if ($sortingSettings['order'] == 'DESC') {
-                        $result = -1 * $result;
-                    }
-
-                    return $result;
-                });
-
-                $totalCount = $list->getTotalCount();
-                $list = $list->load();
-
-                $list = array_slice($list, $start, $limit);
-
-                $settings = [];
-                foreach ($list as $item) {
-                    $resultItem = $this->getWebsiteSettingForEditMode($item);
-                    $settings[] = $resultItem;
-                }
-
-                return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
             }
-        } catch (\Exception $e) {
-            throw $e;
-        }
 
-        return $this->adminJson(false);
+            if ($request->get('xaction') == 'destroy') {
+                $id = $data['id'];
+                $setting = WebsiteSetting::getById($id);
+                $setting->delete();
+
+                return $this->adminJson(['success' => true, 'data' => []]);
+            } elseif ($request->get('xaction') == 'update') {
+                // save routes
+                $setting = WebsiteSetting::getById($data['id']);
+
+                switch ($setting->getType()) {
+                    case 'document':
+                    case 'asset':
+                    case 'object':
+                        if (isset($data['data'])) {
+                            $path = $data['data'];
+                            $element = null;
+                            if ($path != null) {
+                                $element = Element\Service::getElementByPath($setting->getType(), $path);
+                            }
+                            $data['data'] = $element;
+                        }
+                        break;
+                }
+
+                $setting->setValues($data);
+                $setting->save();
+
+                $data = $this->getWebsiteSettingForEditMode($setting);
+
+                return $this->adminJson(['data' => $data, 'success' => true]);
+            } elseif ($request->get('xaction') == 'create') {
+                unset($data['id']);
+
+                // save route
+                $setting = new WebsiteSetting();
+                $setting->setValues($data);
+
+                $setting->save();
+
+                return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
+            }
+        } else {
+            // get list of routes
+
+            $list = new WebsiteSetting\Listing();
+
+            $limit = $request->get('limit');
+            $start = $request->get('start');
+
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+
+            if ($request->get('filter')) {
+                $filter = $request->get('filter');
+                $list->setFilter(function ($row) use ($filter) {
+                    foreach ($row as $value) {
+                        if (strpos($value, $filter) !== false) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+            }
+
+            $list->setOrder(function ($a, $b) use ($sortingSettings) {
+                if (!$sortingSettings) {
+                    return 0;
+                }
+                $orderKey = $sortingSettings['orderKey'];
+                if ($a[$orderKey] == $b[$orderKey]) {
+                    return 0;
+                }
+
+                $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
+                if ($sortingSettings['order'] == 'DESC') {
+                    $result = -1 * $result;
+                }
+
+                return $result;
+            });
+
+            $totalCount = $list->getTotalCount();
+            $list = $list->load();
+
+            $list = array_slice($list, $start, $limit);
+
+            $settings = [];
+            foreach ($list as $item) {
+                $resultItem = $this->getWebsiteSettingForEditMode($item);
+                $settings[] = $resultItem;
+            }
+
+            return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
+        }
     }
 
     /**

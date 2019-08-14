@@ -348,7 +348,7 @@
     "translations": "Traductions du site",
     "firstname": "Prénom",
     "lastname": "Nom",
-    "email": "Courriel",
+    "email": "E-mail",
     "cant_move_node_to_target": "Déplacement du noeud impossible",
     "error_moving_object": "L'objet ne peut pas être déplacé",
     "translations_are_not_configured": "Les traductions ne sont pas configurées",
@@ -898,5 +898,9 @@
     "target_document_invalid": "Veuillez sélectionner un document cible avec une langue valide",
     "metainfo_copy_id": "Copier l'identifiant dans le presse papier",
     "metainfo_copy_fullpath": "Copier le chemin complet dans le presse papier",
-    "metainfo_copy_deeplink": "Copier le lien profond dans le presse-papier"
+    "metainfo_copy_deeplink": "Copier le lien profond dans le presse-papier",
+    "plain_text": "Texte brut",
+    "plain_text_email_part": "E-mail partie texte brut",
+    "error_message": "Message d'erreur",
+    "bundle_ecommerce_order_tab": "Order Details"
 }

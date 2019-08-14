@@ -68,7 +68,7 @@ class ElementControllerBase extends AdminController
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

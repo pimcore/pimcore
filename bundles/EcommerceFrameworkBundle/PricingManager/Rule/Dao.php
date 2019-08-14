@@ -68,8 +68,6 @@ class Dao extends AbstractDao
     {
         $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 
     /**
@@ -79,11 +77,11 @@ class Dao extends AbstractDao
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            $this->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        $this->create();
+        $this->update();
     }
 
     /**

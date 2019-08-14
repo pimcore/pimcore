@@ -42,31 +42,29 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname()
         ];
 
-        try {
-            /** @var $fd Model\DataObject\ClassDefinition\Data */
-            foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
-                $getter = 'get' . ucfirst($fd->getName());
+        /** @var $fd Model\DataObject\ClassDefinition\Data */
+        foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
+            $getter = 'get' . ucfirst($fd->getName());
 
-                if ($fd instanceof CustomResourcePersistingInterface) {
-                    if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
-                        continue;
-                    }
+            if ($fd instanceof CustomResourcePersistingInterface) {
+                if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
+                    continue;
+                }
 
-                    // for fieldtypes which have their own save algorithm eg. relational data types, ...
-                    $index = $this->model->getIndex();
-                    $params = array_merge($params, [
-                        'saveRelationalData' => $saveRelationalData,
-                        'context' => [
-                            'containerType' => 'fieldcollection',
-                            'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname(),
-                            'index' => $index
-                        ]
-                    ]);
+                // for fieldtypes which have their own save algorithm eg. relational data types, ...
+                $index = $this->model->getIndex();
+                $params = array_merge($params, [
+                    'saveRelationalData' => $saveRelationalData,
+                    'context' => [
+                        'containerType' => 'fieldcollection',
+                        'containerKey' => $this->model->getType(),
+                        'fieldname' => $this->model->getFieldname(),
+                        'index' => $index
+                    ]
+                ]);
 
-                    $fd->save(
-                        $this->model, $params
-
+                $fd->save(
+                    $this->model, $params
                     );
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
@@ -80,12 +78,11 @@ class Dao extends Model\Dao\AbstractDao
                             'owner' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                         ]);
                     }
+
                 }
             }
-
-            $this->db->insert($tableName, $data);
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->insert($tableName, $data);
     }
 }

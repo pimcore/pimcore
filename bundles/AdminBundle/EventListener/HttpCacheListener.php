@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\ResponseHelper;
@@ -73,7 +72,7 @@ class HttpCacheListener implements EventSubscriberInterface
                 $disable = true;
             }
 
-            if (\Pimcore::inDebugMode(DebugMode::DISABLE_HTTP_CACHE)) {
+            if (\Pimcore::inDebugMode()) {
                 $disable = true;
             }
         }

@@ -210,6 +210,10 @@
     background-color: #ffefbb;
 }
 
+.x-grid-item-alt.x-grid-item-over {
+    background-color: #e4e4e4;
+}
+
 .x-grid-item-focused .x-grid-cell-inner:before {
     border: 0;
 }

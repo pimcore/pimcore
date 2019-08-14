@@ -326,5 +326,5 @@ pimcore.document.tags.relation = Class.create(pimcore.document.tag, {
     }
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.document.tags.href = pimcore.document.tags.relation;

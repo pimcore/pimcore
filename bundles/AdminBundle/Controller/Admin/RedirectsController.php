@@ -153,8 +153,6 @@ class RedirectsController extends AdminController
 
             return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
         }
-
-        return $this->adminJson(false);
     }
 
     /**

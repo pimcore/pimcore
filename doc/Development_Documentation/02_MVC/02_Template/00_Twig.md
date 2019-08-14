@@ -1,6 +1,6 @@
 # Twig
 
-Pimcore, starting with version 5, fully supports the Twig templating engine which is favored in many Symfony projects
+Pimcore fully supports the Twig templating engine which is favored in many Symfony projects
 and third party bundles. You can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/2.x/)

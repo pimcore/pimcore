@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -28,6 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SnippetController extends DocumentControllerBase
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -39,9 +41,7 @@ class SnippetController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
+            return $this->getEditLockResponse($request->get('id'), 'document');
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
@@ -89,7 +89,7 @@ class SnippetController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -103,67 +103,52 @@ class SnippetController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $snippet = Document\Snippet::getById($request->get('id'));
+        if ($request->get('id')) {
+            $snippet = Document\Snippet::getById($request->get('id'));
 
-                $snippetSession = $this->getFromSession($snippet);
+            $snippetSession = $this->getFromSession($snippet);
 
-                if ($snippetSession) {
-                    $snippet = $snippetSession;
-                } else {
-                    $snippet = $this->getLatestVersion($snippet);
-                }
-
-                $snippet->setUserModification($this->getAdminUser()->getId());
-
-                if ($request->get('task') == 'unpublish') {
-                    $snippet->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $snippet->setPublished(true);
-                }
-
-                if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
-                    $this->setValuesToDocument($request, $snippet);
-
-                    try {
-                        $snippet->save();
-                        $this->saveToSession($snippet);
-
-                        return $this->adminJson(['success' => true, 'data' => ['versionDate' => $snippet->getModificationDate(),
-                                                                               'versionCount' => $snippet->getVersionCount()]]);
-                    } catch (\Exception $e) {
-                        if ($e instanceof Element\ValidationException) {
-                            throw $e;
-                        }
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                } else {
-                    if ($snippet->isAllowed('save')) {
-                        $this->setValuesToDocument($request, $snippet);
-
-                        try {
-                            $snippet->saveVersion();
-                            $this->saveToSession($snippet);
-
-                            return $this->adminJson(['success' => true]);
-                        } catch (\Exception $e) {
-                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                        }
-                    }
-                }
+            if ($snippetSession) {
+                $snippet = $snippetSession;
+            } else {
+                $snippet = $this->getLatestVersion($snippet);
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+
+            $snippet->setUserModification($this->getAdminUser()->getId());
+
+            if ($request->get('task') == 'unpublish') {
+                $snippet->setPublished(false);
             }
-            throw $e;
+            if ($request->get('task') == 'publish') {
+                $snippet->setPublished(true);
+            }
+
+            if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
+                $this->setValuesToDocument($request, $snippet);
+
+                $snippet->save();
+                $this->saveToSession($snippet);
+
+                return $this->adminJson([
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $snippet->getModificationDate(),
+                        'versionCount' => $snippet->getVersionCount()
+                    ]
+                ]);
+            } elseif ($snippet->isAllowed('save')) {
+                $this->setValuesToDocument($request, $snippet);
+
+                $snippet->saveVersion();
+                $this->saveToSession($snippet);
+
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
+            }
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

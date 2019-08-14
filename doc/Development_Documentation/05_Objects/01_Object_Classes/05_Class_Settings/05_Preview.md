@@ -2,7 +2,7 @@
 
 **DEPRECATED FEATURE**  
 **Please use [link generators](./15_Link_Generator.md) instead, which are more powerful and flexibel and 
-offer the same functionality. Since 5.3.0 the preview tab is automatically displayed when a link generator is defined 
+offer the same functionality. The preview tab is automatically displayed when a link generator is defined 
 on the data object class.**
 
 

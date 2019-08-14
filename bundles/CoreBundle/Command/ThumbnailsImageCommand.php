@@ -114,8 +114,9 @@ class ThumbnailsImageCommand extends AbstractCommand
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
+            $images = $list->load();
 
-            foreach ($list as $image) {
+            foreach ($images as $image) {
                 if (!$image instanceof Asset\Image) {
                     continue;
                 }

@@ -56,6 +56,7 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
 
         this.sendingPanel = new pimcore.document.newsletters.sendingPanel(this);
         // this.reports = new pimcore.report.panel("document_snippet", this);
+        this.plaintextPanel = new pimcore.document.newsletters.plaintextPanel(this);
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
         this.workflows = new pimcore.element.workflows(this, "document");
@@ -67,6 +68,7 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
         var items = [];
 
         items.push(this.edit.getLayout());
+        items.push(this.plaintextPanel.getLayout());
         items.push(this.preview.getLayout());
         if (this.isAllowed("settings")) {
             items.push(this.settings.getLayout());
@@ -161,6 +163,14 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
                 //console.log(e3);
             }
 
+        }
+        
+        // plaintext
+        try {
+            parameters.plaintext = Ext.encode(this.plaintextPanel.getValues());
+        }
+        catch (e4) {
+            //console.log(e4);
         }
 
         // data

@@ -16,7 +16,7 @@ namespace Pimcore\Workflow\MarkingStore;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Workflow\Manager;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
@@ -36,7 +36,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     private $stateMapping;
 
     /**
-     * @var PropertyAccessor
+     * @var PropertyAccessorInterface
      */
     private $propertyAccessor;
 
@@ -45,7 +45,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      */
     private $workflowManager;
 
-    public function __construct(string $workflowName, array $places, array $stateMapping, PropertyAccessor $propertyAccessor, Manager $workflowManager)
+    public function __construct(string $workflowName, array $places, array $stateMapping, PropertyAccessorInterface $propertyAccessor, Manager $workflowManager)
     {
         $this->workflowName = $workflowName;
 
