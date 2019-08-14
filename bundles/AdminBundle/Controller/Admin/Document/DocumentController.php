@@ -242,7 +242,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     case 'page':
                         $document = Document\Page::create($request->get('parentId'), $createValues, false);
                         $document->setTitle($request->get('title', null));
-                        $document->setProperty('navigation_name', 'text', $request->get('name', null), false);
+                        $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
                         $success = true;
                         break;
