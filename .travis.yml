@@ -88,8 +88,6 @@ matrix:
     # Test Docs
     - os: linux
       php: 7.2
-      services: ~
-      addons: ~
       env:
         - TASK_TESTS=0
         - TASK_DOCS=1
