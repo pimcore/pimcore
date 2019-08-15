@@ -23,6 +23,7 @@ interface CartFactoryInterface
 {
     /**
      * @param EnvironmentInterface $environment
+     *
      * @return string
      */
     public function getCartClassName(EnvironmentInterface $environment): string;
@@ -32,6 +33,7 @@ interface CartFactoryInterface
      * @param string $name
      * @param string|null $id
      * @param array $options
+     *
      * @return CartInterface
      */
     public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface;

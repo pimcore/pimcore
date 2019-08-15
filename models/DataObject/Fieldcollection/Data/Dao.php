@@ -78,7 +78,6 @@ class Dao extends Model\Dao\AbstractDao
                         'owner' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     ]);
                 }
-
             }
         }
 
