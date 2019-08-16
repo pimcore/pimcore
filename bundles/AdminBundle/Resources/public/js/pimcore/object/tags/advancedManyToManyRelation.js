@@ -823,7 +823,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             allowedSubtypes.object = [];
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 allowedSpecific.classes = [];
-                allowedSubtypes.object.push("object");
+                allowedSubtypes.object.push("object", "variant");
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
 
