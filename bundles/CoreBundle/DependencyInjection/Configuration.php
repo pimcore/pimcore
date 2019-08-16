@@ -1450,7 +1450,7 @@ class Configuration implements ConfigurationInterface
                                                         ->booleanNode('versions')->info('versions permission as it can be configured in Pimcore workplaces')->end()
                                                         ->booleanNode('properties')->info('properties permission as it can be configured in Pimcore workplaces')->end()
                                                         ->booleanNode('modify')->info('a short hand for save, publish, unpublish, delete + rename')->end()
-                                                        ->integerNode('objectLayout')->info('if set, the user will see the configured custom data object layout')->end()
+                                                        ->scalarNode('objectLayout')->info('if set, the user will see the configured custom data object layout')->end()
                                                     ->end()
                                                 ->end()
                                             ->end()
