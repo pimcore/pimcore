@@ -554,7 +554,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
             return (string) $value;
         }
 
-        if (strpos((string) $value, '.') === false) {
+        if (strpos((string) $value, '.') === false && strpos((string) $value, ',') === false) {
             return (int) $value;
         }
 
