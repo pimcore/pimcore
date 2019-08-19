@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 6.2.0 
+- Support for links and folders as a fallback document, details see [#4860](https://github.com/pimcore/pimcore/pull/4860)
+
 ## 6.1.0 
 
 ### E-Commerce Framework Refactorings
