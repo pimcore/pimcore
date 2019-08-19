@@ -20,8 +20,8 @@ framework:
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id:  session.handler.native_file
-        save_path:   "%kernel.root_dir%/../var/sessions"
+        # use the native PHP session mechanism
+        handler_id:  null
     php_errors:
         log: true
 
