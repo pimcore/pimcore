@@ -189,7 +189,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         if ($this->getElementType() && $this->getElementId()) {
             $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
             if (!$element) {
-                Logger::error('element ' . $this->getElementType() . ' ' . $this->getElementId() . ' does not exist anymore');
+                Logger::info('element ' . $this->getElementType() . ' ' . $this->getElementId() . ' does not exist anymore');
             }
 
             return $element;

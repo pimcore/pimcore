@@ -171,7 +171,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if ($this->getObjectId()) {
             $object = DataObject\Concrete::getById($this->getObjectId());
             if (!$object) {
-                Logger::error('object ' . $this->getObjectId() . ' does not exist anymore');
+                Logger::info('object ' . $this->getObjectId() . ' does not exist anymore');
             }
 
             return $object;
