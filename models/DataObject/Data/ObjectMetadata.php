@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -170,7 +171,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if ($this->getObjectId()) {
             $object = DataObject\Concrete::getById($this->getObjectId());
             if (!$object) {
-                throw new \Exception('object ' . $this->getObjectId() . ' does not exist anymore');
+                Logger::info('object ' . $this->getObjectId() . ' does not exist anymore');
             }
 
             return $object;
