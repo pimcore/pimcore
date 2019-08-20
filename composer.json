@@ -154,7 +154,7 @@
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "6.2-dev"
+      "dev-master": "6.1-dev"
     }
   },
   "bin": ["bin/pimcore-install"]
