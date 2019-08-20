@@ -12,7 +12,7 @@ A typical use-case would be to render product objects within a document.
 | Name           | Type      | Description                                                                        | Mandatory   |
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
 | `action`       | string    | Specify action                                                                     | X           |
-| `className`    | string    | Specify class name (if type **object** chosen)                                     |             |
+| `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
 | `controller`   | string    | Specify controller                                                                 | X           |
 | `height`       | integer   | Height of the renderlet in pixel                                                   |             |
 | `bundle`       | string    | Specify bundle (default: `AppBundle`)                                              |             |
