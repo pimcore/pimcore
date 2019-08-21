@@ -469,6 +469,8 @@ swiftmailer:
     default_mailer: pimcore_mailer
 
 presta_sitemap:
+    # override default dump_directory from public to web
+    dump_directory: web
     # do not add properties by default
     defaults:
         lastmod: ~
