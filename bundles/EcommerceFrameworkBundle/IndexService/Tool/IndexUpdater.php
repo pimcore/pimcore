@@ -230,6 +230,7 @@ class IndexUpdater
     /**
      * @param $timeout
      * @param $startTime
+     *
      * @throws \Exception
      */
     private static function checkTimeout($timeout, $startTime): void
