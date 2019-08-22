@@ -26,7 +26,7 @@ Add `"heidelpay/heidelpay-php": "^1.2"` to your requirements.
 2) **Install object brick `PaymentProviderHeidelPay`**
 
 If not already installed, add the object brick `PaymentProviderHeidelPay` to your system. You can find the 
-definition [here](../../../../bundles/EcommerceFrameworkBundle/Resources/install/objectbrick_sources/objectbrick_PaymentProviderHeidelPay_export.json). 
+definition [here](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/install/objectbrick_sources/objectbrick_PaymentProviderHeidelPay_export.json). 
 
 3) **Setup payment provider in Pimcore E-Commerce Framework Configuration**
 
