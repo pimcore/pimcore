@@ -144,9 +144,6 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
         bodyPadding: "10px",
         autoClose: false,
         listeners: {
-            focusleave: function () {
-                this.close();
-            },
             afterrender: function () {
                 pimcore.notification.helper.markAsRead(id, callback);
             }
