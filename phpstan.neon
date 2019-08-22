@@ -52,3 +52,4 @@ parameters:
             message: '/__construct\(\) does not call parent constructor/'
             path: '**/Migrations/Version.php'
         - '/class heidelpayPHP\\(Heidelpay|Resources|Exceptions)/'
+        - '/Heidelpay::fetchPayment\(\) has invalid type heidelpayPHP/'
