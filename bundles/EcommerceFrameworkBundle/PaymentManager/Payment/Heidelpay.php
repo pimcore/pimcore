@@ -39,13 +39,12 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     /**
      * @var string
      */
-    private $accessKey;
+    protected $privateAccessKey;
 
     /**
      * @var string
      */
-    private $partial;
-
+    protected $publicAccessKey;
 
     /**
      * @var array
@@ -54,16 +53,29 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     public function __construct(array $options)
     {
-        if(empty($options['accessKey'])) {
-            throw new \InvalidArgumentException('no access key given');
+        if(empty($options['privateAccessKey'])) {
+            throw new \InvalidArgumentException('no private access key given');
         }
 
-        $this->accessKey = $options['accessKey'];
+        $this->privateAccessKey = $options['privateAccessKey'];
+
+        if(empty($options['publicAccessKey'])) {
+            throw new \InvalidArgumentException('no private access key given');
+        }
+
+        $this->publicAccessKey = $options['publicAccessKey'];
     }
 
     public function getName()
     {
         return 'HeidelPay';
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicAccessKey(): string {
+        return $this->publicAccessKey;
     }
 
     public function initPayment(PriceInterface $price, array $config)
@@ -92,7 +104,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
         $order = $orderAgent->getOrder();
 
-        $heidelpay = new \heidelpayPHP\Heidelpay($this->accessKey, \Pimcore::getKernel()->getContainer()->get(LocaleService::class)->getLocale());
+        $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey, \Pimcore::getKernel()->getContainer()->get(LocaleService::class)->getLocale());
 
         $billingAddress = (new Address())
                           ->setName($order->getCustomerLastname() . ' ' . $order->getCustomerLastname())
@@ -131,7 +143,14 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         $url = null;
         try {
 
-            $transaction = $heidelpay->charge(round($price->getAmount()->asNumeric(), 2), $price->getCurrency()->getShortName(), $config['paymentReference'], $config['returnUrl'], $customer, $this->transformInternalPaymentId($config['internalPaymentId']));
+            $transaction = $heidelpay->charge(
+                $price->getAmount()->asString(2),
+                $price->getCurrency()->getShortName(),
+                $config['paymentReference'],
+                $config['returnUrl'],
+                $customer,
+                $this->transformInternalPaymentId($config['internalPaymentId'])
+            );
 
             $transaction->getPaymentId();
 
@@ -315,7 +334,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
      */
     public function cancelCharge(OnlineShopOrder $order, PriceInterface $price)
     {
-        $heidelpay = new \heidelpayPHP\Heidelpay($this->accessKey);
+        $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
 
         /**
          * @var PaymentProviderHeidelPay $heidelpayBrick
@@ -336,7 +355,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
      */
     public function getMaxCancelAmount(OnlineShopOrder $order)
     {
-        $heidelpay = new \heidelpayPHP\Heidelpay($this->accessKey);
+        $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
 
         /**
          * @var PaymentProviderHeidelPay $heidelpayBrick
@@ -372,7 +391,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
             return null;
         }
 
-        $heidelpay = new \heidelpayPHP\Heidelpay($this->accessKey);
+        $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
 
         return $heidelpay->fetchPayment($paymentInfo->getPaymentReference());
     }
