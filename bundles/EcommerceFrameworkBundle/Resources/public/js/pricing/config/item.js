@@ -1077,7 +1077,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                     name: lang,
                     fieldLabel: t("error_message"),
                     width: 600,
-                    value: data.error_messages[ lang ]
+                    value: data.error_messages ? data.error_messages[ lang ] : ''
                 }]
             };
 
