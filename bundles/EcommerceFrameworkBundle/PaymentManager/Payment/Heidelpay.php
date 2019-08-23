@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Carbon\Carbon;
 use heidelpayPHP\Exceptions\HeidelpayApiException;
-use heidelpayPHP\Resources\EmbeddedResources\Address;
 use heidelpayPHP\Resources\Customer;
+use heidelpayPHP\Resources\EmbeddedResources\Address;
 use heidelpayPHP\Resources\Payment;
 use heidelpayPHP\Resources\TransactionTypes\Cancellation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -35,7 +35,6 @@ use Pimcore\Model\DataObject\OnlineShopOrder;
 
 class Heidelpay extends AbstractPayment implements PaymentInterface
 {
-
     /**
      * @var string
      */
@@ -53,13 +52,13 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     public function __construct(array $options)
     {
-        if(empty($options['privateAccessKey'])) {
+        if (empty($options['privateAccessKey'])) {
             throw new \InvalidArgumentException('no private access key given');
         }
 
         $this->privateAccessKey = $options['privateAccessKey'];
 
-        if(empty($options['publicAccessKey'])) {
+        if (empty($options['publicAccessKey'])) {
             throw new \InvalidArgumentException('no private access key given');
         }
 
@@ -74,7 +73,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     /**
      * @return string
      */
-    public function getPublicAccessKey(): string {
+    public function getPublicAccessKey(): string
+    {
         return $this->publicAccessKey;
     }
 
@@ -85,20 +85,19 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface
     {
-
-        if(empty($config['paymentReference'])) {
+        if (empty($config['paymentReference'])) {
             throw new \InvalidArgumentException('no paymentReference sent');
         }
 
-        if(empty($config['internalPaymentId'])) {
+        if (empty($config['internalPaymentId'])) {
             throw new \InvalidArgumentException('no internalPaymentId sent');
         }
 
-        if(empty($config['returnUrl'])) {
+        if (empty($config['returnUrl'])) {
             throw new \InvalidArgumentException('no return sent');
         }
 
-        if(empty($config['errorUrl'])) {
+        if (empty($config['errorUrl'])) {
             throw new \InvalidArgumentException('no errorUrl sent');
         }
 
@@ -114,7 +113,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                           ->setCountry($order->getCustomerCountry());
 
         // check if alternative shipping address is available
-        if($order->getDeliveryLastname()) {
+        if ($order->getDeliveryLastname()) {
             $shippingAddress = (new Address())
                 ->setName($order->getDeliveryFirstname() . ' ' . $order->getDeliveryLastname())
                 ->setStreet($order->getDeliveryStreet())
@@ -131,18 +130,17 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                     ->setShippingAddress($shippingAddress);
 
         // a customerBirthdate attribute is needed if invoice should be used as payment method
-        if(method_exists($order, 'getCustomerBirthdate')) {
+        if (method_exists($order, 'getCustomerBirthdate')) {
             /**
              * @var Carbon $birthdate
              */
             if ($birthdate = $order->getCustomerBirthdate()) {
-               $customer->setBirthDate($birthdate->format('Y-m-d'));
+                $customer->setBirthDate($birthdate->format('Y-m-d'));
             }
         }
 
         $url = null;
         try {
-
             $transaction = $heidelpay->charge(
                 $price->getAmount()->asString(2),
                 $price->getCurrency()->getShortName(),
@@ -172,16 +170,16 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
             if (empty($transaction->getRedirectUrl()) && $transaction->isSuccess()) {
                 $url = $config['returnUrl'];
-            } elseif($transaction->isSuccess()) {
+            } elseif ($transaction->isSuccess()) {
                 $url = $transaction->getRedirectUrl();
             } elseif (!empty($transaction->getRedirectUrl()) && $transaction->isPending()) {
                 $url = $transaction->getRedirectUrl();
             } else {
                 $url = $config['returnUrl'];
             }
-        } catch(HeidelpayApiException $exception) {
+        } catch (HeidelpayApiException $exception) {
             $url = $this->generateErrorUrl($config['errorUrl'], $exception->getMerchantMessage(), $exception->getClientMessage());
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             $url = $this->generateErrorUrl($config['errorUrl'], $exception->getMessage());
         }
 
@@ -190,12 +188,13 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     protected function transformInternalPaymentId($internalPaymentId)
     {
-        return str_replace('~','---', $internalPaymentId);
+        return str_replace('~', '---', $internalPaymentId);
     }
 
     protected function generateErrorUrl($errorUrl, $merchantMessage, $clientMessage = '')
     {
         $errorUrl .= strpos($errorUrl, '?') === false ? '?' : '&';
+
         return $errorUrl . 'merchantMessage=' . urlencode($merchantMessage) . '&clientMessage=' . urlencode($clientMessage);
     }
 
@@ -213,14 +212,11 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
             $paymentInfo = $orderAgent->getCurrentPendingPaymentInfo();
             $payment = $this->fetchPayment($order);
 
-            if(!$paymentInfo) {
+            if (!$paymentInfo) {
                 return new Status('', '', 'not found', '');
             }
 
-
-
-            if($payment->isCompleted()) {
-
+            if ($payment->isCompleted()) {
                 $this->setAuthorizedData([
                         'amount' => $payment->getAmount()->getCharged(),
                         'currency' => $payment->getCurrency(),
@@ -245,7 +241,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_paymentMethod' => get_class($payment->getPaymentType())
                     ]
                 );
-            } else if($payment->isPending()) {
+            } elseif ($payment->isPending()) {
                 return new Status(
                     $paymentInfo->getInternalPaymentId(),
                     $payment->getId(),
@@ -264,12 +260,10 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
             // Check the result message of the transaction to find out what went wrong.
             $transaction = $payment->getChargeByIndex(0);
             $merchantMessage = $transaction->getMessage()->getCustomer();
-
-
-        } catch(HeidelpayApiException $e) {
+        } catch (HeidelpayApiException $e) {
             $clientMessage = $e->getClientMessage();
             $merchantMessage = $e->getMerchantMessage();
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             $merchantMessage = $e->getMessage();
         }
 
@@ -329,7 +323,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     /**
      * @param OnlineShopOrder $order
      * @param PriceInterface $price
+     *
      * @return bool
+     *
      * @throws HeidelpayApiException
      */
     public function cancelCharge(OnlineShopOrder $order, PriceInterface $price)
@@ -339,7 +335,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         /**
          * @var PaymentProviderHeidelPay $heidelpayBrick
          */
-        if($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
             $result = $heidelpay->cancelChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId(), $price->getAmount()->asNumeric());
 
             return $result->isSuccess();
@@ -350,7 +346,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     /**
      * @param OnlineShopOrder $order
+     *
      * @return float
+     *
      * @throws HeidelpayApiException
      */
     public function getMaxCancelAmount(OnlineShopOrder $order)
@@ -360,14 +358,14 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         /**
          * @var PaymentProviderHeidelPay $heidelpayBrick
          */
-        if($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
             $charge = $heidelpay->fetchChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId());
             $totalAmount = $charge->getAmount();
 
             /**
              * @var Cancellation $cancellation
              */
-            foreach($charge->getCancellations() as $cancellation) {
+            foreach ($charge->getCancellations() as $cancellation) {
                 $totalAmount -= $cancellation->getAmount();
             }
 
@@ -379,7 +377,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     /**
      * @param OnlineShopOrder $order
+     *
      * @return Payment
+     *
      * @throws HeidelpayApiException
      */
     public function fetchPayment(OnlineShopOrder $order): ?Payment
@@ -387,7 +387,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent($order);
         $paymentInfo = $orderAgent->getCurrentPendingPaymentInfo();
 
-        if(!$paymentInfo) {
+        if (!$paymentInfo) {
             return null;
         }
 
@@ -395,5 +395,4 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
         return $heidelpay->fetchPayment($paymentInfo->getPaymentReference());
     }
-
 }

@@ -14,10 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest;
 
-
 class HeidelpayRequest extends AbstractRequest
 {
-
     protected $paymentReference;
     protected $internalPaymentId;
     protected $returnUrl;
@@ -86,6 +84,4 @@ class HeidelpayRequest extends AbstractRequest
     {
         $this->errorUrl = $errorUrl;
     }
-
-
 }
