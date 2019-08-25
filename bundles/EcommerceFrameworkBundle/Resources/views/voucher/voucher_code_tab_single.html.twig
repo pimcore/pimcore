@@ -84,7 +84,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% if paginator %}
+                                    {% if paginator is defined %}
                                         {% for code in paginator %}
                                             <tr>
                                                 <td class="token">{{ code['token'] }}</td>
