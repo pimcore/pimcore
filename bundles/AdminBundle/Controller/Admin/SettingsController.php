@@ -594,7 +594,7 @@ class SettingsController extends AdminController
         $this->forward(self::class . '::clearCacheAction', [
             'only_symfony_cache' => false,
             'only_pimcore_cache' => false,
-            'env' => array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()])
+            'env' => array_unique(['dev', \Pimcore::getKernel()->getEnvironment()])
         ]);
 
         return $this->adminJson(['success' => true]);
