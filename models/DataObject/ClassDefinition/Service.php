@@ -149,7 +149,12 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        $fieldCollection->setParentClass($importData['parentClass']);
+        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $fieldCollection->{'set' . $importPropertyName}($importData[$importPropertyName]);
+            }
+        }
+
         $fieldCollection->save();
 
         return true;
