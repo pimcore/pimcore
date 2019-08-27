@@ -106,9 +106,4 @@ class DocumentTagExtension extends AbstractExtension
             yield $block->getCurrentIndex();
         }
     }
-
-    private function autoCompleteStubs() {
-
-
-    }
 }
