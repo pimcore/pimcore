@@ -159,7 +159,9 @@ class PublicServicesController extends Controller
             $content = "User-agent: *\nDisallow:";
         }
 
-        return new Response($content, 200);
+        return new Response($content, Response::HTTP_OK, [
+            'Content-Type' => 'text/plain'
+        ]);
     }
 
     /**
