@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -68,7 +68,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $modificatorConfig = [];
 
     /**
-     * @var ICartPriceModificator[]
+     * @var CartPriceModificatorInterface[]
      */
     protected $modificators = [];
 
@@ -115,9 +115,9 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         }
     }
 
-    protected function buildModificator(array $config): ICartPriceModificator
+    protected function buildModificator(array $config): CartPriceModificatorInterface
     {
-        /** @var ICartPriceModificator $modificator */
+        /** @var CartPriceModificatorInterface $modificator */
         $modificator = null;
 
         $className = $config['class'];
@@ -226,7 +226,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
 
         $this->modifications = [];
         foreach ($this->getModificators() as $modificator) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator $modificator */
+            /* @var CartPriceModificatorInterface $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if ($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
@@ -351,11 +351,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return CartPriceCalculatorInterface
      */
-    public function addModificator(ICartPriceModificator $modificator)
+    public function addModificator(CartPriceModificatorInterface $modificator)
     {
         $this->reset();
         $this->modificators[] = $modificator;
@@ -364,7 +364,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
-     * @return ICartPriceModificator[]
+     * @return CartPriceModificatorInterface[]
      */
     public function getModificators(): array
     {
@@ -372,11 +372,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return CartPriceCalculatorInterface
      */
-    public function removeModificator(ICartPriceModificator $modificator)
+    public function removeModificator(CartPriceModificatorInterface $modificator)
     {
         foreach ($this->modificators as $key => $mod) {
             if ($mod === $modificator) {

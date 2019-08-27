@@ -14,24 +14,18 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\IShipping is deprecated since version 6.0.0 and will be removed in 7.0.0. Use ' . ShippingInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface IShipping
- *
- * special interface for shipping price modifications - needed for pricing rule that remove shipping costs
- */
-interface IShipping extends ICartPriceModificator
-{
-    /**
-     * @param Decimal $charge
-     *
-     * @return ICartPriceModificator
-     */
-    public function setCharge(Decimal $charge);
+class_exists(ShippingInterface::class);
 
+if (false) {
     /**
-     * @return Decimal
+     * @deprecated use DiscountInterface instead.
      */
-    public function getCharge(): Decimal;
+    interface IShipping
+    {
+    }
 }
