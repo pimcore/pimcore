@@ -1622,9 +1622,7 @@ class Asset extends Element\AbstractElement
     {
         $this->metadata = $metadata;
 
-        if (!empty($metadata)) {
-            $this->setHasMetaData(true);
-        }
+        $this->setHasMetaData(!empty($metadata));
 
         return $this;
     }
