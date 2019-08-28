@@ -87,6 +87,19 @@ class TemplatingHelperExtension extends AbstractExtension
         }
 
         return $functions;
+
+
+        // those are just for auto-complete, not nice, but works ;-)
+        new TwigFunction('pimcore_head_link');
+        new TwigFunction('pimcore_head_meta');
+        new TwigFunction('pimcore_head_script');
+        new TwigFunction('pimcore_head_style');
+        new TwigFunction('pimcore_head_title');
+        new TwigFunction('pimcore_inline_script');
+        new TwigFunction('pimcore_placeholder');
+        new TwigFunction('pimcore_cache');
+        new TwigFunction('pimcore_device');
+        new TwigFunction('pimcore_url');
     }
 
     /**
