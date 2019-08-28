@@ -375,12 +375,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = $this->getLatestVersion($objectFromDatabase);
 
         // check for lock
-        $allowedToModify = $object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete');
-        if ($allowedToModify && Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->getEditLockResponse($request->get('id'), 'object');
-        }
+        if($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'object')) {
+                return $this->getEditLockResponse($request->get('id'), 'object');
+            }
 
-        if($allowedToModify) {
             Element\Editlock::lock($request->get('id'), 'object');
         }
 
@@ -634,7 +633,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
-                 && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
+                && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
             ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
