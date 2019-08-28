@@ -376,7 +376,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         // check for lock
         $allowedToModify = $object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete');
-        if (Element\Editlock::isLocked($request->get('id'), 'object') && $allowedToModify) {
+        if ($allowedToModify && Element\Editlock::isLocked($request->get('id'), 'object')) {
             return $this->getEditLockResponse($request->get('id'), 'object');
         }
 
