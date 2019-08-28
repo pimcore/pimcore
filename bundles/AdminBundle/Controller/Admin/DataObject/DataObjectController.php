@@ -365,13 +365,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->getEditLockResponse($request->get('id'), 'object');
-        }
-        Element\Editlock::lock($request->get('id'), 'object');
-
-        $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        $objectFromDatabase = DataObject::getById((int)$request->get('id'));
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -379,9 +373,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         // set the latest available version for editmode
         $latestObject = $this->getLatestVersion($objectFromDatabase);
+        $object = $latestObject;
+
+        // check for lock
+        if (Element\Editlock::isLocked($request->get('id'), 'object') && ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete'))) {
+            return $this->getEditLockResponse($request->get('id'), 'object');
+        }
+        Element\Editlock::lock($request->get('id'), 'object');
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
-        $objectFromVersion = $latestObject === $objectFromDatabase ? false : true;
+        $objectFromVersion = $latestObject !== $objectFromDatabase;
         $object = $latestObject;
 
         if ($object->isAllowed('view')) {
