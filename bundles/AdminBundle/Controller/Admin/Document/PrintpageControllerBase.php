@@ -41,13 +41,16 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        // check for lock
-        if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->getEditLockResponse($request->get('id'), 'document');
-        }
-        \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
-
         $page = Document\PrintAbstract::getById($request->get('id'));
+
+        // check for lock
+        if($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
+            if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $page = $this->getLatestVersion($page);
 
         $page->getVersions();

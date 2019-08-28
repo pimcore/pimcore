@@ -39,13 +39,16 @@ class FolderController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->getEditLockResponse($request->get('id'), 'document');
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
         $folder = Document\Folder::getById($request->get('id'));
+
+        // check for lock
+        if($folder->isAllowed('save') || $folder->isAllowed('publish') || $folder->isAllowed('unpublish') || $folder->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $folder = clone $folder;
 
         $folder->idPath = Element\Service::getIdPath($folder);

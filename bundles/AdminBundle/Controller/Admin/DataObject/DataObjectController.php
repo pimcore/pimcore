@@ -365,24 +365,26 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'object')) {
-            return $this->getEditLockResponse($request->get('id'), 'object');
-        }
-        Element\Editlock::lock($request->get('id'), 'object');
-
-        $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        $objectFromDatabase = DataObject::getById((int)$request->get('id'));
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $latestObject = $this->getLatestVersion($objectFromDatabase);
+        $object = $this->getLatestVersion($objectFromDatabase);
+
+        // check for lock
+        if($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'object')) {
+                return $this->getEditLockResponse($request->get('id'), 'object');
+            }
+
+            Element\Editlock::lock($request->get('id'), 'object');
+        }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
-        $objectFromVersion = $latestObject === $objectFromDatabase ? false : true;
-        $object = $latestObject;
+        $objectFromVersion = $object !== $objectFromDatabase;
 
         if ($object->isAllowed('view')) {
             $objectData = [];
@@ -631,7 +633,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
-                 && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
+                && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
             ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {

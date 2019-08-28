@@ -59,16 +59,18 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'asset')) {
-            return $this->getEditLockResponse($request->get('id'), 'asset');
-        }
-        Element\Editlock::lock($request->get('id'), 'asset');
-
-        $asset = Asset::getById(intval($request->get('id')));
+        $asset = Asset::getById((int)$request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        // check for lock
+        if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
+            if(Element\Editlock::isLocked($request->get('id'), 'asset')) {
+                return $this->getEditLockResponse($request->get('id'), 'asset');
+            }
+
+            Element\Editlock::lock($request->get('id'), 'asset');
         }
 
         $asset = clone $asset;

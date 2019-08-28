@@ -42,16 +42,20 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
+        $page = Document\Page::getById($request->get('id'));
+
         // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->getEditLockResponse($request->get('id'), 'document');
+        if($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
         }
-        Element\Editlock::lock($request->get('id'), 'document');
 
         /**
          * @var $page Document\Page
          */
-        $page = Document\Page::getById($request->get('id'));
+
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 

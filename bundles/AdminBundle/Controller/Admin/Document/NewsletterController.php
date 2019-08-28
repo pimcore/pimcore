@@ -50,14 +50,17 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->getEditLockResponse($request->get('id'), 'document');
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
         /** @var Document\Newsletter $email */
         $email = Document\Newsletter::getById($request->get('id'));
+
+        // check for lock
+        if($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $email = clone $email;
         $email = $this->getLatestVersion($email);
 
