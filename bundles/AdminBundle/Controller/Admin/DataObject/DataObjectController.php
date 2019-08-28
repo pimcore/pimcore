@@ -372,8 +372,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $latestObject = $this->getLatestVersion($objectFromDatabase);
-        $object = $latestObject;
+        $object = $this->getLatestVersion($objectFromDatabase);
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object') && ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete'))) {
@@ -382,8 +381,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         Element\Editlock::lock($request->get('id'), 'object');
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
-        $objectFromVersion = $latestObject !== $objectFromDatabase;
-        $object = $latestObject;
+        $objectFromVersion = $object !== $objectFromDatabase;
 
         if ($object->isAllowed('view')) {
             $objectData = [];
