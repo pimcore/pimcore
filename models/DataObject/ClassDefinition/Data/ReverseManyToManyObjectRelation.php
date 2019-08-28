@@ -385,15 +385,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             return $newRelation->getId();
         }, (array)$data);
 
-        foreach($newRelationIds as $newRelationId) {
-            $db->insert('dependencies', [
-                'sourceid' => $newRelationId,
-                'sourcetype' => 'object',
-                'targetid' => $object->getId(),
-                'targettype' => 'object'
-            ]);
-        }
-
         $deletedRelationIds = array_diff($deletedRelationIds, $newRelationIds);
 
         foreach($deletedRelationIds as $deletedRelationId) {
@@ -413,7 +404,10 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
             $db->deleteWhere('dependencies', 'sourceid='.$db->quote($deletedRelationId).' AND sourcetype=\'object\' AND targetid='.$db->quote($object->getId()).' AND targettype=\'object\'');
 
-            Cache::remove('object_' . $deletedRelation->getId());
+            $latestVersion = $deletedRelation->getLatestVersion();
+            if(!$latestVersion || $deletedRelation->getVersionCount() === $latestVersion->getVersionCount()) {
+                DataObject\AbstractObject::clearDependentCacheByObjectId($deletedRelation->getId());
+            }
         }
 
         $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
@@ -433,8 +427,17 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     if(!in_array($reverseObject->getId(), $oldRelations)) {
                         $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
                         $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
+                        $db->insert('dependencies', [
+                            'sourceid' => $reverseObject->getId(),
+                            'sourcetype' => 'object',
+                            'targetid' => $object->getId(),
+                            'targettype' => 'object'
+                        ]);
 
-                        Cache::remove('object_' . $reverseObject->getId());
+                        $latestVersion = $reverseObject->getLatestVersion();
+                        if(!$latestVersion || $reverseObject->getVersionCount() === $latestVersion->getVersionCount()) {
+                            DataObject\AbstractObject::clearDependentCacheByObjectId($reverseObject->getId());
+                        }
                     }
                 }
                 $counter++;
