@@ -54,7 +54,7 @@ class NewsletterController extends DocumentControllerBase
         $email = Document\Newsletter::getById($request->get('id'));
 
         // check for lock
-        if($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
+        if ($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }

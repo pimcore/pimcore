@@ -88,7 +88,6 @@ class TemplatingHelperExtension extends AbstractExtension
 
         return $functions;
 
-
         // those are just for auto-complete, not nice, but works ;-)
         new TwigFunction('pimcore_head_link');
         new TwigFunction('pimcore_head_meta');

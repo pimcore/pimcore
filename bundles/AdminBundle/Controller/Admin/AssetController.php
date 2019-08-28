@@ -66,7 +66,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         // check for lock
         if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
-            if(Element\Editlock::isLocked($request->get('id'), 'asset')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'asset')) {
                 return $this->getEditLockResponse($request->get('id'), 'asset');
             }
 

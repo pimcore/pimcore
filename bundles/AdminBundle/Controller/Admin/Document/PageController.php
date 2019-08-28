@@ -45,7 +45,7 @@ class PageController extends DocumentControllerBase
         $page = Document\Page::getById($request->get('id'));
 
         // check for lock
-        if($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
+        if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }
@@ -55,7 +55,6 @@ class PageController extends DocumentControllerBase
         /**
          * @var $page Document\Page
          */
-
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
