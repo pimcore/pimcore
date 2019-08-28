@@ -25,6 +25,10 @@ Pimcore as well, Pimcore will warn you that you are about to modify an object th
 object is already open in the UI, it will have to be reloaded, before the new relation established by a remote object, 
 becomes visible.
 
+## Limitations
+
+Reverse Many-to-Many object relation fields are currently only available in data object classes, not in bricks, field definitions, localized fields, classification store.
+
 
 ## Working with PHP API
 Reverse Many-To-Many Object Relation are a pure Pimcore admin feature, they don't play any role in scripting or services.
