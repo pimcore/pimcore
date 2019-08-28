@@ -343,17 +343,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForSearchIndex($object, $params = [])
-    {
-        return '';
-    }
-
-    /**
      * @inheritdoc
      */
     public function appendData($existingData, $additionalData)
