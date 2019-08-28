@@ -299,7 +299,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, function ($a, $b) {
+        usort($relations, static function ($a, $b) {
             if ($a['index'] == $b['index']) {
                 return 0;
             }
@@ -384,6 +384,16 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
             return $newRelation->getId();
         }, (array)$data);
+
+        foreach($newRelationIds as $newRelationId) {
+            $db->insert('dependencies', [
+                'sourceid' => $newRelationId,
+                'sourcetype' => 'object',
+                'targetid' => $object->getId(),
+                'targettype' => 'object'
+            ]);
+        }
+
         $deletedRelationIds = array_diff($deletedRelationIds, $newRelationIds);
 
         foreach($deletedRelationIds as $deletedRelationId) {
@@ -400,6 +410,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
             $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
             $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $deletedRelation->getId()]);
+
+            $db->deleteWhere('dependencies', 'sourceid='.$db->quote($deletedRelationId).' AND sourcetype=\'object\' AND targetid='.$db->quote($object->getId()).' AND targettype=\'object\'');
 
             Cache::remove('object_' . $deletedRelation->getId());
         }
