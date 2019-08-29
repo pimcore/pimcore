@@ -115,7 +115,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 menu: [{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",
-                    handler: this.unpublishClose.bind(this)
+                    handler: this.save.bind(this)
                 }]
             });
 
