@@ -59,10 +59,11 @@ see [Working with PHP API](./09_Working_with_PHP_API.md).
 
 
 ## User Notifications
-Email notifications can be configured to be sent to users when an transition takes place. To do this simply specify an 
-array of user(s) or role(s) that you would like to be notified in options section of the transition definition. 
+Notifications (via email or Pimcore notifications) can be configured to be sent to users when an transition takes place. 
+To do this simply specify an array of user(s) or role(s) that you would like to be notified in options section of the 
+transition definition. 
 
-Roles will send an email to every user with that role.
+Roles will send an notification to every user with that role.
 
 ```yml
 ...
@@ -79,6 +80,11 @@ Roles will send an email to every user with that role.
                       
                       # Send a email notification to a list of user roles (role names) when the transition get's applied
                       notifyRoles: ['projectmanagers', 'admins']
+                      
+                      # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
+                      channelType:
+                         - mail
+                         - pimcoreNotification
                       
                       # Type of mail source. 
                       mailType: 'template' # this is the default value, One of "template"; "pimcore_document"

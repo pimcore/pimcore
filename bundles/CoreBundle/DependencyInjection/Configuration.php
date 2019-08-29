@@ -1604,6 +1604,7 @@ class Configuration implements ConfigurationInterface
                                                                         ->cannotBeEmpty()
                                                                         ->defaultValue(NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL)
                                                                     ->end()
+                                                                    ->info('Define which channel notification should be sent to, possible values "' . NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL . '" and "' . NotificationSubscriber::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION . '", default value is "' . NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL . '".')
                                                                     ->addDefaultChildrenIfNoneSet()
                                                                 ->end()
                                                                 ->enumNode('mailType')
