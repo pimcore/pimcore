@@ -40,7 +40,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     protected $mailService;
 
     /**
-     * @var Workflow\NotificationEmail\PimcoreNotificationService
+     * @var Workflow\Notification\PimcoreNotificationService
      */
     protected $pimcoreNotificationService;
 
@@ -66,12 +66,12 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     /**
      * @param NotificationEmailService $mailService
-     * @param Workflow\NotificationEmail\PimcoreNotificationService $pimcoreNotificationService
+     * @param Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService
      * @param TranslatorInterface $translator
      * @param Workflow\ExpressionService $expressionService
      * @param Workflow\Manager $workflowManager
      */
-    public function __construct(NotificationEmailService $mailService, Workflow\NotificationEmail\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
+    public function __construct(NotificationEmailService $mailService, Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
     {
         $this->mailService = $mailService;
         $this->pimcoreNotificationService = $pimcoreNotificationService;
