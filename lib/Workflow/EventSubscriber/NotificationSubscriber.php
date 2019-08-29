@@ -18,59 +18,68 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
-use Pimcore\Workflow\NotificationEmail\NotificationEmailService;
+use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NotificationEmailSubscriber implements EventSubscriberInterface
+class NotificationSubscriber implements EventSubscriberInterface
 {
     const MAIL_TYPE_TEMPLATE = 'template';
     const MAIL_TYPE_DOCUMENT = 'pimcore_document';
 
+    const NOTIFICATION_CHANNEL_MAIL = 'mail';
+    const NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION = 'pimcore_notification';
+
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';
 
     /**
-     * @var TranslatorInterface
+     * @var NotificationEmailService
      */
-    private $mailService;
+    protected $mailService;
+
+    /**
+     * @var Workflow\NotificationEmail\PimcoreNotificationService
+     */
+    protected $pimcoreNotificationService;
 
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     /**
      * @var bool
      */
-    private $enabled = true;
+    protected $enabled = true;
 
     /**
      * @var Workflow\ExpressionService
      */
-    private $expressionService;
+    protected $expressionService;
 
     /**
      * @var Workflow\Manager
      */
-    private $workflowManager;
+    protected $workflowManager;
 
     /**
-     * NotificationEmailSubscriber constructor.
-     *
      * @param NotificationEmailService $mailService
+     * @param Workflow\NotificationEmail\PimcoreNotificationService $pimcoreNotificationService
      * @param TranslatorInterface $translator
      * @param Workflow\ExpressionService $expressionService
-     * @param Workflow\Manager $manager
+     * @param Workflow\Manager $workflowManager
      */
-    public function __construct(NotificationEmailService $mailService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $manager)
+    public function __construct(NotificationEmailService $mailService, Workflow\NotificationEmail\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
     {
         $this->mailService = $mailService;
+        $this->pimcoreNotificationService = $pimcoreNotificationService;
         $this->translator = $translator;
         $this->expressionService = $expressionService;
-        $this->workflowManager = $manager;
+        $this->workflowManager = $workflowManager;
     }
+
 
     /**
      * @param Event $event
@@ -99,7 +108,14 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
 
-                $this->handleNotifyPostWorkflow($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
+                if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
+                    $this->handleNotifyPostWorkflowEmail($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
+                }
+
+                if (in_array(self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION, $notificationSetting['channelType'])) {
+                    $this->handleNotifyPostWorkflowPimcoreNotification($transition, $workflow, $subject, $notifyUsers, $notifyRoles);
+                }
+
             }
         }
     }
@@ -111,7 +127,7 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
      * @param string $mailType
      * @param string $mailPath
      */
-    private function handleNotifyPostWorkflow(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
+    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
     {
         //notify users
         $subjectType = (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject));
@@ -128,6 +144,20 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
         );
     }
 
+    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, array $notifyUsers, array $notifyRoles)
+    {
+        $subjectType = (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject));
+        $this->pimcoreNotificationService->sendPimcoreNotification(
+            $notifyUsers,
+            $notifyRoles,
+            $workflow, 
+            $subjectType, 
+            $subject, 
+            $transition->getLabel()
+        );
+        
+    }
+    
     /**
      * check's if the event subscriber should be executed
      *

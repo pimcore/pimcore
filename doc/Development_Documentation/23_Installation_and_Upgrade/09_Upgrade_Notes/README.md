@@ -3,6 +3,12 @@
 ## 6.2.0 
 - Support for links and folders as a fallback document, details see [#4860](https://github.com/pimcore/pimcore/pull/4860)
 
+### Workflow Refactorings
+- Notifications for workflows now support Pimcore notifications. Due to that, some namespaces
+  were renamed. If you don't have overwritten any of the internal classes, no action is needed. 
+   - `Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber` became `Pimcore\Workflow\EventSubscriber\NotificationSubscriber`  
+   - `Pimcore\Workflow\NotificationEmail\NotificationEmailInterface` became `Pimcore\Workflow\NotificationEmail\NotificationInterface` 
+
 
 ## 6.1.2
 - Sessions: the native PHP session mechanism is now the default (instead of `session.handler.native_file`). 

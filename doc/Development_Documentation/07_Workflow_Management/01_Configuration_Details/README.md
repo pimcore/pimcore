@@ -238,6 +238,13 @@ pimcore:
                                 # Send a email notification to a list of user roles (role names) when the transition get's applied
                                 notifyRoles:          []
 
+                                # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
+                                channelType:
+
+                                    # Default:
+                                    - mail
+
+
                                 # Type of mail source.
                                 mailType:             template # One of "template"; "pimcore_document"
 

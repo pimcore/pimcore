@@ -12,20 +12,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Workflow\NotificationEmail;
+namespace Pimcore\Workflow\Notification;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\User;
 use Pimcore\Tool;
-use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
+use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NotificationEmailService
+class NotificationEmailService extends AbstractNotificationService
 {
     const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
@@ -86,7 +85,7 @@ class NotificationEmailService
                 $localizedMailPath = str_replace(self::MAIL_PATH_LANGUAGE_PLACEHOLDER, $language, $mailPath);
 
                 switch ($mailType) {
-                    case NotificationEmailSubscriber::MAIL_TYPE_TEMPLATE:
+                    case NotificationSubscriber::MAIL_TYPE_TEMPLATE:
 
                         $this->sendTemplateMail(
                             $recipientsPerLanguage,
@@ -101,7 +100,7 @@ class NotificationEmailService
 
                         break;
 
-                    case NotificationEmailSubscriber::MAIL_TYPE_DOCUMENT:
+                    case NotificationSubscriber::MAIL_TYPE_DOCUMENT:
 
                         $this->sendPimcoreDocumentMail(
                             $recipientsPerLanguage,
@@ -177,53 +176,6 @@ class NotificationEmailService
     }
 
     /**
-     * Returns a list of distinct users given an user- and role array containing their respective names
-     *
-     * @param $users
-     * @param $roles
-     *
-     * @return User[][]
-     */
-    protected function getNotificationUsersByName($users, $roles): array
-    {
-        $notifyUsers = [];
-
-        //get roles
-        $roleList = new User\Role\Listing();
-        $roleList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $roles)]);
-
-        foreach ($roleList->load() as $role) {
-            $userList = new User\Listing();
-            $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
-
-            foreach ($userList->load() as $user) {
-                if ($user->getEmail()) {
-                    $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
-                }
-            }
-        }
-
-        //get users
-        $userList = new User\Listing();
-        $userList->setCondition('FIND_IN_SET(name, ?) and email is not null', [implode(',', $users)]);
-
-        foreach ($userList->load() as $user) {
-            /**
-             * @var User $user
-             */
-            if ($user->getEmail()) {
-                $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
-            }
-        }
-
-        foreach ($notifyUsers as $language => $usersPerLanguage) {
-            $notifyUsers[$language] = array_values($notifyUsers[$language]);
-        }
-
-        return $notifyUsers;
-    }
-
-    /**
      * @param string $subjectType
      * @param AbstractElement $subject
      * @param Workflow $workflow
@@ -281,23 +233,5 @@ class NotificationEmailService
             'translator' => $this->translator,
             'lang' => $language
         ];
-    }
-
-    protected function getNoteInfo($id): string
-    {
-        $noteList = new Element\Note\Listing();
-        $noteList->addConditionParam('(cid = ?)', [$id]);
-        $noteList->setOrderKey('date');
-        $noteList->setOrder('desc');
-        $noteList->setLimit(1);
-
-        $notes = $noteList->load();
-
-        if (count($notes) == 1) {
-            // found matching note
-            return $notes[0]->getDescription();
-        }
-
-        return '';
     }
 }
