@@ -361,7 +361,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.save.bind(this, "unpublish"),
+                handler: this.save.bind(this, "version"),
                 menu: [{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",

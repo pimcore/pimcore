@@ -2,6 +2,9 @@
 
 ## 6.2.0 
 - Support for links and folders as a fallback document, details see [#4860](https://github.com/pimcore/pimcore/pull/4860)
+- Documents & DataObjects: save button (visible when user has no publish permission) does not unpublish element anymore (if user has unpublish permission). 
+  Details see [#4905](https://github.com/pimcore/pimcore/issues/4905)
+
 
 ### Workflow Refactorings
 - Notifications for workflows now support Pimcore notifications. Due to that, some namespaces
