@@ -94,7 +94,7 @@ To customize the e-mail template, following options are available:
 - Overwrite the template `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig` or configure your own 
   template path in settings. Default parameters available in the template are `subjectType`, `subject`, `action`, `workflow`, 
   `workflowName`, `deeplink`, `note_description`, `translator`, `lang`. If additional parameters are required, overwrite 
-  the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
+  the service `Pimcore\Workflow\Notification\NotificationEmailService`.
 
 - Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, 
   etc. In the mail document same parameters as above are available.    

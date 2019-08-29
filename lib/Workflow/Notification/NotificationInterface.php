@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Workflow\NotificationEmail;
+namespace Pimcore\Workflow\Notification;
 
-interface NotificationEmailInterface
+interface NotificationInterface
 {
     public function getNotificationSettings(): array;
 }

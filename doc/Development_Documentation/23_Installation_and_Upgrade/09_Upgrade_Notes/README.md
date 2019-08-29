@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## 6.2.0 
+
+### Workflow Refactorings
+- Notifications for workflows now support Pimcore notifications. Due to that, some namespaces
+  were renamed. If you don't have overwritten any of the internal classes, no action is needed. 
+   - `Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber` became `Pimcore\Workflow\EventSubscriber\NotificationSubscriber`  
+   - `Pimcore\Workflow\NotificationEmail\NotificationEmailInterface` became `Pimcore\Workflow\NotificationEmail\NotificationInterface` 
+
+
 ## 6.1.2
 - Sessions: the native PHP session mechanism is now the default (instead of `session.handler.native_file`). 
 To use the former handler use the following config: 
