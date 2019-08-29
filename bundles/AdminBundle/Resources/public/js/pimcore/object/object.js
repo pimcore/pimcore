@@ -212,7 +212,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
             if(this.options && this.options['uiState']) {
-                this.setUiState(this.tab, this.options['uiState']);
+                this.setUiState(this.tabbar, this.options['uiState']);
             }
         }.bind(this, tabId));
 
@@ -812,7 +812,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {
-            uiState = this.getUiState(this.tab);
+            uiState = this.getUiState(this.tabbar);
         }
 
         this.tab.on("close", function () {
