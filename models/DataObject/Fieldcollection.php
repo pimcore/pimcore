@@ -262,25 +262,27 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
          */
         $item = $this->get($index);
         if ($item && !$item->isLazyKeyLoaded($field)) {
-            $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
-            /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
-            $fieldDef = $fcDef->getFieldDefinition($field);
+            if ($type == $item->getType()) {
+                $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
+                /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+                $fieldDef = $fcDef->getFieldDefinition($field);
 
-            $params = [
-                'context' => [
-                    'object' => $object,
-                    'containerType' => 'fieldcollection',
-                    'containerKey' => $type,
-                    'fieldname' => $fcField,
-                    'index' => $index
-                ]];
+                $params = [
+                    'context' => [
+                        'object' => $object,
+                        'containerType' => 'fieldcollection',
+                        'containerKey' => $type,
+                        'fieldname' => $fcField,
+                        'index' => $index
+                    ]];
 
-            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
-            AbstractObject::disableDirtyDetection();
+                $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+                AbstractObject::disableDirtyDetection();
 
-            $data = $fieldDef->load($item, $params);
-            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            $item->setObjectVar($field, $data);
+                $data = $fieldDef->load($item, $params);
+                AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                $item->setObjectVar($field, $data);
+            }
             $item->markLazyKeyAsLoaded($field);
         }
     }

@@ -560,18 +560,26 @@ class Thumbnail
                 $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
             }
 
-            $attributesForFallbackImage = [
-                'alt' => $options['alt'],
-                'title' => $options['title'],
-                'src' => (string) $fallBackImageThumb,
-            ];
+            $attrCleanedForPicture = $attributes;
+            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+            unset($attrCleanedForPicture['width']);
+            unset($attrCleanedForPicture['height']);
 
-            if ($isLowQualityPreview) {
-                $attributesForFallbackImage['data-src'] = (string) $fallBackImageThumb;
-                $attributesForFallbackImage['src'] = $attributes['src'];
+            if (isset($attrCleanedForPicture['srcset'])) {
+                unset($attrCleanedForPicture['srcset']);
             }
 
-            $html .= "\t" . '<img ' . array_to_html_attribute_string($attributesForFallbackImage) .' />' . "\n";
+            if ($isLowQualityPreview) {
+                unset($attrCleanedForPicture['data-src']);
+                unset($attrCleanedForPicture['data-srcset']);
+                $attrCleanedForPicture['data-src'] = $attrCleanedForPicture['src'];
+                $attrCleanedForPicture['src'] = $attributes['src'];
+            }
+
+            $htmlImgTagForpicture = "\t" . '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
+
+            $html .= $htmlImgTagForpicture . "\n";
+
             $html .= '</picture>' . "\n";
 
             $htmlImgTag = $html;

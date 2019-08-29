@@ -14,27 +14,18 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceModificator is deprecated since version 6.0.0 and will be removed in 7.0.0. Use ' . CartPriceModificatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface ICartPriceModificator
- */
-interface ICartPriceModificator
-{
-    /**
-     * @return string
-     */
-    public function getName();
+class_exists(CartPriceModificatorInterface::class);
 
+if (false) {
     /**
-     * function which modifies the current sub total price
-     *
-     * @param PriceInterface $currentSubTotal - current sub total which is modified and returned
-     * @param CartInterface $cart - cart
-     *
-     * @return ModificatedPriceInterface
+     * @deprecated use CartPriceModificatorInterface instead.
      */
-    public function modify(PriceInterface $currentSubTotal, CartInterface $cart);
+    interface ICartPriceModificator
+    {
+    }
 }

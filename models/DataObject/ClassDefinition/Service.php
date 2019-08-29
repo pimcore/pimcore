@@ -73,8 +73,8 @@ class Service
     }
 
     /**
-     * @param $class DataObject\ClassDefinition
-     * @param $json
+     * @param DataObject\ClassDefinition $class
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -119,7 +119,7 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
      *
      * @return string
      */
@@ -134,8 +134,8 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
-     * @param $json
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -149,14 +149,19 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        $fieldCollection->setParentClass($importData['parentClass']);
+        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $fieldCollection->{'set' . $importPropertyName}($importData[$importPropertyName]);
+            }
+        }
+
         $fieldCollection->save();
 
         return true;
     }
 
     /**
-     * @param $objectBrick
+     * @param DataObject\Objectbrick\Definition $objectBrick
      *
      * @return string
      */
@@ -187,8 +192,8 @@ class Service
     }
 
     /**
-     * @param $objectBrick
-     * @param $json
+     * @param DataObject\Objectbrick\Definition $objectBrick
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -235,7 +240,7 @@ class Service
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @param bool $throwException
      *
      * @return bool
@@ -295,8 +300,8 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $tableNames
+     * @param array $tableDefinitions
+     * @param array $tableNames
      */
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
     {

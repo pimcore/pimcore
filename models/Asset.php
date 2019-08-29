@@ -1622,9 +1622,9 @@ class Asset extends Element\AbstractElement
     {
         $this->metadata = $metadata;
 
-        if (!empty($metadata)) {
-            $this->setHasMetaData(true);
-        }
+        $this->setHasMetaData(!empty($metadata));
+
+        return $this;
     }
 
     /**
@@ -1641,6 +1641,8 @@ class Asset extends Element\AbstractElement
     public function setHasMetaData($hasMetaData)
     {
         $this->hasMetaData = (bool) $hasMetaData;
+
+        return $this;
     }
 
     /**
@@ -1672,6 +1674,8 @@ class Asset extends Element\AbstractElement
 
             $this->setHasMetaData(true);
         }
+
+        return $this;
     }
 
     /**

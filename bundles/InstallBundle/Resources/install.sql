@@ -312,6 +312,7 @@ CREATE TABLE `glossary` (
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uri` varchar(3000) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
@@ -320,6 +321,7 @@ CREATE TABLE `http_error_log` (
   `serverVars` longtext,
   `date` int(11) unsigned DEFAULT NULL,
   `count` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY (`uri` (765)),
   KEY `code` (`code`),
   KEY `date` (`date`),

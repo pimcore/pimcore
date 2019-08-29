@@ -219,6 +219,12 @@
 }
 
 
+#assetMultiUploadField {
+    width: 10px;
+    position: absolute;
+    left: -1000px;
+}
+
 .pimcore_hidden {
     display:none !important;
 }

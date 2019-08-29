@@ -181,6 +181,19 @@ class Hotspotimage implements OwnerAwareFieldInterface
         }
 
         if ($crop) {
+            if ($thumbConfig->hasMedias()) {
+                $medias = $thumbConfig->getMedias() ?: [];
+
+                foreach ($medias as $mediaName => $mediaConfig) {
+                    $thumbConfig->addItemAt(0, 'cropPercent', [
+                        'width' => $crop['cropWidth'],
+                        'height' => $crop['cropHeight'],
+                        'y' => $crop['cropTop'],
+                        'x' => $crop['cropLeft']
+                    ], $mediaName);
+                }
+            }
+
             $thumbConfig->addItemAt(0, 'cropPercent', [
                 'width' => $crop['cropWidth'],
                 'height' => $crop['cropHeight'],

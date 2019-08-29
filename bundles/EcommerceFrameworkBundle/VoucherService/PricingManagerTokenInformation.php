@@ -34,7 +34,7 @@ class PricingManagerTokenInformation
      *
      * @var bool
      */
-    protected $hasNoValidRule;
+    protected $hasNoValidRule = false;
 
     /**
      * List of not applied pricing rules that would take the given voucher token

@@ -1,6 +1,6 @@
 # Marking Stores
 
-The Pimcore workflow engine provides several different ways how to store the acutal places of a subject. These are 
+The Pimcore workflow engine provides several different ways how to store the actual places of a subject. These are 
 represented of the following marking store types.
 
 ## state_table (default)

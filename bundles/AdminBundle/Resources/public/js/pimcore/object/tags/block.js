@@ -311,6 +311,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
+        this.component.disable();
 
         return this.component;
     },

@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ShippingInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
@@ -275,7 +275,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         $modifications = $order->getPriceModifications();
         if ($modifications) {
             foreach ($modifications as $modification) {
-                if ($modification instanceof IShipping) {
+                if ($modification instanceof ShippingInterface) {
                     $shipping = $shipping->add($modification->getCharge());
                 }
             }

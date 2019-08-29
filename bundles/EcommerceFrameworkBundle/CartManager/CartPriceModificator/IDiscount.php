@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -17,24 +14,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\IDiscount is deprecated since version 6.0.0 and will be removed in 7.0.0. Use ' . DiscountInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface IDiscount
- *
- * Special interface for price modifications added by discount pricing rules for carts
- */
-interface IDiscount extends ICartPriceModificator
-{
-    /**
-     * @param Decimal $amount
-     *
-     * @return IDiscount
-     */
-    public function setAmount(Decimal $amount);
+class_exists(DiscountInterface::class);
 
+if (false) {
     /**
-     * @return Decimal
+     * @deprecated use DiscountInterface instead.
      */
-    public function getAmount(): Decimal;
+    interface IDiscount
+    {
+    }
 }

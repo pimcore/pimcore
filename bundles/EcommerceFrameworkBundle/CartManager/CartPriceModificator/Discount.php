@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class Discount implements IDiscount
+class Discount implements DiscountInterface
 {
     /**
      * @var Decimal

@@ -609,7 +609,7 @@
 .pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
 .pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,.pimcore_icon_cr2,
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
-.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico {
+.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
 }
 

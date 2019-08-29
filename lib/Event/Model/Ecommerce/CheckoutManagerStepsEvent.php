@@ -35,10 +35,10 @@ class CheckoutManagerStepsEvent extends Event
 
     /**
      * @param CheckoutManagerInterface $checkoutManager
-     * @param CheckoutStepInterface $currentStep
+     * @param CheckoutStepInterface|null $currentStep
      * @param array $arguments
      */
-    public function __construct(CheckoutManagerInterface $checkoutManager, CheckoutStepInterface $currentStep, array $arguments = [])
+    public function __construct(CheckoutManagerInterface $checkoutManager, ?CheckoutStepInterface $currentStep, array $arguments = [])
     {
         $this->checkoutManager = $checkoutManager;
         $this->currentStep = $currentStep;
@@ -46,17 +46,17 @@ class CheckoutManagerStepsEvent extends Event
     }
 
     /**
-     * @return CheckoutStepInterface
+     * @return CheckoutStepInterface|null
      */
-    public function getCurrentStep(): CheckoutStepInterface
+    public function getCurrentStep(): ?CheckoutStepInterface
     {
         return $this->currentStep;
     }
 
     /**
-     * @param CheckoutStepInterface $currentStep
+     * @param CheckoutStepInterface|null $currentStep
      */
-    public function setCurrentStep(CheckoutStepInterface $currentStep): void
+    public function setCurrentStep(?CheckoutStepInterface $currentStep): void
     {
         $this->currentStep = $currentStep;
     }
