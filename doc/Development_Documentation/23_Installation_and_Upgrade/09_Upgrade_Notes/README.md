@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 6.2.0 
+- Support for links and folders as a fallback document, details see [#4860](https://github.com/pimcore/pimcore/pull/4860)
+
+
 ## 6.1.2
 - Sessions: the native PHP session mechanism is now the default (instead of `session.handler.native_file`). 
 To use the former handler use the following config: 
@@ -10,7 +14,6 @@ framework:
         save_path:   "%kernel.root_dir%/../var/sessions"
 ```
 If you have configured your own session handler nothing will change. 
-
 
 ## 6.1.0 
 
