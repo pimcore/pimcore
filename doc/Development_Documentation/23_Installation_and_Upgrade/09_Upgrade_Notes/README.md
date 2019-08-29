@@ -9,6 +9,7 @@
    - `Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber` became `Pimcore\Workflow\EventSubscriber\NotificationSubscriber`  
    - `Pimcore\Workflow\NotificationEmail\NotificationEmailInterface` became `Pimcore\Workflow\NotificationEmail\NotificationInterface` 
 
+
 ## 6.1.2
 - Sessions: the native PHP session mechanism is now the default (instead of `session.handler.native_file`). 
 To use the former handler use the following config: 
