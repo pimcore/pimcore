@@ -107,6 +107,11 @@ pimcore.element.scheduler = Class.create({
                             var d = new Date(intval(v) * 1000);
 
                             var ret = Ext.Date.format(d, "Y-m-d H:i");
+
+                            if (rec.data.note) {
+                                ret += " - " + rec.data.note;
+                            }
+
                             if (rec.data.user) {
                                 ret += " - " + rec.data.user.name;
                             }
