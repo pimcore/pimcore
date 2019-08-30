@@ -78,12 +78,19 @@ class Image extends Model\Asset
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
             try {
-                $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+                
+                // defer thumbnail creation in order to prevent overloading the server on
+                // mass file uploads via the gui
+                $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath(true);
 
                 // set the modification time of the thumbnail to the same time from the asset
                 // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();
                 // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
-                @touch($path, $this->getModificationDate());
+                // note: do not touch the thumbnail, if thumbnail creation has been deferred (e.g. not created yet) 
+
+                if (file_exists($path)) {
+                    @touch($path, $this->getModificationDate());
+                }
 
                 $this->generateLowQualityPreview();
             } catch (\Exception $e) {
