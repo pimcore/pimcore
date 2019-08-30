@@ -14,7 +14,6 @@
 
 namespace Pimcore\Workflow\Notification;
 
-
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Symfony\Component\Workflow\Workflow;
@@ -22,7 +21,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PimcoreNotificationService extends AbstractNotificationService
 {
-
     /**
      * @var NotificationService
      */
@@ -35,6 +33,7 @@ class PimcoreNotificationService extends AbstractNotificationService
 
     /**
      * PimcoreNotificationService constructor.
+     *
      * @param NotificationService $notificationService
      * @param TranslatorInterface $translator
      */
@@ -44,8 +43,8 @@ class PimcoreNotificationService extends AbstractNotificationService
         $this->translator = $translator;
     }
 
-    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, AbstractElement $subject, string $action) {
-
+    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, AbstractElement $subject, string $action)
+    {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);
             if (!count($recipients)) {
@@ -53,7 +52,6 @@ class PimcoreNotificationService extends AbstractNotificationService
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
-
                 $title = $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language);
                 $message = $this->translator->trans(
                     'workflow_change_email_notification_text',
@@ -68,22 +66,18 @@ class PimcoreNotificationService extends AbstractNotificationService
                 );
 
                 $noteInfo = $this->getNoteInfo($subject->getId());
-                if($noteInfo) {
+                if ($noteInfo) {
                     $message .= "\n\n";
                     $message .= $this->translator->trans('workflow_change_email_notification_note', [], 'admin') . "\n";
                     $message .= $noteInfo;
                 }
 
-
-                foreach($recipientsPerLanguage as $recipient) {
+                foreach ($recipientsPerLanguage as $recipient) {
                     $this->notificationService->sendToUser($recipient->getId(), 0, $title, $message, $subject);
                 }
-
             }
         } catch (\Exception $e) {
             \Pimcore\Logger::error('Error sending Workflow change notification.');
         }
-
     }
-
 }

@@ -80,7 +80,6 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->workflowManager = $workflowManager;
     }
 
-
     /**
      * @param Event $event
      *
@@ -115,7 +114,6 @@ class NotificationSubscriber implements EventSubscriberInterface
                 if (in_array(self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION, $notificationSetting['channelType'])) {
                     $this->handleNotifyPostWorkflowPimcoreNotification($transition, $workflow, $subject, $notifyUsers, $notifyRoles);
                 }
-
             }
         }
     }
@@ -150,14 +148,13 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->pimcoreNotificationService->sendPimcoreNotification(
             $notifyUsers,
             $notifyRoles,
-            $workflow, 
-            $subjectType, 
-            $subject, 
+            $workflow,
+            $subjectType,
+            $subject,
             $transition->getLabel()
         );
-        
     }
-    
+
     /**
      * check's if the event subscriber should be executed
      *

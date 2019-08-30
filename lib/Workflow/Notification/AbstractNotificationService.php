@@ -17,7 +17,6 @@ namespace Pimcore\Workflow\Notification;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\User;
 
-
 class AbstractNotificationService
 {
     protected function getNoteInfo($id): string
@@ -67,7 +66,7 @@ class AbstractNotificationService
 
         //get users
         $userList = new User\Listing();
-        if($includeAllUsers) {
+        if ($includeAllUsers) {
             $userList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $users)]);
         } else {
             $userList->setCondition('FIND_IN_SET(name, ?) and email is not null', [implode(',', $users)]);
@@ -87,6 +86,5 @@ class AbstractNotificationService
         }
 
         return $notifyUsers;
-    }    
-
+    }
 }
