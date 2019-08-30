@@ -255,6 +255,7 @@
   "add_setting": "Add Setting",
   "reverse": "Reverse",
   "geopolygon": "Geographic Polygon",
+  "geopolyline": "Geographic Polyline",
   "geobounds": "Geographic Bounds",
   "sure_to_install_unstable_update": "Are you sure that you want to install a potential not working version?",
   "analytics_accountid": "Account-ID (eg. 1234567)",
