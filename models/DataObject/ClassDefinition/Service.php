@@ -151,7 +151,7 @@ class Service
 
         foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $fieldCollection->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 
