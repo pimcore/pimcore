@@ -187,6 +187,16 @@ class DeviceDetector
 
         $type = null;
 
+        // check CloudFront headers
+        if($userAgent === 'Amazon CloudFront') {
+            foreach(['mobile', 'tablet', 'desktop'] as $cfType) {
+                $cfHeaderName = 'HTTP_CLOUDFRONT_IS_' . strtoupper($cfType). '_VIEWER';
+                if(isset($_SERVER[$cfHeaderName]) && $_SERVER[$cfHeaderName] === 'true') {
+                    $type = $cfType;
+                }
+            }
+        }
+
         // android devices
         if (stripos($userAgent, 'android') !== false) {
             // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
