@@ -275,7 +275,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function addRelationCondition($fieldname, $condition)
     {
-        $this->relationConditions['relations.' . $fieldname][] = $condition;
+        $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
