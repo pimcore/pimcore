@@ -188,10 +188,14 @@ class DeviceDetector
         $type = null;
 
         // check CloudFront headers
-        foreach(['mobile', 'tablet', 'desktop'] as $cfType) {
-            $cfHeaderName = 'HTTP_CLOUDFRONT_IS_' . strtoupper($cfType). '_VIEWER';
-            if(isset($_SERVER[$cfHeaderName]) && $_SERVER[$cfHeaderName] === 'true') {
-                $type = $cfType;
+        foreach (['mobile', 'tablet', 'desktop'] as $cfType) {
+            $cfHeaderName = 'HTTP_CLOUDFRONT_IS_' . strtoupper($cfType) . '_VIEWER';
+            if (isset($_SERVER[$cfHeaderName]) && $_SERVER[$cfHeaderName] === 'true') {
+                if ($cfType === 'mobile') {
+                    $type = 'phone';
+                } else {
+                    $type = $cfType;
+                }
             }
         }
 
