@@ -187,27 +187,41 @@ class DeviceDetector
 
         $type = null;
 
-        // android devices
-        if (stripos($userAgent, 'android') !== false) {
-            // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
-            if (stripos($userAgent, 'mobile') !== false) {
-                $type = 'phone';
-            } else {
-                $type = 'tablet';
+        // check CloudFront headers
+        foreach (['mobile', 'tablet', 'desktop'] as $cfType) {
+            $cfHeaderName = 'HTTP_CLOUDFRONT_IS_' . strtoupper($cfType) . '_VIEWER';
+            if (isset($_SERVER[$cfHeaderName]) && $_SERVER[$cfHeaderName] === 'true') {
+                if ($cfType === 'mobile') {
+                    $type = 'phone';
+                } else {
+                    $type = $cfType;
+                }
             }
         }
 
-        // ios devices
-        if (stripos($userAgent, 'ipad') !== false) {
-            $type = 'tablet';
-        }
-        if (stripos($userAgent, 'iphone') !== false) {
-            $type = 'phone';
-        }
+        if(!$type) {
+            // android devices
+            if (stripos($userAgent, 'android') !== false) {
+                // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
+                if (stripos($userAgent, 'mobile') !== false) {
+                    $type = 'phone';
+                } else {
+                    $type = 'tablet';
+                }
+            }
 
-        // all other vendors, like blackberry, ...
-        if (!$type && stripos($userAgent, 'mobile') !== false) {
-            $type = 'phone';
+            // ios devices
+            if (stripos($userAgent, 'ipad') !== false) {
+                $type = 'tablet';
+            }
+            if (stripos($userAgent, 'iphone') !== false) {
+                $type = 'phone';
+            }
+
+            // all other vendors, like blackberry, ...
+            if (!$type && stripos($userAgent, 'mobile') !== false) {
+                $type = 'phone';
+            }
         }
 
         // default is desktop
