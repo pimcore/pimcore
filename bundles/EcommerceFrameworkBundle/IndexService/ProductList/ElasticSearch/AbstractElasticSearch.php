@@ -772,7 +772,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($relationCondition)) {
                         $boolFilters[] = $relationCondition;
                     } else {
-                        $boolFilters[] = ['term' => [$fieldname => $relationCondition]];
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $relationCondition]];
                     }
                 }
             }
