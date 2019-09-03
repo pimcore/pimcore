@@ -195,27 +195,29 @@ class DeviceDetector
             }
         }
 
-        // android devices
-        if (stripos($userAgent, 'android') !== false) {
-            // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
-            if (stripos($userAgent, 'mobile') !== false) {
-                $type = 'phone';
-            } else {
+        if(!$type) {
+            // android devices
+            if (stripos($userAgent, 'android') !== false) {
+                // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
+                if (stripos($userAgent, 'mobile') !== false) {
+                    $type = 'phone';
+                } else {
+                    $type = 'tablet';
+                }
+            }
+
+            // ios devices
+            if (stripos($userAgent, 'ipad') !== false) {
                 $type = 'tablet';
             }
-        }
+            if (stripos($userAgent, 'iphone') !== false) {
+                $type = 'phone';
+            }
 
-        // ios devices
-        if (stripos($userAgent, 'ipad') !== false) {
-            $type = 'tablet';
-        }
-        if (stripos($userAgent, 'iphone') !== false) {
-            $type = 'phone';
-        }
-
-        // all other vendors, like blackberry, ...
-        if (!$type && stripos($userAgent, 'mobile') !== false) {
-            $type = 'phone';
+            // all other vendors, like blackberry, ...
+            if (!$type && stripos($userAgent, 'mobile') !== false) {
+                $type = 'phone';
+            }
         }
 
         // default is desktop
