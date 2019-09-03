@@ -12,7 +12,7 @@ class Version20190902085052 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        if(!$schema->getTable('users_permission_definitions')->hasColumn('category')) {
+        if (!$schema->getTable('users_permission_definitions')->hasColumn('category')) {
             $this->addSql("ALTER TABLE users_permission_definitions ADD `category` varchar(50) NOT NULL DEFAULT '';");
         } else {
             $this->addSql("ALTER TABLE users_permission_definitions CHANGE COLUMN `category` `category` varchar(50) NOT NULL DEFAULT '';");
