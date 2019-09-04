@@ -16,7 +16,7 @@ class Version20190729085052 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE users_permission_definitions ADD category varchar(50) NOT NULL');
+        $this->addSql("ALTER TABLE users_permission_definitions ADD `category` varchar(50) NOT NULL DEFAULT ''");
     }
 
     /**

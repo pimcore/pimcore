@@ -316,6 +316,11 @@
 }
 
 .pimcore_nav_icon_matomo {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/matomo.svg) center center no-repeat !important;
+    color: #d4291f;
+}
+
+.pimcore_icon_matomo {
     background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
     color: #d4291f;
 }

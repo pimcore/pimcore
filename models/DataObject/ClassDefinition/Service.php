@@ -109,7 +109,7 @@ class Service
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 
@@ -151,7 +151,7 @@ class Service
 
         foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $fieldCollection->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 

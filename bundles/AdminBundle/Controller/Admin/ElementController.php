@@ -543,6 +543,7 @@ class ElementController extends AdminController
 
                     $versions = $element->getVersions();
                     $versions = Model\Element\Service::getSafeVersionInfo($versions);
+                    $versions = array_reverse($versions); //reverse array to sort by ID DESC
                     foreach ($versions as &$version) {
                         $version['scheduled'] = null;
                         if (array_key_exists($version['id'], $schedules)) {

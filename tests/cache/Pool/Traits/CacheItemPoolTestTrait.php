@@ -26,7 +26,7 @@ trait CacheItemPoolTestTrait
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
         static::handleLogOutput();

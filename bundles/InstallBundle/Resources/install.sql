@@ -680,6 +680,7 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
+  `category` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`key`)
 ) DEFAULT CHARSET=utf8mb4;
 
