@@ -432,6 +432,8 @@ CREATE TABLE `redirects` (
   `expiry` int(11) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
   KEY `active` (`active`)
