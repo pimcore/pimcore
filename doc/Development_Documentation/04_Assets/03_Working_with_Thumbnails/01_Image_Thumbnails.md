@@ -155,6 +155,13 @@ echo $thumbnail; // prints something like /var/tmp/....png
   
 // disable the automatically added width & height attributes
 <?= $asset->getThumbnail("exampleScaleWidth")->getHtml([], ["width","height"]) ?>
+
+// add alt text
+<?= $asset->getThumbnail("content")->getHtml(['alt' => 'top priority alt']) ?>
+// or
+<?= $asset->getThumbnail("content")->getHtml(['defaultalt' => 'default alt, if not set in image']) ?>
+
+
 ```
 
 
