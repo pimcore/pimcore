@@ -206,7 +206,7 @@ pimcore.settings.user.user.settings = Class.create({
                     hidden: (this.currentUser.lastLogin > 0) || (user.id == this.currentUser.id),
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/login/invitationlink",
+                            url: "/admin/user/invitationlink",
                             method: 'POST',
                             ignoreErrors: true,
                             params: {

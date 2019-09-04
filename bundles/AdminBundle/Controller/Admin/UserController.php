@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserController extends AdminController implements EventedControllerInterface
 {
@@ -1096,5 +1097,67 @@ class UserController extends AdminController implements EventedControllerInterfa
         $data = User::getDefaultKeyBindings();
 
         return $this->adminJson(['success' => true, 'data' => $data]);
+    }
+
+    /**
+     * @Route("/user/invitationlink", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @throws \Exception
+     */
+    public function invitationLinkAction(Request $request)
+    {
+        $success = false;
+        $message = "";
+
+        if ($username = $request->get('username')) {
+            $user = User::getByName($username);
+            if ($user instanceof User) {
+                if (!$user->isActive()) {
+                    $message .= 'User inactive  <br />';
+                }
+
+                if (!$user->getEmail()) {
+                    $message .= 'User has no email address <br />';
+                }
+            } else {
+                $message .= 'User unknown <br />';
+            }
+
+            if (empty($message)) {
+                //generate random password if user has no password
+                if (!$user->getPassword()) {
+                    $user->setPassword(md5(uniqid()));
+                    $user->save();
+                }
+
+                $token = Tool\Authentication::generateToken($username, $user->getPassword());
+
+                $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
+                    'username' => $username,
+                    'token' => $token,
+                    'reset' => 'true'
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                try {
+                    $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
+                    $mail->setIgnoreDebugMode(true);
+                    $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $res = $mail->send();
+
+                    $success = true;
+                    $message = sprintf($this->trans("invitation_link_sent"),$user->getEmail());
+                } catch (\Exception $e) {
+                    $message .= 'could not send email';
+                }
+            }
+        }
+
+        return $this->adminJson([
+            'success' => $success,
+            'message' => $message
+        ]);
     }
 }
