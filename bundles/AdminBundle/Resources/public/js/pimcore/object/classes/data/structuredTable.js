@@ -112,9 +112,9 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         });
 
         if(!data || data.length < 1) {
-            var d = {position:1, key: "1", label: "1"};
+            var d = {position:1, key: "", label: ""};
             if(hasType) {
-                d.type = "number";
+                d.type = "text";
             }
             data = [d];
         }
@@ -183,17 +183,36 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 return types[value];
             }});
 
-            typesColumns.push({text: t("length"), width: 40, sortable: true, dataIndex: 'length',
+            typesColumns.push({text: t("length"), width: 70, sortable: true, dataIndex: 'length',
                 editor: new Ext.form.NumberField({})});
 
-            typesColumns.push({text: t("width"), width: 40, sortable: true, dataIndex: 'width',
+            typesColumns.push({text: t("width"), width: 70, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }
 
+        typesColumns.push({xtype: 'actioncolumn', menuText: t('remove'),width: 40,
+            items: [
+                {
+                    tooltip: t('remove'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }
+            ]
+        });
+
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                edit: function (editor, e) {
+                    if (!e.record.get('label')) {
+                        e.record.set('label', e.record.get('key'));
+                    }
+                },
+            }
         });
 
 
@@ -214,13 +233,6 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                     handler: this.onAdd.bind(this, this.stores[title], hasType),
                     iconCls: "pimcore_icon_add"
                 },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this, this.stores[title], title),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-'
             ],
             viewConfig: {
                 forceFit: true
@@ -236,8 +248,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         if(hasType) {
             u.type = "text";
         }
-        u.position = store.getCount() + 1;
-        u.key = "name";
+        if (store.getAt(store.getCount() - 1)) {
+            u.position = store.getAt(store.getCount() - 1).data.position + 1;
+        } else {
+            u.position = store.getCount() + 1;
+        }
+
         store.add(u);
     },
 
