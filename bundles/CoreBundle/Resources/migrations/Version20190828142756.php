@@ -12,7 +12,7 @@ class Version20190828142756 extends AbstractPimcoreMigration
         $table = $schema->getTable('http_error_log');
 
         if (!$table->hasColumn('id')) {
-            $this->addSql('ALTER TABLE `http_error_log` ADD `id` int(11) NULL AUTO_INCREMENT PRIMARY KEY FIRST;');
+            $this->addSql('ALTER TABLE `http_error_log` ADD `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;');
         }
     }
 

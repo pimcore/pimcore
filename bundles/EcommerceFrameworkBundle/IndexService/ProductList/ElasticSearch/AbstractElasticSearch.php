@@ -275,7 +275,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function addRelationCondition($fieldname, $condition)
     {
-        $this->relationConditions['relations.' . $fieldname][] = $condition;
+        $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
@@ -772,7 +772,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($relationCondition)) {
                         $boolFilters[] = $relationCondition;
                     } else {
-                        $boolFilters[] = ['term' => [$fieldname => $relationCondition]];
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $relationCondition]];
                     }
                 }
             }
