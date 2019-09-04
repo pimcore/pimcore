@@ -199,7 +199,7 @@ class DeviceDetector
             }
         }
 
-        if(!$type) {
+        if (!$type) {
             // android devices
             if (stripos($userAgent, 'android') !== false) {
                 // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!

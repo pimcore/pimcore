@@ -141,7 +141,6 @@ class DefaultMockup implements ProductInterface
 
         $object = $this->getOriginalObject();
         if ($object) {
-
             if (method_exists($object, $method)) {
                 return call_user_func_array([$object, $method], $args);
             }
