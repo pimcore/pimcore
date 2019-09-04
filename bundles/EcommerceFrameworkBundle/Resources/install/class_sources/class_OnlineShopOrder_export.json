@@ -1,5 +1,4 @@
 {
-  "id": "EF_OSO",
   "description": null,
   "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractOrder",
   "listingParentClass": null,
@@ -575,7 +574,7 @@
                 "name": "System Informations",
                 "type": null,
                 "region": null,
-                "title": "System Informations",
+                "title": "System Information",
                 "width": null,
                 "height": null,
                 "collapsible": true,
@@ -3268,7 +3267,8 @@
                   "PaymentProviderPayPal",
                   "PaymentProviderMpay24",
                   "PaymentProviderOGone",
-                  "PaymentProviderWirecardSeamless"
+                  "PaymentProviderWirecardSeamless",
+                  "PaymentProviderHeidelPay"
                 ],
                 "maxItems": "",
                 "border": false,
@@ -3429,9 +3429,9 @@
     ],
     "locked": false
   },
-  "icon": null,
+  "icon": "\/bundles\/pimcoreadmin\/img\/flat-color-icons\/deployment.svg",
   "previewUrl": null,
-  "group": null,
+  "group": "E-Commerce",
   "linkGeneratorReference": null,
   "propertyVisibility": {
     "grid": {
