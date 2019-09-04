@@ -184,12 +184,59 @@ pimcore.settings.user.user.settings = Class.create({
             value: this.currentUser.lastname,
             width: 400
         });
-        generalItems.push({
+
+        var emailField = new Ext.form.field.Text({
             xtype: "textfield",
             fieldLabel: t("email"),
             name: "email",
             value: this.currentUser.email,
             width: 400
+        });
+
+        generalItems.push({
+            xtype: "fieldcontainer",
+            layout: 'hbox',
+
+            items: [emailField,
+                {
+                    text: t("send_invitation_link"),
+                    xtype: "button",
+                    style: "margin-left: 8px",
+                    iconCls: "pimcore_nav_icon_email",
+                    hidden: (this.currentUser.lastLogin > 0) || (user.id == this.currentUser.id),
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/user/invitationlink",
+                            method: 'POST',
+                            ignoreErrors: true,
+                            params: {
+                                username: this.currentUser.name
+                            },
+                            success: function (response) {
+                                var res = Ext.decode(response.responseText);
+                                if (res.success) {
+                                    Ext.MessageBox.alert(t('invitation_sent'), res.message);
+                                } else {
+                                    Ext.MessageBox.alert(t('error'), res.message);
+                                }
+                            }.bind(this),
+                            failure: function (response) {
+                                var message = t("error_general");
+
+                                try {
+                                    var json = Ext.decode(response.responseText);
+                                    if (json.message) {
+
+                                        message = json.message;
+                                    }
+                                } catch (e) {}
+
+                                pimcore.helpers.showNotification(t("error"), message, "error");
+                            }
+                        });
+                    }.bind(this)
+                }
+            ]
         });
 
         generalItems.push({
