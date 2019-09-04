@@ -654,7 +654,7 @@ pimcore.layout.toolbar = Class.create({
                                     pimcore.helpers.openGenericIframeWindow(
                                         "piwik_iframe_integration",
                                         url,
-                                        "pimcore_nav_icon_matomo",
+                                        "pimcore_icon_matomo",
                                         "Matomo / Piwik"
                                     );
                                 },
