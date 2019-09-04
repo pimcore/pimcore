@@ -423,6 +423,8 @@ class Thumbnail
         if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
             if ($image->getMetadata('alt')) {
                 $altText = $image->getMetadata('alt');
+            } else if (isset($options['defaultalt'])){
+                $altText = $options['defaultalt'];
             } else {
                 $altText = $titleText;
             }
