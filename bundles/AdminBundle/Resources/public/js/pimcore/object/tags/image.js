@@ -47,16 +47,13 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     } else {
                         // unfortunately we have to use a timeout here to adjust the height of grids configured
                         // with autoHeight: true, there are no other events that would work, see also: https://github.com/pimcore/pimcore/pull/4337/files
-                        if(view['refreshTimeout']) {
-                            window.clearTimeout(view.refreshTimeout);
-                            delete view.refreshTimeout;
+                        if(!view['refreshTimeout']) {
+                            view.refreshTimeout = window.setTimeout(function () {
+                                view.refresh();
+                            }, 1000);
                         }
 
-                        view.refreshTimeout = window.setTimeout(function () {
-                            view.refresh();
-                        }, 500);
-
-                        return baseUrl + '&width=88&height=88&frame=true" />';
+                        return baseUrl + '&width=88&height=88&frame=true" style="width:88px; height:88px;" />';
                     }
 
                 }
