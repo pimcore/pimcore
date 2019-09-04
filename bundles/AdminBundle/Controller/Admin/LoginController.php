@@ -155,7 +155,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                     if ($event->getSendMail()) {
                         $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
                         $mail->setIgnoreDebugMode(true);
-                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
+                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
                         $mail->send();
                     }
 
@@ -176,6 +176,75 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         return $view;
+    }
+
+
+    /**
+     * @Route("/login/invitationlink", methods={"GET","POST"})
+     *
+     * @param Request $request
+     * @param BruteforceProtectionHandler $bruteforceProtectionHandler
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @throws \Exception
+     */
+    public function invitationLinkAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
+    {
+        $success = false;
+        $message = "";
+
+        if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
+            $user = User::getByName($username);
+            if ($user instanceof User) {
+                if (!$user->isActive()) {
+                    $message .= 'User inactive  <br />';
+                }
+
+                if (!$user->getEmail()) {
+                    $message .= 'User has no email address <br />';
+                }
+            } else {
+                $message .= 'User unknown <br />';
+            }
+
+            if (empty($message)) {
+                //generate random password if user has no password
+                if (!$user->getPassword()) {
+                    $user->setPassword(md5(uniqid()));
+                    $user->save();
+                }
+
+                $username = $user->getName();
+                $token = Authentication::generateToken($username, $user->getPassword());
+
+                $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
+                    'username' => $username,
+                    'token' => $token,
+                    'reset' => 'true'
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                try {
+                    $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
+                    $mail->setIgnoreDebugMode(true);
+                    $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
+                    $res = $mail->send();
+
+                    $success = true;
+                    $message = sprintf($this->trans("invitation_link_sent"),$user->getEmail());
+                } catch (\Exception $e) {
+                    $message .= 'could not send email';
+                }
+            }
+
+            if (!$success) {
+                $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
+            }
+        }
+
+        return $this->adminJson([
+            'success' => $success,
+            'message' => $message
+        ]);
     }
 
     /**
