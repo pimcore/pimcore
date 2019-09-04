@@ -379,7 +379,7 @@ class Thumbnail
     {
         $image = $this->getAsset();
         $attributes = [];
-        $pictureAttribs = []; // this is used for the html5 <picture> element
+        $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
         // re-add support for disableWidthHeightAttributes
         if (isset($options['disableWidthHeightAttributes']) && $options['disableWidthHeightAttributes']) {
@@ -461,11 +461,6 @@ class Thumbnail
             //only include attributes with characters a-z and dashes in their name.
             if (preg_match('/^[a-z-]+$/i', $key)) {
                 $attributes[$key] = $value;
-
-                // do not include all attributes
-                if (!in_array($key, ['width', 'height', 'alt'])) {
-                    $pictureAttribs[$key] = $value;
-                }
 
                 // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
                 if (in_array($key, ['alt'])) {
