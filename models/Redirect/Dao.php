@@ -53,15 +53,10 @@ class Dao extends Model\Dao\AbstractDao
             // create in database
             $this->db->insert('redirects', []);
 
-            $ts = time();
-            $this->model->setModificationDate($ts);
-            $this->model->setCreationDate($ts);
-
             $this->model->setId($this->db->lastInsertId());
         }
 
-        $ts = time();
-        $this->model->setModificationDate($ts);
+        $this->updateModificationInfos();
 
         $data = [];
         $type = $this->model->getObjectVars();
@@ -84,5 +79,27 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete('redirects', ['id' => $this->model->getId()]);
+    }
+
+    protected function updateModificationInfos()
+    {
+        $updateTime = time();
+        $this->model->setModificationDate($updateTime);
+
+        if (!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($updateTime);
+        }
+
+        // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
+        $userId = 0;
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        if ($user instanceof Model\User) {
+            $userId = $user->getId();
+        }
+        $this->model->setUserModification($userId);
+
+        if ($this->model->getUserOwner() === null) {
+            $this->model->setUserOwner($userId);
+        }
     }
 }
