@@ -14,10 +14,13 @@ pimcore.registerNS("pimcore.notification.modal");
 
 pimcore.notification.modal = Class.create({
 
-    initialize: function (object) {
+    initialize: function (elementData) {
         this.elementData = {};
 
         this.getWindow().show();
+        if(elementData) {
+            this.addDataBySharedElementData(elementData);
+        }
     },
 
     getWindow: function () {
@@ -65,7 +68,7 @@ pimcore.notification.modal = Class.create({
                     style: "margin-left: 5px",
                     handler: this.empty.bind(this)
                 }
-            ]
+            ];
             var elementContainer = Ext.create('Ext.form.FieldContainer', {
                 fieldLabel: t("attachment"),
                 labelWidth: 100,

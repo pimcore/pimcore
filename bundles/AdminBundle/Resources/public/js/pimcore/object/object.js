@@ -963,7 +963,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (pimcore.globalmanager.get("new_notifications")) {
                 pimcore.globalmanager.get("new_notifications").getWindow().destroy();
             }
-            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal().addDataBySharedElementData(elementData));
-        }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     }
 });
