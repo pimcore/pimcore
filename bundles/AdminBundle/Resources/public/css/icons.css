@@ -1311,6 +1311,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/radar_plot.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_geopolyline {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/line_chart.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_time {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/clock.svg) center center no-repeat !important;
 }
