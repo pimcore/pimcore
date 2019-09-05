@@ -393,7 +393,8 @@ pimcore.object.helpers.edit = {
                                         target: el,
                                         html: nl2br(ts(field.tooltip)),
                                         trackMouse:true,
-                                        showDelay: 200
+                                        showDelay: 200,
+                                        dismissDelay: 0
                                     });
                                 } catch (e6) {
                                     console.log(e6);
