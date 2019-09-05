@@ -600,6 +600,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 if (!is_array($table)) {
                     $table = [];
                     $list = new Model\DataObject\QuantityValue\Unit\Listing();
+                    $list->setOrderKey('abbreviation');
+                    $list->setOrder('asc');
                     $list = $list->load();
                     /** @var $item Model\DataObject\QuantityValue\Unit */
                     foreach ($list as $item) {
