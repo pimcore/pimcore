@@ -107,6 +107,7 @@ pimcore:
                     geobounds: \Pimcore\Model\DataObject\ClassDefinition\Data\Geobounds
                     geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
                     geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
+                    geopolyline: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolyline
                     hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
                     manyToOneRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation
                     image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
