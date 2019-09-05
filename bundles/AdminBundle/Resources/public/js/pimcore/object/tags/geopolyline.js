@@ -74,32 +74,21 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
         this.editableLayers = new L.FeatureGroup();
 
         try {
-            var leafletMap = null;
+            var leafletMap = this.getLeafletMap(
+                fieldConfig.lat,
+                fieldConfig.lng,
+                fieldConfig.zoom
+            );
             if (data) {
-                var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
-                    bounds.extend(new L.latLng(data[i].latitude, data[i].longitude));
                     this.latlngs.push([data[i].latitude,data[i].longitude]);
                 }
-
-                var leafletMap = this.getLeafletMap(
-                    bounds.getCenter().lat,
-                    bounds.getCenter().lng,
-                    fieldConfig.zoom
-                );
 
                 this.polyline = L.polyline(this.latlngs, {stroke: true, color: "#3388ff", opacity: 0.5, fillOpacity: 0.2, weight: 4});
 
                 leafletMap.addLayer(this.polyline);
                 leafletMap.fitBounds(this.polyline.getBounds());
                 this.editableLayers.addLayer(this.polyline);
-
-            } else {
-                leafletMap = this.getLeafletMap(
-                    fieldConfig.lat,
-                    fieldConfig.lng,
-                    fieldConfig.zoom
-                );
             }
             this.getLeafletToolbar(leafletMap);
         } catch (e) {
