@@ -81,7 +81,7 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
             );
             if (data) {
                 for (var i = 0; i < data.length; i++) {
-                    this.latlngs.push([data[i].latitude,data[i].longitude]);
+                    this.latlngs.push([data[i].latitude, data[i].longitude]);
                 }
 
                 this.polyline = L.polyline(this.latlngs, {stroke: true, color: "#3388ff", opacity: 0.5, fillOpacity: 0.2, weight: 4});
@@ -137,13 +137,13 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
             }
         }.bind(this));
 
-        leafletMap.on("draw:deleted", function (e) {
+        leafletMap.on(L.Draw.Event.DELETED, function (e) {
             this.data = null;
             this.dirty = true;
             this.updateMap();
         }.bind(this));
 
-        leafletMap.on("draw:editvertex", function (e) {
+        leafletMap.on(L.Draw.Event.EDITSTOP, function (e) {
             this.dirty = true;
 
             var layer1;
@@ -156,10 +156,10 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
                     }
                 }
             }
-            for (var i = 0; i < newPolyLatLngArray[0].length; i++) {
+            for (var i = 0; i < newPolyLatLngArray.length; i++) {
                 this.data.push({
-                    latitude: newPolyLatLngArray[0][i].lat,
-                    longitude: newPolyLatLngArray[0][i].lng
+                    latitude: newPolyLatLngArray[i].lat,
+                    longitude: newPolyLatLngArray[i].lng
                 });
             }
 
