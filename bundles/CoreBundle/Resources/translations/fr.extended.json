@@ -709,5 +709,8 @@
     "invert_colors_on_login_screen": "Inverser les couleurs sur l'écran de connexion",
     "activate_column_configuration": "Activer la configuration de la colonne",
     "table_column_configuration": "Configuration de la colonne",
-    "delete_language_note": "Remarque: supprimer une langue de la liste ne supprimera pas ses données respectives. Veuillez utiliser la commande de console 'pimcore: locale: delete -used-tables' pour les nettoyer."
+    "delete_language_note": "Remarque: supprimer une langue de la liste ne supprimera pas ses données respectives. Veuillez utiliser la commande de console 'pimcore: locale: delete -used-tables' pour les nettoyer.",
+    "send_invitation_link": "Send Invitation Link",
+    "invitation_sent": "Login Invitation sent",
+    "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
 }
