@@ -226,6 +226,16 @@ pimcore.notification.modal = Class.create({
         this.component.setValue(data.fullpath);
     },
 
+    addDataBySharedElementData: function (elementData) {
+        this.elementData = elementData;
+        this.dataChanged = true;
+        this.component.removeCls("strikeThrough");
+        if (elementData.published === false) {
+            this.component.addCls("strikeThrough");
+        }
+        this.component.setValue(elementData.path);
+    },
+
     openSearchEditor: function () {
         var allowedTypes = ['object', 'asset', 'document'];
         var allowedSpecific = {};
