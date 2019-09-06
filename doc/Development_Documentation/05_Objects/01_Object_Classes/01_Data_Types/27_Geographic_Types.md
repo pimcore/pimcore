@@ -85,24 +85,3 @@ $data = [
 $object->setPolyline($data);
 $object->save();
 ```
-
-## Geopolyline
-
-![GeoPolygon Field](../../../img/classes-datatypes-geo5.jpg)
-
-It allows to define a geographic path by setting an arbitrary amount of geo points. In the database these points are 
-stored in a single column of the data type LONGTEXT in the form of a serialized array of 
-`Pimcore\Model\DataObject\Data\Geopoints`. To set geopolygon data programmatically, an array of Geopoints has to be 
-passed to the setter:
-
-```php
-use Pimcore\Model\DataObject\Data\Geopoint;
-  
-$data = [
-    new Geopoint(150.54428100585938, -33.464671118242684),
-    new Geopoint(150.73654174804688, -33.913733814316245),
-    new Geopoint(151.2542724609375, -33.9946115848146)
-];
-$object->setPolyline($data);
-$object->save();
-```
