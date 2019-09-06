@@ -17,9 +17,9 @@ represented by `Pimcore\Model\DataObject\Data\Geopoint`. To set a geopoint progr
 `Pimcore\Model\DataObject\Data\Geopoint` has to be instantiated:
 
 ```php
-$longitude = 2.2008440814678;
-$latitude = 102.25112915039;
-$point = new \Pimcore\Model\DataObject\Data\Geopoint($longitude,$latitude);
+$longitude = 107.6191228;
+$latitude = -6.9174639;
+$point = new \Pimcore\Model\DataObject\Data\Geopoint($longitude, $latitude);
 $object->setPoint($point);
 $object->save();
 ```
