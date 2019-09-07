@@ -39,7 +39,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
     },
 
     getIconClass: function () {
-        return "pimcore_icon_quantityValue";
+        return "pimcore_icon_inputQuantityValue";
     },
 
     getLayout: function ($super) {
