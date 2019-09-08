@@ -8,6 +8,7 @@
     "local": "Locale",
     "show_cookie_notice": "Visualizza l'avviso Cookie (Norma europea sulla privacy)",
     "ratio": "Proporzione",
+    "preserve_ratio": "Proporzione mantenuta",
     "decimal_precision": "Numeri dopo la virgola",
     "only_unsigned": "solo senza segno",
     "integer": "Intero",

@@ -8,6 +8,7 @@
     "local": "Lokalny",
     "show_cookie_notice": "Pokaż powiadomienie o polityce cookies",
     "ratio": "Stosunek",
+    "preserve_ratio": "Utrzymany stosunek",
     "decimal_precision": "Precyzja",
     "only_unsigned": "tylko dodatnie",
     "integer": "Typ całkowity",

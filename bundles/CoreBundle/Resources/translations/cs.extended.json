@@ -8,6 +8,7 @@
     "local": "Lokální",
     "show_cookie_notice": "Zobrazit oznámení o používání cookies v EU",
     "ratio": "Poměr",
+    "preserve_ratio": "Poměr byl zachován",
     "decimal_precision": "Přesnost na desetinná místa",
     "only_unsigned": "Jen bez znaménka (unsigned)",
     "integer": "Integer",

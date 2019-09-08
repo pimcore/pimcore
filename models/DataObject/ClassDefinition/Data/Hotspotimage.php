@@ -67,6 +67,11 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     public $ratioY;
 
     /**
+     * @var bool
+     */
+    public $preserveRatio;
+
+    /**
      * @var string
      */
     public $predefinedDataTemplates;
@@ -101,6 +106,22 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     public function getRatioY()
     {
         return $this->ratioY;
+    }
+
+    /**
+     * @param bool $preserveRatio
+     */
+    public function setPreserveRatio($preserveRatio)
+    {
+        $this->preserveRatio = (bool) $preserveRatio;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPreserveRatio()
+    {
+        return $this->preserveRatio;
     }
 
     /**

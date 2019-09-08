@@ -5933,6 +5933,7 @@
                                 "phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage",
                                 "ratioX":null,
                                 "ratioY":null,
+                                "preserveRatio":false,
                                 "width":"",
                                 "height":"",
                                 "uploadPath":"",

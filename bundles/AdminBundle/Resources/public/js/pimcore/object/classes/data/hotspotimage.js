@@ -72,6 +72,12 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
                     value: this.datax.ratioY
                 },
                 {
+                    xtype: "checkbox",
+                    fieldLabel: t("preserve_ratio"),
+                    name: "preserveRatio",
+                    value: this.datax.preserveRatio
+                },
+                {
                     xtype: "textarea",
                     name: "predefinedDataTemplates",
                     height: 300,
@@ -105,7 +111,8 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
                     height: source.datax.height,
                     uploadPath: source.datax.uploadPath,
                     ratioX: source.datax.ratioX,
-                    ratioY: source.datax.ratioY
+                    ratioY: source.datax.ratioY,
+                    preserveRatio: source.datax.preserveRatio
                 });
         }
     }

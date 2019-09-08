@@ -8,6 +8,7 @@
     "local": "Localisation",
     "show_cookie_notice": "Voir notre politique de Cookie",
     "ratio": "Ratio",
+    "preserve_ratio": "Ratio maintenu",
     "decimal_precision": "Précision décimale",
     "only_unsigned": "Positif uniquement",
     "integer": "Entier",

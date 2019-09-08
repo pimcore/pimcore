@@ -8,6 +8,7 @@
     "local": "Lokaal",
     "show_cookie_notice": "Toon cookiemelding (EU-regels)",
     "ratio": "Verhouding",
+    "preserve_ratio": "Onderhouden verhouding",
     "decimal_precision": "Decimaalnauwkeurigheid",
     "only_unsigned": "Uitsluitend niet toegewezen",
     "integer": "Geheel getal",
