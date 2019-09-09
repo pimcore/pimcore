@@ -309,6 +309,14 @@ class ClassDefinition extends Model\AbstractModel
             throw new \Exception(sprintf('Invalid ID for class definition: %s', $this->getName()));
         }
 
+        foreach(['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
+                throw new \Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                    $this->getParentClass()));
+            }
+        }
+
         $isUpdate = $this->exists();
 
         if (!$isUpdate) {
