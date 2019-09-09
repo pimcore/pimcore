@@ -122,10 +122,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                     $value = $this->$getter();
 
-                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
+                    if (is_array($value) && ($fd instanceof ClassDefinition\Data\ManyToManyRelation || $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
                         //don't save relations twice, if multiple assignments not allowed
                         if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $value = array_unique($value);
+                            $relationItems = [];
+                            foreach($value as $item) {
+                                if($item instanceof Model\Element\ElementInterface) {
+                                    $relationItems[Model\Element\Service::getElementType($item) . $item->getId()] = $item;
+                                }
+                            }
+
+                            $value = array_values($relationItems);
                         }
                         $this->$setter($value);
                     }
@@ -363,7 +370,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $tags['class_' . $this->getClassId()] = 'class_' . $this->getClassId();
         foreach ($this->getClass()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
-            if (!method_exists($def, 'getLazyLoading') or !$def->getLazyLoading()) {
+            if (!method_exists($def, 'getLazyLoading') || !$def->getLazyLoading()) {
                 $tags = $def->getCacheTags($this->getValueForFieldName($name), $tags);
             }
         }
