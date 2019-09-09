@@ -301,6 +301,14 @@ class ClassDefinition extends Model\AbstractModel
             $this->setId($maxId ? $maxId + 1 : 1);
         }
 
+        if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
+            throw new \Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+        }
+
+        if(!preg_match('/[a-zA-Z0-9][a-zA-Z0-9_]+/', $this->getId())) {
+            throw new \Exception(sprintf('Invalid ID for class definition: %s', $this->getName()));
+        }
+
         $isUpdate = $this->exists();
 
         if (!$isUpdate) {

@@ -159,6 +159,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
+        if(!preg_match('/[a-zA-Z]+[a-zA-Z0-9]+/', $this->getKey())) {
+            throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
+        }
+
         $this->checkTablenames();
 
         $definitionFile = $this->getDefinitionFile();
