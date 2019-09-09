@@ -1125,7 +1125,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
-                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . $config['dpi'] . ' -yresolution=' . $config['dpi'] . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
+                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int) $config['dpi']) . ' -yresolution=' . escapeshellarg((int) $config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
         }
         if ($thumbnail) {
