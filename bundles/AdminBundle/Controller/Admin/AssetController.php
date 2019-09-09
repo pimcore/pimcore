@@ -2055,7 +2055,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $importDirectory = str_replace('/fileexplorer', PIMCORE_PROJECT_ROOT, $request->get('serverPath'));
-        if (is_dir($importDirectory) && preg_match('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', $importDirectory)) {
+        if (preg_match('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', $importDirectory) && is_dir($importDirectory)) {
             $this->checkForPharStreamWrapper($importDirectory);
             $files = rscandir($importDirectory . '/');
             $count = count($files);
