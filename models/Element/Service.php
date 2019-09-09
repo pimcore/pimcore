@@ -463,6 +463,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param ElementInterface $element
+     * @return string
+     */
+    public static function getElementHash(ElementInterface $element) : string {
+        return self::getElementType($element) . "-" . $element->getId();
+    }
+
+    /**
      * determines the type of an element (object,asset,document)
      *
      * @static

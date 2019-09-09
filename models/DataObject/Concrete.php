@@ -127,8 +127,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
                             $relationItems = [];
                             foreach($value as $item) {
-                                if($item instanceof Model\Element\ElementInterface) {
-                                    $relationItems[Model\Element\Service::getElementType($item) . $item->getId()] = $item;
+                                $elementHash = null;
+                                if($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
+                                    if($item->getElement() instanceof Model\Element\ElementInterface) {
+                                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
+                                    }
+                                } elseif($item instanceof Model\Element\ElementInterface) {
+                                    $elementHash = Model\Element\Service::getElementHash($item);
+                                }
+
+                                if($elementHash) {
+                                    $relationItems[$elementHash] = $item;
                                 }
                             }
 
