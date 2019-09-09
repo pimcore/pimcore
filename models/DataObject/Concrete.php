@@ -136,7 +136,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                                     $elementHash = Model\Element\Service::getElementHash($item);
                                 }
 
-                                if($elementHash) {
+                                if($elementHash && !isset($relationItems[$elementHash])) {
                                     $relationItems[$elementHash] = $item;
                                 }
                             }
