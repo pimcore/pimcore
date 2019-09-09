@@ -2055,7 +2055,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $importDirectory = str_replace('/fileexplorer', PIMCORE_PROJECT_ROOT, $request->get('serverPath'));
-        if (is_dir($importDirectory)) {
+        if (is_dir($importDirectory) && preg_match('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', $importDirectory)) {
+            $this->checkForPharStreamWrapper($importDirectory);
             $files = rscandir($importDirectory . '/');
             $count = count($files);
             $jobFiles = [];
@@ -2068,12 +2069,14 @@ class AssetController extends ElementControllerBase implements EventedController
                 $jobFiles[] = preg_replace('@^' . preg_quote($importDirectory, '@') . '@', '', $files[$i]);
 
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
+
+                    $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
                     $jobs[] = [[
                         'url' => '/admin/asset/import-server-files',
                         'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),
-                            'serverPath' => $importDirectory,
+                            'serverPath' => $relativeImportDirectory,
                             'files' => implode('::', $jobFiles)
                         ]
                     ]];
@@ -2098,11 +2101,12 @@ class AssetController extends ElementControllerBase implements EventedController
     public function importServerFilesAction(Request $request)
     {
         $assetFolder = Asset::getById($request->get('parentId'));
-        $serverPath = $request->get('serverPath');
+        $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
             $absolutePath = $serverPath . $file;
+            $this->checkForPharStreamWrapper($absolutePath);
             if (is_file($absolutePath)) {
                 $relFolderPath = str_replace('\\', '/', dirname($file));
                 $folder = Asset\Service::createFolderByPath($assetFolder->getRealFullPath() . $relFolderPath);
@@ -2128,6 +2132,12 @@ class AssetController extends ElementControllerBase implements EventedController
         return $this->adminJson([
             'success' => true
         ]);
+    }
+
+    protected function checkForPharStreamWrapper($path) {
+        if(stripos($path, 'phar://') !== false) {
+            throw new \Exception('Using PHAR files is not allowed!');
+        }
     }
 
     /**
