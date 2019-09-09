@@ -21,10 +21,12 @@ pimcore.element.tag.imagecropper = Class.create({
 
         this.ratioX = null;
         this.ratioY = null;
+        this.preserveRatio = false;
         if(typeof config == "object") {
             if(config["ratioX"] && config["ratioY"]) {
                 this.ratioX = config["ratioX"];
                 this.ratioY = config["ratioY"];
+                this.preserveRatio = true;
             }
         }
     },
@@ -145,7 +147,7 @@ pimcore.element.tag.imagecropper = Class.create({
                     pinned: true,
                     width: 100,
                     height: 100 / (this.ratioX / this.ratioY) || 100,
-                    preserveRatio: false,
+                    preserveRatio: this.preserveRatio,
                     dynamic: true,
                     handles: 'all',
                     listeners: {
