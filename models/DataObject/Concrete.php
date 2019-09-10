@@ -126,17 +126,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         //don't save relations twice, if multiple assignments not allowed
                         if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
                             $relationItems = [];
-                            foreach($value as $item) {
+                            foreach ($value as $item) {
                                 $elementHash = null;
-                                if($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                                    if($item->getElement() instanceof Model\Element\ElementInterface) {
+                                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
+                                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
                                         $elementHash = Model\Element\Service::getElementHash($item->getElement());
                                     }
-                                } elseif($item instanceof Model\Element\ElementInterface) {
+                                } elseif ($item instanceof Model\Element\ElementInterface) {
                                     $elementHash = Model\Element\Service::getElementHash($item);
                                 }
 
-                                if($elementHash && !isset($relationItems[$elementHash])) {
+                                if ($elementHash && !isset($relationItems[$elementHash])) {
                                     $relationItems[$elementHash] = $item;
                                 }
                             }

@@ -2069,7 +2069,6 @@ class AssetController extends ElementControllerBase implements EventedController
                 $jobFiles[] = preg_replace('@^' . preg_quote($importDirectory, '@') . '@', '', $files[$i]);
 
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
-
                     $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
                     $jobs[] = [[
                         'url' => '/admin/asset/import-server-files',
@@ -2134,8 +2133,9 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
     }
 
-    protected function checkForPharStreamWrapper($path) {
-        if(stripos($path, 'phar://') !== false) {
+    protected function checkForPharStreamWrapper($path)
+    {
+        if (stripos($path, 'phar://') !== false) {
             throw new \Exception('Using PHAR files is not allowed!');
         }
     }

@@ -301,15 +301,15 @@ class ClassDefinition extends Model\AbstractModel
             $this->setId($maxId ? $maxId + 1 : 1);
         }
 
-        if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
+        if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
             throw new \Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
         }
 
-        if(!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
+        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
             throw new \Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
         }
 
-        foreach(['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
             $propertyValue = $this->{'get'.ucfirst($propertyName)}();
             if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
                 throw new \Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
