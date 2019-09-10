@@ -40,8 +40,7 @@
 ?>
 
 <?php foreach ($languages as $language) {
-        $iconFile = \Pimcore\Tool::getLanguageFlagFile($language);
-        $iconFile = preg_replace("@^" . preg_quote(PIMCORE_WEB_ROOT, "@") . "@", "", $iconFile);
+        $iconFile = \Pimcore\Tool::getLanguageFlagFile($language, false);
     ?>
 
     /* tab icon for localized fields [ <?= $language ?> ] */

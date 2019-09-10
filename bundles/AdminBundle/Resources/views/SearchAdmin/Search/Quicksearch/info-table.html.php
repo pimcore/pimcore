@@ -24,7 +24,7 @@
         <?php if($element->getProperty('language')) { ?>
             <tr>
                 <th><?= $this->translate('language') ?></th>
-                <td style="padding-left: 40px; background: url(<?= str_replace(PIMCORE_WEB_ROOT, '', Pimcore\Tool::getLanguageFlagFile($element->getProperty('language'))) ?>) left top no-repeat; background-size: 31px 21px;">
+                <td style="padding-left: 40px; background: url(<?= \Pimcore\Tool::getLanguageFlagFile($element->getProperty('language'), false); ?>) left top no-repeat; background-size: 31px 21px;">
                     <?php
                     $locales = \Pimcore\Tool::getSupportedLocales();
                     ?>
