@@ -255,6 +255,7 @@ pimcore.asset.tree = Class.create({
                 if(this.activeUploads < 1) {
                     win.close();
                     pimcore.elementservice.refreshNodeAllTrees("asset", parentNode.get("id"));
+                    pimcore.elementservice.refreshAssetFolder(parentNode.get("id"));
                 }
             }.bind(this);
 
@@ -430,6 +431,8 @@ pimcore.asset.tree = Class.create({
                     node.data.basePath = newBasePath;
                     node.data.path = node.data.basePath + "/" + node.data.text;
                     pimcore.elementservice.nodeMoved("asset", oldParent, newParent);
+                    pimcore.elementservice.refreshAssetFolder(oldParent.id);
+                    pimcore.elementservice.refreshAssetFolder(newParent.id);
                 }
                 else {
                     this.tree.loadMask.hide();
@@ -693,6 +696,7 @@ pimcore.asset.tree = Class.create({
                             handler: function () {
                                 pimcore.elementservice.replaceAsset(record.data.id, function () {
                                     pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
+                                    pimcore.elementservice.refreshAssetFolder(record.parentNode.id);
                                 });
                             }
                         }));
@@ -848,7 +852,9 @@ pimcore.asset.tree = Class.create({
             }
             this.tree.loadMask.hide();
             pimcore.elementservice.refreshNodeAllTrees("asset", oldParent.id);
+            pimcore.elementservice.refreshAssetFolder( oldParent.id);
             pimcore.elementservice.refreshNodeAllTrees("asset", newParent.id);
+            pimcore.elementservice.refreshAssetFolder(newParent.id);
             newParent.expand();
         }.bind(this, asset, newParent, oldParent, tree));
 
@@ -901,6 +907,7 @@ pimcore.asset.tree = Class.create({
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
+                            pimcore.elementservice.refreshAssetFolder(record.parentNode.id);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
@@ -915,6 +922,7 @@ pimcore.asset.tree = Class.create({
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
                         pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
+                        pimcore.elementservice.refreshAssetFolder(record.parentNode.id);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -937,6 +945,7 @@ pimcore.asset.tree = Class.create({
         record.pasteWindow = null;
 
         pimcore.elementservice.refreshNodeAllTrees("asset", record.id);
+        pimcore.elementservice.refreshAssetFolder(record.id);
     },
 
     addFolder : function (tree, record) {
@@ -975,6 +984,7 @@ pimcore.asset.tree = Class.create({
             pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
         }
         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+        pimcore.elementservice.refreshAssetFolder(record.get("id"));
     },
 
     addSingleAsset: function (tree, record) {
@@ -1019,6 +1029,7 @@ pimcore.asset.tree = Class.create({
                     this.downloadProgressWin = null;
 
                     pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+                    pimcore.elementservice.refreshAssetFolder(record.get("id"));
                 }.bind(this, res.jobId),
                 update: function (currentStep, steps, percent) {
                     if(this.downloadProgressBar) {
@@ -1035,6 +1046,7 @@ pimcore.asset.tree = Class.create({
             });
         }.bind(this), function (res) {
             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.get("id"));
+            pimcore.elementservice.refreshAssetFolder(record.parentNode.get("id"));
         }.bind(this));
     },
 
@@ -1182,6 +1194,7 @@ pimcore.asset.tree = Class.create({
                                         this.downloadProgressWin = null;
 
                                         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+                                        pimcore.elementservice.refreshAssetFolder(record.get("id"));
                                     }.bind(this),
                                     update: function (currentStep, steps, percent) {
                                         if(this.downloadProgressBar) {
@@ -1232,11 +1245,13 @@ pimcore.asset.tree = Class.create({
                     success: function () {
                         win.close();
                         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+                        pimcore.elementservice.refreshAssetFolder(record.get("id"));
 
                     }.bind(this),
                     failure: function() {
                         win.close();
                         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+                        pimcore.elementservice.refreshAssetFolder(record.get("id"));
                     }
                 });
             }
@@ -1248,6 +1263,7 @@ pimcore.asset.tree = Class.create({
         record.data.leaf = false;
         record.expand();
         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+        pimcore.elementservice.refreshAssetFolder(record.get("id"));
     },
 
     editAssetKey: function (tree, record) {

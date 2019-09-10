@@ -177,6 +177,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
                 for (var parentNodeId in refreshParentNodes) {
                     pimcore.elementservice.refreshNodeAllTrees(elementType, parentNodeId);
+                    pimcore.elementservice.refreshAssetFolder(parentNodeId);
                 }
 
                 if(this.deleteWindow) {
@@ -532,6 +533,8 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                                 "error");
                         }
                     }
+
+                    pimcore.elementservice.refreshAssetFolder(record.parentNode.id);
                 }.bind(this))
             ;
         }
@@ -669,7 +672,19 @@ pimcore.elementservice.refreshRootNodeAllTrees = function(elementType) {
     }
 };
 
+pimcore.elementservice.refreshAssetFolder = function(id) {
+    if (pimcore.globalmanager.exists("asset_" + id)) {
+        try {
+            var activeTab = pimcore.globalmanager.get("asset_" + id).tabbar.getActiveTab();
 
+            if (activeTab.getDockedItems("pagingtoolbar").length >= 1) {
+                activeTab.getDockedItems("pagingtoolbar")[0].moveFirst();
+            }
+        } catch (e) {
+            pimcore.globalmanager.get("asset_" + id).reload();
+        }
+    }
+}
 
 pimcore.elementservice.refreshNodeAllTrees = function(elementType, id) {
     var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
