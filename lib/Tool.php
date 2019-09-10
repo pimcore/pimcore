@@ -227,11 +227,11 @@ class Tool
      */
     public static function getLanguageFlagFile($language, $absolutePath = true)
     {
-        $relativePath = '/bundles/pimcoreadmin/img/flags';
-        $iconFsBasePath = PIMCORE_WEB_ROOT . $relativePath;
+        $basePath = '/bundles/pimcoreadmin/img/flags';
+        $iconFsBasePath = PIMCORE_WEB_ROOT . $basePath;
 
         if ($absolutePath === true) {
-            $relativePath = PIMCORE_WEB_ROOT . $relativePath;
+            $basePath = PIMCORE_WEB_ROOT . $basePath;
         }
 
         $code = strtolower($language);
@@ -249,7 +249,7 @@ class Tool
         $countryFsPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
         $fallbackFsLanguagePath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
 
-        $iconPath = ($absolutePath === true ? $iconFsBasePath : $relativePath ) . '/countries/_unknown.svg';
+        $iconPath = ($absolutePath === true ? $iconFsBasePath : $basePath ) . '/countries/_unknown.svg';
 
         $languageCountryMapping = [
             'aa' => 'er', 'af' => 'za', 'am' => 'et', 'as' => 'in', 'ast' => 'es', 'asa' => 'tz',
@@ -271,13 +271,13 @@ class Tool
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
-            $iconPath = $relativePath . '/countries/' . $languageCountryMapping[$code] . '.svg';
+            $iconPath = $basePath . '/countries/' . $languageCountryMapping[$code] . '.svg';
         } elseif (file_exists($languageFsPath)) {
-            $iconPath = $relativePath . '/languages/' . $code . '.svg';
+            $iconPath = $basePath . '/languages/' . $code . '.svg';
         } elseif ($countryCode && file_exists($countryFsPath)) {
-            $iconPath = $relativePath . '/countries/' . $countryCode . '.svg';
+            $iconPath = $basePath . '/countries/' . $countryCode . '.svg';
         } elseif ($fallbackLanguageCode && file_exists($fallbackFsLanguagePath)) {
-            $iconPath = $relativePath . '/languages/' . $fallbackLanguageCode . '.svg';
+            $iconPath = $basePath . '/languages/' . $fallbackLanguageCode . '.svg';
         }
 
         return $iconPath;
