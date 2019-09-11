@@ -249,7 +249,7 @@ class Tool
         $countryFsPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
         $fallbackFsLanguagePath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
 
-        $iconPath = ($absolutePath === true ? $iconFsBasePath : $basePath ) . '/countries/_unknown.svg';
+        $iconPath = ($absolutePath === true ? $iconFsBasePath : $basePath) . '/countries/_unknown.svg';
 
         $languageCountryMapping = [
             'aa' => 'er', 'af' => 'za', 'am' => 'et', 'as' => 'in', 'ast' => 'es', 'asa' => 'tz',

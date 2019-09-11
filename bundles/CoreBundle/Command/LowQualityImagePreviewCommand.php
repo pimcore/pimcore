@@ -69,7 +69,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         }
 
         if ($ids = $input->getOption('id')) {
-            $conditions[] = sprintf('id in (%s)', implode(",", $ids));
+            $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
         $generator = null;
