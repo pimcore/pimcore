@@ -292,19 +292,15 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        $line = '';
-        $isFirst = true;
+        $line = [];
+
         if (is_array($data)) {
             foreach ($data as $point) {
-                if (!$isFirst) {
-                    $line .= ' ';
-                }
-                $line .= $point->getLatitude() . ',' . $point->getLongitude();
-                $isFirst = false;
+                $line[] = $point->getLatitude() . ',' . $point->getLongitude();
             }
         }
 
-        return $line;
+        return implode(' ', $line);
     }
 
     /** Encode value for packing it into a single column.
