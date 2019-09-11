@@ -158,7 +158,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return '';
+        return $this->getDiffVersionPreview($data, $object, $params);
     }
 
     /**

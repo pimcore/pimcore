@@ -158,7 +158,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return '';
+        return $this->getDiffVersionPreview($data, $object, $params);
     }
 
     /**
