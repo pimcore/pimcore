@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +29,12 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             ->setName('pimcore:image:low-quality-preview')
             ->setAliases(['pimcore:image:svg-preview'])
             ->setDescription('Regenerates low quality image previews for all image assets')
+            ->addOption(
+                'id',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'only create thumbnails of images with this (IDs)'
+            )
             ->addOption(
                 'parent',
                 'p',
@@ -61,6 +68,10 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             }
         }
 
+        if ($ids = $input->getOption('id')) {
+            $conditions[] = sprintf('id in (%s)', implode(",", $ids));
+        }
+
         $generator = null;
         if ($input->getOption('generator')) {
             $generator = $input->getOption('generator');
@@ -72,18 +83,25 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         $list->setCondition(implode(' AND ', $conditions));
         $total = $list->getTotalCount();
         $perLoop = 10;
+        $progressBar = new ProgressBar($this->output, $total);
 
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
-
-            foreach ($list as $image) {
+            /**
+             * @var $images Asset\Image[]
+             */
+            $images = $list->load();
+            foreach ($images as $image) {
+                $progressBar->advance();
                 if ($force || !file_exists($image->getLowQualityPreviewFileSystemPath())) {
-                    $image->generateLowQualityPreview($generator);
                     $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                    $image->generateLowQualityPreview($generator);
                 }
             }
             \Pimcore::collectGarbage();
         }
+
+        $progressBar->finish();
     }
 }
