@@ -560,7 +560,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $currentIndexName = $this->fetchEsActiveIndex();
         if (empty($currentIndexName)) {
-            throw new \Exception('Index alias with name ' . $this->indexName . ' not found! ' . $e);
+            throw new \Exception('Index alias with name ' . $this->indexName . ' not found! ');
         }
 
         $currentIndexVersion = str_replace($this->indexName . '-', '', $currentIndexName);
