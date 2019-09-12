@@ -442,7 +442,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
                 $context['purpose'] = 'layout';
             }
 
+            $inheritanceEnabled = DataObject::getGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
             $options = $optionsProvider->{'getOptions'}($context, $this);
+            DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
             $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
