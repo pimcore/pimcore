@@ -95,8 +95,12 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             foreach ($images as $image) {
                 $progressBar->advance();
                 if ($force || !file_exists($image->getLowQualityPreviewFileSystemPath())) {
-                    $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
-                    $image->generateLowQualityPreview($generator);
+                    try {
+                        $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                        $image->generateLowQualityPreview($generator);
+                    } catch  (\Exception $e) {
+                        $this->output->writeln('<error>'.$e->getMessage().'</error>');
+                    }
                 }
             }
             \Pimcore::collectGarbage();
