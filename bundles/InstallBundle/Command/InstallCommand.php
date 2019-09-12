@@ -115,6 +115,12 @@ class InstallCommand extends Command
                 'default' => 3306,
                 'group' => 'db_credentials',
             ],
+            'mysql-ssl-cert-path' => [
+                'description' => 'MySQL SSL certificate path (if empty non-ssl connection assumed)',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => '',
+                'group' => 'db_credentials'
+            ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
                 'mode' => InputOption::VALUE_OPTIONAL,
@@ -310,7 +316,7 @@ class InstallCommand extends Command
             $value = $input->getOption($name);
 
             // Empty MySQL password allowed
-            if ($value || $name === 'mysql-password') {
+            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path') {
                 $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
