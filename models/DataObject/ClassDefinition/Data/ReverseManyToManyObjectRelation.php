@@ -389,7 +389,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
         $deletedRelationIds = array_diff($deletedRelationIds, $newRelationIds);
 
-        $objectsWithNewestVersionPublished = [];
         foreach($deletedRelationIds as $deletedRelationId) {
             $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
 
@@ -403,37 +402,23 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
             $deletedRelation->set($this->getOwnerFieldName(), array_values($reverseObjects));
 
-            $latestVersion = $deletedRelation->getLatestVersion();
-            if(!$latestVersion || $deletedRelation->getVersionCount() === $latestVersion->getVersionCount()) {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($deletedRelation));
-            } else {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($deletedRelation, [
-                    'saveVersionOnly' => true
-                ]));
-            }
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($deletedRelation));
 
             $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
             $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $deletedRelation->getId()]);
+            $db->deleteWhere('dependencies', 'sourceid='.$db->quote($deletedRelationId).' AND sourcetype=\'object\' AND targetid='.$db->quote($object->getId()).' AND targettype=\'object\'');
 
+            $latestVersion = $deletedRelation->getLatestVersion();
             if(!$latestVersion || $deletedRelation->getVersionCount() === $latestVersion->getVersionCount()) {
-                $db->deleteWhere('dependencies', 'sourceid='.$db->quote($deletedRelationId).' AND sourcetype=\'object\' AND targetid='.$db->quote($object->getId()).' AND targettype=\'object\'');
-
                 DataObject\AbstractObject::clearDependentCacheByObjectId($deletedRelation->getId());
-
-                $objectsWithNewestVersionPublished[] = $deletedRelation;
-            } else {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($deletedRelation, [
-                    'saveVersionOnly' => true
-                ]));
             }
         }
 
-        $deletedRelationFromObjectIds = array_map($objectsWithNewestVersionPublished, static function(DataObject\Concrete $object) {
-            return $object->getId();
-        });
-        $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND src_id IN ('.implode(',', $deletedRelationFromObjectIds).') AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
-        foreach($objectsWithNewestVersionPublished as $changedObject) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($changedObject));
+        $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
+        foreach($deletedRelationIds as $deletedRelationId) {
+            $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
+
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($deletedRelation));
         }
 
         $return = [];
@@ -449,34 +434,24 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     ];
 
                     if(!in_array($reverseObject->getId(), $oldRelations)) {
-                        $latestVersion = $reverseObject->getLatestVersion();
-                        $event = new DataObjectEvent($reverseObject);
-                        if($latestVersion && $reverseObject->getVersionCount() !== $latestVersion->getVersionCount()) {
-                            $event->setArgument('saveVersionOnly', true);
-                        }
-
-                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $event);
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($reverseObject));
 
                         $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
                         $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
+                        $db->insert('dependencies', [
+                            'sourceid' => $reverseObject->getId(),
+                            'sourcetype' => 'object',
+                            'targetid' => $object->getId(),
+                            'targettype' => 'object'
+                        ]);
 
-
+                        $latestVersion = $reverseObject->getLatestVersion();
                         if(!$latestVersion || $reverseObject->getVersionCount() === $latestVersion->getVersionCount()) {
                             DataObject\AbstractObject::clearDependentCacheByObjectId($reverseObject->getId());
 
-                            $db->insert('dependencies', [
-                                'sourceid' => $reverseObject->getId(),
-                                'sourcetype' => 'object',
-                                'targetid' => $object->getId(),
-                                'targettype' => 'object'
-                            ]);
                         }
 
-                        $event = new DataObjectEvent($reverseObject);
-                        if($latestVersion && $reverseObject->getVersionCount() !== $latestVersion->getVersionCount()) {
-                            $event->setArgument('saveVersionOnly', true);
-                        }
-                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $event);
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($reverseObject));
                     }
                 }
                 $counter++;
