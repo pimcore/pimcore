@@ -241,7 +241,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doGetInheritedValues(Concrete $object = null)
     {
-        if (self::$getInheritedValues && $object !== null) {
+        if ($object !== null) {
             $class = $object->getClass();
 
             return $class->getAllowInherit();
