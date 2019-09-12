@@ -32,6 +32,8 @@ pimcore:
   
 #### Example in Templates / Views
 
+You can also use variable interpolation in localized messages.
+
 <div class="code-section">
 
 ```php
@@ -40,11 +42,15 @@ pimcore:
     <address>&copy; <?= $this->translate("copyright") ?></address>
     <a href="/imprint"><?= $this->translate("imprint") ?></a>
     <a href="/legal"><?= $this->translate("legal_notice") ?></a>
+    <?php // variable interpolation, 'about' translates to 'About {{siteName}}' ?>
+    <a href="/about"><?= $this->translate("about", ['siteName' => $siteName]) ?></a>
     
     <?php // you can also use the the Symfony helper, which is a bit longer ?>
     <address>&copy; <?= $this->translator()->trans("copyright") ?></address>
     <a href="/imprint"><?= $this->translator()->trans("imprint") ?></a>
     <a href="/legal"><?= $this->translator()->trans("legal_notice") ?></a>
+    <?php // variable interpolation, 'about' translates to 'About {{siteName}}' ?>
+    <a href="/about"><?= $this->translator()->trans("about", ['siteName' => $siteName]) ?></a>
 </div>
 ```
 
@@ -53,6 +59,8 @@ pimcore:
 <div>
     <address>&copy; {{ 'Copyright'|trans }}</address>
     <a href="/imprint">{{ 'Imprint'|trans }}</a>
+    {# variable interpolation, 'about' translates to 'About {{siteName}}' #}
+    <a href="/about">{{ 'about'|trans({'{{siteName}}': siteName}) }}</a>
 </div>
 ```
 
@@ -71,7 +79,10 @@ class ContentController extends FrontendController
 {
     public function defaultAction()
     {
-        $translation = $this->get("translator")->trans("legal_notice");
+        $translatedLegalNotice = $this->get("translator")->trans("legal_notice");
+        $siteName = "Demo"; // or get dynamically
+        // variable interpolation, 'about' translates to 'About {{siteName}}'
+        $translatedAbout = $this->get("about")->trans("about", ['siteName' => $siteName]);
     }
 }
 ```
