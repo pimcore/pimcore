@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 
@@ -60,15 +60,15 @@ interface PriceSystemInterface
     public function getTaxClassForProduct(CheckoutableInterface $product);
 
     /**
-     * Returns OnlineShopTaxClass for given ICartPriceModificator
+     * Returns OnlineShopTaxClass for given CartPriceModificatorInterface
      *
      * Should be overwritten in custom price systems with suitable implementation.
      *
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForPriceModification(ICartPriceModificator $modificator);
+    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator);
 }
 
 class_alias(PriceSystemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem');

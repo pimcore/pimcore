@@ -13,6 +13,12 @@ services:
         exclude: '../../Command/Bundle/Helper'
         tags: ['console.command']
 
+    Pimcore\Bundle\CoreBundle\Command\InternalNewsletterDocumentSendCommand:
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: console.command, command: 'internal:newsletter-document-send' }
+
     Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
         arguments:
             - '@Pimcore\Cache\Symfony\CacheClearer'
@@ -47,6 +53,27 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:bundle:enable' }
 
+    Pimcore\Bundle\CoreBundle\Command\Bundle\InstallCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:install' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\UninstallCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:uninstall' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\UpdateCommand:
+        arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:update' }
+
     Pimcore\Bundle\CoreBundle\Command\Targeting\MigrateElementNamesCommand:
         arguments:
             - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
@@ -58,3 +85,9 @@ services:
             - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]
         tags:
             - { name: console.command, command: 'pimcore:deployment:classes-rebuild' }
+
+    Pimcore\Bundle\CoreBundle\Command\CustomLayoutRebuildCommand:
+        calls:
+            - [setClassLayoutDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager']]
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }

@@ -89,6 +89,11 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $phpdocType = 'string';
 
     /**
+     * @var bool
+     */
+    public $dynamicOptions = false;
+
+    /**
      * @return int
      */
     public function getColumnLength()

@@ -291,12 +291,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         unset($fieldItems2[$fkey1]);
                     }
                     foreach ($fieldKeys1 as $fkey => $fieldKey1) {
-                        $v1 = null;
                         $v2 = null;
-                        if($fieldItem1 instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\NumFields) {
-                            $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
-                        }
-
                         $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
 
                         if(!empty($ffkey2) && isset($fieldKeys2[$fkey])) {

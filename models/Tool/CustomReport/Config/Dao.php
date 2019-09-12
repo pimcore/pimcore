@@ -62,22 +62,18 @@ class Dao extends Model\Dao\PhpArrayTable
         }
         $this->model->setModificationDate($ts);
 
-        try {
-            $dataRaw = $this->model->getObjectVars();
-            $data = [];
-            $allowedProperties = ['name', 'sql', 'dataSourceConfig', 'columnConfiguration', 'niceName', 'group', 'xAxis',
-                'groupIconClass', 'iconClass', 'reportClass', 'creationDate', 'modificationDate', 'menuShortcut', 'chartType', 'pieColumn',
-                'pieLabelColumn', 'yAxis', 'shareGlobally', 'sharedUserNames', 'sharedRoleNames'];
+        $dataRaw = $this->model->getObjectVars();
+        $data = [];
+        $allowedProperties = ['name', 'sql', 'dataSourceConfig', 'columnConfiguration', 'niceName', 'group', 'xAxis',
+            'groupIconClass', 'iconClass', 'reportClass', 'creationDate', 'modificationDate', 'menuShortcut', 'chartType', 'pieColumn',
+            'pieLabelColumn', 'yAxis', 'shareGlobally', 'sharedUserNames', 'sharedRoleNames'];
 
-            foreach ($dataRaw as $key => $value) {
-                if (in_array($key, $allowedProperties)) {
-                    $data[$key] = $value;
-                }
+        foreach ($dataRaw as $key => $value) {
+            if (in_array($key, $allowedProperties)) {
+                $data[$key] = $value;
             }
-            $this->db->insertOrUpdate($data, $this->model->getName());
-        } catch (\Exception $e) {
-            throw $e;
         }
+        $this->db->insertOrUpdate($data, $this->model->getName());
     }
 
     /**

@@ -172,7 +172,7 @@ class CollectionConfig extends Model\AbstractModel
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_DELETE, new CollectionConfigEvent($this));
-        parent::delete();
+        $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_DELETE, new CollectionConfigEvent($this));
     }
 
@@ -190,7 +190,7 @@ class CollectionConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_ADD, new CollectionConfigEvent($this));
         }
 
-        $model = parent::save();
+        $model = $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_UPDATE, new CollectionConfigEvent($this));

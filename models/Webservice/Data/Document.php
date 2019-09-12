@@ -68,6 +68,11 @@ abstract class Document extends Model\Webservice\Data
     public $notes;
 
     /**
+     * @var array
+     */
+    public $childs;
+
+    /**
      * @param $object
      * @param null $options
      */

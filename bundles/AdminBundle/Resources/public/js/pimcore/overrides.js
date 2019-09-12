@@ -16,6 +16,9 @@ if(typeof window['t'] !== 'function') {
     window.t = function(v) { return v; };
 }
 
+
+Ext.form.field.Date.prototype.startDay = 1;
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 

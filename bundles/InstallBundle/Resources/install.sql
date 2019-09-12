@@ -174,6 +174,7 @@ CREATE TABLE `documents_newsletter` (
   `trackingParameterName` varchar(255) DEFAULT NULL,
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
+  `plaintext` LONGTEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -311,6 +312,7 @@ CREATE TABLE `glossary` (
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uri` varchar(3000) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
@@ -319,6 +321,7 @@ CREATE TABLE `http_error_log` (
   `serverVars` longtext,
   `date` int(11) unsigned DEFAULT NULL,
   `count` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY (`uri` (765)),
   KEY `code` (`code`),
   KEY `date` (`date`),
@@ -429,6 +432,8 @@ CREATE TABLE `redirects` (
   `expiry` int(11) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
   KEY `active` (`active`)
@@ -677,6 +682,7 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
+  `category` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`key`)
 ) DEFAULT CHARSET=utf8mb4;
 

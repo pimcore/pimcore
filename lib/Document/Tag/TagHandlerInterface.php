@@ -17,14 +17,13 @@ namespace Pimcore\Document\Tag;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Templating\Model\ViewModelInterface;
-use Pimcore\View;
 
 interface TagHandlerInterface
 {
     /**
      * Determine if handler supports the tag
      *
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return bool
      */
@@ -60,7 +59,7 @@ interface TagHandlerInterface
     /**
      * Render a sub-action (snippet, renderlet)
      *
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      * @param string $controller
      * @param string $action
      * @param string|null $parent Bundle

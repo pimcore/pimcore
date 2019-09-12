@@ -190,10 +190,17 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     successHandler();
                 }
             }.bind(this, id, successHandler),
-            update: function (currentStep, steps, percent) {
+            update: function (currentStep, steps, percent, response) {
                 if(this.deleteProgressBar) {
                     var status = currentStep / steps;
                     this.deleteProgressBar.updateProgress(status, percent + "%");
+                }
+
+                if(response && response['deleted']) {
+                    var ids = Object.keys(response['deleted']);
+                    ids.forEach(function (id) {
+                        pimcore.helpers.closeElement(id, elementType);
+                    })
                 }
             }.bind(this),
             failure: function (id, message) {
@@ -785,11 +792,17 @@ pimcore.elementservice.setElementPublishedState = function(options) {
                         }
                     }
                 }
-                if (published) {
-                    delete node.data.cls;
-                } else {
-                    node.data.cls = "pimcore_unpublished";
+
+                if(!node.data['cls']) {
+                    node.data['cls'] = '';
                 }
+
+                if (published) {
+                    node.data.cls = node.data.cls.replace(/pimcore_unpublished/g, '');
+                } else {
+                    node.data.cls += " pimcore_unpublished";
+                }
+
                 node.data.published = published;
             }
         } catch (e) {

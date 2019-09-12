@@ -100,7 +100,7 @@
             tempCanvas.width = dim.width;
             tempCanvas.height = dim.height;
             Layers.convert_layers_to_canvas(tempCtx);
-            var dataUri = tempCanvas.toDataURL('image/"<?= ($imageFileExtension == "png") ? "png" : "jpg" ?>"');
+            var dataUri = tempCanvas.toDataURL('image/<?= ($imageFileExtension == "png") ? "png" : "jpeg" ?>');
 
             parent.Ext.Ajax.request({
                 url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",

@@ -107,6 +107,20 @@ class Redirect extends AbstractModel
     public $modificationDate;
 
     /**
+     * ID of the owner user
+     *
+     * @var int
+     */
+    protected $userOwner;
+
+    /**
+     * ID of the user who make the latest changes
+     *
+     * @var int
+     */
+    protected $userModification;
+
+    /**
      * StatusCodes
      */
     public static $statusCodes = [
@@ -479,6 +493,38 @@ class Redirect extends AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserOwner()
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int $userOwner
+     */
+    public function setUserOwner($userOwner)
+    {
+        $this->userOwner = $userOwner;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserModification()
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $userModification
+     */
+    public function setUserModification($userModification)
+    {
+        $this->userModification = $userModification;
     }
 
     public function save()

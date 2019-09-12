@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-
 use PayPalCheckoutSdk\Core\PayPalHttpClient;
 use PayPalCheckoutSdk\Core\ProductionEnvironment;
 use PayPalCheckoutSdk\Core\SandboxEnvironment;
@@ -24,16 +23,19 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\JsonResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PayPalSmartPaymentButton extends AbstractPayment
+class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
-
-    const CAPTURE_STRATEGY_MANUAL = "manual";
-    const CAPTURE_STRATEGY_AUTOMATIC = "automatic";
+    const CAPTURE_STRATEGY_MANUAL = 'manual';
+    const CAPTURE_STRATEGY_AUTOMATIC = 'automatic';
 
     /**
      * @var PayPalHttpClient
@@ -60,6 +62,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
      */
     protected $environment;
 
+    protected $authorizedData;
 
     public function __construct(array $options, EnvironmentInterface $environment)
     {
@@ -85,7 +88,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
     {
         $this->environment = $environment;
     }
-
 
     /**
      * @return string
@@ -120,7 +122,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
-
         $request = new OrdersCreateRequest();
         $request->prefer('return=representation');
         $request->body = $this->buildRequestBody($price, $config);
@@ -130,16 +131,15 @@ class PayPalSmartPaymentButton extends AbstractPayment
         return $response->result;
     }
 
-    protected function buildRequestBody(PriceInterface $price, array $config) {
-
+    protected function buildRequestBody(PriceInterface $price, array $config)
+    {
         $applicationContext = $this->applicationContext;
-        if($config['return_url']) {
+        if ($config['return_url']) {
             $applicationContext['return_url'] = $config['return_url'];
         }
-        if($config['cancel_url']) {
+        if ($config['cancel_url']) {
             $applicationContext['cancel_url'] = $config['cancel_url'];
         }
-
 
         $requestBody = [
             'intent' => 'CAPTURE',
@@ -157,6 +157,16 @@ class PayPalSmartPaymentButton extends AbstractPayment
         ];
 
         return $requestBody;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $json = $this->initPayment($price, $config->asArray());
+
+        return new JsonResponse($orderAgent->getOrder(), $json);
     }
 
     /**
@@ -203,7 +213,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
         $authorizedData['surname'] = $statusResponse->result->payer->name->surname;
         $this->setAuthorizedData($authorizedData);
 
-
         switch ($this->captureStrategy) {
 
             case self::CAPTURE_STRATEGY_MANUAL:
@@ -223,7 +232,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
             default:
                 throw new InvalidConfigException("Unknown capture strategy '" . $this->captureStrategy . "'");
         }
-
     }
 
     /**
@@ -256,11 +264,9 @@ class PayPalSmartPaymentButton extends AbstractPayment
      */
     public function executeDebit(PriceInterface $price = null, $reference = null)
     {
-
-        if(null !== $price) {
-            throw new \Exception("Setting other price than defined in Order not supported by paypal api");
+        if (null !== $price) {
+            throw new \Exception('Setting other price than defined in Order not supported by paypal api');
         }
-
 
         $orderId = $this->getAuthorizedData()['orderID'];
         $statusResponse = $this->payPalHttpClient->execute(new OrdersCaptureRequest($orderId));
@@ -271,9 +277,9 @@ class PayPalSmartPaymentButton extends AbstractPayment
             '',
             $statusResponse->result->status == 'COMPLETED' ? StatusInterface::STATUS_CLEARED : StatusInterface::STATUS_CANCELLED,
             [
+                'transactionId' => $statusResponse->result->purchase_units[0]->payments->captures[0]->id
             ]
         );
-
     }
 
     /**
@@ -289,7 +295,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
     {
         throw new \Exception('not implemented');
     }
-
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -339,18 +344,18 @@ class PayPalSmartPaymentButton extends AbstractPayment
         ];
 
         $this->captureStrategy = $options['capture_strategy'];
-
     }
 
     /**
      * @param string $clientId
      * @param string $clientSecret
      * @param string $mode
+     *
      * @return PayPalHttpClient
      */
-    protected function buildPayPalClient(string $clientId, string $clientSecret, string $mode = 'sandbox') {
-
-        if($mode == 'production') {
+    protected function buildPayPalClient(string $clientId, string $clientSecret, string $mode = 'sandbox')
+    {
+        if ($mode == 'production') {
             $environment = new ProductionEnvironment($clientId, $clientSecret);
         } else {
             $environment = new SandboxEnvironment($clientId, $clientSecret);
@@ -361,10 +366,12 @@ class PayPalSmartPaymentButton extends AbstractPayment
 
     /**
      * @param Currency|null $currency
+     *
      * @return string
      */
-    public function buildPaymentSDKLink(Currency $currency = null) {
-        if(null === $currency) {
+    public function buildPaymentSDKLink(Currency $currency = null)
+    {
+        if (null === $currency) {
             $currency = $this->getEnvironment()->getDefaultCurrency();
         }
 

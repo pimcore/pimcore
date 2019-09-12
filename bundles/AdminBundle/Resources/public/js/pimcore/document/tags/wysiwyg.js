@@ -101,7 +101,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
-                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig, specificConfig);
+                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig);
             }
 
             eConfig = mergeObject(eConfig, specificConfig);

@@ -52,6 +52,7 @@ class SelectCategory extends AbstractFilterType
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
+            'indexedValues' => $values,
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
             'rootCategory' => $filterDefinition->getRootCategory(),

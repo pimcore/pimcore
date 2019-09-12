@@ -22,6 +22,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -206,6 +207,8 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
+                Logger::error($e);
+
                 return null;
             }
         }
@@ -296,6 +299,22 @@ class ClassDefinition extends Model\AbstractModel
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
             $this->setId($maxId ? $maxId + 1 : 1);
+        }
+
+        if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
+            throw new \Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+        }
+
+        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
+            throw new \Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
+        }
+
+        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
+                throw new \Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                    $this->getParentClass()));
+            }
         }
 
         $isUpdate = $this->exists();
@@ -910,26 +929,6 @@ class ClassDefinition extends Model\AbstractModel
                 $this->addFieldDefinition($def->getName(), $def);
             }
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @param mixed $parent
-     *
-     * @return $this
-     */
-    public function setParent($parent)
-    {
-        $this->parent = $parent;
-
-        return $this;
     }
 
     /**

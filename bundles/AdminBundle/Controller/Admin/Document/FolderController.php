@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -28,6 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class FolderController extends DocumentControllerBase
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -37,15 +39,16 @@ class FolderController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
         $folder = Document\Folder::getById($request->get('id'));
+
+        // check for lock
+        if ($folder->isAllowed('save') || $folder->isAllowed('publish') || $folder->isAllowed('unpublish') || $folder->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $folder = clone $folder;
 
         $folder->idPath = Element\Service::getIdPath($folder);
@@ -76,7 +79,7 @@ class FolderController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -90,28 +93,22 @@ class FolderController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $folder = Document\Folder::getById($request->get('id'));
-                $folder->setModificationDate(time());
-                $folder->setUserModification($this->getAdminUser()->getId());
+        if ($request->get('id')) {
+            $folder = Document\Folder::getById($request->get('id'));
+            $folder->setModificationDate(time());
+            $folder->setUserModification($this->getAdminUser()->getId());
 
-                if ($folder->isAllowed('publish')) {
-                    $this->setValuesToDocument($request, $folder);
-                    $folder->save();
+            if ($folder->isAllowed('publish')) {
+                $this->setValuesToDocument($request, $folder);
+                $folder->save();
 
-                    return $this->adminJson(['success' => true]);
-                }
+                return $this->adminJson(['success' => true]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
-            }
-            throw $e;
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

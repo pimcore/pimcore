@@ -212,7 +212,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
             if(this.options && this.options['uiState']) {
-                this.setUiState(this.tab, this.options['uiState']);
+                this.setUiState(this.tabbar, this.options['uiState']);
             }
         }.bind(this, tabId));
 
@@ -361,7 +361,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.save.bind(this, "unpublish"),
+                handler: this.save.bind(this, "version"),
                 menu: [{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",
@@ -481,10 +481,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             buttons.push({
+                xtype: "splitbutton",
                 tooltip: t("show_metainfo"),
                 iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
-                handler: this.showMetaInfo.bind(this)
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
             });
 
 
@@ -752,10 +754,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 // for internal use ID.
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
-                            else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                                    rdata.message, rdata.stack, rdata.code);
-                            }
                         } catch (e) {
                             pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }
@@ -809,12 +807,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         params = params || {};
         var uiState = null;
 
-        if(!params['layoutId']) {
+        // Reload layout when explicitly set to false
+        if (params['layoutId'] === false) {
+            params['layoutId'] = null;
+        } else if (!params['layoutId']) {
             params['layoutId'] = this.data.currentLayoutId;
         }
 
         if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {
-            uiState = this.getUiState(this.tab);
+            uiState = this.getUiState(this.tabbar);
         }
 
         this.tab.on("close", function () {
@@ -833,45 +834,61 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         pimcore.helpers.closeObject(this.id);
     },
 
+    getMetaInfo: function() {
+        return {
+            id: this.data.general.o_id,
+            path: this.data.general.fullpath,
+            parentid: this.data.general.o_parentId,
+            classid: this.data.general.o_classId,
+            "class": this.data.general.o_className,
+            modificationdate: this.data.general.o_modificationDate,
+            creationdate: this.data.general.o_creationDate,
+            usermodification: this.data.general.o_userModification,
+            userowner: this.data.general.o_userOwner,
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
+        };
+    },
+
     showMetaInfo: function () {
+        var metainfo = this.getMetaInfo();
 
         new pimcore.element.metainfo([
             {
                 name: "id",
-                value: this.data.general.o_id
+                value: metainfo.id
             },
             {
                 name: "path",
-                value: this.data.general.fullpath
+                value: metainfo.path
             }, {
                 name: "parentid",
-                value: this.data.general.o_parentId
+                value: metainfo.parentid
             }, {
                 name: "classid",
-                value: this.data.general.o_classId
+                value: metainfo.classid
             }, {
                 name: "class",
-                value: this.data.general.o_className
+                value: metainfo.class
             }, {
                 name: "modificationdate",
                 type: "date",
-                value: this.data.general.o_modificationDate
+                value: metainfo.modificationdate
             }, {
                 name: "creationdate",
                 type: "date",
-                value: this.data.general.o_creationDate
+                value: metainfo.creationdate
             }, {
                 name: "usermodification",
                 type: "user",
-                value: this.data.general.o_userModification
+                value: metainfo.usermodification
             }, {
                 name: "userowner",
                 type: "user",
-                value: this.data.general.o_userOwner
+                value: metainfo.userowner
             },
             {
                 name: "deeplink",
-                value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
+                value: metainfo.deeplink
             }
         ], "object");
     },

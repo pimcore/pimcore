@@ -1,0 +1,35 @@
+<div class="row border content-block">
+    <div class="col col-sm-3">
+        <div class="statistics">
+            <h3>{{ ('bundle_ecommerce_voucherservice_token-statistic-headline')|trans([],'admin') }}</h3>
+        </div>
+        <canvas id="canvas-token"></canvas>
+        <table class="table current-data" style="margin-top: 35px;">
+            <tbody>
+            <tr>
+                <td><span class="fa fa-list-alt"></span> {{ ('bundle_ecommerce_voucherservice_token-overall')|trans([],'admin') }}</td>
+                <td>{{ statistics['overallCount']|number_format(0, ',', ' ')  }}</td>
+            </tr>
+            <tr>
+                <td><span style="color: {{ colors['used'] }}" class="fa fa-share-square"></span> {{ ('bundle_ecommerce_voucherservice_token-used')|trans([],'admin') }}</td>
+                <td>{{ statistics['usageCount']|number_format(0, ',', ' ')  }}</td>
+            </tr>
+            <tr>
+                <td><span style="color: {{ colors['reserved'] }}" class="fa fa-edit"></span> {{ ('bundle_ecommerce_voucherservice_token-reserved')|trans([],'admin') }}</td>
+                <td>{{ statistics['reservedCount']|number_format(0, ',', ' ')  }}</td>
+            </tr>
+            <tr>
+                <td><span style="color: {{ colors['free'] }}" class="fa fa-external-link-alt"></span> {{ ('bundle_ecommerce_voucherservice_token-free')|trans([],'admin') }}</td>
+                <td>{{ statistics['freeCount']|number_format(0, ',', ' ')  }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col col-sm-9 canvas-container">
+        <div class="statistics">
+            <h3>{{ ('bundle_ecommerce_voucherservice_usage-headline')|trans([],'admin') }}</h3>
+        </div>
+        <canvas id="canvas-usage" height="130" style="padding-right: 50px;"></canvas>
+    </div>
+</div>

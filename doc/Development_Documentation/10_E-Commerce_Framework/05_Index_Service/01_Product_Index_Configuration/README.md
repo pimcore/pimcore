@@ -159,6 +159,8 @@ implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\I
  If configuration option `multiSelectEncoded` is set, it returns id list encoded as multi select (relevant for filtering 
  in Product List). 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Numeric`: Returns `floatval` of given value. 
+- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\QuantityValue`: Interprets quantity value data types, 
+  by default by serializing it to string, when config option `onlyValue` set to `true`, it returns only value 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectId`: Returns id of given object. 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectIdSum`: Calculates sum if ids of given objects. 
 Could be used for similarity calculation. 

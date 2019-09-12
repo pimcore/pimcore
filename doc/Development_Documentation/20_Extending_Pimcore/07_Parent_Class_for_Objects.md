@@ -11,6 +11,6 @@ The class will then extend the given parent class.
 Please make sure, that your custom class itself extends `Pimcore\Model\DataObject\Concrete` at some point in its class hierarchy. 
 Otherwise the object class will not work.
 
-Starting from Pimcore 5.4.0, it is also possible to make the object listing model extend a certain parent class too.
+It is also possible to make the object listing model extend a certain parent class too.
 To do so, define a `Listing Parent class` in the classes basic configuration. 
 The listing class will then extend the given listing parent class.

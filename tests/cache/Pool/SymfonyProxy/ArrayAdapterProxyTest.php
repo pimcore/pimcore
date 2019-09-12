@@ -98,4 +98,13 @@ class ArrayAdapterProxyTest extends ArrayAdapterTest
         }, INF));
         $this->assertFalse($isHit);
     }
+
+    /**
+     * No runInSeparateProcess
+     * See: https://github.com/symfony/symfony/commit/85c50119f146e1c2e25738d6ac9f02b6cb05a471
+     */
+    public function testSavingObject()
+    {
+        parent::testSavingObject();
+    }
 }

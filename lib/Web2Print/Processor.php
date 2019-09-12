@@ -118,8 +118,8 @@ abstract class Processor
             $document->setLastGenerated((time() + 1));
             $document->save();
         } catch (\Exception $e) {
-            $document->save();
             Logger::err($e);
+            $document->save();
         }
 
         Model\Tool\Lock::release($document->getLockKey());

@@ -53,40 +53,25 @@ class Dao extends Model\Document\PageSnippet\Dao
         }
     }
 
-    /**
-     * Create a new record for the object in the database
-     *
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_email', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_email', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
-     * Deletes the object (and data) from database
-     *
      * @throws \Exception
      */
     public function delete()
     {
-        try {
-            $this->deleteAllProperties();
+        $this->deleteAllProperties();
 
-            $this->db->delete('documents_email', ['id' => $this->model->getId()]);
-            $this->db->delete('email_log', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_email', ['id' => $this->model->getId()]);
+        $this->db->delete('email_log', ['documentId' => $this->model->getId()]);
 
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        parent::delete();
     }
 }

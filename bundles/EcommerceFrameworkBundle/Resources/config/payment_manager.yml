@@ -49,4 +49,6 @@ services:
         arguments:
             $options: []
 
-
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Heidelpay:
+        arguments:
+            $options: []

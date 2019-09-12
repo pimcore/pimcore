@@ -28,9 +28,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
-     * @var
+     * @var string[]
      */
     public $columns;
+
+    /**
+     * @var string[]
+     */
+    public $columnKeys;
 
     /**
      * Static type of this element

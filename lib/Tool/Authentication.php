@@ -141,7 +141,7 @@ class Authentication
             $timeZone = date_default_timezone_get();
             date_default_timezone_set('UTC');
 
-            if ($timestamp > time() or $timestamp < (time() - (60 * 30))) {
+            if ($timestamp > time() or $timestamp < (time() - (60 * 60 * 24))) {
                 return null;
             }
             date_default_timezone_set($timeZone);

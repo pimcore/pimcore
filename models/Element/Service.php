@@ -423,18 +423,19 @@ class Service extends Model\AbstractModel
      *
      * @param  string $type
      * @param  int $id
+     * @param  bool $force
      *
      * @return ElementInterface
      */
-    public static function getElementById($type, $id)
+    public static function getElementById($type, $id, $force = false)
     {
         $element = null;
         if ($type == 'asset') {
-            $element = Asset::getById($id);
+            $element = Asset::getById($id, $force);
         } elseif ($type == 'object') {
-            $element = DataObject::getById($id);
+            $element = DataObject::getById($id, $force);
         } elseif ($type == 'document') {
-            $element = Document::getById($id);
+            $element = Document::getById($id, $force);
         }
 
         return $element;
@@ -462,6 +463,16 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param ElementInterface $element
+     *
+     * @return string
+     */
+    public static function getElementHash(ElementInterface $element): string
+    {
+        return self::getElementType($element) . '-' . $element->getId();
+    }
+
+    /**
      * determines the type of an element (object,asset,document)
      *
      * @static
@@ -473,20 +484,6 @@ class Service extends Model\AbstractModel
     public static function getType($element)
     {
         return self::getElementType($element);
-    }
-
-    /**
-     * Schedules element with this id for sanity check to be cleaned of broken relations
-     *
-     * @static
-     *
-     * @param  ElementInterface $element
-     */
-    public static function scheduleForSanityCheck($element)
-    {
-        $type = self::getElementType($element);
-        $sanityCheck = new Sanitycheck($element->getId(), $type);
-        $sanityCheck->save();
     }
 
     /**
@@ -871,7 +868,7 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv, $childsList) {
+            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv) {
                 $where = $cv['where'];
                 if ($where) {
                     $select->where($where);

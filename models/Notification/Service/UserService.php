@@ -71,6 +71,7 @@ class UserService
 
     /**
      * @param array $users
+     *
      * @return array
      */
     public function filterUsersWithPermission(array $users): array

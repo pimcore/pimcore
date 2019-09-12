@@ -100,11 +100,11 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     /**
@@ -119,8 +119,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
         $this->db->insert('sites', ['rootId' => $this->model->getRootId()]);
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 
     /**

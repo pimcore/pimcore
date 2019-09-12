@@ -894,5 +894,16 @@
     "auto_convert": "Automatic conversion",
     "web2print_enableDebugMode": "Enable debug mode",
     "set_to_null": "Empty (set to null)",
-    "bundles": "Bundles"
+    "bundles": "Bundles",
+    "target_document_invalid": "Please select a target document with valid language",
+    "metainfo_copy_id": "Copy ID to clipboard",
+    "metainfo_copy_fullpath": "Copy full path to clipboard",
+    "metainfo_copy_deeplink": "Copy deeplink to clipboard",
+    "plain_text": "Plain Text",
+    "plain_text_email_part": "Email Plain Text Part",
+    "error_message": "Error Message",
+    "bundle_ecommerce_order_tab": "Order Details",
+    "access_denied": "Access Denied!",
+    "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
+    "validation_failed": "Validation Failed!"
 }

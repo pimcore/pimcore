@@ -28,6 +28,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
 
     /**
      * Static type of this element
@@ -567,7 +570,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param $object
      * @param array $params
      *
-     * @return null|DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|DataObject\Objectbrick\Data\
+     * @return null|Element\ElementInterface
      */
     public function preGetData($object, $params = [])
     {
@@ -591,7 +594,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }

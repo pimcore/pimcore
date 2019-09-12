@@ -474,8 +474,6 @@ class EmailController extends AdminController
                 'total' => $list->getTotalCount()
             ]);
         }
-
-        return $this->adminJson(false);
     }
 
     /**

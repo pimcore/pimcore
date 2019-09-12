@@ -95,21 +95,17 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function save()
     {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
+        $ts = time();
+        $this->model->setModificationDate($ts);
 
-            $dataRaw = $this->model->getObjectVars();
-            $data = [];
+        $dataRaw = $this->model->getObjectVars();
+        $data = [];
 
-            foreach ($dataRaw as $key => $value) {
-                $data[$key] = $value;
-            }
-
-            $this->db->insertOrUpdate($data, $this->model->getId());
-        } catch (\Exception $e) {
-            throw $e;
+        foreach ($dataRaw as $key => $value) {
+            $data[$key] = $value;
         }
+
+        $this->db->insertOrUpdate($data, $this->model->getId());
 
         if (!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());

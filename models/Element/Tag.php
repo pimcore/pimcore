@@ -232,8 +232,8 @@ class Tag extends Model\AbstractModel
      */
     public function getParent()
     {
-        if ($this->parent == null) {
-            $this->parent = Tag::getById($this->getParentId());
+        if ($this->parent == null && $parentId = $this->getParentId()) {
+            $this->parent = Tag::getById($parentId);
         }
 
         return $this->parent;

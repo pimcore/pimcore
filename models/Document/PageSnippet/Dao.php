@@ -106,11 +106,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function delete()
     {
-        try {
-            parent::delete();
-            $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        parent::delete();
+        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
     }
 }

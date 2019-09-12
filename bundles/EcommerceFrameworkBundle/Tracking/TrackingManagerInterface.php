@@ -21,11 +21,9 @@ interface TrackingManagerInterface extends
     CartUpdateInterface,
     CartProductActionAddInterface,
     CartProductActionRemoveInterface,
-    IProductActionAdd,
-    IProductActionRemove,
-    ICheckout,
+    CheckoutInterface,
     CheckoutStepInterface,
-    ICheckoutComplete
+    CheckoutCompleteInterface
 {
 }
 

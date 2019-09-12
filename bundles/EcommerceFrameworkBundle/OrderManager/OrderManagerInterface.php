@@ -51,8 +51,6 @@ interface OrderManagerInterface
     /**
      * Looks if order object for given cart already exists, otherwise creates it
      *
-     * move to ordermanagers
-     *
      * @return AbstractOrder
      */
     public function getOrCreateOrderFromCart(CartInterface $cart);

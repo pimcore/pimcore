@@ -111,7 +111,7 @@ class Numeric extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if (empty($data->number) or is_numeric($data->number)) {
             $this->number = $data->number;
         } else {

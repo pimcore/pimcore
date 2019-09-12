@@ -3,6 +3,8 @@
 * [Documentation](https://www.developers.klarna.com/en/de/kco-v2/klarna-checkout-overview-v1)
 * [Test card numbers](https://www.developers.klarna.com/en/de/kco-v2/test-credentials)
 
+Install Klarna SDK: `composer require klarna/checkout`
+
 Test E-Mail Accounts
 - klarna@green.com -> Open Invoice without selection of payment method
 - klarna@yellow.com -> selection of payment methods: open invoice + credit cart

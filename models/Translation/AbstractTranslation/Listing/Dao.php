@@ -25,7 +25,9 @@ use Pimcore\Model;
  */
 abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**

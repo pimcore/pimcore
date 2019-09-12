@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = 'ecommerceframework_vouchertoolkit_tokens';
+    public const TABLE_NAME = 'ecommerceframework_vouchertoolkit_tokens';
 
     public function __construct()
     {
@@ -69,29 +69,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             return $this->db->fetchOne('SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
         } catch (\Exception $e) {
             return false;
-        }
-    }
-
-    /**
-     * @param $token
-     * @param int $allowedUsages
-     *
-     * @return bool
-     */
-    public static function isUsedToken($token, $allowedUsages = 1)
-    {
-        $db = \Pimcore\Db::get();
-
-        $query = 'SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ? ';
-        $params[] = $token;
-
-        try {
-            $tokenUsed = $db->fetchOne($query, $params);
-
-            return $tokenUsed >= $allowedUsages;
-            // If an Error occurs the token is defined as used.
-        } catch (\Exception $e) {
-            return true;
         }
     }
 

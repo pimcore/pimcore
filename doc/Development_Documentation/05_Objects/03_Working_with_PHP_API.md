@@ -89,7 +89,7 @@ $entries->setCondition("name LIKE :name", ["name" => "%bernie%"]); // With PDO_M
 // to add param to the condition (until build 181 this cannot be used with setCondition in the same listing, you should use setCondition OR addConditionParam but not both)
 $entries->addConditionParam("city = ?", "New York", "AND"); // concatenator can be AND or OR
 
-//use array bindings for prepared statements (since version 5.8.0)
+//use array bindings for prepared statements
 $entries->setCondition("city IN (?)", [["New York", "Chicago"]]);
 // or
 $entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]]); // named parameters

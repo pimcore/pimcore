@@ -8,7 +8,7 @@ The `PayPalSmartPaymentButton` provides an integration with the PayPal Smart Pay
 
 1) Update your `composer.json`
 
-Add add `paypal/paypal-checkout-sdk:^1` to your `composer.json`. 
+Add `paypal/paypal-checkout-sdk:^1` to your `composer.json`. 
 
 2) Setup API credentials and Pimcore E-Commerce Framework Configuration
 

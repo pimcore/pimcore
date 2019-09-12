@@ -152,13 +152,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             }
         }.bind(this));
 
-        leafletMap.on("draw:deleted", function() {
+        leafletMap.on(L.Draw.Event.DELETED, function() {
             this.data = null;
             this.dirty = true;
             this.updateMap();
         }.bind(this));
 
-        leafletMap.on("draw:editvertex", function (e) {
+        leafletMap.on(L.Draw.Event.EDITSTOP, function (e) {
             this.dirty = true;
 
             var layer1;
@@ -180,7 +180,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
         }.bind(this));
     },
-    
+
     geocode: function () {
         var address = this.searchfield.getValue();
         jQuery.getJSON(this.getSearchUrl(address), function(json) {
@@ -189,7 +189,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
               this.getLeafletToolbar(map);
             }
         }.bind(this));
-       
+
     },
 
     getValue: function () {

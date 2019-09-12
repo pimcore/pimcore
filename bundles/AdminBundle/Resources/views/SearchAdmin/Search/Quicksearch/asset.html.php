@@ -2,6 +2,7 @@
     /**
      * @var \Pimcore\Model\Asset\Image|\Pimcore\Model\Asset\Document|\Pimcore\Model\Asset\Video $element
      */
+    $element = $this->element;
     $this->get("translate")->setDomain("admin");
 
     $previewImage = null;
