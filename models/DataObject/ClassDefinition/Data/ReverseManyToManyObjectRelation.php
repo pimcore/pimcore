@@ -19,6 +19,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Cache;
 use Pimcore\Db;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -397,6 +399,9 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     unset($reverseObjects[$index]);
                 }
             }
+
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($deletedRelation));
+
             $deletedRelation->set($this->getOwnerFieldName(), array_values($reverseObjects));
 
             $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
@@ -408,6 +413,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             if(!$latestVersion || $deletedRelation->getVersionCount() === $latestVersion->getVersionCount()) {
                 DataObject\AbstractObject::clearDependentCacheByObjectId($deletedRelation->getId());
             }
+
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($deletedRelation));
         }
 
         $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
@@ -425,6 +432,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     ];
 
                     if(!in_array($reverseObject->getId(), $oldRelations)) {
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($reverseObject));
+
                         $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
                         $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
                         $db->insert('dependencies', [
@@ -438,6 +447,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         if(!$latestVersion || $reverseObject->getVersionCount() === $latestVersion->getVersionCount()) {
                             DataObject\AbstractObject::clearDependentCacheByObjectId($reverseObject->getId());
                         }
+
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($reverseObject));
                     }
                 }
                 $counter++;
