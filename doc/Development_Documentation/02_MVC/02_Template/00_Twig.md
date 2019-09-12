@@ -242,3 +242,76 @@ Can be used to test if an object is an instance of a given class.
     {# ... #}
 {% endif %}
 ```
+
+### Adding Third-party Twig Extensions
+
+To add third-party (vendor) Twig extensions, first install the required packages (via `composer require`),
+then add the services into your `app/config/services.yml` file. You may need to run `bin/console cache:clear`
+to ensure Pimcore reloads the `services.yml` file.
+
+For example, to add [twig/markdown-extension](https://packagist.org/packages/twig/markdown-extension),
+you add the following services:
+
+```yaml
+services:
+    # ...
+
+    erusev.markdown:
+        class: Twig\Markdown\ErusevMarkdown
+    twig.markdown.runtime:
+        class: Twig\Markdown\MarkdownRuntime
+        public: true
+        arguments: ['@erusev.markdown']
+        tags:
+            - { name: twig.runtime }
+    twig.markdown:
+        class: Twig\Markdown\MarkdownExtension
+        tags:
+            - { name: twig.extension }
+```
+
+For more information, see [Register an Extension as a Service (Symfony Docs)](https://symfony.com/doc/current/templating/twig_extension.html#register-an-extension-as-a-service).
+
+### Adding Your Own Custom Twig Extensions
+
+Twig Extensions can be used for things like:
+
+* Getting fallback values
+* Calculating things like product prices
+* Helper things like some easy php functions+
+* Currency Conversions
+
+In Pimcore, Twig Extensions should be in the namespace `AppBundle\Twig\Extension` and should look like this:
+
+```php
+<?php
+namespace AppBundle\Twig\Extension;
+
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+
+final class MyExtension extends AbstractExtension
+{
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('my_filter', [$this->helper, 'myFilter']),
+        ];
+    }
+    
+    public function myFilter($subject) {
+         //Do something with $subject here
+         return $subject;
+    }
+}
+```
+
+You can then use it in your Twig view like:
+
+```twig
+{{ my_var|my_filter }}
+```
