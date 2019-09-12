@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -31,7 +31,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *
      * @var string
      */
-    public $fieldtype = 'geopolygon';
+    public $fieldtype = 'geopolyline';
 
     /**
      * Type for the column to query
@@ -319,9 +319,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                 /** @var $point DataObject\Data\Geopoint */
                 foreach ($value as $point) {
                     $result[] = [
-                            $point->getLatitude(),
-                            $point->getLongitude()
-                        ];
+                        $point->getLatitude(),
+                        $point->getLongitude()
+                    ];
                 }
             }
 
