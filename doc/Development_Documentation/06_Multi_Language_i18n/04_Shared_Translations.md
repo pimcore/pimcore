@@ -73,16 +73,17 @@ You can also use variable interpolation in localized messages.
 
 namespace AppBundle\Controller;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Pimcore\Controller\FrontendController;
 
 class ContentController extends FrontendController
 {
-    public function defaultAction()
+    public function defaultAction(TranslatorInterface $translator)
     {
-        $translatedLegalNotice = $this->get("translator")->trans("legal_notice");
+        $translatedLegalNotice = $translator->trans("legal_notice");
         $siteName = "Demo"; // or get dynamically
         // variable interpolation, 'about' translates to 'About {{siteName}}'
-        $translatedAbout = $this->get("translator")->trans("about", ['siteName' => $siteName]);
+        $translatedAbout = $translator->trans("about", ['siteName' => $siteName]);
     }
 }
 ```
