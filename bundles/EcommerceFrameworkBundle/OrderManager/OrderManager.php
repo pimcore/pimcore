@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
@@ -640,7 +641,13 @@ class OrderManager implements OrderManagerInterface
         }
 
         $orderItem->setAmount($item->getCount());
-        $orderItem->setProduct($item->getProduct());
+
+        $product = $item->getProduct();
+        if ($item->getProduct() instanceof DefaultMockup) {
+            $product = $item->getProduct()->getOriginalObject();
+        }
+        $orderItem->setProduct($product);
+
         if ($item->getProduct()) {
             $orderItem->setProductName($item->getProduct()->getOSName());
             $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
