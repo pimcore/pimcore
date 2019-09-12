@@ -82,7 +82,7 @@ class ContentController extends FrontendController
         $translatedLegalNotice = $this->get("translator")->trans("legal_notice");
         $siteName = "Demo"; // or get dynamically
         // variable interpolation, 'about' translates to 'About {{siteName}}'
-        $translatedAbout = $this->get("about")->trans("about", ['siteName' => $siteName]);
+        $translatedAbout = $this->get("translator")->trans("about", ['siteName' => $siteName]);
     }
 }
 ```
