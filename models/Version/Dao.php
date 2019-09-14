@@ -147,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $elementIds = $this->db->fetchCol('SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING amount > ?', [$elementType['elementType'], $elementType['steps']]);
+                    $elementIds = $this->db->fetchCol('SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING amount > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
                     foreach ($elementIds as $elementId) {
                         $count++;
                         Logger::info($elementId . '(object ' . $count . ') Vcount ' . count($versionIds));
