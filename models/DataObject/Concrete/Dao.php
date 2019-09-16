@@ -391,7 +391,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * get versions from database, and assign it to object
      *
-     * @return array
+     * @return Model\Version[]
      */
     public function getVersions()
     {

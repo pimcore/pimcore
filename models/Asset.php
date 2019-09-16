@@ -1479,7 +1479,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
+     * @return Version[]
      */
     public function getVersions()
     {

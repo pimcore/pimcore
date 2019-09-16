@@ -63,7 +63,7 @@ abstract class Dao extends Model\Document\Dao
     /**
      * Get available versions fot the object and return an array of them
      *
-     * @return array
+     * @return Version[]
      */
     public function getVersions()
     {
