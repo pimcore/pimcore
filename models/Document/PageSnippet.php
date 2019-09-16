@@ -522,7 +522,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * @return Model\Version[]
      */
     public function getVersions()
     {
