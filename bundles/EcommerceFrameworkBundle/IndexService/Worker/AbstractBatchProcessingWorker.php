@@ -233,6 +233,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     'subtenants' => ($subTenantData ? $subTenantData : [])
                 ]);
 
+                $jsonLastError = \json_last_error();
+                if ($jsonLastError !== JSON_ERROR_NONE) {
+                    throw new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
+                }
+                
                 $crc = crc32($jsonData);
                 $insertData = [
                     'o_id' => $subObjectId,
