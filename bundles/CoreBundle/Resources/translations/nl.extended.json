@@ -712,5 +712,6 @@
     "delete_language_note": "Note: Removing language from the list will not delete its respective data. Please use console command 'pimcore:locale:delete-unused-tables' for cleanup.",
     "send_invitation_link": "Send Invitation Link",
     "invitation_sent": "Login Invitation sent",
-    "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+    "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
+    "geopolyline": "Geographic Polyline"
 }
