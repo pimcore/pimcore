@@ -710,7 +710,8 @@
     "activate_column_configuration": "Activer la configuration de la colonne",
     "table_column_configuration": "Configuration de la colonne",
     "delete_language_note": "Remarque: supprimer une langue de la liste ne supprimera pas ses données respectives. Veuillez utiliser la commande de console 'pimcore: locale: delete -used-tables' pour les nettoyer.",
-    "send_invitation_link": "Send Invitation Link",
-    "invitation_sent": "Login Invitation sent",
-    "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+    "send_invitation_link": "Envoyer le lien d'invitation",
+    "invitation_sent": "Invitation de connexion envoyée",
+    "invitation_link_sent": "Un lien de connexion temporaire a été envoyé à l'adresse électronique: \"%s\" ",
+    "geopolyline": "Geographic Polyline"
 }
