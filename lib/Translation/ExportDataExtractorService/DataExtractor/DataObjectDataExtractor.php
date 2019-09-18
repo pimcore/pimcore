@@ -184,6 +184,11 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             foreach ($blockElements as $index => $blockElementFields) {
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElementFields as $blockElement) {
+                    // check allowed datatypes
+                    if (!in_array($blockElement->getType(), self::EXPORTABLE_TAGS)) {
+                        continue;
+                    }
+                    
                     $content = $blockElement->getData();
 
                     if (!empty($content)) {
