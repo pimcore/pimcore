@@ -574,7 +574,7 @@
     "do_not_use_in_production": "Nicht in Produktivumgebung verwenden!",
     "environments": "Umgebung",
     "decimal_size": "Dezimalgröße",
-    "decimal_mysql_type_info": "Wenn eine Dezimalgröße oder -genauigkeit angegeben wird, wird der MySQL-Typ <code>DECIMAL(decimalSize, decimalPrecision)</code> verwendet. Fehlen Standardwerte, werden <code>64</ code> als Größe und <code>0</code> als Genauigkeit genutzt.",
+    "decimal_mysql_type_info": "Wenn eine Dezimalgröße oder -genauigkeit angegeben wird, wird der MySQL-Typ <code>DECIMAL(decimalSize, decimalPrecision)</code> verwendet. Fehlen Standardwerte, werden <code>64</code> als Größe und <code>0</code> als Genauigkeit genutzt.",
     "decimal_mysql_type_naming_warning": "Beachten Sie, dass in MySQL die <code>decimalSize</code> als <code>precision</code> und die <code>decimalPrecision</code> als <code>scale</code> bezeichnet wird.",
     "action_scope": "Aktionsbereich",
     "session_with_variables": "Session (mit Variablen)",
@@ -646,7 +646,7 @@
     "targeting_toolbar_browser_note": "<b>HINWEIS:</b> Das Aktivieren der Targeting-Symbolleiste wirkt sich nur auf den aktuell verwendeten Browser aus. Wenn Sie die Symbolleiste in einem anderen Browser verwenden möchten, müssen Sie sie erneut aktivieren. Weitere Informationen finden Sie <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Tools_and_Features/Targeting_and_Personalization/index.html#page_Debugging-Targeting-Data'> in der Dokumentation</a>.",
     "deactivate": "Deaktivieren",
     "admin_translations": "Admin Übersetzungen",
-    "debug_override_warning": "<strong>WARNUNG:</ strong> Wenn der Debug-Modus explizit über Code festgelegt wird, wird diese Einstellung ignoriert. Weitere Informationen finden Sie in der <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Development_Tools_and_Details/Feature_Flags_And_Debug_Mode.html'>Dokumentation</a>.",
+    "debug_override_warning": "<strong>WARNUNG:</strong> Wenn der Debug-Modus explizit über Code festgelegt wird, wird diese Einstellung ignoriert. Weitere Informationen finden Sie in der <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Development_Tools_and_Details/Feature_Flags_And_Debug_Mode.html'>Dokumentation</a>.",
     "last_login": "Letzte Anmeldung",
     "errors_from_the_last_7_days": "Fehler der letzten 7 Tage",
     "microsoft_word_export_notice": "<ul><li>Es ist nicht möglich, diesen Export erneut zu importieren</li><li>Das Exportdatei-Format ist HTML, dieses kann mit Word geöffnet werden kann</li><li>Dieser Export enthält nicht die vollständigen Layout-Informationen (nur grundlegende Textformatierung)</li><li>Die Sprachauswahl wird verwendet, um die Sprache für die lokalisierten Felder des Objekts festzulegen (nur lokalisierte Felder werden exportiert!)</li></ul>",
@@ -712,5 +712,6 @@
     "delete_language_note": "Hinweis: Wenn Sie eine Sprache aus der Liste entfernen, werden die entsprechenden Daten nicht gelöscht. Verwenden Sie zur Bereinigung den Konsolenbefehl 'pimcore: locale: delete-unused-tables'.",
     "send_invitation_link": "Einladungslink senden",
     "invitation_sent": "Einladung versendet",
-    "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+    "invitation_link_sent": "Ein temporärer Login-Link wurde an folgende E-Mail-Adresse gesendet: \"%s\" ",
+    "geopolyline": "Geografische Polylinie"
 }
