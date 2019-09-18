@@ -68,7 +68,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             $this->db->query('INSERT INTO ' . self::TABLE_NAME . ' (token,cart_id,timestamp) VALUES (?,?,NOW())', [$code, $cart->getId()]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

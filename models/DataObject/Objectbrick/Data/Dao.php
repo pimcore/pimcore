@@ -75,7 +75,11 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
-                            if ($this->model->isFieldDirty($key) || $this->model->isFieldDirty('_self')) {
+                            if ($this->model->isFieldDirty('_self')) {
+                                $this->model->markFieldDirty($key);
+                            }
+
+                            if ($this->model->isFieldDirty($key)) {
                                 $dirtyRelations[] = $db->quote($key);
                             }
                         } else {
@@ -118,12 +122,12 @@ class Dao extends Model\Dao\AbstractDao
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                     ]);
                     $data[$key] = $insertData;
                 }

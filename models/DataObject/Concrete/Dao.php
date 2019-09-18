@@ -246,7 +246,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         $data = array_merge($data, $insertDataArray);
                     }
                 } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model);
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $this->model,
+                        [
+                            'owner' => $this->model
+                        ]);
                     $data[$key] = $insertData;
                 }
             }
@@ -416,7 +419,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function getLatestVersion($force = false)
     {
         if ($this->model instanceof DataObject\Concrete) {
-            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(), $this->model->getModificationDate());
+            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(),
+                $this->model->getModificationDate(), $this->model->getVersionCount(), $force);
         }
 
         return;

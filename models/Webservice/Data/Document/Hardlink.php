@@ -41,5 +41,5 @@ class Hardlink extends Model\Webservice\Data\Document
     /**
      * @var bool
      */
-    public $childsFromSource;
+    public $childrenFromSource;
 }

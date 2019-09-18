@@ -23,7 +23,7 @@
             $treetype = $cv["treetype"] ? $cv["treetype"] : "object";
             ?>
     .pimcore_<?= $treetype ?>_customview_icon_<?= $cv["id"]; ?> {
-        background: url(<?= $cv["icon"]; ?>) left center no-repeat !important;
+        background: url(<?= $cv["icon"]; ?>) center center no-repeat !important;
     }
     <?php } ?>
 
@@ -40,8 +40,7 @@
 ?>
 
 <?php foreach ($languages as $language) {
-        $iconFile = \Pimcore\Tool::getLanguageFlagFile($language);
-        $iconFile = preg_replace("@^" . preg_quote(PIMCORE_WEB_ROOT, "@") . "@", "", $iconFile);
+        $iconFile = \Pimcore\Tool::getLanguageFlagFile($language, false);
     ?>
 
     /* tab icon for localized fields [ <?= $language ?> ] */

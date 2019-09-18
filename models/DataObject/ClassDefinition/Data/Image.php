@@ -363,6 +363,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $id = $value;
 
+        $fromMapper = false;
         if ($idMapper && !empty($value)) {
             $id = $idMapper->getMappedId('asset', $value);
             $fromMapper = true;

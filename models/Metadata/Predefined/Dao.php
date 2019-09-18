@@ -88,21 +88,17 @@ class Dao extends Model\Dao\PhpArrayTable
         }
         $this->model->setModificationDate($ts);
 
-        try {
-            $dataRaw = $this->model->getObjectVars();
-            $data = [];
-            $allowedProperties = ['id', 'name', 'description', 'language', 'type', 'data',
-                'targetSubtype', 'config', 'creationDate', 'modificationDate'];
+        $dataRaw = $this->model->getObjectVars();
+        $data = [];
+        $allowedProperties = ['id', 'name', 'description', 'language', 'type', 'data',
+            'targetSubtype', 'config', 'creationDate', 'modificationDate'];
 
-            foreach ($dataRaw as $key => $value) {
-                if (in_array($key, $allowedProperties)) {
-                    $data[$key] = $value;
-                }
+        foreach ($dataRaw as $key => $value) {
+            if (in_array($key, $allowedProperties)) {
+                $data[$key] = $value;
             }
-            $this->db->insertOrUpdate($data, $this->model->getId());
-        } catch (\Exception $e) {
-            throw $e;
         }
+        $this->db->insertOrUpdate($data, $this->model->getId());
 
         if (!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());

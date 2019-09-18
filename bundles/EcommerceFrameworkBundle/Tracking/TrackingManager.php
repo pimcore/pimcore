@@ -138,7 +138,7 @@ class TrackingManager implements TrackingManagerInterface
     public function trackProductImpression(ProductInterface $product)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ProductInterfaceImpression) {
+            if ($tracker instanceof ProductImpressionInterface) {
                 $tracker->trackProductImpression($product);
             }
         }

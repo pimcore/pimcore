@@ -160,7 +160,7 @@ class Placeholder
                         } elseif (!is_array($configArray)) {
                             throw new \Exception('The JSON string in the PlaceholderConfig should be an array.');
                         }
-                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null, ['ignoreconstants' => true]);
+                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;

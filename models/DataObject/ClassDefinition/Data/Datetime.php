@@ -66,7 +66,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -91,7 +91,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -112,7 +112,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -126,7 +126,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -142,16 +142,12 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param $timestamp
      *
-     * @return \DateTime|\Pimcore\Date
+     * @return \Carbon\Carbon()
      */
     protected function getDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $date = new \Pimcore\Date($timestamp);
-        } else {
-            $date = new \Carbon\Carbon();
-            $date->setTimestamp($timestamp);
-        }
+        $date = new \Carbon\Carbon();
+        $date->setTimestamp($timestamp);
 
         return $date;
     }
@@ -163,7 +159,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -191,7 +187,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *
@@ -209,7 +205,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getVersionPreview
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -217,11 +213,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
+
+        return '';
     }
 
     /**
@@ -237,9 +233,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
 

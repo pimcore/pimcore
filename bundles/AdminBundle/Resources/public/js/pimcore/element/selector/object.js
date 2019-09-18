@@ -63,8 +63,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var filterStore = [];
         var selectedStore = [];
         for (i=0; i<possibleRestrictions.length; i++) {
-            if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i],
-                    this.parent.restrictions.subtype.object )) {
+            if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i], this.parent.restrictions.subtype.object )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
             }
@@ -83,22 +82,31 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             filterStore.splice(0,0,[selectedValue, t("all_types")]);
         }
 
-        if(!this.parent.initialRestrictions.specific || (!this.parent.initialRestrictions.specific.classes
-            || this.parent.initialRestrictions.specific.classes.length < 1)) {
-            // only add the subtype filter if there is no class restriction
-            compositeConfig.items.push({
-                xtype: "combo",
-                store: filterStore,
-                queryMode: "local",
-                name: "subtype",
-                triggerAction: "all",
-                editable: true,
-                typeAhead:true,
-                forceSelection: true,
-                selectOnFocus: true,
-                value: selectedValue
-            });
-        }
+        compositeConfig.items.push({
+            xtype: "combo",
+            store: filterStore,
+            queryMode: "local",
+            name: "subtype",
+            triggerAction: "all",
+            editable: true,
+            typeAhead:true,
+            forceSelection: true,
+            selectOnFocus: true,
+            value: selectedValue,
+            listeners: {
+                select: function(e) {
+                    if(e.value == 'folder') {
+                        defaultRecord = this.classChangeCombo.getStore().getAt(0);
+                        this.classChangeCombo.setValue(defaultRecord.get(this.classChangeCombo.valueField));
+                        this.classChangeCombo.fireEvent('select', this.classChangeCombo, defaultRecord);
+
+                        this.classChangeCombo.setDisabled(true);
+                    } else {
+                        this.classChangeCombo.setDisabled(false);
+                    }
+                }.bind(this)
+            }
+        });
 
 
         // classes
@@ -144,6 +152,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 select: this.changeClass.bind(this)
             }
         });
+        if(selectedValue == 'folder') {
+            this.classChangeCombo.setDisabled(true);
+        }
 
         compositeConfig.items.push(this.classChangeCombo);
 
@@ -366,7 +377,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var columns = [
             {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                    return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
+                    return '<div style="height: 16px;" class="pimcore_icon_' + value + '" name="'
                         + t(record.data.subtype) + '">&nbsp;</div>';
                 }
             },

@@ -327,8 +327,6 @@ pimcore.workflow.transitionPanel = Class.create({
     },
 
     reloadObject: function() {
-        this.elementEditor.reload();
+        this.elementEditor.reload({layoutId: false});
     }
-    
-
 });

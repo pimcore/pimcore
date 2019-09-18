@@ -159,6 +159,15 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
+        if (!preg_match('/[a-zA-Z]+[a-zA-Z0-9]+/', $this->getKey())) {
+            throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
+        }
+
+        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
+            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+                $this->getParentClass()));
+        }
+
         $this->checkTablenames();
 
         $definitionFile = $this->getDefinitionFile();

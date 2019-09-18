@@ -886,7 +886,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -947,7 +947,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -1032,7 +1032,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -1075,7 +1075,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450

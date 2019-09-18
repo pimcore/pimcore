@@ -28,11 +28,11 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
         success: function(response) {
             var data = Ext.decode(response.responseText);
 
-            if(data.success) {
+            if (data.success) {
 
                 pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), transition.label, "success");
 
-                elementEditor.reload();
+                elementEditor.reload({layoutId: false});
 
             } else {
                 Ext.MessageBox.alert(data.message, data.reason);

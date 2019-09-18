@@ -136,7 +136,7 @@ class MigrationManager
         if ($includePrevious) {
             $migrations = $configuration->getMigrations();
             foreach ($migrations as $migration) {
-                if (version_compare($migration->getVersion(), $version->getVersion(), '<')) {
+                if ($migration->getVersion() < $version->getVersion()) {
                     if (!$configuration->hasVersionMigrated($migration)) {
                         $configuration->getOutputWriter()->write(sprintf(
                             '  <info>--</info> Marking version <comment>%s</comment> as migrated',

@@ -1308,7 +1308,17 @@ class Asset extends Element\AbstractElement
         if (is_resource($stream)) {
             $this->setDataChanged(true);
             $this->stream = $stream;
-            rewind($this->stream);
+
+            $isRewindable = @rewind($this->stream);
+
+            if (!$isRewindable) {
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($this->getFilename());
+                $dest = fopen($tmpFile, 'w+', false, File::getContext());
+                stream_copy_to_stream($this->stream, $dest);
+                $this->stream = $dest;
+
+                $this->_temporaryFiles[] = $tmpFile;
+            }
         } elseif (is_null($stream)) {
             $this->stream = null;
         }
@@ -1333,15 +1343,15 @@ class Asset extends Element\AbstractElement
      */
     public function getChecksum($type = 'md5')
     {
+        if (!in_array($type, hash_algos())) {
+            throw new \Exception(sprintf('Hashing algorithm `%s` is not supported', $type));
+        }
+
         $file = $this->getFileSystemPath();
         if (is_file($file)) {
-            if ($type == 'md5') {
-                return md5_file($file);
-            } elseif ($type == 'sha1') {
-                return sha1_file($file);
-            } else {
-                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
-            }
+            return hash_file($type, $file);
+        } elseif (\is_resource($this->getStream())) {
+            return hash($type, $this->getData());
         }
 
         return null;
@@ -1612,9 +1622,9 @@ class Asset extends Element\AbstractElement
     {
         $this->metadata = $metadata;
 
-        if (!empty($metadata)) {
-            $this->setHasMetaData(true);
-        }
+        $this->setHasMetaData(!empty($metadata));
+
+        return $this;
     }
 
     /**
@@ -1631,6 +1641,8 @@ class Asset extends Element\AbstractElement
     public function setHasMetaData($hasMetaData)
     {
         $this->hasMetaData = (bool) $hasMetaData;
+
+        return $this;
     }
 
     /**
@@ -1662,6 +1674,8 @@ class Asset extends Element\AbstractElement
 
             $this->setHasMetaData(true);
         }
+
+        return $this;
     }
 
     /**

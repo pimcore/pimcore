@@ -2,6 +2,9 @@
 Basically elastic search worker works as described in the [optimized architecture](README.md). 
 Currently Elastic Search 5 and Elastic Search 6 are supported. 
 
+## Installation
+To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.
+
 ## Index Configuration
 
 Following aspects need to be considered in index configuration:  
@@ -83,6 +86,8 @@ pimcore_ecommerce_framework:
 
 In addition to the `type` configuration, you also can provide custom mappings for a field. If provided, these mapping 
 configurations are used for creating the mapping of the elastic search index.
+
+You can also skip the `type` and `mapping`, then ES will try to create dynamic mapping. 
 
 ```yml
 

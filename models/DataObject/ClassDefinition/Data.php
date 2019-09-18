@@ -1338,7 +1338,7 @@ abstract class Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($params['raw']) {
+        if (isset($params['raw']) && $params['raw']) {
             return $value;
         } else {
             return ['value' => $value];

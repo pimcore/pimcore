@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
@@ -30,6 +30,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LinkController extends DocumentControllerBase
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -39,15 +41,16 @@ class LinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
         $link = Document\Link::getById($request->get('id'));
+
+        // check for lock
+        if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $link = clone $link;
 
         $link->setObject(null);
@@ -85,7 +88,7 @@ class LinkController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -99,43 +102,41 @@ class LinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $link = Document\Link::getById($request->get('id'));
-                $this->setValuesToDocument($request, $link);
+        if ($request->get('id')) {
+            $link = Document\Link::getById($request->get('id'));
+            $this->setValuesToDocument($request, $link);
 
-                $link->setModificationDate(time());
-                $link->setUserModification($this->getAdminUser()->getId());
+            $link->setModificationDate(time());
+            $link->setUserModification($this->getAdminUser()->getId());
 
-                if ($request->get('task') == 'unpublish') {
-                    $link->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $link->setPublished(true);
-                }
-
-                $task = $request->get('task');
-                // only save when publish or unpublish
-                if (($task == 'publish' && $link->isAllowed('publish'))
-                    || ($task == 'unpublish' && $link->isAllowed('unpublish'))
-                    || $task == 'scheduler' && $link->isAllowed('settings')
-                ) {
-                    $link->save();
-
-                    return $this->adminJson(['success' => true,
-                                             'data' => ['versionDate' => $link->getModificationDate(),
-                                                        'versionCount' => $link->getVersionCount()]]);
-                }
+            if ($request->get('task') == 'unpublish') {
+                $link->setPublished(false);
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+            if ($request->get('task') == 'publish') {
+                $link->setPublished(true);
             }
-            throw $e;
+
+            $task = $request->get('task');
+            // only save when publish or unpublish
+            if (($task == 'publish' && $link->isAllowed('publish'))
+                || ($task == 'unpublish' && $link->isAllowed('unpublish'))
+                || $task == 'scheduler' && $link->isAllowed('settings')
+            ) {
+                $link->save();
+
+                return $this->adminJson([
+                    'success' => true,
+                    'data' => [
+                        'versionDate' => $link->getModificationDate(),
+                        'versionCount' => $link->getVersionCount()
+                    ]
+                ]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
+            }
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

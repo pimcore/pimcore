@@ -524,7 +524,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        $value = $this->toNumeric(str_replace(',', '.', $importValue));
+        $value = $this->toNumeric($importValue);
 
         return $value;
     }
@@ -557,11 +557,13 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     protected function toNumeric($value)
     {
+        $value = str_replace(',', '.', (string) $value);
+
         if ($this->isDecimalType()) {
-            return (string) $value;
+            return $value;
         }
 
-        if (strpos((string) $value, '.') === false) {
+        if (strpos($value, '.') === false) {
             return (int) $value;
         }
 

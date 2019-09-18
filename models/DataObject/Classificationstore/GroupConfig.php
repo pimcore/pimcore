@@ -219,7 +219,7 @@ class GroupConfig extends Model\AbstractModel
         Cache\Runtime::set($cacheKey, null);
         Cache::remove($cacheKey);
 
-        parent::delete();
+        $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_DELETE, new GroupConfigEvent($this));
     }
 
@@ -241,7 +241,7 @@ class GroupConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD, new GroupConfigEvent($this));
         }
 
-        $model = parent::save();
+        $model = $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE, new GroupConfigEvent($this));

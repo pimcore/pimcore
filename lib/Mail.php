@@ -19,7 +19,6 @@ use Egulias\EmailValidator\Validation\RFCValidation;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Helper\Mail as MailHelper;
 
 class Mail extends \Swift_Message
@@ -267,7 +266,7 @@ class Mail extends \Swift_Message
             return true;
         }
 
-        return \Pimcore::inDebugMode(DebugMode::MAIL) && $this->ignoreDebugMode === false;
+        return \Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
     }
 
     /**
@@ -624,15 +623,16 @@ class Mail extends \Swift_Message
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             try {
-                $mailer->send($this, $emailaddress);
+                $failedRecipients = [];
+                $mailer->send($this, $failedRecipients);
             } catch (\Exception $e) {
                 $mailer->getTransport()->stop();
-                throw new \Exception($emailaddress[0].' - '.$e->getMessage());
+                throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
             }
         }
 
         if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode(DebugMode::MAIL) && !$this->ignoreDebugMode) {
+            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 

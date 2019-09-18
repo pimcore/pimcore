@@ -36,9 +36,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $visibleFields;
 
     /**
-     * @var
+     * @var string[]
      */
     public $columns;
+
+    /**
+     * @var string[]
+     */
+    public $columnKeys;
 
     /**
      * Static type of this element
@@ -63,6 +68,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @var bool
      */
     public $allowMultipleAssignments;
+
+    /**
+     * @var array
+     */
+    public $visibleFieldDefinitions = [];
 
     /**
      * @inheritdoc
@@ -1157,7 +1167,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     ]
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params)
             ];
 
             $newData = [];

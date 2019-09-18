@@ -93,6 +93,11 @@ class Asset extends Model\Webservice\Data
     public $notes;
 
     /**
+     * @var array
+     */
+    public $childs;
+
+    /**
      * @param Asset|Asset\Folder $object
      * @param null $options
      */

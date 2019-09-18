@@ -21,7 +21,7 @@ class Input extends AbstractFilterType
 {
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
-        $field = $filterDefinition->getField($filterDefinition);
+        $field = $this->getField($filterDefinition);
 
         return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),

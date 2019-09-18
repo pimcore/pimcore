@@ -40,7 +40,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
 
@@ -52,7 +52,7 @@ class Service extends Model\Element\Service
     protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -138,8 +138,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -148,7 +148,13 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChildren() as $child) {
+        $children = $source->getChildren([
+            AbstractObject::OBJECT_TYPE_OBJECT,
+            AbstractObject::OBJECT_TYPE_VARIANT,
+            AbstractObject::OBJECT_TYPE_FOLDER
+        ], true);
+
+        foreach ($children as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -185,8 +191,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -234,7 +240,7 @@ class Service extends Model\Element\Service
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
         $new->setProperties($source->getProperties());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
 
@@ -904,7 +910,7 @@ class Service extends Model\Element\Service
         $condition = 'classId = ' . $list->quote($classId);
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', $layoutIds) . ')';
+            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
         $list->setCondition($condition);
         $list = $list->load();
@@ -1327,6 +1333,13 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            $user = AdminTool::getCurrentUser();
+            if (!$user->isAdmin()) {
+                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
+            }
+
             if ($context['containerType'] == 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
             } elseif ($context['containerType'] == 'objectbrick') {
@@ -1342,6 +1355,57 @@ class Service extends Model\Element\Service
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $layout
+     * @param $allowedView
+     * @param $allowedEdit
+     */
+    public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
+    {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            if (is_array($allowedView) && count($allowedView) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedViewDefault = isset($allowedView['default']);
+                    if ($haveAllowedViewDefault) {
+                        unset($allowedView['default']);
+                    }
+                }
+                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
+                    $layout->{'permissionView'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedView),
+                        true
+                    );
+                }
+            }
+            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedEditDefault = isset($allowedEdit['default']);
+                    if ($haveAllowedEditDefault) {
+                        unset($allowedEdit['default']);
+                    }
+                }
+
+                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
+                    $layout->{'permissionEdit'} = AdminTool::reorderWebsiteLanguages(
+                        AdminTool::getCurrentUser(),
+                        array_keys($allowedEdit),
+                        true
+                    );
+                }
+            }
+        } else {
+            if (method_exists($layout, 'getChilds')) {
+                $children = $layout->getChildren();
+                if (is_array($children)) {
+                    foreach ($children as $child) {
+                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit);
+                    }
                 }
             }
         }

@@ -73,8 +73,8 @@ class Service
     }
 
     /**
-     * @param $class DataObject\ClassDefinition
-     * @param $json
+     * @param DataObject\ClassDefinition $class
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -109,7 +109,7 @@ class Service
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 
@@ -119,14 +119,14 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
      *
      * @return string
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
-        unset($fieldCollection->key);
-        unset($fieldCollection->fieldDefinitions);
+        $fieldCollection->setKey(null);
+        $fieldCollection->setFieldDefinitions(null);
 
         $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
 
@@ -134,8 +134,8 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
-     * @param $json
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -149,21 +149,26 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        $fieldCollection->setParentClass($importData['parentClass']);
+        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
+            }
+        }
+
         $fieldCollection->save();
 
         return true;
     }
 
     /**
-     * @param $objectBrick
+     * @param DataObject\Objectbrick\Definition $objectBrick
      *
      * @return string
      */
     public static function generateObjectBrickJson($objectBrick)
     {
-        unset($objectBrick->key);
-        unset($objectBrick->fieldDefinitions);
+        $objectBrick->setKey(null);
+        $objectBrick->setFieldDefinitions(null);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -187,8 +192,8 @@ class Service
     }
 
     /**
-     * @param $objectBrick
-     * @param $json
+     * @param DataObject\Objectbrick\Definition $objectBrick
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -235,7 +240,7 @@ class Service
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @param bool $throwException
      *
      * @return bool
@@ -295,8 +300,8 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $tableNames
+     * @param array $tableDefinitions
+     * @param array $tableNames
      */
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
     {
@@ -335,7 +340,7 @@ class Service
      */
     public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
     {
-        $tableDefinition = $tableDefinitions[$table];
+        $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
             if ($colDefinition) {

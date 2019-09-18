@@ -27,6 +27,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
 
     /**
      * Static type of this element

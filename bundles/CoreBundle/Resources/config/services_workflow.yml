@@ -10,8 +10,10 @@ services:
     Pimcore\Workflow\Place\StatusInfo:
         public: true
 
-    Pimcore\Workflow\NotificationEmail\NotificationEmailService:
+    Pimcore\Workflow\Notification\NotificationEmailService:
         public: true
+
+    Pimcore\Workflow\Notification\PimcoreNotificationService:
 
     workflow.marking_store.state_table:
         class: Pimcore\Workflow\MarkingStore\StateTableMarkingStore
@@ -43,7 +45,7 @@ services:
             - '@validator'
         public: true
 
-    Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber: ~
+    Pimcore\Workflow\EventSubscriber\NotificationSubscriber: ~
 
     Pimcore\Workflow\EventSubscriber\NotesSubscriber: ~
 

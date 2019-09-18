@@ -41,11 +41,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    /**
-     * Save object to database
-     *
-     * @return int
-     */
     public function save()
     {
         $importConfigShare = $this->model->getObjectVars();
@@ -61,8 +56,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->insertOrUpdate('importconfig_shares', $data);
-
-        return $this->model;
     }
 
     /**

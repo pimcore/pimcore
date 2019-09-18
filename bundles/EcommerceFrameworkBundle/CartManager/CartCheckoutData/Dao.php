@@ -59,7 +59,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function save()
     {
-        return $this->update();
+        $this->update();
     }
 
     /**

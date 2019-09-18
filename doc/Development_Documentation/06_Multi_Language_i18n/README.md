@@ -26,7 +26,7 @@ Following settings can be defined here:
 * Fallback language for each language: if defined, Pimcore returns values from fallback language if primary language has 
  no values set. 
 
-
+> *Note: Removing language from the Localization & Internationalization (i18n/l10n) list will not delete its respective data. Please use console command `pimcore:locale:delete-unused-tables` for cleanup.*
 ### Localized Content Areas
 The activated languages have influence to following modules of content within Pimcore: 
 

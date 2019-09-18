@@ -48,6 +48,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'values' => array_values($values),
             'document' => $this->request->get('contentDocument'),
             'fieldname' => $filterDefinition->getField(),
+            'rootCategory' => $filterDefinition->getRootCategory(),
             'resultCount' => $productList->count()
         ]);
     }

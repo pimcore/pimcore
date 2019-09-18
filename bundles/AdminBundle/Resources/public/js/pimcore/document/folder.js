@@ -177,10 +177,12 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             }
 
             buttons.push({
+                xtype: "splitbutton",
                 tooltip: t("show_metainfo"),
                 iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
-                handler: this.showMetaInfo.bind(this)
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
             });
 
             buttons.push(this.getTranslationButtons());
@@ -243,42 +245,57 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         return this.tabbar;
     },
 
+    getMetaInfo: function() {
+        return {
+            id: this.data.id,
+            path: this.data.path + this.data.key,
+            parentid: this.data.parentId,
+            type: this.data.type,
+            modificationdate: this.data.modificationDate,
+            creationdate: this.data.creationDate,
+            usermodification: this.data.userModification,
+            userowner: this.data.userOwner,
+            deeplink: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
+        };
+    },
+
     showMetaInfo: function() {
+        var metainfo = this.getMetaInfo();
 
         new pimcore.element.metainfo([
             {
                 name: "id",
-                value: this.data.id
+                value: metainfo.id
             },
             {
                 name: "path",
-                value: this.data.path + this.data.key
+                value: metainfo.path
             }, {
                 name: "parentid",
-                value: this.data.parentId
+                value: metainfo.parentid
             }, {
                 name: "type",
-                value: this.data.type
+                value: metainfo.type
             }, {
                 name: "modificationdate",
                 type: "date",
-                value: this.data.modificationDate
+                value: metainfo.modificationdate
             }, {
                 name: "creationdate",
                 type: "date",
-                value: this.data.creationDate
+                value: metainfo.creationdate
             }, {
                 name: "usermodification",
                 type: "user",
-                value: this.data.userModification
+                value: metainfo.usermodification
             }, {
                 name: "userowner",
                 type: "user",
-                value: this.data.userOwner
+                value: metainfo.userowner
             },
             {
                 name: "deeplink",
-                value: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
+                value: metainfo.deeplink
             }
         ], "folder");
     },

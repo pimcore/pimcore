@@ -43,7 +43,9 @@ class Dao extends Model\DataObject\Listing\Dao
      */
     protected $totalCount = 0;
 
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**

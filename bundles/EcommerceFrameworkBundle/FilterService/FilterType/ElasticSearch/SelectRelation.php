@@ -23,7 +23,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
-        $productList->prepareGroupByValues($filterDefinition->getField(), true);
+        $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
     protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])

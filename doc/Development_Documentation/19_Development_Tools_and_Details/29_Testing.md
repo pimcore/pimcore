@@ -20,7 +20,7 @@ to your project:
 $ composer require --dev 'symfony/phpunit-bridge:*'
 ```
 
-With ``symfony/phpunit-bridge``` comes ```vendor/bin/simple-phpunit``` which uses its own PHPUnit version. For ```simple-phpunit``` to use the right version, you need to exclude ```phpunit``` from the autoloader's classmap and afterwards update the autoloader with ```composer dump-autoload -o```
+With ```symfony/phpunit-bridge``` comes ```vendor/bin/simple-phpunit``` which uses its own PHPUnit version. For ```simple-phpunit``` to use the right version, you need to exclude ```phpunit``` from the autoloader's classmap and afterwards update the autoloader with ```composer dump-autoload -o```
 ```
   "autoload": {
     ...
@@ -169,7 +169,7 @@ with the following content (customize as needed):
 include "../../vendor/autoload.php";
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 ```
 
@@ -337,7 +337,7 @@ putenv('PIMCORE_ENVIRONMENT=test');
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 
 // add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section

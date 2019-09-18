@@ -113,12 +113,11 @@ class Checkbox extends Model\Document\Tag
      *
      * @throws \Exception
      *
-     * @todo: replace or with ||
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if ($data->bool === null or is_bool($data)) {
+        $data = $this->sanitizeWebserviceData($wsElement->value);
+        if ($data->bool === null || is_bool($data)) {
             $this->value = (bool) $data->value;
         } else {
             throw new \Exception('cannot get values from web service import - invalid data');

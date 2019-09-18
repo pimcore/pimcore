@@ -29,7 +29,7 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
     /**
@@ -38,7 +38,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -72,8 +72,8 @@ class Service extends Model\Element\Service
 
         $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -117,8 +117,8 @@ class Service extends Model\Element\Service
         }
         $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -158,7 +158,7 @@ class Service extends Model\Element\Service
             $target->setCustomSettings($source->getCustomSettings());
         }
 
-        $target->setUserModification($this->_user->getId());
+        $target->setUserModification($this->_user ? $this->_user->getId() : 0);
         $newProps = Element\Service::cloneMe($source->getProperties());
         $target->setProperties($newProps);
         $target->save();

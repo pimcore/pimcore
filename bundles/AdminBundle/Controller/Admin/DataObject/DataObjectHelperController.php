@@ -876,9 +876,9 @@ class DataObjectHelperController extends AdminController
                 . ' and objectId != ' . $objectId . ' and objectId != 0');
 
             return $this->adminJson(['success' => true]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -935,9 +935,9 @@ class DataObjectHelperController extends AdminController
             }
 
             return $this->adminJson(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1114,7 +1114,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -1492,7 +1492,7 @@ class DataObjectHelperController extends AdminController
         $dialect = $request->get('dialect');
         $dialect = json_decode($request->get('dialect'));
         $success = true;
-        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
+        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geopolyline', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
 
         $classId = $request->get('classId');
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
@@ -2209,20 +2209,6 @@ class DataObjectHelperController extends AdminController
                                 $csLanguage
                             );
                         }
-                    } else {
-                        $getter = 'get' . ucfirst($field);
-                        $setter = 'set' . ucfirst($field);
-                        $keyValuePairs = $object->$getter();
-
-                        if (!$keyValuePairs) {
-                            $keyValuePairs = new DataObject\Data\KeyValue();
-                            $keyValuePairs->setObjectId($object->getId());
-                            $keyValuePairs->setClass($object->getClass());
-                        }
-
-                        $keyValuePairs->setPropertyWithId($keyid, $value, true);
-
-                        $object->$setter($keyValuePairs);
                     }
                 } elseif (count($parts) > 1) {
                     // check for bricks

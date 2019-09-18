@@ -119,7 +119,7 @@ class Document extends Model\Asset
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
-     * @return mixed|string
+     * @return Document\ImageThumbnail
      */
     public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
     {
