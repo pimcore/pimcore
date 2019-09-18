@@ -944,7 +944,7 @@ class Service extends Model\AbstractModel
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
             $key = trim($key);
-            $key = ltrim($key, '.');
+            $key = ltrim($key, '. ');
         }
 
         $key = mb_substr($key, 0, 255);
