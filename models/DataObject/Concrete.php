@@ -650,7 +650,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
-                if ($localizedField->isFilterable()) {
+                if (!$localizedField->isFilterable()) {
                     throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
