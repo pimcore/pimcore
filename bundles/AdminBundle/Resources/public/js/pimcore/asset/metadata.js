@@ -190,6 +190,7 @@ pimcore.asset.metadata = Class.create({
                                     allowBlank: false
                                 });
                             },
+                            renderer: Ext.util.Format.htmlEncode,
                             sortable: true,
                             width: 230
                         },
@@ -341,7 +342,7 @@ pimcore.asset.metadata = Class.create({
         if (value == "input") {
             value = "text";
         }
-        return '<div class="pimcore_icon_' + value + ' pimcore_property_grid_type_column" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div class="pimcore_icon_' + Ext.util.Format.htmlEncode(value) + ' pimcore_property_grid_type_column" name="' + Ext.util.Format.htmlEncode(record.data.name) + '">&nbsp;</div>';
     },
 
 
@@ -351,7 +352,7 @@ pimcore.asset.metadata = Class.create({
         var type = data.type;
 
         if (type == "textarea") {
-            return nl2br(value);
+            return nl2br(Ext.util.Format.htmlEncode(value));
         } else if (type == "document" || type == "asset" || type == "object") {
             if (value) {
                 return '<div class="pimcore_property_droptarget">' + value + '</div>';
@@ -373,7 +374,7 @@ pimcore.asset.metadata = Class.create({
             }
         }
 
-        return value;
+        return Ext.util.Format.htmlEncode(value);
     },
 
 
