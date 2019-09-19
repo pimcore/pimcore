@@ -188,7 +188,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     if (!in_array($blockElement->getType(), self::EXPORTABLE_TAGS)) {
                         continue;
                     }
-                    
+
                     $content = $blockElement->getData();
 
                     if (!empty($content)) {
