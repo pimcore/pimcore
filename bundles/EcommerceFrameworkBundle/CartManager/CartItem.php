@@ -45,7 +45,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
     {
         if (empty($this->cart)) {
             $cartClass = '\\'.Factory::getInstance()->getCartManager()->getCartClassName();
-            $this->cart = $cartClass::getById($this->class);
+            $this->cart = $cartClass::getById($this->cartId);
         }
 
         return $this->cart;
