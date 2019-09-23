@@ -333,6 +333,7 @@ class IndexService
 
     /**
      * @param WorkerInterface[] $tenantWorkers
+     *
      * @return IndexService
      */
     public function setTenantWorkers(array $tenantWorkers): self
@@ -342,6 +343,7 @@ class IndexService
             $tenantWorkerAssocList[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
         }
         $this->tenantWorkers = $tenantWorkerAssocList;
+
         return $this;
     }
 }
