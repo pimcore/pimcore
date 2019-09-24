@@ -4,7 +4,7 @@ This section describes the installation of the E-Commerce Framework and the firs
 
 ## Installation
 
-The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Extensions` in Pimcore 
+The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Bundles` in Pimcore 
 Admin UI and activate and install the `PimcoreEcommerceFrameworkBundle`. 
 
 The installer does following tasks:  
