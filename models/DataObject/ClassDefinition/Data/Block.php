@@ -1101,4 +1101,23 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             }
         }
     }
+
+    /**
+     * This method is called in DataObject\ClassDefinition::save()
+     *
+     * @param $class
+     * @param array $params
+     */
+    public function classSaved($class, $params = []) {
+        $blockDefinitions = $this->getFieldDefinitions();
+
+        if (is_array($blockDefinitions)) {
+            /** @var Data $fd */
+            foreach ($blockDefinitions as $field) {
+                if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                    $field->setLazyLoading(false);
+                }
+            }
+        }
+    }
 }
