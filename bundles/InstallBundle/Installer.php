@@ -87,6 +87,11 @@ class Installer
     private $importDatabaseDataDump = true;
 
     /**
+     * When true, change MyISAM tables (which is unsupported e.g. in the Azure MySQL service) to InooDB
+     */
+    private $changeMyIsamToInnoDb = false;
+
+    /**
      * @var array
      */
     private $stepEvents = [
@@ -247,7 +252,7 @@ class Installer
         $adminUser = $params['admin_username'] ?? '';
         $adminPass = $params['admin_password'] ?? '';
 
-        //check skipping database creation or database data
+        //check skipping database creation, database data or change MyISAM to InnoDb
         if (array_key_exists('skip_database_structure', $params)) {
             $this->createDatabaseStructure = false;
         }
@@ -256,6 +261,9 @@ class Installer
         }
         if (array_key_exists('skip_database_data_dump', $params)) {
             $this->importDatabaseDataDump = false;
+        }
+        if (array_key_exists('is_myisam_supported', $params) && ($params['is_myisam_supported'] == 'no')) {
+            $this->changeMyIsamToInnoDb = true;
         }
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
@@ -565,6 +573,10 @@ class Installer
 
             // remove comments in SQL script
             $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
+
+            if ($this->changeMyIsamToInnoDb) {
+                $mysqlInstallScript = str_replace('MyISAM', 'InnoDB', $mysqlInstallScript);
+            }
 
             // get every command as single part
             $mysqlInstallScripts = explode(';', $mysqlInstallScript);

@@ -115,6 +115,12 @@ class InstallCommand extends Command
                 'default' => 3306,
                 'group' => 'db_credentials',
             ],
+            'is-myisam-supported' => [
+                'description' => 'If set to "no" then MyISAM engine is changed to InnoDB in all tables (useful e.g. in Azure database for MySQL)',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 'yes',
+                'group' => 'db_credentials'
+            ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
                 'mode' => InputOption::VALUE_OPTIONAL,
