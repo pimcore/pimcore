@@ -1105,12 +1105,13 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @param Request $request
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     *
      * @throws \Exception
      */
     public function invitationLinkAction(Request $request)
     {
         $success = false;
-        $message = "";
+        $message = '';
 
         if ($username = $request->get('username')) {
             $user = User::getByName($username);
@@ -1148,7 +1149,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $res = $mail->send();
 
                     $success = true;
-                    $message = sprintf($this->trans("invitation_link_sent"),$user->getEmail());
+                    $message = sprintf($this->trans('invitation_link_sent'), $user->getEmail());
                 } catch (\Exception $e) {
                     $message .= 'could not send email';
                 }

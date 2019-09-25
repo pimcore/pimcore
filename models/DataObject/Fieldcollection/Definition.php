@@ -288,6 +288,15 @@ class Definition extends Model\AbstractModel
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
+        if (!preg_match('/[a-zA-Z]+/', $this->getKey())) {
+            throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
+        }
+
+        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
+            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+                $this->getParentClass()));
+        }
+
         $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();

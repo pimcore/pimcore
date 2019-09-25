@@ -32,7 +32,7 @@ pimcore.object.classes.data.geopolyline = Class.create(pimcore.object.classes.da
     },
 
     getGroup: function () {
-            return 'geo';
+        return 'geo';
     },
 
     getIconClass: function () {

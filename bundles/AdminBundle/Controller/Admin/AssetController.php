@@ -1125,7 +1125,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
-                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . $config['dpi'] . ' -yresolution=' . $config['dpi'] . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
+                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int) $config['dpi']) . ' -yresolution=' . escapeshellarg((int) $config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
         }
         if ($thumbnail) {
@@ -2055,7 +2055,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $importDirectory = str_replace('/fileexplorer', PIMCORE_PROJECT_ROOT, $request->get('serverPath'));
-        if (is_dir($importDirectory)) {
+        if (preg_match('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', $importDirectory) && is_dir($importDirectory)) {
+            $this->checkForPharStreamWrapper($importDirectory);
             $files = rscandir($importDirectory . '/');
             $count = count($files);
             $jobFiles = [];
@@ -2068,12 +2069,13 @@ class AssetController extends ElementControllerBase implements EventedController
                 $jobFiles[] = preg_replace('@^' . preg_quote($importDirectory, '@') . '@', '', $files[$i]);
 
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
+                    $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
                     $jobs[] = [[
                         'url' => '/admin/asset/import-server-files',
                         'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),
-                            'serverPath' => $importDirectory,
+                            'serverPath' => $relativeImportDirectory,
                             'files' => implode('::', $jobFiles)
                         ]
                     ]];
@@ -2098,11 +2100,12 @@ class AssetController extends ElementControllerBase implements EventedController
     public function importServerFilesAction(Request $request)
     {
         $assetFolder = Asset::getById($request->get('parentId'));
-        $serverPath = $request->get('serverPath');
+        $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
         $files = explode('::', $request->get('files'));
 
         foreach ($files as $file) {
             $absolutePath = $serverPath . $file;
+            $this->checkForPharStreamWrapper($absolutePath);
             if (is_file($absolutePath)) {
                 $relFolderPath = str_replace('\\', '/', dirname($file));
                 $folder = Asset\Service::createFolderByPath($assetFolder->getRealFullPath() . $relFolderPath);
@@ -2128,6 +2131,13 @@ class AssetController extends ElementControllerBase implements EventedController
         return $this->adminJson([
             'success' => true
         ]);
+    }
+
+    protected function checkForPharStreamWrapper($path)
+    {
+        if (stripos($path, 'phar://') !== false) {
+            throw new \Exception('Using PHAR files is not allowed!');
+        }
     }
 
     /**

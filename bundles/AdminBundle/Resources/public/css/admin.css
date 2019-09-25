@@ -74,7 +74,7 @@
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     background-size: 28px;
