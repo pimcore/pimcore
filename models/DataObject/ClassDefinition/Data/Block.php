@@ -1108,7 +1108,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param $class
      * @param array $params
      */
-    public function classSaved($class, $params = []) {
+    public function classSaved($class, $params = [])
+    {
         $blockDefinitions = $this->getFieldDefinitions();
 
         if (is_array($blockDefinitions)) {

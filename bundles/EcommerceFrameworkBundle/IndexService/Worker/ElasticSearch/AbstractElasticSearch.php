@@ -557,7 +557,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     protected function isInReindexMode()
     {
-
         $currentIndexName = $this->fetchEsActiveIndex();
         if (empty($currentIndexName)) {
             throw new \Exception('Index alias with name ' . $this->indexName . ' not found! ');
@@ -696,7 +695,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
 
         if (!$result) {
-
             $indexName = $this->getIndexNameVersion();
             $this->createEsIndex($indexName);
 
@@ -745,28 +743,33 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     /**
      * Retrieve the currently active index name from ES based on the alias.
+     *
      * @return string|null null if no index is found.
      */
-    public function fetchEsActiveIndex() : ?string {
+    public function fetchEsActiveIndex(): ?string
+    {
         $esClient = $this->getElasticSearchClient();
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {
             Logger::error($e);
+
             return null;
         }
 
         reset($result);
         $currentIndexName = key($result);
+
         return $currentIndexName;
     }
 
-
     /**
      * Create the index alias on demand.
+     *
      * @throws \Exception if alias could not be created.
      */
-    protected function createEsAliasIfMissing() {
+    protected function createEsAliasIfMissing()
+    {
         $esClient = $this->getElasticSearchClient();
         //create alias for new index if alias doesn't exist so far
         $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
@@ -789,13 +792,15 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
-
     /**
      * Create an ES index with the specified version.
+     *
      * @param string $indexName the name of the index.
+     *
      * @throws \Exception is thrown if index cannot be created, for instance if connection fails or index is already existing.
      */
-    protected function createEsIndex(string $indexName) {
+    protected function createEsIndex(string $indexName)
+    {
         $esClient = $this->getElasticSearchClient();
 
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
