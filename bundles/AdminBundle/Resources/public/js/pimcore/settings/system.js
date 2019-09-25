@@ -678,7 +678,13 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("show_cookie_notice"),
                                 name: "general.show_cookie_notice",
                                 checked: this.getValue("general.show_cookie_notice")
-                            }
+                            },
+                            {
+                                xtype: "checkbox",
+                                fieldLabel: t("remove_cookie_notice_css_styles"),
+                                name: "general.remove_cookie_notice_css_styles",
+                                checked: this.getValue("general.remove_cookie_notice_css_styles")
+                            },
                         ]
                     },
                     {

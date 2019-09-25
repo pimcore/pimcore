@@ -257,6 +257,15 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->defaultFalse()
                 ->end()
+                ->booleanNode('remove_cookie_notice_css_styles')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
             ->end();
     }
 

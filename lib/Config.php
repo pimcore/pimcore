@@ -288,7 +288,8 @@ class Config
                     'disableusagestatistics' => $config['general']['disable_usage_statistics'],
                     'debug_admin_translations' => $config['general']['debug_admin_translations'],
                     'instanceIdentifier' => $config['general']['instance_identifier'],
-                    'show_cookie_notice' => $config['general']['show_cookie_notice']
+                    'show_cookie_notice' => $config['general']['show_cookie_notice'],
+                    'remove_cookie_notice_css_styles' => $config['general']['remove_cookie_notice_css_styles'],
                 ],
                 'documents' => [
                     'versions' => [
