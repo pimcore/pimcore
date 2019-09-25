@@ -7,6 +7,7 @@
     "test": "Test",
     "local": "Lokal",
     "show_cookie_notice": "Zeige Cookie Hinweis (EU Vorgabe)",
+    "remove_cookie_notice_css_styles": "Cookie Hinweis CSS Styles Block entfernen",
     "ratio": "Verhältnis",
     "decimal_precision": "Dezimalgenauigkeit",
     "only_unsigned": "Nur ohne Vorzeichen (unsigned)",

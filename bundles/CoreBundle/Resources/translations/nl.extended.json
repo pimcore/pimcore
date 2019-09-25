@@ -7,6 +7,7 @@
     "test": "Test",
     "local": "Lokaal",
     "show_cookie_notice": "Toon cookiemelding (EU-regels)",
+    "remove_cookie_notice_css_styles": "Cookie verwijderen CSS-stijlen blokkeren",
     "ratio": "Verhouding",
     "decimal_precision": "Decimaalnauwkeurigheid",
     "only_unsigned": "Uitsluitend niet toegewezen",

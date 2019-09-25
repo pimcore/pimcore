@@ -7,6 +7,7 @@
     "test": "Test",
     "local": "Localisation",
     "show_cookie_notice": "Voir notre politique de Cookie",
+    "remove_cookie_notice_css_styles": "Remove Cookie Notice CSS Styles Block",
     "ratio": "Ratio",
     "decimal_precision": "Précision décimale",
     "only_unsigned": "Positif uniquement",

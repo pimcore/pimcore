@@ -7,6 +7,7 @@
     "test": "Test",
     "local": "Lokálny",
     "show_cookie_notice": "Zobraziť oznámenie o používaní cookies v EU",
+    "remove_cookie_notice_css_styles": "Usuń powiadomienie o pliku cookie Blok stylów CSS",
     "ratio": "Pomer",
     "decimal_precision": "Presnosť na desatinné miesta",
     "only_unsigned": "Len bez znamienka (unsigned)",
