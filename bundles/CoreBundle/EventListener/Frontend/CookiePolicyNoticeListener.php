@@ -153,6 +153,10 @@ class CookiePolicyNoticeListener
                 $template = preg_replace('/>[\s]+</', '><', $template); //remove new lines, spaces, tabs
                 $template = preg_replace('/[\s]+/', ' ', $template); //remove new lines, spaces, tabs
 
+                if ($config->general->remove_cookie_notice_css_styles) {
+                    $template = preg_replace('/<style([\S\s]*?)>([\S\s]*?)<\/style>/', '', $template);
+                }
+
                 $translations = $this->getTranslations($locale);
 
                 foreach ($translations as $key => &$value) {
