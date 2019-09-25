@@ -84,6 +84,12 @@ $cookieListener = $this->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\C
 $cookieListener->setTemplateCode("<b>Your Custom Template</b> ...");
 ```
 
+##### Use your own CSS rules
+
+You can enable the "remove css syles block" setting and use your own CSS rules to style the cookie notice.  
+The default syles can be found in `CoreBundle/Resources/misc/cookie-policy-default-template.html`
+
+
 ## Documents
 Settings for documents like version steps, default values and URL settings. 
 
