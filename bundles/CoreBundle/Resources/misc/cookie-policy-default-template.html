@@ -1,6 +1,6 @@
 
 <style type="text/css">
-    #pc-cookie-notice {
+    .pc-cookie-notice {
         background: #3c3c3c;
         color: #fff;
         position: fixed;
@@ -14,37 +14,37 @@
         z-index: 10000;
     }
 
-    #pc-cookie-notice a {
+    .pc-cookie-notice a {
         color: #fff;
         text-decoration: underline;
     }
 
-    #pc-cookie-notice #pc-icon {
+    .pc-cookie-notice-icon {
         position: absolute;
         top: 5px;
         left: 5px;
     }
 
-    #pc-cookie-notice #pc-message {
+    .pc-cookie-notice-message {
         width: 100%;
         padding: 0 55px 0 25px;
     }
 
-    #pc-cookie-notice #pc-message span:after {
+    .pc-cookie-notice-message span:after {
         content: attr(data-content);
     }
 
-    #pc-cookie-notice #pc-message a:after {
+    .pc-cookie-notice-message a:after {
         content: attr(data-content);
     }
 
-    #pc-cookie-notice #pc-button {
+    .pc-cookie-notice-button {
         position: absolute;
         top: 3px;
         right: 20px;
     }
 
-    #pc-cookie-notice #pc-button button {
+    .pc-cookie-notice-button button {
         font-weight: bold;
         background: #008d4c;
         border-radius: 2px;
@@ -52,38 +52,38 @@
         padding: 1px 5px;
     }
 
-    #pc-cookie-notice #pc-button button:after {
+    .pc-cookie-notice-button button:after {
         content: attr(data-content);
     }
 
     @media (max-width: 750px) {
-        #pc-cookie-notice #pc-icon {
+        .pc-cookie-notice-icon {
             display: none;
         }
 
-        #pc-cookie-notice #pc-message {
+        .pc-cookie-notice-message {
             padding-left: 5px;
         }
 
-        #pc-cookie-notice #pc-button {
+        .pc-cookie-notice-button {
             right:5px;
             top:5px;
         }
 
-        #pc-cookie-notice #pc-button button {
+        .pc-cookie-notice-button button {
             padding: 5px 3px;
         }
     }
 
 </style>
 
-<div id="pc-cookie-notice">
-    <div id="pc-icon"></div>
-    <div id="pc-message">
+<div id="pc-cookie-notice" class="pc-cookie-notice">
+    <div class="pc-cookie-notice-icon"></div>
+    <div class="pc-cookie-notice-message">
         <span data-content="%text%"></span>
         %link%
     </div>
-    <div id="pc-button">
+    <div id="pc-button" class="pc-cookie-notice-button">
         <button data-content="%ok%" aria-label="%ok%"></button>
     </div>
 </div>
