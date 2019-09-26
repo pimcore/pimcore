@@ -44,7 +44,7 @@ To get the inherited values in the backend via code, you have to use the getter-
 the attributes directly, you will not get the inherited values.
 
 > **Bear in mind**
-> The complex data type field collections do not support inheritance.
+> The complex data type field collections does not support inheritance.
 
 
 ## Parent Class - Class Inheritance
