@@ -126,6 +126,23 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @param string $name
+     * @param int    $classId
+     *
+     * @return null|CustomLayout
+     */
+    public static function getByNameAndClassId(string $name, $classId)
+    {
+        $customLayout = new self();
+        $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
+        if ($id) {
+            return self::getById($id);
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $field
      *
      * @return \Pimcore\Model\DataObject\ClassDefinition\Data | null
@@ -172,8 +189,10 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @todo: $isUpdate is not needed
+     *
+     * @param bool $saveDefinitionFile
      */
-    public function save()
+    public function save($saveDefinitionFile = true)
     {
         $isUpdate = $this->exists();
 
@@ -192,7 +211,7 @@ class CustomLayout extends Model\AbstractModel
 
         $this->getDao()->save($isUpdate);
 
-        $this->saveCustomLayoutFile();
+        $this->saveCustomLayoutFile($saveDefinitionFile);
 
         // empty custom layout cache
         try {
@@ -201,6 +220,11 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
+    /**
+     * @param bool $saveDefinitionFile
+     *
+     * @throws \Exception
+     */
     private function saveCustomLayoutFile($saveDefinitionFile = true)
     {
         // save definition as a php file
@@ -227,7 +251,6 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     *
      * @return string
      */
     public function getDefinitionFile()
@@ -328,6 +351,9 @@ class CustomLayout extends Model\AbstractModel
      */
     public function exists()
     {
+        if (is_null($this->getId())) {
+            return false;
+        }
         $name = $this->getDao()->getNameById($this->getId());
 
         return is_string($name);

@@ -147,7 +147,7 @@ class Sold extends AbstractOrder implements ConditionInterface
      *
      * @return int
      */
-    protected function getCartRuleCount(ICart $cart, RuleInterface $rule, CartItemInterface $cartItem = null)
+    protected function getCartRuleCount(CartInterface $cart, RuleInterface $rule, CartItemInterface $cartItem = null)
     {
         // init
         $counter = 0;

@@ -3,7 +3,7 @@
  * Pimcore
  *
  * This source file is available under two different licenses:
- * - GNU General protected License version 3 (GPLv3)
+ * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
@@ -122,10 +122,26 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                     $value = $this->$getter();
 
-                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
+                    if (is_array($value) && ($fd instanceof ClassDefinition\Data\ManyToManyRelation || $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
                         //don't save relations twice, if multiple assignments not allowed
                         if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $value = array_unique($value);
+                            $relationItems = [];
+                            foreach ($value as $item) {
+                                $elementHash = null;
+                                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
+                                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
+                                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
+                                    }
+                                } elseif ($item instanceof Model\Element\ElementInterface) {
+                                    $elementHash = Model\Element\Service::getElementHash($item);
+                                }
+
+                                if ($elementHash && !isset($relationItems[$elementHash])) {
+                                    $relationItems[$elementHash] = $item;
+                                }
+                            }
+
+                            $value = array_values($relationItems);
                         }
                         $this->$setter($value);
                     }
@@ -307,7 +323,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * @return Model\Version[]
      */
     public function getVersions()
     {
@@ -363,7 +379,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $tags['class_' . $this->getClassId()] = 'class_' . $this->getClassId();
         foreach ($this->getClass()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
-            if (!method_exists($def, 'getLazyLoading') or !$def->getLazyLoading()) {
+            if (!method_exists($def, 'getLazyLoading') || !$def->getLazyLoading()) {
                 $tags = $def->getCacheTags($this->getValueForFieldName($name), $tags);
             }
         }
@@ -819,16 +835,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      *
      * @param $objectId
      * @param $modificationDate
+     * @param $versionCount
      * @param bool $force
      *
      * @return Model\Version|void
      */
-    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $force = false)
+    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $versionCount, $force = false)
     {
         $db = Db::get();
-        $versionData = $db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $objectId);
+        $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
 
-        if ($versionData && $versionData['id'] && ($versionData['date'] > $modificationDate || $force)) {
+        if ($versionData && $versionData['id'] && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
             $version = Model\Version::getById($versionData['id']);
 
             return $version;

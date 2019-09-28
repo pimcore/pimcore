@@ -180,7 +180,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
 
         // do not allow requests including /app.php/ => SEO
         // this is after the first redirect check, to allow redirects in app.php?xxx
-        if (preg_match('@^/app.php(.*)@', $path, $matches) && $request->getMethod() === 'GET') {
+        if (preg_match('@^/app\.php(.*)@', $path, $matches) && $request->getMethod() === 'GET') {
             $redirectUrl = $matches[1];
             $redirectUrl = ltrim($redirectUrl, '/');
             $redirectUrl = '/' . $redirectUrl;

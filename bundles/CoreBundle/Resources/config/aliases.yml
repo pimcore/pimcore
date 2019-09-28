@@ -32,6 +32,7 @@ services:
     pimcore.service.request_matcher_factory: '@Pimcore\Http\RequestMatcherFactory'
 
     pimcore.translator: '@Pimcore\Translation\Translator'
+    Symfony\Contracts\Translation\TranslatorInterface: '@Pimcore\Translation\Translator'
     pimcore.locale: '@Pimcore\Localization\LocaleServiceInterface'
     Pimcore\Localization\Locale: '@Pimcore\Localization\LocaleServiceInterface'
     Pimcore\Localization\LocaleService: '@Pimcore\Localization\LocaleServiceInterface'

@@ -111,6 +111,7 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
+                classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
                 if (success) {
                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
                 }
@@ -393,5 +394,5 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.multihref = pimcore.object.classes.data.manyToManyRelation;

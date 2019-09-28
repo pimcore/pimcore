@@ -251,9 +251,14 @@ pimcore.object.tree = Class.create({
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
         var tree = oldParent.getOwnerTree();
 
+        var pageOffset = 0;
+        if (node.parentNode.pagingData) {
+            pageOffset = node.parentNode.pagingData.offset;
+        }
+
         pimcore.elementservice.updateObject(node.data.id, {
             parentId: newParent.data.id,
-            index: index
+            index: index + pageOffset,
         }, function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);

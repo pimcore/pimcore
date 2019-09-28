@@ -80,8 +80,22 @@ abstract class AdminController extends Controller implements AdminControllerInte
                 ]
             );
 
-            throw new AccessDeniedHttpException('Attempt to access ' . $permission . ', but has no permission to do so.');
+            throw $this->createAccessDeniedHttpException();
         }
+    }
+
+    /**
+     * @param string $message
+     * @param \Throwable|null $previous
+     * @param int $code
+     * @param array $headers
+     *
+     * @return AccessDeniedHttpException
+     */
+    protected function createAccessDeniedHttpException(string $message = 'Access Denied.', \Throwable $previous = null, int $code = 0, array $headers = []): AccessDeniedHttpException
+    {
+        // $headers parameter not supported by Symfony 3.4
+        return new AccessDeniedHttpException($message, $previous, $code);
     }
 
     /**

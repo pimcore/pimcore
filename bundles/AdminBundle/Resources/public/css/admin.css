@@ -74,7 +74,7 @@
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     background-size: 28px;
@@ -218,6 +218,12 @@
     border-right: 0px solid #2A2D30;
 }
 
+
+#assetMultiUploadField {
+    width: 10px;
+    position: absolute;
+    left: -1000px;
+}
 
 .pimcore_hidden {
     display:none !important;
@@ -1915,7 +1921,7 @@ span.warning {
     background-color: #D0D2D4;
 }
 
-.pimcore_tree_node_root .x-tree-expander {
+.pimcore_tree_node_root .x-tree-expander, .pimcore_tree_node_root .x-tree-elbow-img {
     display: none;
 }
 

@@ -12,7 +12,7 @@ data. Currently two adapters ship with Pimcore:
 - Google Analytics: Retrieve Data from Google Analytics 
 
 
-## Custom Report Permissions (since version 5.7.0)
+## Custom Report Permissions
 With custom report permissions it is possible to define which users should be able to see a report. Following options 
 are available:  
 - `Share globally`: Custom report is visible to all users that have `reports` permission. 

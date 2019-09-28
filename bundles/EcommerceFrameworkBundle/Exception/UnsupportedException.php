@@ -17,6 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 /**
  * Class UnsupportedException
  */
-class UnsupportedException extends \Exception
+class UnsupportedException extends AbstractEcommerceException
 {
 }

@@ -184,12 +184,59 @@ pimcore.settings.user.user.settings = Class.create({
             value: this.currentUser.lastname,
             width: 400
         });
-        generalItems.push({
+
+        var emailField = new Ext.form.field.Text({
             xtype: "textfield",
             fieldLabel: t("email"),
             name: "email",
             value: this.currentUser.email,
             width: 400
+        });
+
+        generalItems.push({
+            xtype: "fieldcontainer",
+            layout: 'hbox',
+
+            items: [emailField,
+                {
+                    text: t("send_invitation_link"),
+                    xtype: "button",
+                    style: "margin-left: 8px",
+                    iconCls: "pimcore_nav_icon_email",
+                    hidden: (this.currentUser.lastLogin > 0) || (user.id == this.currentUser.id),
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/user/invitationlink",
+                            method: 'POST',
+                            ignoreErrors: true,
+                            params: {
+                                username: this.currentUser.name
+                            },
+                            success: function (response) {
+                                var res = Ext.decode(response.responseText);
+                                if (res.success) {
+                                    Ext.MessageBox.alert(t('invitation_sent'), res.message);
+                                } else {
+                                    Ext.MessageBox.alert(t('error'), res.message);
+                                }
+                            }.bind(this),
+                            failure: function (response) {
+                                var message = t("error_general");
+
+                                try {
+                                    var json = Ext.decode(response.responseText);
+                                    if (json.message) {
+
+                                        message = json.message;
+                                    }
+                                } catch (e) {}
+
+                                pimcore.helpers.showNotification(t("error"), message, "error");
+                            }
+                        });
+                    }.bind(this)
+                }
+            ]
         });
 
         generalItems.push({
@@ -405,26 +452,37 @@ pimcore.settings.user.user.settings = Class.create({
             items: adminItems
         });
 
-
-        var availPermsItems = [];
-        // add available permissions
+        var itemsPerSection = [];
+        var sectionArray = [];
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
-            availPermsItems.push({
+            let section = this.data.availablePermissions[i].category;
+            if(!section){
+                section = "default";
+            }
+            if (!itemsPerSection[section]) {
+                itemsPerSection[section] = [];
+            }
+            itemsPerSection[section].push({
                 xtype: "checkbox",
-                boxLabel: t(this.data.availablePermissions[i].key),
+                fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
-                labelStyle: "width: 200px;"
+                labelWidth: 200
             });
         }
+        for (var key in itemsPerSection) {
+            let title = t("permissions");
+            if (key && key != "default") {
+                title += " " + t(key);
+            }
 
-        this.permissionsSet = new Ext.form.FieldSet({
-            collapsible: true,
-            title: t("permissions"),
-            items: availPermsItems,
-            hidden: this.currentUser.admin
-        });
-
+            sectionArray.push(new Ext.form.FieldSet({
+                collapsible: true,
+                title: title,
+                items: itemsPerSection[key],
+                collapsed: true,
+            }));
+        }
 
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
@@ -465,7 +523,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.generalSet, this.adminSet, this.permissionsSet, this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel],
+            items: array_merge([this.generalSet, this.adminSet], sectionArray, [this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel]),
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

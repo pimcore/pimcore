@@ -51,7 +51,7 @@ class ClassUtils
         $gettingClass = false;
 
         if (!$file->isReadable() || !file_exists($file->getPathname())) {
-            throw new \InvalidArgumentException(sprintf('File %s does not exist or is not readable'));
+            throw new \InvalidArgumentException(sprintf('File %s does not exist or is not readable', $file->getPathname()));
         }
 
         $content = '';

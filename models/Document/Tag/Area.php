@@ -69,7 +69,6 @@ class Area extends Model\Document\Tag
      */
     public function frontend()
     {
-        $count = 0;
         $options = $this->getOptions();
 
         // TODO inject area handler via DI when tags are built through container
@@ -84,15 +83,13 @@ class Area extends Model\Document\Tag
         $blockState = $this->getBlockState();
         $blockState->pushBlock(BlockName::createFromTag($this));
 
-        $this->current = $count;
-
         // create info object and assign it to the view
         $info = null;
         try {
             $info = new Area\Info();
             $info->setId($options['type']);
             $info->setTag($this);
-            $info->setIndex($count);
+            $info->setIndex(0);
         } catch (\Exception $e) {
             $info = null;
         }

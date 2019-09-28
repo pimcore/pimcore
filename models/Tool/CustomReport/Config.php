@@ -321,7 +321,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param \string[] $dataSourceConfig
+     * @param string[] $dataSourceConfig
      */
     public function setDataSourceConfig($dataSourceConfig)
     {
@@ -329,7 +329,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
     public function getDataSourceConfig()
     {

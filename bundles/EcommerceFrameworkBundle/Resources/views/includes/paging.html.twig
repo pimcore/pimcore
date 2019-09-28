@@ -1,0 +1,36 @@
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {%  if(paginationVariables.previous is defined) %}
+            <li class="page-item">
+                <a class="page-link" href="{{  pimcore_url({'page': paginationVariables.previous}) }}" aria-label="Previous">
+                    <span class="fas fa-chevron-left" aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
+
+        {%  for page in paginationVariables.pagesInRange %}
+
+            {%  if(paginationVariables.current == page) %}
+
+                <li class="page-item active" aria-current="page">
+                              <span class="page-link">
+                                {{  page }}
+                                <span class="sr-only">(current)</span>
+                              </span>
+                </li>
+
+            {%  else %}
+                <li class="page-item"><a class="page-link" href="{{  pimcore_url({'page': page}) }}">{{ page }}</a></li>
+            {%  endif %}
+
+        {% endfor %}
+
+        {%  if(paginationVariables.next is defined) %}
+            <li class="page-item">
+                <a class="page-link next flip" href="{{  pimcore_url({'page': paginationVariables.next}) }}" aria-label="Next">
+                    <span class="fas fa-chevron-right" aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
+    </ul>
+</nav>

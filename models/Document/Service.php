@@ -39,7 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Service extends Model\Element\Service
 {
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
     /**
@@ -53,7 +53,7 @@ class Service extends Model\Element\Service
     protected $nearestPathCache;
 
     /**
-     * @param null $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -160,8 +160,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -174,7 +174,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChildren() as $child) {
+        foreach ($source->getChildren(true) as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -214,8 +214,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -289,7 +289,7 @@ class Service extends Model\Element\Service
             $target->setLinktype($source->getLinktype());
         }
 
-        $target->setUserModification($this->_user->getId());
+        $target->setUserModification($this->_user ? $this->_user->getId() : 0);
         $target->setProperties($source->getProperties());
         $target->save();
 

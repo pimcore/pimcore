@@ -62,23 +62,19 @@ class Dao extends Model\Dao\PhpArrayTable
         }
         $this->model->setModificationDate($ts);
 
-        try {
-            $dataRaw = $this->model->getObjectVars();
-            $data = [];
-            $allowedProperties = ['name', 'description', 'group', 'items',
-                'videoBitrate', 'audioBitrate', 'creationDate', 'modificationDate'];
+        $dataRaw = $this->model->getObjectVars();
+        $data = [];
+        $allowedProperties = ['name', 'description', 'group', 'items',
+            'videoBitrate', 'audioBitrate', 'creationDate', 'modificationDate'];
 
-            foreach ($dataRaw as $key => $value) {
-                if (in_array($key, $allowedProperties)) {
-                    $data[$key] = $value;
-                }
+        foreach ($dataRaw as $key => $value) {
+            if (in_array($key, $allowedProperties)) {
+                $data[$key] = $value;
             }
-
-            $this->db->insertOrUpdate($data, $this->model->getName());
-            $this->autoClearTempFiles();
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->insertOrUpdate($data, $this->model->getName());
+        $this->autoClearTempFiles();
     }
 
     /**

@@ -14,7 +14,7 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment:
         alias: Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface
-        deprecated: 'The "%alias_id%" is deprecated, use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface instead'
+        # deprecated: 'The "%alias_id%" is deprecated, use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface instead'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
         arguments:

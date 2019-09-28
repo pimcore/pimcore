@@ -14,7 +14,8 @@
 
 namespace Pimcore\Tool\RestClient;
 
-use Pimcore\Logger;
+use GuzzleHttp\Client;
+use Pimcore\Http\ClientFactory;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -367,7 +368,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         if ($response->getStatusCode() !== $expectedStatus) {
             throw Exception::create(
-                sprintf('Response status %d does not match the expected status %d', $response->getStatusCode(), $expectedStatus),
+                sprintf("Response status %d does not match the expected status %d, response was: \n\n" . $response->getBody(), $response->getStatusCode(), $expectedStatus),
                 $request,
                 $response
             );
@@ -739,6 +740,10 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             $params['light'] = 1;
         }
 
+        if ($thumbnail) {
+            $params['thumbnail'] = $thumbnail;
+        }
+
         $response = $this->getJsonResponse('GET', sprintf('/asset/id/%d', $id), $params);
         $response = $response->data;
 
@@ -769,25 +774,20 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
                 if ($light) {
-                    $client = Tool::getHttpClient();
-                    $client->setMethod('GET');
+                    /** @var $client Client */
+                    $client = ClientFactory::createHttpClient();
 
                     $assetType = $asset->getType();
                     $data = null;
 
                     if ($assetType == 'image' && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
-                        // http://example.com/var/tmp/thumb_9__fancybox_thumb
-                        $tmpPath = preg_replace('@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@', '', PIMCORE_TEMPORARY_DIRECTORY);
-                        $uri = $protocol . $this->getHost() . $tmpPath . '/thumb_' . $asset->getId() . '__' . $thumbnail;
-                        $client->setUri($uri);
 
-                        if ($this->getLoggingEnabled()) {
-                            print '    =>' . $uri . "\n";
-                        }
+                        $uri = $protocol . $this->getHost() . $wsDocument->thumbnail;
 
-                        $result = $client->request();
-                        if ($result->getStatus() == 200) {
+                        $result = $client->request('GET', $uri, []);
+
+                        if ($result->getStatusCode() == 200) {
                             $data = $result->getBody();
                         }
                         $mimeType = $result->getHeader('Content-Type');
@@ -810,7 +810,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
                         }
 
-                        Logger::debug('mimeType: ' . $mimeType);
                         $asset->setFilename($filename);
                     }
 
@@ -818,13 +817,15 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         $path = $wsDocument->path;
                         $filename = $wsDocument->filename;
                         $uri = $protocol . $this->getHost() . '/var/assets' . $path . $filename;
-                        $client->setUri($uri);
-                        $result = $client->request();
-                        if ($result->getStatus() != 200 && !$tolerant) {
+
+                        $result = $client->request('GET', $uri, []);
+
+                        if ($result->getStatusCode() != 200 && !$tolerant) {
                             throw new Exception('Could not retrieve asset');
                         }
                         $data = $result->getBody();
                     }
+
                     $asset->setData($data);
                 }
 

@@ -63,7 +63,7 @@ abstract class Dao extends Model\Document\Dao
     /**
      * Get available versions fot the object and return an array of them
      *
-     * @return array
+     * @return Version[]
      */
     public function getVersions()
     {
@@ -106,11 +106,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function delete()
     {
-        try {
-            parent::delete();
-            $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        parent::delete();
+        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
     }
 }

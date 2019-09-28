@@ -23,6 +23,19 @@ use Pimcore\Model\User;
 
 class NotificationService
 {
+    /** @var UserService */
+    private $userService;
+
+    /**
+     * NotificationService constructor.
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * @param int $userId
      * @param int $fromUser
@@ -46,10 +59,6 @@ class NotificationService
 
         if (!$recipient instanceof User) {
             throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
-        }
-
-        if ($element && !$element instanceof ElementInterface) {
-            throw new \UnexpectedValueException(sprint('No element found with the ID %d', $elementId));
         }
 
         $notification = new Notification();
@@ -87,7 +96,6 @@ class NotificationService
 
         $filter = [
             'id != ?' => $fromUser,
-            'permissions LIKE ?' => '%notifications%',
             'active = ?' => 1,
             'roles LIKE ?' => '%' . $groupId . '%'
         ];
@@ -102,6 +110,7 @@ class NotificationService
         $listing->load();
 
         $users = $listing->getUsers() ?? [];
+        $users = $this->userService->filterUsersWithPermission($users);
 
         foreach ($users as $user) {
             $this->sendToUser($user->getId(), $fromUser, $title, $message, $element);
@@ -235,11 +244,6 @@ class NotificationService
         }
 
         $sender = $notification->getSender();
-        $from = false;
-
-        if (is_int($sender)) {
-            $sender = \Pimcore\Model\User::getById($senderId);
-        }
 
         if ($sender instanceof User\AbstractUser) {
             $from = trim(sprintf('%s %s', $sender->getFirstname(), $sender->getLastname()));

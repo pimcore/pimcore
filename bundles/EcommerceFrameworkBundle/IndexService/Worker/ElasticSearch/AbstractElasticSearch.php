@@ -190,6 +190,15 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $relationAttributesMapping = [];
 
         foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            if (empty($attribute->getType())
+                && (empty($attribute->getInterpreter()) || ($attribute->getInterpreter() && !($attribute->getInterpreter() instanceof RelationInterpreterInterface)))
+                && empty($attribute->getOption('mapping'))
+                && empty($attribute->getOption('mapper'))
+                && empty($attribute->getOption('analyzer'))
+            ) {
+                continue;
+            }
+
             // if option "mapping" is set (array), no other configuration is considered for mapping
             if (!empty($attribute->getOption('mapping'))) {
                 $customAttributesMapping[$attribute->getName()] = $attribute->getOption('mapping');
@@ -379,7 +388,14 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
-            $data = json_decode($data, true);
+            if ($data) {
+                $data = json_decode($data, true);
+
+                $jsonDecodeError = json_last_error();
+                if ($jsonDecodeError !== JSON_ERROR_NONE) {
+                    throw new \Exception("Could not decode store data for updating index - maybe there is invalid json data. Json decode error code was {$jsonDecodeError}, ObjectId was {$objectId}.");
+                }
+            }
         }
 
         if ($data) {
@@ -541,16 +557,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     protected function isInReindexMode()
     {
-        $esClient = $this->getElasticSearchClient();
-        try {
-            $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
-        } catch (\Exception $e) {
-            Logger::error($e);
-            throw new \Exception('Index alias with name ' . $this->indexName . ' not found! ' . $e);
+        $currentIndexName = $this->fetchEsActiveIndex();
+        if (empty($currentIndexName)) {
+            throw new \Exception('Index alias with name ' . $this->indexName . ' not found! ');
         }
 
-        reset($result);
-        $currentIndexName = key($result);
         $currentIndexVersion = str_replace($this->indexName . '-', '', $currentIndexName);
 
         if ($currentIndexVersion < $this->getIndexVersion()) {
@@ -684,32 +695,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
 
         if (!$result) {
-            $result = $esClient->indices()->create(['index' => $this->getIndexNameVersion(), 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
-
-            Logger::info('Index-Actions - creating new Index. Name: ' . $this->getIndexNameVersion());
-            if (!$result['acknowledged']) {
-                throw new \Exception('Index creation failed. IndexName: ' . $this->getIndexNameVersion());
-            }
+            $indexName = $this->getIndexNameVersion();
+            $this->createEsIndex($indexName);
 
             //index didn't exist -> reset index queue to make sure all products get reindexed
             $this->resetIndexingQueue();
 
-            //create alias for new index if alias doesn't exist so far
-            $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
-            if (!$aliasExists) {
-                Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
-                $params['body'] = [
-                    'actions' => [
-                        [
-                            'add' => [
-                                'index' => $this->getIndexNameVersion(),
-                                'alias' => $this->indexName,
-                            ]
-                        ]
-                    ]
-                ];
-                $result = $esClient->indices()->updateAliases($params);
-            }
+            $this->createEsAliasIfMissing();
         }
 
         $params = $this->getMappingParams();
@@ -747,5 +739,86 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         ];
 
         return $params;
+    }
+
+    /**
+     * Retrieve the currently active index name from ES based on the alias.
+     *
+     * @return string|null null if no index is found.
+     */
+    public function fetchEsActiveIndex(): ?string
+    {
+        $esClient = $this->getElasticSearchClient();
+        try {
+            $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
+        } catch (\Exception $e) {
+            Logger::error($e);
+
+            return null;
+        }
+
+        reset($result);
+        $currentIndexName = key($result);
+
+        return $currentIndexName;
+    }
+
+    /**
+     * Create the index alias on demand.
+     *
+     * @throws \Exception if alias could not be created.
+     */
+    protected function createEsAliasIfMissing()
+    {
+        $esClient = $this->getElasticSearchClient();
+        //create alias for new index if alias doesn't exist so far
+        $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
+        if (!$aliasExists) {
+            Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
+            $params['body'] = [
+                'actions' => [
+                    [
+                        'add' => [
+                            'index' => $this->getIndexNameVersion(),
+                            'alias' => $this->indexName,
+                        ]
+                    ]
+                ]
+            ];
+            $result = $esClient->indices()->updateAliases($params);
+            if (!$result) {
+                throw new \Exception('Alias '.$this->indexName.' could not be created.');
+            }
+        }
+    }
+
+    /**
+     * Create an ES index with the specified version.
+     *
+     * @param string $indexName the name of the index.
+     *
+     * @throws \Exception is thrown if index cannot be created, for instance if connection fails or index is already existing.
+     */
+    protected function createEsIndex(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+
+        Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
+        $result = $esClient->indices()->create([
+            'index' => $indexName,
+            'body' => ['settings' => $this->tenantConfig->getIndexSettings()]
+        ]);
+
+        if (!$result['acknowledged']) {
+            throw new \Exception('Index creation failed. IndexName: ' . $indexName);
+        }
+
+        $params = $this->getMappingParams();
+        $params['index'] = $indexName; //important
+        $result = $esClient->indices()->putMapping($params);
+
+        if (!$result['acknowledged']) {
+            throw new \Exception('Index creation failed. IndexName: ' . $indexName);
+        }
     }
 }

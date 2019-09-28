@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\SiteId;
 
 use Pimcore\Model\Site;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Represents an analytics site config key which is either just "default" without

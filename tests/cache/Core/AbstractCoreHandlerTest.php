@@ -664,19 +664,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $this->handleShutdownTagListProcessing(true);
     }
 
-    public function testForceCacheIsNotWrittenWithActiveWriteLock()
-    {
-        $this->handler->save('itemA', 'test', [], null, null, true);
-
-        $this->assertTrue($this->cacheHasItem('itemA'));
-
-        $this->writeLock->lock();
-
-        $this->handler->save('itemB', 'test', [], null, null, true);
-
-        $this->assertFalse($this->cacheHasItem('itemB'));
-    }
-
     public function testForceCacheIsWrittenWhenWriteLockIsDisabled()
     {
         $this->handler->save('itemA', 'test', [], null, null, true);

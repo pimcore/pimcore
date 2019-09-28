@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Model\Element\ValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -64,9 +64,16 @@ class AdminExceptionListener implements EventSubscriberInterface
                 'message' => $message,
             ];
 
-            if (\Pimcore::inDebugMode(DebugMode::EXCEPTION_TRACES)) {
+            if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
                 $data['traceString'] = $ex->getTraceAsString();
+            }
+
+            if ($ex instanceof ValidationException) {
+                $data['type'] = 'ValidationException';
+                $code = 403;
+
+                $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
 
             $response = new JsonResponse($data, $code, $headers);
@@ -85,7 +92,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 'msg' => $message
             ];
 
-            if (\Pimcore::inDebugMode(DebugMode::EXCEPTION_TRACES)) {
+            if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
                 $data['traceString'] = $ex->getTraceAsString();
             }
@@ -114,5 +121,59 @@ class AdminExceptionListener implements EventSubscriberInterface
         }
 
         return [$code, $headers, $message];
+    }
+
+    /**
+     * @param $items
+     * @param $message
+     * @param $detailedInfo
+     */
+    protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
+    {
+        if (!$items) {
+            return;
+        }
+        /** @var $items ValidationException[] */
+        foreach ($items as $e) {
+            if ($e->getMessage()) {
+                $message .= '<b>' . $e->getMessage() . '</b>';
+                $this->addContext($e, $message);
+                $message .= '<br>';
+
+                $detailedInfo .= '<br><b>Message:</b><br>';
+                $detailedInfo .= $e->getMessage() . '<br>';
+
+                $inner = $this->getInnerStack($e);
+                $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
+            }
+
+            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+        }
+    }
+
+    /**
+     * @param ValidationException $e
+     * @param $message
+     */
+    protected function addContext(ValidationException $e, &$message)
+    {
+        $contextStack = $e->getContextStack();
+        if ($contextStack) {
+            $message = $message . ' (' . implode(',', $contextStack) . ')';
+        }
+    }
+
+    /**
+     * @param \Exception $e
+     *
+     * @return \Exception
+     */
+    protected function getInnerStack(\Exception $e)
+    {
+        while ($e->getPrevious()) {
+            $e = $e->getPrevious();
+        }
+
+        return $e;
     }
 }

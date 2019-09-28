@@ -45,19 +45,15 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
-     *
-     * @return bool
-     *
-     * @todo: not all save methods return a boolean, why this one?
+     * @throws \Exception
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->model->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     /**
@@ -73,26 +69,22 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
+        $ts = time();
+        $this->model->setModificationDate($ts);
 
-            $data = [];
-            $type = $this->model->getObjectVars();
+        $data = [];
+        $type = $this->model->getObjectVars();
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('glossary'))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('glossary'))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
                 }
+                $data[$key] = $value;
             }
-
-            $this->db->update('glossary', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->update('glossary', $data, ['id' => $this->model->getId()]);
     }
 
     /**
@@ -109,7 +101,5 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert('glossary', []);
 
         $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
     }
 }

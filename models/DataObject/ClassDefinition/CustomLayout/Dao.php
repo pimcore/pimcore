@@ -52,27 +52,58 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param null $name
+     * @param string $name
      *
-     * @return int|null
+     * @return mixed|null
      */
-    public function getIdByName($name = null)
+    public function getIdByName($name)
     {
-        $name = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+        $id = null;
+        try {
+            if (!empty($name)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $id;
+    }
+
+    /**
+     * @param mixed $id
+     *
+     * @return string|null
+     */
+    public function getNameById($id)
+    {
+        $name = null;
+        try {
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+            }
+        } catch (\Exception $e) {
+        }
 
         return $name;
     }
 
     /**
-     * @param null $id
+     * @param string $name
+     * @param int    $classId
      *
-     * @return string
+     * @return int|null
      */
-    public function getNameById($id = null)
+    public function getIdByNameAndClassId($name, $classId)
     {
-        $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+        $id = null;
+        try {
+            if (!empty($name) && !empty($classId)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ? AND classId = ?', [$name, $classId]);
+            }
+        } catch (\Exception $e) {
+        }
 
-        return $name;
+        return $id;
     }
 
     /**
@@ -122,9 +153,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save layout to database
      *
-     * @return bool
+     * @param bool $isUpdate
      *
-     * @todo: update() and create() don't return anything
+     * @throws \Exception
      */
     public function save($isUpdate = true)
     {
@@ -134,14 +165,13 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!$isUpdate) {
-            return $this->create();
+            $this->create();
         } else {
-            return $this->update();
+            $this->update();
         }
     }
 
     /**
-     * @throws \Exception
      * @throws \Exception
      */
     public function update()
@@ -173,7 +203,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setCreationDate(time());
         $this->model->setModificationDate(time());
 
-        $this->save();
+        $this->update();
     }
 
     /**

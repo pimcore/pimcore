@@ -322,8 +322,8 @@ class Installer extends MigrationInstaller
                 Permission\Definition::create($permission);
             } catch (\Throwable $e) {
                 throw new AbortMigrationException(sprintf(
-                    'Failed to create permission "%s"',
-                    $permission
+                    'Failed to create permission "%s": %s',
+                    $permission, $e->getMessage()
                 ));
             }
         }

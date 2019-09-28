@@ -306,22 +306,22 @@ pimcore.helpers.recordElement = function (id, type, name) {
 
 };
 
-pimcore.helpers.openElement = function (id, type, subtype) {
+pimcore.helpers.openElement = function (idOrPath, type, subtype) {
     if (typeof subtype != "undefined") {
         if (type == "document") {
-            pimcore.helpers.openDocument(id, subtype);
+            pimcore.helpers.openDocument(idOrPath, subtype);
         }
         else if (type == "asset") {
-            pimcore.helpers.openAsset(id, subtype);
+            pimcore.helpers.openAsset(idOrPath, subtype);
         }
         else if (type == "object") {
-            pimcore.helpers.openObject(id, subtype);
+            pimcore.helpers.openObject(idOrPath, subtype);
         }
     } else {
         Ext.Ajax.request({
             url: "/admin/element/get-subtype",
             params: {
-                id: id,
+                id: idOrPath,
                 type: type
             },
             success: function (response) {
@@ -333,6 +333,18 @@ pimcore.helpers.openElement = function (id, type, subtype) {
                 }
             }
         });
+    }
+};
+
+pimcore.helpers.closeElement = function (id, type) {
+    if (type == "document") {
+        pimcore.helpers.closeDocument(id);
+    }
+    else if (type == "asset") {
+        pimcore.helpers.closeAsset(id);
+    }
+    else if (type == "object") {
+        pimcore.helpers.closeObject(id);
     }
 };
 
@@ -457,103 +469,17 @@ pimcore.helpers.getValidFilename = function (value, type) {
 };
 
 pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack, code, hideDelay) {
-
-    if (type != "ValidationException") {
-        pimcore.helpers.showNotification(title, text, "error", errorText, hideDelay);
-        return;
-    }
-    if (errorText != null && errorText != undefined) {
-
-        if (t(errorText) != "~" + errorText + "~") {
-            errorText = t(errorText);
-        }
-
-        text = text + '<br /><hr />' +
-            '<span style="font-size:12px">'
-            + '<b>' + errorText + '</b>' +
-            "</span>";
-
-    }
-
-    if (stack) {
-        stack = str_replace("#", "<br>#", stack);
-        var htmlValue = '<a href="#">' + t("details") + '</a>';
-        var detailedInfo = {
-            xtype: "displayfield",
-            readOnly: true,
-            value: htmlValue,
-            width: 300,
-            listeners: {
-                render: function (c) {
-                    c.getEl().on('click', function () {
-                        var detailedWindow = new Ext.Window({
-                            modal: true,
-                            title: t('details'),
-                            width: 1000,
-                            height: 600,
-                            html: stack,
-                            autoScroll: true,
-                            bodyStyle: "padding: 10px;",
-                            buttonAlign: "center",
-                            shadow: false,
-                            closable: true,
-                            buttons: [{
-                                text: t("OK"),
-                                handler: function () {
-                                    detailedWindow.close();
-                                }
-                            }]
-                        });
-                        detailedWindow.show();
-                    }, c);
-                }.bind(this)
-            }
-        };
-    }
-
-    if (code) {
-        title = title + " " + code;
-    }
-    var errWin = new Ext.Window({
-        modal: true,
-        iconCls: "pimcore_icon_error",
-        title: title,
-        width: 600,
-        //height: 300,
-
-        layout: 'vbox',
-        items: [
-            {
-                xtype: 'panel',
-                html: text,
-                width: '100%'
-            },
-            detailedInfo
-        ],
-        autoScroll: true,
-        bodyStyle: "padding: 10px;",
-        buttonAlign: "center",
-        shadow: false,
-        closable: false,
-        buttons: [{
-            text: "OK",
-            handler: function () {
-                errWin.close();
-            }
-        }]
-    });
-    errWin.show();
-
+    pimcore.helpers.showNotification(title, text, "error", errorText, hideDelay);
 };
 
-pimcore.helpers.showNotification = function (title, text, type, errorText, hideDelay) {
+pimcore.helpers.showNotification = function (title, text, type, detailText, hideDelay) {
     // icon types: info,error,success
-    if (type == "error") {
+    if (type === "error") {
 
-        if (errorText != null && errorText != undefined) {
-            text = text + '<br /><hr /><br />' +
+        if (detailText) {
+            detailText =
                 '<pre style="font-size:11px;word-wrap: break-word;">'
-                + strip_tags(errorText) +
+                    + strip_tags(detailText) +
                 "</pre>";
         }
 
@@ -570,6 +496,32 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             shadow: false,
             closable: false,
             buttons: [{
+                text: t("details"),
+                hidden: !detailText,
+                handler: function () {
+                    errWin.close();
+
+                    var detailWindow = new Ext.Window({
+                        modal: true,
+                        title: t('details'),
+                        width: 1000,
+                        height: '95%',
+                        html: detailText,
+                        autoScroll: true,
+                        bodyStyle: "padding: 10px;",
+                        buttonAlign: "center",
+                        shadow: false,
+                        closable: true,
+                        buttons: [{
+                            text: t("OK"),
+                            handler: function () {
+                                detailWindow.close();
+                            }
+                        }]
+                    });
+                    detailWindow.show();
+                }
+            }, {
                 text: t("OK"),
                 handler: function () {
                     errWin.close();
@@ -586,9 +538,6 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             width: 'auto',
             maxWidth: 350,
             closeable: true
-            //autoDestroy: true
-            //,
-            //hideDelay:  hideDelay | 1000
         });
         notification.show(document);
     }
@@ -2135,6 +2084,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
+    var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
@@ -2244,14 +2194,24 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var openButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
+        openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
             searchButton.disable();
+            openButton.disable();
 
             poster.hide();
             poster.setValue("");
@@ -2303,7 +2263,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton]
+            items: [fieldPath, searchButton, openButton]
         }, poster, {
             xtype: "textfield",
             name: "title",
@@ -2339,8 +2299,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
-        width: 500,
+    window = new Ext.Window({
+        width: 510,
         height: 370,
         title: t("video"),
         items: [form],
@@ -2362,7 +2322,7 @@ pimcore.helpers.showAbout = function () {
     var html = '<div class="pimcore_about_window">';
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
-    html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
+    html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
@@ -3116,3 +3076,27 @@ pimcore.helpers.openProfile = function () {
     }
 };
 
+pimcore.helpers.copyStringToClipboard = function (str) {
+    var selection = document.getSelection(),
+        prevSelection = (selection.rangeCount > 0) ? selection.getRangeAt(0) : false,
+        el;
+
+    // create element and insert string
+    el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+
+    // insert element, select all text and copy
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    // restore previous selection
+    if (prevSelection) {
+        selection.removeAllRanges();
+        selection.addRange(prevSelection);
+    }
+};

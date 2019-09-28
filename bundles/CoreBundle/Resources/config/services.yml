@@ -56,11 +56,6 @@ services:
 
     Pimcore\Config\ReportConfigWriter: ~
 
-    Pimcore\FeatureToggles\FeatureManagerInterface:
-        public: true
-        shared: false
-        factory: ['Pimcore', getFeatureManager]
-
     #
     # CONTROLLERS
     #
@@ -183,6 +178,9 @@ services:
     Pimcore\Translation\Escaper\Xliff12Escaper: ~
 
     Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
+        public: true
+
+    Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
         public: true
 
     # Override Swiftmailer redirecting plugin

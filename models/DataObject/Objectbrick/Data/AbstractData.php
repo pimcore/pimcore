@@ -30,6 +30,13 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     /**
+     * Will be overriden by the actual ObjectBrick
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * @var string
      */
     public $fieldname;

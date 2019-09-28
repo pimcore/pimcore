@@ -878,6 +878,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             // for lazy loading
                             $context = $itemElementData->getContext() ? $itemElementData->getContext() : [];
                             $context['containerType'] = 'block';
+                            $context['containerKey'] = $this->getName();
                             $itemElementData->setContext($context);
                         }
                     }
@@ -1096,6 +1097,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $aggregatedExceptions = new Model\Element\ValidationException();
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is called in DataObject\ClassDefinition::save()
+     *
+     * @param $class
+     * @param array $params
+     */
+    public function classSaved($class, $params = [])
+    {
+        $blockDefinitions = $this->getFieldDefinitions();
+
+        if (is_array($blockDefinitions)) {
+            /** @var Data $fd */
+            foreach ($blockDefinitions as $field) {
+                if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                    $field->setLazyLoading(false);
                 }
             }
         }

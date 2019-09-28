@@ -120,16 +120,13 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
         } else {
             charCount.setHtml(textField.getValue().length);
         }
-
     },
 
 
     getLayoutShow: function () {
-
-        this.component = this.getLayoutEdit();
+        var layout = this.getLayoutEdit();
         this.component.setReadOnly(true);
-
-        return this.component;
+        return layout;
     },
 
     getValue: function () {

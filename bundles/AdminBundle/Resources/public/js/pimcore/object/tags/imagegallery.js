@@ -44,7 +44,36 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                return t("not_supported");
+                var content = '';
+
+                if(value && value.length > 0) {
+
+                    for(var i = 0; i < value.length; i++) {
+
+                        var item = value[i];
+
+                        var baseUrl = '<img style="padding-left: 3px" src="/admin/asset/get-image-thumbnail?id=' + item.id;
+                        var params = {
+                            width: 88,
+                            height: 88,
+                            frame: true
+                        };
+
+                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
+
+                        if (item.crop) {
+                            var cropParams = Ext.Object.toQueryString(item.crop);
+                            url = Ext.String.urlAppend(url, cropParams);
+                        }
+
+                        url = url + '" />';
+
+                        content += url;
+                    }
+
+                }
+
+                return content;
             }.bind(this, field.key)
         };
     },

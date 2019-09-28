@@ -24,6 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated
+ */
 class PayPal extends AbstractPayment
 {
     /**
@@ -340,7 +343,7 @@ class PayPal extends AbstractPayment
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order)
+    protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order = null)
     {
         // create order total
         $paymentDetails = new \stdClass();

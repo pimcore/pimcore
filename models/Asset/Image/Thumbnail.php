@@ -379,7 +379,7 @@ class Thumbnail
     {
         $image = $this->getAsset();
         $attributes = [];
-        $pictureAttribs = []; // this is used for the html5 <picture> element
+        $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
         // re-add support for disableWidthHeightAttributes
         if (isset($options['disableWidthHeightAttributes']) && $options['disableWidthHeightAttributes']) {
@@ -423,6 +423,8 @@ class Thumbnail
         if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
             if ($image->getMetadata('alt')) {
                 $altText = $image->getMetadata('alt');
+            } elseif (isset($options['defaultalt'])) {
+                $altText = $options['defaultalt'];
             } else {
                 $altText = $titleText;
             }
@@ -460,11 +462,6 @@ class Thumbnail
             if (preg_match('/^[a-z-]+$/i', $key)) {
                 $attributes[$key] = $value;
 
-                // do not include all attributes
-                if (!in_array($key, ['width', 'height', 'alt'])) {
-                    $pictureAttribs[$key] = $value;
-                }
-
                 // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
                 if (in_array($key, ['alt'])) {
                     $pictureAttribs['data-' . $key] = $value;
@@ -501,16 +498,15 @@ class Thumbnail
         }
 
         $isLowQualityPreview = false;
-        $lowQualityPreviewFile = $this->getAsset()->getLowQualityPreviewFileSystemPath();
         if (
             (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            && file_exists($lowQualityPreviewFile)
+            && ($previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri())
             && !Tool::isFrontendRequestByAdmin()
         ) {
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
-            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($lowQualityPreviewFile));
+            $attributes['src'] = $previewDataUri;
             unset($attributes['srcset']);
         }
 

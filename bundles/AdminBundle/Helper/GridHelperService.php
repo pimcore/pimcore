@@ -338,7 +338,7 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters, $me) {
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureFilters, $me) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -400,7 +400,7 @@ class GridHelperService
 
         $start = 0;
         $limit = 20;
-        $orderKey = 'oo_id';
+        $orderKey = 'o_id';
         $order = 'ASC';
 
         $fields = [];
@@ -428,10 +428,10 @@ class GridHelperService
             if (!(substr($orderKey, 0, 1) == '~')) {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  ClassDefinition\Data\QuantityValue) {
+                } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                     $doNotQuote = true;
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  ClassDefinition\Data\RgbaColor) {
+                } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\RgbaColor) {
                     $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
                     $doNotQuote = true;
                 } elseif (strpos($orderKey, '~') !== false) {
@@ -464,7 +464,7 @@ class GridHelperService
         if (!$adminUser->isAdmin()) {
             $userIds = $adminUser->getRoles();
             $userIds[] = $adminUser->getId();
-            $conditionFilters[] .= ' (
+            $conditionFilters[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -545,6 +545,10 @@ class GridHelperService
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
+
+        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
+            $list->setIgnoreLocalizedFields(true);
+        }
 
         return $list;
     }

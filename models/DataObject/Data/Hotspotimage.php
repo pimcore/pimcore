@@ -92,7 +92,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getHotspots()
     {
@@ -113,7 +113,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getMarker()
     {
@@ -121,7 +121,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param \array[] $crop
+     * @param array[] $crop
      */
     public function setCrop($crop)
     {
@@ -130,7 +130,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return \array[]
+     * @return array[]
      */
     public function getCrop()
     {
@@ -181,6 +181,19 @@ class Hotspotimage implements OwnerAwareFieldInterface
         }
 
         if ($crop) {
+            if ($thumbConfig->hasMedias()) {
+                $medias = $thumbConfig->getMedias() ?: [];
+
+                foreach ($medias as $mediaName => $mediaConfig) {
+                    $thumbConfig->addItemAt(0, 'cropPercent', [
+                        'width' => $crop['cropWidth'],
+                        'height' => $crop['cropHeight'],
+                        'y' => $crop['cropTop'],
+                        'x' => $crop['cropLeft']
+                    ], $mediaName);
+                }
+            }
+
             $thumbConfig->addItemAt(0, 'cropPercent', [
                 'width' => $crop['cropWidth'],
                 'height' => $crop['cropHeight'],

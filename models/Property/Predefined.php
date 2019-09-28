@@ -20,7 +20,9 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Property\Predefined\Dao getDao()
+ * @method Predefined\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Predefined extends Model\AbstractModel
 {

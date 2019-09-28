@@ -71,6 +71,21 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementClasses($options = []): array
+    {
+        // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
+        // the default behavior of the parent method is to include the "class" attribute
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        return $classes;
+    }
+
+    /**
      * @see Document\Tag\TagInterface::frontend
      *
      * @return string
@@ -497,12 +512,10 @@ class Link extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        if ($wsElement->value->data instanceof \stdClass) {
-            $wsElement->value->data = (array)$wsElement->value->data;
-        }
+        $data = $this->sanitizeWebserviceData($wsElement->value);
 
-        if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
-            $this->data = $wsElement->value->data;
+        if (empty($data->data) or $data->data instanceof \stdClass) {
+            $this->data = $data->data instanceof \stdClass ? get_object_vars($data->data) : null;
             if ($this->data['internal']) {
                 if (intval($this->data['internalId']) > 0) {
                     $id = $this->data['internalId'];
@@ -545,6 +558,10 @@ class Link extends Model\Document\Tag
                                 );
                             }
                         }
+                    }
+
+                    if ($id) {
+                        $this->data['internalId'] = $id;
                     }
                 }
             }
