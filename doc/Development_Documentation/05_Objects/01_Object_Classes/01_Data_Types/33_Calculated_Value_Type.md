@@ -14,7 +14,7 @@ called `sum` placed inside a localizedfields container.
 ![Calculated Value Configuration](../../../img/classes-datatypes-calculated.png)
 
 
-The first step is to provide a PHP calculator class implementing at least one static method which computes the result 
+The first step is to provide a PHP calculator class implementing at least one method which computes the result 
 for the `sum` field. An example is shown below.
 
 The arguments passed into this method is the Pimcore object and the contextual information telling you which 
@@ -65,6 +65,8 @@ public static function getCalculatedValueForEditMode($object, $context) {
 The visual outcome would be as follows: 
 
 ![Calculated Value Field](../../../img/classes-datatypes-calculated-field.png)
+
+You can also provide a Symfony service as calculator class via `@` prefix (e.g. `@service_name`). The `compute` and `getCalculatedValueForEditMode` methods do not need to be static to be able to use dependency injection.
 
 
 
