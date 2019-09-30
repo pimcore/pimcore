@@ -22,11 +22,6 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 
 class CalculatorClassResolver extends ClassResolver
 {
-    /**
-     * @param $calculatorClass
-     *
-     * @return |null
-     */
     public static function resolveCalculatorClass($calculatorClass)
     {
         return self::resolve($calculatorClass);
