@@ -295,7 +295,7 @@ class Item extends Model\AbstractModel
         }
         $element->save();
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->getObjectVar('o_childs');
