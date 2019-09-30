@@ -931,7 +931,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $db = \Pimcore\Db::get();
             $mappedData = [];
             $groupsData = $db->fetchAll('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
-                'ids' => $ids
+                'ids' => implode(',', array_filter($ids, 'intval')),
             ]);
 
             foreach ($groupsData as $groupData) {
