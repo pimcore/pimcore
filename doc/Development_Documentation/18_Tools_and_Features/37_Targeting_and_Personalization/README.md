@@ -9,10 +9,6 @@ description and feature listing see your [user docs](../../../User_Documentation
 first. 
 
  
-**NOTE:** the new targeting engine is incompatible to the targeting feature which was shipped with Pimcore before 5.1. See
-[Migrating from the existing Targeting Engine](./30_Migrating_from_the_existing_Targeting_Engine.md) for further details.
-
-
 ## Basic concepts
 
 | Concept          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
