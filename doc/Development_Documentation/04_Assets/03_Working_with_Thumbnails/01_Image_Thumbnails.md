@@ -63,7 +63,7 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 | ROUNDED CORNERS | Rounds the corners to the given width/height. |   ![Config Corner](../../img/thumbnails-config-corner.png) | ![Sample Corner](../../img/thumbnails-sample-corner.png) |
 
 
-For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore.org/en/basic-examples/thumbnails). 
+For thumbnails in action also have a look at our [Live Demo](https://demo.pimcore.fun/en/More-Stuff/Developers-Corner/Thumbnails). 
 
 ## Usage Examples
 ```php

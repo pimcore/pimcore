@@ -17,31 +17,22 @@ cd /your/project
 ```
 
 #### Choose a package to install
-We're offering 4 different installation packages, 3 demo packages and one skeleton for experienced developers.
+We're offering 2 different installation packages, 3 demo packages and one skeleton for experienced developers.
 
 ##### 1. Skeleton Package (only for experienced Pimcore developers)
 ```bash
 COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton my-project
 ```
 
-##### 2. Basic Demo Package (PHP Templates)
+##### Demo Package
 ```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-basic my-project
+COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo my-project
 ```
 
-##### 3. Basic Demo Package (Twig Templates)
-```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-basic-twig my-project
-```
-
-##### 4. Advanced Demo Package (E-Commerce, PIM, MDM, DAM, ...)
-```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-ecommerce my-project
-```
 
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
 Keep in mind, that Pimcore needs to be installed **outside** of the **document root**.
-Specific configurations and optimizations for your webserver are available here:
+Specific configurations and optimizations for your web server are available here:
 [Apache](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md),
 [Nginx](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 
