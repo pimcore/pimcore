@@ -930,6 +930,11 @@ class Service extends Model\AbstractModel
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 
+
+        if ($type == 'object') {
+            $key = preg_replace('/[<>]/', '-', $key);
+        }
+
         if ($type == 'document') {
             // replace URL reserved characters with a hyphen
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
