@@ -2149,7 +2149,9 @@ class DataObjectHelperController extends AdminController
             $object = DataObject::getById($request->get('job'));
 
             if ($object) {
-                if (!$object->isAllowed('publish')) {
+                $name = $request->get('name');
+
+                if (!$object->isAllowed('save') || ($name  === 'published' && !$object->isAllowed('publish'))) {
                     throw new \Exception("Permission denied. You don't have the rights to save this object.");
                 }
 
@@ -2162,7 +2164,6 @@ class DataObjectHelperController extends AdminController
                     $value = $this->decodeJson($value);
                 }
 
-                $name = $request->get('name');
                 $parts = explode('~', $name);
 
                 if (substr($name, 0, 1) == '~') {
