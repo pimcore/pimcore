@@ -11,4 +11,4 @@ The typical workflow of personalizing content contains following steps:
 3) [Create Personalized Content](./05_Create_Personalized_Content.md)
 4) [Deliver Personalized Content](./07_Deliver_Personalized_Content_and_Debug.md)
 
-For a live demo with a predefined rule set see our [Demo Advanced](https://demo-advanced.pimcore.org). 
+For a live demo with a predefined rule set see our [Demo](https://demo.pimcore.fun). 
