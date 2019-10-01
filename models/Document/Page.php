@@ -98,6 +98,7 @@ class Page extends TargetingDocument
     protected function update($params = [])
     {
         $oldPath = $this->getDao()->getCurrentFullPath();
+        $oldDocument = self::getById($this->getId(), true);
 
         parent::update($params);
 
@@ -112,11 +113,18 @@ class Page extends TargetingDocument
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
 
-            $site = Frontend::getSiteForDocument($this);
-            if ($site) {
-                $redirect->setSourceSite($site->getId());
-                $oldPath = preg_replace('@^' . preg_quote($site->getRootPath()) . '@', '', $oldPath);
+            //set source site
+            $oldSite = Frontend::getSiteForDocument($oldDocument);
+            if($oldSite) {
+                $redirect->setSourceSite($oldSite->getId());
+                $oldPath = preg_replace('@^' . preg_quote($oldSite->getRootPath()) . '@', '', $oldPath);
                 $redirect->setSource('@' . $oldPath . '/?@');
+            }
+
+            //set target site
+            $newSite = Frontend::getSiteForDocument($this);
+            if ($newSite) {
+                $redirect->setTargetSite($newSite->getId());
             }
 
             $redirect->save();

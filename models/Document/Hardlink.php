@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
+use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -266,6 +267,7 @@ class Hardlink extends Document
     protected function update($params = [])
     {
         $oldPath = $this->getDao()->getCurrentFullPath();
+        $oldDocument = self::getById($this->getId(), true);
 
         parent::update($params);
 
@@ -279,6 +281,21 @@ class Hardlink extends Document
             $redirect->setSource('@' . $oldPath . '/?@');
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
+
+            //set source site
+            $oldSite = Frontend::getSiteForDocument($oldDocument);
+            if($oldSite) {
+                $redirect->setSourceSite($oldSite->getId());
+                $oldPath = preg_replace('@^' . preg_quote($oldSite->getRootPath()) . '@', '', $oldPath);
+                $redirect->setSource('@' . $oldPath . '/?@');
+            }
+
+            //set target site
+            $newSite = Frontend::getSiteForDocument($this);
+            if ($newSite) {
+                $redirect->setTargetSite($newSite->getId());
+            }
+
             $redirect->save();
         }
 
