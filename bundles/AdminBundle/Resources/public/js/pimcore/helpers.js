@@ -2612,7 +2612,6 @@ pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, res
 };
 
 pimcore.helpers.exportWarning = function (type, callback) {
-
     var iconComponent = new Ext.Component({
         cls: "x-message-box-warning x-dlg-icon"
     });
@@ -2655,31 +2654,23 @@ pimcore.helpers.exportWarning = function (type, callback) {
         ]
     });
 
-    var delimiter = new Ext.form.TextField({
-        fieldLabel: t('delimiter'),
-        name: 'delimiter',
-        maxLength: 1,
-        labelWidth: 200,
-        value: ';'
-    });
+    var formPanelItems = [];
+    formPanelItems.push(objectSettingsContainer);
 
+    exportSettingsContainer = type.getExportSettingsContainer();
 
-    var csvSettingsContainer = new Ext.form.FieldSet({
-        title: t('csv_settings'),
-        items: [
-            delimiter
-        ]
-    });
+    if(exportSettingsContainer) {
+        formPanelItems.push(exportSettingsContainer);
+    }
 
     var formPanel = new Ext.form.FormPanel({
         bodyStyle: 'padding:10px',
-        items: [objectSettingsContainer, csvSettingsContainer]
+        items: formPanelItems
     });
-
 
     var window = new Ext.Window({
         modal: true,
-        title: t('export_csv'),
+        title: type.text,
         width: 600,
         height: 450,
         bodyStyle: "padding: 10px;",
@@ -2702,6 +2693,7 @@ pimcore.helpers.exportWarning = function (type, callback) {
             }
         ]
     });
+
     window.show();
 };
 

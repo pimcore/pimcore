@@ -15,11 +15,10 @@ pimcore.registerNS("pimcore.gridexport.abstract");
 pimcore.gridexport.abstract = Class.create({
     name: null,
     text: null,
-    settingsContainer: new Ext.form.FieldSet({
-        title: t('csv_settings'),
-        items: [
-        ]
-    })
+    downloadUrl: null,
+    getExportSettingsContainer: function () {
+        return null;
+    }
 });
 
 pimcore.globalmanager.add("pimcore.gridexport", []);
