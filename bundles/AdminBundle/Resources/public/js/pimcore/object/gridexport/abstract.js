@@ -13,8 +13,9 @@
 
 pimcore.registerNS("pimcore.gridexport.abstract");
 pimcore.gridexport.abstract = Class.create({
-    name: null,
-    text: null,
+    name: t('export'),
+    text: t('export'),
+    warningText: t('object_export_warning'),
     downloadUrl: null,
     getExportSettingsContainer: function () {
         return null;

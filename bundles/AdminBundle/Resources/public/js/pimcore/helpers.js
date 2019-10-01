@@ -2617,7 +2617,7 @@ pimcore.helpers.exportWarning = function (type, callback) {
     });
 
     var textContainer = Ext.Component({
-        html: t('object_export_warning')
+        html: type.warningText
     });
 
     var promptContainer = new Ext.container.Container({
