@@ -18,13 +18,15 @@ class ClassResolver
                 $serviceName = substr($class, 1);
                 try {
                     $service = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                    return self::returnValidServiceOrNull($service, $validationCallback);
+                    self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
+                    return self::$cache[$class];
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }
             } else {
                 $service = new $class;
-                return self::returnValidServiceOrNull($service, $validationCallback);
+                self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
+                return self::$cache[$class];
             }
         }
 
