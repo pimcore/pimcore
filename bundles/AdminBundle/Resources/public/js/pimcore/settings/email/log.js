@@ -280,10 +280,11 @@ pimcore.settings.email.log = Class.create({
                                             //when the objectPath is set -> the object is still available otherwise it was
                                             // deleted in the meantime
                                             if (data.objectPath) {
+                                                var type = data.type;
                                                 var subtype = data.objectClassSubType.toLowerCase();
-                                                return '<span onclick="pimcore.helpers.open'
-                                                    + data.objectClassBase + '(' + data.objectId + ', \''
-                                                    + subtype + '\');" class="input_drop_target" style="display: block;">'
+                                                metadata.tdAttr = 'data-qtip="' + t("open") + '"';
+                                                return '<span onclick="pimcore.helpers.openElement(' + data.objectId + ', \'' + type + '\' , \''
+                                                    + subtype + '\'); Ext.getCmp(\'email_log_params_panel\').close();" class="x-grid-cell-inner input_drop_target" style="display: block;">'
                                                     + data.objectPath + '</span>';
                                             } else {
                                                 return '"' + data.objectClass + '" with Id: '
@@ -295,6 +296,7 @@ pimcore.settings.email.log = Class.create({
                         });
 
                         this.window = new Ext.Window({
+                            id: "email_log_params_panel",
                             modal: true,
                             width: 620,
                             height: "90%",
