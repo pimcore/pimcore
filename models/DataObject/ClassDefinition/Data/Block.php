@@ -287,28 +287,38 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             $oIndex = $rawBlockElement['oIndex'];
             $blockElement = $rawBlockElement['data'];
+            $blockElementDefinition = $this->getFieldDefinitions();
 
-            foreach ($blockElement as $elementName => $elementData) {
-
-                /** @var $fd DataObject\ClassDefinition\Data */
-                $fd = $this->getFielddefinition($elementName);
-                $dataFromEditMode = $fd->getDataFromEditmode(
-                    $elementData,
-                    $object,
-                    [
-                        'context' => [
-                            'containerType' => 'block',
-                            'fieldname' => $this->getName(),
-                            'index' => $count,
-                            'oIndex' => $oIndex,
-                            'classId' => $object->getClassId()
+            /** @var $fd DataObject\ClassDefinition\Data */
+            foreach ($blockElementDefinition as $elementName => $fd) {
+                $invisible = $fd->getInvisible();
+                if ($invisible && !is_null($oIndex)) {
+                    $blockGetter = 'get' . ucfirst($this->getname());
+                    $items = $object->$blockGetter();
+                    if (isset($items[$oIndex])) {
+                        $item = $items[$oIndex][$elementName];
+                        $blockData = $item->getData();
+                    }
+                } else {
+                    $elementData = $blockElement[$elementName];
+                    $blockData = $fd->getDataFromEditmode(
+                        $elementData,
+                        $object,
+                        [
+                            'context' => [
+                                'containerType' => 'block',
+                                'fieldname' => $this->getName(),
+                                'index' => $count,
+                                'oIndex' => $oIndex,
+                                'classId' => $object->getClassId()
+                            ]
                         ]
-                    ]
-                );
+                    );
 
+                }
                 $elementType = $fd->getFieldtype();
 
-                $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $dataFromEditMode);
+                $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
             }
 
             $result[] = $resultElement;
