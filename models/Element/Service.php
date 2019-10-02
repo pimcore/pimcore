@@ -930,7 +930,6 @@ class Service extends Model\AbstractModel
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 
-
         if ($type == 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
         }
