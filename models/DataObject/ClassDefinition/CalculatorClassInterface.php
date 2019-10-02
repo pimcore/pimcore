@@ -10,4 +10,5 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
 interface CalculatorClassInterface
 {
     public function compute(Concrete $object, CalculatedValue $context): string;
+    public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string;
 }

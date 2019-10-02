@@ -14,7 +14,7 @@ called `sum` placed inside a localizedfields container.
 ![Calculated Value Configuration](../../../img/classes-datatypes-calculated.png)
 
 
-The first step is to provide a PHP calculator class implementing the `CalculatorClassInterface` interface. At least the `compute` method needs to be implemented which computes the result for the `sum` field. An example is shown below.
+The first step is to provide a PHP calculator class implementing the `CalculatorClassInterface` interface. The `compute` method needs to be implemented which computes the result for the `sum` field. An example is shown below.
 
 The arguments passed into this method is the Pimcore object and the contextual information telling you which 
 calculated-value field is affected and where it is located at.
@@ -44,7 +44,7 @@ class CalculatorDemo implements CalculatorClassInterface
 
 As we see here, the calculator class sums up the x and y values from the corresponding language tab.
 
-It is also possible to provide a different representation for edit mode by providing a second (optional) implementation just for this purpose. An example would be:
+In addition to the `compute` method you need to implement the `getCalculatedValueForEditMode` method. This method is used to display the value in object edit mode:
 ```php
 public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string {
     $language = $context->getPosition();
