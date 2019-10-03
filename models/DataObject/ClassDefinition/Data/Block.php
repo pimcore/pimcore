@@ -291,13 +291,24 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             /** @var $fd DataObject\ClassDefinition\Data */
             foreach ($blockElementDefinition as $elementName => $fd) {
+                $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
                 if ($invisible && !is_null($oIndex)) {
                     $blockGetter = 'get' . ucfirst($this->getname());
-                    $items = $object->$blockGetter();
-                    if (isset($items[$oIndex])) {
-                        $item = $items[$oIndex][$elementName];
-                        $blockData = $item->getData();
+                    if (method_exists($object, $blockGetter)) {
+                        $language = $params['language'] ?? null;
+                        $items = $object->$blockGetter($language);
+                        if (isset($items[$oIndex])) {
+                            $item = $items[$oIndex][$elementName];
+                            $blockData = $item->getData();
+                            $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
+                        }
+                    } else {
+                        $params['blockGetter'] = $blockGetter;
+                        $blockData = $this->getBlockDataFromContainer($object, $params);
+                        if ($blockData) {
+                            $resultElement = $blockData[$oIndex];
+                        }
                     }
                 } else {
                     $elementData = $blockElement[$elementName];
@@ -315,10 +326,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         ]
                     );
 
+                    $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
                 }
-                $elementType = $fd->getFieldtype();
-
-                $resultElement[$elementName] = new DataObject\Data\BlockElement($elementName, $elementType, $blockData);
             }
 
             $result[] = $resultElement;
@@ -327,6 +336,75 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         return $result;
     }
+    /**
+     * @param $object
+     * @param array $params
+     * @param int $dataIndex
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    protected function getBlockDataFromContainer($object, $params = [])
+    {
+        $data = null;
+
+        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
+
+        if ($context) {
+            if ($context['containerType'] == 'fieldcollection') {
+                $fieldname = $context['fieldname'];
+
+                if ($object instanceof DataObject\Concrete) {
+                    $containerGetter = 'get' . ucfirst($fieldname);
+                    $container = $object->$containerGetter();
+                    if ($container) {
+                        $originalIndex = $context['oIndex'];
+
+                        // field collection or block items
+                        if (!is_null($originalIndex)) {
+                            $items = $container->getItems();
+
+                            if ($items && count($items) > $originalIndex) {
+                                $item = $items[$originalIndex];
+
+                                $getter = 'get' . ucfirst($this->getName());
+                                $data = $item->$getter();
+
+                                return $data;
+                            }
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                }
+            } else if ($context['containerType'] == 'objectbrick') {
+                $fieldname = $context['fieldname'];
+
+                if ($object instanceof DataObject\Concrete) {
+                    $containerGetter = 'get' . ucfirst($fieldname);
+                    $container = $object->$containerGetter();
+                    if ($container) {
+                        $brickGetter = 'get' . ucfirst($context['containerKey']);
+                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        $brickData = $container->$brickGetter();
+
+                        if ($brickData) {
+                            $blockGetter = $params['blockGetter'];
+                            $data = $brickData->$blockGetter();
+
+                            return $data;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
 
     /**
      * @see Data::getVersionPreview

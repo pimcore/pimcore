@@ -301,6 +301,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
                     $fd = $this->getFielddefinition($name);
+                    $params['language'] = $language;
                     $localizedFields->setLocalizedValue(
                         $name,
                         $fd->getDataFromEditmode($fdata, $object, $params),
