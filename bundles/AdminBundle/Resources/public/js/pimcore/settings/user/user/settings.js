@@ -229,7 +229,8 @@ pimcore.settings.user.user.settings = Class.create({
 
                                         message = json.message;
                                     }
-                                } catch (e) {}
+                                } catch (e) {
+                                }
 
                                 pimcore.helpers.showNotification(t("error"), message, "error");
                             }
@@ -438,7 +439,8 @@ pimcore.settings.user.user.settings = Class.create({
 
                                 message = json.message;
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                        }
 
                         pimcore.helpers.showNotification(t("error"), message, "error");
                     }
@@ -456,7 +458,7 @@ pimcore.settings.user.user.settings = Class.create({
         var sectionArray = [];
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
             let section = this.data.availablePermissions[i].category;
-            if(!section){
+            if (!section) {
                 section = "default";
             }
             if (!itemsPerSection[section]) {
@@ -494,10 +496,18 @@ pimcore.settings.user.user.settings = Class.create({
                     editable: false,
                     fieldLabel: t("document_types"),
                     width: 400,
-                    displayField: "name",
                     valueField: "id",
                     store: pimcore.globalmanager.get("document_types_store"),
-                    value: this.currentUser.docTypes
+                    value: this.currentUser.docTypes,
+                    listConfig: {
+                        itemTpl: new Ext.XTemplate('{[this.sanitize(values.name)]}',
+                            {
+                                sanitize: function (name) {
+                                    return Ext.util.Format.htmlEncode(name);
+                                }
+                            }
+                        )
+                    }
                 }),
                 Ext.create('Ext.ux.form.MultiSelect', {
                     name: "classes",
