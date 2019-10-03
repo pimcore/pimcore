@@ -2151,7 +2151,7 @@ class DataObjectHelperController extends AdminController
             if ($object) {
                 $name = $request->get('name');
 
-                if (!$object->isAllowed('save') || ($name  === 'published' && !$object->isAllowed('publish'))) {
+                if (!$object->isAllowed('save') || ($name === 'published' && !$object->isAllowed('publish'))) {
                     throw new \Exception("Permission denied. You don't have the rights to save this object.");
                 }
 

@@ -94,7 +94,6 @@ class Cache extends Helper
         }
 
         if ($content = CacheManager::load($this->key)) {
-
             $this->outputContent($content, $this->key, true);
 
             return true;
@@ -133,26 +132,27 @@ class Cache extends Helper
         $this->end();
     }
 
-
-
     /**
      * Output the content.
+     *
      * @param $content the content, either rendered or retrieved directly from the cache.
      * @param string $key the cache key
      * @param bool $isLoadedFromCache true if the content origins from the cache and hasn't been created "live".
      */
-    protected function outputContent($content, string $key, bool $isLoadedFromCache) {
+    protected function outputContent($content, string $key, bool $isLoadedFromCache)
+    {
         echo $content;
     }
 
-
     /**
      * Save the (rendered) content to to cache. May be overriden to add custom markup / code, or specific tags, etc.
+     *
      * @param $content
      * @param string $key
      * @param $tags
      */
-    protected function saveContentToCache($content, string $key, array $tags) {
+    protected function saveContentToCache($content, string $key, array $tags)
+    {
         CacheManager::save($content, $key, $tags, $this->lifetime, 996, true);
     }
 }
