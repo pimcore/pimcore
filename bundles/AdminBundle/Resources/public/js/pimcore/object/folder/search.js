@@ -314,6 +314,25 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
         });
 
+        this.searchAndMoveButton = new Ext.Button({
+            text: t("search_and_move"),
+            iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
+            handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
+                function () {
+                    this.store.reload();
+                }.bind(this), "object")
+        });
+
+        var exportButtons = this.getExportButtons();
+        var firstButton = exportButtons.pop();
+
+        this.exportButton = new Ext.SplitButton({
+            text: firstButton.text,
+            iconCls: firstButton.iconCls,
+            handler: firstButton.handler,
+            menu: exportButtons,
+        });
+
         var hideSaveColumnConfig = !fromConfig || save;
 
         this.saveColumnConfigButton = new Ext.Button({
@@ -364,22 +383,14 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             },
             cls: 'pimcore_object_grid_panel',
-            tbar: [this.searchField, "-", this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
-                text: t("search_and_move"),
-                iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
-                handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
-                    function () {
-                        this.store.reload();
-                    }.bind(this), "object")
-            }, "-", {
-                text: t("export_csv"),
-                iconCls: "pimcore_icon_export",
-                handler: function () {
-                    pimcore.helpers.csvExportWarning(function(settings) {
-                        this.exportPrepare(settings);
-                    }.bind(this));
-                }.bind(this)
-            }, "-",
+            tbar: [this.searchField, "-",
+                this.languageInfo, "-",
+                this.toolbarFilterInfo,
+                this.clearFilterButton, "->",
+                this.checkboxOnlyDirectChildren, "-",
+                this.sqlEditor, this.sqlButton, "-",
+                this.searchAndMoveButton, "-",
+                this.exportButton, "-",
                 this.columnConfigButton,
                 this.saveColumnConfigButton
             ]
@@ -434,6 +445,23 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
             this.saveConfig(false);
         }
+    },
+
+    getExportButtons: function () {
+        var buttons = [];
+        pimcore.globalmanager.get("pimcore.gridexport").forEach(function (exportType) {
+            buttons.push({
+                text: t(exportType.text),
+                iconCls: exportType.icon || "pimcore_icon_export",
+                handler: function () {
+                    pimcore.helpers.exportWarning(exportType, function (settings) {
+                        this.exportPrepare(settings, exportType);
+                    }.bind(this));
+                }.bind(this),
+            })
+        }.bind(this));
+
+        return buttons;
     },
 
     getGridConfig: function ($super) {

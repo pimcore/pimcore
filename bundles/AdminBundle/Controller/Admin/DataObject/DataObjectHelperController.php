@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
@@ -1842,6 +1845,37 @@ class DataObjectHelperController extends AdminController
             $response = new BinaryFileResponse($csvFile);
             $response->headers->set('Content-Type', 'application/csv');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
+            $response->deleteFileAfterSend(true);
+
+            return $response;
+        }
+    }
+
+    /**
+     * @Route("/download-xlsx-file", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function downloadXlsxFileAction(Request $request)
+    {
+        $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
+        $csvFile = $this->getCsvFile($fileHandle);
+        if (file_exists($csvFile)) {
+            $csvReader = new Csv();
+            $csvReader->setDelimiter(';');
+            $csvReader->setEnclosure('""');
+            $csvReader->setSheetIndex(0);
+
+            $spreadsheet = $csvReader->load($csvFile);
+            $writer = new Xlsx($spreadsheet);
+            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. "/" .$fileHandle. ".xlsx";
+            $writer->save($xlsxFilename);
+
+            $response = new BinaryFileResponse($xlsxFilename);
+            $response->headers->set('Content-Type', 'application/xlsx');
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
 
             return $response;
