@@ -26,7 +26,7 @@ class TargetGroupEvent extends Event
     protected $targetGroup;
 
     /**
-     * DocumentEvent constructor.
+     * TargetGroupEvent constructor.
      *
      * @param TargetGroup $targetGroup
      * @param array $arguments
