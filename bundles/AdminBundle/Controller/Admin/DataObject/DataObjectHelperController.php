@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -1870,7 +1869,7 @@ class DataObjectHelperController extends AdminController
 
             $spreadsheet = $csvReader->load($csvFile);
             $writer = new Xlsx($spreadsheet);
-            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. "/" .$fileHandle. ".xlsx";
+            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
 
             $response = new BinaryFileResponse($xlsxFilename);
