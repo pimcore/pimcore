@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Pimcore\Event\TargetGroupEvents;
+use Pimcore\Event\Model\TargetGroupEvent;
 
 /**
  * @Route("/targeting")
@@ -230,6 +232,9 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup->setName($request->get('name'));
         $targetGroup->save();
 
+        $event = new TargetGroupEvent($targetGroup);
+        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_ADD, $event);
+
         $cache->clearTag('target_groups');
 
         return $this->adminJson(['success' => true, 'id' => $targetGroup->getId()]);
@@ -250,8 +255,11 @@ class TargetingController extends AdminController implements EventedControllerIn
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
+            $event = new TargetGroupEvent($targetGroup);
             $targetGroup->delete();
             $success = true;
+
+            \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_DELETE, $event);
         }
 
         $cache->clearTag('target_groups');
@@ -290,6 +298,9 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup = TargetGroup::getById($request->get('id'));
         $targetGroup->setValues($data['settings']);
         $targetGroup->save();
+
+        $event = new TargetGroupEvent($targetGroup);
+        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_UPDATE, $event);
 
         $cache->clearTag('target_groups');
 
