@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Event\Model\TargetGroupEvent;
+use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,8 +26,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Event\TargetGroupEvents;
-use Pimcore\Event\Model\TargetGroupEvent;
 
 /**
  * @Route("/targeting")

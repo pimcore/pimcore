@@ -36,5 +36,4 @@ final class TargetGroupEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.targetgroup.postDelete';
-
 }

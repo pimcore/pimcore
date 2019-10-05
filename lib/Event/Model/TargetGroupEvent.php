@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class TargetGroupEvent extends Event
 {
-
     /**
      * @var TargetGroup
      */
