@@ -51,8 +51,11 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.value = this.data;
         }
 
-
-        this.component = new Ext.form.field.Text(input);
+        if(this.fieldConfig.elementType === 'textarea') {
+            this.component = new Ext.form.field.TextArea(input);
+        } else {
+            this.component = new Ext.form.field.Text(input);
+        }
 
         return this.component;
     },
