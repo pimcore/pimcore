@@ -1677,31 +1677,34 @@ class DataObjectHelperController extends AdminController
         $rowId = $skipFirstRow ? $job + 1 : $job;
 
         try {
-            $configData->classId = $request->get('classId');
-            $resolver = $importService->getResolver($configData->resolverSettings->strategy);
+            if ($rowData !== FALSE) {
+                $configData->classId = $request->get('classId');
+                $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-            /** @var $object DataObject\Concrete */
-            $object = $resolver->resolve($configData, $parentId, $rowData);
+                /** @var $object DataObject\Concrete */
+                $object = $resolver->resolve($configData, $parentId, $rowData);
 
-            $context = $eventData->getContext();
+                $context = $eventData->getContext();
 
-            $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
+                $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
 
-            $eventData->setObject($object);
-            $eventData->setRowData($rowData);
+                $eventData->setObject($object);
+                $eventData->setRowData($rowData);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-            $object->setUserModification($this->getUser());
-            $object->save();
+                $object->setUserModification($this->getUser());
+                $object->save();
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
 
-            if ($job >= $importJobTotal) {
-                $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                if ($job >= $importJobTotal) {
+                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                }
+                return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
+            } else {
+                throw new \Exception("empty row");
             }
-
-            return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
