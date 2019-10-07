@@ -336,6 +336,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return null
      *
+     * @throws \Exception
+     *
      * @todo: not sure if bool|false is actually allowed in phpdoc?
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = 'default', $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
