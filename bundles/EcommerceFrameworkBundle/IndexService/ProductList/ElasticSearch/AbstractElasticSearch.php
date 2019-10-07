@@ -1166,7 +1166,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param array $aggregations
      * @return array
      */
-    private function searchForBuckets(array $aggregations)
+    protected function searchForBuckets(array $aggregations)
     {
         if (array_key_exists("buckets", $aggregations)) {
             return $aggregations["buckets"];
@@ -1194,7 +1194,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param array $bucket
      * @return array
      */
-    private function convertBucketValues(array $bucket){
+    protected function convertBucketValues(array $bucket){
         $data = [
             'value' => $bucket['key'],
             'count' => $bucket['doc_count']
