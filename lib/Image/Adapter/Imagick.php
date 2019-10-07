@@ -615,13 +615,40 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->roundCorners($width, $height);
+        if (method_exists($this->resource, 'roundCorners')) {
+            $this->resource->roundCorners($width, $height);
+        } else {
+            $this->internalRoundCorners($width, $height);
+        }
 
         $this->postModify();
 
         $this->setIsAlphaPossible(true);
 
         return $this;
+    }
+
+
+    /**
+     * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
+     *
+     * @param $width
+     * @param $height
+     */
+    protected function internalRoundCorners($width, $height)
+    {
+        $imageWidth = $this->resource->getImageWidth();
+        $imageHeight = $this->resource->getImageHeight();
+
+        $rectangle = new \ImagickDraw();
+        $rectangle->setFillColor(new \ImagickPixel('black'));
+        $rectangle->roundRectangle(0, 0, $imageWidth - 1, $imageHeight - 1, $width, $height);
+
+        $mask = new \Imagick();
+        $mask->newImage($imageWidth, $imageHeight, new \ImagickPixel('transparent'), 'png');
+        $mask->drawImage($rectangle);
+
+        $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
     /**
