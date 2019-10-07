@@ -98,7 +98,7 @@ To utilize the `nested` document functionality the mapping type of the field `my
 Now you can create a filter for the nested document field, which has to be defined in a nested manner as well:
 
 ```php
-class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\AbstractFilterType
+class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
@@ -163,6 +163,27 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
         ];
 
         $productList->addCondition($condition, $this->getField($filterDefinition));
+    }
+
+    /**
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList $productList
+     * @param $currentFilter
+     * @return string
+     * @throws \Exception
+     */
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
+        $field = $this->getField($filterDefinition);
+        $this->prepareGroupByValues($filterDefinition, $productList);
+
+        $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
+        return $this->render($this->getTemplate($filterDefinition), [
+            'label' => $filterDefinition->getLabel(),
+            'values' => $values,
+            'metaData' => $filterDefinition->getMetaData(),
+            'hasValue' => $this->hasValue
+        ]);
     }
 
 }
