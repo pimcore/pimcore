@@ -31,6 +31,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public $fieldtype = 'calculatedValue';
 
+    /** @var string */
+    public $elementType = 'input';
+
     /**
      * @var float
      */
@@ -61,6 +64,28 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
+
+    /**
+     * @return string
+     */
+    public function getElementType(): string
+    {
+        return $this->elementType;
+    }
+
+    /**
+     * @param string $elementType
+     *
+     * @return $this
+     */
+    public function setElementType($elementType)
+    {
+        if ($elementType) {
+            $this->elementType = $elementType;
+        }
+
+        return $this;
+    }
 
     /**
      * @return int

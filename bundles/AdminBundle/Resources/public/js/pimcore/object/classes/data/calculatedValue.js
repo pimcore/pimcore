@@ -45,6 +45,17 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
+                xtype: "combo",
+                fieldLabel: t("type"),
+                name: "elementType",
+                value: this.datax.elementType,
+                labelWidth: 140,
+                store: [
+                    ['input', t('input')],
+                    ['textarea', t('textarea')]
+                ]
+            },
+            {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
