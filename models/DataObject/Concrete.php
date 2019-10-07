@@ -335,7 +335,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param array $o_versions
+     * @param Model\Version[] $o_versions
      *
      * @return $this
      */
