@@ -25,7 +25,7 @@ class ValidationException extends \Exception
     protected $contextStack = [];
 
     /** @var array */
-    protected $subItems;
+    protected $subItems = [];
 
     /**
      * @return array
@@ -38,7 +38,7 @@ class ValidationException extends \Exception
     /**
      * @param array $subItems
      */
-    public function setSubItems($subItems)
+    public function setSubItems(array $subItems)
     {
         $this->subItems = $subItems;
     }
