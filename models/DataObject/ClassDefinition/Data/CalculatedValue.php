@@ -75,10 +75,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * @param string $elementType
+     *
+     * @return $this
      */
     public function setElementType($elementType)
     {
-        $this->elementType = (string)$elementType;
+        if ($elementType) {
+            $this->elementType = $elementType;
+        }
+
+        return $this;
     }
 
     /**
