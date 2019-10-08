@@ -9,7 +9,7 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DefaultCustomAttributeGetter implements GetterInterface
+class DefaultClassificationAttributeGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 
