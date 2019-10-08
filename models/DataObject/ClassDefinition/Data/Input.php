@@ -33,6 +33,9 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $fieldtype = 'input';
 
+    /** @var string */
+    public $defaultValueGenerator = '';
+
     /**
      * @var int
      */
@@ -82,6 +85,22 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $showCharCount;
 
     /**
+     * @return string
+     */
+    public function getDefaultValueGenerator(): string
+    {
+        return $this->defaultValueGenerator;
+    }
+
+    /**
+     * @param string $defaultValueGenerator
+     */
+    public function setDefaultValueGenerator($defaultValueGenerator)
+    {
+        $this->defaultValueGenerator = (string)$defaultValueGenerator;
+    }
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -112,6 +131,11 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if($this->isEmpty($data) && $object !== null && !empty($this->defaultValueGenerator)) {
+            $defaultValueGenerator = Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
+            $data = $defaultValueGenerator->getValue($object, $this);
+        }
+
         return $data;
     }
 
