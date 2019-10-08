@@ -1677,7 +1677,7 @@ class DataObjectHelperController extends AdminController
         $rowId = $skipFirstRow ? $job + 1 : $job;
 
         try {
-            if ($rowData !== FALSE) {
+            if ($rowData !== false) {
                 $configData->classId = $request->get('classId');
                 $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
@@ -1701,9 +1701,10 @@ class DataObjectHelperController extends AdminController
                 if ($job >= $importJobTotal) {
                     $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
                 }
+
                 return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
             } else {
-                throw new \Exception("empty row");
+                throw new \Exception('empty row');
             }
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
