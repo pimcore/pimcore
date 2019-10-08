@@ -199,6 +199,9 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                 if (!$allowClass || !($o instanceof DataObject\Concrete)) {
                     throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']', null, null);
                 }
+
+                $fd = $o->getClass()->getFieldDefinition($this->getOwnerFieldName());
+                $fd->checkValidity($o->get($this->getOwnerFieldName()), $omitMandatoryCheck);
             }
         }
     }
@@ -383,7 +386,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         }, $oldRelations);
 
         $deletedRelationIds = $oldRelations;
-        $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+        $newRelationIds = array_map(static function(DataObject\Concrete $newRelation) {
             return $newRelation->getId();
         }, (array)$data);
 
@@ -406,6 +409,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
             $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
             $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $deletedRelation->getId()]);
+
             $db->deleteWhere('dependencies', 'sourceid='.$db->quote($deletedRelationId).' AND sourcetype=\'object\' AND targetid='.$db->quote($object->getId()).' AND targettype=\'object\'');
 
             $latestVersion = $deletedRelation->getLatestVersion();
@@ -415,6 +419,11 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
+
+        if(count($deletedRelationIds) > 0) {
+            $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=REPLACE(`'.$this->getOwnerFieldName().'`, \','.$object->getId().'\', \'\') WHERE oo_id IN ('.implode(',', $deletedRelationIds).')');
+        }
+
         foreach($deletedRelationIds as $deletedRelationId) {
             $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
 
@@ -455,6 +464,10 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     }
                 }
                 $counter++;
+            }
+
+            if(count($newRelationIds) > 0) {
+                $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(`'.$this->getOwnerFieldName().'`, \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $newRelationIds).')');
             }
 
             return $return;
