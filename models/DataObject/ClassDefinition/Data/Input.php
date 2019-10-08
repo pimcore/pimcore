@@ -84,6 +84,9 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $showCharCount;
 
+    /** @var array */
+    public $context = [];
+
     /**
      * @return string
      */
@@ -318,5 +321,31 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->columnLength = $masterDefinition->columnLength;
+    }
+
+    public function enrichFieldDefinition($context = [])
+    {
+        if(isset($context['containerType'])) {
+            $this->context['ownerType'] = $context['containerType'];
+        } elseif(isset($context['class'])) {
+            $this->context['ownerType'] = 'object';
+            if($context['class'] instanceof Model\DataObject\Localizedfield) {
+                $this->context['ownerType'] = 'localizedfield';
+            }
+        }
+
+        if(isset($context['containerKey'])) {
+            $this->context['index'] = $context['containerKey'];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getContext(): array
+    {
+        return $this->context;
     }
 }
