@@ -143,7 +143,11 @@ implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\I
   `DefaultBrickGetterSequence`, but stores all found values as a multi select in the *Product Index*. 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter`: Gets [Tags](../../../18_Tools_and_Features/09_Tags.md) 
   of product object and returns them as array. 
-
+- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultClassificationAttributeGetter`: Gets attribute value
+  from classification store. Possible options: 
+   - `key_id` - id of the classification store attribute
+   - `group_id` - id of the group related to the id | key can occur multiple times in classification store field through multiple groups
+   - `fieldname` - name of the field upon which the classification store is saved on the specific object (defaults to attributes)
 
 #### Selection of available Interpreters:
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\AssetId`: Stores only asset id into *Product Index*.
