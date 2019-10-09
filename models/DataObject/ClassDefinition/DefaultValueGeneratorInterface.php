@@ -5,5 +5,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface DefaultValueGeneratorInterface
 {
-    public function getValue(Concrete $object, Data $context);
+    public function getValue(Concrete $object, Data $fieldDefinition, array $context);
 }
