@@ -180,20 +180,39 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
+                /** @var Data $fd */
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+
+                    $invisible = $fd->getInvisible();
+                    if ($invisible && !is_null($oIndex)) {
+                        $containerGetter = 'get' . ucfirst($fieldname);
+                        $container = $object->$containerGetter();
+                        if ($container) {
+                            $items = $container->getItems();
+                            if ($items && count($items) > $oIndex) {
+                                $item = $items[$oIndex];
+                                $getter = 'get' . ucfirst($fd->getName());
+                                $invisibleData = $item->$getter();
+                            }
+
+                            $collectionData[$fd->getName()] = $invisibleData;
+                        }
+                    } else if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+
+                        $collectionParams = [
+                            'context' => [
+                                'containerType' => 'fieldcollection',
+                                'containerKey' => $collectionKey,
+                                'fieldname' => $fieldname,
+                                'index' => $count,
+                                'oIndex' => $oIndex
+                            ]
+                        ];
+
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
                             $collectionRaw['data'][$fd->getName()],
                             $object,
-                            [
-                                'context' => [
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $collectionKey,
-                                    'fieldname' => $fieldname,
-                                    'index' => $count,
-                                    'oIndex' => $oIndex
-                                ]
-                            ]
+                            $collectionParams
                         );
                     }
                 }
