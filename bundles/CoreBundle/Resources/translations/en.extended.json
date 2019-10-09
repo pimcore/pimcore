@@ -442,6 +442,7 @@
   "classificationstore_mbx_entergroup_prompt": "Enter name",
   "classificationstore_error_addgroup_msg": "Error adding group",
   "classificationstore_invalidname": "Invalid name",
+  "classificationstore_error_group_exists_msg": "Group with this name already exists",
   "classificationstore_properties": "Key Definitions",
   "classificationstore_mbx_enterkey_title": "New Key",
   "classificationstore_detailed_configuration": "Detailed Configuration",

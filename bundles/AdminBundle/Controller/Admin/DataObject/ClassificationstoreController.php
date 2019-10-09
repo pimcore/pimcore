@@ -126,7 +126,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
     {
         $name = $request->get('name');
         $storeId = $request->get('storeId');
-        $alreadyExist = false;
         $config = Classificationstore\GroupConfig::getByName($name, $storeId);
 
         if (!$config) {
@@ -134,9 +133,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $config->setStoreId($storeId);
             $config->setName($name);
             $config->save();
-        }
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+            return $this->adminJson(['success' => true, 'id' => $config->getName()]);
+        } else {
+            return $this->adminJson(['success' => false, 'id' => $config->getName(), 'message' => "classificationstore_error_group_exists_msg"]);
+        }
     }
 
     /**
