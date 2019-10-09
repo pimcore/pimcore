@@ -381,8 +381,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         this.grid =  Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.groupsStore.load();
-
         return this.grid
     },
 
