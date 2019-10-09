@@ -182,7 +182,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 /** @var Data $fd */
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-
                     $invisible = $fd->getInvisible();
                     if ($invisible && !is_null($oIndex)) {
                         $containerGetter = 'get' . ucfirst($fieldname);
@@ -197,8 +196,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                             $collectionData[$fd->getName()] = $invisibleData;
                         }
-                    } else if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
-
+                    } elseif (array_key_exists($fd->getName(), $collectionRaw['data'])) {
                         $collectionParams = [
                             'context' => [
                                 'containerType' => 'fieldcollection',

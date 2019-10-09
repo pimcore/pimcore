@@ -336,6 +336,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         return $result;
     }
+
     /**
      * @param $object
      * @param array $params
@@ -380,7 +381,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         return null;
                     }
                 }
-            } else if ($context['containerType'] == 'objectbrick') {
+            } elseif ($context['containerType'] == 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -404,7 +405,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         return $data;
     }
-
 
     /**
      * @see Data::getVersionPreview

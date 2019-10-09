@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
-
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -18,8 +16,10 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      * ** group_id  - id of the group related to the id | key can occur multiple times in classification store field through multiple groups
      * ** fieldname - name of the field upon which the classification store is saved on the specific object [defaults to attributes]
      * note that this getter does not support localization at the moment
+     *
      * @param $object
      * @param null $config
+     *
      * @return mixed
      */
     public function get($object, $config = null)
