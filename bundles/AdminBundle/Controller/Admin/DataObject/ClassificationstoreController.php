@@ -136,7 +136,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'id' => $config->getName()]);
         } else {
-            return $this->adminJson(['success' => false, 'id' => $config->getName(), 'message' => "classificationstore_error_group_exists_msg"]);
+            return $this->adminJson(['success' => false, 'id' => $config->getName(), 'message' => 'classificationstore_error_group_exists_msg']);
         }
     }
 
