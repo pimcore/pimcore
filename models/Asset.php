@@ -1400,7 +1400,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $properties
+     * @param Property[] $properties
      *
      * @return $this
      */
@@ -1491,7 +1491,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $versions
+     * @param Version[] $versions
      *
      * @return $this
      */

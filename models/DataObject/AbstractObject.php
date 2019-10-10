@@ -1187,7 +1187,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $o_properties
+     * @param Model\Property[] $o_properties
      *
      * @return $this
      */

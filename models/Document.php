@@ -1287,7 +1287,7 @@ class Document extends Element\AbstractElement
     /**
      * Set document properties.
      *
-     * @param array $properties
+     * @param Property[] $properties
      *
      * @return Document
      */
