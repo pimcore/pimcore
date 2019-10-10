@@ -1620,9 +1620,15 @@ class Asset extends Element\AbstractElement
      */
     public function setMetadata($metadata)
     {
-        $this->metadata = $metadata;
+        if(!empty($metadata)) {
+            foreach((array)$metadata as $metaItem) {
+                if(!isset($metaItem['language'])) {
+                    $metaItem['language'] = null;
+                }
 
-        $this->setHasMetaData(!empty($metadata));
+                $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'], $metaItem['language']);
+            }
+        }
 
         return $this;
     }
