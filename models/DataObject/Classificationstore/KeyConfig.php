@@ -149,11 +149,31 @@ class KeyConfig extends Model\AbstractModel
      */
     public static function getByName($name, $storeId = 1)
     {
-        try {
+         try {
+            $cacheKey = "cs_keyconfig_" . $storeId . "_" . md5($name);
+
+            if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey)) {
+                $config = Cache\Runtime::get($cacheKey);
+                if ($config) {
+                    return $config;
+                }
+            }
+
+            $config = Cache::load($cacheKey);
+            if ($config) {
+                return $config;
+            }
+
             $config = new self();
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
+
+            if (self::$cacheEnabled) {
+                Cache\Runtime::set($cacheKey, $config);
+            }
+
+            Cache::save($config, $cacheKey, [], null, 0, true);
 
             return $config;
         } catch (\Exception $e) {
