@@ -40,7 +40,7 @@ class ValidationException extends \Exception
      */
     public function setSubItems($subItems)
     {
-        if(!\is_array($subItems)) {
+        if (!\is_array($subItems)) {
             @trigger_error('Calling '.__METHOD__.' with a '.\gettype($subItems).' as argument is deprecated', E_USER_DEPRECATED);
         }
         $this->subItems = $subItems;

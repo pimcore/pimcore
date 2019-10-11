@@ -192,7 +192,7 @@ class Frontend
 
                 // order of browsers important since edge also sends chrome in user agent
                 $browsersToCheck = ['firefox' => 65, 'edge' => 18, 'chrome' => 32];
-                foreach($browsersToCheck as $browser => $version) {
+                foreach ($browsersToCheck as $browser => $version) {
                     if (preg_match('@(' . $browser . ')/([\d]+)@', $userAgent, $matches)) {
                         if ($matches[1] == $browser) {
                             if (intval($matches[2]) >= $version) {

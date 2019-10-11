@@ -149,8 +149,8 @@ class KeyConfig extends Model\AbstractModel
      */
     public static function getByName($name, $storeId = 1)
     {
-         try {
-            $cacheKey = "cs_keyconfig_" . $storeId . "_" . md5($name);
+        try {
+            $cacheKey = 'cs_keyconfig_' . $storeId . '_' . md5($name);
 
             if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey)) {
                 $config = Cache\Runtime::get($cacheKey);

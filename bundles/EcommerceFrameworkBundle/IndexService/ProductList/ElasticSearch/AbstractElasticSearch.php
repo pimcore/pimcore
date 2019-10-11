@@ -877,12 +877,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      * @param array $aggregationConfig
+     *
      * @throws \Exception
      */
     public function prepareGroupByValuesWithConfig($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true, array $aggregationConfig = [])
     {
         if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            throw new \Exception("Custom sub aggregations are not supported for variant mode VARIANT_MODE_INCLUDE_PARENT_OBJECT");
+            throw new \Exception('Custom sub aggregations are not supported for variant mode VARIANT_MODE_INCLUDE_PARENT_OBJECT');
         }
 
         if ($fieldname) {
@@ -1075,8 +1076,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
             //relation conditions
             $specificFilters = $this->buildRelationConditions($specificFilters, array_merge($filteredFieldnames, [$shortFieldname => $shortFieldname]));
 
-            if (!empty($config["aggregationConfig"])) {
-                $aggregation = $config["aggregationConfig"];
+            if (!empty($config['aggregationConfig'])) {
+                $aggregation = $config['aggregationConfig'];
             } else {
                 $aggregation = [
                     'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc']]
@@ -1164,12 +1165,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * may differ dependent on the used aggregations (i.e. date filters, nested aggr, ...)
      *
      * @param array $aggregations
+     *
      * @return array
      */
     protected function searchForBuckets(array $aggregations)
     {
-        if (array_key_exists("buckets", $aggregations)) {
-            return $aggregations["buckets"];
+        if (array_key_exists('buckets', $aggregations)) {
+            return $aggregations['buckets'];
         }
 
         // usually the relevant key is at the very end of the array so we reverse the order
@@ -1192,29 +1194,32 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Recursively convert aggregation data (sub-aggregations possible)
      *
      * @param array $bucket
+     *
      * @return array
      */
-    protected function convertBucketValues(array $bucket){
+    protected function convertBucketValues(array $bucket)
+    {
         $data = [
             'value' => $bucket['key'],
             'count' => $bucket['doc_count']
         ];
 
-        unset($bucket["key"]);
-        unset($bucket["doc_count"]);
+        unset($bucket['key']);
+        unset($bucket['doc_count']);
 
         if (!empty($bucket)) {
             $subAggregationField = array_key_first($bucket);
             $subAggregationBuckets = $bucket[$subAggregationField];
 
-            if (array_key_exists("key_as_string", $bucket)) {          // date aggregations
-                $data["key_as_string"] = $bucket["key_as_string"];
-            } elseif (is_array($subAggregationBuckets["buckets"])) {        // sub aggregations
-                foreach ($subAggregationBuckets["buckets"] as $bucket) {
+            if (array_key_exists('key_as_string', $bucket)) {          // date aggregations
+                $data['key_as_string'] = $bucket['key_as_string'];
+            } elseif (is_array($subAggregationBuckets['buckets'])) {        // sub aggregations
+                foreach ($subAggregationBuckets['buckets'] as $bucket) {
                     $data[$subAggregationField][] = $this->convertBucketValues($bucket);
                 }
             }
         }
+
         return $data;
     }
 
