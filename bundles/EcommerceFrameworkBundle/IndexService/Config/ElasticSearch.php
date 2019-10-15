@@ -85,6 +85,28 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->fieldMapping[$attribute->getName()] = sprintf('%s.%s', $attributeType, $attribute->getName());
     }
 
+    protected function addSearchAttribute(string $searchAttribute)
+    {
+        if(isset($this->attributes[$searchAttribute])) {
+            $this->searchAttributes[] = $searchAttribute;
+            return;
+        }
+
+        $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($searchAttribute);
+        foreach($fieldNameParts as $fieldNamePart) {
+            if(isset($this->attributes[$fieldNamePart])) {
+                $this->searchAttributes[] = $searchAttribute;
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'The search attribute "%s" in product index tenant "%s" is not defined as attribute',
+            $searchAttribute,
+            $this->tenantName
+        ));
+    }
+
     protected function processOptions(array $options)
     {
         $options = $this->resolveOptions($options);
@@ -118,16 +140,50 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('store', 'bool');
     }
 
+    protected function extractPossibleFirstSubFieldnameParts($fieldName) {
+        $parts = [];
+
+        $delimiters = ['.', '^'];
+
+        foreach($delimiters as $delimiter) {
+            if(strpos($fieldName, $delimiter) !== false) {
+                $fieldNameParts = explode($delimiter, $fieldName);
+                $parts[] = $fieldNameParts[0];
+            }
+        }
+
+        return $parts;
+    }
+
     /**
      * returns the full field name
      *
      * @param $fieldName
+     * @param $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
      *
      * @return string
      */
-    public function getFieldNameMapped($fieldName)
+    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-        return $this->fieldMapping[$fieldName] ?: $fieldName;
+
+        if($this->fieldMapping[$fieldName]) {
+            return $this->fieldMapping[$fieldName];
+        }
+
+        // consider subfield names like name.analyzed or score definitions like name^3
+        if($considerSubFieldNames) {
+
+            $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
+            foreach($fieldNameParts as $fieldNamePart) {
+                if($this->fieldMapping[$fieldNamePart]) {
+                    return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
+                }
+
+            }
+
+        }
+
+        return $fieldName;
     }
 
     /**

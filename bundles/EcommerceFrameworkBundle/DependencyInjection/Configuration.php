@@ -762,7 +762,22 @@ class Configuration implements ConfigurationInterface
                             // check if all search attributes are defined as attribute
                             foreach ($v as $tenant => $tenantConfig) {
                                 foreach ($tenantConfig['search_attributes'] as $searchAttribute) {
-                                    if (!isset($tenantConfig['attributes'][$searchAttribute])) {
+                                    $attributeFound = false;
+                                    if (isset($tenantConfig['attributes'][$searchAttribute])) {
+                                        $attributeFound = true;
+                                    }
+
+                                    $delimiters = ['.', '^'];
+                                    foreach($delimiters as $delimiter) {
+                                        if (!$attributeFound && strpos($searchAttribute, $delimiter) !== false) {
+                                            $fieldNameParts = explode($delimiter, $searchAttribute);
+                                            if (isset($tenantConfig['attributes'][$fieldNameParts[0]])) {
+                                                $attributeFound = true;
+                                            }
+                                        }
+                                    }
+
+                                    if (!$attributeFound) {
                                         throw new InvalidConfigurationException(sprintf(
                                             'The search attribute "%s" in product index tenant "%s" is not defined as attribute.',
                                             $searchAttribute,
