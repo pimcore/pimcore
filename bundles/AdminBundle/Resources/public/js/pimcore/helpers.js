@@ -2893,6 +2893,14 @@ pimcore.helpers.showQuickSearch = function () {
 
     Ext.get('pimcore_body').addCls('blurry');
     Ext.get('pimcore_sidebar').addCls('blurry');
+    var elem = document.createElement('div');
+    elem.id = 'pimcore_quickSearch_overlay';
+    elem.style.cssText = 'position:absolute;width:100vw;height:100vh;z-index:100;top:0;left:0;opacity:0';
+    elem.addEventListener('click', function(e) {
+        document.body.removeChild(elem);
+        pimcore.helpers.hideQuickSearch();
+    });
+    document.body.appendChild(elem);
 };
 
 pimcore.helpers.hideQuickSearch = function () {
@@ -2900,6 +2908,9 @@ pimcore.helpers.hideQuickSearch = function () {
     quicksearchContainer.hide();
     Ext.get('pimcore_body').removeCls('blurry');
     Ext.get('pimcore_sidebar').removeCls('blurry');
+    if (Ext.get('pimcore_quickSearch_overlay')) {
+        Ext.get('pimcore_quickSearch_overlay').remove();
+    }
 };
 
 
