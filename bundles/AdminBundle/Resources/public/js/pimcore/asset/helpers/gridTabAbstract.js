@@ -107,7 +107,6 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
         };
 
         var cm = this.grid.getView().getHeaderCt().getGridColumns();
-        console.log(cm);
 
         for (var i = 0; i < cm.length; i++) {
             if (cm[i].dataIndex) {
@@ -115,7 +114,6 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
                 //preview column uses data index ID
                 if(cm[i].text == "Preview") {
                     name = "preview";
-                    console.log(this.fieldObject[name]);
                 }
                 config.columns[name] = {
                     name: name,

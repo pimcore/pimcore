@@ -271,7 +271,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         });
 
         this.grid.on("columnmove", function () {
-            console.log('here');
             this.saveColumnConfigButton.show();
         }.bind(this));
         this.grid.on("columnresize", function () {

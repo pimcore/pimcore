@@ -18,4 +18,4 @@ pimcore.asset.gridexport.xlsx = Class.create(pimcore.asset.gridexport.abstract, 
     downloadUrl: "/admin/asset-helper/download-xlsx-file",
 });
 
-pimcore.globalmanager.get("pimcore.asset.gridexport").push(new pimcore.asset.gridexport.xlsx())
+pimcore.globalmanager.get("pimcore.asset.gridexport").push(new pimcore.asset.gridexport.xlsx());

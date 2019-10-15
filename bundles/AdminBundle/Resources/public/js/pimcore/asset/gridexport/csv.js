@@ -32,4 +32,4 @@ pimcore.asset.gridexport.csv = Class.create(pimcore.asset.gridexport.abstract, {
     }
 });
 
-pimcore.globalmanager.get("pimcore.asset.gridexport").push(new pimcore.asset.gridexport.csv())
+pimcore.globalmanager.get("pimcore.asset.gridexport").push(new pimcore.asset.gridexport.csv());

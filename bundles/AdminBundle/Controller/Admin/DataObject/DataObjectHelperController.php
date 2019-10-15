@@ -1781,7 +1781,6 @@ class DataObjectHelperController extends AdminController
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
 
-
         $enableInheritance = $settings['enableInheritance'];
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
 
