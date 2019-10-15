@@ -19,6 +19,9 @@ pimcore.gridexport.abstract = Class.create({
     downloadUrl: null,
     getExportSettingsContainer: function () {
         return null;
+    },
+    getObjectSettingsContainer: function () {
+        return null;
     }
 });
 

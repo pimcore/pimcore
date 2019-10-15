@@ -907,5 +907,9 @@
   "split_view_object_dirty_title": "Please confirm",
   "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations",
-  "set_to_null": "Empty (set to null)"
+  "set_to_null": "Empty (set to null)",
+  "asset_metadata": "Asset Metadata",
+  "predefined_metadata": "Predefined Metadata",
+  "default_metadata": "Default Metadata",
+  "asset_export_warning": "Please note that the export does not support some fields(e.g. preview, size). Press OK to continue with the export."
 }

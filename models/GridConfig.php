@@ -74,6 +74,11 @@ class GridConfig extends AbstractModel
     public $shareGlobally;
 
     /**
+     * @var string
+     */
+    public $type = "object";
+
+    /**
      * @param int $id
      *
      * @return GridConfig
@@ -274,5 +279,21 @@ class GridConfig extends AbstractModel
     public function setShareGlobally($shareGlobally)
     {
         $this->shareGlobally = $shareGlobally;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType(string $type)
+    {
+        $this->type = $type;
     }
 }

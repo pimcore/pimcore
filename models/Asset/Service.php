@@ -29,6 +29,11 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
+     * @var array
+     */
+    public static $gridSystemColumns = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
+
+    /**
      * @var Model\User|null
      */
     protected $_user;
@@ -166,14 +171,50 @@ class Service extends Model\Element\Service
         return $target;
     }
 
+
     /**
-     * @param  Asset $asset
+     * @param $asset
+     * @param null $fields
+     * @param null $requestedLanguage
+     * @param array $params
      *
-     * @return $this
+     * @return array
      */
-    public static function gridAssetData($asset)
+    public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($asset);
+
+        if ($asset instanceof Asset && !empty($fields)) {
+
+            $data = [
+                'id' => $asset->getid(),
+                'type' => $asset->getType(),
+                'fullpath' => $asset->getRealFullPath(),
+                'filename' => $asset->getKey(),
+                'creationDate' => $asset->getCreationDate(),
+                'modificationDate' => $asset->getModificationDate(),
+                'idPath' => Element\Service::getIdPath($asset),
+            ];
+
+            foreach ($fields as $field) {
+                if ($field == "preview") {
+                    $data[$field] = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&width=108&height=70&frame=true';
+                } else if ($field == "size") {
+                    /** @var $asset Asset */
+                    $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
+                    $size = @filesize($filename);
+                    $data[$field] = formatBytes($size);
+                } else if (!in_array($field, Asset\Service::$gridSystemColumns)) {
+                    $metaData = $asset->getMetadata($field, $requestedLanguage);
+                    if($metaData instanceof Model\Element\AbstractElement) {
+                        $metaData = $metaData->getFullPath();
+                    }
+
+                    $data[$field] = $metaData;
+                }
+            }
+
+        }
 
         return $data;
     }

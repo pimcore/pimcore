@@ -365,6 +365,10 @@ $scripts = array(
     "pimcore/element/tag/configuration.js",
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
+    "pimcore/asset/helpers/metadataTree.js",
+    "pimcore/asset/helpers/gridColumnConfig.js",
+    "pimcore/asset/helpers/gridConfigDialog.js",
+    "pimcore/asset/helpers/gridTabAbstract.js",
 
     // documents
     "pimcore/document/properties.js",
@@ -409,11 +413,16 @@ $scripts = array(
     "pimcore/asset/audio.js",
     "pimcore/asset/text.js",
     "pimcore/asset/folder.js",
+    "pimcore/asset/gridcolumn/Abstract.js",
+    "pimcore/asset/gridcolumn/operator/DateFormatter.js",
     "pimcore/asset/listfolder.js",
     "pimcore/asset/versions.js",
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
+    "pimcore/asset/gridexport/abstract.js",
+    "pimcore/asset/gridexport/xlsx.js",
+    "pimcore/asset/gridexport/csv.js",
 
     // object
     "pimcore/object/helpers/edit.js",
