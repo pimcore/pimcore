@@ -1621,6 +1621,7 @@ class Asset extends Element\AbstractElement
     public function setMetadata($metadata)
     {
         $this->metadata = [];
+        $this->setHasMetaData(false);
         if(!empty($metadata)) {
             foreach((array)$metadata as $metaItem) {
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
