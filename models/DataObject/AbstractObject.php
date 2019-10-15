@@ -437,6 +437,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder('asc');
             $list->setObjectTypes($objectTypes);
             $this->o_children = $list->load();
+            $this->o_hasChildren = !empty($this->o_children);
         }
 
         return $this->o_children;
