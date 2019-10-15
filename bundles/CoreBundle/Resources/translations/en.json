@@ -598,6 +598,8 @@
   "web2print_only_published": "Only possible with published documents.",
   "web2print_documents_changed": "Documents changed since last pdf generation.",
   "web2print_enableDebugMode": "Enable debug mode",
+  "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
+  "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
   "about_pimcore": "ABOUT PIMCORE PLATFORM",
   "phone": "Phone",
   "workflow_additional_info": "Additional Information",
