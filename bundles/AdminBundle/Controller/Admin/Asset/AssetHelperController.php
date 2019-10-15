@@ -21,6 +21,7 @@ use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
@@ -719,7 +720,7 @@ class AssetHelperController extends AdminController
                         $a[] = $asset->$getter($language);
                     } else {
                         $a[] = $asset->getMetadata($field, $language);
-                        if ($a instanceof Model\Element\AbstractElement) {
+                        if ($a instanceof Element\AbstractElement) {
                             $a = $a->getFullPath();
                         }
                     }
