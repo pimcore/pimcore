@@ -827,8 +827,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
                         } else {
                             $fieldnames = $this->tenantConfig->getSearchAttributes();
                             $mappedFieldnames = [];
-                            foreach ($fieldnames as $fieldname) {
-                                $mappedFieldnames[] = $this->tenantConfig->getFieldNameMapped($fieldname);
+                            foreach ($fieldnames as $searchFieldnames) {
+                                $mappedFieldnames[] = $this->tenantConfig->getFieldNameMapped($searchFieldnames);
                             }
 
                             $queryFilters[] = ['multi_match' => [
