@@ -595,7 +595,12 @@ class DefaultMysql implements ProductListInterface
             $searchstring = '';
             foreach ($this->queryConditions as $queryConditionPartArray) {
                 foreach ($queryConditionPartArray as $queryConditionPart) {
-                    $searchstring .= '+"' . $queryConditionPart . '*" ';
+                    //check if there are any mysql special characters in query condition - if so, then quote condition
+                    if(str_replace(['+', '-', '<', '>', '(', ')', '~', '*'], '', $queryConditionPart) != $queryConditionPart) {
+                        $searchstring .= '+"' . $queryConditionPart . '" ';
+                    } else {
+                        $searchstring .= '+' . $queryConditionPart . '* ';
+                    }
                 }
             }
 
