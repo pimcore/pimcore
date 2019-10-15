@@ -595,7 +595,7 @@ class DefaultMysql implements ProductListInterface
             $searchstring = '';
             foreach ($this->queryConditions as $queryConditionPartArray) {
                 foreach ($queryConditionPartArray as $queryConditionPart) {
-                    $searchstring .= '+' . $queryConditionPart . '* ';
+                    $searchstring .= '+"' . $queryConditionPart . '*" ';
                 }
             }
 
