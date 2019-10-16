@@ -446,17 +446,20 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if(!$this->o_children) {
-            return [];
-        }
-
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
             $returnKeys[] = $objectType.'_'.$unpublished;
         }
-        return array_merge(...array_filter($this->o_children, static function($type) use ($returnKeys) {
+
+        $returnArrays = array_filter($this->o_children, static function($type) use ($returnKeys) {
             return in_array($type, $returnKeys, true);
-        }, ARRAY_FILTER_USE_KEY));
+        }, ARRAY_FILTER_USE_KEY);
+
+        if(!$returnArrays) {
+            return [];
+        }
+
+        return array_merge(...$returnArrays);
     }
 
     /**
@@ -519,17 +522,20 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if(!$this->o_siblings) {
-            return [];
-        }
-
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
             $returnKeys[] = $objectType.'_'.$unpublished;
         }
-        return array_merge(...array_filter($this->o_siblings, static function($type) use ($returnKeys) {
+
+        $returnArrays = array_filter($this->o_siblings, static function($type) use ($returnKeys) {
             return in_array($type, $returnKeys, true);
-        }, ARRAY_FILTER_USE_KEY));
+        }, ARRAY_FILTER_USE_KEY);
+
+        if(!$returnArrays) {
+            return [];
+        }
+
+        return array_merge(...$returnArrays);
     }
 
     /**
@@ -1118,7 +1124,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setChildrenSortBy($childrenSortBy)
     {
         if($this->o_childrenSortBy !== $childrenSortBy) {
-            $this->o_children = null;
+            $this->o_children = [];
             $this->o_hasChildren = null;
         }
         $this->o_childrenSortBy = $childrenSortBy;
@@ -1179,7 +1185,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->o_children = null;
+        $this->o_children = [];
         $this->o_hasChildren = null;
         if (is_array($children) && count($children) > 0) {
             foreach($children as $child) {
