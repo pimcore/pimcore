@@ -453,11 +453,11 @@ class AbstractObject extends Model\Element\AbstractElement
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if (is_bool($this->o_hasChildren)) {
-            if (($this->o_hasChildren && empty($this->o_children)) || (!$this->o_hasChildren && !empty($this->o_children))) {
+            if (($this->o_hasChildren and empty($this->o_children)) or (!$this->o_hasChildren and !empty($this->o_children))) {
                 return $this->getDao()->hasChildren($objectTypes, $unpublished);
+            } else {
+                return $this->o_hasChildren;
             }
-
-            return $this->o_hasChildren;
         }
 
         return $this->getDao()->hasChildren($objectTypes, $unpublished);
@@ -498,11 +498,11 @@ class AbstractObject extends Model\Element\AbstractElement
     public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
     {
         if (is_bool($this->o_hasSiblings)) {
-            if (($this->o_hasSiblings && empty($this->o_siblings)) || (!$this->o_hasSiblings && !empty($this->o_siblings))) {
+            if (($this->o_hasSiblings and empty($this->o_siblings)) or (!$this->o_hasSiblings and !empty($this->o_siblings))) {
                 return $this->getDao()->hasSiblings($objectTypes);
+            } else {
+                return $this->o_hasSiblings;
             }
-
-            return $this->o_hasSiblings;
         }
 
         return $this->getDao()->hasSiblings($objectTypes);
