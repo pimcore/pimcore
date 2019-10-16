@@ -454,7 +454,7 @@ class AbstractObject extends Model\Element\AbstractElement
         foreach($objectTypes as $objectType) {
             $returnKeys[] = $objectType.'_'.$unpublished;
         }
-        return array_merge(...array_filter($this->o_children, static function(array $type) use ($returnKeys) {
+        return array_merge(...array_filter($this->o_children, static function($type) use ($returnKeys) {
             return in_array($type, $returnKeys, true);
         }, ARRAY_FILTER_USE_KEY));
     }
@@ -527,7 +527,7 @@ class AbstractObject extends Model\Element\AbstractElement
         foreach($objectTypes as $objectType) {
             $returnKeys[] = $objectType.'_'.$unpublished;
         }
-        return array_merge(...array_filter($this->o_siblings, static function(array $type) use ($returnKeys) {
+        return array_merge(...array_filter($this->o_siblings, static function($type) use ($returnKeys) {
             return in_array($type, $returnKeys, true);
         }, ARRAY_FILTER_USE_KEY));
     }
