@@ -22,37 +22,79 @@ class PHPCode extends AbstractOperator
     /**
      * @var \stdClass
      */
-    private $config;
+    protected $config;
 
     /**
      * @var string
      */
-    private $phpClass;
+    protected $phpClass;
+
+    /**
+     * @var string
+     */
+    protected $additionalData;
 
     /**
      * @var OperatorInterface
      */
     private $instance;
 
+    /**
+     * PHPCode constructor.
+     * @param \stdClass $config
+     * @param null $context
+     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
         $this->config = $config;
         $this->phpClass = (string)$config->phpClass;
+        $this->additionalData = (string) $config->additionalData;
     }
 
+    /**
+     * @return string
+     */
     public function getPhpClass(): string
     {
         return $this->phpClass;
     }
 
+    /**
+     * @param string $phpClass
+     */
     public function setPhpClass(string $phpClass)
     {
         $this->phpClass = $phpClass;
         $this->instance = null;
     }
 
+    /**
+     * @return string
+     */
+    public function getAdditionalData(): string
+    {
+        return $this->additionalData;
+    }
+
+    /**
+     * @param string $additionalData
+     */
+    public function setAdditionalData(string $additionalData): void
+    {
+        $this->additionalData = $additionalData;
+    }
+
+
+    /**
+     * @param \Pimcore\Model\Element\ElementInterface $element
+     * @param mixed $target
+     * @param array $rowData
+     * @param int $colIndex
+     * @param array $context
+     * @throws \Exception
+     */
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         if (null === $this->instance) {
@@ -62,6 +104,10 @@ class PHPCode extends AbstractOperator
         $this->instance->process($element, $target, $rowData, $colIndex, $context);
     }
 
+    /**
+     * @return OperatorInterface
+     * @throws \Exception
+     */
     private function buildInstance(): OperatorInterface
     {
         $phpClass = $this->getPhpClass();
