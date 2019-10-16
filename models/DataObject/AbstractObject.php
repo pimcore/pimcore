@@ -490,7 +490,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $loadTypes = [];
         foreach($objectTypes as $index => $objectType) {
-            if(!isset($this->o_siblings[$objectType])) {
+            if(!isset($this->o_siblings[$objectType.'_'.$unpublished])) {
                 $loadTypes[] = $objectType;
             }
         }
@@ -506,8 +506,8 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder('asc');
 
             foreach($list as $element) {
-                $this->o_siblings[$element->getType()][] = $element;
-                $this->o_hasSiblings[$element->getType()] = true;
+                $this->o_siblings[$element->getType().'_'.$unpublished][] = $element;
+                $this->o_hasSiblings[$element->getType().'_'.$unpublished] = true;
             }
         }
 
@@ -515,8 +515,12 @@ class AbstractObject extends Model\Element\AbstractElement
             return [];
         }
 
-        return array_merge(...array_filter($this->o_siblings, static function(array $type) use ($objectTypes) {
-            return in_array($type, $objectTypes, true);
+        $returnKeys = [];
+        foreach($objectTypes as $objectType) {
+            $returnKeys[] = $objectType.'_'.$unpublished;
+        }
+        return array_merge(...array_filter($this->o_siblings, static function(array $type) use ($returnKeys) {
+            return in_array($type, $returnKeys, true);
         }, ARRAY_FILTER_USE_KEY));
     }
 
@@ -527,14 +531,14 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if(!$objectTypes) {
             return false;
         }
 
         foreach($objectTypes as $objectType) {
-            if(!empty($this->o_hasSiblings[$objectType])) {
+            if(!empty($this->o_hasSiblings[$objectType.'_'.$unpublished])) {
                 return true;
             }
         }
@@ -1038,8 +1042,13 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
-            $this->markFieldDirty('o_parentId');
+        if ($o_parentId != $this->o_parentId) {
+            if($this instanceof DirtyIndicatorInterface) {
+                $this->markFieldDirty('o_parentId');
+            }
+
+            $this->o_siblings = null;
+            $this->o_hasSiblings = null;
         }
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
@@ -1101,6 +1110,9 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setChildrenSortBy($childrenSortBy)
     {
         $this->o_childrenSortBy = $childrenSortBy;
+
+        $this->o_children = null;
+        $this->o_hasChildren = null;
     }
 
     /**
