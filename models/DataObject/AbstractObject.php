@@ -453,14 +453,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setObjectTypes($objectTypes);
 
             foreach($list as $element) {
-                $this->o_children[$element->getType()][$element->getId()] = $element;
+                $this->o_children[$element->getType()][] = $element;
                 $this->o_hasChildren[$element->getType()] = true;
             }
         }
 
-        return array_filter($this->o_children, static function(array $type) use ($objectTypes) {
+        return array_merge(...array_filter($this->o_children, static function(array $type) use ($objectTypes) {
             return in_array($type, $objectTypes, true);
-        }, ARRAY_FILTER_USE_KEY);
+        }, ARRAY_FILTER_USE_KEY));
     }
 
     /**
@@ -518,14 +518,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder('asc');
 
             foreach($list as $element) {
-                $this->o_siblings[$element->getType()][$element->getId()] = $element;
+                $this->o_siblings[$element->getType()][] = $element;
                 $this->o_hasSiblings[$element->getType()] = true;
             }
         }
 
-        return array_filter($this->o_siblings, static function(array $type) use ($objectTypes) {
+        return array_merge(...array_filter($this->o_siblings, static function(array $type) use ($objectTypes) {
             return in_array($type, $objectTypes, true);
-        }, ARRAY_FILTER_USE_KEY);
+        }, ARRAY_FILTER_USE_KEY));
     }
 
     /**
