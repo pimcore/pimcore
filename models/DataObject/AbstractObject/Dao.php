@@ -295,7 +295,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasChildren(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         $sql = 'SELECT o_id FROM objects WHERE o_parentId = ?';
 

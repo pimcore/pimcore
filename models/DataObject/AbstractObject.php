@@ -471,7 +471,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if(!$objectTypes) {
             return false;
