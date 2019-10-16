@@ -441,13 +441,17 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setObjectTypes($objectTypes);
 
             foreach($list as $element) {
-                $this->o_children[$element->getType()][] = $element;
-                $this->o_hasChildren[$element->getType()] = true;
+                $this->o_children[self::getChildrenCacheKey($element)][] = $element;
+                $this->o_hasChildren[self::getChildrenCacheKey($element)] = true;
             }
         }
 
-        return array_merge(...array_filter($this->o_children, static function(array $type) use ($objectTypes) {
-            return in_array($type, $objectTypes, true);
+        $returnKeys = [];
+        foreach($objectTypes as $objectType) {
+            $returnKeys[] = $objectType.'_'.$unpublished;
+        }
+        return array_merge(...array_filter($this->o_children, static function(array $type) use ($returnKeys) {
+            return in_array($type, $returnKeys, true);
         }, ARRAY_FILTER_USE_KEY));
     }
 
@@ -466,7 +470,7 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         foreach($objectTypes as $objectType) {
-            if(!empty($this->o_hasChildren[$objectType])) {
+            if(!empty($this->o_hasChildren[$objectType.'_'.$unpublished])) {
                 return true;
             }
         }
@@ -506,8 +510,8 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder('asc');
 
             foreach($list as $element) {
-                $this->o_siblings[$element->getType().'_'.$unpublished][] = $element;
-                $this->o_hasSiblings[$element->getType().'_'.$unpublished] = true;
+                $this->o_siblings[self::getChildrenCacheKey($element)][] = $element;
+                $this->o_hasSiblings[self::getChildrenCacheKey($element)] = true;
             }
         }
 
@@ -1165,20 +1169,32 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $children
+     * @param self[] $children
      *
      * @return $this
      */
     public function setChildren($children)
     {
-        $this->o_children = $children;
-        if (is_array($children) and count($children) > 0) {
-            $this->o_hasChildren = true;
-        } else {
-            $this->o_hasChildren = false;
+        $this->o_children = null;
+        $this->o_hasChildren = null;
+        if (is_array($children) && count($children) > 0) {
+            foreach($children as $child) {
+                $this->o_hasChildren[self::getChildrenCacheKey($child)] = true;
+                $this->o_children[self::getChildrenCacheKey($child)][] = $child;
+            }
+
         }
 
         return $this;
+    }
+
+    private static function getChildrenCacheKey(self $object) {
+        $key = $object->getKey();
+        if(\method_exists($object, 'getPublished')) {
+            $key .= $object->getPublished();
+        }
+
+        return $key;
     }
 
     /**
