@@ -16,8 +16,20 @@ pimcore.gridexport.xlsx = Class.create(pimcore.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),
     downloadUrl: "/admin/object-helper/download-xlsx-file",
-    getExportSettingsContainer: function () {
-        return null;
+    getObjectSettingsContainer: function () {
+        var enableInheritance = new Ext.form.Checkbox({
+            fieldLabel: t('enable_inheritance'),
+            name: 'enableInheritance',
+            inputValue: true,
+            labelWidth: 200
+        });
+
+        return new Ext.form.FieldSet({
+            title: t('object_settings'),
+            items: [
+                enableInheritance
+            ]
+        });
     }
 });
 
