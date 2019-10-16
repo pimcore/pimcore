@@ -448,7 +448,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
-            $returnKeys[] = $objectType.'_'.$unpublished;
+            $returnKeys[] = $objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'');
         }
 
         $returnArrays = array_filter($this->o_children, static function($type) use ($returnKeys) {
@@ -477,7 +477,7 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         foreach($objectTypes as $objectType) {
-            if(!empty($this->o_hasChildren[$objectType.'_'.$unpublished])) {
+            if(!empty($this->o_hasChildren[$objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'')])) {
                 return true;
             }
         }
@@ -501,7 +501,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $loadTypes = [];
         foreach($objectTypes as $index => $objectType) {
-            if(!isset($this->o_siblings[$objectType.'_'.$unpublished])) {
+            if(!isset($this->o_siblings[$objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'')])) {
                 $loadTypes[] = $objectType;
             }
         }
@@ -524,7 +524,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
-            $returnKeys[] = $objectType.'_'.$unpublished;
+            $returnKeys[] = $objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'');
         }
 
         $returnArrays = array_filter($this->o_siblings, static function($type) use ($returnKeys) {
@@ -552,7 +552,7 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         foreach($objectTypes as $objectType) {
-            if(!empty($this->o_hasSiblings[$objectType.'_'.$unpublished])) {
+            if(!empty($this->o_hasSiblings[$objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'')])) {
                 return true;
             }
         }
