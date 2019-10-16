@@ -95,7 +95,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $filteredTotalCount = 0;
 
         if ($object->hasChildren($objectTypes)) {
-            $limit = intval($request->get('limit'));
+            $limit = (int)$request->get('limit');
             if (!is_null($filter)) {
                 if (substr($filter, -1) != '*') {
                     $filter .= '*';
@@ -107,7 +107,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $limit = 100000000;
             }
 
-            $offset = intval($request->get('start'));
+            $offset = (int)$request->get('start');
 
             $childsList = new DataObject\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
