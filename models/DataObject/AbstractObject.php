@@ -446,6 +446,10 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
+        if(!$this->o_children) {
+            return [];
+        }
+
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
             $returnKeys[] = $objectType.'_'.$unpublished;
