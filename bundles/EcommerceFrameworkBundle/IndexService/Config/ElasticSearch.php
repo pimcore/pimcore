@@ -87,15 +87,17 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
     protected function addSearchAttribute(string $searchAttribute)
     {
-        if(isset($this->attributes[$searchAttribute])) {
+        if (isset($this->attributes[$searchAttribute])) {
             $this->searchAttributes[] = $searchAttribute;
+
             return;
         }
 
         $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($searchAttribute);
-        foreach($fieldNameParts as $fieldNamePart) {
-            if(isset($this->attributes[$fieldNamePart])) {
+        foreach ($fieldNameParts as $fieldNamePart) {
+            if (isset($this->attributes[$fieldNamePart])) {
                 $this->searchAttributes[] = $searchAttribute;
+
                 return;
             }
         }
@@ -140,13 +142,14 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('store', 'bool');
     }
 
-    protected function extractPossibleFirstSubFieldnameParts($fieldName) {
+    protected function extractPossibleFirstSubFieldnameParts($fieldName)
+    {
         $parts = [];
 
         $delimiters = ['.', '^'];
 
-        foreach($delimiters as $delimiter) {
-            if(strpos($fieldName, $delimiter) !== false) {
+        foreach ($delimiters as $delimiter) {
+            if (strpos($fieldName, $delimiter) !== false) {
                 $fieldNameParts = explode($delimiter, $fieldName);
                 $parts[] = $fieldNameParts[0];
             }
@@ -165,22 +168,18 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-
-        if($this->fieldMapping[$fieldName]) {
+        if ($this->fieldMapping[$fieldName]) {
             return $this->fieldMapping[$fieldName];
         }
 
         // consider subfield names like name.analyzed or score definitions like name^3
-        if($considerSubFieldNames) {
-
+        if ($considerSubFieldNames) {
             $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
-            foreach($fieldNameParts as $fieldNamePart) {
-                if($this->fieldMapping[$fieldNamePart]) {
+            foreach ($fieldNameParts as $fieldNamePart) {
+                if ($this->fieldMapping[$fieldNamePart]) {
                     return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
                 }
-
             }
-
         }
 
         return $fieldName;

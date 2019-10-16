@@ -768,7 +768,7 @@ class Configuration implements ConfigurationInterface
                                     }
 
                                     $delimiters = ['.', '^'];
-                                    foreach($delimiters as $delimiter) {
+                                    foreach ($delimiters as $delimiter) {
                                         if (!$attributeFound && strpos($searchAttribute, $delimiter) !== false) {
                                             $fieldNameParts = explode($delimiter, $searchAttribute);
                                             if (isset($tenantConfig['attributes'][$fieldNameParts[0]])) {
