@@ -511,6 +511,10 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
+        if(!$this->o_siblings) {
+            return [];
+        }
+
         return array_merge(...array_filter($this->o_siblings, static function(array $type) use ($objectTypes) {
             return in_array($type, $objectTypes, true);
         }, ARRAY_FILTER_USE_KEY));
