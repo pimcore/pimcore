@@ -452,16 +452,19 @@ class Service extends Model\AbstractModel
      */
     public static function getElementType($element)
     {
-        $type = null;
         if ($element instanceof DataObject\AbstractObject) {
-            $type = 'object';
-        } elseif ($element instanceof Document) {
-            $type = 'document';
-        } elseif ($element instanceof Asset) {
-            $type = 'asset';
+            return 'object';
         }
 
-        return $type;
+        if ($element instanceof Document) {
+            return 'document';
+        }
+
+        if ($element instanceof Asset) {
+            return 'asset';
+        }
+
+        return null;
     }
 
     /**
