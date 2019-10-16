@@ -138,7 +138,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function resolveDependencies()
     {
-        $dependencies = [];
+        $dependencies = [[]];
 
         // check for properties
         if (method_exists($this, 'getProperties')) {
