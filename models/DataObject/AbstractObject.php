@@ -169,16 +169,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_childrenSortBy;
 
-    /**
-     * @var array
-     */
-    private $lastGetChildrenObjectTypes = [];
-
-    /**
-     * @var array
-     */
-    private $lastGetSiblingObjectTypes = [];
-
     /** @var int */
     protected $o_versionCount = 0;
 
@@ -443,8 +433,6 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         if($loadTypes) {
-            $this->lastGetChildrenObjectTypes = $objectTypes;
-
             $list = new Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
