@@ -437,7 +437,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $loadTypes = [];
         foreach($objectTypes as $index => $objectType) {
-            if(!isset($this->o_siblings[$objectType])) {
+            if(!isset($this->o_children[$objectType])) {
                 $loadTypes[] = $objectType;
             }
         }
