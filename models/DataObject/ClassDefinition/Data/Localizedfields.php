@@ -127,16 +127,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      *
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode($localizedData, $object = null, $params = [])
     {
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof DataObject\Localizedfield) {
+        if (!$localizedData instanceof DataObject\Localizedfield) {
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
+        $result = $this->doGetDataForEditMode($localizedData, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {
@@ -147,7 +147,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $childData->setContextualData('localizedfield', $this->getName(), null, $language);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedData->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
                 }
             }
         }
