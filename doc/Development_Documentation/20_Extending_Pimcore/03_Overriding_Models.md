@@ -3,7 +3,7 @@
 Sometimes it is necessary to override certain functionalities of Pimcore's core models, therefore it is possible to 
 override the core models with your own classes. 
 
-Currently this works for all implementations of the following classes: 
+Currently this works for all implementations of the following classes (but not for these classes directly): 
 - `Pimcore\Model\Document`
 - `Pimcore\Model\Document\Listing`
 - `Pimcore\Model\AbstractObject`
@@ -13,6 +13,7 @@ Currently this works for all implementations of the following classes:
 
 So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
 `Pimcore\Model\Asset\Image` is supported. 
+But you cannot override `Pimcore\Model\Asset` ifself (as it is the parent class of for example `Pimcore\Model\Asset\Image` and that would mean to change the class hierarchy). 
 
 ## Configure an Override 
 
