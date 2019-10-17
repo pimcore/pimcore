@@ -41,6 +41,7 @@ class PHPCode extends AbstractOperator
 
     /**
      * PHPCode constructor.
+     *
      * @param \stdClass $config
      * @param null $context
      */
@@ -86,13 +87,13 @@ class PHPCode extends AbstractOperator
         $this->additionalData = $additionalData;
     }
 
-
     /**
      * @param \Pimcore\Model\Element\ElementInterface $element
      * @param mixed $target
      * @param array $rowData
      * @param int $colIndex
      * @param array $context
+     *
      * @throws \Exception
      */
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
@@ -106,6 +107,7 @@ class PHPCode extends AbstractOperator
 
     /**
      * @return OperatorInterface
+     *
      * @throws \Exception
      */
     private function buildInstance(): OperatorInterface
