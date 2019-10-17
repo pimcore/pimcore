@@ -134,6 +134,11 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if($this->isEmpty($data) && $object !== null && !empty($this->defaultValueGenerator)) {
+            $defaultValueGenerator = Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
+            $data = $defaultValueGenerator->getValue($object, $this, $params);
+        }
+
         return $data;
     }
 
@@ -176,12 +181,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if($this->isEmpty($data) && $object !== null && !empty($this->defaultValueGenerator)) {
-            $defaultValueGenerator = Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
-            $data = $defaultValueGenerator->getValue($object, $this, $params);
-        }
-
-        return $data;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
