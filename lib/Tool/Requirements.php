@@ -652,7 +652,7 @@ class Requirements
         $checks[] = new Check([
             'name' => 'curl',
             'link' => 'http://www.php.net/curl',
-            'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_WARNING
+            'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // WebP for active image adapter
