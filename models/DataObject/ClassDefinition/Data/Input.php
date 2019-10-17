@@ -167,6 +167,10 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
+        if($this->isEmpty($data) && $object !== null && !empty($this->defaultValueGenerator)) {
+            $defaultValueGenerator = Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
+            $data = $defaultValueGenerator->getValue($object, $this, $params);
+        }
         return $data;
     }
 
