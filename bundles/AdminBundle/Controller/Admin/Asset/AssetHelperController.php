@@ -96,7 +96,6 @@ class AssetHelperController extends AdminController
         // collect all roles
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
-        $db = Db::get();
 
         $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
@@ -837,17 +836,19 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType("asset", null);
         $metadataItems = [];
         $tmp = [];
-        foreach ($list as $idx => $item) {
+        foreach ($list as $item) {
             //only allow unique metadata columns
             if(!in_array($item->getName(), $tmp)) {
                 $tmp[] = $item->getName();
                 /** @var $item Metadata\Predefined */
                 $item->expand();
-                $metadataItems[$idx]['title'] = $item->getName();
-                $metadataItems[$idx]['name'] = $item->getName();
-                $metadataItems[$idx]['subtype'] = $item->getTargetSubtype();
-                $metadataItems[$idx]['datatype'] = "data";
-                $metadataItems[$idx]['fieldtype'] = $item->getType();
+                $metadataItems[] = [
+                    'title' => $item->getName(),
+                    'name'  => $item->getName(),
+                    'subtype' => $item->getTargetSubtype(),
+                    'datatype' => "data",
+                    'fieldtype' => $item->getType()
+                ];
             }
         }
 

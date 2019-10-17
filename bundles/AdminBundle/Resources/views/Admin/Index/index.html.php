@@ -413,8 +413,6 @@ $scripts = array(
     "pimcore/asset/audio.js",
     "pimcore/asset/text.js",
     "pimcore/asset/folder.js",
-    "pimcore/asset/gridcolumn/Abstract.js",
-    "pimcore/asset/gridcolumn/operator/DateFormatter.js",
     "pimcore/asset/listfolder.js",
     "pimcore/asset/versions.js",
     "pimcore/asset/metadata.js",

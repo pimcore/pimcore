@@ -89,7 +89,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
             this.settings = response.settings || {};
             this.availableConfigs = response.availableConfigs;
-            //this.sharedConfigs = response.sharedConfigs;
+            this.sharedConfigs = response.sharedConfigs;
 
             if (response.onlyDirectChildren) {
                 this.onlyDirectChildren = response.onlyDirectChildren;

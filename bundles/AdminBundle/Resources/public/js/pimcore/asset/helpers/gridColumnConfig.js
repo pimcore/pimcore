@@ -11,12 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
-/**
- * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection,
- * pimcore.object.tags.localizedfields
- */
-
 pimcore.registerNS("pimcore.asset.helpers.gridColumnConfig");
 pimcore.asset.helpers.gridColumnConfig = {
 
