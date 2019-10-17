@@ -27,12 +27,12 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [zip](http://php.net/zip)
 - [intl](http://www.php.net/intl)
 - [opcache](http://php.net/opcache)
+- [curl](http://php.net/curl)
 - CLI SAPI (for Cron Jobs)
 - [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
-- [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
