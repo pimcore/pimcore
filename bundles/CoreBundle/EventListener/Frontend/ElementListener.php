@@ -104,7 +104,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         $document = $this->documentResolver->getDocument($request);
-        if (!$document instanceof Document\PageSnippet) {
+        if (!$document instanceof Document\PageSnippet && !Staticroute::getCurrentRoute()) {
             return;
         }
 
