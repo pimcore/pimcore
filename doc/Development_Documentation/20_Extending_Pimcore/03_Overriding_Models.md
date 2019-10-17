@@ -13,7 +13,8 @@ Currently this works for all implementations of the following classes (but not f
 
 So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
 `Pimcore\Model\Asset\Image` is supported. 
-But you cannot override `Pimcore\Model\Asset` ifself (as it is the parent class of for example `Pimcore\Model\Asset\Image` and that would mean to change the class hierarchy). 
+
+But you cannot override `Pimcore\Model\Asset` (or the other abstract model classes) ifself (as it is the parent class of for example `Pimcore\Model\Asset\Image` and that would mean to change the class hierarchy). 
 
 ## Configure an Override 
 
