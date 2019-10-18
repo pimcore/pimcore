@@ -129,7 +129,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $url = $this->router->generate('pimcore_admin_login');
+        $url = $this->router->generate('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective'))]);
 
         return new RedirectResponse($url);
     }
@@ -317,7 +317,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             $url .= '?' . $request->get('deeplink');
         } else {
             $url = $this->router->generate('pimcore_admin_index', [
-                '_dc' => time()
+                '_dc' => time(),
+                'perspective' => strip_tags($request->get('perspective'))
             ]);
         }
 

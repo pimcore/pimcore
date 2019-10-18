@@ -182,24 +182,27 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/deeplink")
      * @TemplatePhp()
      */
-    public function deeplinkAction()
+    public function deeplinkAction(Request $request)
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
+            $deeplink = $deeplink[0];
+            $perspective = strip_tags($request->get('perspective'));
+
             if (strpos($queryString, 'token')) {
-                $deeplink = $deeplink[0];
                 $url = $this->generateUrl('pimcore_admin_login', [
-                    'deeplink' => $deeplink
+                    'deeplink' => $deeplink,
+                    'perspective' => $perspective
                 ]);
 
                 $url .= '&' . $queryString;
-
                 return $this->redirect($url);
             } elseif ($queryString) {
                 return new ViewModel([
-                    'tab' => $queryString
+                    'tab' => $deeplink,
+                    'perspective' => $perspective
                 ]);
             }
         }
