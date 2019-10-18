@@ -238,7 +238,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='object'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAll('SELECT name, type, data, cid, inheritable, cpath FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? ) AND ctype='object'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -297,7 +297,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        $sql = 'SELECT o_id FROM objects WHERE o_parentId = ?';
+        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ?';
 
         if (DataObject\AbstractObject::doHideUnpublished() && !$unpublished) {
             $sql .= ' AND o_published = 1';
@@ -318,7 +318,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
     {
-        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
+        $c = $this->db->fetchOne("SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }
@@ -343,7 +343,7 @@ class Dao extends Model\Element\Dao
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
+            $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
         }
 
         $c = $this->db->fetchOne($query, $this->model->getId());
@@ -411,29 +411,17 @@ class Dao extends Model\Element\Dao
             }
 
             return $classes;
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     /**
-     * @return array
+     * @return int[]
      */
     protected function collectParentIds()
     {
-        // collect properties via parent - ids
-        $parentIds = [1];
-
-        $obj = $this->model->getParent();
-        if ($obj) {
-            while ($obj) {
-                $parentIds[] = $obj->getId();
-                $obj = $obj->getParent();
-            }
-        }
-        $parentIds[] = $this->model->getId();
-
-        return $parentIds;
+        return $this->getParentIds();
     }
 
     /**
@@ -457,7 +445,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type == 'list') {
+            if (empty($permissionsParent) && $type === 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
@@ -503,41 +491,43 @@ class Dao extends Model\Element\Dao
                 $allPermissions = $this->db->fetchAll('SELECT ' . $queryType . ',cid,cpath FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC');
                 if (!$allPermissions) {
                     return null;
-                } elseif (count($allPermissions) == 1) {
+                }
+
+                if (count($allPermissions) == 1) {
                     return $allPermissions[0];
-                } else {
-                    $firstPermission = $allPermissions[0];
-                    $firstPermissionCid = $firstPermission['cid'];
-                    $mergedPermissions = [];
+                }
 
-                    foreach ($allPermissions as $permission) {
-                        $cid = $permission['cid'];
-                        if ($cid != $firstPermissionCid) {
-                            break;
-                        }
+                $firstPermission = $allPermissions[0];
+                $firstPermissionCid = $firstPermission['cid'];
+                $mergedPermissions = [];
 
-                        $permissionValues = $permission[$type];
-                        if (!$permissionValues) {
-                            $firstPermission[$type] = null;
-
-                            return $firstPermission;
-                        }
-
-                        $permissionValues = explode(',', $permissionValues);
-                        foreach ($permissionValues as $permissionValue) {
-                            $mergedPermissions[$permissionValue] = $permissionValue;
-                        }
+                foreach ($allPermissions as $permission) {
+                    $cid = $permission['cid'];
+                    if ($cid != $firstPermissionCid) {
+                        break;
                     }
 
-                    $firstPermission[$type] = implode(',', $mergedPermissions);
+                    $permissionValues = $permission[$type];
+                    if (!$permissionValues) {
+                        $firstPermission[$type] = null;
 
-                    return $firstPermission;
+                        return $firstPermission;
+                    }
+
+                    $permissionValues = explode(',', $permissionValues);
+                    foreach ($permissionValues as $permissionValue) {
+                        $mergedPermissions[$permissionValue] = $permissionValue;
+                    }
                 }
-            } else {
-                $permissions = $this->db->fetchRow('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC  LIMIT 1');
 
-                return $permissions;
+                $firstPermission[$type] = implode(',', $mergedPermissions);
+
+                return $firstPermission;
             }
+
+            $permissions = $this->db->fetchRow('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC LIMIT 1');
+
+            return $permissions;
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
@@ -592,10 +582,8 @@ class Dao extends Model\Element\Dao
     public function __isBasedOnLatestData()
     {
         $data = $this->db->fetchRow('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', $this->model->getId());
-        if ($data['o_modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['o_versionCount'] == $this->model->getVersionCount()) {
-            return true;
-        }
 
-        return false;
+        return $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()
+            && $data['o_versionCount'] == $this->model->getVersionCount();
     }
 }
