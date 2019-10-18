@@ -30,3 +30,4 @@ define('PIMCORE_SYMFONY_CACHE_DIRECTORY', '');
 define('PIMCORE_PHP_ERROR_LOG', '');
 define('PIMCORE_PHP_ERROR_REPORTING', '');
 define('PIMCORE_KERNEL_CLASS', '');
+?>
