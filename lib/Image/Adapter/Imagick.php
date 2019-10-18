@@ -628,7 +628,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     /**
      * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
      *
