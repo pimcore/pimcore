@@ -1565,14 +1565,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = '';
-            if ($asset instanceof Asset\Image) {
-                $thumbnailMethod = 'getThumbnail';
-            } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            }
+            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
 
             if (!empty($thumbnailMethod)) {
                 $filenameDisplay = $asset->getFilename();

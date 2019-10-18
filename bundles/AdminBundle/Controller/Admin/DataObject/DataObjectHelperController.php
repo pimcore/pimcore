@@ -910,6 +910,7 @@ class DataObjectHelperController extends AdminController
             }
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
+            $favourite->setType('object');
 
             try {
                 if ($gridConfigId != 0) {

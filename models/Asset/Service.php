@@ -198,7 +198,7 @@ class Service extends Model\Element\Service
 
             foreach ($fields as $field) {
                 if ($field == "preview") {
-                    $data[$field] = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&width=108&height=70&frame=true';
+                    $data["preview"] = self::getPreviewThumbnail($asset,['width' => 108, 'height' => 70, 'frame' => true]);
                 } else if ($field == "size") {
                     /** @var $asset Asset */
                     $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
@@ -217,6 +217,42 @@ class Service extends Model\Element\Service
         }
 
         return $data;
+    }
+
+    /**
+     * @param $asset
+     * @param array $params
+     * @param bool $onlyMethod
+     *
+     * @return string|null
+     */
+    public static function getPreviewThumbnail($asset, $params = [], $onlyMethod = false)
+    {
+        $thumbnailMethod = '';
+        $thumbnailUrl = null;
+
+        if ($asset instanceof Asset\Image) {
+            $thumbnailMethod = 'getThumbnail';
+        } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
+            $thumbnailMethod = 'getImageThumbnail';
+        } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
+            $thumbnailMethod = 'getImageThumbnail';
+        }
+
+        if($onlyMethod) {
+            return $thumbnailMethod;
+        }
+
+        if (!empty($thumbnailMethod)) {
+            $thumbnailUrl = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId();
+            if (count($params) > 0) {
+                foreach ($params as $pKey => $pValue) {
+                    $thumbnailUrl .= "&" . $pKey . '=' . $pValue;
+                }
+            }
+        }
+
+        return $thumbnailUrl;
     }
 
     /**

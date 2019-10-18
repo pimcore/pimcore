@@ -362,6 +362,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             } else if (field.type == "select") {
                 gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 200), sortable: false,
                     dataIndex: field.key, filter: 'string'});
+            } else if (field.type == "document" || field.type == "asset" || field.type == "object") {
+                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 300), sortable: false,
+                    dataIndex: field.key});
             } else {
                 gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 250), sortable: false,
                     dataIndex: field.key, filter: 'string'});

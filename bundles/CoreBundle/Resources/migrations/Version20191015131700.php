@@ -5,9 +5,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 class Version20191015131700 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
