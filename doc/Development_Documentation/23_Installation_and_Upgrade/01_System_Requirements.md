@@ -60,6 +60,8 @@ All permissions on database level, specifically:
 - Create view
 - Show view
 
+> For installing our [demo](https://github.com/pimcore/demo) additionally `Create routine` and `Alter routine` are needed. 
+
 #### System Variables
 ```
 [mysqld]
