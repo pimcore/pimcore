@@ -651,10 +651,8 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        if(strpos($file, 'atomic') !== false) {
-
+        if (strpos($file, 'atomic') !== false) {
             $db->exec($dumpFile);
-
         } else {
 
             // get every command as single part - ; at end of line
@@ -675,9 +673,7 @@ class Installer
             }
 
             $db->exec(implode("\n", $batchQueries));
-
         }
-
 
         // set the id of the system user to 0
         $db->update('users', ['id' => 0], ['name' => 'system']);

@@ -198,6 +198,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 ]);
 
                 $url .= '&' . $queryString;
+
                 return $this->redirect($url);
             } elseif ($queryString) {
                 return new ViewModel([
