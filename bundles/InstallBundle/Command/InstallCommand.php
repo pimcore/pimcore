@@ -117,7 +117,7 @@ class InstallCommand extends Command
             ],
             'mysql-ssl-cert-path' => [
                 'description' => 'MySQL SSL certificate path (if empty non-ssl connection assumed)',
-                'mode' => InputOption::VALUE_REQUIRED,
+                'mode' => InputOption::VALUE_OPTIONAL,
                 'default' => '',
                 'group' => 'db_credentials'
             ],
