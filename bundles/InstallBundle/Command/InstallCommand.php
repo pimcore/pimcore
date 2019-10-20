@@ -117,7 +117,7 @@ class InstallCommand extends Command
             ],
             'is-myisam-supported' => [
                 'description' => 'If set to "no" then MyISAM engine is changed to InnoDB in all tables (useful e.g. in Azure database for MySQL)',
-                'mode' => InputOption::VALUE_REQUIRED,
+                'mode' => InputOption::VALUE_OPTIONAL,
                 'default' => 'yes',
                 'group' => 'db_credentials'
             ],
