@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
+use Doctrine\DBAL\DBALException;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -59,6 +60,13 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             list($code, $headers, $message) = $this->getResponseData($ex);
 
+            if (!\Pimcore::inDebugMode()) {
+                // DBAL exceptions do include SQL statements, we don't want to expose them
+                if($ex instanceof DBALException) {
+                    $message = 'Database error, see logs for details';
+                }
+            }
+
             $data = [
                 'success' => false,
                 'message' => $message,
@@ -83,7 +91,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         } elseif ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_WEBSERVICE)) {
             list($code, $headers, $message) = $this->getResponseData($ex);
 
-            if ($ex instanceof \Doctrine\DBAL\DBALException) {
+            if ($ex instanceof DBALException) {
                 $message = 'Database error, see logs for details';
             }
 
