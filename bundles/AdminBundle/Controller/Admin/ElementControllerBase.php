@@ -81,6 +81,7 @@ class ElementControllerBase extends AdminController
     public function deleteInfoAction(Request $request)
     {
         $hasDependency = false;
+        $disallowDeleteIfDependencies = false;
         $errors = false;
         $deleteJobs = [];
         $recycleJobs = [];
@@ -136,12 +137,23 @@ class ElementControllerBase extends AdminController
                     }
                 }
 
-                $itemResults[] = [
-                    'id' => $element->getId(),
-                    'type' => $element->getType(),
-                    'key' => $element->getKey(),
-                    'allowed' => true,
-                ];
+                if (($hasDependency == true) && ($element->getClass()->getDisallowDeleteIfDependencies() == true))  {
+                    $itemResults[] = [
+                        'id' => $element->getId(),
+                        'type' => $element->getType(),
+                        'key' => $element->getKey(),
+                        'reason' => 'Dependencies exist',
+                        'allowed' => false,
+                    ]; 
+                    $disallowDeleteIfDependencies = true;
+                } else {
+                    $itemResults[] = [
+                        'id' => $element->getId(),
+                        'type' => $element->getType(),
+                        'key' => $element->getKey(),
+                        'allowed' => true,
+                    ];
+                }
 
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
@@ -209,6 +221,7 @@ class ElementControllerBase extends AdminController
 
         return $this->adminJson([
             'hasDependencies' => $hasDependency,
+            'disallowDeleteIfDependencies' =>$disallowDeleteIfDependencies,
             'childs' => $totalChilds,
             'deletejobs' => $deleteJobs,
             'batchDelete' => count($ids) > 1,
