@@ -418,6 +418,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
             $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
+            $objectData['general']['disallowDeleteIfDependencies'] = $objectFromDatabase->getClass()->getDisallowDeleteIfDependencies();
             if ($objectFromDatabase instanceof DataObject\Concrete) {
                 $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
             }
