@@ -88,12 +88,20 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
 
         var deleteMethod = "delete" + ucfirst(options.elementType) + "FromServer";
 
+        if (res.disallowDeleteIfDependencies) {
+            message = t('deletion_not_allowed_if_dependencies_extist');
+        }
+
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
-            buttons: Ext.Msg.OKCANCEL ,
+            buttons: !res.disallowDeleteIfDependencies ? Ext.Msg.OKCANCEL : Ext.Msg.OK,
             icon: Ext.MessageBox.INFO ,
-            fn: pimcore.elementservice.deleteElementFromServer.bind(window, res, options)
+            fn: function(r, options, button) {
+                    if (button === "ok" && (res.disallowDeleteIfDependencies === false)) {
+                        pimcore.elementservice.deleteElementFromServer.bind(window, r, options);
+                    }
+                }.bind(window, res, options)
         });
     }
     catch (e) {
