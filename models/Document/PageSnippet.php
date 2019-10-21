@@ -357,7 +357,7 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param string $data
+     * @param Tag $data
      *
      * @return $this
      */
@@ -387,29 +387,29 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Document\Tag
+     * @return Tag
      */
     public function getElement($name)
     {
         $elements = $this->getElements();
         if ($this->hasElement($name)) {
             return $elements[$name];
-        } else {
-            if (array_key_exists($name, $this->inheritedElements)) {
-                return $this->inheritedElements[$name];
-            }
+        }
 
-            // check for content master document (inherit data)
-            if ($contentMasterDocument = $this->getContentMasterDocument()) {
-                if ($contentMasterDocument instanceof Document\PageSnippet) {
-                    $inheritedElement = $contentMasterDocument->getElement($name);
-                    if ($inheritedElement) {
-                        $inheritedElement = clone $inheritedElement;
-                        $inheritedElement->setInherited(true);
-                        $this->inheritedElements[$name] = $inheritedElement;
+        if (array_key_exists($name, $this->inheritedElements)) {
+            return $this->inheritedElements[$name];
+        }
 
-                        return $inheritedElement;
-                    }
+        // check for content master document (inherit data)
+        if ($contentMasterDocument = $this->getContentMasterDocument()) {
+            if ($contentMasterDocument instanceof self) {
+                $inheritedElement = $contentMasterDocument->getElement($name);
+                if ($inheritedElement) {
+                    $inheritedElement = clone $inheritedElement;
+                    $inheritedElement->setInherited(true);
+                    $this->inheritedElements[$name] = $inheritedElement;
+
+                    return $inheritedElement;
                 }
             }
         }
@@ -429,7 +429,7 @@ abstract class PageSnippet extends Model\Document
         // this is that the path is automatically converted to ID => when setting directly from admin UI
         if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
             $contentMasterDocument = Document::getByPath($contentMasterDocumentId);
-            if ($contentMasterDocument instanceof Document\PageSnippet) {
+            if ($contentMasterDocument instanceof self) {
                 $contentMasterDocumentId = $contentMasterDocument->getId();
             }
         }
@@ -476,7 +476,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function setContentMasterDocument($document)
     {
-        if ($document instanceof Document\PageSnippet) {
+        if ($document instanceof self) {
             $this->setContentMasterDocumentId($document->getId());
         } else {
             $this->setContentMasterDocumentId(null);
