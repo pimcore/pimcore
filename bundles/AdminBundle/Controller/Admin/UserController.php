@@ -303,6 +303,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             $values = $this->decodeJson($request->get('data'), true);
 
             if (!empty($values['password'])) {
+                if(strlen($values['password']) < 10) {
+                    throw new \Exception('Passwords have to be at least 10 characters long');
+                }
                 $values['password'] = Tool\Authentication::getPasswordHash($user->getName(), $values['password']);
             }
 
@@ -569,6 +572,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                         if ($checkUser) {
                             $oldPasswordCheck = true;
                         }
+                    }
+
+                    if(strlen($values['new_password']) < 10) {
+                        throw new \Exception('Passwords have to be at least 10 characters long');
                     }
 
                     if ($oldPasswordCheck && $values['new_password'] == $values['retype_password']) {
