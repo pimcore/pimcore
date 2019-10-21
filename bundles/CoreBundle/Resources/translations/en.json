@@ -910,4 +910,6 @@
   "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations",
   "set_to_null": "Empty (set to null)"
+  "disallow_delete_if_dependencies": "Disallow delete if dependencies exist",
+  "deletion_not_allowed_if_dependencies_extist": "Deletion of this object is not allowed, there are existing dependencies.", 
 }
