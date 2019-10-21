@@ -116,6 +116,11 @@ class ClassDefinition extends Model\AbstractModel
      * @var bool
      */
     public $showVariants = false;
+    
+    /**
+     * @var bool
+     */
+    public $disallowDeleteIfDependencies = false;
 
     /**
      * @var array
@@ -1240,6 +1245,22 @@ class ClassDefinition extends Model\AbstractModel
     public function getShowVariants()
     {
         return $this->showVariants;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function getDisallowDeleteIfDependencies()
+    {
+        return $this->disallowDeleteIfDependencies;
+    }
+
+    /**
+     * @param bool $disallowDeleteIfDependencies
+     */
+    public function setDisallowDeleteIfDependencies($disallowDeleteIfDependencies)
+    {
+        $this->disallowDeleteIfDependencies = (bool) $disallowDeleteIfDependencies;
     }
 
     /**
