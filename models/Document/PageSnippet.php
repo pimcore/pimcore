@@ -387,7 +387,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Document\Tag
+     * @return Tag
      */
     public function getElement($name)
     {
