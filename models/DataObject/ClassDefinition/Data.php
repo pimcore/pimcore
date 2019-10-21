@@ -1179,6 +1179,13 @@ abstract class Data
                     if ($object instanceof DataObject\Concrete) {
                         $containerGetter = 'get' . ucfirst($fieldname);
                         $container = $object->$containerGetter();
+                        if (!$container && $context['containerType'] == 'block') {
+                            // no data, so check if inheritance is enabled + there is parent value
+                            if ($object->getClass()->getAllowInherit()) {
+                                $container = $object->getValueFromParent($fieldname);
+                            }
+                        }
+
                         if ($container) {
                             $originalIndex = $context['oIndex'];
 
