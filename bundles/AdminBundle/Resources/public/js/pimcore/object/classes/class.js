@@ -794,6 +794,12 @@ pimcore.object.classes.klass = Class.create({
                 this.showVariants,
                 {
                     xtype: "checkbox",
+                    fieldLabel: t("disallow_delete_if_dependencies"),
+                    name: "disallowDeleteIfDependencies",
+                    checked: this.data.disallowDeleteIfDependencies
+                },
+                {
+                    xtype: "checkbox",
                     fieldLabel: t("show_applogger_tab"),
                     name: "showAppLoggerTab",
                     checked: this.data.showAppLoggerTab
