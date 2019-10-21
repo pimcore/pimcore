@@ -357,7 +357,7 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param string $data
+     * @param Tag $data
      *
      * @return $this
      */
@@ -394,22 +394,22 @@ abstract class PageSnippet extends Model\Document
         $elements = $this->getElements();
         if ($this->hasElement($name)) {
             return $elements[$name];
-        } else {
-            if (array_key_exists($name, $this->inheritedElements)) {
-                return $this->inheritedElements[$name];
-            }
+        }
 
-            // check for content master document (inherit data)
-            if ($contentMasterDocument = $this->getContentMasterDocument()) {
-                if ($contentMasterDocument instanceof Document\PageSnippet) {
-                    $inheritedElement = $contentMasterDocument->getElement($name);
-                    if ($inheritedElement) {
-                        $inheritedElement = clone $inheritedElement;
-                        $inheritedElement->setInherited(true);
-                        $this->inheritedElements[$name] = $inheritedElement;
+        if (array_key_exists($name, $this->inheritedElements)) {
+            return $this->inheritedElements[$name];
+        }
 
-                        return $inheritedElement;
-                    }
+        // check for content master document (inherit data)
+        if ($contentMasterDocument = $this->getContentMasterDocument()) {
+            if ($contentMasterDocument instanceof Document\PageSnippet) {
+                $inheritedElement = $contentMasterDocument->getElement($name);
+                if ($inheritedElement) {
+                    $inheritedElement = clone $inheritedElement;
+                    $inheritedElement->setInherited(true);
+                    $this->inheritedElements[$name] = $inheritedElement;
+
+                    return $inheritedElement;
                 }
             }
         }
