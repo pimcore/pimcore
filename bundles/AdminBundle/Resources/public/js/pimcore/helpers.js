@@ -814,7 +814,6 @@ pimcore.helpers.download = function (url) {
         pimcore.settings.showCloseConfirmation = true;
     }, 1000);
 
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
     location.href = url;
 };
 
@@ -931,7 +930,6 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     if (context) {
         url += "&context=" + Ext.encode(context);
     }
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     var uploadWindowCompatible = new Ext.Window({
         autoHeight: true,
@@ -959,6 +957,9 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
                 change: function () {
                     uploadForm.getForm().submit({
                         url: url,
+                        params: {
+                            csrfToken: pimcore.settings['csrfToken']
+                        },
                         waitMsg: t("please_wait"),
                         success: function (el, res) {
                             success(res);
@@ -981,20 +982,11 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     uploadWindowCompatible.updateLayout();
 };
 
+/**
+ * @deprecated
+ */
 pimcore.helpers.addCsrfTokenToUrl = function (url) {
-
-    // only for /admin urls
-    if(url.indexOf('/admin') !== 0) {
-        return url;
-    }
-
-    if (url.indexOf('?') === -1) {
-        url = url + "?";
-    } else {
-        url = url + "&";
-    }
-    url = url + 'csrfToken=' + pimcore.settings['csrfToken'];
-
+    // we don't use the CSRF token in the query string
     return url;
 };
 
@@ -1013,8 +1005,6 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
     if (typeof filename != "string") {
         filename = "Filedata";
     }
-
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     if (empty(filename)) {
         filename = "Filedata";
@@ -1046,6 +1036,9 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
                 change: function () {
                     uploadForm.getForm().submit({
                         url: url,
+                        params: {
+                            csrfToken: pimcore.settings['csrfToken']
+                        },
                         waitMsg: t("please_wait"),
                         success: function (el, res) {
                             // content-type in response has to be text/html, otherwise (when application/json is sent)
@@ -1421,8 +1414,6 @@ pimcore.helpers.getMainTabMenuItems = function () {
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
 
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
-
     if (typeof callbackSuccess != "function") {
         callbackSuccess = function () {
         };
@@ -1447,6 +1438,7 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     var data = new FormData();
     data.append('Filedata', file);
     data.append("filename", file.name);
+    data.append("csrfToken", pimcore.settings['csrfToken']);
 
     jQuery.ajax({
         xhr: function () {

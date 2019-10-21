@@ -374,7 +374,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
     loadCurrentPreview: function () {
         var date = new Date();
         var url = "/admin/printpage/pdf-download?id=" + this.page.id + "&time=" + date.getTime();
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
 
         try {
             Ext.get(this.iframeName).dom.src = url;
