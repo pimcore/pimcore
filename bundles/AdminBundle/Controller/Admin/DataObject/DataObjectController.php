@@ -430,7 +430,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
             $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
-
+            $objectData['childdata']['data']['general'] = $objectData['general'];
             /** -------------------------------------------------------------
              *   Load remaining general data from latest version
              *  ------------------------------------------------------------- */
