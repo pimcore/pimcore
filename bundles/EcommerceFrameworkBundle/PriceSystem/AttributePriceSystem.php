@@ -130,7 +130,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     {
         $getter = 'get' . ucfirst($this->attributeName);
 
-        if (is_callable($product, $getter)) {
+        if (is_callable([$product, $getter])) {
             if (!empty($products)) {
                 // TODO where to start using price value object?
                 $sum = 0;
