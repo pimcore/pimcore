@@ -98,6 +98,11 @@ class ClassDefinition extends Model\Webservice\Data
      * @var bool
      */
     public $showVariants = false;
+    
+    /**
+     * @var bool
+     */
+    public $disallowDeleteIfDependencies = false;
 
     /**
      * @var array
