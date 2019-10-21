@@ -61,7 +61,6 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $data = [
                 'success' => false,
-                'message' => $message,
             ];
 
             if (\Pimcore::inDebugMode()) {
@@ -73,9 +72,16 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $data['type'] = 'ValidationException';
                 $code = 403;
 
+                // Reset message of validation exception to prevent duplicate message
+                $message = 'Validation failed: ';
+                if (count($ex->getSubItems()) > 1) {
+                    $message .= '<br>';
+                }
+
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
 
+            $data['message'] = $message;
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
 
@@ -124,19 +130,20 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $items
-     * @param $message
-     * @param $detailedInfo
+     * @param ValidationException[] $items
+     * @param string &$message
+     * @param string &$detailedInfo
+     * @param int $level
      */
-    protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
+    protected function recursiveAddValidationExceptionSubItems(array $items, string &$message, string &$detailedInfo, int $level = 0)
     {
         if (!$items) {
             return;
         }
-        /** @var $items ValidationException[] */
+
         foreach ($items as $e) {
             if ($e->getMessage()) {
-                $message .= '<b>' . $e->getMessage() . '</b>';
+                $message .= '<b>' . str_repeat('&nbsp;', $level * 2) . $e->getMessage() . '</b>';
                 $this->addContext($e, $message);
                 $message .= '<br>';
 
@@ -147,7 +154,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
             }
 
-            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo, $level + 1);
         }
     }
 

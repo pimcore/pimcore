@@ -183,13 +183,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         }
 
         if ($validationExceptions) {
-            $message = 'Validation failed: ';
-            $errors = [];
-            foreach ($validationExceptions as $e) {
-                $errors[] = $e->getMessage();
-            }
-            $message .= implode(' / ', $errors);
-            $aggregatedExceptions = new Model\Element\ValidationException($message);
+            $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;
         }

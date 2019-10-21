@@ -951,63 +951,89 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param DataObject\Classificationstore $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
+        if ($omitMandatoryCheck) {
+            return;
+        }
+
         $activeGroups = $data->getActiveGroups();
         if (!$activeGroups) {
             return;
         }
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
-        $errors = [];
 
-        if (!$omitMandatoryCheck) {
-            foreach ($activeGroups as $activeGroupId => $enabled) {
-                if ($enabled) {
-                    $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
-                    if (!$groupDefinition) {
-                        continue;
+        $groupValidationExceptions = [];
+        foreach ($activeGroups as $activeGroupId => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+
+            $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
+            if (!$groupDefinition) {
+                continue;
+            }
+
+            /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
+            $keyGroupRelations = $groupDefinition->getRelations();
+
+            $keyValidationExceptions = [];
+            foreach ($keyGroupRelations as $keyGroupRelation) {
+                $keyId = $keyGroupRelation->getKeyId();
+
+                $keyValidationException = null;
+                foreach ($validLanguages as $validLanguage) {
+                    $value = $items[$activeGroupId][$keyId][$validLanguage];
+
+                    $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                    if ($keyGroupRelation->isMandatory()) {
+                        $keyDef->setMandatory(1);
                     }
 
-                    /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
-                    $keyGroupRelations = $groupDefinition->getRelations();
-
-                    foreach ($keyGroupRelations as $keyGroupRelation) {
-                        foreach ($validLanguages as $validLanguage) {
-                            $keyId = $keyGroupRelation->getKeyId();
-                            $value = $items[$activeGroupId][$keyId][$validLanguage];
-
-                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
-
-                            if ($keyGroupRelation->isMandatory()) {
-                                $keyDef->setMandatory(1);
-                            }
-                            try {
-                                $keyDef->checkValidity($value);
-                            } catch (\Exception $e) {
-                                $errors[] = [
-                                    'exception' => $e,
-                                    'language' => $validLanguage
-                                ];
-                            }
+                    try {
+                        $keyDef->checkValidity($value);
+                    } catch (\Exception $exception) {
+                        // Create key group validation exception if not initialized yet
+                        if ($keyValidationException === null) {
+                            // Validation exception for each field
+                            $keyValidationException = new Element\ValidationException(
+                                $exception->getMessage(),
+                                1571651828
+                            );
                         }
+
+                        // Add language as context
+                        $keyValidationException->addContext($validLanguage);
                     }
                 }
+
+                // Add exception if key value was invalid
+                if ($keyValidationException !== null) {
+                    $keyValidationExceptions[] = $keyValidationException;
+                }
+            }
+
+            // Validation exceptions for each group
+            if (count($keyValidationExceptions) > 0) {
+                $groupValidationException = new Element\ValidationException($groupDefinition->getName(), 1571651829);
+                $groupValidationException->setSubItems($keyValidationExceptions);
+
+                // Add field validation exceptions as subitems
+                $groupValidationExceptions[] = $groupValidationException;
             }
         }
-        if ($errors) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error['exception']->getMessage() . ' (' . $error['language'] . ')';
-            }
-            $validationException = new Model\Element\ValidationException(implode(', ', $messages));
-            $validationException->setSubItems($errors);
-            throw $validationException;
+
+        if (!empty($groupValidationExceptions)) {
+            $aggregatedExceptions = new Model\Element\ValidationException($data->getFieldname(), 1571651830);
+            // Set group validation exceptions as subitems
+            $aggregatedExceptions->setSubItems($groupValidationExceptions);
+            throw $aggregatedExceptions;
         }
     }
 
