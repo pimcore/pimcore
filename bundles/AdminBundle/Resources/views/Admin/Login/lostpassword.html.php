@@ -8,23 +8,16 @@ $this->get("translate")->setDomain("admin");
 
 
 
-<?php if ($this->success) { ?>
-    <div class="text info">
+<?php if ($this->getRequest()->getMethod() === 'POST') { ?>
+    <div class="text error">
         <?= $this->translate("A temporary login link has been sent to your email address."); ?>
         <br/>
         <?= $this->translate("Please check your mailbox."); ?>
     </div>
 <?php } else { ?>
-    <?php if ($this->error) { ?>
-        <div class="text error">
-            <?= $this->translate('lostpassword_reset_error'); ?>
-        </div>
-    <?php } else { ?>
-        <div class="text info">
-            <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
-        </div>
-    <?php } ?>
-
+    <div class="text info">
+        <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
+    </div>
 
     <form method="post" action="<?= $view->router()->path('pimcore_admin_login_lostpassword') ?>">
         <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus>

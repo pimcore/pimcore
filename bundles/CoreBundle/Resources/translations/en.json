@@ -147,7 +147,6 @@
   "send": "Send",
   "Password": "Password",
   "Forgot your password": "Forgot your password",
-  "lostpassword_reset_error": "There was an error while sending the lost password info. Please try again or contact your administrator.",
   "Back to Login": "Back to Login",
   "Enter your username and pimcore will send a login link to your email address": "Enter your username and Pimcore will send a login link to your email address",
   "Please check your mailbox.": "Please check your mailbox.",

@@ -22,6 +22,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -116,29 +117,28 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
     {
         $view = $this->buildLoginPageViewModel();
-        $view->success = false;
+        $error = null;
 
-        // TODO is the error on the view used somewhere?
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
             $user = User::getByName($username);
 
             if ($user instanceof User) {
                 if (!$user->isActive()) {
-                    $view->error = 'user inactive';
+                    $error = 'user inactive';
                 }
 
                 if (!$user->getEmail()) {
-                    $view->error = 'user has no email address';
+                    $error = 'user has no email address';
                 }
 
                 if (!$user->getPassword()) {
-                    $view->error = 'user has no password';
+                    $error = 'user has no password';
                 }
             } else {
-                $view->error = 'user unknown';
+                $error = 'user unknown';
             }
 
-            if (!$view->error) {
+            if (!$error) {
                 $token = Authentication::generateToken($username, $user->getPassword());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
@@ -163,14 +163,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                     if ($event->hasResponse()) {
                         return $event->getResponse();
                     }
-
-                    $view->success = true;
                 } catch (\Exception $e) {
-                    $view->error = 'could not send email';
+                    $error = 'could not send email';
                 }
             }
 
-            if ($view->error) {
+            if ($error) {
+                Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }
