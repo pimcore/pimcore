@@ -12,9 +12,10 @@
  */
 
 pimcore.registerNS("pimcore.asset.gridexport.csv");
-pimcore.asset.gridexport.csv = Class.create(pimcore.asset.gridexport.abstract, {
+pimcore.asset.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),
+    warningText: t('asset_export_warning'),
     downloadUrl: "/admin/asset-helper/download-csv-file",
     getExportSettingsContainer: function () {
         return new Ext.form.FieldSet({

@@ -12,9 +12,10 @@
  */
 
 pimcore.registerNS("pimcore.asset.gridexport.xlsx");
-pimcore.asset.gridexport.xlsx = Class.create(pimcore.asset.gridexport.abstract, {
+pimcore.asset.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),
+    warningText: t('asset_export_warning'),
     downloadUrl: "/admin/asset-helper/download-xlsx-file",
 });
 

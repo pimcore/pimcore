@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.gridexport.csv");
-pimcore.gridexport.csv = Class.create(pimcore.gridexport.abstract, {
+pimcore.registerNS("pimcore.object.gridexport.csv");
+pimcore.object.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),
     warningText: t('csv_object_export_warning'),
@@ -33,4 +33,4 @@ pimcore.gridexport.csv = Class.create(pimcore.gridexport.abstract, {
     }
 });
 
-pimcore.globalmanager.get("pimcore.gridexport").push(new pimcore.gridexport.csv())
+pimcore.globalmanager.get("pimcore.object.gridexport").push(new pimcore.object.gridexport.csv());

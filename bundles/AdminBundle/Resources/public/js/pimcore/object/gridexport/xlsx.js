@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.gridexport.xlsx");
-pimcore.gridexport.xlsx = Class.create(pimcore.gridexport.abstract, {
+pimcore.registerNS("pimcore.object.gridexport.xlsx");
+pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),
     downloadUrl: "/admin/object-helper/download-xlsx-file",
@@ -33,4 +33,4 @@ pimcore.gridexport.xlsx = Class.create(pimcore.gridexport.abstract, {
     }
 });
 
-pimcore.globalmanager.get("pimcore.gridexport").push(new pimcore.gridexport.xlsx())
+pimcore.globalmanager.get("pimcore.object.gridexport").push(new pimcore.object.gridexport.xlsx())

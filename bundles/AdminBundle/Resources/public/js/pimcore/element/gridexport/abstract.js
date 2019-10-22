@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.asset.gridexport.abstract");
-pimcore.asset.gridexport.abstract = Class.create({
+pimcore.registerNS("pimcore.element.gridexport.abstract");
+pimcore.element.gridexport.abstract = Class.create({
     name: t('export'),
     text: t('export'),
     warningText: t('asset_export_warning'),
@@ -26,3 +26,4 @@ pimcore.asset.gridexport.abstract = Class.create({
 });
 
 pimcore.globalmanager.add("pimcore.asset.gridexport", []);
+pimcore.globalmanager.add("pimcore.object.gridexport", []);

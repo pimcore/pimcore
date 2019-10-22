@@ -343,6 +343,7 @@ $scripts = array(
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
+    "pimcore/element/gridexport/abstract.js",
     "pimcore/object/helpers/grid.js",
     "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
@@ -418,7 +419,6 @@ $scripts = array(
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
-    "pimcore/asset/gridexport/abstract.js",
     "pimcore/asset/gridexport/xlsx.js",
     "pimcore/asset/gridexport/csv.js",
 
@@ -621,7 +621,6 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/gridexport/abstract.js",
     "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
 
