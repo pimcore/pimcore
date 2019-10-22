@@ -287,25 +287,9 @@ class AssetHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $config = \Pimcore\Config::getSystemConfig();
-        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config->general->validLanguages);
-        if ($frontendLanguages) {
-            $language = explode(',', $frontendLanguages)[0];
-        } else {
-            $language = $request->getLocale();
-        }
-
-        if (!Tool::isValidLanguage($language)) {
-            $validLanguages = Tool::getValidLanguages();
-            $language = $validLanguages[0];
-        }
-
+        $language = "default";
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
-        }
-
-        if (!empty($gridConfig) && !empty($gridConfig['pageSize'])) {
-            $pageSize = $gridConfig['pageSize'];
         }
 
         $availableConfigs = $classId ? $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType) : [];
@@ -824,7 +808,7 @@ class AssetHelperController extends AdminController
         $result = [];
 
         //default metadata
-        $defaultMetadataNames = ['copyright', 'source', 'title'];
+        $defaultMetadataNames = ['copyright', 'alt', 'title'];
         foreach ($defaultMetadataNames as $defaultMetadata) {
             $defaultColumns[] = ['title' => $defaultMetadata, 'name' => $defaultMetadata, 'datatype' => 'data', 'fieldtype' => 'input'];
         }
