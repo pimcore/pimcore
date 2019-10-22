@@ -908,5 +908,7 @@
   "split_view_object_dirty_title": "Please confirm",
   "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations",
-  "set_to_null": "Empty (set to null)"
+  "set_to_null": "Empty (set to null)",
+  "paste_clipboard": "Paste Clipboard",
+  "paste_here": "Paste your clipboard data here"
 }
