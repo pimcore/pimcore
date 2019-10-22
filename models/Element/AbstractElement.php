@@ -146,8 +146,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             foreach ($properties as $property) {
                 $dependencies[] = $property->resolveDependencies();
             }
-            $dependencies = array_merge(...$dependencies);
         }
+
+        $dependencies = array_merge(...$dependencies);
 
         return $dependencies;
     }

@@ -71,7 +71,7 @@ class Service extends Model\Element\Service
      */
     public static function getObjectsReferencingUser($userId)
     {
-        $userObjects = [];
+        $userObjects = [[]];
         $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
