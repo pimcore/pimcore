@@ -147,7 +147,7 @@ class NotificationService
         $this->beginTransaction();
         $notification = $this->find($id);
 
-        if($notification->getRecipient()->getId() != $recipientId) {
+        if ($notification->getRecipient()->getId() != $recipientId) {
             throw new AccessDeniedHttpException();
         }
 

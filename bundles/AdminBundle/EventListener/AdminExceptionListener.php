@@ -62,7 +62,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             if (!\Pimcore::inDebugMode()) {
                 // DBAL exceptions do include SQL statements, we don't want to expose them
-                if($ex instanceof DBALException) {
+                if ($ex instanceof DBALException) {
                     $message = 'Database error, see logs for details';
                 }
             }
