@@ -915,71 +915,12 @@ pimcore.helpers.openMemorizedTabs = function () {
 
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
 
-    if (typeof success != "function") {
-        success = function () {
-        };
-    }
-
-    if (typeof failure != "function") {
-        failure = function () {
-        };
-    }
-
     var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
-
     if (context) {
         url += "&context=" + Ext.encode(context);
     }
 
-    var uploadWindowCompatible = new Ext.Window({
-        autoHeight: true,
-        title: t('add_assets'),
-        closeAction: 'close',
-        width: 400,
-        modal: true
-    });
-
-    var uploadForm = new Ext.form.FormPanel({
-        fileUpload: true,
-        width: 400,
-        bodyStyle: 'padding: 10px;',
-        items: [{
-            xtype: 'fileuploadfield',
-            emptyText: t("select_a_file"),
-            fieldLabel: t("asset"),
-            width: 360,
-            name: 'Filedata',
-            buttonText: "",
-            buttonConfig: {
-                iconCls: 'pimcore_icon_upload'
-            },
-            listeners: {
-                change: function () {
-                    uploadForm.getForm().submit({
-                        url: url,
-                        params: {
-                            csrfToken: pimcore.settings['csrfToken']
-                        },
-                        waitMsg: t("please_wait"),
-                        success: function (el, res) {
-                            success(res);
-                            uploadWindowCompatible.close();
-                        },
-                        failure: function (el, res) {
-                            failure(res);
-                            uploadWindowCompatible.close();
-                            pimcore.helpers.showNotification(t("error"), res.response.responseText, "error");
-                        }
-                    });
-                }
-            }
-        }]
-    });
-
-    uploadWindowCompatible.add(uploadForm);
-    uploadWindowCompatible.show();
-    uploadWindowCompatible.setWidth(401);
-    uploadWindowCompatible.updateLayout();
+    pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
 };
 
 /**
