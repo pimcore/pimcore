@@ -1182,7 +1182,11 @@ abstract class Data
                         if (!$container && $context['containerType'] == 'block') {
                             // no data, so check if inheritance is enabled + there is parent value
                             if ($object->getClass()->getAllowInherit()) {
-                                $container = $object->getValueFromParent($fieldname);
+                                try {
+                                    $container = $object->getValueFromParent($fieldname);
+                                } catch (InheritanceParentNotFoundException $e) {
+                                    //nothing to do here - just no parent data available
+                                }
                             }
                         }
 
