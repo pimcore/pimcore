@@ -206,7 +206,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             fieldInfo.layout = {
                 layout: {
                     title: t("published"),
-                    name: "published"
+                    name: "published",
+                    hideEmptyButton: true
                 },
                 type: "checkbox"
             };
