@@ -937,7 +937,11 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
-        $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
+        $link = $this->generateUrl('pimcore_admin_login_check', [
+            'username' => $user->getName(),
+            'token' => $token,
+            'reset' => 'true'
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->adminJson([
             'success' => true,
