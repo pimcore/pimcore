@@ -799,8 +799,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function renew2FaSecretAction(Request $request)
     {
-        $this->checkCsrfToken($request);
-
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 

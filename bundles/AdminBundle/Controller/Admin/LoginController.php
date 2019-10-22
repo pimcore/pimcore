@@ -225,22 +225,25 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
-     *
-     * @param Request $request
-     *
      * @TemplatePhp()
      */
-    public function twoFactorAuthenticationAction(Request $request)
+    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
     {
         $view = $this->buildLoginPageViewModel();
 
         if ($request->hasSession()) {
+
+            // we have to call the check here manually, because BruteforceProtectionListener uses the 'username' from the request
+            $bruteforceProtectionHandler->checkProtection($this->getAdminUser()->getName(), $request);
+
             $session = $request->getSession();
             $authException = $session->get(Security::AUTHENTICATION_ERROR);
             if ($authException instanceof AuthenticationException) {
                 $session->remove(Security::AUTHENTICATION_ERROR);
 
                 $view->error = $authException->getMessage();
+
+                $bruteforceProtectionHandler->addEntry($this->getAdminUser()->getName(), $request);
             }
         } else {
             $view->error = 'No session available, it either timed out or cookies are not enabled.';
