@@ -570,7 +570,7 @@ class DefaultMysql implements ProductListInterface
             case ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
                 //make sure, that only variant objects are considered
-                $condition .= ' AND o_id != o_virtualProductId ';
+                $condition .= ' AND a.o_id != o_virtualProductId ';
                 break;
 
             case ProductListInterface::VARIANT_MODE_HIDE:
