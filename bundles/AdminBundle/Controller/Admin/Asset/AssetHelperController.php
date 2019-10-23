@@ -168,10 +168,6 @@ class AssetHelperController extends AdminController
     public function doGetGridColumnConfig(Request $request, $isDelete = false)
     {
         $gridConfigId = null;
-        $gridType = 'folder';
-        if ($request->get('gridtype')) {
-            $gridType = $request->get('gridtype');
-        }
 
         $classId = $request->get('id');
         $type = $request->get('type');
@@ -317,7 +313,6 @@ class AssetHelperController extends AdminController
 
     /**
      * @param $noSystemColumns
-     * @param $gridType
      * @param $fields
      * @param $context
      * @param $types

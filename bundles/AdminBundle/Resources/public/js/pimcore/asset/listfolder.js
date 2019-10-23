@@ -17,11 +17,14 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
     onlyDirectChildren: false,
     onlyUnreferenced: false,
     fieldObject: {},
+    object: {},
+    gridType: 'asset',
 
     initialize: function (element, searchType) {
         this.element = element;
         this.searchType = searchType;
-
+        this.classId = element.id;
+        this.object.id = element.id;
     },
 
     getLayout: function () {
@@ -40,12 +43,16 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         return this.layout;
     },
 
+    //for parent switchToGridConfig call
+    getTableDescription: function () {
+        this.getGrid();
+    },
+
     getGrid: function () {
         Ext.Ajax.request({
             url: "/admin/asset-helper/grid-get-column-config",
             params: {
                 id: this.element.data.id,
-                gridtype: "grid",
                 type: "asset",
                 gridConfigId: this.settings ? this.settings.gridConfigId : null,
                 searchType: this.searchType
@@ -505,4 +512,4 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
 });
 
-pimcore.asset.listfolder.addMethods(pimcore.asset.helpers.gridColumnConfig);
+pimcore.asset.listfolder.addMethods(pimcore.element.helpers.gridcolumnconfig);

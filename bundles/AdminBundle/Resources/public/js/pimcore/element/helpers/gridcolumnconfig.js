@@ -12,13 +12,8 @@
  */
 
 
-/**
- * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection,
- * pimcore.object.tags.localizedfields
- */
-
-pimcore.registerNS("pimcore.object.helpers.gridcolumnconfig");
-pimcore.object.helpers.gridcolumnconfig = {
+pimcore.registerNS("pimcore.element.helpers.gridcolumnconfig");
+pimcore.element.helpers.gridcolumnconfig = {
 
     getSaveAsDialog: function () {
         var defaultName = new Date();
@@ -49,7 +44,7 @@ pimcore.object.helpers.gridcolumnconfig = {
                     this.settings.gridConfigDescription = descriptionField.getValue();
 
                     pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
-                        this.columnConfigurationSavedHandler.bind(this), this.settings);
+                        this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType);
                     this.saveWindow.close();
                 }.bind(this)
             }]
@@ -84,7 +79,7 @@ pimcore.object.helpers.gridcolumnconfig = {
     deleteGridConfigConfirmed: function (btn) {
         if (btn == 'ok') {
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-delete-column-config",
+                url: "/admin/" + this.gridType + "-helper/grid-delete-column-config",
                 method: "DELETE",
                 params: {
                     id: this.classId,
@@ -157,7 +152,7 @@ pimcore.object.helpers.gridcolumnconfig = {
                 text: t('set_as_favourite'),
                 iconCls: "pimcore_icon_favourite",
                 handler: function () {
-                    pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
+                    pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true, this.gridType);
                 }.bind(this)
             });
 
@@ -204,7 +199,7 @@ pimcore.object.helpers.gridcolumnconfig = {
             this.getSaveAsDialog();
         } else {
             pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
-                this.columnConfigurationSavedHandler.bind(this), this.settings);
+                this.columnConfigurationSavedHandler.bind(this), this.settings, this.gridType);
         }
     },
 

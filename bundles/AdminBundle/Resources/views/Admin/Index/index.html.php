@@ -344,8 +344,8 @@ $scripts = array(
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
     "pimcore/element/gridexport/abstract.js",
+    "pimcore/element/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/grid.js",
-    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/import/csvPreviewTab.js",
     "pimcore/object/helpers/import/columnConfigurationTab.js",
@@ -367,7 +367,6 @@ $scripts = array(
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
     "pimcore/asset/helpers/metadataTree.js",
-    "pimcore/asset/helpers/gridColumnConfig.js",
     "pimcore/asset/helpers/gridConfigDialog.js",
     "pimcore/asset/helpers/gridTabAbstract.js",
 
