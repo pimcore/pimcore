@@ -136,6 +136,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $nestedPath = "attributes.my_attributes";
         
         // @todo: get $myAttributeValue and $myAttributeId from request params

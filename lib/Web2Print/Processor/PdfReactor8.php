@@ -47,7 +47,8 @@ class PdfReactor8 extends Processor
             'addTags' => $config->tags == 'true',
             'logLevel' => $config->loglevel,
             'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode == 'true',
-            'addOverprint' => $config->addOverprint == 'true'
+            'addOverprint' => $config->addOverprint == 'true',
+            'httpsMode' => $web2PrintConfig->pdfreactorEnableLenientHttpsMode ? \HttpsMode::LENIENT : \HttpsMode::STRICT
         ];
         if ($config->viewerPreference) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];

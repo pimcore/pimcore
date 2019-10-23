@@ -355,7 +355,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         if (isset($this->$key)) {
             return $this->$key;
-        } elseif ($this->getClass()->getFieldDefinition($key) instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+        }
+
+        if ($this->getClass()->getFieldDefinition($key) instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $value = new Model\DataObject\Data\CalculatedValue($key);
             $value = Service::getCalculatedFieldValue($this, $value);
 
@@ -392,17 +394,19 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         // check in fields
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies = array_merge($dependencies, $field->resolveDependencies(
+                $dependencies[] = $field->resolveDependencies(
                     isset($this->$key) ? $this->$key : null
-                ));
+                );
             }
         }
+
+        $dependencies = array_merge(...$dependencies);
 
         return $dependencies;
     }
@@ -553,10 +557,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($parent) {
             $method = 'get' . $key;
             if (method_exists($parent, $method)) {
-                return call_user_func([$parent, $method], $params);
-            } else {
-                throw new InheritanceParentNotFoundException(sprintf('Parent object does not have a method called `%s()`, unable to retrieve value for key `%s`', $method, $key));
+                return $parent->$method($params);
             }
+
+            throw new InheritanceParentNotFoundException(sprintf('Parent object does not have a method called `%s()`, unable to retrieve value for key `%s`', $method, $key));
         }
 
         throw new InheritanceParentNotFoundException('No parent object available to get a value from');
@@ -569,12 +573,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         if ($this->getParent() instanceof AbstractObject) {
             $parent = $this->getParent();
-            while ($parent && $parent->getType() == 'folder') {
+            while ($parent && $parent->getType() === self::OBJECT_TYPE_FOLDER) {
                 $parent = $parent->getParent();
             }
 
-            if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
-                if ($parent->getClassId() == $this->getClassId()) {
+            if ($parent && in_array($parent->getType(), [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT], true)) {
+                if ($parent->getClassId() === $this->getClassId()) {
                     return $parent;
                 }
             }
@@ -624,7 +628,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'manyToManyRelation', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
 
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
-            if (!in_array($field->getFieldType(), $allowedDataTypes)) {
+            if (!in_array($field->getFieldType(), $allowedDataTypes, true)) {
                 throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
             }
 
@@ -644,7 +648,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
                 }
 
-                $defaultCondition = $localizedPropertyName . ' = ' . \Pimcore\Db::get()->quote($value) . ' ';
+                $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition
                 ];
@@ -656,7 +660,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $arguments = array_pad($arguments, 3, 0);
                 list($value, $limit, $offset) = $arguments;
 
-                $defaultCondition = $propertyName . ' = ' . \Pimcore\Db::get()->quote($value) . ' ';
+                $defaultCondition = $propertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition
                 ];
@@ -845,7 +849,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $db = Db::get();
         $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
 
-        if ($versionData && $versionData['id'] && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
+        if (!empty($versionData['id']) && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
             $version = Model\Version::getById($versionData['id']);
 
             return $version;
