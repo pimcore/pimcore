@@ -18,6 +18,7 @@
 namespace Pimcore\Model;
 
 use DeepCopy\DeepCopy;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
@@ -183,17 +184,30 @@ class Version extends AbstractModel
         if (is_object($data) or is_array($data)) {
 
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
+            $fromRuntime = null;
+            $cacheKey = null;
             if ($data instanceof Element\ElementInterface) {
+                $cacheKey = Service::getType($data) . "_" . $data->getId();
+
                 Element\Service::loadAllFields($data);
+                if (Runtime::isRegistered($cacheKey)) {
+                    $fromRuntime = Runtime::get($cacheKey);
+                }
+                Runtime::set($cacheKey, $data);
             }
 
             $this->setSerialized(true);
+
 
             $data->_fulldump = true;
 
             $condensedData = $this->marshalData($data);
 
             $dataString = Serialize::serialize($condensedData);
+
+            if ($fromRuntime) {
+                Runtime::set($cacheKey, $fromRuntime);
+            }
 
             // revert all changed made by __sleep()
             if (method_exists($data, '__wakeup')) {
