@@ -351,7 +351,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             },
             viewConfig: {
                 plugins: {
-                    ptype: 'gridviewdragdrop'
+                    ptype: 'gridviewdragdrop',
+                    draggroup: 'element'
                 },
                 markDirty: false,
                 enableTextSelection: true,

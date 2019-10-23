@@ -412,7 +412,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 markDirty: false,
                 enableTextSelection: true,
                 plugins: {
-                    ptype: 'gridviewdragdrop'
+                    ptype: 'gridviewdragdrop',
+                    draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {

@@ -185,7 +185,8 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             viewConfig: {
                 markDirty: false,
                 plugins: {
-                    ptype: 'gridviewdragdrop'
+                    ptype: 'gridviewdragdrop',
+                    draggroup: 'element'
                 },
                 listeners: {
                     refresh: function (gridview) {
