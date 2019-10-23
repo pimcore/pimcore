@@ -493,7 +493,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $newFileExt = File::getFileExtension($newFilename);
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
-            $newFilename = preg_replace('/\.' . $currentFileExt . '$/', '.'.$newFileExt, $asset->getFilename());
+            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.'.$newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
