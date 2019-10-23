@@ -371,7 +371,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             plugins: plugins,
             viewConfig: {
                 forceFit: false,
-                xtype: 'patchedgridview'
+                xtype: 'patchedgridview',
+                enableTextSelection: true
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
