@@ -26,7 +26,7 @@ class PimcoreClassDefinitionMatcher implements Matcher
     public function matches($object, $property)
     {
         return $object instanceof Concrete &&
-            $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data;
+            $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data\CustomVersionMarshalInterface;
     }
 
 }
