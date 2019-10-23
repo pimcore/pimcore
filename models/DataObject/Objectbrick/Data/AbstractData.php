@@ -161,15 +161,18 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function getValueFromParent($key)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($this->getObject());
+        $object = $this->getObject();
+        if ($object) {
+            $parent = DataObject\Service::hasInheritableParentObject($object);
 
-        if (!empty($parent)) {
-            $containerGetter = 'get' . ucfirst($this->fieldname);
-            $brickGetter = 'get' . ucfirst($this->getType());
-            $getter = 'get' . ucfirst($key);
+            if (!empty($parent)) {
+                $containerGetter = 'get' . ucfirst($this->fieldname);
+                $brickGetter = 'get' . ucfirst($this->getType());
+                $getter = 'get' . ucfirst($key);
 
-            if ($parent->$containerGetter()->$brickGetter()) {
-                return $parent->$containerGetter()->$brickGetter()->$getter();
+                if ($parent->$containerGetter()->$brickGetter()) {
+                    return $parent->$containerGetter()->$brickGetter()->$getter();
+                }
             }
         }
 
