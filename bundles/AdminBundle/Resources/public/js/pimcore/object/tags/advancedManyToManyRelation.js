@@ -351,10 +351,10 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             },
             viewConfig: {
                 plugins: {
-                    ptype: 'gridviewdragdrop',
-                    draggroup: 'element'
+                    ptype: 'gridviewdragdrop'
                 },
                 markDirty: false,
+                enableTextSelection: true,
                 listeners: {
                     afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data, true);
