@@ -350,6 +350,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
         var operatorFound = false;
 
         if (this.selectionPanel) {
+            var tmp = [];
             this.data.columns = [];
             this.selectionPanel.getRootNode().eachChild(function (child) {
                 var obj = {};
@@ -364,7 +365,13 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                     obj.attributes = attributes;
 
                 } else {
-                    obj.key = child.data.key;
+                    if(child.data.language) {
+                        obj.key = child.data.text + '~~' + child.data.language;
+                    } else {
+                        obj.key = child.data.text;
+                    }
+
+                    obj.language = child.data.language;
                     obj.label = child.data.layout ? child.data.layout.title : child.data.text;
                     obj.type = child.data.dataType;
                     obj.layout = child.data.layout;
@@ -372,8 +379,10 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                         obj.width = child.data.width;
                     }
                 }
-
-                this.data.columns.push(obj);
+                if(!Ext.Array.contains(tmp, obj.key)) {
+                    tmp.push(obj.key);
+                    this.data.columns.push(obj);
+                }
             }.bind(this));
         }
 
@@ -590,7 +599,8 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                         dataType: nodeConf.dataType,
                         leaf: true,
                         layout: nodeConf.layout,
-                        iconCls: "pimcore_icon_" + nodeConf.dataType
+                        iconCls: "pimcore_icon_" + nodeConf.dataType,
+                        language: nodeConf.language
                     };
                     if (nodeConf.width) {
                         child.width = nodeConf.width;
@@ -600,7 +610,25 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
             }
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1
+                clicksToEdit: 1,
+                listeners: {
+                    beforeedit: function(editor, context, eOpts) {
+                        //need to clear cached editors of cell-editing editor in order to
+                        //enable different editors per row
+                        editor.editors.each(function (e) {
+                            try {
+                                // complete edit, so the value is stored when hopping around with TAB
+                                e.completeEdit();
+                                Ext.destroy(e);
+                            } catch (exception) {
+                                // garbage collector was faster
+                                // already destroyed
+                            }
+                        });
+
+                        editor.editors.clear();
+                    }
+                }
             });
 
             var store = new Ext.data.TreeStore({
@@ -631,6 +659,41 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                     flex: 90
                 }
             ];
+
+            var languagestore = [["",t("default")]];
+            for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
+                languagestore.push([pimcore.settings.websiteLanguages[i],
+                    pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
+            }
+
+            columns.push({
+                text: t('language'),
+                sortable: true,
+                dataIndex: "language",
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
+                        name: "language",
+                        store: languagestore,
+                        editable: false,
+                        triggerAction: 'all',
+                        mode: "local",
+                        listeners: {
+                            // blur: function() {
+                            //     this.commitData(false, true);
+                            // }.bind(this),
+                            focusenter: function ( combo, event, eOpts ) {
+                                var currentRecord =  this.selectionPanel.getSelection();
+                                if(currentRecord[0].data.dataType == "system") {
+                                    combo.disable();
+                                } else {
+                                    combo.expand();
+                                }
+                            }.bind(this),
+                        },
+                    });
+                }.bind(this),
+                width: 150
+            });
 
             if (this.previewSettings && this.previewSettings.allowPreview) {
                 columns.push({
@@ -728,15 +791,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                                     }
 
                                 } else {
-                                    if (this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
-                                        dropHandlers.cancelDrop();
-                                    } else {
-                                        var copy = Ext.apply({}, record.data);
-                                        delete copy.id;
-                                        copy = record.createNode(copy);
+                                    var copy = Ext.apply({}, record.data);
+                                    delete copy.id;
+                                    copy = record.createNode(copy);
 
-                                        data.records = [copy]; // assign the copy as the new dropNode
-                                    }
+                                    data.records = [copy]; // assign the copy as the new dropNode
                                 }
                             } else {
                                 // node has been moved inside right selection panel
@@ -840,6 +899,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
                 autoScroll: true,
                 rowLines: true,
                 columnLines: true,
+                trackMouseOver: true,
                 listeners: {
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
@@ -950,14 +1010,12 @@ pimcore.asset.helpers.gridConfigDialog = Class.create({
             if (!record.data.root && record.data.type != "layout") {
                 var copy = Ext.apply({}, record.data);
 
-                if (this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
-                    delete copy.id;
-                    copy = this.selectionPanel.getRootNode().appendChild(copy);
+                delete copy.id;
+                copy = this.selectionPanel.getRootNode().appendChild(copy);
 
-                    var ownerTree = this.selectionPanel;
+                var ownerTree = this.selectionPanel;
 
-                    this.updatePreview();
-                }
+                this.updatePreview();
             }
         }.bind(this));
 

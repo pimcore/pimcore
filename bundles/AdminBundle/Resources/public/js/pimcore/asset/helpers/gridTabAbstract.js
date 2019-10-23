@@ -30,7 +30,8 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
                     key: fieldKeys[i],
                     label: field.fieldConfig.label,
                     dataType: field.fieldConfig.type,
-                    layout: field.fieldConfig.layout
+                    layout: field.fieldConfig.layout,
+                    language: field.fieldConfig.language,
                 };
                 if (field.fieldConfig.width) {
                     fc.width = field.fieldConfig.width;
@@ -166,6 +167,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
             "ids[]": ids,
             "fields[]": fieldKeys,
             settings: settings,
+            language: this.gridLanguage,
             only_direct_children: this.onlyDirectChildren,
             only_unreferenced: this.onlyUnreferenced
         };

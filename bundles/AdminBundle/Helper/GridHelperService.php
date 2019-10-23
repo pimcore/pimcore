@@ -648,7 +648,13 @@ class GridHelperService
 
 
                 if(! in_array($filterField, $systemColumns)) {
-                    $language = str_replace("default", "", $allParams['language']);
+                    $language = $allParams['language'];
+                    if( strpos($filterField, '~~')) {
+                        $fieldDef = explode('~~',$filterField);
+                        $filterField = $fieldDef[0];
+                        $language = $fieldDef[1];
+                    }
+                    $language = str_replace("default", "", $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $db->quote($value) . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
                     $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);

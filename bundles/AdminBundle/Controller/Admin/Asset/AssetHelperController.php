@@ -266,8 +266,9 @@ class AssetHelperController extends AdminController
                     $colConfig = [
                         'key' => $key,
                         'type' => $type,
-                        'label' => $key,
-                        'position' => $sc['position']];
+                        'label' => $sc['fieldConfig']['label'] ?? $key,
+                        'position' => $sc['position'],
+                        'language' => $sc['fieldConfig']['language']];
                     if (isset($sc['width'])) {
                         $colConfig['width'] = $sc['width'];
                     }
@@ -697,7 +698,13 @@ class AssetHelperController extends AdminController
                     if (method_exists($asset, $getter)) {
                         $a[] = $asset->$getter($language);
                     } else {
-                        $a[] = $asset->getMetadata($field, $language);
+                        if( strpos($field, '~~')) {
+                            $fieldDef = explode('~~', $field);
+                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1]);
+                        } else {
+                            $a[] = $asset->getMetadata($field, $language);
+                        }
+
                         if ($a instanceof Element\AbstractElement) {
                             $a = $a->getFullPath();
                         }

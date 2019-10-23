@@ -196,8 +196,9 @@ class Service extends Model\Element\Service
                 'idPath' => Element\Service::getIdPath($asset),
             ];
 
+            $requestedLanguage = str_replace("default","", $requestedLanguage);
+
             foreach ($fields as $field) {
-                $requestedLanguage =str_replace("default","", $requestedLanguage);
                 if ($field == "preview") {
                     $data["preview"] = self::getPreviewThumbnail($asset,['width' => 108, 'height' => 70, 'frame' => true]);
                 } else if ($field == "size") {
@@ -206,7 +207,13 @@ class Service extends Model\Element\Service
                     $size = @filesize($filename);
                     $data[$field] = formatBytes($size);
                 } else if (!in_array($field, Asset\Service::$gridSystemColumns)) {
-                    $metaData = $asset->getMetadata($field, $requestedLanguage, true);
+                    if( strpos($field, '~~')) {
+                        $fieldDef = explode('~~',$field);
+                        $metaData = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
+                    } else {
+                        $metaData = $asset->getMetadata($field, $requestedLanguage, true);
+                    }
+
                     if($metaData instanceof Model\Element\AbstractElement) {
                         $metaData = $metaData->getFullPath();
                     }
