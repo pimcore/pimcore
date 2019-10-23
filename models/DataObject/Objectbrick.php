@@ -286,7 +286,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function __wakeup()
     {
 
-        if ($this->object) {
+        if (isset($this->object) && $this->object) {
             $this->objectId = $this->object->getId();
         }
 
