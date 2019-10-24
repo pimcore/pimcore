@@ -22,10 +22,10 @@
   ],
   "support": {
     "issues": "https://github.com/pimcore/pimcore/issues",
-    "wiki": "https://pimcore.com/docs/5.0.x/index.html",
+    "wiki": "https://pimcore.com/docs/latest/",
     "source": "https://github.com/pimcore/pimcore",
-    "forum": "https://groups.google.com/forum/#!forum/pimcore",
-    "docs": "https://pimcore.com/docs/5.0.x/index.html"
+    "forum": "https://talk.pimcore.org/",
+    "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
     "php": ">=7.2",
