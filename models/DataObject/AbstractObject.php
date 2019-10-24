@@ -1243,10 +1243,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
-        if (isset($this->_fulldump)) {
+        if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
-            $finalVars[] = '_fulldump';
+            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
@@ -1264,7 +1264,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function __wakeup()
     {
-        if (isset($this->_fulldump) && !self::$doNotRestoreKeyAndPath) {
+        if ($this->isInDumpState() && !self::$doNotRestoreKeyAndPath) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = AbstractObject::getById($this->getId());
             if ($originalElement) {
@@ -1273,13 +1273,13 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if (isset($this->_fulldump) && $this->o_properties !== null) {
+        if ($this->isInDumpState() && $this->o_properties !== null) {
             $this->renewInheritedProperties();
         }
 
-        if (isset($this->_fulldump)) {
-            unset($this->_fulldump);
-        }
+        $this->setInDumpState(false);
+
+
     }
 
     public function removeInheritedProperties()

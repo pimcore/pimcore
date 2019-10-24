@@ -25,9 +25,11 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 /**
  * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    use Model\Element\ElementDumpStateTrait;
 
     /**
      * Will be overriden by the actual ObjectBrick
@@ -187,6 +189,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function setObject($object)
     {
         $this->objectId = $object ? $object->getId() : null;
+        $this->object = $object;
         return $this;
     }
 
@@ -195,11 +198,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function getObject()
     {
-        if ($this->objectId) {
-            $object = Concrete::getById($this->objectId);
-            return $object;
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
         }
-        return null;
+
+        return $this->object;
     }
 
     /**
@@ -273,10 +276,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys', 'object', $this->getDumpStateProperty()];
         $finalVars = [];
 
-        if (!isset($this->getObject()->_fulldump)) {
+        if (!$this->isInDumpState()) {
             //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
             $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
@@ -292,7 +295,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
 
     public function __wakeup() {
-        if (isset($this->object) && $this->object) {
+        if ($this->object) {
             $this->objectId = $this->object->getId();
         }
     }

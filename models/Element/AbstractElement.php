@@ -22,8 +22,11 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
  */
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
+
+    use ElementDumpStateTrait;
+
     /**
      * @var int
      */

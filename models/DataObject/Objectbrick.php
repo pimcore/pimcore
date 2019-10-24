@@ -39,6 +39,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     protected $fieldname;
 
     /**
+     * @var Model\DataObject\Concrete
+     */
+    protected $object;
+
+    /**
      * @var int
      */
     protected $objectId;
@@ -239,11 +244,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function getObject()
     {
-        if ($this->objectId) {
-            $object = Concrete::getById($this->objectId);
-            return $object;
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
         }
-        return null;
+
+        return $this->object;
+
     }
 
     /**
@@ -254,6 +260,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function setObject($object)
     {
         $this->objectId = $object ? $object->getId() : null;
+        $this->object = $object;
 
         // update all items with the new $object
         if (is_array($this->getItems())) {
@@ -283,9 +290,28 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $this->getDao()->delete($object);
     }
 
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['object'];
+        $vars = parent::__sleep();
+
+        foreach ($vars as $value) {
+            if (!in_array($value, $blockedVars)) {
+                $finalVars[] = $value;
+            }
+        }
+
+        return $finalVars;
+    }
+
     public function __wakeup()
     {
 
+        // for backwards compatibility
         if (isset($this->object) && $this->object) {
             $this->objectId = $this->object->getId();
         }
