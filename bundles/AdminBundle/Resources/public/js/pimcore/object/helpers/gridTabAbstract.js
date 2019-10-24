@@ -206,7 +206,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             fieldInfo.layout = {
                 layout: {
                     title: t("published"),
-                    name: "published"
+                    name: "published",
+                    hideEmptyButton: true
                 },
                 type: "checkbox"
             };
@@ -336,7 +337,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         Ext.Ajax.request({
             url: "/admin/object-helper/batch",
             method: 'PUT',
-            params: this.batchParameters,
+            params: {
+                data: Ext.encode(this.batchParameters)
+            },
             success: function (jobs, currentJob, response) {
 
                 try {
