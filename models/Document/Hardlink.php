@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
-use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -28,6 +27,7 @@ use Pimcore\Tool\Frontend;
 class Hardlink extends Document
 {
     use Document\Traits\ScheduledTasksTrait;
+    use Document\Traits\RedirectHelperTrait;
 
     /**
      * static type of this object
@@ -271,34 +271,7 @@ class Hardlink extends Document
 
         parent::update($params);
 
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
-            // create redirect for old path
-            $redirect = new Redirect();
-            $redirect->setType(Redirect::TYPE_PATH);
-            $redirect->setRegex(true);
-            $redirect->setTarget($this->getId());
-            $redirect->setSource('@' . $oldPath . '/?@');
-            $redirect->setStatusCode(301);
-            $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
-
-            //set source site
-            $oldSite = Frontend::getSiteForDocument($oldDocument);
-            if($oldSite) {
-                $redirect->setSourceSite($oldSite->getId());
-                $oldPath = preg_replace('@^' . preg_quote($oldSite->getRootPath()) . '@', '', $oldPath);
-                $redirect->setSource('@' . $oldPath . '/?@');
-            }
-
-            //set target site
-            $newSite = Frontend::getSiteForDocument($this);
-            if ($newSite) {
-                $redirect->setTargetSite($newSite->getId());
-            }
-
-            $redirect->save();
-        }
-
+        $this->createRedirectForFormerPath($oldPath, $oldDocument);
         $this->saveScheduledTasks();
     }
 }
