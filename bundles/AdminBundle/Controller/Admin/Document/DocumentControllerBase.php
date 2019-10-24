@@ -175,8 +175,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                 $document = $this->getLatestVersion($document);
             }
 
-            // set _fulldump otherwise the properties will be removed because of the session-serialize
-            $document->_fulldump = true;
+            // set dump state to true otherwise the properties will be removed because of the session-serialize
+            $document->setInDumpState(true);
             $this->setValuesToDocument($request, $document);
 
             $session->set($key, $document);
