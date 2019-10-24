@@ -24,12 +24,15 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ElementDumpStateInterface;
+use Pimcore\Model\Element\ElementDumpStateTrait;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\ElementDescriptor;
 use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Model\Version\UnmarshalMatcher;
 use Pimcore\Tool\Serialize;
 
@@ -186,13 +189,13 @@ class Version extends AbstractModel
         if (is_object($data) or is_array($data)) {
 
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
+            $fromRuntime = null;
+            $cacheKey = null;
             if ($data instanceof Element\ElementInterface) {
                 Element\Service::loadAllFields($data);
             }
 
             $this->setSerialized(true);
-
-            $data->_fulldump = true;
 
             $condensedData = $this->marshalData($data);
 
@@ -202,7 +205,6 @@ class Version extends AbstractModel
             if (method_exists($data, '__wakeup')) {
                 $data->__wakeup();
             }
-            unset($data->_fulldump);
         } else {
             $dataString = $data;
         }
@@ -303,8 +305,10 @@ class Version extends AbstractModel
         $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
         $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Templating\Model\ViewModelInterface'));
         $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Psr\Container\ContainerInterface'));
+        $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateTrait::$dumpStateProperty));
+        $newData = $copier->copy($data);
 
-        return $copier->copy($data);
+        return $newData;
     }
 
     /**

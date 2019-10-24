@@ -2183,156 +2183,159 @@ class DataObjectHelperController extends AdminController
         $success = true;
 
         try {
-            $object = DataObject::getById($request->get('job'));
+            if ($request->get('data')) {
+                $params = $this->decodeJson($request->get('data'), true);
+                $object = DataObject::getById($params['job']);
 
-            if ($object) {
-                $name = $request->get('name');
+                if ($object) {
+                    $name = $params['name'];
 
-                if (!$object->isAllowed('save') || ($name === 'published' && !$object->isAllowed('publish'))) {
-                    throw new \Exception("Permission denied. You don't have the rights to save this object.");
-                }
+                    if (!$object->isAllowed('save') || ($name === 'published' && !$object->isAllowed('publish'))) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                    }
 
-                $append = $request->get('append');
+                    $append = $params['append'];
 
-                $className = $object->getClassName();
-                $class = DataObject\ClassDefinition::getByName($className);
-                $value = $request->get('value');
-                if ($request->get('valueType') == 'object') {
-                    $value = $this->decodeJson($value);
-                }
+                    $className = $object->getClassName();
+                    $class = DataObject\ClassDefinition::getByName($className);
+                    $value = $params['value'];
+                    if ($params['valueType'] == 'object') {
+                        $value = $this->decodeJson($value);
+                    }
 
-                $parts = explode('~', $name);
+                    $parts = explode('~', $name);
 
-                if (substr($name, 0, 1) == '~') {
-                    $type = $parts[1];
-                    $field = $parts[2];
-                    $keyid = $parts[3];
+                    if (substr($name, 0, 1) == '~') {
+                        $type = $parts[1];
+                        $field = $parts[2];
+                        $keyid = $parts[3];
 
-                    if ($type == 'classificationstore') {
-                        $requestedLanguage = $request->get('language');
-                        if ($requestedLanguage) {
-                            if ($requestedLanguage != 'default') {
-                                //                $this->get('translator')->setLocale($requestedLanguage);
-                                $request->setLocale($requestedLanguage);
-                            }
-                        } else {
-                            $requestedLanguage = $request->getLocale();
-                        }
-
-                        $groupKeyId = explode('-', $keyid);
-                        $groupId = $groupKeyId[0];
-                        $keyid = $groupKeyId[1];
-
-                        $getter = 'get' . ucfirst($field);
-                        if (method_exists($object, $getter)) {
-
-                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
+                        if ($type == 'classificationstore') {
+                            $requestedLanguage = $params['language'];
+                            if ($requestedLanguage) {
+                                if ($requestedLanguage != 'default') {
+                                    //                $this->get('translator')->setLocale($requestedLanguage);
+                                    $request->setLocale($requestedLanguage);
+                                }
+                            } else {
+                                $requestedLanguage = $request->getLocale();
                             }
 
-                            /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
-                            $fd = $class->getFieldDefinition($field);
-                            $keyConfig = $fd->getKeyConfiguration($keyid);
-                            $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                            $groupKeyId = explode('-', $keyid);
+                            $groupId = $groupKeyId[0];
+                            $keyid = $groupKeyId[1];
 
-                            /** @var $classificationStoreData DataObject\Classificationstore */
-                            $classificationStoreData = $object->$getter();
-                            $classificationStoreData->setLocalizedKeyValue(
-                                $groupId,
-                                $keyid,
-                                $dataDefinition->getDataFromEditmode($value),
-                                $csLanguage
-                            );
+                            $getter = 'get' . ucfirst($field);
+                            if (method_exists($object, $getter)) {
+
+                                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                                $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                $csLanguage = $requestedLanguage;
+                                if (!$csFieldDefinition->isLocalized()) {
+                                    $csLanguage = 'default';
+                                }
+
+                                /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+                                $fd = $class->getFieldDefinition($field);
+                                $keyConfig = $fd->getKeyConfiguration($keyid);
+                                $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+                                /** @var $classificationStoreData DataObject\Classificationstore */
+                                $classificationStoreData = $object->$getter();
+                                $classificationStoreData->setLocalizedKeyValue(
+                                    $groupId,
+                                    $keyid,
+                                    $dataDefinition->getDataFromEditmode($value),
+                                    $csLanguage
+                                );
+                            }
                         }
-                    }
-                } elseif (count($parts) > 1) {
-                    // check for bricks
-                    $brickType = $parts[0];
-                    $brickKey = $parts[1];
-                    $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    } elseif (count($parts) > 1) {
+                        // check for bricks
+                        $brickType = $parts[0];
+                        $brickKey = $parts[1];
+                        $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                    $fieldGetter = 'get' . ucfirst($brickField);
-                    $brickGetter = 'get' . ucfirst($brickType);
-                    $valueSetter = 'set' . ucfirst($brickKey);
+                        $fieldGetter = 'get' . ucfirst($brickField);
+                        $brickGetter = 'get' . ucfirst($brickType);
+                        $valueSetter = 'set' . ucfirst($brickKey);
 
-                    $brick = $object->$fieldGetter()->$brickGetter();
-                    if (empty($brick)) {
-                        $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
-                        $brickSetter = 'set' . ucfirst($brickType);
-                        $brick = new $classname($object);
-                        $object->$fieldGetter()->$brickSetter($brick);
-                    }
+                        $brick = $object->$fieldGetter()->$brickGetter();
+                        if (empty($brick)) {
+                            $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
+                            $brickSetter = 'set' . ucfirst($brickType);
+                            $brick = new $classname($object);
+                            $object->$fieldGetter()->$brickSetter($brick);
+                        }
 
-                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
-                    $field = $brickClass->getFieldDefinition($brickKey);
+                        $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
+                        $field = $brickClass->getFieldDefinition($brickKey);
 
-                    $newData = $field->getDataFromEditmode($value, $object);
-
-                    if ($append) {
-                        $valueGetter = 'get' . ucfirst($brickKey);
-                        $existingData = $brick->$valueGetter();
-                        $newData = $field->appendData($existingData, $newData);
-                    }
-                    $brick->$valueSetter($newData);
-                } else {
-                    // everything else
-                    $field = $class->getFieldDefinition($name);
-                    if ($field) {
                         $newData = $field->getDataFromEditmode($value, $object);
 
                         if ($append) {
-                            $existingData = $object->{'get' . $name}();
+                            $valueGetter = 'get' . ucfirst($brickKey);
+                            $existingData = $brick->$valueGetter();
                             $newData = $field->appendData($existingData, $newData);
                         }
-                        $object->setValue($name, $newData);
+                        $brick->$valueSetter($newData);
                     } else {
-                        // check if it is a localized field
-                        if ($request->get('language')) {
-                            $localizedField = $class->getFieldDefinition('localizedfields');
-                            if ($localizedField) {
-                                $field = $localizedField->getFieldDefinition($name);
-                                if ($field) {
-                                    $getter = 'get' . $name;
-                                    $setter = 'set' . $name;
-                                    /** @var $field DataObject\ClassDefinition\Data */
-                                    $newData = $field->getDataFromEditmode($value, $object);
-                                    if ($append) {
-                                        $existingData = $object->$getter($request->get('language'));
-                                        $newData = $field->appendData($existingData, $newData);
-                                    }
+                        // everything else
+                        $field = $class->getFieldDefinition($name);
+                        if ($field) {
+                            $newData = $field->getDataFromEditmode($value, $object);
 
-                                    $object->$setter($newData, $request->get('language'));
+                            if ($append) {
+                                $existingData = $object->{'get' . $name}();
+                                $newData = $field->appendData($existingData, $newData);
+                            }
+                            $object->setValue($name, $newData);
+                        } else {
+                            // check if it is a localized field
+                            if ($params['language']) {
+                                $localizedField = $class->getFieldDefinition('localizedfields');
+                                if ($localizedField) {
+                                    $field = $localizedField->getFieldDefinition($name);
+                                    if ($field) {
+                                        $getter = 'get' . $name;
+                                        $setter = 'set' . $name;
+                                        /** @var $field DataObject\ClassDefinition\Data */
+                                        $newData = $field->getDataFromEditmode($value, $object);
+                                        if ($append) {
+                                            $existingData = $object->$getter($params['language']);
+                                            $newData = $field->appendData($existingData, $newData);
+                                        }
+
+                                        $object->$setter($newData, $params['language']);
+                                    }
+                                }
+                            }
+
+                            // seems to be a system field, this is actually only possible for the "published" field yet
+                            if ($name == 'published') {
+                                if ($value === 'false' || empty($value)) {
+                                    $object->setPublished(false);
+                                } else {
+                                    $object->setPublished(true);
                                 }
                             }
                         }
-
-                        // seems to be a system field, this is actually only possible for the "published" field yet
-                        if ($name == 'published') {
-                            if ($value == 'false' || empty($value)) {
-                                $object->setPublished(false);
-                            } else {
-                                $object->setPublished(true);
-                            }
-                        }
                     }
-                }
 
-                try {
-                    // don't check for mandatory fields here
-                    $object->setOmitMandatoryCheck(!$object->isPublished());
-                    $object->setUserModification($this->getAdminUser()->getId());
-                    $object->save();
-                    $success = true;
-                } catch (\Exception $e) {
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                }
-            } else {
-                Logger::debug('DataObjectController::batchAction => There is no object left to update.');
+                    try {
+                        // don't check for mandatory fields here
+                        $object->setOmitMandatoryCheck(!$object->isPublished());
+                        $object->setUserModification($this->getAdminUser()->getId());
+                        $object->save();
+                        $success = true;
+                    } catch (\Exception $e) {
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                    }
+                } else {
+                    Logger::debug('DataObjectController::batchAction => There is no object left to update.');
 
-                return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                    return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                }
             }
         } catch (\Exception $e) {
             Logger::err($e);

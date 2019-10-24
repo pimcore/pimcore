@@ -23,8 +23,11 @@ use Pimcore\Model\DataObject\Concrete;
 /**
  * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
+
+    use Model\Element\ElementDumpStateTrait;
+
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     /**
@@ -41,6 +44,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      * @var Model\DataObject\Concrete
      */
     protected $object;
+
+    /**
+     * @var int
+     */
+    protected $objectId;
 
     /**
      * @var string
@@ -105,25 +113,31 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $definition;
     }
 
+
     /**
-     * @param Model\DataObject\Concrete $object
+     * @param Concrete $object
      *
      * @return $this
      */
     public function setObject($object)
     {
+        $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
-
         return $this;
     }
 
     /**
-     * @return Model\DataObject\Concrete
+     * @return Concrete
      */
     public function getObject()
     {
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
+        }
+
         return $this->object;
     }
+
 
     /**
      * @param string $fieldName
@@ -183,10 +197,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys','object', $this->getDumpStateProperty()];
         $finalVars = [];
 
-        if (!isset($this->getObject()->_fulldump)) {
+        if (!$this->isInDumpState()) {
             //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
             $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
@@ -199,4 +213,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
         return $finalVars;
     }
+
+    public function __wakeup() {
+        if ($this->object) {
+            $this->objectId = $this->object->getId();
+        }
+    }
+
 }

@@ -23,11 +23,14 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Localizedfield\Dao getDao()
  */
-class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface
+class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
+
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;
+
+    use Model\Element\ElementDumpStateTrait;
 
     const STRICT_DISABLED = 0;
 
@@ -558,7 +561,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     public function __sleep()
     {
-        if (!isset($this->getObject()->_fulldump)) {
+        if (!$this->isInDumpState()) {
             /**
              * Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
              * This is actually not perfect, but currently we don't have an alternative

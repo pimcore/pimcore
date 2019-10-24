@@ -39,9 +39,14 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     protected $fieldname;
 
     /**
-     * @var Concrete
+     * @var Model\DataObject\Concrete
      */
     protected $object;
+
+    /**
+     * @var int
+     */
+    protected $objectId;
 
     /**
      * @var array
@@ -239,7 +244,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function getObject()
     {
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
+        }
+
         return $this->object;
+
     }
 
     /**
@@ -249,6 +259,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function setObject($object)
     {
+        $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
 
         // update all items with the new $object
@@ -279,8 +290,32 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $this->getDao()->delete($object);
     }
 
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['object'];
+        $vars = parent::__sleep();
+
+        foreach ($vars as $value) {
+            if (!in_array($value, $blockedVars)) {
+                $finalVars[] = $value;
+            }
+        }
+
+        return $finalVars;
+    }
+
     public function __wakeup()
     {
+
+        // for backwards compatibility
+        if (isset($this->object) && $this->object) {
+            $this->objectId = $this->object->getId();
+        }
+
         // sanity check, remove data requiring non-existing (deleted) brick definitions
 
         if (is_array($this->brickGetters)) {
@@ -338,7 +373,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $brickDef->getFieldDefinition($field);
             $context = [];
-            $context['object'] = $this->object;
+            $context['object'] = $this->getObject();
             $context['containerType'] = 'objectbrick';
             $context['containerKey'] = $brick;
             $context['brickField'] = $brickField;
@@ -380,4 +415,5 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
         }
     }
+
 }
