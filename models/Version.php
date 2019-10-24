@@ -202,9 +202,6 @@ class Version extends AbstractModel
             if (method_exists($data, '__wakeup')) {
                 $data->__wakeup();
             }
-
-            // no need to to restore the dump state as we created a copy
-            // unset($data->_fulldump);
         } else {
             $dataString = $data;
         }
@@ -255,7 +252,7 @@ class Version extends AbstractModel
         }
         \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
     }
-    
+
     /**
      * @param ElementInterface $data
      *
