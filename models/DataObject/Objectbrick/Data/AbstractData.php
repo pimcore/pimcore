@@ -49,6 +49,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $doDelete;
 
     /**
+     * @var Model\DataObject\Concrete
+     */
+    protected $object;
+
+    /**
      * @var int
      */
     protected $objectId;
