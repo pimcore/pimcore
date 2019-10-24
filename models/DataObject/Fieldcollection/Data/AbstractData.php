@@ -115,7 +115,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete $object
      *
      * @return $this
      */
@@ -127,7 +127,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return Concrete
      */
     public function getObject()
     {
@@ -200,7 +200,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $blockedVars = ['loadedLazyKeys','object', $this->getDumpStateProperty()];
         $finalVars = [];
 
-        if (!$this->is) {
+        if (!$this->isInDumpState()) {
             //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
             $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
