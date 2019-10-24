@@ -14,6 +14,12 @@
 pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
 pimcore.asset.helpers.gridTabAbstract = Class.create({
 
+    objecttype: 'asset',
+    batchPrepareUrl: "/admin/asset-helper/get-batch-jobs",
+    batchProcessUrl: "/admin/asset-helper/batch",
+    exportPrepareUrl: "/admin/asset-helper/get-export-jobs",
+    exportProcessUrl: "/admin/asset-helper/do-export",
+
     createGrid: function (columnConfig) {
     },
 
@@ -128,138 +134,5 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
         }
 
         return config;
-    },
-
-    exportPrepare: function (settings, exportType) {
-        var jobs = [];
-        var filters = "";
-
-        var filterData = this.store.getFilters().items;
-        if (filterData.length > 0) {
-            filters = this.store.getProxy().encodeFilters(filterData);
-        }
-
-        var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
-
-
-        //remove unsupported fields for export
-        var ignoreFields = ['preview', 'size'];
-        ignoreFields.forEach(function (field) {
-            var index = fieldKeys.indexOf(field);
-            if (index > -1) {
-                fieldKeys.splice(index, 1);
-            }
-        });
-
-        //create the ids array which contains chosen rows to export
-        ids = [];
-        var selectedRows = this.grid.getSelectionModel().getSelection();
-        for (var i = 0; i < selectedRows.length; i++) {
-            ids.push(selectedRows[i].data.id);
-        }
-
-        settings = Ext.encode(settings);
-
-        var params = {
-            filter: filters,
-            folderId: this.element.id,
-            "ids[]": ids,
-            "fields[]": fieldKeys,
-            settings: settings,
-            language: this.gridLanguage,
-            only_direct_children: this.onlyDirectChildren,
-            only_unreferenced: this.onlyUnreferenced
-        };
-
-        Ext.Ajax.request({
-            url: "/admin/asset-helper/get-export-jobs",
-            params: params,
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-
-                if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
-                }
-            }.bind(this)
-        });
-    },
-
-    exportProcess: function (jobs, fileHandle, fields, initial, settings, exportType) {
-        if (initial) {
-            this.exportErrors = [];
-            this.exportJobCurrent = 0;
-
-            this.exportParameters = {
-                fileHandle: fileHandle,
-                settings: settings
-            };
-            this.exportProgressBar = new Ext.ProgressBar({
-                text: t('initializing'),
-                style: "margin: 10px;",
-                width: 500
-            });
-
-            this.exportProgressWin = new Ext.Window({
-                items: [this.exportProgressBar],
-                modal: true,
-                bodyStyle: "background: #fff;",
-                closable: false
-            });
-            this.exportProgressWin.show();
-        }
-
-        if (this.exportJobCurrent >= jobs.length) {
-            this.exportProgressWin.close();
-
-            // error handling
-            if (this.exportErrors.length > 0) {
-                var jobErrors = [];
-                for (var i = 0; i < this.exportErrors.length; i++) {
-                    jobErrors.push(this.exportErrors[i].job);
-                }
-                Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
-            } else {
-                pimcore.helpers.download(exportType.downloadUrl + "?fileHandle=" + fileHandle);
-            }
-
-            return;
-        }
-
-        var status = (this.exportJobCurrent / jobs.length);
-        var percent = Math.ceil(status * 100);
-        this.exportProgressBar.updateProgress(status, percent + "%");
-
-        this.exportParameters['ids[]'] = jobs[this.exportJobCurrent];
-        this.exportParameters["fields[]"] = fields;
-        this.exportParameters.classId = this.classId;
-        this.exportParameters.initial = initial ? 1 : 0;
-        this.exportParameters.language = this.gridLanguage;
-
-        Ext.Ajax.request({
-            url: "/admin/asset-helper/do-export",
-            method: 'POST',
-            params: this.exportParameters,
-            success: function (jobs, currentJob, response) {
-
-                try {
-                    var rdata = Ext.decode(response.responseText);
-                    if (rdata) {
-                        if (!rdata.success) {
-                            throw "not successful";
-                        }
-                    }
-                } catch (e) {
-                    this.exportErrors.push({
-                        job: currentJob
-                    });
-                }
-
-                window.setTimeout(function () {
-                    this.exportJobCurrent++;
-                    this.exportProcess(jobs, fileHandle, fields, false, settings, exportType);
-                }.bind(this), 400);
-            }.bind(this, jobs, jobs[this.exportJobCurrent])
-        });
     },
 });

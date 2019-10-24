@@ -14,6 +14,7 @@
 pimcore.registerNS("pimcore.asset.listfolder");
 pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
+    systemColumns: ["id", "type", "fullpath", "filename", "creationDate", "modificationDate", "preview", "size"],
     onlyDirectChildren: false,
     onlyUnreferenced: false,
     fieldObject: {},
@@ -254,7 +255,8 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             bbar: this.pagingtoolbar,
             selModel: this.selectionColumn,
             viewConfig: {
-                forceFit: true
+                forceFit: true,
+                enableTextSelection: true
             },
             listeners: {
                 activate: function() {
@@ -512,4 +514,4 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
 });
 
-pimcore.asset.listfolder.addMethods(pimcore.element.helpers.gridcolumnconfig);
+pimcore.asset.listfolder.addMethods(pimcore.element.helpers.gridColumnConfig);

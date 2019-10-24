@@ -569,4 +569,4 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 });
 
-pimcore.object.search.addMethods(pimcore.element.helpers.gridcolumnconfig);
+pimcore.object.search.addMethods(pimcore.element.helpers.gridColumnConfig);

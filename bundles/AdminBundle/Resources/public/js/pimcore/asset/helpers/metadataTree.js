@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.helpers.metadataTree");
-pimcore.object.helpers.metadataTree = Class.create({
+pimcore.registerNS("pimcore.asset.helpers.metadataTree");
+pimcore.asset.helpers.metadataTree = Class.create({
 
     showFieldName: false,
 

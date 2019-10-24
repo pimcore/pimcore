@@ -664,4 +664,4 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 });
 
-pimcore.element.selector.object.addMethods(pimcore.element.helpers.gridcolumnconfig);
+pimcore.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);
