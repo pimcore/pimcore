@@ -690,7 +690,6 @@
     "login_token_invalid_user_error": "Ungültiger Benutzer.",
     "login_token_as_admin_non_admin_user_error": "Nur Administratoren haben das Recht sich als Administrator einzuloggen",
     "login_token_no_password_error": "Der Benutzer hat kein Passwort gesetzt.",
-    "lostpassword_reset_error": "Es ist ein Fehler aufgetreten beim Versenden der Passwort-Information. Bitte versuchen Sie es erneut oder kontaktieren Sie Ihren Administrator.",
     "targeting_toolbar": "Targeting-Symbolleiste",
     "sort_children_by": "Kinder sortieren nach",
     "by_key": "Schlüssel (alphabetisch)",
@@ -905,5 +904,11 @@
     "bundle_ecommerce_order_tab": "Bestelldetails",
     "access_denied": "Zugriff verweigert!",
     "access_denied_description": "Du hast nicht genügend Berechtigungen, um das Element zu öffnen oder die gewünschte Aktion auszuführen.",
-    "validation_failed": "Validierung fehlgeschlagen!"
+    "validation_failed": "Validierung fehlgeschlagen!",
+    "export_xlsx": "XLSX Export",
+    "object_export_warning": "Bitte beachten Sie, dass der Export nicht alle Datentypen unterstützt. Klicken Sie auf OK, um mit dem Export fortzufahren.",
+    "web2print_enableLenientHttpsMode": "Aktivieren Sie nachsichtigen HTTPS-Modus",
+    "web2print_enableLenientHttpsMode_txt": "Aktivieren Sie diese Option, wenn PDFreactor über HTTPS keine Verbindung herstellen kann",
+    "paste_clipboard": "Zwischenablage einfügen",
+    "paste_here": "Fügen Sie hier Ihre Daten aus der Zwischenablage ein"
 }
