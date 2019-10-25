@@ -28,5 +28,4 @@ class PimcoreClassDefinitionMatcher implements Matcher
         return $object instanceof Concrete &&
             $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data\CustomVersionMarshalInterface;
     }
-
 }

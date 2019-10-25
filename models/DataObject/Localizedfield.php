@@ -25,7 +25,6 @@ use Pimcore\Tool;
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;

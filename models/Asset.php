@@ -1885,7 +1885,6 @@ class Asset extends Element\AbstractElement
             $this->renewInheritedProperties();
         }
 
-
         $this->setInDumpState(false);
     }
 

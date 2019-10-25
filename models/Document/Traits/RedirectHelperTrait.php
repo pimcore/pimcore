@@ -23,7 +23,8 @@ use Pimcore\Tool\Frontend;
 
 trait RedirectHelperTrait
 {
-    protected function createRedirectForFormerPath(string $oldPath, ?Document $oldDocument) {
+    protected function createRedirectForFormerPath(string $oldPath, ?Document $oldDocument)
+    {
         $config = \Pimcore\Config::getSystemConfig();
         if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
             // create redirect for old path
@@ -36,7 +37,7 @@ trait RedirectHelperTrait
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
 
             //set source site
-            if($oldDocument) {
+            if ($oldDocument) {
                 $oldSite = Frontend::getSiteForDocument($oldDocument);
                 if ($oldSite) {
                     $redirect->setSourceSite($oldSite->getId());

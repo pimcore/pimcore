@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject\Concrete;
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
-
     use Model\Element\ElementDumpStateTrait;
 
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -113,7 +112,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $definition;
     }
 
-
     /**
      * @param Concrete $object
      *
@@ -123,6 +121,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
+
         return $this;
     }
 
@@ -137,7 +136,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
         return $this->object;
     }
-
 
     /**
      * @param string $fieldName
@@ -197,7 +195,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys','object', $this->getDumpStateProperty()];
+        $blockedVars = ['loadedLazyKeys', 'object', $this->getDumpStateProperty()];
         $finalVars = [];
 
         if (!$this->isInDumpState()) {
@@ -214,10 +212,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup() {
+    public function __wakeup()
+    {
         if ($this->object) {
             $this->objectId = $this->object->getId();
         }
     }
-
 }

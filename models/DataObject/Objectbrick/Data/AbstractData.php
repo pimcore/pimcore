@@ -195,6 +195,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
+
         return $this;
     }
 
@@ -274,7 +275,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return true;
     }
 
-
     /**
      * @return array
      */
@@ -298,8 +298,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-
-    public function __wakeup() {
+    public function __wakeup()
+    {
         if ($this->object) {
             $this->objectId = $this->object->getId();
         }

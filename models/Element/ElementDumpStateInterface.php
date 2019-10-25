@@ -19,10 +19,11 @@ namespace Pimcore\Model\Element;
 
 interface ElementDumpStateInterface
 {
-
     /**
      * Set to true to indicate that we are about to serialize the version data.
+     *
      * @param bool $dumpState
+     *
      * @return mixed
      */
     public function setInDumpState(bool $dumpState);
@@ -30,6 +31,5 @@ interface ElementDumpStateInterface
     /**
      * @return bool
      */
-    public function isInDumpState() : bool;
-
+    public function isInDumpState(): bool;
 }

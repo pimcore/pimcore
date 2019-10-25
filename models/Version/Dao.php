@@ -148,7 +148,7 @@ class Dao extends Model\Dao\AbstractDao
                 } else {
                     // by steps
                     $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
-                    while( $versionInfo = $versionData->fetch()) {
+                    while ($versionInfo = $versionData->fetch()) {
                         $count++;
                         Logger::info($versionInfo['cid'] . '(object ' . $count . ') Vcount ' . count($versionIds));
                         $elementVersions = \array_slice(explode(',', $versionInfo['versions']), $elementType['steps']);

@@ -29,7 +29,6 @@ final class SetDumpStateFilter implements Filter
         $this->state = $state;
     }
 
-
     /**
      * {@inheritdoc}
      */

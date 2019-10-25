@@ -22,7 +22,7 @@ trait ElementDumpStateTrait
     /**
      * @var string
      */
-    public static $dumpStateProperty = "_fulldump";
+    public static $dumpStateProperty = '_fulldump';
 
     /**
      * @var bool
@@ -31,21 +31,24 @@ trait ElementDumpStateTrait
 
     /**
      * @param bool $dumpState
+     *
      * @return mixed|void
      */
-    public function setInDumpState(bool $dumpState) {
+    public function setInDumpState(bool $dumpState)
+    {
         $this->_fulldump = $dumpState;
     }
-
 
     /**
      * @return bool
      */
-    public function isInDumpState() : bool {
+    public function isInDumpState(): bool
+    {
         return $this->_fulldump;
     }
 
-    public function getDumpStateProperty() : string {
+    public function getDumpStateProperty(): string
+    {
         return self::$dumpStateProperty;
     }
 }
