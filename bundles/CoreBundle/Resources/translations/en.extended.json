@@ -714,5 +714,6 @@
   "table_column_configuration": "Column Configuration",
   "send_invitation_link": "Send Invitation Link",
   "invitation_sent": "Login Invitation sent",
-  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
+  "classificationstore_group_by_key": "Group by key"
 }
