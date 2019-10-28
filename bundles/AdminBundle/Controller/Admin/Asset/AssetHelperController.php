@@ -20,6 +20,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
@@ -244,6 +245,11 @@ class AssetHelperController extends AdminController
             }
         }
 
+        $language = 'default';
+        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
+            $language = $gridConfig['language'];
+        }
+
         $availableFields = [];
 
         if (empty($gridConfig)) {
@@ -257,18 +263,8 @@ class AssetHelperController extends AdminController
 
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
-                    if (in_array($key, Asset\Service::$gridSystemColumns)) {
-                        $type = 'system';
-                    } else {
-                        $type = $sc['fieldConfig']['type'];
-                    }
+                    $colConfig = $this->getFieldGridConfig($sc, $language, null);
 
-                    $colConfig = [
-                        'key' => $key,
-                        'type' => $type,
-                        'label' => $sc['fieldConfig']['label'] ?? $key,
-                        'position' => $sc['position'],
-                        'language' => $sc['fieldConfig']['language']];
                     if (isset($sc['width'])) {
                         $colConfig['width'] = $sc['width'];
                     }
@@ -310,6 +306,50 @@ class AssetHelperController extends AdminController
             'sharedConfigs' => $sharedConfigs
 
         ];
+    }
+
+    /**
+     * @param $field
+     * @param $language
+     * @param null $keyPrefix
+     *
+     * @return array|null
+     */
+    protected function getFieldGridConfig($field, $language = "", $keyPrefix = null)
+    {
+        $language = ($language != 'default' ?: "");
+        $key = $field['name'];
+        if($keyPrefix) {
+            $key = $keyPrefix . $key;
+        }
+
+        if (in_array($field['name'], Asset\Service::$gridSystemColumns)) {
+            $type = 'system';
+        } else {
+            $type = $field['fieldConfig']['type'];
+        }
+
+        $result = [
+            'key' => $key,
+            'type' => $type,
+            'label' => $sc['fieldConfig']['label'] ?? $key,
+            'position' => $field['position'],
+            'language' => $field['fieldConfig']['language'],
+            'layout' => $field['fieldConfig']['layout'],
+        ];
+
+        if ($type == 'select') {
+            $predefined = Metadata\Predefined::getByName($field['name'], $language);
+            if($predefined && $predefined->getType() == $type) {
+                $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
+            }
+            $result['layout'] = $field['fieldConfig']['layout'];
+        } else if ($type == 'document' || $type == 'asset' || $type == 'object') {
+            $result['layout']['fieldtype'] = "manyToOneRelation";
+            $result['layout']['subtype'] = $type;
+        }
+
+        return $result;
     }
 
     /**
@@ -833,7 +873,8 @@ class AssetHelperController extends AdminController
                     'name'  => $item->getName(),
                     'subtype' => $item->getTargetSubtype(),
                     'datatype' => "data",
-                    'fieldtype' => $item->getType()
+                    'fieldtype' => $item->getType(),
+                    'config' => $item->getConfig()
                 ];
             }
         }
@@ -854,5 +895,124 @@ class AssetHelperController extends AdminController
         $result['systemColumns']['childs'] = $systemColumns;
 
         return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/get-batch-jobs", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getBatchJobsAction(Request $request, GridHelperService $gridHelperService)
+    {
+        if ($request->get('language')) {
+            $request->setLocale($request->get('language'));
+        }
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
+        $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
+
+        $jobs = $list->loadIdList();
+
+        return $this->adminJson(['success' => true, 'jobs' => $jobs]);
+    }
+
+    /**
+     * @Route("/batch", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function batchAction(Request $request)
+    {
+        try {
+            if ($request->get('data')) {
+                $params = $this->decodeJson($request->get('data'), true);
+                $language = $params['language'] != 'default'? $params['language'] : null;
+
+                $asset = Asset::getById($params['job']);
+
+                if ($asset) {
+
+                    if (!$asset->isAllowed('publish')) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this asset.");
+                    }
+
+                    $metadata = $asset->getMetadata();
+                    $dirty = false;
+
+                    $name = $params["name"];
+                    $value = $params['value'];
+
+                    if ($params['valueType'] == 'object') {
+                        $value = $this->decodeJson($value);
+                    }
+
+
+                    if( strpos($name, '~~')) {
+                        $parts = explode('~~', $name);
+                        $name = $parts[0];
+                        $language = $parts[1];
+                    }
+
+                    foreach ($metadata as $idx => &$em) {
+                        if($em['name'] == $name && $em['language'] == $language) {
+                            $em['data'] = $value;
+                            $dirty = true;
+                            break;
+                        }
+                    }
+
+                    if(!$dirty) {
+                        $defaulMetadata = ['title','alt','copyright'];
+                        if (in_array($name, $defaulMetadata)) {
+                            $metadata[] = [
+                                'name' => $name,
+                                'language' => $language,
+                                'type' => "input",
+                                'data' => $value
+                            ];
+                            $dirty = true;
+                        } else {
+                            $predefined = Metadata\Predefined::getByName($name);
+                            if ($predefined && (empty($predefined->getTargetSubtype())
+                                    || $predefined->getTargetSubtype() == $asset->getType() )) {
+                                $metadata[] = [
+                                    'name' => $name,
+                                    'language' => $language,
+                                    'type' => $predefined->getType(),
+                                    'data' => $value
+                                ];
+                                $dirty = true;
+                            }
+                        }
+                    }
+
+                    try {
+                        if($dirty) {
+                            $metadata = Asset\Service::minimizeMetadata($metadata);
+                            $asset->setMetadata($metadata);
+                            $asset->save();
+
+                            return $this->adminJson(['success' => true]);
+                        }
+                    } catch (\Exception $e) {
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                    }
+                } else {
+                    Logger::debug('AssetHelperController::batchAction => There is no object left to update.');
+
+                    return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                }
+            }
+        } catch (\Exception $e) {
+            Logger::err($e);
+
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        return $this->adminJson(['success' => false, 'message' => 'something went wrong.']);
     }
 }

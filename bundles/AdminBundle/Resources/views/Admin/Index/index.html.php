@@ -370,6 +370,8 @@ $scripts = array(
     "pimcore/asset/helpers/metadataTree.js",
     "pimcore/asset/helpers/gridConfigDialog.js",
     "pimcore/asset/helpers/gridTabAbstract.js",
+    "pimcore/asset/helpers/gridCellEditor.js",
+    "pimcore/asset/helpers/grid.js",
 
     // documents
     "pimcore/document/properties.js",
@@ -405,6 +407,13 @@ $scripts = array(
     "pimcore/document/customviews/tree.js",
 
     // assets
+    "pimcore/asset/tags/abstract.js",
+    "pimcore/asset/tags/checkbox.js",
+    "pimcore/asset/tags/date.js",
+    "pimcore/asset/tags/input.js",
+    "pimcore/asset/tags/manyToOneRelation.js",
+    "pimcore/asset/tags/select.js",
+    "pimcore/asset/tags/textarea.js",
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
     "pimcore/asset/embedded_meta_data.js",
