@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
+use Pimcore\Cache;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\TemplateControllerInterface;
 use Pimcore\Controller\Traits\TemplateControllerTrait;
@@ -219,10 +220,33 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $json;
         };
 
-        // get geo point
-        $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
+
+        // get geo points
+        $invoiceAddressCacheKey = 'pimcore_order_invoice_address_' . $order->getId();
+        if(!$geoAddressInvoice = Cache::load($invoiceAddressCacheKey)) {
+
+            $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
+            Cache::save(
+                $geoAddressInvoice,
+                $invoiceAddressCacheKey,
+                [ 'object_' . $order->getId() ]
+            );
+        }
+
+
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
-            $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
+
+            $deliveryAddressCacheKey = 'pimcore_order_delivery_address_' . $order->getId();
+            if(!$geoAddressDelivery = Cache::load($deliveryAddressCacheKey)) {
+
+                $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
+                Cache::save(
+                    $geoAddressDelivery,
+                    $deliveryAddressCacheKey,
+                    [ 'object_' . $order->getId() ]
+                );
+
+            }
         }
 
         // get customer info
