@@ -406,7 +406,7 @@ pimcore.object.helpers.grid = Class.create({
 
                 result += '<tr><td>&nbsp;</td>';
                 for (let i = 0; i < columnKeys.length; i++) {
-                    result += '<td style="font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + ts(columnKeys[i]) + '</td>';
+                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + ts(columnKeys[i]) + '</td>';
                 }
                 result += '</tr>';
 
@@ -414,14 +414,14 @@ pimcore.object.helpers.grid = Class.create({
                 for (let i = 0; i < value.length && i < 10; i++) {
                     result += '<tr>';
 
-                    result += '<td style="border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0;">';
+                    result += '<td style="padding: 0 5px 0 5px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0;">';
                     let item = value[i];
                     result += item[pathProperty];
                     result += '</td>';
 
                     for (let col = 0; col < columnKeys.length; col++) {
                         let colName = columnKeys[col];
-                        result += '<td style="font-size:11px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">';
+                        result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">';
                         let displayValue = item[colName] ? item[colName] : "&nbsp";
                         result += displayValue;
                         result += '</td>';
@@ -443,10 +443,4 @@ pimcore.object.helpers.grid = Class.create({
         }
         return value;
     }
-
-
-
-
-
-
 });
