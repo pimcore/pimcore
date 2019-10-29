@@ -206,7 +206,7 @@ Probably, your view looks like below:
 
 The last step to finish the product object is adding a photo.
 
-The one way to upload a photo is this button: ![Upload image to an object](../img/Pimcore_Elements_upload_button.png) or just drag a file that you uploaded from the Assets section.
+One way to upload a photo is using this button: ![Upload image to an object](../img/Pimcore_Elements_upload_button.png) or just drag a file that you uploaded from the Assets section.
 
 Click *Save & Publish* button. 
 
