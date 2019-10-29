@@ -38,6 +38,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     protected $session;
 
+    protected $readOnlySessionBagsCache = [];
+
     public function __construct(SessionInterface $session)
     {
         $this->session = $session;
@@ -48,9 +50,14 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        return $this->useSession(static function (SessionInterface $session) {
-            return $session->getId();
-        });
+        if (!$this->session->isStarted()) {
+            // this is just to initialize the session :)
+            $this->useSession(static function (SessionInterface $session) {
+                return $session->getId();
+            });
+        }
+
+        return $this->session->getId();
     }
 
     /**
@@ -71,6 +78,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $result = call_user_func_array($callable, [$session]);
 
         $this->writeClose();
+
+        $this->readOnlySessionBagsCache = []; // clear cache if session was modified manually
 
         return $result;
     }
@@ -95,13 +104,17 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getReadOnlyAttributeBag(string $name = 'pimcore_admin'): AttributeBagInterface
     {
-        $bag = $this->useSessionAttributeBag(function (AttributeBagInterface $bag) {
-            if ($bag instanceof LockableAttributeBagInterface) {
-                $bag->lock();
-            }
+        if(isset($this->readOnlySessionBagsCache[$name])) {
+            $bag = $this->readOnlySessionBagsCache[$name];
+        } else {
+            $bag = $this->useSessionAttributeBag(function (AttributeBagInterface $bag) {
+                return $bag;
+            }, $name);
+        }
 
-            return $bag;
-        }, $name);
+        if ($bag instanceof LockableAttributeBagInterface) {
+            $bag->lock();
+        }
 
         return $bag;
     }
@@ -137,6 +150,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         if ($attributeBag instanceof LockableAttributeBagInterface) {
             $attributeBag->unlock();
         }
+
+        $this->readOnlySessionBagsCache[$name] = $attributeBag;
 
         return $attributeBag;
     }
