@@ -48,7 +48,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        return $this->useSession(function (SessionInterface $session) {
+        return $this->useSession(static function (SessionInterface $session) {
             return $session->getId();
         });
     }
@@ -119,7 +119,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function regenerateId(): bool
     {
-        return $this->useSession(function (SessionInterface $session) {
+        return $this->useSession(static function (SessionInterface $session) {
             return $session->migrate(true);
         });
     }
