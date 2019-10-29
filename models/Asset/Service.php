@@ -209,7 +209,8 @@ class Service extends Model\Element\Service
                 } else if (!in_array($field, Asset\Service::$gridSystemColumns)) {
                     if( strpos($field, '~~')) {
                         $fieldDef = explode('~~',$field);
-                        $metaData = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
+                        $language = ($fieldDef[1] == "none" ? "" : $fieldDef[1]);
+                        $metaData = $asset->getMetadata($fieldDef[0], $language, true);
                     } else {
                         $metaData = $asset->getMetadata($field, $requestedLanguage, true);
                     }
