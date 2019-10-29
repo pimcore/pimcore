@@ -220,11 +220,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $json;
         };
 
-
         // get geo points
         $invoiceAddressCacheKey = 'pimcore_order_invoice_address_' . $order->getId();
-        if(!$geoAddressInvoice = Cache::load($invoiceAddressCacheKey)) {
-
+        if (!$geoAddressInvoice = Cache::load($invoiceAddressCacheKey)) {
             $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
             Cache::save(
                 $geoAddressInvoice,
@@ -233,19 +231,15 @@ class AdminOrderController extends AdminController implements EventedControllerI
             );
         }
 
-
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
-
             $deliveryAddressCacheKey = 'pimcore_order_delivery_address_' . $order->getId();
-            if(!$geoAddressDelivery = Cache::load($deliveryAddressCacheKey)) {
-
+            if (!$geoAddressDelivery = Cache::load($deliveryAddressCacheKey)) {
                 $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
                 Cache::save(
                     $geoAddressDelivery,
                     $deliveryAddressCacheKey,
                     [ 'object_' . $order->getId() ]
                 );
-
             }
         }
 
