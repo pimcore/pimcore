@@ -690,7 +690,6 @@
     "login_token_invalid_user_error": "Geçersiz kullanıcı.",
     "login_token_as_admin_non_admin_user_error": "Yalnızca yöneticilerin, yönetici kullanıcısı olarak giriş yapmasına izin verilir.",
     "login_token_no_password_error": "Kullanıcının şifre seti yok.",
-    "lostpassword_reset_error": "Parola bilgisi gönderilirken bir hata oluştu. Lütfen tekrar deneyin veya yöneticinize başvurun.",
     "targeting_toolbar": "Hedefleme Araç Çubuğu",
     "sort_children_by": "Alt Öğeleri Sırala",
     "by_key": "Anahtar (Alfabetik olarak)",
@@ -905,5 +904,11 @@
     "bundle_ecommerce_order_tab": "Order Details",
     "access_denied": "Access Denied!",
     "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
-    "validation_failed": "Validation Failed!"
+    "validation_failed": "Validation Failed!",
+    "export_xlsx": "XLSX Export",
+    "object_export_warning": "Please note that the export does not support all data types. Press OK to continue with the export.",
+    "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
+    "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
+    "paste_clipboard": "Paste Clipboard",
+    "paste_here": "Paste your clipboard data here"
 }

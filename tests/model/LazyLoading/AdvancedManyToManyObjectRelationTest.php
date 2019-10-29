@@ -270,9 +270,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
     {
         //prepare data object
         $object = $this->createDataObject();
-        codecept_debug($object);
         $brick = new LazyLoadingTest($object);
-        codecept_debug($brick);
         $brick->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
         $object->getBricks()->setLazyLoadingTest($brick);
         $object->save();

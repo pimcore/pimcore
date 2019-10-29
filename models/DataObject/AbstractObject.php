@@ -1278,8 +1278,6 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         $this->setInDumpState(false);
-
-
     }
 
     public function removeInheritedProperties()

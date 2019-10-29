@@ -15,27 +15,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Version;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use DeepCopy\Filter\Filter;
-use Pimcore\Model\Element\ElementDumpStateInterface;
-
-final class SetDumpStateFilter implements Filter
+interface CustomVersionMarshalInterface
 {
-    protected $state;
-
-    public function __construct(bool  $state)
-    {
-        $this->state = $state;
-    }
+    /**
+     * @param $object
+     * @param $data
+     */
+    public function marshalVersion($object, $data);
 
     /**
-     * {@inheritdoc}
+     * @param $object
+     * @param $data
      */
-    public function apply($object, $property, $objectCopier)
-    {
-        if ($object instanceof ElementDumpStateInterface) {
-            $object->setInDumpState($this->state);
-        }
-    }
+    public function unmarshalVersion($object, $data);
 }

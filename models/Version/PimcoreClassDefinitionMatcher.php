@@ -17,25 +17,15 @@
 
 namespace Pimcore\Model\Version;
 
-use DeepCopy\Filter\Filter;
-use Pimcore\Model\Element\ElementDumpStateInterface;
+use DeepCopy\Matcher\Matcher;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Concrete;
 
-final class SetDumpStateFilter implements Filter
+class PimcoreClassDefinitionMatcher implements Matcher
 {
-    protected $state;
-
-    public function __construct(bool  $state)
+    public function matches($object, $property)
     {
-        $this->state = $state;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function apply($object, $property, $objectCopier)
-    {
-        if ($object instanceof ElementDumpStateInterface) {
-            $object->setInDumpState($this->state);
-        }
+        return $object instanceof Concrete &&
+            $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data\CustomVersionMarshalInterface;
     }
 }

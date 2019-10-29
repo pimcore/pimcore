@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
-
     use ElementDumpStateTrait;
 
     /**

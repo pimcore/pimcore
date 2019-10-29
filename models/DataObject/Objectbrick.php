@@ -249,7 +249,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
 
         return $this->object;
-
     }
 
     /**
@@ -415,5 +414,4 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             }
         }
     }
-
 }
