@@ -122,7 +122,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
                 if(cm[i].text == "Preview") {
                     name = "preview";
                 }
-                config.columns[name] = {
+                config.columns[i] = {
                     name: name,
                     position: i,
                     hidden: cm[i].hidden,

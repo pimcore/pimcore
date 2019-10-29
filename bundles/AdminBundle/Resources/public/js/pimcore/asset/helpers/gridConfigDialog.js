@@ -56,7 +56,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         var operatorFound = false;
 
         if (this.selectionPanel) {
-            var tmp = [];
             this.data.columns = [];
             this.selectionPanel.getRootNode().eachChild(function (child) {
                 var obj = {};
@@ -85,10 +84,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         obj.width = child.data.width;
                     }
                 }
-                if(!Ext.Array.contains(tmp, obj.key)) {
-                    tmp.push(obj.key);
-                    this.data.columns.push(obj);
-                }
+                this.data.columns.push(obj);
             }.bind(this));
         }
 
@@ -281,7 +277,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 }
             ];
 
-            var languagestore = [["",t("default")]];
+            var languagestore = [["",t("default")],["none",t("none")]];
             for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
                 languagestore.push([pimcore.settings.websiteLanguages[i],
                     pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
@@ -337,11 +333,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                 var fieldType = record.data.dataType;
 
                                 try {
-                                    if (record.data.isOperator && record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
+                                    if (record.data.isOperator && record.data.configAttributes && pimcore.asset.tags[record.data.configAttributes.renderer]) {
                                         var rendererType = record.data.configAttributes.renderer;
-                                        var tag = pimcore.object.tags[rendererType];
+                                        var tag = pimcore.asset.tags[rendererType];
                                     } else {
-                                        var tag = pimcore.object.tags[fieldType];
+                                        var tag = pimcore.asset.tags[fieldType];
                                     }
 
                                     if (tag) {
