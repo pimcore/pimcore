@@ -186,7 +186,7 @@ If everything goes well, the new class looks like in the picture:
 
 ![Product class](../img/Pimcore_Elements_product_class.png)
 
-**Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class 
+**Important:** Every generated class in the Pimcore admin panel has an associated PHP class 
 with getters and setters. You can find the PHP class representation of our newly created class definition above in 
 `var/classes/DataObject/Product.php` 
 
@@ -195,7 +195,7 @@ with getters and setters. You can find the PHP class representation of our newly
 We've just prepared a simple class for new products. 
 Now we can use it to create objects in Pimcore.
 
-* Open the objects section on the left and click on the right button after *Home* (Note that you can create also directories structure for objects).
+* Open the objects section on the left and click on the right button after *Home* (Note that you can also create directory structures for objects).
 * Choose *Add object -> product* and fill the input with a name, for example: *tshirt*
 * Add values for sku, name and description attributes.
 * Click  *Save & Publish*
@@ -204,9 +204,9 @@ Probably, your view looks like below:
 
 ![New product](../img/Pimcore_Elements_new_product.png)
 
-The last step to finish the product object is add a photo.
+The last step to finish the product object is adding a photo.
 
-The one way to upload a photo is this button: ![Upload image to an object](../img/Pimcore_Elements_upload_button.png) or just drag file which you uploaded from Assets section.
+One way to upload a photo is using this button: ![Upload image to an object](../img/Pimcore_Elements_upload_button.png) or just drag a file that you uploaded from the Assets section.
 
 Click *Save & Publish* button. 
 
@@ -269,11 +269,11 @@ $this->extend('layout.html.php');
 
 ```
 
-`$this->editmode` is a standard variable (is always set) to check if the view is called from the Pimcore admin backend and gives you the 
- possibility to do different stuff in editmode and in frontend. 
+`$this->editmode` is a standard variable (it's always set) that checks if the view is called from the Pimcore admin backend and gives you the 
+ possibility to do different stuff in editmode and in the frontend. 
 
-`$this->relation('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool 
-alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
+`$this->relation('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations. A cool 
+alternative for that would be the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
 Click [here](../03_Documents/01_Editables/README.md) for a full list of available editables in Pimcore.
 
 
@@ -295,7 +295,7 @@ Go to the product page. In my case, let's say `http://pimcore.local/tshirt` wher
 
 We haven't implemented frontend features yet, therefore the page doesn't contain any product information.
 
-In the template file (`app/Resources/views/Content/product.html.php`) add few lines:
+Add a few lines in the template file (`app/Resources/views/Content/product.html.php`):
 
 ```php
 <?php
@@ -337,12 +337,12 @@ It's a good practice to add `@var` PHPDoc in every view, to benefit from auto-co
 To show the product image in the view, we need to add a thumbnail configuration first. Using [thumbnail configurations](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md),
 Pimcore automatically renders optimized images for certain output channels (including high-res @2x versions). 
 
-For adding a thumbnail configuration see the following screen. Just add a configuration named `content`. 
+Adding a thumbnail configuration can be achieved by adding a configuration as depicted below. For now, simply add a configuration named `content`. 
 ![Adding thumbnail configuration](../img/adding_thumbnails.png)
 
 
 ## Showing the Image in the View
-Now, last but not least, we would like to show the product picture: 
+Last but not least, we would like to show the product picture: 
 
 ```php
 <div class="content">
@@ -357,10 +357,10 @@ Now, last but not least, we would like to show the product picture:
     <?= $product->getDescription(); ?>
 </div>
 ```
-As you can see, image attribute is an additional class with useful parameter.
+As you can see, Image is an additional class with useful attributes and functions.
 To print out the image in the right size just use the method `getThumbnail()->getHtml()` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
 correct image path and also sets alt attributes to values based on the asset meta data. 
 
-Now the product page should look like:
+Now the product page should look like this:
 
 ![Final product page](../img/Pimcore_Elements_final_product_page.png)
