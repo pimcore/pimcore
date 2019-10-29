@@ -31,7 +31,6 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
             text:ts(field.label),
             dataIndex:field.key,
             renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
-                metaData.tdCls += ' x-grid-check-col-td';
                 return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
             }.bind(this, field)
         };

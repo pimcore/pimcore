@@ -264,11 +264,9 @@ class AssetHelperController extends AdminController
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
                     $colConfig = $this->getFieldGridConfig($sc, $language, null);
-
-                    if (isset($sc['width'])) {
-                        $colConfig['width'] = $sc['width'];
+                    if($colConfig) {
+                        $availableFields[] = $colConfig;
                     }
-                    $availableFields[] = $colConfig;
                 }
             }
         }
@@ -317,7 +315,8 @@ class AssetHelperController extends AdminController
      */
     protected function getFieldGridConfig($field, $language = "", $keyPrefix = null)
     {
-        $language = ($language != 'default' ?: "");
+        $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+
         $key = $field['name'];
         if($keyPrefix) {
             $key = $keyPrefix . $key;
@@ -326,23 +325,25 @@ class AssetHelperController extends AdminController
         if (in_array($field['name'], Asset\Service::$gridSystemColumns)) {
             $type = 'system';
         } else {
+            //check if predefined metadata exists, otherwise ignore
+            if(empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
+                return null;
+            }
             $type = $field['fieldConfig']['type'];
         }
 
         $result = [
             'key' => $key,
             'type' => $type,
-            'label' => $sc['fieldConfig']['label'] ?? $key,
+            'label' => $field['fieldConfig']['label'] ?? $key,
+            'width' => $field['width'],
             'position' => $field['position'],
             'language' => $field['fieldConfig']['language'],
             'layout' => $field['fieldConfig']['layout'],
         ];
 
         if ($type == 'select') {
-            $predefined = Metadata\Predefined::getByName($field['name'], $language);
-            if($predefined && $predefined->getType() == $type) {
-                $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
-            }
+            $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
         } else if ($type == 'document' || $type == 'asset' || $type == 'object') {
             $result['layout']['fieldtype'] = "manyToOneRelation";
