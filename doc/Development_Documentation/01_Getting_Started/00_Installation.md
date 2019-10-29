@@ -1,7 +1,7 @@
 # Pimcore Installation
 
-The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) 
-or facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+The following guide assumes you're using a typical LAMP environment, if you're using a different setup (eg. Nginx) 
+or you're facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
 ## 1. System Requirements
 
@@ -17,7 +17,7 @@ cd /your/project
 ```
 
 #### Choose a package to install
-We're offering 2 different installation packages, 3 demo packages and one skeleton for experienced developers.
+We offer 2 different installation packages, 3 demo packages and one skeleton for experienced developers.
 
 ##### 1. Skeleton Package (only for experienced Pimcore developers)
 ```bash
@@ -39,7 +39,7 @@ Specific configurations and optimizations for your web server are available here
 Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var`
 ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you have already the right config files 
+If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files 
 in place, e.g. `app/config/config_[env_name].yml`. 
 
 ## 3. Create Database
@@ -80,7 +80,7 @@ Keep in mind, that the cron job has to run as the same user as the web interface
 
 ## 6. Additional Information & Help
 
-If you would like to know more about installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
 ## 7. Further Reading
 

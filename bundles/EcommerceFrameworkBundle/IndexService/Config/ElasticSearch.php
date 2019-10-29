@@ -142,6 +142,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('store', 'bool');
     }
 
+    /**
+     * @param $fieldName
+     * @return array
+     */
     protected function extractPossibleFirstSubFieldnameParts($fieldName)
     {
         $parts = [];
@@ -187,6 +191,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
     /**
      * returns short field name based on full field name
+     * also considers subfield names like name.analyzed etc.
      *
      * @param $fullFieldName
      *
@@ -194,7 +199,30 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getReverseMappedFieldName($fullFieldName)
     {
-        return array_search($fullFieldName, $this->fieldMapping);
+        //check for direct match of field name
+        $fieldName = array_search($fullFieldName, $this->fieldMapping);
+        if($fieldName) {
+            return $fieldName;
+        }
+
+        //search for part match in order to consider sub field names like name.analyzed
+        $fieldNamePart = $fullFieldName;
+        while(!empty($fieldNamePart)) {
+
+            // cut off part after last .
+            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, "."));
+
+            // search for mapping with field name part
+            $fieldName = array_search($fieldNamePart, $this->fieldMapping);
+
+            if($fieldName) {
+                // append cut off part again to returned field name
+                return $fieldName . str_replace($fieldNamePart, '', $fullFieldName);
+            }
+        }
+
+        //return full field name if no mapping was found
+        return $fullFieldName;
     }
 
     /**

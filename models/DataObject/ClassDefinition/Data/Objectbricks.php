@@ -135,7 +135,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
+        $object = $data->getObject();
+        if ($object) {
+            $parent = DataObject\Service::hasInheritableParentObject($object);
+        }
         /** @var $item DataObject\Objectbrick\Definition */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
@@ -209,7 +212,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
     {
         $result = new \stdClass();
-        $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+        if ($baseObject) {
+            $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+        }
         $valueGetter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
@@ -270,7 +275,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 }
             }
             $result->objectData = $editmodeValue;
-            $result->metaData['objectid'] = $baseObject->getId();
+            $result->metaData['objectid'] = $baseObject ? $baseObject->getId() : null;
             $result->metaData['inherited'] = $level != 0;
         }
 

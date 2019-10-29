@@ -690,7 +690,6 @@
     "login_token_invalid_user_error": "无效的用户",
     "login_token_as_admin_non_admin_user_error": "只有管理员用户才能以管理员用户登录",
     "login_token_no_password_error": "用户未设置密码",
-    "lostpassword_reset_error": "发送丢失密码信息时发生了一个错误。请重试或者联系你的管理员。",
     "targeting_toolbar": "定位工具栏",
     "sort_children_by": "将子级排序为",
     "by_key": "键（按字母顺序）",
@@ -905,5 +904,11 @@
     "bundle_ecommerce_order_tab": "订单明细",
     "access_denied": "访问被拒",
     "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
-    "validation_failed": "校验失败"
+    "validation_failed": "校验失败",
+    "export_xlsx": "XLSX Export",
+    "object_export_warning": "Please note that the export does not support all data types. Press OK to continue with the export.",
+    "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
+    "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
+    "paste_clipboard": "Paste Clipboard",
+    "paste_here": "Paste your clipboard data here"
 }

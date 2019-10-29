@@ -1,5 +1,5 @@
 
-In this part, you are going to see a required minimum of knowledge, crucial for start developing with Pimcore. 
+In this section, you will learn the basics of Pimcore, required to start developing. 
 
 [TOC]
 
