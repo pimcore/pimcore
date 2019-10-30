@@ -146,13 +146,22 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.selectionColumn = new Ext.selection.CheckboxModel();
         typesColumns = this.getGridColumns(fields);
 
+        var modelName = 'assetGridModel';
+        if(!Ext.ClassManager.isCreated(modelName) ) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: 'id~system',
+                fields: readerFields,
+                proxy: proxy,
+            });
+        }
+
         this.store = new Ext.data.Store({
-            proxy: proxy,
             pageSize: itemsPerPage,
             remoteSort: true,
             remoteFilter: true,
             filter: this.filterField,
-            fields: readerFields
+            model:modelName
         });
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
@@ -262,11 +271,14 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 activate: function() {
                     this.store.load();
                 }.bind(this),
-                rowdblclick: function(grid, record, tr, rowIndex, e, eOpts ) {
-                    var data = this.store.getAt(rowIndex);
-                    pimcore.helpers.openAsset(data.get("id"), data.get("type"));
-
-                }.bind(this)
+                celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                    var columnName = grid.ownerGrid.getColumns();
+                    if(columnName[cellIndex].dataIndex == 'id~system' || columnName[cellIndex].dataIndex == 'fullpath~system'
+                        || columnName[cellIndex].dataIndex == 'preview~system') {
+                        var data = this.store.getAt(rowIndex);
+                        pimcore.helpers.openAsset(data.id, data.get("type~system"));
+                    }
+                }
             },
             tbar: [
                 this.languageInfo, "->",
@@ -305,7 +317,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         for (i = 0; i < fields.length; i++) {
             var field = fields[i];
-            var key = field.name;
+            var key = field.key;
             var language = field.language;
             if (!key) {
                 key = "";
@@ -318,38 +330,42 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 continue;
             }
 
+            if(key.indexOf("~") >= 0 ) {
+                key = key.substr(0, key.lastIndexOf('~'));
+            }
+
             if (field.type == "system") {
-                if(field.key == "preview") {
+                if(key == "preview") {
                     gridColumns.push({
-                        text: t("preview"), sortable: false, dataIndex: 'preview', editable: false, width: this.getColumnWidth(field, 150),
+                        text: t(field.label), sortable: false, dataIndex: field.key, editable: false, width: this.getColumnWidth(field, 150),
                         renderer: function (value) {
                             if (value) {
                                 return '<img src="' + value + '" />';
                             }
                         }.bind(this)
                     });
-                } else if (field.key == "creationDate" || field.key == "modificationDate") {
-                    gridColumns.push({text: t(field.key), width: this.getColumnWidth(field, 150), sortable: true, dataIndex: field.key, editable: false, filter: 'date',
+                } else if (key == "creationDate" || field.key == "modificationDate") {
+                    gridColumns.push({text: t(field.label), width: this.getColumnWidth(field, 150), sortable: true, dataIndex: field.key, editable: false, filter: 'date',
                        renderer: function(d) {
                             var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
                     });
-                } else if (field.key == "filename") {
-                    gridColumns.push({text: t(field.key), sortable: true, dataIndex: field.key, editable: false,
+                } else if (key == "filename") {
+                    gridColumns.push({text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 250), filter: 'string', renderer: Ext.util.Format.htmlEncode});
-                } else if (field.key == "fullpath") {
-                    gridColumns.push({text: t(field.key), sortable: true, dataIndex: field.key, editable: false,
+                } else if (key == "fullpath") {
+                    gridColumns.push({text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 400), filter: 'string', renderer: Ext.util.Format.htmlEncode});
-                } else if (field.key == "size") {
-                    gridColumns.push({text: t(field.key), sortable: false, dataIndex: field.key, editable: false,
+                } else if (key == "size") {
+                    gridColumns.push({text: t(field.label), sortable: false, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 130)});
                 } else {
-                    gridColumns.push({text: t(field.key),  width: this.getColumnWidth(field, 130), sortable: true,
+                    gridColumns.push({text: t(field.label),  width: this.getColumnWidth(field, 130), sortable: true,
                         dataIndex: field.key});
                 }
             } else if (field.type == "date") {
-                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 120), sortable: false,
+                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 120), sortable: false,
                     dataIndex: field.key, filter: 'date', editable: false,
                     renderer: function(d) {
                         if (d) {
@@ -361,7 +377,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 });
             } else if (field.type == "checkbox") {
                 gridColumns.push(new Ext.grid.column.Check({
-                    text:  field.key,
+                    text:  field.label,
                     editable: false,
                     width: this.getColumnWidth(field, 40),
                     sortable: false,
@@ -370,12 +386,12 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 }));
             } else if (field.type == "select") {
                 gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 200), sortable: false,
-                    dataIndex: field.key, filter: 'string'});
+                    dataIndex: field.label, filter: 'string'});
             } else if (field.type == "document" || field.type == "asset" || field.type == "object") {
                 gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 300), sortable: false,
-                    dataIndex: field.key});
+                    dataIndex: field.label});
             } else {
-                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 250), sortable: false,
+                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 250), sortable: false,
                     dataIndex: field.key, filter: 'string'});
             }
         }
@@ -431,7 +447,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
-                    pimcore.helpers.openAsset(data.data.id, data.data.type);
+                    pimcore.helpers.openAsset(data.id, data.data['type~system']);
                 }.bind(this, data)
             }));
 
@@ -453,7 +469,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                     }
                 }));
             }
-            
+
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
@@ -478,7 +494,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                     var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         var data = selectedRows[i].data;
-                        pimcore.helpers.openAsset(data.id, data.type);
+                        pimcore.helpers.openAsset(data.id, data.get("type~system"));
                     }
                 }.bind(this, data)
             }));

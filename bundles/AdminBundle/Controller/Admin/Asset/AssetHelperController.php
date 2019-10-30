@@ -244,6 +244,11 @@ class AssetHelperController extends AdminController
             }
         }
 
+        $language = 'default';
+        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
+            $language = $gridConfig['language'];
+        }
+
         $availableFields = [];
 
         if (empty($gridConfig)) {
@@ -257,22 +262,10 @@ class AssetHelperController extends AdminController
 
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
-                    if (in_array($key, Asset\Service::$gridSystemColumns)) {
-                        $type = 'system';
-                    } else {
-                        $type = $sc['fieldConfig']['type'];
+                    $colConfig = $this->getFieldGridConfig($sc, $language, null);
+                    if($colConfig) {
+                        $availableFields[] = $colConfig;
                     }
-
-                    $colConfig = [
-                        'key' => $key,
-                        'type' => $type,
-                        'label' => $sc['fieldConfig']['label'] ?? $key,
-                        'position' => $sc['position'],
-                        'language' => $sc['fieldConfig']['language']];
-                    if (isset($sc['width'])) {
-                        $colConfig['width'] = $sc['width'];
-                    }
-                    $availableFields[] = $colConfig;
                 }
             }
         }
@@ -313,6 +306,60 @@ class AssetHelperController extends AdminController
     }
 
     /**
+     * @param $field
+     * @param $language
+     * @param null $keyPrefix
+     *
+     * @return array|null
+     */
+    protected function getFieldGridConfig($field, $language = "", $keyPrefix = null)
+    {
+        $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+
+        $key = $field['name'];
+        if($keyPrefix) {
+            $key = $keyPrefix . $key;
+        }
+
+        $fieldDef = explode("~", $field['name']);
+        $field['name'] = $fieldDef[0];
+
+        if ($fieldDef[1] == "system") {
+            $type = 'system';
+        } else {
+            //check if predefined metadata exists, otherwise ignore
+            if(empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
+                return null;
+            }
+            $type = $field['fieldConfig']['type'];
+            if (isset($fieldDef[1])) {
+                $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . "(" . $fieldDef[1] . ")";
+                $field['fieldConfig']['layout']['icon'] = Tool::getLanguageFlagFile($fieldDef[1], true);
+            }
+        }
+
+        $result = [
+            'key' => $key,
+            'type' => $type,
+            'label' => $field['fieldConfig']['label'] ?? $key,
+            'width' => $field['width'],
+            'position' => $field['position'],
+            'language' => $field['fieldConfig']['language'],
+            'layout' => $field['fieldConfig']['layout'],
+        ];
+
+        if ($type == 'select') {
+            $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
+            $result['layout'] = $field['fieldConfig']['layout'];
+        } else if ($type == 'document' || $type == 'asset' || $type == 'object') {
+            $result['layout']['fieldtype'] = "manyToOneRelation";
+            $result['layout']['subtype'] = $type;
+        }
+
+        return $result;
+    }
+
+    /**
      * @param $noSystemColumns
      * @param $fields
      * @param $context
@@ -329,7 +376,7 @@ class AssetHelperController extends AdminController
             foreach (Asset\Service::$gridSystemColumns as $sc) {
                 if (empty($types)) {
                     $availableFields[] = [
-                        'key' => $sc,
+                        'key' => $sc . "~system",
                         'type' => 'system',
                         'label' => $sc,
                         'position' => $count];
@@ -621,7 +668,7 @@ class AssetHelperController extends AdminController
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
-        $language = $this->extractLanguage($request);
+        $language = str_replace("default", "", $request->get('language'));
 
         /**
          * @var $list \Pimcore\Model\Asset\Listing
@@ -681,6 +728,9 @@ class AssetHelperController extends AdminController
         //create csv
         $csv = [];
 
+        $unsupportedFields = ['preview~system', 'size~system'];
+        $fields = array_diff($fields, $unsupportedFields);
+
         if ($addTitles) {
             $columns = $fields;
             foreach ($columns as $columnIdx => $columnKey) {
@@ -693,16 +743,17 @@ class AssetHelperController extends AdminController
             if ($fields) {
                 $a = [];
                 foreach ($fields as $field) {
-                    $getter = 'get' . ucfirst($field);
+                    $fieldDef = explode('~', $field);
+                    $getter = 'get' . ucfirst($fieldDef[0]);
 
-                    if (method_exists($asset, $getter)) {
+                    if ($fieldDef[1] == "system" && method_exists($asset, $getter)) {
                         $a[] = $asset->$getter($language);
                     } else {
-                        if( strpos($field, '~~')) {
-                            $fieldDef = explode('~~', $field);
-                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1]);
+                        if(isset($fieldDef[1])) {
+                            $fieldDef[1] = str_replace("none", "", $fieldDef[1]);
+                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
                         } else {
-                            $a[] = $asset->getMetadata($field, $language);
+                            $a[] = $asset->getMetadata($field, $language, true);
                         }
 
                         if ($a instanceof Element\AbstractElement) {
