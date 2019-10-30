@@ -21,6 +21,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
     use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+    use Symfony\Component\HttpKernel\Profiler\Profiler;
     use Symfony\Component\Routing\Annotation\Route;
 
     class AdminerController extends AdminController implements EventedControllerInterface
@@ -34,11 +35,16 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          * @Route("/external_adminer/adminer")
          *
          * @param Request $request
+         * @param Profiler $profiler
          *
          * @return Response
          */
-        public function adminerAction(Request $request)
+        public function adminerAction(Request $request, ?Profiler $profiler)
         {
+            if($profiler) {
+                $profiler->disable();
+            }
+
             $db = \Pimcore\Db::get();
             $request->query->remove('csrfToken');
 

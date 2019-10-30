@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 class OpcacheController extends AdminController implements EventedControllerInterface
@@ -28,11 +29,16 @@ class OpcacheController extends AdminController implements EventedControllerInte
      * @Route("/external_opcache")
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, ?Profiler $profiler)
     {
+        if($profiler) {
+            $profiler->disable();
+        }
+
         $path = PIMCORE_COMPOSER_PATH . '/amnuts/opcache-gui';
 
         ob_start();

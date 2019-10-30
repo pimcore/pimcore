@@ -21,6 +21,7 @@ use Pimcore\Model\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -108,13 +109,18 @@ class EmailController extends AdminController
      * @Route("/show-email-log", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return JsonResponse|Response
      *
      * @throws \Exception
      */
-    public function showEmailLogAction(Request $request)
+    public function showEmailLogAction(Request $request, ?Profiler $profiler)
     {
+        if($profiler) {
+            $profiler->disable();
+        }
+
         if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }

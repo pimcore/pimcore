@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -706,13 +707,18 @@ class MiscController extends AdminController
      * @Route("/phpinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @throws \Exception
      *
      * @return Response
      */
-    public function phpinfoAction(Request $request)
+    public function phpinfoAction(Request $request, ?Profiler $profiler)
     {
+        if($profiler) {
+            $profiler->disable();
+        }
+
         if (!$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Permission denied');
         }
@@ -745,11 +751,15 @@ class MiscController extends AdminController
      * @TemplatePhp()
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return Response
      */
-    public function iconListAction(Request $request)
+    public function iconListAction(Request $request, ?Profiler $profiler)
     {
+        if($profiler) {
+            $profiler->disable();
+        }
     }
 
     /**
