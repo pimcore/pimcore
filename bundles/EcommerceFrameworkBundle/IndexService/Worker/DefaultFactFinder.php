@@ -23,6 +23,7 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Tool\Text;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property DefaultFactFinderConfig $tenantConfig
@@ -37,9 +38,9 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $_sqlChangeLog = [];
 
-    public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
     protected function getSystemAttributes()
@@ -172,8 +173,9 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      * prepare data for index creation and store is in store table
      *
      * @param IndexableInterface $object
+     * @return array returns the processed sub-objects that can be used for the index update.
      */
-    public function prepareDataForIndex(IndexableInterface $object)
+    public function prepareDataForIndex(IndexableInterface $object) : array
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
@@ -231,6 +233,8 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
 
         //cleans up all old zombie data
         $this->doCleanupOldZombieData($object, $subObjectIds);
+
+        return $subObjectIds;
     }
 
     /**

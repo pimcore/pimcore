@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property FindologicConfigInterface $tenantConfig
@@ -46,9 +47,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
     /**

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractWorker implements WorkerInterface
 {
@@ -45,13 +46,19 @@ abstract class AbstractWorker implements WorkerInterface
      */
     protected $filterGroups;
 
-    public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db)
+    /**
+     * @var EventDispatcherInterface\
+     */
+    protected  $eventDispatcher;
+
+    public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
         $this->tenantConfig = $tenantConfig;
         $tenantConfig->setTenantWorker($this);
 
         $this->name = $tenantConfig->getTenantName();
         $this->db = $db;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getTenantConfig()

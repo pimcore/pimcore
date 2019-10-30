@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql a
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method OptimizedMysqlConfig getTenantConfig()
@@ -34,9 +35,9 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      */
     protected $mySqlHelper;
 
-    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
@@ -91,15 +92,16 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
             return;
         }
 
-        $this->prepareDataForIndex($object);
+        $subObjectIds = $this->prepareDataForIndex($object);
 
         //updates data for all subentries
-        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach ($subObjectIds as $subObjectId => $object) {
             $this->doUpdateIndex($subObjectId);
         }
 
-        $this->fillupPreparationQueue($object);
+        if (count($subObjectIds) > 0) {
+            $this->fillupPreparationQueue($object);
+        }
     }
 
     /**
