@@ -6,7 +6,6 @@ services:
     Pimcore\Db\Connection: '@database_connection'
     Pimcore\Db\ConnectionInterface: '@database_connection'
     Pimcore\Kernel: '@kernel'
-    Symfony\Component\HttpKernel\Profiler\Profiler: '@profiler'
 
     # aliases for backwards compatibility
     pimcore.cache.runtime: '@Pimcore\Cache\Runtime'
