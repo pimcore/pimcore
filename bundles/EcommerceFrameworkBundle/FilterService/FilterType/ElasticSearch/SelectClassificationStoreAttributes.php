@@ -21,17 +21,18 @@ use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 
 class SelectClassificationStoreAttributes extends AbstractFilterType
 {
-
     /**
      * extract list of excluded keys from filter definition
      *
      * @param AbstractFilterDefinitionType $filterDefinition
+     *
      * @return array
      */
-    protected function extractExcludedKeys(AbstractFilterDefinitionType $filterDefinition): array {
+    protected function extractExcludedKeys(AbstractFilterDefinitionType $filterDefinition): array
+    {
         $excludedKeys = [];
 
-        if(method_exists($filterDefinition, 'getExcludedKeyIds') && $filterDefinition->getExcludedKeyIds()) {
+        if (method_exists($filterDefinition, 'getExcludedKeyIds') && $filterDefinition->getExcludedKeyIds()) {
             $excludedKeys = explode(',', $filterDefinition->getExcludedKeyIds());
             $excludedKeys = array_map('intval', $excludedKeys);
         }
@@ -42,9 +43,9 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     /**
      * @inheritDoc
      */
-    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $keyCollection) {
-
-        if(!method_exists($filterDefinition, 'getKeyIdPriorityOrder') || empty($filterDefinition->getKeyIdPriorityOrder())) {
+    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $keyCollection)
+    {
+        if (!method_exists($filterDefinition, 'getKeyIdPriorityOrder') || empty($filterDefinition->getKeyIdPriorityOrder())) {
             return $keyCollection;
         }
 
@@ -53,14 +54,13 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
 
         $sortedCollection = [];
 
-        foreach($priorityKeys as $key) {
+        foreach ($priorityKeys as $key) {
             $sortedCollection[$key] = $keyCollection[$key];
             unset($keyCollection[$key]);
         }
 
         return $sortedCollection + $keyCollection;
     }
-
 
     /**
      * @inheritDoc
@@ -75,8 +75,8 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
         $values = $productList->getGroupByValues($keysField, false, false);
 
         $excludedKeys = $this->extractExcludedKeys($filterDefinition);
-        foreach($values as $keyId) {
-            if(in_array($keyId, $excludedKeys)) {
+        foreach ($values as $keyId) {
+            if (in_array($keyId, $excludedKeys)) {
                 continue;
             }
 
@@ -84,7 +84,6 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
             $productList->prepareGroupByValues($subField, false, true);
         }
     }
-
 
     /**
      * @inheritDoc
@@ -99,24 +98,22 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
         $keyCollection = [];
 
         $excludedKeys = $this->extractExcludedKeys($filterDefinition);
-        foreach($keys as $keyId) {
-            if(in_array($keyId, $excludedKeys)) {
+        foreach ($keys as $keyId) {
+            if (in_array($keyId, $excludedKeys)) {
                 continue;
             }
 
             $valuesField = $field . '.values.' . $keyId . '.keyword';
 
             $keyValues = $productList->getGroupByValues($valuesField, true, true);
-            if(!empty($keyValues)) {
+            if (!empty($keyValues)) {
                 $key = KeyConfig::getById($keyId);
 
                 $keyCollection[$keyId] = [
                     'keyConfig' => $key,
                     'values' => $keyValues
                 ];
-
             }
-
         }
 
         $keyCollection = $this->sortResult($filterDefinition, $keyCollection);
@@ -140,26 +137,22 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
 
         $value = $params[$field];
 
-        if(is_array($value)) {
-
-            foreach($value as $keyId => $keyValue) {
+        if (is_array($value)) {
+            foreach ($value as $keyId => $keyValue) {
                 $filterValue = trim($keyValue);
                 if ($filterValue == AbstractFilterType::EMPTY_STRING) {
                     $filterValue = null;
                 }
 
-                if($filterValue) {
+                if ($filterValue) {
                     $currentFilter[$field][$keyId] = $filterValue;
 
                     $valueField = $nestedPath . '.' . $keyId . '.keyword';
                     $productList->addCondition($filterValue, $valueField);
-
                 }
             }
-
         }
 
         return $currentFilter;
     }
-
 }

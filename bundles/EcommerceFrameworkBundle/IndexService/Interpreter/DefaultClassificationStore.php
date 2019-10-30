@@ -14,50 +14,49 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-
 use Pimcore\Model\DataObject\Classificationstore;
 
 class DefaultClassificationStore implements InterpreterInterface
 {
-
     /**
      * @param $value
      * @param null $config
+     *
      * @return array|void
+     *
      * @throws \Exception
      */
     public function interpret($value, $config = null)
     {
-
-        if(!$value instanceof Classificationstore) {
+        if (!$value instanceof Classificationstore) {
             return;
         }
 
         $data = [];
-        foreach($this->getAllKeysFromStore($value) as $groupId => $groupItem) {
-            foreach($groupItem as $keyId => $item) {
+        foreach ($this->getAllKeysFromStore($value) as $groupId => $groupItem) {
+            foreach ($groupItem as $keyId => $item) {
                 $data['values'][$keyId][] = (string) $value->getLocalizedKeyValue($groupId, $keyId, 'en');
                 $data['keys'][$keyId] = $keyId;
             }
         }
 
-        if($data['keys']) {
+        if ($data['keys']) {
             $data['keys'] = array_values($data['keys']);
         }
 
         return $data;
-
     }
 
     /**
      * Get all keys from objects store - including inherited information
      *
      * @param Classificationstore $store
+     *
      * @return array
      */
-    public function getAllKeysFromStore(Classificationstore $store): array {
-        if($store->getClass()->getAllowInherit()) {
-
+    public function getAllKeysFromStore(Classificationstore $store): array
+    {
+        if ($store->getClass()->getAllowInherit()) {
             $items = [];
 
             //TODO eventually cache that information

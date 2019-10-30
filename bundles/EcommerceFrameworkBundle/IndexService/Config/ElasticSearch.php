@@ -144,6 +144,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
     /**
      * @param $fieldName
+     *
      * @return array
      */
     protected function extractPossibleFirstSubFieldnameParts($fieldName)
@@ -201,21 +202,21 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     {
         //check for direct match of field name
         $fieldName = array_search($fullFieldName, $this->fieldMapping);
-        if($fieldName) {
+        if ($fieldName) {
             return $fieldName;
         }
 
         //search for part match in order to consider sub field names like name.analyzed
         $fieldNamePart = $fullFieldName;
-        while(!empty($fieldNamePart)) {
+        while (!empty($fieldNamePart)) {
 
             // cut off part after last .
-            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, "."));
+            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, '.'));
 
             // search for mapping with field name part
             $fieldName = array_search($fieldNamePart, $this->fieldMapping);
 
-            if($fieldName) {
+            if ($fieldName) {
                 // append cut off part again to returned field name
                 return $fieldName . str_replace($fieldNamePart, '', $fullFieldName);
             }
