@@ -139,7 +139,7 @@ pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.ob
             width: 400,
             height: 450,
             modal: true,
-            title: t('operator_objectbricksetter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

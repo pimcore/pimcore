@@ -61,10 +61,8 @@ class DefaultValue extends AbstractConfigElement implements ValueInterface
             $realAttribute = $this->attribute;
             $container = $target->getClass();
         } elseif ($target instanceof AbstractData) {
-            $keyParts = explode('~', $this->attribute);
-            $brickType = $keyParts[0];
-            $realAttribute = $keyParts[1];
-            $container = Definition::getByKey($brickType);
+            $realAttribute = $this->attribute;
+            $container = $target->getDefinition();
         }
 
         if (null === $container) {
