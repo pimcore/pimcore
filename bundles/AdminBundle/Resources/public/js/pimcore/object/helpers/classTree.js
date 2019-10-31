@@ -262,6 +262,7 @@ pimcore.object.helpers.classTree = Class.create({
             var newNode = {
                 text: text,
                 key: key,
+                name: initData.name,
                 type: "data",
                 layout: initData,
                 leaf: isLeaf,
