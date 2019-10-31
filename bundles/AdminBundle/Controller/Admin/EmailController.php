@@ -117,7 +117,7 @@ class EmailController extends AdminController
      */
     public function showEmailLogAction(Request $request, ?Profiler $profiler)
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
 

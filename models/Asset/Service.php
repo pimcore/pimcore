@@ -171,7 +171,6 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-
     /**
      * @param $asset
      * @param null $fields
@@ -185,7 +184,6 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($asset);
 
         if ($asset instanceof Asset && !empty($fields)) {
-
             $data = [
                 'id~system' => $asset->getid(),
                 'type~system' => $asset->getType(),
@@ -196,35 +194,34 @@ class Service extends Model\Element\Service
                 'idPath~system' => Element\Service::getIdPath($asset),
             ];
 
-            $requestedLanguage = str_replace("default","", $requestedLanguage);
+            $requestedLanguage = str_replace('default', '', $requestedLanguage);
 
             foreach ($fields as $field) {
-                $fieldDef = explode("~", $field);
-                if ($fieldDef[1] == "system") {
-                    if ($fieldDef[0] == "preview") {
+                $fieldDef = explode('~', $field);
+                if ($fieldDef[1] == 'system') {
+                    if ($fieldDef[0] == 'preview') {
                         $data[$field] = self::getPreviewThumbnail($asset, ['width' => 108, 'height' => 70, 'frame' => true]);
-                    } else if ($fieldDef[0] == "size") {
+                    } elseif ($fieldDef[0] == 'size') {
                         /** @var $asset Asset */
                         $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
                         $size = @filesize($filename);
                         $data[$field] = formatBytes($size);
                     }
                 } else {
-                    if(isset($fieldDef[1])) {
-                        $language = ($fieldDef[1] == "none" ? "" : $fieldDef[1]);
+                    if (isset($fieldDef[1])) {
+                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                         $metaData = $asset->getMetadata($fieldDef[0], $language, true);
                     } else {
                         $metaData = $asset->getMetadata($field, $requestedLanguage, true);
                     }
 
-                    if($metaData instanceof Model\Element\AbstractElement) {
+                    if ($metaData instanceof Model\Element\AbstractElement) {
                         $metaData = $metaData->getFullPath();
                     }
 
                     $data[$field] = $metaData;
                 }
             }
-
         }
 
         return $data;
@@ -250,7 +247,7 @@ class Service extends Model\Element\Service
             $thumbnailMethod = 'getImageThumbnail';
         }
 
-        if($onlyMethod) {
+        if ($onlyMethod) {
             return $thumbnailMethod;
         }
 

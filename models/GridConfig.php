@@ -76,7 +76,7 @@ class GridConfig extends AbstractModel
     /**
      * @var string
      */
-    public $type = "object";
+    public $type = 'object';
 
     /**
      * @param int $id

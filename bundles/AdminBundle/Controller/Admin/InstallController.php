@@ -38,7 +38,7 @@ class InstallController extends AdminController
      */
     public function checkAction(Request $request, ConnectionInterface $db, ?Profiler $profiler)
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
 

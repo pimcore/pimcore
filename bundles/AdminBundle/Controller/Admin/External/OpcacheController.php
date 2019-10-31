@@ -35,7 +35,7 @@ class OpcacheController extends AdminController implements EventedControllerInte
      */
     public function indexAction(Request $request, ?Profiler $profiler)
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
 

@@ -648,13 +648,13 @@ class GridHelperService
 
                 $fieldDef = explode('~', $filterField);
 
-                if($fieldDef[1] != "system") {
+                if ($fieldDef[1] != 'system') {
                     $language = $allParams['language'];
                     if (isset($fieldDef[1])) {
                         $filterField = $fieldDef[0];
                         $language = $fieldDef[1];
                     }
-                    $language = str_replace("none", "", $language);
+                    $language = str_replace('none', '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $db->quote($value) . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
                     $conditionFilters[] = $fieldDef[0] . ' ' . $operator . ' ' . $db->quote($value);
@@ -672,7 +672,6 @@ class GridHelperService
                                                  )';
         }
 
-
         $condition = implode(' AND ', $conditionFilters);
 
         $list->setCondition($condition);
@@ -682,7 +681,6 @@ class GridHelperService
         $list->setOrderKey($orderKey, $orderKeyQuote);
 
         return $list;
-
     }
 
     /**

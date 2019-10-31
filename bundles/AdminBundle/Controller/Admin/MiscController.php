@@ -715,7 +715,7 @@ class MiscController extends AdminController
      */
     public function phpinfoAction(Request $request, ?Profiler $profiler)
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
 
@@ -757,7 +757,7 @@ class MiscController extends AdminController
      */
     public function iconListAction(Request $request, ?Profiler $profiler)
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
     }

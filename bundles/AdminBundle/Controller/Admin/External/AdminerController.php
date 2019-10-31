@@ -41,7 +41,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function adminerAction(Request $request, ?Profiler $profiler)
         {
-            if($profiler) {
+            if ($profiler) {
                 $profiler->disable();
             }
 
