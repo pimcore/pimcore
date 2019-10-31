@@ -121,12 +121,21 @@ class Composer
     public static function parametersYmlCheck($rootPath)
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
+        $parameters = '';
         $parametersYml = $rootPath . '/app/config/parameters.yml';
         $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
         if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
-            $secret = base64_encode(random_bytes(24));
             $parameters = file_get_contents($parametersYmlExample);
-            $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', $secret, $parameters);
+        } elseif (file_exists($parametersYml)) {
+            $parameters = file_get_contents($parametersYml);
+        }
+
+        // ensure that there's a random secret defined
+        if(strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
+            $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
+                // generate a unique token for each occurrence
+                return base64_encode(random_bytes(24));
+            }, $parameters);
             file_put_contents($parametersYml, $parameters);
         }
     }
