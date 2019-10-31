@@ -553,6 +553,138 @@ class GridHelperService
         return $list;
     }
 
+    public function prepareAssetListingForGrid($allParams, $adminUser)
+    {
+        $systemColumns = Model\Asset\Service::$gridSystemColumns;
+        $db = \Pimcore\Db::get();
+        $folder = Model\Asset::getById($allParams['folderId']);
+
+        $start = 0;
+        $limit = 0;
+        $orderKey = 'id';
+        $order = 'ASC';
+
+        if ($allParams['limit']) {
+            $limit = $allParams['limit'];
+        }
+        if ($allParams['start']) {
+            $start = $allParams['start'];
+        }
+
+        $orderKeyQuote = true;
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+        if ($sortingSettings['orderKey']) {
+            $orderKey = $sortingSettings['orderKey'];
+            if ($orderKey == 'fullpath') {
+                $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            } elseif ($orderKey == 'filename') {
+                $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            }
+
+            $order = $sortingSettings['order'];
+        }
+
+        $list = new Model\Asset\Listing();
+
+        $conditionFilters = [];
+        if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
+            $conditionFilters[] = 'parentId = ' . $folder->getId();
+        } else {
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+        }
+
+        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
+            $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
+        }
+
+        $conditionFilters[] = "type != 'folder'";
+        $filterJson = $allParams['filter'] ?? null;
+        if ($filterJson) {
+            $filters = json_decode($filterJson, true);
+            foreach ($filters as $filter) {
+                $operator = '=';
+
+                $filterField = $filter['property'];
+                $filterOperator = $filter['operator'];
+                $filterType = $filter['type'];
+
+                if ($filterType == 'string') {
+                    $operator = 'LIKE';
+                } elseif ($filterType == 'numeric') {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
+                } elseif ($filterType == 'date') {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
+                    $filter['value'] = strtotime($filter['value']);
+                } elseif ($filterType == 'list') {
+                    $operator = '=';
+                } elseif ($filterType == 'boolean') {
+                    $operator = '=';
+                    $filter['value'] = (int) $filter['value'];
+                }
+                // system field
+                $value = $filter['value'];
+                if ($operator == 'LIKE') {
+                    $value = '%' . $value . '%';
+                }
+
+                $field = '`' . $filterField . '` ';
+                if ($filterField == 'fullpath') {
+                    $field = 'CONCAT(path,filename)';
+                }
+
+                $fieldDef = explode('~', $filterField);
+
+                if($fieldDef[1] != "system") {
+                    $language = $allParams['language'];
+                    if (isset($fieldDef[1])) {
+                        $filterField = $fieldDef[0];
+                        $language = $fieldDef[1];
+                    }
+                    $language = str_replace("none", "", $language);
+                    $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $db->quote($value) . ' AND `language` = ' . $db->quote($language). ')';
+                } else {
+                    $conditionFilters[] = $fieldDef[0] . ' ' . $operator . ' ' . $db->quote($value);
+                }
+            }
+        }
+
+        if (!$adminUser->isAdmin()) {
+            $userIds = $adminUser->getRoles();
+            $userIds[] = $adminUser->getId();
+            $conditionFilters[] = ' (
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+        }
+
+
+        $condition = implode(' AND ', $conditionFilters);
+
+        $list->setCondition($condition);
+        $list->setLimit($limit);
+        $list->setOffset($start);
+        $list->setOrder($order);
+        $list->setOrderKey($orderKey, $orderKeyQuote);
+
+        return $list;
+
+    }
+
     /**
      * @param string $query
      *

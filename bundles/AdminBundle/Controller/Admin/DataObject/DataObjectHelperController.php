@@ -901,6 +901,7 @@ class DataObjectHelperController extends AdminController
             $searchType = $request->get('searchType');
             $global = $request->get('global');
             $user = $this->getAdminUser();
+            $type = $request->get('type');
 
             $favourite = new GridConfigFavourite();
             $favourite->setOwnerId($user->getId());
@@ -910,6 +911,7 @@ class DataObjectHelperController extends AdminController
             }
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
+            $favourite->setType($type);
 
             try {
                 if ($gridConfigId != 0) {
@@ -930,7 +932,8 @@ class DataObjectHelperController extends AdminController
                     . 'ownerId = ' . $user->getId()
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
-                    . ' and objectId != ' . $objectId . ' and objectId != 0');
+                    . ' and objectId != ' . $objectId . ' and objectId != 0'
+                    . ' and type != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();

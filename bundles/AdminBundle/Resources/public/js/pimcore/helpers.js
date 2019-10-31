@@ -2274,19 +2274,23 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridConfigId, searchType, global) {
+pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridConfigId, searchType, global, type) {
 
     try {
 
+        type = type || "object";
+        var url = '/admin/' + type + '-helper/grid-mark-favourite-column-config';
+
         Ext.Ajax.request({
-            url: '/admin/object-helper/grid-mark-favourite-column-config',
+            url: url,
             method: "post",
             params: {
                 objectId: objectId,
                 classId: classId,
                 gridConfigId: gridConfigId,
                 searchType: searchType,
-                global: global ? 1 : 0
+                global: global ? 1 : 0,
+                type: type
             },
             success: function (response) {
                 try {
@@ -2342,20 +2346,24 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
     });
 };
 
-pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type) {
 
 
     try {
+        type = type || "object";
         var data = {
             id: objectId,
             class_id: classId,
             gridconfig: Ext.encode(configuration),
             searchType: searchType,
-            settings: Ext.encode(settings)
+            settings: Ext.encode(settings),
+            type: type
         };
 
+        var url = '/admin/' + type + '-helper/grid-save-column-config';
+
         Ext.Ajax.request({
-            url: '/admin/object-helper/grid-save-column-config',
+            url: url,
             method: "post",
             params: data,
             success: function (response) {
@@ -2573,26 +2581,17 @@ pimcore.helpers.exportWarning = function (type, callback) {
         }
     );
 
-    var enableInheritance = new Ext.form.Checkbox({
-        fieldLabel: t('enable_inheritance'),
-        name: 'enableInheritance',
-        inputValue: true,
-        labelWidth: 200
-    });
-
-    var objectSettingsContainer = new Ext.form.FieldSet({
-        title: t('object_settings'),
-        items: [
-            enableInheritance
-        ]
-    });
+    var objectSettingsContainer = type.getObjectSettingsContainer();
 
     var formPanelItems = [];
-    formPanelItems.push(objectSettingsContainer);
 
-    exportSettingsContainer = type.getExportSettingsContainer();
+    if (objectSettingsContainer) {
+        formPanelItems.push(objectSettingsContainer);
+    }
 
-    if(exportSettingsContainer) {
+    var exportSettingsContainer = type.getExportSettingsContainer();
+
+    if (exportSettingsContainer) {
         formPanelItems.push(exportSettingsContainer);
     }
 
@@ -2605,7 +2604,6 @@ pimcore.helpers.exportWarning = function (type, callback) {
         modal: true,
         title: type.text,
         width: 600,
-        height: 450,
         bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,

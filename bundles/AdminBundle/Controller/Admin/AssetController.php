@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
@@ -1564,14 +1565,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = '';
-            if ($asset instanceof Asset\Image) {
-                $thumbnailMethod = 'getThumbnail';
-            } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            }
+            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
 
             if (!empty($thumbnailMethod)) {
                 $filenameDisplay = $asset->getFilename();
@@ -2217,7 +2211,7 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -2229,119 +2223,9 @@ class AssetController extends ElementControllerBase implements EventedController
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         if (isset($allParams['data']) && $allParams['data']) {
-            //TODO probably not needed
+            //TODO assets metadata grid & batch edits
         } else {
-            $db = \Pimcore\Db::get();
-            // get list of objects
-            $folder = Asset::getById($allParams['folderId']);
-
-            $start = 0;
-            $limit = 20;
-            $orderKey = 'id';
-            $order = 'ASC';
-
-            if ($allParams['limit']) {
-                $limit = $allParams['limit'];
-            }
-            if ($allParams['start']) {
-                $start = $allParams['start'];
-            }
-
-            $orderKeyQuote = true;
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
-            if ($sortingSettings['orderKey']) {
-                $orderKey = $sortingSettings['orderKey'];
-                if ($orderKey == 'fullpath') {
-                    $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
-                    $orderKeyQuote = false;
-                } elseif ($orderKey == 'filename') {
-                    $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
-                    $orderKeyQuote = false;
-                }
-
-                $order = $sortingSettings['order'];
-            }
-
-            $list = new Asset\Listing();
-
-            $conditionFilters = [];
-            if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
-                $conditionFilters[] = 'parentId = ' . $folder->getId();
-            } else {
-                $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
-            }
-
-            if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
-                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
-            }
-
-            $conditionFilters[] = "type != 'folder'";
-            $filterJson = $allParams['filter'] ?? null;
-            if ($filterJson) {
-                $filters = $this->decodeJson($filterJson);
-                foreach ($filters as $filter) {
-                    $operator = '=';
-
-                    $filterField = $filter['property'];
-                    $filterOperator = $filter['operator'];
-                    $filterType = $filter['type'];
-
-                    if ($filterType == 'string') {
-                        $operator = 'LIKE';
-                    } elseif ($filterType == 'numeric') {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
-                        }
-                    } elseif ($filterType == 'date') {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
-                        }
-                        $filter['value'] = strtotime($filter['value']);
-                    } elseif ($filterType == 'list') {
-                        $operator = '=';
-                    } elseif ($filterType == 'boolean') {
-                        $operator = '=';
-                        $filter['value'] = (int) $filter['value'];
-                    }
-                    // system field
-                    $value = $filter['value'];
-                    if ($operator == 'LIKE') {
-                        $value = '%' . $value . '%';
-                    }
-
-                    $field = '`' . $filterField . '` ';
-                    if ($filterField == 'fullpath') {
-                        $field = 'CONCAT(path,filename)';
-                    }
-
-                    $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);
-                }
-            }
-
-            if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
-            }
-
-            $condition = implode(' AND ', $conditionFilters);
-            $list->setCondition($condition);
-            $list->setLimit($limit);
-            $list->setOffset($start);
-            $list->setOrder($order);
-            $list->setOrderKey($orderKey, $orderKeyQuote);
+            $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
@@ -2353,24 +2237,12 @@ class AssetController extends ElementControllerBase implements EventedController
             $list->load();
 
             $assets = [];
-            foreach ($list->getAssets() as $asset) {
-
-                /** @var $asset Asset */
-                $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
-                $size = @filesize($filename);
+            foreach ($list->getAssets() as $index => $asset) {
 
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getid(),
-                        'type' => $asset->getType(),
-                        'fullpath' => $asset->getRealFullPath(),
-                        'filename' => $asset->getKey(),
-                        'creationDate' => $asset->getCreationDate(),
-                        'modificationDate' => $asset->getModificationDate(),
-                        'size' => formatBytes($size),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
-                    ];
+                    $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language']);
+                    $assets[] = $a;
                 }
             }
 
