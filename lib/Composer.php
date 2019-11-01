@@ -131,7 +131,7 @@ class Composer
         }
 
         // ensure that there's a random secret defined
-        if(strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
+        if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
             $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
                 // generate a unique token for each occurrence
                 return base64_encode(random_bytes(24));
