@@ -670,7 +670,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         if ($user) {
             $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
             $r = $this->getRequest();
-            $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
+            $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . urlencode($user->getName()) . "&token=" . $token;
 
             $this->_helper->json([
                 "link" => $link
