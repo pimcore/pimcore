@@ -45,13 +45,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 $profiler->disable();
             }
 
-            $db = \Pimcore\Db::get();
-            $request->query->remove('csrfToken');
-
-            if (!$request->query->count()) {
-                return $this->redirect('/admin/external_adminer/adminer?username=' . $db->getUsername() . '&db=' . $db->getDatabase());
-            }
-
             // disable debug error handler while including adminer
             $errorHandler = set_error_handler(function () {
             });
@@ -221,6 +214,14 @@ namespace {
                 {
                     return '';
                 }
+
+
+                public function loginForm()
+                {
+                    parent::loginForm();
+                    echo "<script" . nonce() . ">document.querySelector('form').submit()</script>";
+                }
+
 
                 /**
                  * @param bool $create
