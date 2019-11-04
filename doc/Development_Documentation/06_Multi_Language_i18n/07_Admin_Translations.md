@@ -32,4 +32,13 @@ Admin translations underly the same case sensitivity logic as [shared translatio
      ]
  ]); ?>
  ```
+ ```twig
+ {{ pimcore_select("select", {
+	"store": [
+		["option1", {{ "Option One"|trans({}, 'admin') }}],
+		["option2", {{ "Option Two"|trans({}, 'admin') }}],
+		["option3", {{ "Option Three"|trans({}, 'admin') }}]
+	]
+}) }}
+ ```
  
