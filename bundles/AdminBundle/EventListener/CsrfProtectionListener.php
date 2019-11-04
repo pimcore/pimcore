@@ -21,7 +21,6 @@ use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -125,9 +124,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public function getCsrfToken()
     {
         if (!$this->csrfToken) {
-            $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-                return $adminSession->get('csrfToken');
-            });
+            $this->csrfToken = Session::getReadOnly()->get('csrfToken');
         }
 
         return $this->csrfToken;

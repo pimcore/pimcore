@@ -85,8 +85,8 @@ The command that you enter in the binary field can then be something like this:
 ```
 xvfb-run -a -s "-screen 0 640x480x16" /usr/bin/wkhtmltopdf
 ```
-In the host field, enter the full URL, like you would in a web browser, not just the hostname. 
-For example: "http://example.mydevdomain.local"
+In the host field, enter the full URL, like you would in a web browser, but without the leading `http://` or `https://`. 
+For example: `example.mydevdomain.local`
 
 To test and debug the PDF rendering, open a Print document, go to the tab "Generate & Preview PDF", click the "Generate PDF" 
 button and observe the message field for any errors.

@@ -60,9 +60,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
         return this.component;
     },
 
-
     getLayoutShow: function () {
-
         this.getLayoutEdit();
         this.component.setReadOnly(true);
 
@@ -79,5 +77,32 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
 
     isInvalidMandatory: function () {
         return true;
+    },
+
+    getGridColumnFilter: function (field) {
+        return {type: 'string', dataIndex: field.key};
+    },
+
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            try {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+
+            if (value) {
+                value = value.replace(/\n/g,"<br>");
+                value = strip_tags(value, '<br>');
+            }
+            return value;
+        }.bind(this, field.key);
+
+        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+            editor:this.getGridColumnEditor(field)};
     }
 });

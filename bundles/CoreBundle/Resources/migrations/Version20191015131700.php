@@ -28,8 +28,7 @@ class Version20191015131700 extends AbstractPimcoreMigration
     {
         $this->addSql("DELETE from `gridconfigs` WHERE `type` = 'asset';");
         $this->addSql("DELETE from `gridconfig_favourites` WHERE `type` = 'asset';");
-        $this->addSql("ALTER TABLE `gridconfigs` DROP COLUMN `type`;");
-        $this->addSql("ALTER TABLE `gridconfig_favourites` DROP COLUMN `type`;");
-
+        $this->addSql('ALTER TABLE `gridconfigs` DROP COLUMN `type`;');
+        $this->addSql('ALTER TABLE `gridconfig_favourites` DROP COLUMN `type`;');
     }
 }

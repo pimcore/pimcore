@@ -39,6 +39,63 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 border: false,
                 layout: "fit"
             });
+        if (response.responseText) {
+            response = Ext.decode(response.responseText);
+
+            if (response.pageSize) {
+                itemsPerPage = response.pageSize;
+            }
+
+            fields = response.availableFields;
+            this.gridLanguage = response.language;
+            this.gridPageSize = response.pageSize;
+            this.sortinfo = response.sortinfo;
+
+            this.settings = response.settings || {};
+            this.availableConfigs = response.availableConfigs;
+            this.sharedConfigs = response.sharedConfigs;
+
+            if (response.onlyDirectChildren) {
+                this.onlyDirectChildren = response.onlyDirectChildren;
+            }
+
+            if (response.onlyUnreferenced) {
+                this.onlyUnreferenced = response.onlyUnreferenced;
+            }
+        } else {
+             itemsPerPage = this.gridPageSize;
+             fields = response;
+             this.settings = settings;
+             this.buildColumnConfigMenu();
+        }
+
+        this.fieldObject = {};
+
+        for(var i = 0; i < fields.length; i++) {
+            this.fieldObject[fields[i].key] = fields[i];
+        }
+
+        var fieldParam = Object.keys(this.fieldObject);
+
+        var proxy = new Ext.data.HttpProxy({
+            type: 'ajax',
+            url: "/admin/asset/grid-proxy",
+            reader: {
+                type: 'json',
+                rootProperty: 'data',
+                totalProperty: 'total',
+                successProperty: 'success',
+                idProperty: 'key'
+            },
+            extraParams: {
+                limit: itemsPerPage,
+                folderId: this.element.data.id,
+                "fields[]": fieldParam,
+                language: this.gridLanguage,
+                only_direct_children: this.onlyDirectChildren,
+                only_unreferenced: this.onlyUnreferenced
+            }
+        });
 
             this.layout.on("afterrender", this.getGrid.bind(this, false));
         }
@@ -267,10 +324,10 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 }.bind(this),
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
                     var columnName = grid.ownerGrid.getColumns();
-                    if(columnName[cellIndex].dataIndex == 'id' || columnName[cellIndex].dataIndex == 'fullpath'
-                        || columnName[cellIndex].dataIndex == 'preview') {
+                    if(columnName[cellIndex].dataIndex == 'id~system' || columnName[cellIndex].dataIndex == 'fullpath~system'
+                        || columnName[cellIndex].dataIndex == 'preview~system') {
                         var data = this.store.getAt(rowIndex);
-                        pimcore.helpers.openAsset(data.get("id"), data.get("type"));
+                        pimcore.helpers.openAsset(data.id, data.get("type~system"));
                     }
                 }
             },
@@ -291,6 +348,134 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.grid.on("columnresize", function () {
             this.saveColumnConfigButton.show();
         }.bind(this));
+
+        this.grid.on("rowcontextmenu", this.onRowContextmenu);
+
+        this.layout.removeAll();
+        this.layout.add(this.grid);
+        this.layout.updateLayout();
+
+        if (save) {
+            if (this.settings.isShared) {
+                this.settings.gridConfigId = null;
+            }
+            this.saveConfig(false);
+        }
+    },
+
+    getGridColumns: function(fields) {
+        var gridColumns = [];
+
+        for (i = 0; i < fields.length; i++) {
+            var field = fields[i];
+            var key = field.key;
+            var language = field.language;
+            if (!key) {
+                key = "";
+            }
+            if (!language) {
+                language = "";
+            }
+
+            if (!field.type) {
+                continue;
+            }
+
+            if(key.indexOf("~") >= 0 ) {
+                key = key.substr(0, key.lastIndexOf('~'));
+            }
+
+            if (field.type == "system") {
+                if(key == "preview") {
+                    gridColumns.push({
+                        text: t(field.label), sortable: false, dataIndex: field.key, editable: false, width: this.getColumnWidth(field, 150),
+                        renderer: function (value) {
+                            if (value) {
+                                return '<img src="' + value + '" />';
+                            }
+                        }.bind(this)
+                    });
+                } else if (key == "creationDate" || field.key == "modificationDate") {
+                    gridColumns.push({text: t(field.label), width: this.getColumnWidth(field, 150), sortable: true, dataIndex: field.key, editable: false, filter: 'date',
+                       renderer: function(d) {
+                            var date = new Date(d * 1000);
+                            return Ext.Date.format(date, "Y-m-d H:i:s");
+                        }
+                    });
+                } else if (key == "filename") {
+                    gridColumns.push({text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
+                        width: this.getColumnWidth(field, 250), filter: 'string', renderer: Ext.util.Format.htmlEncode});
+                } else if (key == "fullpath") {
+                    gridColumns.push({text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
+                        width: this.getColumnWidth(field, 400), filter: 'string', renderer: Ext.util.Format.htmlEncode});
+                } else if (key == "size") {
+                    gridColumns.push({text: t(field.label), sortable: false, dataIndex: field.key, editable: false,
+                        width: this.getColumnWidth(field, 130)});
+                } else {
+                    gridColumns.push({text: t(field.label),  width: this.getColumnWidth(field, 130), sortable: true,
+                        dataIndex: field.key});
+                }
+            } else if (field.type == "date") {
+                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 120), sortable: false,
+                    dataIndex: field.key, filter: 'date', editable: false,
+                    renderer: function(d) {
+                        if (d) {
+                            var date = new Date(d * 1000);
+                            return Ext.Date.format(date, "Y-m-d");
+                        }
+
+                    }
+                });
+            } else if (field.type == "checkbox") {
+                gridColumns.push(new Ext.grid.column.Check({
+                    text:  field.label,
+                    editable: false,
+                    width: this.getColumnWidth(field, 40),
+                    sortable: false,
+                    filter: 'boolean',
+                    dataIndex: field.key
+                }));
+            } else if (field.type == "select") {
+                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 200), sortable: false,
+                    dataIndex: field.label, filter: 'string'});
+            } else if (field.type == "document" || field.type == "asset" || field.type == "object") {
+                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 300), sortable: false,
+                    dataIndex: field.label});
+            } else {
+                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 250), sortable: false,
+                    dataIndex: field.key, filter: 'string'});
+            }
+        }
+
+        return gridColumns;
+    },
+
+    getColumnWidth: function(field, defaultValue) {
+        if (field.width) {
+            return field.width;
+        } else if(field.layout && field.layout.width) {
+            return field.layout.width;
+        } else {
+            return defaultValue;
+        }
+    },
+
+    getExportButtons: function () {
+        var buttons = [];
+        pimcore.globalmanager.get("pimcore.asset.gridexport").forEach(function (exportType) {
+            buttons.push({
+                text: t(exportType.text),
+                iconCls: exportType.icon || "pimcore_icon_export",
+                handler: function () {
+                    pimcore.helpers.exportWarning(exportType, function (settings) {
+                        this.exportPrepare(settings, exportType);
+                    }.bind(this));
+                }.bind(this),
+            })
+        }.bind(this));
+
+        return buttons;
+    },
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
@@ -360,7 +545,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
-                    pimcore.helpers.openAsset(data.data.id, data.data.type);
+                    pimcore.helpers.openAsset(data.id, data.data['type~system']);
                 }.bind(this, data)
             }));
 
@@ -407,7 +592,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                     var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
                         var data = selectedRows[i].data;
-                        pimcore.helpers.openAsset(data.id, data.type);
+                        pimcore.helpers.openAsset(data.id, data.get("type~system"));
                     }
                 }.bind(this, data)
             }));

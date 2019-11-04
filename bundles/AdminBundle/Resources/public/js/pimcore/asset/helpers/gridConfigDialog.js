@@ -70,8 +70,12 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     obj.attributes = attributes;
 
                 } else {
-                    if(child.data.language) {
-                        obj.key = child.data.text + '~~' + child.data.language;
+                    obj.label =  child.data.text;
+                    if(child.data.dataType == "system") {
+                        obj.key = child.data.text + '~system';
+                    } else if(child.data.language) {
+                        obj.key = child.data.text + '~' + child.data.language;
+                        obj.label = child.data.layout.title = child.data.text + ' (' + child.data.language + ')';
                     } else {
                         obj.key = child.data.text;
                     }
@@ -203,6 +207,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     child = child[0];
                 } else {
                     var text = nodeConf.label;
+                    if(nodeConf.layout) {
+                        var text = nodeConf.layout.name;
+                    } else {
+                        var text = nodeConf.label;
+                    }
                     var subType = nodeConf.type;
 
                     if (nodeConf.dataType !== "system" && this.showFieldname && subType) {
@@ -319,7 +328,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     flex: 90,
                     renderer: function (value, metaData, record) {
                         if (record && record.parentNode.id == 0) {
-                            var key = record.data.key;
+                            var key = record.data.text;
                             record.data.inheritedFields = {};
 
                             if (key == "preview" && value) {
@@ -408,11 +417,16 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                     }
 
                                 } else {
-                                    var copy = Ext.apply({}, record.data);
-                                    delete copy.id;
-                                    copy = record.createNode(copy);
-
                                     data.records = [copy]; // assign the copy as the new dropNode
+                                    if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
+                                        dropHandlers.cancelDrop();
+                                    } else {
+                                        var copy = Ext.apply({}, record.data);
+                                        delete copy.id;
+                                        copy = record.createNode(copy);
+
+                                        data.records = [copy]; // assign the copy as the new dropNode
+                                    }
                                 }
                             } else {
                                 // node has been moved inside right selection panel

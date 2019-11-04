@@ -624,7 +624,6 @@ pimcore.layout.toolbar = Class.create({
                                         return;
                                     }
 
-                                    console.log(data);
                                     if (data && data.configured && data.url) {
                                         resolve(data.url);
                                     }

@@ -797,7 +797,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($filterCondition)) {
                         $boolFilters[] = $filterCondition;
                     } else {
-                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $filterCondition]];
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname, true) => $filterCondition]];
                     }
                 }
             }
@@ -867,7 +867,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
     }
@@ -887,7 +887,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
 
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = [
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = [
                 'countValues' => $countValues,
                 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded,
                 'aggregationConfig' => $aggregationConfig
@@ -907,7 +907,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
     }
@@ -967,7 +967,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname, true), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -983,7 +983,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname, true), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**

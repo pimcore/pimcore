@@ -118,11 +118,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
         for (var i = 0; i < cm.length; i++) {
             if (cm[i].dataIndex) {
                 var name = cm[i].dataIndex;
-                //preview column uses data index ID
-                if(cm[i].text == "Preview") {
-                    name = "preview";
-                }
-                config.columns[i] = {
+                config.columns[name] = {
                     name: name,
                     position: i,
                     hidden: cm[i].hidden,

@@ -690,7 +690,6 @@
     "login_token_invalid_user_error": "Utilisateur non valide.",
     "login_token_as_admin_non_admin_user_error": "Seuls les utilisateurs admin sont autorisés à se connecter en tant qu'administrateur.",
     "login_token_no_password_error": "L'utilisateur n'a pas de mot de passe défini.",
-    "lostpassword_reset_error": "Une erreur s'est produite lors de l'envoi des informations sur le mot de passe perdu. Veuillez réessayer ou contactez votre administrateur.",
     "targeting_toolbar": "Barre d'outils de ciblage",
     "sort_children_by": "Trier les enfants par",
     "by_key": "Clé (alphabétiquement)",
@@ -905,5 +904,11 @@
     "bundle_ecommerce_order_tab": "Détails de la commande",
     "access_denied": "Accès refusé !",
     "access_denied_description": "Vous ne disposez pas des autorisations suffisantes pour ouvrir l'élément ou effectuer l'action souhaitée.",
-    "validation_failed": "Validation échouée !"
+    "validation_failed": "Validation échouée !",
+    "export_xlsx": "XLSX Export",
+    "object_export_warning": "Please note that the export does not support all data types. Press OK to continue with the export.",
+    "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
+    "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
+    "paste_clipboard": "Paste Clipboard",
+    "paste_here": "Paste your clipboard data here"
 }

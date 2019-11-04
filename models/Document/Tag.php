@@ -465,16 +465,26 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @return string
      */
+    public function render()
+    {
+        if ($this->editmode) {
+            return $this->admin();
+        }
+
+        return $this->frontend();
+    }
+
+    /**
+     * direct output to the frontend
+     *
+     * @return string
+     */
     public function __toString()
     {
         $result = '';
 
         try {
-            if ($this->editmode) {
-                $result = $this->admin();
-            } else {
-                $result = $this->frontend();
-            }
+            $result = $this->render();
         } catch (\Throwable $e) {
             if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions

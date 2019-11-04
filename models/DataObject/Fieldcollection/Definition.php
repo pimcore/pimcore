@@ -458,15 +458,30 @@ class Definition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "Fields Summary: \n";
 
-        if (is_array($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $fd) {
-                $cd .= ' - ' . $fd->getName() . ' [' . $fd->getFieldtype() . "]\n";
-            }
-        }
+        $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
 
         $cd .= '*/ ';
 
         return $cd;
+    }
+
+    /**
+     * @param $definition
+     * @param $text
+     * @param $level
+     *
+     * @return string
+     */
+    protected function getInfoDocBlockForFields($definition, $text, $level)
+    {
+        foreach ($definition->getFieldDefinitions() as $fd) {
+            $text .= str_pad('', $level, '-').' '.$fd->getName().' ['.$fd->getFieldtype()."]\n";
+            if (method_exists($fd, 'getFieldDefinitions')) {
+                $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
+            }
+        }
+
+        return $text;
     }
 
     /**

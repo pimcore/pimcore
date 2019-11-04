@@ -171,7 +171,6 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-
     /**
      * @param $asset
      * @param null $fields
@@ -185,44 +184,44 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($asset);
 
         if ($asset instanceof Asset && !empty($fields)) {
-
             $data = [
-                'id' => $asset->getid(),
-                'type' => $asset->getType(),
-                'fullpath' => $asset->getRealFullPath(),
-                'filename' => $asset->getKey(),
-                'creationDate' => $asset->getCreationDate(),
-                'modificationDate' => $asset->getModificationDate(),
-                'idPath' => Element\Service::getIdPath($asset),
+                'id~system' => $asset->getid(),
+                'type~system' => $asset->getType(),
+                'fullpath~system' => $asset->getRealFullPath(),
+                'filename~system' => $asset->getKey(),
+                'creationDate~system' => $asset->getCreationDate(),
+                'modificationDate~system' => $asset->getModificationDate(),
+                'idPath~system' => Element\Service::getIdPath($asset),
             ];
 
-            $requestedLanguage = str_replace("default","", $requestedLanguage);
+            $requestedLanguage = str_replace('default', '', $requestedLanguage);
 
             foreach ($fields as $field) {
-                if ($field == "preview") {
-                    $data["preview"] = self::getPreviewThumbnail($asset,['width' => 108, 'height' => 70, 'frame' => true]);
-                } else if ($field == "size") {
-                    /** @var $asset Asset */
-                    $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
-                    $size = @filesize($filename);
-                    $data[$field] = formatBytes($size);
-                } else if (!in_array($field, Asset\Service::$gridSystemColumns)) {
-                    if( strpos($field, '~~')) {
-                        $fieldDef = explode('~~',$field);
-                        $language = ($fieldDef[1] == "none" ? "" : $fieldDef[1]);
+                $fieldDef = explode('~', $field);
+                if ($fieldDef[1] == 'system') {
+                    if ($fieldDef[0] == 'preview') {
+                        $data[$field] = self::getPreviewThumbnail($asset, ['width' => 108, 'height' => 70, 'frame' => true]);
+                    } elseif ($fieldDef[0] == 'size') {
+                        /** @var $asset Asset */
+                        $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
+                        $size = @filesize($filename);
+                        $data[$field] = formatBytes($size);
+                    }
+                } else {
+                    if (isset($fieldDef[1])) {
+                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                         $metaData = $asset->getMetadata($fieldDef[0], $language, true);
                     } else {
                         $metaData = $asset->getMetadata($field, $requestedLanguage, true);
                     }
 
-                    if($metaData instanceof Model\Element\AbstractElement) {
+                    if ($metaData instanceof Model\Element\AbstractElement) {
                         $metaData = $metaData->getFullPath();
                     }
 
                     $data[$field] = $metaData;
                 }
             }
-
         }
 
         return $data;
@@ -248,16 +247,14 @@ class Service extends Model\Element\Service
             $thumbnailMethod = 'getImageThumbnail';
         }
 
-        if($onlyMethod) {
+        if ($onlyMethod) {
             return $thumbnailMethod;
         }
 
         if (!empty($thumbnailMethod)) {
             $thumbnailUrl = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId();
             if (count($params) > 0) {
-                foreach ($params as $pKey => $pValue) {
-                    $thumbnailUrl .= "&" . $pKey . '=' . $pValue;
-                }
+                $thumbnailUrl .= '&' . http_build_query($params);
             }
         }
 
