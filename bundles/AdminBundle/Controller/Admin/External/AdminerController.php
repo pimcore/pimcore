@@ -215,13 +215,11 @@ namespace {
                     return '';
                 }
 
-
                 public function loginForm()
                 {
                     parent::loginForm();
-                    echo "<script" . nonce() . ">document.querySelector('form').submit()</script>";
+                    echo '<script' . nonce() . ">document.querySelector('form').submit()</script>";
                 }
-
 
                 /**
                  * @param bool $create
