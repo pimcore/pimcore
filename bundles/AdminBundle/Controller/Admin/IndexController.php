@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Linfo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
@@ -62,6 +63,7 @@ class IndexController extends AdminController
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
+     * @param CsrfProtectionListener $csrfProtectionListener
      *
      * @return ViewModel
      *
@@ -71,7 +73,8 @@ class IndexController extends AdminController
         Request $request,
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
-        Executor $maintenanceExecutor
+        Executor $maintenanceExecutor,
+        CsrfProtectionListener $csrfProtectionListener
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -83,7 +86,7 @@ class IndexController extends AdminController
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
@@ -228,7 +231,7 @@ class IndexController extends AdminController
      *
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener)
     {
         $config = $view->config;
         $settings = new ViewModel([
@@ -288,10 +291,12 @@ class IndexController extends AdminController
 
         $this
             ->addSystemVarSettings($settings)
-            ->addCsrfToken($settings, $user)
             ->addMaintenanceSettings($settings, $maintenanceExecutor)
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
+
+
+        $settings->csrfToken = $csrfProtectionListener->getCsrfToken();
 
         return $settings;
     }
@@ -348,27 +353,6 @@ class IndexController extends AdminController
         }
 
         $settings->session_gc_maxlifetime = (int)$session_gc_maxlifetime;
-
-        return $this;
-    }
-
-    /**
-     * @param ViewModel $settings
-     * @param User $user
-     *
-     * @return $this
-     */
-    protected function addCsrfToken(ViewModel $settings, User $user)
-    {
-        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
-            if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
-                $adminSession->set('csrfToken', sha1(microtime() . $user->getName() . uniqid()));
-            }
-
-            return $adminSession->get('csrfToken');
-        });
-
-        $settings->csrfToken = $csrfToken;
 
         return $this;
     }

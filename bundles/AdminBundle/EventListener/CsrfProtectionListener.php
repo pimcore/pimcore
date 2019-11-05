@@ -21,6 +21,7 @@ use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -55,7 +56,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'handleRequest'
+            KernelEvents::REQUEST => ['handleRequest', 11]
         ];
     }
 
@@ -76,10 +77,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
         }
 
         $exludedRoutes = [
-            // login
-            'pimcore_admin_login', 'pimcore_admin_login_fallback', 'pimcore_admin_login_check', 'pimcore_admin_login_lostpassword',
-            'pimcore_admin_login_deeplink', 'pimcore_admin_2fa', 'pimcore_admin_2fa',
-
             // WebDAV
             'pimcore_admin_webdav',
 
@@ -125,6 +122,15 @@ class CsrfProtectionListener implements EventSubscriberInterface
     {
         if (!$this->csrfToken) {
             $this->csrfToken = Session::getReadOnly()->get('csrfToken');
+            if(!$this->csrfToken) {
+                $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+                    if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
+                        $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
+                    }
+
+                    return $adminSession->get('csrfToken');
+                });
+            }
         }
 
         return $this->csrfToken;
