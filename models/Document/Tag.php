@@ -341,6 +341,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         $this->documentId = (int) $id;
 
+        if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
+            $this->document = null;
+        }
+
         return $this;
     }
 
