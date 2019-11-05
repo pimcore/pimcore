@@ -479,11 +479,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __sleep()
     {
+        $finalVars = [];
+        $parentVars = parent::__sleep();
+        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
 
-        // here the "normal" task of __sleep ;-)
-        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options', 'parentBlockNames'];
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+        foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
