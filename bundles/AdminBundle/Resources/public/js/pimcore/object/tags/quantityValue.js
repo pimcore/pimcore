@@ -173,6 +173,126 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         };
     },
 
+    getGridColumnFilter: function (field) {
+        pimcore.helpers.quantityValue.initUnitStore();
+
+        Ext.define('Ext.grid.filters.filter.QuantityValue', {
+            extend: 'Ext.grid.filters.filter.Number',
+            alias: 'grid.filter.quantityValue',
+            type: 'quantityValue',
+            config: {
+                /**
+                 * @cfg {Object} [fields]
+                 * Configures field items individually. These properties override those defined
+                 * by `{@link #itemDefaults}`.
+                 *
+                 * Example usage:
+                 *
+                 *      fields: {
+                 *          // Override itemDefaults for one field:
+                 *          gt: {
+                 *              width: 200
+                 *          }
+                 *
+                 *          // "lt" and "eq" fields retain all itemDefaults
+                 *      },
+                 */
+                fields: {
+                    gt: {
+                        iconCls: Ext.baseCSSPrefix + 'grid-filters-gt',
+                        margin: '0 0 3px 0'
+                    },
+                    lt: {
+                        iconCls: Ext.baseCSSPrefix + 'grid-filters-lt',
+                        margin: '0 0 3px 0'
+                    },
+                    eq: {
+                        iconCls: Ext.baseCSSPrefix + 'grid-filters-eq',
+                        margin: '0 0 3px 0'
+                    }
+                }
+            },
+            constructor: function(config) {
+                var me = this;
+                me.callParent([config]);
+                me.filter.unit = me.createFilter({
+                    operator: 'unit',
+                    value: 123
+                }, 'unit');
+
+                if (me.active) {
+                    me.addStoreFilter(me.filter.unit);
+                }
+            },
+            createMenu: function() {
+                var me = this;
+                me.callParent();
+
+                var cfg = {
+                    xtype: 'combo',
+                    name: 'unit',
+                    labelClsExtra: Ext.baseCSSPrefix + 'grid-filters-icon pimcore_nav_icon_quantityValue',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true,
+                    hideEmptyLabel: false,
+                    store: pimcore.helpers.quantityValue.store,
+                    valueField: 'id',
+                    displayField: 'abbreviation',
+                    margin: 0,
+                    listeners: {
+                        change: function(field, newValue, oldValue, e) {
+                            var me = this;
+                            me.menu.hide();
+                            if (me.updateBuffer) {
+                                me.task.delay(me.updateBuffer, null, null, [
+                                    me.getValue(field)
+                                ]);
+                            } else {
+                                me.setValue(me.getValue(field));
+                            }
+                        }.bind(this)
+                    }
+                };
+                if (me.getItemDefaults()) {
+                    cfg = Ext.merge({}, me.getItemDefaults(), cfg);
+                }
+
+                me.menu.add('-');
+                me.fields.unit = item = me.menu.add(cfg);
+                item.filter = me.filter.unit;
+                item.filterKey = 'unit';
+            },
+            getValue: function(field) {
+                var value = {};
+                var me = this;
+
+                for(var i in me.filter) {
+                    value[i] = me.filter[i].getValue();
+                }
+                return value;
+            },
+            setValue: function(value) {
+                var me = this;
+                me.callParent([value]);
+                if ('unit' in value) {
+                    var v = value.unit;
+                    if (v) {
+                        me.filter.unit.setValue(v);
+                        me.addStoreFilter(me.filter.unit);
+                    } else {
+                        me.fields.unit.setValue(null);
+                        me.removeStoreFilter(me.filter.unit);
+                    }
+                }
+            }
+        });
+
+        return {
+            type: 'quantityValue',
+            dataIndex: field.key
+        };
+    },
 
     getLayoutShow: function () {
         this.getLayoutEdit();

@@ -115,7 +115,7 @@ Ext.define('pimcore.filters', {
         var type = column.filter.type;
         var theFilter = column.filter.filter;
 
-        if (type == "date" || type == "numeric") {
+        if (column.filter instanceof Ext.grid.filters.filter.TriFilter) {
             theFilter.lt.config.type = type;
             theFilter.gt.config.type = type;
             theFilter.eq.config.type = type;
