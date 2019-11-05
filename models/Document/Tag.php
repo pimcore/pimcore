@@ -631,6 +631,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         unset($el['dao']);
         unset($el['documentId']);
+        unset($el['document']);
         unset($el['controller']);
         unset($el['view']);
         unset($el['editmode']);
