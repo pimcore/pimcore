@@ -228,6 +228,7 @@ class IndexController extends AdminController
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
+     * @param CsrfProtectionListener $csrfProtectionListener
      *
      * @return ViewModel
      */
