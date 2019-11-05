@@ -97,7 +97,9 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
             Ext.apply(this.datax,
                 {
                     calculatorClass: source.datax.calculatorClass,
-                    elementType: source.datax.elementType
+                    elementType: source.datax.elementType,
+                    width: source.datax.width,
+                    columnLength: source.datax.columnLength
                 });
         }
     }
