@@ -271,8 +271,10 @@ class Item extends Model\AbstractModel
         }
     }
 
+
     /**
      * @param Element\ElementInterface $element
+     * @throws \Exception
      */
     public function restoreChilds(Element\ElementInterface $element)
     {
@@ -302,8 +304,10 @@ class Item extends Model\AbstractModel
             } else {
                 $childs = $element->getChildren();
             }
-            foreach ($childs as $child) {
-                $this->restoreChilds($child);
+            if (is_array($childs)) {
+                foreach ($childs as $child) {
+                    $this->restoreChilds($child);
+                }
             }
         }
     }
