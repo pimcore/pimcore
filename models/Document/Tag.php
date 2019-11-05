@@ -70,6 +70,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $documentId;
 
     /**
+     * Element belongs to the document
+     *
+     * @var Document\PageSnippet
+     */
+    protected $document;
+
+    /**
      * @deprecated Unused - will be removed in 7.0
      *
      * @var null
@@ -343,6 +350,31 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function getDocumentId()
     {
         return $this->documentId;
+    }
+
+    /**
+     * @param Document\PageSnippet $document
+     *
+     * @return $this
+     */
+    public function setDocument(Document\PageSnippet $document)
+    {
+        $this->document = $document;
+        $this->documentId = (int) $document->getId();
+
+        return $this;
+    }
+
+    /**
+     * @return Document\PageSnippet
+     */
+    public function getDocument()
+    {
+        if (!$this->document) {
+            $this->document = Document\PageSnippet::getById($this->documentId);
+        }
+
+        return $this->document;
     }
 
     /**

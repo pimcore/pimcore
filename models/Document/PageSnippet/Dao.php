@@ -50,7 +50,7 @@ abstract class Dao extends Model\Document\Dao
             /** @var Document\Tag $element */
             $element = $loader->build($elementRaw['type']);
             $element->setName($elementRaw['name']);
-            $element->setDocumentId($this->model->getId());
+            $element->setDocument($this->model);
             $element->setDataFromResource($elementRaw['data']);
 
             $elements[$elementRaw['name']] = $element;
