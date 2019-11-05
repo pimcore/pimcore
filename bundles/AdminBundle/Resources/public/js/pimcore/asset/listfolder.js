@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.asset.listfolder");
 pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
-    systemColumns: ["id", "type", "fullpath", "filename", "creationDate", "modificationDate", "preview", "size"],
+    systemColumns: ["id~system", "type~system", "fullpath~system", "filename~system", "creationDate~system", "modificationDate~system", "preview~system", "size~system"],
     onlyDirectChildren: false,
     onlyUnreferenced: false,
     fieldObject: {},
@@ -39,63 +39,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 border: false,
                 layout: "fit"
             });
-        if (response.responseText) {
-            response = Ext.decode(response.responseText);
 
-            if (response.pageSize) {
-                itemsPerPage = response.pageSize;
-            }
-
-            fields = response.availableFields;
-            this.gridLanguage = response.language;
-            this.gridPageSize = response.pageSize;
-            this.sortinfo = response.sortinfo;
-
-            this.settings = response.settings || {};
-            this.availableConfigs = response.availableConfigs;
-            this.sharedConfigs = response.sharedConfigs;
-
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
-
-            if (response.onlyUnreferenced) {
-                this.onlyUnreferenced = response.onlyUnreferenced;
-            }
-        } else {
-             itemsPerPage = this.gridPageSize;
-             fields = response;
-             this.settings = settings;
-             this.buildColumnConfigMenu();
-        }
-
-        this.fieldObject = {};
-
-        for(var i = 0; i < fields.length; i++) {
-            this.fieldObject[fields[i].key] = fields[i];
-        }
-
-        var fieldParam = Object.keys(this.fieldObject);
-
-        var proxy = new Ext.data.HttpProxy({
-            type: 'ajax',
-            url: "/admin/asset/grid-proxy",
-            reader: {
-                type: 'json',
-                rootProperty: 'data',
-                totalProperty: 'total',
-                successProperty: 'success',
-                idProperty: 'key'
-            },
-            extraParams: {
-                limit: itemsPerPage,
-                folderId: this.element.data.id,
-                "fields[]": fieldParam,
-                language: this.gridLanguage,
-                only_direct_children: this.onlyDirectChildren,
-                only_unreferenced: this.onlyUnreferenced
-            }
-        });
 
             this.layout.on("afterrender", this.getGrid.bind(this, false));
         }
@@ -351,6 +295,10 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
+        this.grid.on("afterrender", function (grid) {
+            this.updateGridHeaderContextMenu(grid);
+        }.bind(this));
+
         this.layout.removeAll();
         this.layout.add(this.grid);
         this.layout.updateLayout();
@@ -475,26 +423,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }.bind(this));
 
         return buttons;
-    },
-
-        this.grid.on("rowcontextmenu", this.onRowContextmenu);
-
-        this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
-        }.bind(this));
-
-        this.layout.removeAll();
-        this.layout.add(this.grid);
-        this.layout.updateLayout();
-
-        if (save) {
-            if (this.settings.isShared) {
-                this.settings.gridConfigId = null;
-            }
-            this.saveConfig(false);
-        }
-
-        //this.grid.getView().on("refresh", this.updateRows.bind(this, "view-refresh"));
     },
 
     getColumnWidth: function(field, defaultValue) {

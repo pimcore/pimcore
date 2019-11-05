@@ -414,7 +414,7 @@ pimcore.element.helpers.gridColumnConfig = {
             var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
             editor.setObject(this.object);
         } else {
-            fieldInfo = this.fieldObject[fieldInfo.text];
+            fieldInfo = this.fieldObject[fieldInfo.dataIndex];
             var tagType = fieldInfo.layout.fieldtype;
             var editor = new pimcore.asset.tags[tagType](null, fieldInfo.layout);
             fieldInfo.dataIndex = fieldInfo.key;

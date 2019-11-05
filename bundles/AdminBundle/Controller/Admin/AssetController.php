@@ -2242,6 +2242,12 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     unset($data['id']);
                     foreach ($data as $key => $value) {
+                        $fieldDef = explode('~', $key);
+                        $key = $fieldDef[0];
+                        if ($fieldDef[1]) {
+                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                        }
+
                         foreach ($metadata as $idx => &$em) {
                             if($em['name'] == $key && $em['language'] == $language) {
                                 $em['data'] = $value;
@@ -2261,7 +2267,7 @@ class AssetController extends ElementControllerBase implements EventedController
                                 ];
                                 $dirty = true;
                             } else {
-                                $predefined = Model\Metadata\Predefined::getByName($key, $language);
+                                $predefined = Model\Metadata\Predefined::getByName($key);
                                 if ($predefined && (empty($predefined->getTargetSubtype())
                                         || $predefined->getTargetSubtype() == $asset->getType() )) {
                                     $metadata[] = [

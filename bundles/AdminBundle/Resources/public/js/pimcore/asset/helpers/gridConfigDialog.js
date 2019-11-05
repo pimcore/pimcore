@@ -81,7 +81,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     }
 
                     obj.language = child.data.language;
-                    obj.label = child.data.layout ? child.data.layout.title : child.data.text;
                     obj.type = child.data.dataType;
                     obj.layout = child.data.layout;
                     if (child.data.width) {
@@ -206,7 +205,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     }
                     child = child[0];
                 } else {
-                    var text = nodeConf.label;
                     if(nodeConf.layout) {
                         var text = nodeConf.layout.name;
                     } else {
@@ -417,7 +415,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                     }
 
                                 } else {
-                                    data.records = [copy]; // assign the copy as the new dropNode
                                     if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
                                         dropHandlers.cancelDrop();
                                     } else {
@@ -556,12 +553,16 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
         tree.addListener("itemdblclick", function (tree, record, item, index, e, eOpts) {
             if (!record.data.root && record.data.type != "layout") {
-                var copy = Ext.apply({}, record.data);
+                if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
+                    dropHandlers.cancelDrop();
+                } else {
+                    var copy = Ext.apply({}, record.data);
 
-                delete copy.id;
-                this.selectionPanel.getRootNode().appendChild(copy);
+                    delete copy.id;
+                    this.selectionPanel.getRootNode().appendChild(copy);
 
-                this.updatePreview();
+                    this.updatePreview();
+                }
             }
         }.bind(this));
 

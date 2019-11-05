@@ -173,7 +173,7 @@ pimcore.asset.helpers.grid = Class.create({
 
         for (i = 0; i < fields.length; i++) {
             var field = fields[i];
-            var key = field.name;
+            var key = field.key;
             var language = field.language;
             if (!key) {
                 key = "";
@@ -186,12 +186,16 @@ pimcore.asset.helpers.grid = Class.create({
                 continue;
             }
 
+            if(key.indexOf("~") >= 0 ) {
+                key = key.substr(0, key.lastIndexOf('~'));
+            }
+
             if (field.type == "system") {
-                if (field.key == "preview") {
+                if (key == "preview") {
                     gridColumns.push({
-                        text: t("preview"),
+                        text: t(field.label),
                         sortable: false,
-                        dataIndex: 'preview',
+                        dataIndex: field.key,
                         editable: false,
                         width: this.getColumnWidth(field, 150),
                         renderer: function (value) {
@@ -200,9 +204,9 @@ pimcore.asset.helpers.grid = Class.create({
                             }
                         }.bind(this)
                     });
-                } else if (field.key == "creationDate" || field.key == "modificationDate") {
+                } else if (key == "creationDate" || key == "modificationDate") {
                     gridColumns.push({
-                        text: t(field.key),
+                        text: t(field.label),
                         width: this.getColumnWidth(field, 150),
                         sortable: true,
                         dataIndex: field.key,
@@ -213,29 +217,29 @@ pimcore.asset.helpers.grid = Class.create({
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
                     });
-                } else if (field.key == "filename") {
+                } else if (key == "filename") {
                     gridColumns.push({
-                        text: t(field.key), sortable: true, dataIndex: field.key, editable: false,
+                        text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 250), filter: 'string', renderer: Ext.util.Format.htmlEncode
                     });
-                } else if (field.key == "fullpath") {
+                } else if (key == "fullpath") {
                     gridColumns.push({
-                        text: t(field.key), sortable: true, dataIndex: field.key, editable: false,
+                        text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 400), filter: 'string', renderer: Ext.util.Format.htmlEncode
                     });
-                } else if (field.key == "size") {
+                } else if (key == "size") {
                     gridColumns.push({
-                        text: t(field.key), sortable: false, dataIndex: field.key, editable: false,
+                        text: t(field.label), sortable: false, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 130)
                     });
                 } else {
                     gridColumns.push({
-                        text: t(field.key), width: this.getColumnWidth(field, 130), sortable: true,
+                        text: t(field.label), width: this.getColumnWidth(field, 130), sortable: true,
                         dataIndex: field.key
                     });
                 }
             } else if (field.type == "date") {
-                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 120), sortable: false,
+                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 120), sortable: false,
                     dataIndex: field.key, filter: 'date',
                     renderer: function(d) {
                         if (d) {
@@ -248,7 +252,7 @@ pimcore.asset.helpers.grid = Class.create({
                 });
             } else if (field.type == "checkbox") {
                 gridColumns.push(new Ext.grid.column.Check({
-                    text:  field.key,
+                    text:  field.label,
                     editable: false,
                     width: this.getColumnWidth(field, 40),
                     sortable: false,
@@ -261,7 +265,7 @@ pimcore.asset.helpers.grid = Class.create({
                 });
             } else {
                 var fc = {
-                    text: field.key,
+                    text: field.label,
                     width: this.getColumnWidth(field, 200),
                     height: '500',
                     sortable: false,

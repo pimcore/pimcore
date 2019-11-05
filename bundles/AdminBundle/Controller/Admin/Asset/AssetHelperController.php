@@ -211,7 +211,6 @@ class AssetHelperController extends AdminController
             $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
             $configListingConditionParts[] = 'type = ' . $db->quote($type);
 
-
             if ($searchType) {
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
@@ -229,7 +228,6 @@ class AssetHelperController extends AdminController
                     }
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
-
                 } catch (\Exception $e) {
                 }
 
@@ -264,7 +262,7 @@ class AssetHelperController extends AdminController
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
                     $colConfig = $this->getFieldGridConfig($sc, $language, null);
-                    if($colConfig) {
+                    if ($colConfig) {
                         $availableFields[] = $colConfig;
                     }
                 }
@@ -278,7 +276,7 @@ class AssetHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $language = "default";
+        $language = 'default';
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
         }
@@ -313,23 +311,33 @@ class AssetHelperController extends AdminController
      *
      * @return array|null
      */
-    protected function getFieldGridConfig($field, $language = "", $keyPrefix = null)
+    protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
+        $defaulMetadataFields = ['copyright', 'alt', 'title'];
         $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
 
         $key = $field['name'];
-        if($keyPrefix) {
+        if ($keyPrefix) {
             $key = $keyPrefix . $key;
         }
 
-        if (in_array($field['name'], Asset\Service::$gridSystemColumns)) {
+        $fieldDef = explode('~', $field['name']);
+        $field['name'] = $fieldDef[0];
+
+        if ($fieldDef[1] == 'system') {
             $type = 'system';
+        } else if (in_array($fieldDef[0], $defaulMetadataFields)) {
+            $type = 'input';
         } else {
             //check if predefined metadata exists, otherwise ignore
-            if(empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
+            if (empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
                 return null;
             }
             $type = $field['fieldConfig']['type'];
+            if (isset($fieldDef[1])) {
+                $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . ' (' . $fieldDef[1] . ')';
+                $field['fieldConfig']['layout']['icon'] = Tool::getLanguageFlagFile($fieldDef[1], true);
+            }
         }
 
         $result = [
@@ -345,8 +353,8 @@ class AssetHelperController extends AdminController
         if ($type == 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
-        } else if ($type == 'document' || $type == 'asset' || $type == 'object') {
-            $result['layout']['fieldtype'] = "manyToOneRelation";
+        } elseif ($type == 'document' || $type == 'asset' || $type == 'object') {
+            $result['layout']['fieldtype'] = 'manyToOneRelation';
             $result['layout']['subtype'] = $type;
         }
 
@@ -370,14 +378,13 @@ class AssetHelperController extends AdminController
             foreach (Asset\Service::$gridSystemColumns as $sc) {
                 if (empty($types)) {
                     $availableFields[] = [
-                        'key' => $sc,
+                        'key' => $sc . '~system',
                         'type' => 'system',
                         'label' => $sc,
                         'position' => $count];
                     $count++;
                 }
             }
-
         }
 
         if (is_array($fields)) { //TODO required?
@@ -507,7 +514,6 @@ class AssetHelperController extends AdminController
         $asset = Asset::getById($request->get('id'));
 
         if ($asset->isAllowed('list')) {
-
             try {
                 $classId = $request->get('class_id');
                 $searchType = $request->get('searchType');
@@ -635,7 +641,7 @@ class AssetHelperController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
         $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
-        if(empty($ids = $allParams["ids"])) {
+        if (empty($ids = $allParams['ids'])) {
             $ids = $list->loadIdList();
         }
 
@@ -662,7 +668,7 @@ class AssetHelperController extends AdminController
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
-        $language = $this->extractLanguage($request);
+        $language = str_replace('default', '', $request->get('language'));
 
         /**
          * @var $list \Pimcore\Model\Asset\Listing
@@ -722,6 +728,9 @@ class AssetHelperController extends AdminController
         //create csv
         $csv = [];
 
+        $unsupportedFields = ['preview~system', 'size~system'];
+        $fields = array_diff($fields, $unsupportedFields);
+
         if ($addTitles) {
             $columns = $fields;
             foreach ($columns as $columnIdx => $columnKey) {
@@ -734,16 +743,17 @@ class AssetHelperController extends AdminController
             if ($fields) {
                 $a = [];
                 foreach ($fields as $field) {
-                    $getter = 'get' . ucfirst($field);
+                    $fieldDef = explode('~', $field);
+                    $getter = 'get' . ucfirst($fieldDef[0]);
 
-                    if (method_exists($asset, $getter)) {
+                    if ($fieldDef[1] == 'system' && method_exists($asset, $getter)) {
                         $a[] = $asset->$getter($language);
                     } else {
-                        if( strpos($field, '~~')) {
-                            $fieldDef = explode('~~', $field);
-                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1]);
+                        if (isset($fieldDef[1])) {
+                            $fieldDef[1] = str_replace('none', '', $fieldDef[1]);
+                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
                         } else {
-                            $a[] = $asset->getMetadata($field, $language);
+                            $a[] = $asset->getMetadata($field, $language, true);
                         }
 
                         if ($a instanceof Element\AbstractElement) {
@@ -860,20 +870,20 @@ class AssetHelperController extends AdminController
         $result['defaultColumns']['childs'] = $defaultColumns;
 
         //predefined metadata
-        $list = Metadata\Predefined\Listing::getByTargetType("asset", null);
+        $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
         foreach ($list as $item) {
             //only allow unique metadata columns
-            if(!in_array($item->getName(), $tmp)) {
+            if (!in_array($item->getName(), $tmp)) {
                 $tmp[] = $item->getName();
                 /** @var $item Metadata\Predefined */
                 $item->expand();
                 $metadataItems[] = [
                     'title' => $item->getName(),
-                    'name'  => $item->getName(),
+                    'name' => $item->getName(),
                     'subtype' => $item->getTargetSubtype(),
-                    'datatype' => "data",
+                    'datatype' => 'data',
                     'fieldtype' => $item->getType(),
                     'config' => $item->getConfig()
                 ];
@@ -883,7 +893,6 @@ class AssetHelperController extends AdminController
         $result['metadataColumns']['childs'] = $metadataItems;
         $result['metadataColumns']['nodeLabel'] = 'predefined_metadata';
         $result['metadataColumns']['nodeType'] = 'metadata';
-
 
         //system columns
         $systemColumnNames = Asset\Service::$gridSystemColumns;
@@ -952,10 +961,10 @@ class AssetHelperController extends AdminController
                     }
 
 
-                    if( strpos($name, '~~')) {
-                        $parts = explode('~~', $name);
-                        $name = $parts[0];
-                        $language = $parts[1];
+                    $fieldDef = explode('~', $name);
+                    $name = $fieldDef[0];
+                    if ($fieldDef[1]) {
+                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                     }
 
                     foreach ($metadata as $idx => &$em) {

@@ -555,7 +555,6 @@ class GridHelperService
 
     public function prepareAssetListingForGrid($allParams, $adminUser)
     {
-        $systemColumns = Model\Asset\Service::$gridSystemColumns;
         $db = \Pimcore\Db::get();
         $folder = Model\Asset::getById($allParams['folderId']);
 
@@ -574,7 +573,7 @@ class GridHelperService
         $orderKeyQuote = true;
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
-            $orderKey = $sortingSettings['orderKey'];
+            $orderKey = explode('~', $sortingSettings['orderKey'])[0];
             if ($orderKey == 'fullpath') {
                 $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
@@ -606,7 +605,8 @@ class GridHelperService
             foreach ($filters as $filter) {
                 $operator = '=';
 
-                $filterField = $filter['property'];
+                $filterDef = explode('~', $filter['property']);
+                $filterField = $filterDef[0];
                 $filterOperator = $filter['operator'];
                 $filterType = $filter['type'];
 
@@ -641,23 +641,19 @@ class GridHelperService
                     $value = '%' . $value . '%';
                 }
 
-                $field = '`' . $filterField . '` ';
                 if ($filterField == 'fullpath') {
-                    $field = 'CONCAT(path,filename)';
+                    $filterField = 'CONCAT(path,filename)';
                 }
 
-                $fieldDef = explode('~', $filterField);
-
-                if ($fieldDef[1] != 'system') {
+                if ($filterDef[1] != 'system') {
                     $language = $allParams['language'];
-                    if (isset($fieldDef[1])) {
-                        $filterField = $fieldDef[0];
-                        $language = $fieldDef[1];
+                    if (isset($filterDef[1])) {
+                        $language = $filterDef[1];
                     }
-                    $language = str_replace('none', '', $language);
+                    $language = str_replace(['none','default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $db->quote($value) . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
-                    $conditionFilters[] = $fieldDef[0] . ' ' . $operator . ' ' . $db->quote($value);
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($value);
                 }
             }
         }
