@@ -26,6 +26,17 @@ pimcore.asset.tags.input = Class.create(pimcore.asset.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
+    getGridColumnConfig:function (field) {
+        return {
+            text: field.label,
+            width: this.getColumnWidth(field, 200),
+            sortable:false,
+            dataIndex:field.key,
+            filter: 'date',
+            getEditor: this.getGridColumnEditor.bind(this, field)
+        };
+    },
+
     getGridColumnEditor: function(field) {
         var editorConfig = {};
 

@@ -21,58 +21,25 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnConfigDynamic: function(field) {
-        var renderer = function (key, data, metaData, record) {
-            var value = data;
-            var options = record.data[key + "%options"];
-
-            if (options) {
-                for (var i = 0; i < options.length; i++) {
-                    if (options[i]["value"] == value) {
-                        return replace_html_event_attributes(strip_tags(options[i]["key"], 'div,span,b,strong,em,i,small,sup,sub'));
-                    }
-                }
-            }
-
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
-        }.bind(this, field.key);
-
-        return {
-            text:ts(field.label),
-            sortable:true,
-            dataIndex:field.key,
-            renderer: renderer,
-            getEditor:this.getCellEditor.bind(this, field)
-        };
-    },
-
-    getGridColumnConfigStatic: function(field) {
+    getGridColumnConfig:function (field) {
         var renderer = function (key, value, metaData, record) {
             return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label),
-            sortable: true,
+            text: field.label,
+            editable: false,
+            width: this.getColumnWidth(field, 80),
+            sortable: false,
             dataIndex: field.key,
             renderer: renderer,
-            editor: this.getGridColumnEditor(field)
+            filter: this.getGridColumnFilter(field),
+            getEditor: this.getGridColumnEditor.bind(this, field)
         };
-    },
-
-    getGridColumnConfig:function (field) {
-        if (field.layout.optionsProviderClass) {
-            return this.getGridColumnConfigDynamic(field);
-        } else {
-            return this.getGridColumnConfigStatic(field);
-        }
     },
 
     getCellEditor: function (field, record) {
         var key = field.key;
-        if(field.layout.noteditable) {
-            return null;
-        }
 
         var value = record.data[key];
         var options = record.data[key +  "%options"];
@@ -115,11 +82,8 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnEditor: function(field) {
-        if(field.layout.noteditable) {
-            return null;
-        }
 
-        var storeData = this.prepareStoreDataAndFilterLabels(field.layout.options);
+        var storeData = this.prepareStoreDataAndFilterLabels(field.layout.config);
         var store = new Ext.data.Store({
             autoDestroy: true,
             fields: ['key', 'value'],
@@ -156,14 +120,15 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
     prepareStoreDataAndFilterLabels: function(options) {
         var filteredStoreData = [];
         if (options) {
+            options = options.split(',');
             for (var i = 0; i < options.length; i++) {
 
-                var label = ts(options[i].key);
-                if(label.indexOf('<') >= 0) {
-                    label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
+                var key = ts(options[i]);
+                if(key.indexOf('<') >= 0) {
+                    key = replace_html_event_attributes(strip_tags(key, "div,span,b,strong,em,i,small,sup,sub2"));
                 }
 
-                filteredStoreData.push({'value': options[i].value, 'key': label});
+                filteredStoreData.push({'value': key, 'key': key});
             }
         }
 
@@ -171,22 +136,13 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        if (field.layout.dynamicOptions) {
-            return {type: 'string', dataIndex: field.key};
-        } else {
-            var store = Ext.create('Ext.data.JsonStore', {
-                fields: ['key', "value"],
-                data: this.prepareStoreDataAndFilterLabels(field.layout.options)
-            });
+        var options = [];
 
-            return {
-                type: 'list',
-                dataIndex: field.key,
-                labelField: "key",
-                idField: "value",
-                options: store
-            };
-        }
+        return {
+            type: 'list',
+            dataIndex: field.key,
+            options: field.layout.config.split(',')
+        };
     },
 
     getLayoutEdit: function () {

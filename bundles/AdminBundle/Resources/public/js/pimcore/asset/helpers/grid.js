@@ -238,106 +238,19 @@ pimcore.asset.helpers.grid = Class.create({
                         dataIndex: field.key
                     });
                 }
-            } else if (field.type == "date") {
-                gridColumns.push({text: field.label,  width: this.getColumnWidth(field, 120), sortable: false,
-                    dataIndex: field.key, filter: 'date',
-                    renderer: function(d) {
-                        if (d) {
-                            var date = new Date(d * 1000);
-                            return Ext.Date.format(date, "Y-m-d");
-                        }
-
-                    },
-                    getEditor: this.getWindowCellEditor.bind(this, field)
-                });
-            } else if (field.type == "checkbox") {
-                gridColumns.push(new Ext.grid.column.Check({
-                    text:  field.label,
-                    editable: false,
-                    width: this.getColumnWidth(field, 40),
-                    sortable: false,
-                    filter: 'boolean',
-                    dataIndex: field.key
-                }));
-            } else if (field.type == "document" || field.type == "asset" || field.type == "object") {
-                gridColumns.push({text: field.key,  width: this.getColumnWidth(field, 300), sortable: false,
-                    dataIndex: field.key, getEditor: this.getWindowCellEditor.bind(this, field)
-                });
             } else {
-                var fc = {
-                    text: field.label,
-                    width: this.getColumnWidth(field, 200),
-                    height: '500',
-                    sortable: false,
-                    dataIndex: field.key,
-                    filter: 'string',
-                    editor: this.getCellEditor(field),
-                    renderer: function (field, value) {
-                        var type = field.type;
-                        if (type == "textarea" && value) {
-                            return nl2br(Ext.util.Format.htmlEncode(value));
-                        } else if (type == "date") {
-                            if (value) {
-                                if(!(value instanceof Date)) {
-                                    value = new Date(value * 1000);
-                                }
-                                return Ext.Date.format(value, "Y-m-d");
-                            }
-                        }
-
-                        return Ext.util.Format.htmlEncode(value);
-                    }.bind(this, field)
-                };
-                var fieldType = fields[i].type;
-                var tag = pimcore.asset.tags[fieldType];
-                if (tag) {
-                    //var fcLayout = tag.prototype.getGridColumnConfig(field);
-                    //fc.config.layout = fields[i];
+                var fieldType = field.type;
+                if (fieldType == "document" || fieldType == "asset" || fieldType == "object") {
+                    fieldType = 'manyToOneRelation';
                 }
+
+                var tag = pimcore.asset.tags[fieldType];
+                var fc = tag.prototype.getGridColumnConfig(field);
                 gridColumns.push(fc);
             }
         }
 
         return gridColumns;
-    },
-
-    getWindowCellEditor: function ( field, record) {
-        return new pimcore.asset.helpers.gridCellEditor({
-            fieldInfo: field
-        });
-    },
-
-    getCellEditor: function (field, defaultField ) {
-        var data = field.data;
-
-        var type = field.type;
-        var property;
-
-        if (type == "input") {
-            property = Ext.create('Ext.form.TextField');
-        } else if (type == "textarea") {
-            property = Ext.create('Ext.form.TextArea');
-        } else if (type == "document" || type == "asset" || type == "object") {
-            //no editor needed here
-        } else if (type == "date") {
-            property = Ext.create('Ext.form.field.Date', {
-                format: "Y-m-d"
-            });
-        } else if (type == "checkbox") {
-            //no editor needed here
-        } else if (type == "select") {
-            if (field.layout.config) {
-                var options = field.layout.config;
-                property =  Ext.create('Ext.form.ComboBox', {
-                    triggerAction: 'all',
-                    editable: false,
-                    store: options.split(",")
-                });
-            }
-
-        }
-
-        return property;
     },
 
     getColumnWidth: function(field, defaultValue) {

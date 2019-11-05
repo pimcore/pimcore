@@ -28,20 +28,12 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
         this.fieldConfig = fieldConfig;
     },
 
-
     getGridColumnConfig: function (field) {
-        var renderer = function (key, value, metaData, record) {
-
-            if (value && value.path) {
-                return value.path;
-
-            }
-            return value;
-
-        }.bind(this, field.key);
-
         return {
-            text: ts(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
+            text: field.label,
+            width: this.getColumnWidth(field, 300),
+            sortable: false,
+            dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
@@ -66,6 +58,7 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
         }
 
         href.enableKeyEvents = true;
+        href.editable = false;
         href.fieldCls = "pimcore_droptarget_input";
         this.component = new Ext.form.TextField(href);
 
@@ -90,11 +83,6 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
 
         }.bind(this));
 
-        // disable typing into the textfield
-        this.component.on("keyup", function (element, event) {
-            element.setValue(this.data);
-        }.bind(this));
-
 
         this.composite = Ext.create('Ext.form.FieldContainer', {
             fieldLabel: this.fieldConfig.title,
@@ -110,7 +98,6 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
 
         return this.composite;
     },
-
 
     getLayoutShow: function () {
 
@@ -198,13 +185,6 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
             isAllowed = true;
         }
         return isAllowed;
-    },
-
-    isInvalidMandatory: function () {
-        if (this.data.id) {
-            return false;
-        }
-        return true;
     },
 
     getCellEditValue: function () {

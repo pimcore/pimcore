@@ -251,7 +251,10 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         });
 
                         editor.editors.clear();
-                    }
+                    },
+                    afteredit: function (editor) {
+                        this.commitData(false, true);
+                    }.bind(this)
                 }
             });
 
@@ -302,9 +305,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         triggerAction: 'all',
                         mode: "local",
                         listeners: {
-                            // blur: function() {
-                            //     this.commitData(false, true);
-                            // }.bind(this),
                             focusenter: function ( combo, event, eOpts ) {
                                 var currentRecord =  this.selectionPanel.getSelection();
                                 if(currentRecord[0].data.dataType == "system") {
@@ -372,7 +372,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 });
             }
 
-            this.selectionPanel = new Ext.tree.TreePanel({
+            this.selectionPanel = new Ext.tree.Panel({
                 store: store,
                 plugins: [this.cellEditing],
                 rootVisible: false,

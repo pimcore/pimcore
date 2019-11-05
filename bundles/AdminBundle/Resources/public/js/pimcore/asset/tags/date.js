@@ -30,8 +30,13 @@ pimcore.asset.tags.date = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        return {text:ts(field.label), width:150, sortable:true, dataIndex:field.key,
-            getEditor:this.getWindowCellEditor.bind(this, field),
+        return {
+            text: field.label,
+            width: this.getColumnWidth(field, 120),
+            sortable:false,
+            dataIndex:field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
+            filter: this.getGridColumnFilter(field),
             renderer:function (key, value, metaData, record) {
                 if (value) {
                     var timestamp = intval(value) * 1000;
@@ -40,7 +45,8 @@ pimcore.asset.tags.date = Class.create(pimcore.asset.tags.abstract, {
                     return Ext.Date.format(date, "Y-m-d");
                 }
                 return "";
-            }.bind(this, field.key)};
+            }.bind(this, field.key)
+        };
     },
 
     getGridColumnFilter:function (field) {
@@ -79,7 +85,7 @@ pimcore.asset.tags.date = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getCellEditValue: function () {
-        return this.getValue() / 1000;
+        return this.getValue();
     },
 
     getName:function () {

@@ -22,6 +22,17 @@ pimcore.asset.tags.textarea = Class.create(pimcore.asset.tags.abstract, {
 
     },
 
+    getGridColumnConfig:function (field) {
+        return {
+            text:ts(field.label),
+            width: this.getColumnWidth(field, 200),
+            sortable:false,
+            dataIndex:field.key,
+            filter: this.getGridColumnFilter(field),
+            getEditor: this.getGridColumnEditor.bind(this, field)
+        };
+    },
+
     getGridColumnEditor: function(field) {
         var editorConfig = {};
 
@@ -33,9 +44,6 @@ pimcore.asset.tags.textarea = Class.create(pimcore.asset.tags.abstract, {
             }
         }
 
-        if(field.layout.noteditable) {
-            return null;
-        }
         // TEXTAREA
         if (field.type == "textarea") {
            return new Ext.form.TextArea(editorConfig);

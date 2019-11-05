@@ -61,8 +61,15 @@ pimcore.asset.tags.abstract = Class.create({
             return Ext.util.Format.htmlEncode(value);
         }.bind(this, field.key);
 
-        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
-            editor:this.getGridColumnEditor(field)};
+        return {
+            text: field.label,
+            sortable:false,
+            width: this.getColumnWidth(field, 200),
+            dataIndex:field.key,
+            renderer:renderer,
+            filter: 'string',
+            editor:this.getGridColumnEditor(field)
+        };
     },
 
     getGridColumnFilter:function (field) {
@@ -105,6 +112,16 @@ pimcore.asset.tags.abstract = Class.create({
 
         throw "it seems that the field -" + this.getName()
         + "- does not implement the isRendered() method and doesn't contain this.component";
+    },
+
+    getColumnWidth: function(field, defaultValue) {
+        if (field.width) {
+            return field.width;
+        } else if(field.layout && field.layout.width) {
+            return field.layout.width;
+        } else {
+            return defaultValue;
+        }
     },
 
 });

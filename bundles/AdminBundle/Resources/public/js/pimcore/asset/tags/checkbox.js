@@ -17,7 +17,6 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
     type:"checkbox",
 
     initialize:function (data, fieldConfig) {
-
         this.data = "";
 
         if (data) {
@@ -27,13 +26,14 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        var columnConfig = {
-            text:ts(field.label),
-            dataIndex:field.key,
-            renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
-                return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
-            }.bind(this, field)
-        };
+        var columnConfig = new Ext.grid.column.Check({
+            text:  field.label,
+            editable: false,
+            width: this.getColumnWidth(field, 40),
+            sortable: false,
+            filter: this.getGridColumnFilter(field),
+            dataIndex: field.key
+        });
 
         return columnConfig;
     },
@@ -43,7 +43,6 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getLayoutEdit:function () {
-
         var checkbox = {
             name:this.fieldConfig.name,
             value: this.data,
