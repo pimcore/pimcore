@@ -418,9 +418,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getter = 'get' . ucfirst($this->getName());
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
+        $activeGroups = $classificationStore->getActiveGroups();
         if ($items) {
             foreach ($items as $groupId => $keys) {
-                if (!isset($data->getActiveGroups()[$groupId])) {
+                if (!isset($activeGroups[$groupId])) {
                     continue;
                 }
                 foreach ($keys as $keyId => $values) {
