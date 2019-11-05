@@ -474,10 +474,12 @@ class Definition extends Model\AbstractModel
      */
     protected function getInfoDocBlockForFields($definition, $text, $level)
     {
-        foreach ($definition->getFieldDefinitions() as $fd) {
-            $text .= str_pad('', $level, '-').' '.$fd->getName().' ['.$fd->getFieldtype()."]\n";
-            if (method_exists($fd, 'getFieldDefinitions')) {
-                $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
+        if (is_array($definition->getFieldDefinitions())) {
+            foreach ($definition->getFieldDefinitions() as $fd) {
+                $text .= str_pad('', $level, '-') . ' ' . $fd->getName() . ' [' . $fd->getFieldtype() . "]\n";
+                if (method_exists($fd, 'getFieldDefinitions')) {
+                    $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
+                }
             }
         }
 
