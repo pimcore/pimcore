@@ -351,7 +351,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -413,7 +413,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
@@ -438,7 +438,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -463,7 +463,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -488,7 +488,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
