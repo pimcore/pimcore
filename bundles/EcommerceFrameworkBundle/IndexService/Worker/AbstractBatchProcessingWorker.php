@@ -18,10 +18,16 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexStati;
+use Pimcore\Event\Ecommerce\IndexServiceEvents;
+use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
+use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides worker functionality for batch preparing data and updating index
@@ -67,9 +73,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           `update_error` CHAR(255) NULL DEFAULT NULL,
           `preparation_status` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
           `preparation_error` VARCHAR(255) NULL DEFAULT NULL,
+          `trigger_info` VARCHAR(255) NULL DEFAULT NULL,
           PRIMARY KEY (`o_id`,`tenant`),
           KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`),
           KEY `preparation_status_index` (`tenant`,`preparation_status`),
+          KEY `worker_idx` (`worker_id`),        
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
 
@@ -180,6 +188,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             /**
              * @var IndexableInterface $object
              */
+            $insertData = [];
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
                 $b = AbstractObject::doGetInheritedValues();
@@ -223,8 +232,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         }
                     } catch (\Exception $e) {
 
-                        $event = new PreprocessErrorEvent($attribute, $e);
-                        $this->eventDispatcher->dispatch('ecommerce_preprocess_error', $event); //@todo use constant for event.
+                        $event = new PreprocessAttributeErrorEvent($attribute, $e);
+                        $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 
                         if ($event->isSkipAttribute()) {
                             Logger::err(
@@ -234,7 +243,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                                     $event->getException()->getMessage()
                                 )
                             );
-
+                        } elseif ($event->isPropagationStopped()) {
+                            throw $e;
                         } else {
                             $attributeErrors[$attribute->getName()] = $e->getMessage();
                         }
@@ -257,13 +267,20 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 ]);
 
                 $jsonLastError = \json_last_error();
+                $generalErrors = [];
                 if ($jsonLastError !== JSON_ERROR_NONE) {
-                    //@todo own event?
-                    throw new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
+                    $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
+                    $event = new PreprocessErrorEvent($e);
+                    $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
+                    if ($event->isPropagationStopped()) {
+                        throw $e;
+                    } else {
+                        $generalErrors[] = $e->getMessage();
+                    }
                 }
 
                 $crc = crc32($jsonData);
-                if (count($attributeErrors) <= 0) {
+                if (count($attributeErrors) <= 0 && count($generalErrors) <= 0) {
                     $processedSubObject[$subObjectId] = $object;
                     $insertData = [
                         'o_id' => $subObjectId,
@@ -273,13 +290,21 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         'crc_current' => $crc,
                         'preparation_worker_timestamp' => 0,
                         'preparation_worker_id' => $this->db->quote(null),
-                        'in_preparation_queue' => 0,
-                        'preparation_status' => 0,
+                        'in_preparation_queue' => (int)false,
+                        'preparation_status' => IndexStati::PREPARATION_STATUS_DONE,
                         'preparation_error' => ''
                     ];
 
                 } else {
-                    $preparationError = $preparationErrorDb = implode(",", array_keys($attributeErrors));
+                    $preparationError = "";
+                    if (count($generalErrors) > 0) {
+                        $preparationError = implode(", ", $generalErrors);
+                    }
+                    if (count($attributeErrors) > 0) {
+                        $preparationError .= 'Attribute errors: '.$preparationErrorDb = implode(",", array_keys($attributeErrors));
+                    }
+
+                    $preparationErrorDb = $preparationError;
                     if (strlen($preparationErrorDb) > 255) {
                         $preparationErrorDb = substr($preparationErrorDb,0,252)."...";
                     }
@@ -288,18 +313,17 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         'o_virtualProductId' => $data['o_virtualProductId'],
                         'tenant' => $this->name,
                         'data' => $jsonData,
-                        'crc_current' => time(), //must be set, otherwise no update takes place.
+                        'crc_current' => time(), //force update by setting crc_current to timestamp. If empty, no update will take place.
                         //'preparation_worker_timestamp' => 0,
                         //'preparation_worker_id' => $this->db->quote(null),
-                        'in_preparation_queue' => 1,
-                        'preparation_status' => 5,
-                        'preparation_error' => 'Attribute errors: '.$preparationError
+                        'in_preparation_queue' => (int)true,
+                        'preparation_status' => IndexStati::PREPARATION_STATUS_ERROR,
+                        'preparation_error' => $preparationErrorDb
                     ];
-                    Logger::alert(sprintf('Mark product "%s" with preparation error:.', $subObjectId),
-                        $attributeErrors
+                    Logger::alert(sprintf('Mark product "%s" with preparation error.', $subObjectId),
+                        array_merge($generalErrors, $attributeErrors)
                     );
                 }
-
                 $this->insertDataToIndex($insertData, $subObjectId);
             } else {
                 Logger::info("Don't adding product " . $subObjectId . ' to index ' . $this->name . '.');
@@ -372,7 +396,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         $workerTimestamp = time();
         $this->db->query(
             'UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 '
-           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status LIMIT ' . intval($limit),
+           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status ASC LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
         );
 
@@ -413,24 +437,44 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     {
         $workerId = uniqid();
         $workerTimestamp = time();
-        $this->db->query(
-            'UPDATE ' . $this->getStoreTableName() . ' SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
-            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
-        );
+        $entries = [];
 
-        $entries = $this->db->fetchAll('SELECT o_id, data FROM ' . $this->getStoreTableName() . ' WHERE worker_id = ?', [$workerId]);
+        try {
 
-        if ($entries) {
-            foreach ($entries as $entry) {
-                Logger::info("Worker $workerId updating index for element " . $entry['id']);
-                $data = json_decode($entry['data'], true);
-                $this->doUpdateIndex($entry['o_id'], $data);
+            //fetch open IDs and assign a worker-ID. SELECT and Update statements are separated, as a combined
+            //statement can take several seconds on large-scale systems.
+
+            $this->db->beginTransaction();
+            $query = "SELECT o_id, data FROM {$this->getStoreTableName()} 
+                  WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
+                . intval($limit);
+
+            $entries = $this->db->fetchAll($query,[$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+
+            if (count($entries) > 0) {
+                $queueIds = array_map(function($e) { return $e['o_id']; }, $entries);
+                $ids = implode(",", $queueIds);
+                $updateQuery = "UPDATE {$this->getStoreTableName()} SET worker_id = ?, worker_timestamp = ? WHERE o_id in ({$ids}) and tenant=?";
+                $this->db->query($updateQuery, [$workerId, $workerTimestamp, $this->name]);
             }
+            $this->db->commit();
 
-            return count($entries);
-        } else {
+        } catch (\Exception $e) {
+            Logger::warn("Error during processUpdateIndexQueue().");
+            try { $this->db->rollBack(); } catch (\Exception $e) {
+                Logger::error("Error on rollback in processUpdateIndexQueue().");
+            }
             return 0;
         }
+
+        //process entries (outside transaction, as worker ID is secured).
+        foreach ($entries as $entry) {
+            Logger::info("Worker $workerId updating index for element " . $entry['id']);
+            $data = json_decode($entry['data'], true);
+            $this->doUpdateIndex($entry['o_id'], $data);
+        }
+
+        return count($entries);
     }
 
     /**
@@ -439,12 +483,19 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function resetPreparationQueue()
     {
         Logger::info('Index-Actions - Resetting preparation queue');
+        $className = (new \ReflectionClass($this))->getShortName();
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
                         preparation_worker_id = null,
+                        preparation_status = ``,
+                        preparation_error = ``,
+                        trigger_info = ?,
                         in_preparation_queue = 1 WHERE tenant = ?';
-        $this->db->query($query, [$this->name]);
+        $this->db->query($query, [
+            sprintf('Reset preparation queue in "%s".', $className),
+            $this->name
+        ]);
     }
 
     /**
@@ -453,11 +504,16 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function resetIndexingQueue()
     {
         Logger::info('Index-Actions - Resetting index queue');
+        $className = (new \ReflectionClass($this))->getShortName();
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
                         preparation_worker_id = null,
+                        trigger_info = ?,
                         crc_index = 0 WHERE tenant = ?';
-        $this->db->query($query, [$this->name]);
+        $this->db->query($query, [
+            sprintf('Reset indexing queue in "%s".', $className),
+            $this->name
+        ]);
     }
 }
