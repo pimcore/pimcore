@@ -189,6 +189,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+        
+        // set the given group to active groups
+        $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
