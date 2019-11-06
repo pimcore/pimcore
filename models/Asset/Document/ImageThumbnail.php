@@ -26,40 +26,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ImageThumbnail
 {
-    /**
-     * @var \Pimcore\Model\Asset\Video
-     */
-    protected $asset;
-
-    /**
-     * @var mixed|string
-     */
-    protected $filesystemPath;
-
-    /**
-     * @var int
-     */
-    protected $width;
-
-    /**
-     * @var int
-     */
-    protected $height;
-
-    /**
-     * @var int
-     */
-    protected $realWidth;
-
-    /**
-     * @var int
-     */
-    protected $realHeight;
-
-    /**
-     * @var Image\Thumbnail\Config
-     */
-    protected $config;
+    use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
      * @var bool
@@ -107,18 +74,10 @@ class ImageThumbnail
     }
 
     /**
-     * @return mixed|string
+     * @param bool $deferredAllowed
+     * @return string
      */
-    public function getFileSystemPath()
-    {
-        if (!$this->filesystemPath) {
-            $this->generate();
-        }
-
-        return $this->filesystemPath;
-    }
-
-    public function generate()
+    public function generate($deferredAllowed = true)
     {
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $generated = false;
@@ -131,7 +90,8 @@ class ImageThumbnail
 
             try {
                 $path = null;
-                if (!$this->deferred) {
+                $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                if (!$deferred) {
                     $converter = \Pimcore\Document::getInstance();
                     $converter->load($this->asset->getFileSystemPath());
                     $path = PIMCORE_TEMPORARY_DIRECTORY . '/document-image-cache/document_' . $this->asset->getId() . '__thumbnail_' .  $this->page . '.png';
@@ -152,7 +112,7 @@ class ImageThumbnail
                 }
 
                 if ($config) {
-                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true, $generated);
+                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $deferred, true, $generated);
                 }
 
                 $this->filesystemPath = $path;
@@ -163,19 +123,10 @@ class ImageThumbnail
             }
 
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::DOCUMENT_IMAGE_THUMBNAIL, new GenericEvent($this, [
-                'deferred' => $this->deferred,
+                'deferred' => $deferred,
                 'generated' => $generated
             ]));
         }
-    }
-
-    public function reset()
-    {
-        $this->filesystemPath = null;
-        $this->width = null;
-        $this->height = null;
-        $this->realHeight = null;
-        $this->realWidth = null;
     }
 
     /**
@@ -188,113 +139,6 @@ class ImageThumbnail
     public function __toString()
     {
         return $this->getPath();
-    }
-
-    /**
-     * @return int Width of the generated thumbnail image.
-     */
-    public function getWidth()
-    {
-        if (!$this->width) {
-            $this->getDimensions();
-        }
-
-        return $this->width;
-    }
-
-    /**
-     * Get the width of the generated thumbnail image in pixels.
-     *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getHeight()
-    {
-        if (!$this->height) {
-            $this->getDimensions();
-        }
-
-        return $this->height;
-    }
-
-    /**
-     * @return int real Width of the generated thumbnail image. (when using high resolution option)
-     */
-    public function getRealWidth()
-    {
-        if (!$this->realWidth) {
-            $this->getDimensions();
-        }
-
-        return $this->realWidth;
-    }
-
-    /**
-     * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
-     *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getRealHeight()
-    {
-        if (!$this->realHeight) {
-            $this->getDimensions();
-        }
-
-        return $this->realHeight;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDimensions()
-    {
-        if (!$this->width || !$this->height) {
-            $config = $this->getConfig();
-            $dimensions = [];
-
-            // generate the thumbnail and get dimensions from the thumbnail file
-            $info = @getimagesize($this->getFileSystemPath());
-            if ($info) {
-                $dimensions = [
-                    'width' => $info[0],
-                    'height' => $info[1]
-                ];
-            }
-
-            $this->width = $dimensions['width'];
-            $this->height = $dimensions['height'];
-
-            // the following is only relevant if using high-res option (retina, ...)
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = floor($this->width * $config->getHighResolution());
-                $this->realHeight = floor($this->height * $config->getHighResolution());
-            }
-        }
-
-        return [
-            'width' => $this->width,
-            'height' => $this->height
-        ];
-    }
-
-    /**
-     * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
-     */
-    public function getAsset()
-    {
-        return $this->asset;
-    }
-
-    /**
-     * Get thumbnail image configuration.
-     *
-     * @return Image\Thumbnail\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
     }
 
     /**
