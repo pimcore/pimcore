@@ -17,7 +17,7 @@ cd /your/project
 ```
 
 #### Choose a package to install
-We offer 2 different installation packages, 3 demo packages and one skeleton for experienced developers.
+We offer 2 different installation packages, a demo package with exemplary blueprints and an empty skeleton package for experienced developers.
 
 ##### 1. Skeleton Package (only for experienced Pimcore developers)
 ```bash
