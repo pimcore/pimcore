@@ -207,6 +207,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
 
         foreach ($items  as $groupId => $keys) {
+            if (!isset($data->getActiveGroups()[$groupId])) {
+                continue;
+            }
             foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig->getEnabled()) {
@@ -415,8 +418,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getter = 'get' . ucfirst($this->getName());
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
+        $activeGroups = $classificationStore->getActiveGroups();
         if ($items) {
             foreach ($items as $groupId => $keys) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -486,6 +493,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $items = $data->getItems();
 
             foreach ($items as $groupId => $groupData) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 $groupResult = [];
 
                 foreach ($groupData as $keyId => $keyData) {
