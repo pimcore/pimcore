@@ -59,7 +59,6 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
-        self::zendFrameworkOptimization($rootPath);
     }
 
     /**
@@ -69,7 +68,6 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
-        self::zendFrameworkOptimization($rootPath);
     }
 
     /**
@@ -137,48 +135,6 @@ class Composer
                 return base64_encode(random_bytes(24));
             }, $parameters);
             file_put_contents($parametersYml, $parameters);
-        }
-    }
-
-    /**
-     * @param $rootPath
-     */
-    public static function zendFrameworkOptimization($rootPath)
-    {
-        // @TODO: Remove in 6.0
-
-        // strips all require_once out of the sources
-        // see also: http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
-        $zfPath = $rootPath . '/vendor/zendframework/zendframework1/library/Zend/';
-
-        if (is_dir($zfPath)) {
-            $directory = new \RecursiveDirectoryIterator($zfPath);
-            $iterator = new \RecursiveIteratorIterator($directory);
-            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-
-            $excludePatterns = [
-                '/Loader/Autoloader.php$',
-                '/Loader/ClassMapAutoloader.php$',
-                '/Application.php$',
-            ];
-
-            foreach ($regex as $file) {
-                $file = $file[0];
-
-                $excluded = false;
-                foreach ($excludePatterns as $pattern) {
-                    if (preg_match('@' . $pattern . '@', $file)) {
-                        $excluded = true;
-                        break;
-                    }
-                }
-
-                if (!$excluded) {
-                    $content = file_get_contents($file);
-                    $content = preg_replace('@([^/])(require_once)@', '$1//$2', $content);
-                    file_put_contents($file, $content);
-                }
-            }
         }
     }
 
