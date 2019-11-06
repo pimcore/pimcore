@@ -271,9 +271,9 @@ class Item extends Model\AbstractModel
         }
     }
 
-
     /**
      * @param Element\ElementInterface $element
+     *
      * @throws \Exception
      */
     public function restoreChilds(Element\ElementInterface $element)

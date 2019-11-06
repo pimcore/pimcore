@@ -296,7 +296,6 @@ class IndexController extends AdminController
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
-
         $settings->csrfToken = $csrfProtectionListener->getCsrfToken();
 
         return $settings;

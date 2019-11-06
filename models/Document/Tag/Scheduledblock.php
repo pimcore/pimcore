@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
-use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
 /**

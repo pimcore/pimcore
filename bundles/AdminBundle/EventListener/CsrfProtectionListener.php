@@ -122,7 +122,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     {
         if (!$this->csrfToken) {
             $this->csrfToken = Session::getReadOnly()->get('csrfToken');
-            if(!$this->csrfToken) {
+            if (!$this->csrfToken) {
                 $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
                     if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
                         $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
