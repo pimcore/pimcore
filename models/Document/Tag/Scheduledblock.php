@@ -244,7 +244,7 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function getElements()
     {
-        $document = Model\Document\Page::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
