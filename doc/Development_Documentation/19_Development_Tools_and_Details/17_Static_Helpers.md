@@ -56,27 +56,6 @@ $content = Document\Service::render(Document::getById(2), $optionalParams, $useL
 echo $content;
 ```
 
-#### Advanced:
-If you are using this method in a batch job then you may want to clear parameters from the view upon, 
-for example:
-
-```php
-foreach($users as $user) {
-    $myOptions = ['recentlyViewedItems' => $user->getRecentViews()];
-    $content = Document\Service::render(Document::getById(2), $myOptions, true);
- 
-    //clear only the $myOptions out of the view
-    $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
-    if($viewHelper && $viewHelper->view !== null) {
-        foreach ($myOptions as $key => $value) {
-            if ($viewHelper->view->$key) unset($viewHelper->view->$key);
-        }
-    }
- 
-    //dosomethingwithContent i.e. mail it
-}
-```
-
 ## Locking
 Pimcore provides a simple tool for locking. With that tool it is possible to avoid concurrent
 execution of same code sections or functions.
