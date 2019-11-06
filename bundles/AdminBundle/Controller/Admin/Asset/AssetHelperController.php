@@ -875,7 +875,7 @@ class AssetHelperController extends AdminController
         $tmp = [];
         foreach ($list as $item) {
             //only allow unique metadata columns
-            if (!in_array($item->getName(), $tmp)) {
+            if (!in_array($item->getName(), $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $item->getName();
                 /** @var $item Metadata\Predefined */
                 $item->expand();
@@ -1012,9 +1012,9 @@ class AssetHelperController extends AdminController
                         return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 } else {
-                    Logger::debug('AssetHelperController::batchAction => There is no object left to update.');
+                    Logger::debug('AssetHelperController::batchAction => There is no asset left to update.');
 
-                    return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                    return $this->adminJson(['success' => false, 'message' => 'AssetHelperController::batchAction => There is no asset left to update.']);
                 }
             }
         } catch (\Exception $e) {

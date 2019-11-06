@@ -73,6 +73,9 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     obj.label =  child.data.text;
                     if(child.data.dataType == "system") {
                         obj.key = child.data.text + '~system';
+                    } else if(child.data.dataType == "asset" || child.data.dataType == "object" || child.data.dataType == "document") {
+                        child.data.layout.subtype = child.data.dataType;
+                        child.data.layout.fieldtype = 'manyToOneRelation';
                     } else if(child.data.language) {
                         obj.key = child.data.text + '~' + child.data.language;
                         obj.label = child.data.layout.title = child.data.text + ' (' + child.data.language + ')';

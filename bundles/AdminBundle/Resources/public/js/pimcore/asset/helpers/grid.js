@@ -113,7 +113,7 @@ pimcore.asset.helpers.grid = Class.create({
             batchActions: false,
             actionMethods: {
                 create : 'POST',
-                read   : 'POST',
+                read   : 'GET',
                 update : 'POST',
                 destroy: 'POST'
             },
