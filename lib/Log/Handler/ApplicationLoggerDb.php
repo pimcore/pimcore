@@ -31,13 +31,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
     {
         $this->db = $db;
-
-        // Zend_Log compatibility
-        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
-        if (isset($zendLoggerPsr3Mapping[$level])) {
-            $level = $zendLoggerPsr3Mapping[$level];
-        }
-
         parent::__construct($level, $bubble);
     }
 
@@ -59,21 +52,6 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         ];
 
         $this->db->insert(self::TABLE_NAME, $data);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param $level
-     */
-    public function setFilterPriority($level)
-    {
-        // legacy ZF method
-        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
-        if (isset($zendLoggerPsr3Mapping[$level])) {
-            $level = $zendLoggerPsr3Mapping[$level];
-            $this->setLevel($level);
-        }
     }
 
     /**
