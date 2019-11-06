@@ -222,7 +222,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'id' => $child->getId(),
             'idx' => intval($child->getIndex()),
             'sortBy' => $child->getChildrenSortBy(),
-            'text' => htmlspecialchars($child->getKey()),
+            'text' => $child->getKey(),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
             'basePath' => $child->getRealPath(),
