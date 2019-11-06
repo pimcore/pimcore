@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 6.2.2
+- Asset Metadata: character `~` is not allowed anymore for (predefined/custom) metadata naming. All existing and new metadata name with '~' converts to '-'. This change is introduced to support Localized columns in asset grid [#5093](https://github.com/pimcore/pimcore/pull/5093)
 
 ## 6.2.2
 - Object Keys: characters `>` and `<` not allowed anymore.
