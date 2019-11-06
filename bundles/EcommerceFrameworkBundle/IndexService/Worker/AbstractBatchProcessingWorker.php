@@ -484,14 +484,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     {
         Logger::info('Index-Actions - Resetting preparation queue');
         $className = (new \ReflectionClass($this))->getShortName();
-        $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
+        $query = 'UPDATE '. $this->getStoreTableName() ." SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
                         preparation_worker_id = null,
-                        preparation_status = ``,
-                        preparation_error = ``,
+                        preparation_status = '',
+                        preparation_error = '',
                         trigger_info = ?,
-                        in_preparation_queue = 1 WHERE tenant = ?';
+                        in_preparation_queue = 1 WHERE tenant = ?";
         $this->db->query($query, [
             sprintf('Reset preparation queue in "%s".', $className),
             $this->name
