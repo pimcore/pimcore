@@ -212,18 +212,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
             },
-            constructor: function(config) {
-                var me = this;
-                me.callParent([config]);
-                me.filter.unit = me.createFilter({
-                    operator: 'unit',
-                    value: 123
-                }, 'unit');
-
-                if (me.active) {
-                    me.addStoreFilter(me.filter.unit);
-                }
-            },
             createMenu: function() {
                 var me = this;
                 me.callParent();
@@ -241,16 +229,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     displayField: 'abbreviation',
                     margin: 0,
                     listeners: {
-                        change: function(field, newValue, oldValue, e) {
+                        change: function(field) {
                             var me = this;
-                            me.menu.hide();
-                            if (me.updateBuffer) {
-                                me.task.delay(me.updateBuffer, null, null, [
-                                    me.getValue(field)
-                                ]);
-                            } else {
-                                me.setValue(me.getValue(field));
-                            }
+
+                            me.onValueChange(field, {RETURN: 1, getKey: function() {return null;}});
                         }.bind(this)
                     }
                 };
@@ -258,33 +240,26 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     cfg = Ext.merge({}, me.getItemDefaults(), cfg);
                 }
 
-                me.menu.add('-');
-                me.fields.unit = item = me.menu.add(cfg);
-                item.filter = me.filter.unit;
-                item.filterKey = 'unit';
-            },
+                me.menu.insert(0, '-');
+                me.fields.unit = me.menu.insert(0, cfg);
+            }/*,
             getValue: function(field) {
-                var value = {};
                 var me = this;
+                var value = me.callParent([field]);
 
-                for(var i in me.filter) {
-                    value[i] = me.filter[i].getValue();
+                for(var i in value) {
+                    value[i] = [value[i], me.fields.unit.getValue()];
                 }
+
                 return value;
-            },
+            }*/,
             setValue: function(value) {
                 var me = this;
-                me.callParent([value]);
-                if ('unit' in value) {
-                    var v = value.unit;
-                    if (v) {
-                        me.filter.unit.setValue(v);
-                        me.addStoreFilter(me.filter.unit);
-                    } else {
-                        me.fields.unit.setValue(null);
-                        me.removeStoreFilter(me.filter.unit);
-                    }
+
+                for(var i in value) {
+                    value[i] = [value[i], me.fields.unit.getValue()];
                 }
+                me.callParent([value]);
             }
         });
 
@@ -322,10 +297,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     isInvalidMandatory: function () {
-        if (this.unitField.getValue() && this.inputField.getValue()) {
-            return false;
-        }
-        return true;
+        return !(this.unitField.getValue() && this.inputField.getValue());
     }
-
 });

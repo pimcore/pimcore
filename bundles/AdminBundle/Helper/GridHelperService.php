@@ -175,6 +175,14 @@ class GridHelperService
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int)$filter['value'];
+                } elseif ($filter['type'] == 'quantityValue') {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq' || $filterOperator === 'unit') {
+                        $operator = '=';
+                    }
                 }
 
                 $field = $class->getFieldDefinition($filterField);
