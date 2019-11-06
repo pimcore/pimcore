@@ -100,8 +100,9 @@ pimcore.asset.tags.abstract = Class.create({
     },
 
     getWindowCellEditor: function ( field, record) {
-        return new pimcore.asset.helpers.gridCellEditor({
-            fieldInfo: field
+        return new pimcore.element.helpers.gridCellEditor({
+            fieldInfo: field,
+            elementType: "asset"
         });
     },
 

@@ -346,6 +346,7 @@ $scripts = array(
     "pimcore/element/gridexport/abstract.js",
     "pimcore/element/helpers/gridColumnConfig.js",
     "pimcore/element/helpers/gridConfigDialog.js",
+    "pimcore/element/helpers/gridCellEditor.js",
     "pimcore/object/helpers/grid.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/import/csvPreviewTab.js",
@@ -357,7 +358,6 @@ $scripts = array(
     "pimcore/object/helpers/import/reportTab.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
-    "pimcore/object/helpers/gridCellEditor.js",
     "pimcore/object/helpers/metadataMultiselectEditor.js",
     "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/object/helpers/optionEditor.js",
@@ -370,7 +370,6 @@ $scripts = array(
     "pimcore/asset/helpers/metadataTree.js",
     "pimcore/asset/helpers/gridConfigDialog.js",
     "pimcore/asset/helpers/gridTabAbstract.js",
-    "pimcore/asset/helpers/gridCellEditor.js",
     "pimcore/asset/helpers/grid.js",
 
     // documents

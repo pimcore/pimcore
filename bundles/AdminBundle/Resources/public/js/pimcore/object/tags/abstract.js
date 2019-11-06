@@ -262,8 +262,9 @@ pimcore.object.tags.abstract = Class.create({
 
 
     getWindowCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
+        return new pimcore.element.helpers.gridCellEditor({
+            fieldInfo: field,
+            elementType: "object"
         });
     },
 
