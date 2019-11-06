@@ -29,18 +29,11 @@ class ImageThumbnail
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
-     * @var bool
-     */
-    protected $deferred = true;
-
-    /**
      * @var int
      */
     protected $page = 1;
 
     /**
-     * ImageThumbnail constructor.
-     *
      * @param $asset
      * @param $config
      * @param int $page

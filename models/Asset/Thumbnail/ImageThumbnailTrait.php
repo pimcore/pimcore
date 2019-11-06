@@ -63,6 +63,11 @@ trait ImageThumbnailTrait
     protected $mimetype;
 
     /**
+     * @var bool
+     */
+    protected $deferred = true;
+
+    /**
      * @param bool $deferredAllowed
      * @return string
      */

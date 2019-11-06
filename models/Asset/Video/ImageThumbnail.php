@@ -40,19 +40,19 @@ class ImageThumbnail
     protected $imageAsset;
 
     /**
-     * ImageThumbnail constructor.
-     *
      * @param $asset
      * @param null $config
      * @param null $timeOffset
      * @param null $imageAsset
+     * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null)
+    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
         $this->imageAsset = $imageAsset;
         $this->config = $this->createConfig($config);
+        $this->deferred = $deferred;
     }
 
     /**
@@ -75,12 +75,13 @@ class ImageThumbnail
     }
 
     /**
+     * @param bool $deferredAllowed
      * @throws \Exception
      */
-    public function generate()
+    public function generate($deferredAllowed = true)
     {
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
-        $deferred = false;
+        $deferred = ($deferredAllowed && $this->deferred) ? true : false;
         $generated = false;
 
         if (!$this->asset) {

@@ -29,11 +29,6 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
-     * @var bool
-     */
-    protected $deferred = true;
-
-    /**
      * @param $asset
      * @param null $config
      * @param bool $deferred

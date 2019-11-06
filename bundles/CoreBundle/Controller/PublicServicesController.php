@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Config;
 use Pimcore\Controller\Controller;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -47,15 +48,9 @@ class PublicServicesController extends Controller
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {
-                $page = 1; // default
                 $imageThumbnail = null;
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
-
-                //get page in case of an asset document (PDF, ...)
-                if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
-                    $page = (int)$matchesThumbs[1];
-                }
 
                 // just check if the thumbnail exists -> throws exception otherwise
                 $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
@@ -79,7 +74,20 @@ class PublicServicesController extends Controller
                     throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
                 }
 
-                if ($asset instanceof Asset\Document) {
+                if ($asset instanceof Asset\Video) {
+                    $time = 1;
+                    if (preg_match("|~\-~time\-(\d+)\.|", $filename, $matchesThumbs)) {
+                        $time = (int)$matchesThumbs[1];
+                    }
+
+                    $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
+                } elseif ($asset instanceof Asset\Document) {
+                    $page = 1;
+                    if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
+                        $page = (int)$matchesThumbs[1];
+                    }
+
                     $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
                     $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
@@ -105,6 +113,20 @@ class PublicServicesController extends Controller
                 }
 
                 if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
+                    $requestedFileExtension = File::getFileExtension($filename);
+                    $actualFileExtension = File::getFileExtension($thumbnailFile);
+
+                    if($actualFileExtension !== $requestedFileExtension) {
+                        // create a copy/symlink to the file with the original file extension
+                        // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
+                        // is set to auto-optimized format so the resulting thumbnail can be jpeg
+                        $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
+                        $linked = symlink($thumbnailFile, $requestedFile);
+                        if(false === $linked) {
+                            // create a hard copy
+                            copy($thumbnailFile, $requestedFile);
+                        }
+                    }
 
                     // set appropriate caching headers
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
@@ -124,6 +146,8 @@ class PublicServicesController extends Controller
         } else {
             throw $this->createNotFoundException('Asset not found');
         }
+
+        throw $this->createNotFoundException('Unable to create image thumbnail');
     }
 
     /**
