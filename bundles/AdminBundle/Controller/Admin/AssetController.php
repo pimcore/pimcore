@@ -611,7 +611,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $tmpAsset = [
             'id' => $asset->getId(),
-            'text' => htmlspecialchars($asset->getFilename()),
+            'text' => $asset->getFilename(),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
             'basePath' => $asset->getRealPath(),
