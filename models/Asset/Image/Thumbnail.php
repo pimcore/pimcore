@@ -29,11 +29,6 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
-     * @var string
-     */
-    protected $mimetype;
-
-    /**
      * @var bool
      */
     protected $deferred = true;
@@ -139,50 +134,6 @@ class Thumbnail
     public function __toString()
     {
         return $this->getPath(true);
-    }
-
-    /**
-     * Get the height of the generated thumbnail image in pixels.
-     *
-     * @return string HTTP Mime Type of the generated thumbnail image.
-     */
-    public function getMimeType()
-    {
-        if (!$this->mimetype) {
-            // get target mime type without actually generating the thumbnail (deferred)
-            $mapping = [
-                'png' => 'image/png',
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'pjpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'tiff' => 'image/tiff',
-                'svg' => 'image/svg+xml',
-            ];
-
-            $targetFormat = strtolower($this->getConfig()->getFormat());
-            $format = $targetFormat;
-            $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-
-            if ($targetFormat == 'source' || empty($targetFormat)) {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
-            } elseif ($targetFormat == 'print') {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
-                if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
-                    // return a webformat in admin -> tiff cannot be displayed in browser
-                    $format = 'png';
-                }
-            }
-
-            if (array_key_exists($format, $mapping)) {
-                $this->mimetype = $mapping[$format];
-            } else {
-                // unknown
-                $this->mimetype = 'application/octet-stream';
-            }
-        }
-
-        return $this->mimetype;
     }
 
     /**

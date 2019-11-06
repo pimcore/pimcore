@@ -30,12 +30,12 @@ class ImageThumbnail
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
-     * @var
+     * @var int
      */
     protected $timeOffset;
 
     /**
-     * @var
+     * @var Image
      */
     protected $imageAsset;
 
