@@ -196,7 +196,7 @@ class Pdf extends Model\Document\Tag
         if ($asset instanceof Asset\Document && $asset->getPageCount()) {
             $divId = 'pimcore-pdf-' . uniqid();
             $pdfPath = $asset->getFullPath();
-            $thumbnailPath = $asset->getImageThumbnail($thumbnailConfig);
+            $thumbnailPath = $asset->getImageThumbnail($thumbnailConfig, 1, true);
 
             $code = <<<HTML
             <div id="$divId" class="pimcore-pdfViewer">

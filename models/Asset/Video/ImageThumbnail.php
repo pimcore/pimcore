@@ -56,11 +56,13 @@ class ImageThumbnail
     }
 
     /**
-     * @return mixed
+     * @param bool $deferredAllowed
+     *
+     * @return mixed|string
      */
-    public function getPath()
+    public function getPath($deferredAllowed = true)
     {
-        $fsPath = $this->getFileSystemPath();
+        $fsPath = $this->getFileSystemPath($deferredAllowed);
         $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
