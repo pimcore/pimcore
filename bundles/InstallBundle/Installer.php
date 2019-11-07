@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
@@ -319,6 +320,13 @@ class Installer
             $dbConfig['port'] = $params['mysql_port'];
         }
 
+        $mysqlSslCertPath = $params['mysql_ssl_cert_path'];
+        if (!empty($mysqlSslCertPath)) {
+            $dbConfig['driverOptions'] = [
+                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath
+            ];
+        }
+
         return $dbConfig;
     }
 
@@ -330,6 +338,11 @@ class Installer
 
         unset($dbConfig['driver']);
         unset($dbConfig['wrapperClass']);
+
+        if (isset($dbConfig['driverOptions'])) {
+            $dbConfig['options'] = $dbConfig['driverOptions'];
+            unset($dbConfig['driverOptions']);
+        }
 
         $this->createConfigFiles([
             'doctrine' => [
