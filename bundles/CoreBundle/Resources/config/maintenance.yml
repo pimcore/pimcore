@@ -92,6 +92,12 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: imageoptimize }
 
+    Pimcore\Maintenance\Tasks\AssetDocumentConversionTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: asset_document_convert }
+
     Pimcore\Maintenance\Tasks\HousekeepingTask:
         tags:
             - { name: pimcore.maintenance.task, type: housekeeping }

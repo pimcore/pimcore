@@ -206,7 +206,7 @@ HTML;
 
             return $code;
         } else {
-            return $this->getErrorCode('Asset is not a valid PDF');
+            return $this->getErrorCode('Preview in progress or not a valid PDF file');
         }
     }
 
@@ -224,7 +224,7 @@ HTML;
 
         $code = '
         <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: 100%; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
                 ' . $message . '
             </div>
         </div>';
