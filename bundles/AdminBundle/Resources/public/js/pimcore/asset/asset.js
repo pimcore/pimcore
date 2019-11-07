@@ -248,6 +248,16 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 });
             }
 
+            if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+                buttons.push("-");
+                buttons.push({
+                    tooltip: t('share_via_notifications'),
+                    iconCls: "pimcore_icon_share",
+                    scale: "medium",
+                    handler: this.shareViaNotifications.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -477,6 +487,19 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
             pimcore.elementservice.editElementKey(options);
         }
-    }
+    },
 
+    shareViaNotifications: function () {
+        if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+            var elementData = {
+                id:this.id,
+                type:'asset',
+                published:true,
+                path:this.data.path + this.data.filename
+            };
+            if (pimcore.globalmanager.get("new_notifications")) {
+                pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+            }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
+    }
 });

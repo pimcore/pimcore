@@ -263,6 +263,16 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 });
             }
 
+            if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+                buttons.push("-");
+                buttons.push({
+                    tooltip: t('share_via_notifications'),
+                    iconCls: "pimcore_icon_share",
+                    scale: "medium",
+                    handler: this.shareViaNotifications.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -414,5 +424,19 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             };
             pimcore.elementservice.editElementKey(options);
         }
+    },
+
+    shareViaNotifications: function () {
+        if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+            var elementData = {
+                id:this.data.id,
+                type:'document',
+                published:this.data.published,
+                path:this.data.path + this.data.key
+            };
+            if (pimcore.globalmanager.get("new_notifications")) {
+                pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+            }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     }
 });
