@@ -175,6 +175,10 @@ Expects following configuration options:
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Round`: Rounds given value to integer.
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Soundex`: Returns soundex of given value. Could be used 
 for similarity calculation.
+- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultClassificationStore`: Stores all classification
+  store attributes of a data object to the index. Only usable in combination with elastic search. 
+  See [Filter Classification Store](../../07_Filter_Service/03_Elastic_Search/01_Filter_Classification_Store.md) 
+  for details. 
 
 > Depending on the *Product Index* implementation, the *Product Index* configuration can be slightly different. 
 > See sample configurations for specific *Product Iindex* implementations.

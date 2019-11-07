@@ -713,5 +713,6 @@
     "send_invitation_link": "Envoyer le lien d'invitation",
     "invitation_sent": "Invitation de connexion envoyée",
     "invitation_link_sent": "Un lien de connexion temporaire a été envoyé à l'adresse électronique: \"%s\" ",
-    "geopolyline": "Geographic Polyline"
+    "geopolyline": "Polyligne géographique",
+    "classificationstore_error_group_exists_msg": "Group with this name already exists"
 }

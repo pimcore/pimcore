@@ -89,7 +89,7 @@ class Service
 
         $importData = json_decode($json, true);
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             // set layout-definition
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             if ($layout === false) {
@@ -221,7 +221,7 @@ class Service
             }
         }
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             $objectBrick->setLayoutDefinitions($layout);
         }
@@ -273,9 +273,9 @@ class Service
                             } else {
                                 if ($throwException) {
                                     throw new \Exception('Could not add child ' . var_export($child, true));
-                                } else {
-                                    Logger::err('Could not add child ' . var_export($child, true));
                                 }
+
+                                Logger::err('Could not add child ' . var_export($child, true));
 
                                 return false;
                             }
@@ -318,7 +318,7 @@ class Service
         foreach ($tmp as $tableName => $columns) {
             foreach ($columns as $column) {
                 $column['Type'] = strtolower($column['Type']);
-                if (strtolower($column['Null']) == 'yes') {
+                if (strtolower($column['Null']) === 'yes') {
                     $column['Null'] = 'null';
                 }
                 //                $fieldName = strtolower($column["Field"]);

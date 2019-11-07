@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.relationSelectionWindow");
+/*
+ * this is for the grid
+ */
 pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
     acceptEvents: true,

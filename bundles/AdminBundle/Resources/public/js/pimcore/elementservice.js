@@ -359,8 +359,8 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                     record.set("text", originalText);
                     record.set("path", originalPath);
                 }
-                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
-                    "error");
+                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
+                    t(rdata.message));
                 return;
             }
 

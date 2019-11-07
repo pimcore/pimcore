@@ -30,7 +30,7 @@ The framework already defines a number of core filter types in [filter_service_f
 
 > FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
 > Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 
-> [Elastic Search Config](./03_Elastic_Search.md).  
+> [Elastic Search Config](03_Elastic_Search/README.md).  
  
 ```yaml
 pimcore_ecommerce_framework:

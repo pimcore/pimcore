@@ -343,8 +343,10 @@ $scripts = array(
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
+    "pimcore/element/gridexport/abstract.js",
+    "pimcore/element/helpers/gridColumnConfig.js",
+    "pimcore/element/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/grid.js",
-    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/import/csvPreviewTab.js",
     "pimcore/object/helpers/import/columnConfigurationTab.js",
@@ -365,6 +367,9 @@ $scripts = array(
     "pimcore/element/tag/configuration.js",
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
+    "pimcore/asset/helpers/metadataTree.js",
+    "pimcore/asset/helpers/gridConfigDialog.js",
+    "pimcore/asset/helpers/gridTabAbstract.js",
 
     // documents
     "pimcore/document/properties.js",
@@ -414,6 +419,8 @@ $scripts = array(
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
+    "pimcore/asset/gridexport/xlsx.js",
+    "pimcore/asset/gridexport/csv.js",
 
     // object
     "pimcore/object/helpers/edit.js",
@@ -614,7 +621,6 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/gridexport/abstract.js",
     "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
 

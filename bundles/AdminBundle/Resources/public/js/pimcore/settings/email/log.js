@@ -179,7 +179,6 @@ pimcore.settings.email.log = Class.create({
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
-                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('html'),
                             width: iFrameSettings.width,
@@ -211,7 +210,6 @@ pimcore.settings.email.log = Class.create({
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
-                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('text'),
                             width: iFrameSettings.width,

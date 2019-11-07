@@ -27,7 +27,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
 
 <div id="loginform">
-    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check') ?>" autocomplete="off">
+    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check', ['perspective' => strip_tags($view->request()->getParameter('perspective'))]) ?>" autocomplete="off">
 
         <?php if ($this->error) { ?>
             <div class="text error">

@@ -690,7 +690,6 @@
     "login_token_invalid_user_error": "Neplatný uživatel.",
     "login_token_as_admin_non_admin_user_error": "Jen administrátoři se mohou přihlásit jako admin uživatel.",
     "login_token_no_password_error": "Uživatel nemá nastavené heslo.",
-    "lostpassword_reset_error": "Při posílání informací o ztraceném hesle nastala chyba. Zkuste to prosím znovu nebo kontaktujte administrátora.",
     "targeting_toolbar": "Panel cílení",
     "sort_children_by": "Seřadit potomky dle",
     "by_key": "Klíče (abecedně)",
@@ -905,5 +904,11 @@
     "bundle_ecommerce_order_tab": "Order Details",
     "access_denied": "Access Denied!",
     "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
-    "validation_failed": "Validation Failed!"
+    "validation_failed": "Validation Failed!",
+    "export_xlsx": "XLSX Export",
+    "object_export_warning": "Please note that the export does not support all data types. Press OK to continue with the export.",
+    "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
+    "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
+    "paste_clipboard": "Paste Clipboard",
+    "paste_here": "Paste your clipboard data here"
 }

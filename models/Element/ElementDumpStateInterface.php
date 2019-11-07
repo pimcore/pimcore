@@ -1,3 +1,4 @@
+<?php
 /**
  * Pimcore
  *
@@ -7,19 +8,28 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
+ * @category   Pimcore
+ * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.gridexport.abstract");
-pimcore.gridexport.abstract = Class.create({
-    name: t('export'),
-    text: t('export'),
-    warningText: t('object_export_warning'),
-    downloadUrl: null,
-    getExportSettingsContainer: function () {
-        return null;
-    }
-});
+namespace Pimcore\Model\Element;
 
-pimcore.globalmanager.add("pimcore.gridexport", []);
+interface ElementDumpStateInterface
+{
+    /**
+     * Set to true to indicate that we are about to serialize the version data.
+     *
+     * @param bool $dumpState
+     *
+     * @return mixed
+     */
+    public function setInDumpState(bool $dumpState);
+
+    /**
+     * @return bool
+     */
+    public function isInDumpState(): bool;
+}

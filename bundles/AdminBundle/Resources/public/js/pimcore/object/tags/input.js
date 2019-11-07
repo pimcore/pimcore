@@ -124,11 +124,9 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
 
     getLayoutShow: function () {
-
-        this.component = this.getLayoutEdit();
+        var layout = this.getLayoutEdit();
         this.component.setReadOnly(true);
-
-        return this.component;
+        return layout;
     },
 
     getValue: function () {

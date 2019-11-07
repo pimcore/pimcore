@@ -1622,8 +1622,8 @@ class Asset extends Element\AbstractElement
     {
         $this->metadata = [];
         $this->setHasMetaData(false);
-        if(!empty($metadata)) {
-            foreach((array)$metadata as $metaItem) {
+        if (!empty($metadata)) {
+            foreach ((array)$metadata as $metaItem) {
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
         }
@@ -1685,10 +1685,11 @@ class Asset extends Element\AbstractElement
     /**
      * @param null $name
      * @param null $language
+     * @param bool $strictMatch
      *
-     * @return array
+     * @return array|null
      */
-    public function getMetadata($name = null, $language = null)
+    public function getMetadata($name = null, $language = null, $strictMatch = false)
     {
         $convert = function ($metaData) {
             if (in_array($metaData['type'], ['asset', 'document', 'object']) && is_numeric($metaData['data'])) {
@@ -1709,7 +1710,7 @@ class Asset extends Element\AbstractElement
                     if ($language == $md['language']) {
                         return $convert($md);
                     }
-                    if (empty($md['language'])) {
+                    if (empty($md['language']) && !$strictMatch) {
                         $data = $md;
                     }
                 }
@@ -1852,9 +1853,9 @@ class Asset extends Element\AbstractElement
         $parentVars = parent::__sleep();
         $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChildren', 'versions', 'parent', 'stream'];
 
-        if (isset($this->_fulldump)) {
+        if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $finalVars[] = '_fulldump';
+            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
@@ -1872,7 +1873,7 @@ class Asset extends Element\AbstractElement
 
     public function __wakeup()
     {
-        if (isset($this->_fulldump)) {
+        if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
             $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
@@ -1881,13 +1882,11 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if (isset($this->_fulldump) && $this->properties !== null) {
+        if ($this->isInDumpState() && $this->properties !== null) {
             $this->renewInheritedProperties();
         }
 
-        if (isset($this->_fulldump)) {
-            unset($this->_fulldump);
-        }
+        $this->setInDumpState(false);
     }
 
     public function removeInheritedProperties()

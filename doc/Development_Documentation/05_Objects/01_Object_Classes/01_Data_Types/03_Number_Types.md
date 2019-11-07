@@ -107,3 +107,7 @@ When conversion factors / offsets change over time (e.g. money currencies) or yo
 2. You can create a converter service class
 
 If you prefer the latter you have to create a class which implements  `\Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface` and define a service for this class in your `services.yml`. The service name can then be entered in quantity value unit configuration's column "Converter service" for the base unit.
+
+## Input Quantity Value
+
+[Input Quantity Value](01_Text_Types.md) is quite similar to Quantity Value except that text values are allowed instead of the strict restriction to numeric values.
