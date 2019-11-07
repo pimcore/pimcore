@@ -116,13 +116,13 @@ class PublicServicesController extends Controller
                     $requestedFileExtension = File::getFileExtension($filename);
                     $actualFileExtension = File::getFileExtension($thumbnailFile);
 
-                    if($actualFileExtension !== $requestedFileExtension) {
+                    if ($actualFileExtension !== $requestedFileExtension) {
                         // create a copy/symlink to the file with the original file extension
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
                         $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
                         $linked = symlink($thumbnailFile, $requestedFile);
-                        if(false === $linked) {
+                        if (false === $linked) {
                             // create a hard copy
                             copy($thumbnailFile, $requestedFile);
                         }

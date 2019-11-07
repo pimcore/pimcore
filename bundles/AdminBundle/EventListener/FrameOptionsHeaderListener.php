@@ -61,7 +61,7 @@ class FrameOptionsHeaderListener implements EventSubscriberInterface
             $response->headers->set('X-Frame-Options', 'deny', true);
         }
 
-        if($this->requestHelper->isFrontendRequestByAdmin($request)) {
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
             $response->headers->set('X-Frame-Options', 'SAMEORIGIN', true);
         }
     }

@@ -69,6 +69,7 @@ trait ImageThumbnailTrait
 
     /**
      * @param bool $deferredAllowed
+     *
      * @return string
      */
     public function getFileSystemPath($deferredAllowed = false)
@@ -80,9 +81,6 @@ trait ImageThumbnailTrait
         return $this->filesystemPath;
     }
 
-    /**
-     *
-     */
     public function reset()
     {
         $this->filesystemPath = null;

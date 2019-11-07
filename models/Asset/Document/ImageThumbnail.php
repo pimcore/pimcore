@@ -70,6 +70,7 @@ class ImageThumbnail
 
     /**
      * @param bool $deferredAllowed
+     *
      * @return string
      */
     public function generate($deferredAllowed = true)

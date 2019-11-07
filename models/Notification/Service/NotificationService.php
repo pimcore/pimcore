@@ -196,7 +196,9 @@ class NotificationService
     /**
      * @param int $user
      * @param int $lastUpdate
+     *
      * @return array
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findLastUnread(int $user, int $lastUpdate): array
