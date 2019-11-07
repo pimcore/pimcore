@@ -747,12 +747,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     /** @var DataObject\Objectbrick\Data\AbstractData $item */
                     $item = $data->$getter();
 
-                    if ($item) {
+                    if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
                         if ($item->getDoDelete()) {
-                            continue;
-                        }
-
-                        if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
                             continue;
                         }
 
