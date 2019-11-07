@@ -73,7 +73,7 @@ CREATE TABLE `cache_tags` (
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
-) ENGINE=MEMORY;
+) DEFAULT CHARSET=ascii;
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -333,7 +333,7 @@ CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',
   `date` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (

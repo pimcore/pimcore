@@ -91,12 +91,6 @@ class Requirements
             'state' => ($engines && in_arrayi('archive', $engines)) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
-        // memory
-        $checks[] = new Check([
-            'name' => 'MEMORY Support',
-            'state' => ($engines && in_arrayi('memory', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
-        ]);
-
         // check database charset =>  utf-8 encoding
         $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
         $checks[] = new Check([
