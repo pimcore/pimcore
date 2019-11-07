@@ -281,7 +281,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
 
                 $crc = crc32($jsonData);
                 if (count($attributeErrors) <= 0 && count($generalErrors) <= 0) {
-                    $processedSubObject[$subObjectId] = $object;
+                    $processedSubObjects[$subObjectId] = $object;
                     $insertData = [
                         'o_id' => $subObjectId,
                         'o_virtualProductId' => $data['o_virtualProductId'],
