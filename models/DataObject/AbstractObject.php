@@ -454,7 +454,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return [];
         }
 
-        return array_merge(...$returnArrays);
+        return array_merge(...array_values($returnArrays));
     }
 
     /**
@@ -530,7 +530,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return [];
         }
 
-        return array_merge(...$returnArrays);
+        return array_merge(...array_values($returnArrays));
     }
 
     /**
