@@ -1199,9 +1199,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     private static function getChildrenCacheKey(self $object) {
-        $key = $object->getKey();
+        $key = $object->getType();
         if(\method_exists($object, 'getPublished')) {
-            $key .= $object->getPublished();
+            $key .='_'. $object->getPublished();
         }
 
         return $key;
