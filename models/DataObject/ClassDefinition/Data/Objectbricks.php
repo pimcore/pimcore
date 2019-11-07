@@ -740,39 +740,42 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if ($data instanceof DataObject\Objectbrick) {
                 $validationExceptions = [];
 
-                $items = $data->getItems();
-                foreach ($items as $item) {
-                    if ($item->getDoDelete()) {
-                        continue;
-                    }
+                $allowedTypes = $this->getAllowedTypes();
+                foreach ($allowedTypes as $allowedType) {
 
-                    if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                        continue;
-                    }
+                    $getter = 'get' . ucfirst($allowedType);
+                    /** @var DataObject\Objectbrick\Data\AbstractData $item */
+                    $item = $data->$getter();
 
-                    if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                        continue;
-                    }
+                    if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
+                        if ($item->getDoDelete()) {
+                            continue;
+                        }
 
-                    //needed when new brick is added but not saved yet - then validity check fails.
-                    if (!$item->getFieldname()) {
-                        $item->setFieldname($data->getFieldname());
-                    }
+                        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                            continue;
+                        }
 
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        try {
-                            $key = $fd->getName();
-                            $getter = 'get' . ucfirst($key);
-                            $fd->checkValidity($item->$getter());
-                        } catch (Model\Element\ValidationException $ve) {
-                            $ve->addContext($this->getName());
-                            $validationExceptions[] = $ve;
+                        //needed when new brick is added but not saved yet - then validity check fails.
+                        if (!$item->getFieldname()) {
+                            $item->setFieldname($data->getFieldname());
+                        }
+
+                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            try {
+                                $key = $fd->getName();
+                                $getter = 'get' . ucfirst($key);
+                                $fd->checkValidity($item->$getter());
+                            } catch (Model\Element\ValidationException $ve) {
+                                $ve->addContext($this->getName());
+                                $validationExceptions[] = $ve;
+                            }
                         }
                     }
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions = new Model\Element\ValidationException("invalid brick " . $this->getName());
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }
