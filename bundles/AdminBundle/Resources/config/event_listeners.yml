@@ -56,6 +56,4 @@ services:
 
     Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
 
-    Pimcore\Bundle\AdminBundle\EventListener\FrameOptionsHeaderListener: ~
-
     Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~

@@ -21,6 +21,7 @@ use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
@@ -37,10 +38,12 @@ use Pimcore\Version;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController extends AdminController
+class IndexController extends AdminController implements EventedControllerInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -442,5 +445,15 @@ class IndexController extends AdminController
         $settings->customviews = $cvData;
 
         return $this;
+    }
+
+    public function onKernelController(FilterControllerEvent $event)
+    {
+
+    }
+
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
 }

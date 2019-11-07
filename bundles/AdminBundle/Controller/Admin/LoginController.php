@@ -58,6 +58,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
 
     /**
