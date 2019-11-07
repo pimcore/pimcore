@@ -255,10 +255,14 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }*/,
             setValue: function(value) {
                 var me = this;
+                var unitId = me.fields.unit.getValue();
 
-                for(var i in value) {
-                    value[i] = [value[i], me.fields.unit.getValue()];
+                if(unitId) {
+                    for(var i in value) {
+                        value[i] = [value[i], unitId];
+                    }
                 }
+
                 me.callParent([value]);
             }
         });

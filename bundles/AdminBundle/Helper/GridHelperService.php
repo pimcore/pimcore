@@ -26,6 +26,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
 class GridHelperService
 {
@@ -145,6 +146,31 @@ class GridHelperService
         if ($filterJson) {
             $db = \Pimcore\Db::get();
             $filters = json_decode($filterJson, true);
+
+            foreach($filters as $index => $filter) {
+                if ($filter['type'] === 'quantityValue' && is_array($filter['value'])) {
+                    /** @var UnitConversionService $converter */
+                    $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
+
+                    $baseValue = $filter['value'][0];
+                    $baseUnitId = $filter['value'][1];
+                    $baseQuantityValue = new DataObject\Data\QuantityValue($baseValue, $baseUnitId);
+
+                    $unitListing = new DataObject\QuantityValue\Unit\Listing();
+                    $unitListing->addConditionParam('baseunit=?', $baseUnitId);
+                    foreach($unitListing as $unit) {
+                        $filters[] = [
+                            'value' => $converter->convert($baseQuantityValue, $unit),
+                            'type' => 'numeric',
+                            'operator' => $filter['operator'],
+                            'property' => $filter['property']
+                        ];
+                    }
+
+                    unset($filters[$index]);
+                }
+            }
+
             foreach ($filters as $filter) {
                 $operator = '=';
 
@@ -175,14 +201,6 @@ class GridHelperService
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int)$filter['value'];
-                } elseif ($filter['type'] == 'quantityValue') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq' || $filterOperator === 'unit') {
-                        $operator = '=';
-                    }
                 }
 
                 $field = $class->getFieldDefinition($filterField);
