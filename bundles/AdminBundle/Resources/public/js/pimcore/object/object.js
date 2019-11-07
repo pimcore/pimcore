@@ -513,7 +513,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
-                buttons.push("-");
                 buttons.push({
                     tooltip: t('share_via_notifications'),
                     iconCls: "pimcore_icon_share",
