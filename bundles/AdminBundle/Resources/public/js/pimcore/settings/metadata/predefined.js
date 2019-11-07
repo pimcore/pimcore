@@ -62,7 +62,7 @@ pimcore.settings.metadata.predefined = Class.create({
                     name: 'name',
                     allowBlank: false,
                     convert: function (v, r) {
-                        return v.replace(/[~]/g, "-");
+                        return v.replace(/[~]/g, "---");
                     }
                 },
                 'description','type',
