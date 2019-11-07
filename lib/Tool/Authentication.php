@@ -114,30 +114,28 @@ class Authentication
     }
 
     /**
-     * @param $username
      * @param $token
      * @param bool $adminRequired
      *
      * @return null|User
      */
-    public static function authenticateToken($username, $token, $adminRequired = false)
+    public static function authenticateToken($token, $adminRequired = false)
     {
-        $user = User::getByName($username);
+        $username = null;
+        $timestamp = null;
+        try {
+            $decrypted = self::tokenDecrypt($token);
+            list($timestamp, $username) = $decrypted;
+        } catch (CryptoException $e) {
+            return null;
+        }
 
+        $user = User::getByName($username);
         if (self::isValidUser($user)) {
             if ($adminRequired and !$user->isAdmin()) {
                 return null;
             }
 
-            $passwordHash = $user->getPassword();
-
-            try {
-                $decrypted = self::tokenDecrypt($passwordHash, $token);
-            } catch (CryptoException $e) {
-                return null;
-            }
-
-            $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
             date_default_timezone_set('UTC');
 
@@ -223,31 +221,28 @@ class Authentication
 
     /**
      * @param $username
-     * @param $passwordHash
      *
      * @return string
      */
-    public static function generateToken($username, $passwordHash)
+    public static function generateToken($username)
     {
-        if (empty($passwordHash)) {
-            throw new \InvalidArgumentException('Can\'t generate token for an empty password');
-        }
+        $secret = \Pimcore::getContainer()->getParameter('secret');
 
         $data = time() - 1 . '|' . $username;
-        $token = Crypto::encryptWithPassword($data, $passwordHash);
+        $token = Crypto::encryptWithPassword($data, $secret);
 
         return $token;
     }
 
     /**
-     * @param $passwordHash
      * @param $token
      *
      * @return array
      */
-    public static function tokenDecrypt($passwordHash, $token)
+    public static function tokenDecrypt($token)
     {
-        $decrypted = Crypto::decryptWithPassword($token, $passwordHash);
+        $secret = \Pimcore::getContainer()->getParameter('secret');
+        $decrypted = Crypto::decryptWithPassword($token, $secret);
 
         return explode('|', $decrypted);
     }

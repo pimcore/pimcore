@@ -140,10 +140,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
 
             if (!$error) {
-                $token = Authentication::generateToken($username, $user->getPassword());
+                $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
