@@ -79,16 +79,10 @@ class Requirements
             'state' => ($engines && in_arrayi('innodb', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
-        // myisam
+        // ARCHIVE & MyISAM
         $checks[] = new Check([
-            'name' => 'MyISAM Support',
-            'state' => ($engines && in_arrayi('myisam', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
-        ]);
-
-        // ARCHIVE
-        $checks[] = new Check([
-            'name' => 'ARCHIVE Support',
-            'state' => ($engines && in_arrayi('archive', $engines)) ? Check::STATE_OK : Check::STATE_WARNING
+            'name' => 'ARCHIVE or MyISAM Support',
+            'state' => ($engines && (in_arrayi('archive', $engines) || in_arrayi('myisam', $engines))) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         // check database charset =>  utf-8 encoding
