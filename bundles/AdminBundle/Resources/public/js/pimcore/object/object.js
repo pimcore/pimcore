@@ -132,6 +132,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     checkForInheritance: function () {
+
+        // do not run when tab is not active
+        if(document.hidden) {
+            return;
+        }
+
         if (!this.edit.layout.rendered) {
             throw "edit not available";
         }
