@@ -62,11 +62,15 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($dataTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
 
         $items = $this->model->getItems();
+        $activeGroups = $this->model->getActiveGroups();
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 $keyConfig = DefinitionCache::get($keyId);
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
@@ -106,7 +110,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->delete($groupsTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
 
-        $activeGroups = $this->model->getActiveGroups();
         if (is_array($activeGroups)) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
@@ -141,6 +144,16 @@ class Dao extends Model\Dao\AbstractDao
         $dataTableName = $this->getDataTableName();
         $objectId = $object->getId();
         $fieldname = $this->model->getFieldname();
+        $groupsTableName = $this->getGroupsTableName();
+
+        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+
+        $data = $this->db->fetchAll($query);
+        $list = [];
+
+        foreach ($data as $item) {
+            $list[$item['groupId']] = true;
+        }
 
         $query = 'SELECT * FROM ' . $dataTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
@@ -149,6 +162,10 @@ class Dao extends Model\Dao\AbstractDao
         $groupCollectionMapping = [];
 
         foreach ($data as $item) {
+            if (!isset($list[$item['groupId']])) {
+                continue;
+            }
+
             $groupId = $item['groupId'];
             $keyId = $item['keyId'];
             $collectionId = $item['collectionId'];
@@ -172,17 +189,6 @@ class Dao extends Model\Dao\AbstractDao
 
             $language = $item['language'];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-        }
-
-        $groupsTableName = $this->getGroupsTableName();
-
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAll($query);
-        $list = [];
-
-        foreach ($data as $item) {
-            $list[$item['groupId']] = true;
         }
 
         $classificationStore->setActiveGroups($list);

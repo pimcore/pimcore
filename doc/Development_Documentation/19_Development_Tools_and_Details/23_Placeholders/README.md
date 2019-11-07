@@ -20,7 +20,7 @@ config is used)
 Lets assume you have a text `"Thank you for the order of "PRODUCTNAME""` and you want replace 
 `"PRODUCTNAME"` with the real Product name.
 
-The following code-snippet replaces the Placeholder `"%DataObject(...);"` with the Product name.
+The following code-snippet replaces the Placeholder `%DataObject(...);` with the Product name.
 
 ```php
 $text = 'Thank you for the order of "%DataObject(object_id,{"method" : "getName"});"';

@@ -138,24 +138,29 @@ $definition = new \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue()
 $definition->setName("height");
 $definition->setTitle(Height);
 
-$config = new \Pimcore\Model\DataObject\Classificationstore\KeyConfig();
-$config->setName($name);
-$config->setDescription($description);
-$config->setEnabled(true);
-$config->setType($definition->getFieldtype());
-$config->setDefinition(json_encode($definition)); // The definition is used in object editor to render fields
-$config->save();  
+$keyConfig = new \Pimcore\Model\DataObject\Classificationstore\KeyConfig();
+$keyConfig->setName($name);
+$keyConfig->setDescription($description);
+$keyConfig->setEnabled(true);
+$keyConfig->setType($definition->getFieldtype());
+$keyConfig->setDefinition(json_encode($definition)); // The definition is used in object editor to render fields
+$keyConfig->save();  
   
 // Group
-$config = new \Pimcore\Model\DataObject\Classificationstore\GroupConfig();
-$config->setName($name);
-$config->setDescription($description);
-$config->save();
+$groupConfig = new \Pimcore\Model\DataObject\Classificationstore\GroupConfig();
+$groupConfig->setName($name);
+$groupConfig->setDescription($description);
+$groupConfig->save();
   
 // Collection
-$config = new \Pimcore\Model\DataObject\Classificationstore\CollectionConfig();
-$config->setName($name);
-$config->setDescription($description);
-$config->save();
+$collectionConfig = new \Pimcore\Model\DataObject\Classificationstore\CollectionConfig();
+$collectionConfig->setName($name);
+$collectionConfig->setDescription($description);
+$collectionConfig->save();
 ```
 
+// Add a group to a collection
+$rel = new CollectionGroupRelation();
+$rel->setGroupId($groupConfig->getId();
+$rel->setColId($collectionConfig->getId();
+$rel->save();

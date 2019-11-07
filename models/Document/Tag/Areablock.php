@@ -604,7 +604,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     public function getElement(string $name)
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

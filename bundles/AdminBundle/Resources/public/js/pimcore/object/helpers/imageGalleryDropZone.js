@@ -148,12 +148,14 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
             dd.panelProxy.hide();
             dd.proxy.hide();
 
+            var source = dd.panelProxy.panel.ownerCt.initialConfig.proxyConfig.callback;
+            source.markDirty();
+
             if (pos !== false) {
                 parent.insert(pos, panel);
             } else {
                 parent.add(panel);
             }
-
             if (this.proxyConfig.callback) {
                 this.proxyConfig.callback.notifyDrop();
             }

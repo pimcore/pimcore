@@ -292,7 +292,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
     },
 
     initPreviewVideo: function () {
-        var frameUrl = pimcore.helpers.addCsrfTokenToUrl('/admin/asset/get-preview-video?id=' + this.id);
+        var frameUrl = '/admin/asset/get-preview-video?id=' + this.id;
         var html = '<iframe src="' + frameUrl + '" frameborder="0" id="' + this.previewFrameId + '" name="' + this.previewFrameId + '" style="width:100%;"></iframe>';
         this.previewPanel.update(html);
 

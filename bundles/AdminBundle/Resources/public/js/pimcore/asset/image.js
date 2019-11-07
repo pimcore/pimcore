@@ -103,7 +103,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         if (!this.editPanel) {
             var url = '/admin/asset/image-editor?id=' + this.id;
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
             var frameId = 'asset_image_edit_' + this.id;
             this.editPanel = new Ext.Panel({
                 title: t("edit"),

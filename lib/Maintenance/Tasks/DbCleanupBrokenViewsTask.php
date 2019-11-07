@@ -61,7 +61,7 @@ final class DbCleanupBrokenViewsTask implements TaskInterface
 
                         $this->db->query('DROP VIEW '.$name);
                     } else {
-                        $this->logger->errorerror($e);
+                        $this->logger->error($e);
                     }
                 }
             }

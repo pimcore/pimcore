@@ -237,7 +237,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param Element\ElementInterface|Element\ElementDumpStateInterface $element
      */
     public function loadChildren(Element\ElementInterface $element)
     {
@@ -251,10 +251,10 @@ class Item extends Model\AbstractModel
             $element->getScheduledTasks();
         }
 
-        $element->_fulldump = true;
+        $element->setInDumpState(true);
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
-        // with the property _fulldump set, because this would cause major issues in wakeUp()
+        // with the dump state set to true, because this would cause major issues in wakeUp()
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
         if (method_exists($element, 'getChildren')) {
@@ -273,6 +273,8 @@ class Item extends Model\AbstractModel
 
     /**
      * @param Element\ElementInterface $element
+     *
+     * @throws \Exception
      */
     public function restoreChilds(Element\ElementInterface $element)
     {
@@ -295,15 +297,17 @@ class Item extends Model\AbstractModel
         }
         $element->save();
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->getObjectVar('o_childs');
             } else {
                 $childs = $element->getChildren();
             }
-            foreach ($childs as $child) {
-                $this->restoreChilds($child);
+            if (is_array($childs)) {
+                foreach ($childs as $child) {
+                    $this->restoreChilds($child);
+                }
             }
         }
     }

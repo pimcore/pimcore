@@ -98,10 +98,18 @@ pimcore.settings.user.role.settings = Class.create({
                 editable: false,
                 fieldLabel: t("document_types"),
                 width: 400,
-                displayField: "name",
                 valueField: "id",
                 store: pimcore.globalmanager.get("document_types_store"),
-                value: this.data.docTypes
+                value: this.data.docTypes,
+                listConfig: {
+                    itemTpl: new Ext.XTemplate('{[this.sanitize(values.name)]}',
+                        {
+                            sanitize: function (name) {
+                                return Ext.util.Format.htmlEncode(name);
+                            }
+                        }
+                    )
+                }
             }, {
                 xtype: "multiselect",
                 name: "classes",

@@ -442,6 +442,7 @@
   "classificationstore_mbx_entergroup_prompt": "Enter name",
   "classificationstore_error_addgroup_msg": "Error adding group",
   "classificationstore_invalidname": "Invalid name",
+  "classificationstore_error_group_exists_msg": "Group with this name already exists",
   "classificationstore_properties": "Key Definitions",
   "classificationstore_mbx_enterkey_title": "New Key",
   "classificationstore_detailed_configuration": "Detailed Configuration",
@@ -713,5 +714,6 @@
   "table_column_configuration": "Column Configuration",
   "send_invitation_link": "Send Invitation Link",
   "invitation_sent": "Login Invitation sent",
-  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
+  "classificationstore_group_by_key": "Group by key"
 }

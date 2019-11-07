@@ -68,7 +68,7 @@ class Definition extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getCategory(): string
+    public function getCategory(): ?string
     {
         return $this->category;
     }

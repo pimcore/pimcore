@@ -219,7 +219,7 @@ class Info
         if ($this->view && isset($this->view->document)) {
             $document = $this->view->document;
         } else {
-            $document = Document::getById($this->tag->getDocumentId());
+            $document = $this->tag->getDocument();
         }
 
         return $document;

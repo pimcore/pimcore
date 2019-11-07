@@ -229,7 +229,8 @@ pimcore.settings.user.user.settings = Class.create({
 
                                         message = json.message;
                                     }
-                                } catch (e) {}
+                                } catch (e) {
+                                }
 
                                 pimcore.helpers.showNotification(t("error"), message, "error");
                             }
@@ -438,7 +439,8 @@ pimcore.settings.user.user.settings = Class.create({
 
                                 message = json.message;
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                        }
 
                         pimcore.helpers.showNotification(t("error"), message, "error");
                     }
@@ -456,7 +458,7 @@ pimcore.settings.user.user.settings = Class.create({
         var sectionArray = [];
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
             let section = this.data.availablePermissions[i].category;
-            if(!section){
+            if (!section) {
                 section = "default";
             }
             if (!itemsPerSection[section]) {
@@ -484,6 +486,11 @@ pimcore.settings.user.user.settings = Class.create({
             }));
         }
 
+        this.permissionsSet = new Ext.container.Container({
+            items: sectionArray,
+            hidden: this.currentUser.admin
+        });
+
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
             title: t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
@@ -494,10 +501,18 @@ pimcore.settings.user.user.settings = Class.create({
                     editable: false,
                     fieldLabel: t("document_types"),
                     width: 400,
-                    displayField: "name",
                     valueField: "id",
                     store: pimcore.globalmanager.get("document_types_store"),
-                    value: this.currentUser.docTypes
+                    value: this.currentUser.docTypes,
+                    listConfig: {
+                        itemTpl: new Ext.XTemplate('{[this.sanitize(values.name)]}',
+                            {
+                                sanitize: function (name) {
+                                    return Ext.util.Format.htmlEncode(name);
+                                }
+                            }
+                        )
+                    }
                 }),
                 Ext.create('Ext.ux.form.MultiSelect', {
                     name: "classes",
@@ -523,7 +538,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: array_merge([this.generalSet, this.adminSet], sectionArray, [this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel]),
+            items: [this.generalSet, this.adminSet, this.permissionsSet, this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel],
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

@@ -410,9 +410,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             viewConfig: {
                 markDirty: false,
+                enableTextSelection: true,
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
+                    draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
@@ -610,6 +611,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
+            enableTextSelection: true,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);

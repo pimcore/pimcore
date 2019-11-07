@@ -1256,7 +1256,7 @@ pimcore.asset.tree = Class.create({
             elementType: "asset",
             elementSubType: record.data.type,
             id: record.data.id,
-            default: record.data.text
+            default: Ext.util.Format.htmlDecode(record.data.text)
         };
         pimcore.elementservice.editElementKey(options);
     },

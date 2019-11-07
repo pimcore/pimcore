@@ -1,10 +1,10 @@
 # Database Model
 
-Pimcore tries to keep a clean and optimized database model for managing the data. Nevertheless 
-there are quite a lot tables around and finding the correct data might be a bit challenging at
+Pimcore tries to keep a clean and optimized database model for managing the data. Nevertheless,
+there are quite a lot of tables around and finding the correct data might be a bit challenging at
 the beginning. 
 
-Basically there are two types of tables
+Basically, there are two types of tables
 * Default tables with are created during install - for all sorts of data like assets, documents
 logs, versions, ... 
 * Dynamically created tables during object data model configuration - mainly for all object related
@@ -16,7 +16,7 @@ These tables are created during Pimcore install and are always the same.
 
 | Table | Description |
 |-------|-------------|
-| application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally there might be application_logs_archive* tables for old logging entries. | 
+| application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally, there might be application_logs_archive* tables for old logging entries. | 
 | assets | Assets (Images, etc.), with system metadata |
 | assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
 | cache | serialized data, used by the default Pimcore cache |
@@ -40,7 +40,7 @@ These tables are created during Pimcore install and are always the same.
 | documents_printpage | Extra config data |
 | documents_snippet | Extra config data |
 | documents_translations | Relation between same documents for different languages |
-| edit_lock | Tracks which user opened which ressource in the backend |
+| edit_lock | Tracks which user opened which resource in the backend |
 | element_workflow_state | Keeps track of workflow state for all elements |
 | email_blacklist | Blacklist for eMail-addresses
 | email_log | Log for sent emails |
@@ -52,7 +52,7 @@ These tables are created during Pimcore install and are always the same.
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
 | properties | Data from the `properties` tab |
 | qr_codes | Edit QR Code configurations | 
-| quantityvalue_units | Available quantites for quantity value object data type |
+| quantityvalue_units | Available quantities for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
 | sanitycheck | Working table for Pimcore's sanity check |
@@ -65,7 +65,7 @@ These tables are created during Pimcore install and are always the same.
 | tracking_events | |
 | translations_admin | Backend translations |
 | translations_website | Frontend translations |
-| tree_locks | Locks in tree of Pimcore backend interface | 
+| tree_locks | Locks in the tree of Pimcore backend interface | 
 | users | Backend users |
 | users_permission_definitions | List of globally assignable user permissions |
 | users_workspaces_asset | Stores user access permissions for asset folder |
@@ -76,8 +76,8 @@ These tables are created during Pimcore install and are always the same.
 | website_settings | Stores `Website Settings` |
 
 # Object Tables 
-These tables are created and modified dynamically during configuration of object data model. 
-As a result they look different of every Pimcore installation depending of the data model. 
+These tables are created and modified dynamically during the configuration of the object data model. 
+As a result, they look different on an every Pimcore installation depending on the data model. 
 
 ### Objects
 As soon as a new object class is created in Pimcore, at least three tables are 
@@ -96,7 +96,7 @@ added to the database. The tables have a numerical suffix, denoting the number
 
 
 #### Simple Data Field Types
-Following is an overview of how different object data types are stored in to database. This overview might not be complete.
+Following is an overview of how different object data types are stored in the database. This overview might not be complete.
 This overview might be a useful starting point when querying object data with object lists. 
 
 
@@ -108,7 +108,7 @@ Table: object_store_(id)
 | Input | varchar(255) | NULL | / |
 | Textarea | longtext | NULL | / |
 | wysiwyg | longtext | NULL | Text with HTML-tags |
-| password | varchar(255) | NULL | Passwort - as hash |
+| password | varchar(255) | NULL | Password - as hash |
 
 
 ##### Number
@@ -148,7 +148,7 @@ Table: object_store_(id)
 Table: object_relations_(id) & object_meta_data_(id)
 
 * Data fields of relation types are stored in extra tables
-* Data fields are not stored in distinct columns, but as rows whereas the field name is in an extra column `fieldname`
+* Data fields are not stored in distinct columns, but as rows, whereas the field name is in an extra column `fieldname`
 * The column `type` specifies the type of the linked resource (Object, Document, Asset)
 * The columns `src_id` and `dest_id` define the relation / the link between the objects. 
 * Column `index` is used to specify the order of the relations
@@ -196,7 +196,7 @@ Table: object_store_(id)
 | Table/View | Purpose |
 | ---------- | ------- |
 | object_brick_query_(id) Table | Analog to object_query_(id) |
-| object_brick_store_(id) Table Main data storage |
+| object_brick_store_(id) Table | Main data storage |
 
 
 ##### Localized fields

@@ -814,7 +814,6 @@ pimcore.helpers.download = function (url) {
         pimcore.settings.showCloseConfirmation = true;
     }, 1000);
 
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
     location.href = url;
 };
 
@@ -916,85 +915,19 @@ pimcore.helpers.openMemorizedTabs = function () {
 
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
 
-    if (typeof success != "function") {
-        success = function () {
-        };
-    }
-
-    if (typeof failure != "function") {
-        failure = function () {
-        };
-    }
-
     var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
-
     if (context) {
         url += "&context=" + Ext.encode(context);
     }
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
-    var uploadWindowCompatible = new Ext.Window({
-        autoHeight: true,
-        title: t('add_assets'),
-        closeAction: 'close',
-        width: 400,
-        modal: true
-    });
-
-    var uploadForm = new Ext.form.FormPanel({
-        fileUpload: true,
-        width: 400,
-        bodyStyle: 'padding: 10px;',
-        items: [{
-            xtype: 'fileuploadfield',
-            emptyText: t("select_a_file"),
-            fieldLabel: t("asset"),
-            width: 360,
-            name: 'Filedata',
-            buttonText: "",
-            buttonConfig: {
-                iconCls: 'pimcore_icon_upload'
-            },
-            listeners: {
-                change: function () {
-                    uploadForm.getForm().submit({
-                        url: url,
-                        waitMsg: t("please_wait"),
-                        success: function (el, res) {
-                            success(res);
-                            uploadWindowCompatible.close();
-                        },
-                        failure: function (el, res) {
-                            failure(res);
-                            uploadWindowCompatible.close();
-                            pimcore.helpers.showNotification(t("error"), res.response.responseText, "error");
-                        }
-                    });
-                }
-            }
-        }]
-    });
-
-    uploadWindowCompatible.add(uploadForm);
-    uploadWindowCompatible.show();
-    uploadWindowCompatible.setWidth(401);
-    uploadWindowCompatible.updateLayout();
+    pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
 };
 
+/**
+ * @deprecated
+ */
 pimcore.helpers.addCsrfTokenToUrl = function (url) {
-
-    // only for /admin urls
-    if(url.indexOf('/admin') !== 0) {
-        return url;
-    }
-
-    if (url.indexOf('?') === -1) {
-        url = url + "?";
-    } else {
-        url = url + "&";
-    }
-    url = url + 'csrfToken=' + pimcore.settings['csrfToken'];
-
+    // we don't use the CSRF token in the query string
     return url;
 };
 
@@ -1013,8 +946,6 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
     if (typeof filename != "string") {
         filename = "Filedata";
     }
-
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     if (empty(filename)) {
         filename = "Filedata";
@@ -1046,6 +977,9 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
                 change: function () {
                     uploadForm.getForm().submit({
                         url: url,
+                        params: {
+                            csrfToken: pimcore.settings['csrfToken']
+                        },
                         waitMsg: t("please_wait"),
                         success: function (el, res) {
                             // content-type in response has to be text/html, otherwise (when application/json is sent)
@@ -1421,8 +1355,6 @@ pimcore.helpers.getMainTabMenuItems = function () {
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
 
-    url = pimcore.helpers.addCsrfTokenToUrl(url);
-
     if (typeof callbackSuccess != "function") {
         callbackSuccess = function () {
         };
@@ -1447,6 +1379,7 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     var data = new FormData();
     data.append('Filedata', file);
     data.append("filename", file.name);
+    data.append("csrfToken", pimcore.settings['csrfToken']);
 
     jQuery.ajax({
         xhr: function () {
@@ -2098,10 +2031,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             keyup: function (el) {
                 if ((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("youtube");
+                    updateType("youtube");
                 } else if (el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
+                    updateType("vimeo");
                 } else if ((el.getValue().indexOf("dai.ly") >= 0 || el.getValue().indexOf("dailymotion") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("dailymotion");
+                    updateType("dailymotion");
                 }
             }.bind(this)
         }
@@ -2159,6 +2095,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                         if (data.elementType == "asset" && data.type == "video") {
                             fieldPath.setValue(data.path);
                             form.getComponent("type").setValue("asset");
+                            updateType("asset");
                             return true;
                         }
                     } else if (target.getId() == poster.getId()) {
@@ -2341,19 +2278,23 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridConfigId, searchType, global) {
+pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridConfigId, searchType, global, type) {
 
     try {
 
+        type = type || "object";
+        var url = '/admin/' + type + '-helper/grid-mark-favourite-column-config';
+
         Ext.Ajax.request({
-            url: '/admin/object-helper/grid-mark-favourite-column-config',
+            url: url,
             method: "post",
             params: {
                 objectId: objectId,
                 classId: classId,
                 gridConfigId: gridConfigId,
                 searchType: searchType,
-                global: global ? 1 : 0
+                global: global ? 1 : 0,
+                type: type
             },
             success: function (response) {
                 try {
@@ -2409,20 +2350,24 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
     });
 };
 
-pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type) {
 
 
     try {
+        type = type || "object";
         var data = {
             id: objectId,
             class_id: classId,
             gridconfig: Ext.encode(configuration),
             searchType: searchType,
-            settings: Ext.encode(settings)
+            settings: Ext.encode(settings),
+            type: type
         };
 
+        var url = '/admin/' + type + '-helper/grid-save-column-config';
+
         Ext.Ajax.request({
-            url: '/admin/object-helper/grid-save-column-config',
+            url: url,
             method: "post",
             params: data,
             success: function (response) {
@@ -2573,7 +2518,6 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
     });
 };
 
-
 pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {
     config = config || {};
     Ext.applyIf(config, {
@@ -2612,14 +2556,13 @@ pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, res
     gridView.updateLayout();
 };
 
-pimcore.helpers.csvExportWarning = function (callback) {
-
+pimcore.helpers.exportWarning = function (type, callback) {
     var iconComponent = new Ext.Component({
         cls: "x-message-box-warning x-dlg-icon"
     });
 
     var textContainer = Ext.Component({
-        html: t('csv_object_export_warning')
+        html: type.warningText
     });
 
     var promptContainer = new Ext.container.Container({
@@ -2642,47 +2585,29 @@ pimcore.helpers.csvExportWarning = function (callback) {
         }
     );
 
-    var enableInheritance = new Ext.form.Checkbox({
-        fieldLabel: t('enable_inheritance'),
-        name: 'enableInheritance',
-        inputValue: true,
-        labelWidth: 200
-    });
+    var objectSettingsContainer = type.getObjectSettingsContainer();
 
-    var objectSettingsContainer = new Ext.form.FieldSet({
-        title: t('object_settings'),
-        items: [
-            enableInheritance
-        ]
-    });
+    var formPanelItems = [];
 
-    var delimiter = new Ext.form.TextField({
-        fieldLabel: t('delimiter'),
-        name: 'delimiter',
-        maxLength: 1,
-        labelWidth: 200,
-        value: ';'
-    });
+    if (objectSettingsContainer) {
+        formPanelItems.push(objectSettingsContainer);
+    }
 
+    var exportSettingsContainer = type.getExportSettingsContainer();
 
-    var csvSettingsContainer = new Ext.form.FieldSet({
-        title: t('csv_settings'),
-        items: [
-            delimiter
-        ]
-    });
+    if (exportSettingsContainer) {
+        formPanelItems.push(exportSettingsContainer);
+    }
 
     var formPanel = new Ext.form.FormPanel({
         bodyStyle: 'padding:10px',
-        items: [objectSettingsContainer, csvSettingsContainer]
+        items: formPanelItems
     });
-
 
     var window = new Ext.Window({
         modal: true,
-        title: t('export_csv'),
+        title: type.text,
         width: 600,
-        height: 450,
         bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,
@@ -2703,33 +2628,30 @@ pimcore.helpers.csvExportWarning = function (callback) {
             }
         ]
     });
+
     window.show();
 };
 
 pimcore.helpers.generatePassword = function (len) {
-    var length = (len) ? (len) : (10);
+    var length = (len) ? (len) : (20);
     var string = "abcdefghijklmnopqrstuvwxyz"; //to upper
     var numeric = '0123456789';
-    var punctuation = '!@#$%^&*()_+~`|}{[]\:;?><,./-=';
     var password = "";
     var character = "";
     while (password.length < length) {
         entity1 = Math.ceil(string.length * Math.random() * Math.random());
         entity2 = Math.ceil(numeric.length * Math.random() * Math.random());
-        entity3 = Math.ceil(punctuation.length * Math.random() * Math.random());
         hold = string.charAt(entity1);
         hold = (entity1 % 2 == 0) ? (hold.toUpperCase()) : (hold);
         character += hold;
         character += numeric.charAt(entity2);
-        character += punctuation.charAt(entity3);
         password = character;
     }
     return password;
 };
 
 pimcore.helpers.isValidPassword = function (pass) {
-    var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
-    if (!pass.match(passRegExp)) {
+    if (pass.length < 10) {
         return false;
     }
     return true;
@@ -2902,6 +2824,14 @@ pimcore.helpers.showQuickSearch = function () {
 
     Ext.get('pimcore_body').addCls('blurry');
     Ext.get('pimcore_sidebar').addCls('blurry');
+    var elem = document.createElement('div');
+    elem.id = 'pimcore_quickSearch_overlay';
+    elem.style.cssText = 'position:absolute;width:100vw;height:100vh;z-index:100;top:0;left:0;opacity:0';
+    elem.addEventListener('click', function(e) {
+        document.body.removeChild(elem);
+        pimcore.helpers.hideQuickSearch();
+    });
+    document.body.appendChild(elem);
 };
 
 pimcore.helpers.hideQuickSearch = function () {
@@ -2909,6 +2839,9 @@ pimcore.helpers.hideQuickSearch = function () {
     quicksearchContainer.hide();
     Ext.get('pimcore_body').removeCls('blurry');
     Ext.get('pimcore_sidebar').removeCls('blurry');
+    if (Ext.get('pimcore_quickSearch_overlay')) {
+        Ext.get('pimcore_quickSearch_overlay').remove();
+    }
 };
 
 

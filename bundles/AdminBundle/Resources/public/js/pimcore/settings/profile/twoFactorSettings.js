@@ -76,7 +76,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
             items: [
                 {
                     xtype: "container",
-                    html: '<img src="' + pimcore.helpers.addCsrfTokenToUrl('/admin/user/renew-2fa-qr-secret') + '"/>',
+                    html: '<img src="/admin/user/renew-2fa-qr-secret"/>',
                     width: 230,
                     height: 230
                 },

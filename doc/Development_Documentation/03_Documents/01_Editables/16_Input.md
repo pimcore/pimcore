@@ -62,20 +62,3 @@ You could also specify other parameters, like the size:
 </h2>
 ```
 </div>
-
-## Validation
-To validate the input you have to add `validator` parameter to the configuration array. 
-
-```php
-<h2>
-    <?= $this->input("myHeadline", [
-        "validator" => new Zend_Json_Expr('
-            function(value){
-              return value.match(/\d.*/) !== null;
-            }'
-        )
-    ]); ?>
-</h2>
-```
-
-> At the moment, the validation has **only a visual effect**, user can still save an incorrect value. 

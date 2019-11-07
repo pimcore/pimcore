@@ -126,7 +126,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
             width: 400,
             height: 300,
             modal: true,
-            title: t('settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

@@ -65,7 +65,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           `preparation_worker_id` varchar(20) DEFAULT NULL,
           `update_status` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
           `update_error` CHAR(255) NULL DEFAULT NULL,
-          PRIMARY KEY (`o_id`,`tenant`)
+          PRIMARY KEY (`o_id`,`tenant`),
+          KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
 
@@ -232,6 +233,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     'relations' => ($relationData ? $relationData : []),
                     'subtenants' => ($subTenantData ? $subTenantData : [])
                 ]);
+
+                $jsonLastError = \json_last_error();
+                if ($jsonLastError !== JSON_ERROR_NONE) {
+                    throw new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
+                }
 
                 $crc = crc32($jsonData);
                 $insertData = [

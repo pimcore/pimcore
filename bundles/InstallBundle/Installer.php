@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
@@ -319,6 +320,13 @@ class Installer
             $dbConfig['port'] = $params['mysql_port'];
         }
 
+        $mysqlSslCertPath = $params['mysql_ssl_cert_path'];
+        if (!empty($mysqlSslCertPath)) {
+            $dbConfig['driverOptions'] = [
+                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath
+            ];
+        }
+
         return $dbConfig;
     }
 
@@ -330,6 +338,11 @@ class Installer
 
         unset($dbConfig['driver']);
         unset($dbConfig['wrapperClass']);
+
+        if (isset($dbConfig['driverOptions'])) {
+            $dbConfig['options'] = $dbConfig['driverOptions'];
+            unset($dbConfig['driverOptions']);
+        }
 
         $this->createConfigFiles([
             'doctrine' => [
@@ -651,24 +664,29 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        // get every command as single part - ; at end of line
-        $singleQueries = explode(";\n", $dumpFile);
+        if (strpos($file, 'atomic') !== false) {
+            $db->exec($dumpFile);
+        } else {
 
-        // execute queries in bulk mode to prevent max_packet_size errors
-        $batchQueries = [];
-        foreach ($singleQueries as $m) {
-            $sql = trim($m);
-            if (strlen($sql) > 0) {
-                $batchQueries[] = $sql . ';';
+            // get every command as single part - ; at end of line
+            $singleQueries = explode(";\n", $dumpFile);
+
+            // execute queries in bulk mode to prevent max_packet_size errors
+            $batchQueries = [];
+            foreach ($singleQueries as $m) {
+                $sql = trim($m);
+                if (strlen($sql) > 0) {
+                    $batchQueries[] = $sql . ';';
+                }
+
+                if (count($batchQueries) > 500) {
+                    $db->exec(implode("\n", $batchQueries));
+                    $batchQueries = [];
+                }
             }
 
-            if (count($batchQueries) > 500) {
-                $db->exec(implode("\n", $batchQueries));
-                $batchQueries = [];
-            }
+            $db->exec(implode("\n", $batchQueries));
         }
-
-        $db->exec(implode("\n", $batchQueries));
 
         // set the id of the system user to 0
         $db->update('users', ['id' => 0], ['name' => 'system']);

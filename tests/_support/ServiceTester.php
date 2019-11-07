@@ -20,5 +20,5 @@ namespace Pimcore\Tests;
  */
 class ServiceTester extends \Codeception\Actor
 {
-    use _generated\ModelTesterActions;
+    use _generated\ServiceTesterActions;
 }

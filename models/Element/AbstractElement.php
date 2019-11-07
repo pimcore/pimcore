@@ -22,8 +22,10 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
  */
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
+    use ElementDumpStateTrait;
+
     /**
      * @var int
      */
@@ -138,15 +140,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function resolveDependencies()
     {
-        $dependencies = [];
+        $dependencies = [[]];
 
         // check for properties
         if (method_exists($this, 'getProperties')) {
             $properties = $this->getProperties();
             foreach ($properties as $property) {
-                $dependencies = array_merge($dependencies, $property->resolveDependencies());
+                $dependencies[] = $property->resolveDependencies();
             }
         }
+
+        $dependencies = array_merge(...$dependencies);
 
         return $dependencies;
     }

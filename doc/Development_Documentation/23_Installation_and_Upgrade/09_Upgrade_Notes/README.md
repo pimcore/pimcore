@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+
+## 6.2.2
+- Object Keys: characters `>` and `<` not allowed anymore.
+
 ## 6.2.0 
 - Support for links and folders as a fallback document, details see [#4860](https://github.com/pimcore/pimcore/pull/4860)
 - Documents & DataObjects: save button (visible when user has no publish permission) does not unpublish element anymore (if user has unpublish permission). 

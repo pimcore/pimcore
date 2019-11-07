@@ -17,16 +17,18 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Model\Document\Traits\RedirectHelperTrait;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
  */
 class Page extends TargetingDocument
 {
+    use RedirectHelperTrait;
+
     /**
      * Contains the title of the page (meta-title)
      *
@@ -98,29 +100,11 @@ class Page extends TargetingDocument
     protected function update($params = [])
     {
         $oldPath = $this->getDao()->getCurrentFullPath();
+        $oldDocument = self::getById($this->getId(), true);
 
         parent::update($params);
 
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
-            // create redirect for old path
-            $redirect = new Redirect();
-            $redirect->setType(Redirect::TYPE_PATH);
-            $redirect->setRegex(true);
-            $redirect->setTarget($this->getId());
-            $redirect->setSource('@' . $oldPath . '/?@');
-            $redirect->setStatusCode(301);
-            $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
-
-            $site = Frontend::getSiteForDocument($this);
-            if ($site) {
-                $redirect->setSourceSite($site->getId());
-                $oldPath = preg_replace('@^' . preg_quote($site->getRootPath()) . '@', '', $oldPath);
-                $redirect->setSource('@' . $oldPath . '/?@');
-            }
-
-            $redirect->save();
-        }
+        $this->createRedirectForFormerPath($oldPath, $oldDocument);
     }
 
     /**
