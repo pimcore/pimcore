@@ -2031,10 +2031,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             keyup: function (el) {
                 if ((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("youtube");
+                    updateType("youtube");
                 } else if (el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
+                    updateType("vimeo");
                 } else if ((el.getValue().indexOf("dai.ly") >= 0 || el.getValue().indexOf("dailymotion") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("dailymotion");
+                    updateType("dailymotion");
                 }
             }.bind(this)
         }
@@ -2092,6 +2095,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                         if (data.elementType == "asset" && data.type == "video") {
                             fieldPath.setValue(data.path);
                             form.getComponent("type").setValue("asset");
+                            updateType("asset");
                             return true;
                         }
                     } else if (target.getId() == poster.getId()) {
