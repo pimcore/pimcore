@@ -195,18 +195,18 @@ class NotificationService
 
     /**
      * @param int $user
-     * @param int $interval
-     *
+     * @param int $lastUpdate
      * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findLastUnread(int $user, int $interval): array
+    public function findLastUnread(int $user, int $lastUpdate): array
     {
         $listing = new Listing();
         $listing->setCondition(
             'recipient = ? AND `read` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', time() - $interval)
+                date('Y-m-d H:i:s', $lastUpdate)
             ]
         );
         $listing->setOrderKey('creationDate');
