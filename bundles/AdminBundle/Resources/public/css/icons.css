@@ -1877,3 +1877,7 @@
 .pimcore_material_icon_variants {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-style-24px.svg) center center no-repeat;
 }
+
+.pimcore_icon_share {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/share.svg) center center no-repeat;
+}

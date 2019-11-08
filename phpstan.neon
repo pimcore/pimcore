@@ -40,9 +40,6 @@ parameters:
             message: '#Undefined variable: \$(this|view|app)#'
             path: '**/*.js.php'
         -
-            message: '/Zend_Log/'
-            path: '**/Log/ApplicationLogger.php'
-        -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
         -

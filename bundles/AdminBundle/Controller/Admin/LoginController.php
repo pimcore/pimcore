@@ -58,6 +58,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
 
     /**
@@ -139,10 +140,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
 
             if (!$error) {
-                $token = Authentication::generateToken($username, $user->getPassword());
+                $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);

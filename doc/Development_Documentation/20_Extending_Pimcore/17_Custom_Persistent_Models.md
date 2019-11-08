@@ -258,7 +258,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public $data = null;
  
     /**
-     * @var string|\Zend_Locale
+     * @var string
      */
     public $locale;
  
@@ -331,7 +331,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     /**
      * Get Locale.
      *
-     * @return string|\Zend_Locale
+     * @return string
      */
     public function getLocale()
     {
@@ -432,7 +432,6 @@ class Dao extends Listing\Dao\AbstractDao
      * @return string
      *
      * @throws \Exception
-     * @throws \Zend_Exception
      */
     protected function getTableName()
     {

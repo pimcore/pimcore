@@ -45,7 +45,6 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 #### Features
 - InnoDB / XtraDB storage engine
 - Support for InnoDB fulltext indexes
-- MEMORY storage engine
 
 #### Permissions
 All permissions on database level, specifically: 
