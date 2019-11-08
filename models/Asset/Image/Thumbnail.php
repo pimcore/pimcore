@@ -311,6 +311,10 @@ class Thumbnail
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
+            
+            if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+                $path = '/cache-buster-' . $image->getModificationDate() . $path;
+            }
 
             $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
@@ -327,7 +331,12 @@ class Thumbnail
                     $thumbConfigRes->selectMedia($mediaQuery);
                     $thumbConfigRes->setHighResolution($highRes);
                     $thumb = $image->getThumbnail($thumbConfigRes, true);
-                    $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
+                    
+                    if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+                        $srcSetValues[] = '/cache-buster-' . $image->getModificationDate() . $thumb . ' ' . $highRes . 'x';
+                    } else {
+                        $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
+                    }
 
                     if (!$fallBackImageThumb) {
                         $fallBackImageThumb = $thumb;
@@ -351,7 +360,13 @@ class Thumbnail
             }
 
             $attrCleanedForPicture = $attributes;
-            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+
+            if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+                $attrCleanedForPicture['src'] = '/cache-buster-' . $image->getModificationDate() . (string) $fallBackImageThumb;
+            } else {
+                $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+            }
+            
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
 
