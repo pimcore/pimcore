@@ -187,28 +187,38 @@ pimcore.object.tree = Class.create({
                         text += (t("type") + ": "+ t(record.data.type));
                     }
 
-                    jQuery("#pimcore_tooltip").show();
-                    jQuery("#pimcore_tooltip").html(text);
-                    jQuery("#pimcore_tooltip").removeClass('right');
+                    var pimcore_tooltip = Ext.get('pimcore_tooltip');
 
-                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
+                    pimcore_tooltip.show();
+                    pimcore_tooltip.update(text);
+                    pimcore_tooltip.removeCls('right');
 
-                    var offsetTreeNode = jQuery(item).offset();
+                    var offsetTabPanel = Ext.get('pimcore_panel_tabs').getXY();
+
+                    var offsetTreeNode = Ext.get(item).getXY();
 
                     var parentTree = el.ownerCt.ownerCt;
 
                     if(parentTree.region == 'west') {
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
+                        pimcore_tooltip.applyStyles({
+                            top: (offsetTreeNode[1] + 8) + "px",
+                            left: offsetTabPanel[0] + "px",
+                            right: 'auto'
+                        });
                     }
 
                     if(parentTree.region == 'east') {
-                        jQuery("#pimcore_tooltip").addClass('right');
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
+                        pimcore_tooltip.addCls('right');
+                        pimcore_tooltip.applyStyles({
+                            top: (offsetTreeNode[1] + 8) + "px",
+                            right: (parentTree.width + 35) + "px",
+                            left: 'auto'
+                        });
                     }
                 }
             },
             "itemmouseleave": function () {
-                jQuery("#pimcore_tooltip").hide();
+                Ext.get('pimcore_tooltip').hide();
             }
         };
 

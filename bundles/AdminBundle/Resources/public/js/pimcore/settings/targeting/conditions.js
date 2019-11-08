@@ -245,12 +245,17 @@ pimcore.settings.targeting.conditions = (function () {
 
                         var searchHandler = function() {
                             var address = searchfield.getValue();
-                            jQuery.getJSON(pimcore.settings.targeting.conditions.getSearchUrl(address), function (json) {
-                                if (json[0].lat !== null && json[0].lon !== null) {
-                                    marker.setLatLng(L.latLng(json[0].lat, json[0].lon));
-                                    leafletMap.setView(L.latLng(json[0].lat, json[0].lon), 7);
-                                }
-                            }.bind(this));
+                            Ext.Ajax.request({
+                                url: pimcore.settings.targeting.conditions.getSearchUrl(address),
+                                method: "GET",
+                                success: function (response, opts) {
+                                    var data = Ext.decode(response.responseText);
+                                    if (data[0].lat !== null && data[0].lon !== null) {
+                                        marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
+                                        leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
+                                    }
+                                }.bind(this),
+                            });
                         };
 
                         var searchfield = new Ext.form.TextField({

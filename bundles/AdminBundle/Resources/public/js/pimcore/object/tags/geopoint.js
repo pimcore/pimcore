@@ -188,22 +188,32 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     geocode: function () {
         var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function (json) {
-            this.latitude.setValue(json[0].lat);
-            this.longitude.setValue(json[0].lon);
-            this.updateMap();
-        }.bind(this));
+        Ext.Ajax.request({
+            url: this.getSearchUrl(address),
+            method: "GET",
+            success: function (response, opts) {
+                var data = Ext.decode(response.responseText);
+                this.latitude.setValue(data[0].lat);
+                this.longitude.setValue(data[0].lon);
+                this.updateMap();
+            }.bind(this),
+        });
 
     },
 
     reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             var url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
-            jQuery.getJSON(url, function (json) {
-                this.currentLocationText = json.display_name;
-                layerObj.bindTooltip(this.currentLocationText);
-                layerObj.openTooltip();
-            }.bind(this));
+            Ext.Ajax.request({
+                url: url,
+                method: "GET",
+                success: function (response, opts) {
+                    var data = Ext.decode(response.responseText);
+                    this.currentLocationText = data.display_name;
+                    layerObj.bindTooltip(this.currentLocationText);
+                    layerObj.openTooltip();
+                }.bind(this),
+            });
         }
     },
 
