@@ -258,7 +258,7 @@ class PageController extends DocumentControllerBase
 
         if (strlen($path) < 2) {
             $success = false;
-            $message .= "\n URL must be 2 characters long.";
+            $message .= "\n URL must be at least 2 characters long.";
         }
 
         if (!Element\Service::isValidPath($path, 'document')) {
