@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 6.2.3
+- Link Editables no longer apply configured classes to the editable container. If you have custom css relying on this classes you have to adopt it. see [#4740](https://github.com/pimcore/pimcore/issues/4740)
 
 ## 6.2.2
 - Object Keys: characters `>` and `<` not allowed anymore.
