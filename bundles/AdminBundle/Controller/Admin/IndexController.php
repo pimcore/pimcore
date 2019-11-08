@@ -449,7 +449,6 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     public function onKernelController(FilterControllerEvent $event)
     {
-
     }
 
     public function onKernelResponse(FilterResponseEvent $event)

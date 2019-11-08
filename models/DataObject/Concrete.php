@@ -197,7 +197,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         /** @var \Exception $subItem */
                         foreach ($subItems as $subItem) {
                             $subItemParts[] = $subItem->getMessage();
-
                         }
                         $msg .= implode(',', $subItems);
                         $msg .= ' (';

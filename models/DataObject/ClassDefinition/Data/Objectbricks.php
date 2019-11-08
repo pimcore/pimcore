@@ -742,7 +742,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
                 $allowedTypes = $this->getAllowedTypes();
                 foreach ($allowedTypes as $allowedType) {
-
                     $getter = 'get' . ucfirst($allowedType);
                     /** @var DataObject\Objectbrick\Data\AbstractData $item */
                     $item = $data->$getter();
@@ -775,7 +774,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException("invalid brick " . $this->getName());
+                    $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }

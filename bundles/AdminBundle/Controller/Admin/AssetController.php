@@ -1372,7 +1372,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function getDocumentPreviewPdf(Asset $asset)
     {
         $pdfFsPath = null;
-        if($asset->getPageCount()) {
+        if ($asset->getPageCount()) {
             if ($asset->getMimetype() == 'application/pdf') {
                 $pdfFsPath = $asset->getFileSystemPath();
             } elseif (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {

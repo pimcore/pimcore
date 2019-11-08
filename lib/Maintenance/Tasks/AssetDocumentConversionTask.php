@@ -28,6 +28,7 @@ final class AssetDocumentConversionTask implements TaskInterface
 
     /**
      * AssetDocumentConversionTask constructor.
+     *
      * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
@@ -44,7 +45,6 @@ final class AssetDocumentConversionTask implements TaskInterface
 
         // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
         foreach ($ids as $id) {
-
             $item = TmpStore::get($id);
             $asset = Asset::getById($item->getData());
 
@@ -57,7 +57,6 @@ final class AssetDocumentConversionTask implements TaskInterface
             } catch (\Throwable $e) {
                 $this->logger->debug(sprintf('Processing document with ID %s failed', $asset->getId()));
                 $this->logger->debug($e);
-
             }
 
             TmpStore::delete($id);

@@ -60,6 +60,7 @@ class Document extends Model\Asset
 
     /**
      * @param null $path
+     *
      * @return |null
      */
     public function processPageCount($path = null)
@@ -90,6 +91,7 @@ class Document extends Model\Asset
 
     /**
      * returns null when page count wasn't processed yet (done asynchronously)
+     *
      * @return int|null
      */
     public function getPageCount()
