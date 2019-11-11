@@ -349,15 +349,14 @@ class Document extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Document\\Listing';
+            $listClass = Listing::class;
             $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
-            $list->load();
 
             return $list;
         }
 
-        throw new \Exception('Unable to initiate list class - class not found or invalid configuration');
+        throw new \Exception('Unable to initiate list class - please provide valid configuration array');
     }
 
     /**
@@ -369,14 +368,10 @@ class Document extends Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $count = $list->getTotalCount();
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-            return $count;
-        }
+        return $count;
     }
 
     /**

@@ -26,6 +26,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Pimcore\Model\Asset\Listing;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -381,15 +382,16 @@ class Asset extends Element\AbstractElement
      */
     public static function getList($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Asset\\Listing';
-
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $list->load();
-
-            return $list;
+        if(!\is_array($config)) {
+            throw new \Exception('Unable to initiate list class - please provide valid configuration array');
         }
+
+        $listClass = Listing::class;
+
+        $list = self::getModelFactory()->build($listClass);
+        $list->setValues($config);
+
+        return $list;
     }
 
     /**
@@ -399,14 +401,10 @@ class Asset extends Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Asset\\Listing';
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $count = $list->getTotalCount();
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-            return $count;
-        }
+        return $count;
     }
 
     /**
