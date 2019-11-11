@@ -392,7 +392,7 @@ abstract class PageSnippet extends Model\Document
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if ($this->hasElement($name)) {
+        if ($this->hasElement($name) && !$elements[$name]->isEmpty()) {
             return $elements[$name];
         }
 
