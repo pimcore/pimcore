@@ -20,6 +20,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
@@ -33,6 +34,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetHelperController extends AdminController
 {
+
     /**
      * @param $userId
      * @param $classId
@@ -310,6 +313,7 @@ class AssetHelperController extends AdminController
      */
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
+        $defaulMetadataFields = ['copyright', 'alt', 'title'];
         $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
 
         $key = $field['name'];
@@ -322,6 +326,8 @@ class AssetHelperController extends AdminController
 
         if ($fieldDef[1] == 'system') {
             $type = 'system';
+        } else if (in_array($fieldDef[0], $defaulMetadataFields)) {
+            $type = 'input';
         } else {
             //check if predefined metadata exists, otherwise ignore
             if (empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
@@ -329,7 +335,7 @@ class AssetHelperController extends AdminController
             }
             $type = $field['fieldConfig']['type'];
             if (isset($fieldDef[1])) {
-                $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . '(' . $fieldDef[1] . ')';
+                $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . ' (' . $fieldDef[1] . ')';
                 $field['fieldConfig']['layout']['icon'] = Tool::getLanguageFlagFile($fieldDef[1], true);
             }
         }
@@ -869,7 +875,7 @@ class AssetHelperController extends AdminController
         $tmp = [];
         foreach ($list as $item) {
             //only allow unique metadata columns
-            if (!in_array($item->getName(), $tmp)) {
+            if (!in_array($item->getName(), $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $item->getName();
                 /** @var $item Metadata\Predefined */
                 $item->expand();
@@ -878,7 +884,8 @@ class AssetHelperController extends AdminController
                     'name' => $item->getName(),
                     'subtype' => $item->getTargetSubtype(),
                     'datatype' => 'data',
-                    'fieldtype' => $item->getType()
+                    'fieldtype' => $item->getType(),
+                    'config' => $item->getConfig()
                 ];
             }
         }
@@ -898,5 +905,124 @@ class AssetHelperController extends AdminController
         $result['systemColumns']['childs'] = $systemColumns;
 
         return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/get-batch-jobs", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getBatchJobsAction(Request $request, GridHelperService $gridHelperService)
+    {
+        if ($request->get('language')) {
+            $request->setLocale($request->get('language'));
+        }
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
+        $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
+
+        $jobs = $list->loadIdList();
+
+        return $this->adminJson(['success' => true, 'jobs' => $jobs]);
+    }
+
+    /**
+     * @Route("/batch", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function batchAction(Request $request)
+    {
+        try {
+            if ($request->get('data')) {
+                $params = $this->decodeJson($request->get('data'), true);
+                $language = $params['language'] != 'default'? $params['language'] : null;
+
+                $asset = Asset::getById($params['job']);
+
+                if ($asset) {
+
+                    if (!$asset->isAllowed('publish')) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this asset.");
+                    }
+
+                    $metadata = $asset->getMetadata();
+                    $dirty = false;
+
+                    $name = $params["name"];
+                    $value = $params['value'];
+
+                    if ($params['valueType'] == 'object') {
+                        $value = $this->decodeJson($value);
+                    }
+
+
+                    $fieldDef = explode('~', $name);
+                    $name = $fieldDef[0];
+                    if ($fieldDef[1]) {
+                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                    }
+
+                    foreach ($metadata as $idx => &$em) {
+                        if($em['name'] == $name && $em['language'] == $language) {
+                            $em['data'] = $value;
+                            $dirty = true;
+                            break;
+                        }
+                    }
+
+                    if(!$dirty) {
+                        $defaulMetadata = ['title','alt','copyright'];
+                        if (in_array($name, $defaulMetadata)) {
+                            $metadata[] = [
+                                'name' => $name,
+                                'language' => $language,
+                                'type' => "input",
+                                'data' => $value
+                            ];
+                            $dirty = true;
+                        } else {
+                            $predefined = Metadata\Predefined::getByName($name);
+                            if ($predefined && (empty($predefined->getTargetSubtype())
+                                    || $predefined->getTargetSubtype() == $asset->getType() )) {
+                                $metadata[] = [
+                                    'name' => $name,
+                                    'language' => $language,
+                                    'type' => $predefined->getType(),
+                                    'data' => $value
+                                ];
+                                $dirty = true;
+                            }
+                        }
+                    }
+
+                    try {
+                        if($dirty) {
+                            $metadata = Asset\Service::minimizeMetadata($metadata);
+                            $asset->setMetadata($metadata);
+                            $asset->save();
+
+                            return $this->adminJson(['success' => true]);
+                        }
+                    } catch (\Exception $e) {
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                    }
+                } else {
+                    Logger::debug('AssetHelperController::batchAction => There is no asset left to update.');
+
+                    return $this->adminJson(['success' => false, 'message' => 'AssetHelperController::batchAction => There is no asset left to update.']);
+                }
+            }
+        } catch (\Exception $e) {
+            Logger::err($e);
+
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+        }
+
+        return $this->adminJson(['success' => false, 'message' => 'something went wrong.']);
     }
 }

@@ -2207,7 +2207,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/grid-proxy", methods={"GET"})
+     * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
@@ -2220,12 +2220,85 @@ class AssetController extends ElementControllerBase implements EventedController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
+        $language = $request->get('language') != 'default'? $request->get('language') : null;
+
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         if (isset($allParams['data']) && $allParams['data']) {
-            //TODO assets metadata grid & batch edits
+            $this->checkCsrfToken($request);
+            if ($allParams['xaction'] == 'update') {
+                try {
+                    $data = $this->decodeJson($allParams['data']);
+
+                    // save
+                    $asset = Asset::getById($data['id']);
+
+                    if (!$asset->isAllowed('publish')) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this asset.");
+                    }
+
+                    $metadata = $asset->getMetadata();
+                    $dirty = false;
+
+                    unset($data['id']);
+                    foreach ($data as $key => $value) {
+                        $fieldDef = explode('~', $key);
+                        $key = $fieldDef[0];
+                        if ($fieldDef[1]) {
+                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                        }
+
+                        foreach ($metadata as $idx => &$em) {
+                            if($em['name'] == $key && $em['language'] == $language) {
+                                $em['data'] = $value;
+                                $dirty = true;
+                                break;
+                            }
+                        }
+
+                        if(!$dirty) {
+                            $defaulMetadata = ['title','alt','copyright'];
+                            if (in_array($key, $defaulMetadata)) {
+                                $metadata[] = [
+                                    'name' => $key,
+                                    'language' => $language,
+                                    'type' => "input",
+                                    'data' => $value
+                                ];
+                                $dirty = true;
+                            } else {
+                                $predefined = Model\Metadata\Predefined::getByName($key);
+                                if ($predefined && (empty($predefined->getTargetSubtype())
+                                        || $predefined->getTargetSubtype() == $asset->getType() )) {
+                                    $metadata[] = [
+                                        'name' => $key,
+                                        'language' => $language,
+                                        'type' => $predefined->getType(),
+                                        'data' => $value
+                                    ];
+                                    $dirty = true;
+                                }
+                            }
+                        }
+
+                    }
+
+                    if($dirty) {
+                        $metadata = Asset\Service::minimizeMetadata($metadata);
+                        $asset->setMetadata($metadata);
+                        $asset->save();
+
+                        return $this->adminJson(['success' => true]);
+                    }
+
+                    return $this->adminJson(['success' => false, 'message' => 'something went wrong.']);
+
+                } catch (\Exception $e) {
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                }
+            }
         } else {
             $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
