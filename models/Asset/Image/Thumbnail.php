@@ -20,6 +20,7 @@ namespace Pimcore\Model\Asset\Image;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
+use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -158,6 +159,20 @@ class Thumbnail
     }
 
     /**
+     * @param string $path
+     * @param array $options
+     * @param Image $asset
+     * @return string
+     */
+    protected function addCacheBuster(string $path, array $options, Image $asset): string {
+        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+            $path = '/cache-buster-' . $asset->getModificationDate() . $path;
+        }
+
+        return $path;
+    }
+
+    /**
      * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
      * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
      * Width and Height attribute can be overridden. SRC-attribute not.
@@ -170,6 +185,9 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
+        /**
+         * @var $image Image
+         */
         $image = $this->getAsset();
         $attributes = [];
         $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
@@ -263,10 +281,7 @@ class Thumbnail
         }
 
         $path = $this->getPath(true);
-        $attributes['src'] = $path;
-        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $attributes['src'] = '/cache-buster-' . $image->getModificationDate() . $attributes['src'];
-        }
+        $attributes['src'] = $this->addCacheBuster($path, $options, $image);
 
         $thumbConfig = $this->getConfig();
 
@@ -277,10 +292,7 @@ class Thumbnail
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
                 $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
-                if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-                    $srcsetEntry = '/cache-buster-' . $image->getModificationDate() . $srcsetEntry;
-                }
-                $srcSetValues[] = $srcsetEntry;
+                $srcSetValues[] = $this->addCacheBuster($srcsetEntry, $options, $image);
             }
             $attributes['srcset'] = implode(', ', $srcSetValues);
         }
@@ -312,7 +324,7 @@ class Thumbnail
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
 
-            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
 
             // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
@@ -327,7 +339,7 @@ class Thumbnail
                     $thumbConfigRes->selectMedia($mediaQuery);
                     $thumbConfigRes->setHighResolution($highRes);
                     $thumb = $image->getThumbnail($thumbConfigRes, true);
-                    $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
+                    $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $highRes . 'x', $options, $image);
 
                     if (!$fallBackImageThumb) {
                         $fallBackImageThumb = $thumb;
@@ -351,7 +363,7 @@ class Thumbnail
             }
 
             $attrCleanedForPicture = $attributes;
-            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+            $attrCleanedForPicture['src'] = $this->addCacheBuster((string) $fallBackImageThumb, $options, $image);
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
 
