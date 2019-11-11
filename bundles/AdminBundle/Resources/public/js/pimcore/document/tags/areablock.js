@@ -282,7 +282,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         // click outside, hide all block buttons
         if(this.options['controlsTrigger'] === 'hover') {
             Ext.getBody().on('click', function (event) {
-                if (!Ext.get(id).isAncestor(event.target)) {
+                if (Ext.get(id) && !Ext.get(id).isAncestor(event.target)) {
                     Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
                         el.hide();
                     });
