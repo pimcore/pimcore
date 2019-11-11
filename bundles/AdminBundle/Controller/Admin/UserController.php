@@ -936,11 +936,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
+        $token = Tool\Authentication::generateToken($user->getName());
         $link = $this->generateUrl('pimcore_admin_login_check', [
-            'username' => $user->getName(),
             'token' => $token,
-            'reset' => 'true'
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->adminJson([
@@ -1143,10 +1141,8 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $user->save();
                 }
 
-                $token = Tool\Authentication::generateToken($username, $user->getPassword());
-
+                $token = Tool\Authentication::generateToken($user->getName());
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);

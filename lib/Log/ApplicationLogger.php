@@ -19,7 +19,6 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 class ApplicationLogger implements LoggerInterface
 {

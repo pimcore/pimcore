@@ -20,7 +20,7 @@ CREATE TABLE `application_logs` (
   KEY `timestamp` (`timestamp`),
   KEY `relatedobject` (`relatedobject`),
   KEY `priority` (`priority`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
@@ -73,7 +73,7 @@ CREATE TABLE `cache_tags` (
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
-) ENGINE=MEMORY;
+) DEFAULT CHARSET=ascii;
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
@@ -333,7 +333,7 @@ CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',
   `date` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -484,7 +484,7 @@ CREATE TABLE `search_backend_data` (
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
   FULLTEXT KEY `fulltext` (`data`,`properties`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -533,7 +533,7 @@ CREATE TABLE `targeting_rules` (
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_storage`;
 CREATE TABLE `targeting_storage` (
@@ -547,7 +547,7 @@ CREATE TABLE `targeting_storage` (
   KEY `targeting_storage_scope_index` (`scope`),
   KEY `targeting_storage_name_index` (`name`),
   KEY `targeting_storage_visitorId_index` (`visitorId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_target_groups`;
 CREATE TABLE `targeting_target_groups` (
@@ -557,7 +557,7 @@ CREATE TABLE `targeting_target_groups` (
   `threshold` int(11) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
