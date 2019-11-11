@@ -89,7 +89,7 @@ abstract class PageSnippet extends Model\Document
 
         if (is_array($this->getElements()) and count($this->getElements()) > 0) {
             foreach ($this->getElements() as $name => $element) {
-                if (!$element->getInherited()) {
+                if (!$element->getInherited() && !$element->isEmpty()) {
                     $element->setDao(null);
                     $element->setDocumentId($this->getId());
                     $element->save();
