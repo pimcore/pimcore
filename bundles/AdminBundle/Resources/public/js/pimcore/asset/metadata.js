@@ -48,7 +48,15 @@ pimcore.asset.metadata = Class.create({
 
             var customKey = new Ext.form.TextField({
                 name: 'key',
-                emptyText: t('name')
+                emptyText: t('name'),
+                enableKeyEvents : true,
+                listeners: {
+                    keyup : function(el) {
+                        if (el.getValue().match(/[~]+/)) {
+                            el.setValue(el.getValue().replace(/[~]/g, "---"));
+                        }
+                    }
+                }
             });
 
             var customType = new Ext.form.ComboBox({
@@ -94,7 +102,13 @@ pimcore.asset.metadata = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                         extend: 'Ext.data.Model',
-                        fields: ['name', "type", {
+                        fields: [
+                        {
+                            name: 'name',
+                            convert: function (v, r) {
+                                return v.replace(/[~]/g, "---");
+                            }
+                        }, "type", {
                             name: "data",
                             convert: function (v, r) {
                                 if (r.data.type == "date" && v && !(v instanceof Date)) {

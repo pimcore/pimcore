@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 6.3.0
+- Asset Metadata: character `~` is not allowed anymore for (predefined/custom) metadata naming. All existing and new metadata name with '~' converts to '---'. This change is introduced to support Localized columns in asset grid [#5093](https://github.com/pimcore/pimcore/pull/5093)
+
 ## 6.2.2
 - Object Keys: characters `>` and `<` not allowed anymore.
 
@@ -74,4 +77,3 @@ If you have configured your own session handler nothing will change.
  
  ### Link Editable
  - Link Editables no longer apply configured classes to the editable container. If you have custom css relying on this classes you have to adopt it. see [#4740](https://github.com/pimcore/pimcore/issues/4740)
-
