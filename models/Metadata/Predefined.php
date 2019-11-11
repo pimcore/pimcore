@@ -165,7 +165,7 @@ class Predefined extends Model\AbstractModel
      */
     public function setName($name)
     {
-        $this->name = str_replace("~", '---', $name);
+        $this->name = str_replace('~', '---', $name);
 
         return $this;
     }

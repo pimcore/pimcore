@@ -162,9 +162,11 @@ class Thumbnail
      * @param string $path
      * @param array $options
      * @param Image $asset
+     *
      * @return string
      */
-    protected function addCacheBuster(string $path, array $options, Image $asset): string {
+    protected function addCacheBuster(string $path, array $options, Image $asset): string
+    {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
             $path = '/cache-buster-' . $asset->getModificationDate() . $path;
         }

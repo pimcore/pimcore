@@ -1659,7 +1659,7 @@ class Asset extends Element\AbstractElement
     {
         if ($name && $type) {
             $tmp = [];
-            $name = str_replace("~", '---', $name);
+            $name = str_replace('~', '---', $name);
             if (!is_array($this->metadata)) {
                 $this->metadata = [];
             }
