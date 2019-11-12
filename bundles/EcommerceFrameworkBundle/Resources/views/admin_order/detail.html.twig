@@ -215,7 +215,7 @@
                     </li>
                     {% if order.hasDeliveryAddress() %}
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="fa fa-home"></span>
+                        <a class="nav-link" id="addressDeliveryTab" href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="fa fa-home"></span>
                             {{ ('bundle_ecommerce.back-office.order.address.delivery')|trans([],'admin') }}</a>
                     </li>
                     {% endif %}
@@ -380,23 +380,23 @@
     </div>
 
     {% do pimcore_head_script().captureStart() %}
-        $(function () {
-
+        document.addEventListener("DOMContentLoaded", function(event) {
             // pimcore open object
-            $('[data-action=open]').click(function () {
-                pimcore.helpers.openObject( $(this).data('id') , "object");
-
+            document.querySelectorAll('[data-action=open]').forEach(function(el){
+                el.addEventListener('click', function() {
+                    pimcore.helpers.openObject(this.getAttribute('data-id') , "object");
+                });
             });
 
 
-            // enable popover
-            $('[data-toggle="popover"]').popover({html: true});
-
-            // remove modal on close
-            $('body').on('hidden.bs.modal', '.modal', function () {
-                $(this).removeData('bs.modal');
-                $(this).find('.modal-content').html("");
-            });
+            var elementsPopover = document.querySelectorAll('[data-toggle="popover"]');
+            for (var i = 0; i < elementsPopover.length; i++){
+                new Popover(elementsPopover[i], {
+                placement: 'right',
+                delay: 100,
+                dismissible: true,
+                })
+            }
 
             var tileLayerUrl = "{{ pimcoreSymfonyConfig['maps']['tile_layer_url_template'] }}";
             {% if geoAddressInvoice %}
@@ -410,9 +410,9 @@
                 L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
                 L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressInvoice.lon }}]).addTo(leafletMapDelivery);
 
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                leafletMapDelivery.invalidateSize();
-                });
+                document.getElementById('addressDeliveryTab').onclick = function(el){
+                    leafletMapDelivery.invalidateSize();
+                };
             {% endif %}
 
         });
