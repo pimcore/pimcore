@@ -422,7 +422,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $loadTypes = [];
         foreach($objectTypes as $index => $objectType) {
-            if(!isset($this->o_children[$objectType])) {
+            if(!isset($this->o_children[$objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'')])) {
                 $loadTypes[] = $objectType;
             }
         }
@@ -443,7 +443,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
-            $returnKeys[] = $objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'');
+            if($unpublished && \method_exists($this, 'getPublished')) {
+                $returnKeys[] = $objectType.'_unpublished';
+            }
+            $returnKeys[] = $objectType;
         }
 
         $returnArrays = array_filter($this->o_children, static function($type) use ($returnKeys) {
@@ -519,7 +522,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $returnKeys = [];
         foreach($objectTypes as $objectType) {
-            $returnKeys[] = $objectType.(\method_exists($this, 'getPublished')?'_'.$unpublished:'');
+            if($unpublished && \method_exists($this, 'getPublished')) {
+                $returnKeys[] = $objectType.'_unpublished';
+            }
+            $returnKeys[] = $objectType;
         }
 
         $returnArrays = array_filter($this->o_siblings, static function($type) use ($returnKeys) {
@@ -1195,8 +1201,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
     private static function getChildrenCacheKey(self $object) {
         $key = $object->getType();
-        if(\method_exists($object, 'getPublished')) {
-            $key .='_'. $object->getPublished();
+        if(\method_exists($object, 'getPublished') && !$object->getPublished()) {
+            $key .='_unpublished';
         }
 
         return $key;
