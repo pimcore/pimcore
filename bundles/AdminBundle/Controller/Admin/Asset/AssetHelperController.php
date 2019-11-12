@@ -34,7 +34,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +43,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetHelperController extends AdminController
 {
-
     /**
      * @param $userId
      * @param $classId
@@ -326,7 +324,7 @@ class AssetHelperController extends AdminController
 
         if ($fieldDef[1] == 'system') {
             $type = 'system';
-        } else if (in_array($fieldDef[0], $defaulMetadataFields)) {
+        } elseif (in_array($fieldDef[0], $defaulMetadataFields)) {
             $type = 'input';
         } else {
             //check if predefined metadata exists, otherwise ignore
@@ -940,12 +938,11 @@ class AssetHelperController extends AdminController
         try {
             if ($request->get('data')) {
                 $params = $this->decodeJson($request->get('data'), true);
-                $language = $params['language'] != 'default'? $params['language'] : null;
+                $language = $params['language'] != 'default' ? $params['language'] : null;
 
                 $asset = Asset::getById($params['job']);
 
                 if ($asset) {
-
                     if (!$asset->isAllowed('publish')) {
                         throw new \Exception("Permission denied. You don't have the rights to save this asset.");
                     }
@@ -953,13 +950,12 @@ class AssetHelperController extends AdminController
                     $metadata = $asset->getMetadata();
                     $dirty = false;
 
-                    $name = $params["name"];
+                    $name = $params['name'];
                     $value = $params['value'];
 
                     if ($params['valueType'] == 'object') {
                         $value = $this->decodeJson($value);
                     }
-
 
                     $fieldDef = explode('~', $name);
                     $name = $fieldDef[0];
@@ -968,27 +964,27 @@ class AssetHelperController extends AdminController
                     }
 
                     foreach ($metadata as $idx => &$em) {
-                        if($em['name'] == $name && $em['language'] == $language) {
+                        if ($em['name'] == $name && $em['language'] == $language) {
                             $em['data'] = $value;
                             $dirty = true;
                             break;
                         }
                     }
 
-                    if(!$dirty) {
-                        $defaulMetadata = ['title','alt','copyright'];
+                    if (!$dirty) {
+                        $defaulMetadata = ['title', 'alt', 'copyright'];
                         if (in_array($name, $defaulMetadata)) {
                             $metadata[] = [
                                 'name' => $name,
                                 'language' => $language,
-                                'type' => "input",
+                                'type' => 'input',
                                 'data' => $value
                             ];
                             $dirty = true;
                         } else {
                             $predefined = Metadata\Predefined::getByName($name);
                             if ($predefined && (empty($predefined->getTargetSubtype())
-                                    || $predefined->getTargetSubtype() == $asset->getType() )) {
+                                    || $predefined->getTargetSubtype() == $asset->getType())) {
                                 $metadata[] = [
                                     'name' => $name,
                                     'language' => $language,
@@ -1001,7 +997,7 @@ class AssetHelperController extends AdminController
                     }
 
                     try {
-                        if($dirty) {
+                        if ($dirty) {
                             $metadata = Asset\Service::minimizeMetadata($metadata);
                             $asset->setMetadata($metadata);
                             $asset->save();

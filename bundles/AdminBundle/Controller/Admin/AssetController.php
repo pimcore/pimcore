@@ -2220,7 +2220,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        $language = $request->get('language') != 'default'? $request->get('language') : null;
+        $language = $request->get('language') != 'default' ? $request->get('language') : null;
 
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
@@ -2251,27 +2251,27 @@ class AssetController extends ElementControllerBase implements EventedController
                         }
 
                         foreach ($metadata as $idx => &$em) {
-                            if($em['name'] == $key && $em['language'] == $language) {
+                            if ($em['name'] == $key && $em['language'] == $language) {
                                 $em['data'] = $value;
                                 $dirty = true;
                                 break;
                             }
                         }
 
-                        if(!$dirty) {
-                            $defaulMetadata = ['title','alt','copyright'];
+                        if (!$dirty) {
+                            $defaulMetadata = ['title', 'alt', 'copyright'];
                             if (in_array($key, $defaulMetadata)) {
                                 $metadata[] = [
                                     'name' => $key,
                                     'language' => $language,
-                                    'type' => "input",
+                                    'type' => 'input',
                                     'data' => $value
                                 ];
                                 $dirty = true;
                             } else {
                                 $predefined = Model\Metadata\Predefined::getByName($key);
                                 if ($predefined && (empty($predefined->getTargetSubtype())
-                                        || $predefined->getTargetSubtype() == $asset->getType() )) {
+                                        || $predefined->getTargetSubtype() == $asset->getType())) {
                                     $metadata[] = [
                                         'name' => $key,
                                         'language' => $language,
@@ -2282,10 +2282,9 @@ class AssetController extends ElementControllerBase implements EventedController
                                 }
                             }
                         }
-
                     }
 
-                    if($dirty) {
+                    if ($dirty) {
                         $metadata = Asset\Service::minimizeMetadata($metadata);
                         $asset->setMetadata($metadata);
                         $asset->save();
@@ -2294,7 +2293,6 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
 
                     return $this->adminJson(['success' => false, 'message' => 'something went wrong.']);
-
                 } catch (\Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
