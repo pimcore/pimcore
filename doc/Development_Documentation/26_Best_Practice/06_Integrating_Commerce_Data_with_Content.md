@@ -10,7 +10,7 @@ which provide a great way to integrate dynamic object (thus commerce) content to
 ![Demo](img/demo.jpg)
 
 
-Follow the steps to create a Product teaser similar to the one in our [advanced demo](https://demo-advanced.pimcore.org/en).
+Follow the steps to create a Product teaser similar to the one in our [demo](https://demo.pimcore.fun/).
 
 ### Create Area Brick `MyProductTeaser` with Renderlet 
 

@@ -57,7 +57,15 @@ pimcore.settings.metadata.predefined = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
             [
-                'id', {name: 'name', allowBlank: false},'description','type',
+                'id',
+                {
+                    name: 'name',
+                    allowBlank: false,
+                    convert: function (v, r) {
+                        return v.replace(/[~]/g, "---");
+                    }
+                },
+                'description','type',
                 {name: 'data',
                     convert: function (v, r) {
                         if (r.data.type == "date" && v && !(v instanceof Date)) {

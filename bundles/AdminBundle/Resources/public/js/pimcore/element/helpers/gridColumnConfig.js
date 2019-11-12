@@ -342,7 +342,7 @@ pimcore.element.helpers.gridColumnConfig = {
             var filters = "";
             var condition = "";
 
-            if (this.sqlButton.pressed) {
+            if (this.sqlButton && this.sqlButton.pressed) {
                 condition = this.sqlEditor.getValue();
             } else {
                 var filterData = this.store.getFilters().items;
@@ -400,18 +400,27 @@ pimcore.element.helpers.gridColumnConfig = {
         }
         // HACK END
 
-        if (!fieldInfo.layout || !fieldInfo.layout.layout) {
-            return;
+        if(this.objecttype == "object") {
+            if (!fieldInfo.layout || !fieldInfo.layout.layout) {
+                return;
+            }
+
+            if (fieldInfo.layout.layout.noteditable) {
+                Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
+                return;
+            }
+
+            var tagType = fieldInfo.layout.type;
+            var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
+            editor.setObject(this.object);
+        } else {
+            fieldInfo = this.fieldObject[fieldInfo.dataIndex];
+            var tagType = fieldInfo.layout.fieldtype;
+            var editor = new pimcore.asset.tags[tagType](null, fieldInfo.layout);
+            fieldInfo.dataIndex = fieldInfo.key;
+            editor.setAsset(this.asset);
         }
 
-        if (fieldInfo.layout.layout.noteditable) {
-            Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
-            return;
-        }
-
-        var tagType = fieldInfo.layout.type;
-        var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
-        editor.setObject(this.object);
         editor.updateContext({
             containerType: "batch"
         });
