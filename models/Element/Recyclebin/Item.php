@@ -299,8 +299,9 @@ class Item extends Model\AbstractModel
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
-                // don't use the getter because this will return an empty array (variants are excluded by default)
-                $childs = $element->getObjectVar('o_childs');
+                $childs = $element->getChildren([], true);
+            } elseif ($element instanceof Document) {
+                $childs = $element->getChildren(true);
             } else {
                 $childs = $element->getChildren();
             }
