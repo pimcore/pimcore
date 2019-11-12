@@ -143,23 +143,21 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
             $username = $request->get('username');
-            if (null === $username) {
-                throw new AuthenticationException('Missing username');
-            }
-
-            $this->bruteforceProtectionHandler->checkProtection($username);
-
-            if ($request->getMethod() === 'POST' && $password = $request->get('password')) {
+            if ($request->getMethod() === 'POST' && $request->get('password') && $username) {
+                $this->bruteforceProtectionHandler->checkProtection($username);
                 $credentials = [
                     'username' => $username,
-                    'password' => $password
+                    'password' => $request->get('password')
                 ];
             } elseif ($token = $request->get('token')) {
+                $this->bruteforceProtectionHandler->checkProtection();
                 $credentials = [
-                    'username' => $username,
                     'token' => $token,
-                    'reset' => (bool)$request->get('reset', false)
+                    'reset' => (bool) $request->get('reset', false)
                 ];
+            } else {
+                $this->bruteforceProtectionHandler->checkProtection();
+                throw new AuthenticationException('Missing username or token');
             }
 
             $event = new LoginCredentialsEvent($request, $credentials);
@@ -196,8 +194,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $this->twoFactorRequired = true;
             }
         } else {
-            if (!isset($credentials['username'])) {
-                throw new AuthenticationException('Missing username');
+            if (!isset($credentials['username']) && !isset($credentials['token'])) {
+                throw new AuthenticationException('Missing username/token');
             }
 
             if (isset($credentials['password'])) {
@@ -217,7 +215,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                     }
                 }
             } elseif (isset($credentials['token'])) {
-                $pimcoreUser = Authentication::authenticateToken($credentials['username'], $credentials['token']);
+                $pimcoreUser = Authentication::authenticateToken($credentials['token']);
 
                 if ($pimcoreUser) {
                     $user = new User($pimcoreUser);

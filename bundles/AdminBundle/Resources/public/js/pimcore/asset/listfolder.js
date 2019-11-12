@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.asset.listfolder");
 pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
-    systemColumns: ["id", "type", "fullpath", "filename", "creationDate", "modificationDate", "preview", "size"],
+    systemColumns: ["id~system", "type~system", "fullpath~system", "filename~system", "creationDate~system", "modificationDate~system", "preview~system", "size~system"],
     onlyDirectChildren: false,
     onlyUnreferenced: false,
     fieldObject: {},
@@ -26,6 +26,8 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.searchType = searchType;
         this.classId = element.id;
         this.object.id = element.id;
+        this.noBatchColumns = [];
+        this.batchAppendColumns = [];
     },
 
     getLayout: function () {
@@ -37,6 +39,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 border: false,
                 layout: "fit"
             });
+
 
             this.layout.on("afterrender", this.getGrid.bind(this, false));
         }
@@ -67,22 +70,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var fields = [];
 
-        this.filterField = new Ext.form.TextField({
-            width: 200,
-            style: "margin: 0 10px 0 0;",
-            enableKeyEvents: true,
-            value: this.preconfiguredFilter,
-            listeners: {
-                "keydown" : function (field, key) {
-                    if (key.getKey() == key.ENTER) {
-                        var input = field;
-                        var proxy = this.store.baseParams.filter = input.getValue();
-                        this.store.load();
-                    }
-                }.bind(this)
-            }
-        });
-
         if (response.responseText) {
             response = Ext.decode(response.responseText);
 
@@ -107,10 +94,10 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 this.onlyUnreferenced = response.onlyUnreferenced;
             }
         } else {
-             itemsPerPage = this.gridPageSize;
-             fields = response;
-             this.settings = settings;
-             this.buildColumnConfigMenu();
+            itemsPerPage = this.gridPageSize;
+            fields = response;
+            this.settings = settings;
+            this.buildColumnConfigMenu();
         }
 
         this.fieldObject = {};
@@ -119,50 +106,57 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.fieldObject[fields[i].key] = fields[i];
         }
 
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 1
+            }
+        );
+
         var fieldParam = Object.keys(this.fieldObject);
 
-        var proxy = new Ext.data.HttpProxy({
-            type: 'ajax',
-            url: "/admin/asset/grid-proxy",
-            reader: {
-                type: 'json',
-                rootProperty: 'data',
-                totalProperty: 'total',
-                successProperty: 'success',
-                idProperty: 'key'
-            },
-            extraParams: {
-                limit: itemsPerPage,
-                folderId: this.element.data.id,
-                "fields[]": fieldParam,
+        var gridHelper = new pimcore.asset.helpers.grid(
+            fields,
+            "/admin/asset/grid-proxy",
+            {
                 language: this.gridLanguage,
-                only_direct_children: this.onlyDirectChildren,
-                only_unreferenced: this.onlyUnreferenced
-            }
-        });
+                // limit: itemsPerPage
+            },
+            false
+        );
 
-        var readerFields = ['preview', 'id', 'fullpath', 'filename', 'type', 'creationDate', 'modificationDate', 'size', 'idPath'];
+        gridHelper.showSubtype = false;
+        gridHelper.enableEditor = true;
+        gridHelper.limit = itemsPerPage;
 
-        this.selectionColumn = new Ext.selection.CheckboxModel();
-        typesColumns = this.getGridColumns(fields);
-
-        var modelName = 'assetGridModel';
-        if(!Ext.ClassManager.isCreated(modelName) ) {
-            Ext.define(modelName, {
-                extend: 'Ext.data.Model',
-                idProperty: 'id~system',
-                fields: readerFields,
-                proxy: proxy,
-            });
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
         }
 
-        this.store = new Ext.data.Store({
-            pageSize: itemsPerPage,
-            remoteSort: true,
-            remoteFilter: true,
-            filter: this.filterField,
-            model:modelName
-        });
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
+        if (this.sortinfo) {
+            this.store.sort(this.sortinfo.field, this.sortinfo.direction);
+        }
+
+        this.store.getProxy().extraParams = {
+            limit: itemsPerPage,
+            folderId: this.element.data.id,
+            "fields[]": fieldParam,
+            language: this.gridLanguage,
+            only_direct_children: this.onlyDirectChildren,
+            only_unreferenced: this.onlyUnreferenced
+        };
+
+        this.store.setPageSize(itemsPerPage);
+
+        if (existingFilters) {
+            this.store.setFilters(existingFilters.items);
+        }
+
+        var gridColumns = gridHelper.getGridColumns();
+
+        // add filters
+        this.gridfilters = gridHelper.getGridFilters();
+
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
@@ -258,11 +252,12 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             store: this.store,
             columnLines: true,
             stripeRows: true,
-            columns : typesColumns,
-            plugins: ['pimcore.gridfilters'],
+            bodyCls: "pimcore_editable_grid",
+            columns : gridColumns,
+            plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
-            selModel: this.selectionColumn,
+            selModel: gridHelper.getSelectionColumn(),
             viewConfig: {
                 forceFit: true,
                 enableTextSelection: true
@@ -299,6 +294,10 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
+
+        this.grid.on("afterrender", function (grid) {
+            this.updateGridHeaderContextMenu(grid);
+        }.bind(this));
 
         this.layout.removeAll();
         this.layout.add(this.grid);
@@ -397,6 +396,33 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         return gridColumns;
+    },
+
+    getColumnWidth: function(field, defaultValue) {
+        if (field.width) {
+            return field.width;
+        } else if(field.layout && field.layout.width) {
+            return field.layout.width;
+        } else {
+            return defaultValue;
+        }
+    },
+
+    getExportButtons: function () {
+        var buttons = [];
+        pimcore.globalmanager.get("pimcore.asset.gridexport").forEach(function (exportType) {
+            buttons.push({
+                text: t(exportType.text),
+                iconCls: exportType.icon || "pimcore_icon_export",
+                handler: function () {
+                    pimcore.helpers.exportWarning(exportType, function (settings) {
+                        this.exportPrepare(settings, exportType);
+                    }.bind(this));
+                }.bind(this),
+            })
+        }.bind(this));
+
+        return buttons;
     },
 
     getColumnWidth: function(field, defaultValue) {

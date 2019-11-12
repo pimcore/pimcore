@@ -185,7 +185,8 @@ class Service extends Model\Element\Service
 
         if ($asset instanceof Asset && !empty($fields)) {
             $data = [
-                'id~system' => $asset->getid(),
+                'id' => $asset->getId(),
+                'id~system' => $asset->getId(),
                 'type~system' => $asset->getType(),
                 'fullpath~system' => $asset->getRealFullPath(),
                 'filename~system' => $asset->getKey(),

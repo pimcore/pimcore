@@ -218,7 +218,7 @@ namespace {
                 public function loginForm()
                 {
                     parent::loginForm();
-                    echo '<script' . nonce() . ">document.querySelector('form').submit()</script>";
+                    echo '<script' . nonce() . ">document.querySelector('input[name=auth\\\\[db\\\\]]').value='" . $this->database() . "'; document.querySelector('form').submit()</script>";
                 }
 
                 /**

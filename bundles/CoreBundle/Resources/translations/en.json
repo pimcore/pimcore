@@ -909,6 +909,7 @@
   "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations",
   "set_to_null": "Empty (set to null)",
+  "share_via_notifications": "Share via Notifications",
   "asset_metadata": "Asset Metadata",
   "predefined_metadata": "Predefined Metadata",
   "default_metadata": "Default Metadata",

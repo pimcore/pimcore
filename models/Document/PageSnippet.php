@@ -89,7 +89,7 @@ abstract class PageSnippet extends Model\Document
 
         if (is_array($this->getElements()) and count($this->getElements()) > 0) {
             foreach ($this->getElements() as $name => $element) {
-                if (!$element->getInherited()) {
+                if (!$element->getInherited() && !$element->isEmpty()) {
                     $element->setDao(null);
                     $element->setDocumentId($this->getId());
                     $element->save();
@@ -344,7 +344,7 @@ abstract class PageSnippet extends Model\Document
                 $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
-                $this->elements[$name]->setDocumentId($this->getId());
+                $this->elements[$name]->setDocument($this);
             }
         } catch (\Exception $e) {
             Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
@@ -392,7 +392,7 @@ abstract class PageSnippet extends Model\Document
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if ($this->hasElement($name)) {
+        if ($this->hasElement($name) && !$elements[$name]->isEmpty()) {
             return $elements[$name];
         }
 

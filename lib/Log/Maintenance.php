@@ -154,9 +154,15 @@ class Maintenance
         $sql = ' SELECT %s FROM ' .  ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
-            $archiveEngine = 'MyISAM';
+            $archiveEngine = 'InnoDB';
             $engines = $db->fetchCol('SHOW ENGINES;');
-            if (in_arrayi('archive', $engines)) {
+
+            // use a different engine than InnoDB for archiving (if available) to keep InnoDB as lean as possible
+            if (in_arrayi('MyISAM', $engines)) {
+                $archiveEngine = 'MyISAM';
+            }
+
+            if (in_arrayi('ARCHIVE', $engines)) {
                 $archiveEngine = 'ARCHIVE';
             }
 

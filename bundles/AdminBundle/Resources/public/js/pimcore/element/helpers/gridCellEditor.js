@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-Ext.define('pimcore.object.helpers.gridCellEditor', {
+Ext.define('pimcore.element.helpers.gridCellEditor', {
     extend: 'Ext.grid.CellEditor',
 
     constructor: function(config) {
@@ -38,6 +38,7 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
         value = Ext.clone(value);
 
         var fieldInfo = Ext.clone(this.config.fieldInfo);
+        var fieldType = this.config.elementType;
 
         //make sure that no relation data is loaded async
         fieldInfo.layout.optimizedAdminLoading = false;
@@ -61,9 +62,13 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             fieldInfo.layout.title = t(fieldInfo.layout.title);
         }
 
-        var tag = new pimcore.object.tags[tagType](value, fieldInfo.layout);
-        var object = Ext.clone(this.context.record);
-        tag.setObject(object);
+        var tag = new pimcore[fieldType].tags[tagType](value, fieldInfo.layout);
+
+        if(fieldType == 'object') {
+            var object = Ext.clone(this.context.record);
+            tag.setObject(object);
+        }
+
         tag.updateContext({
             cellEditing: true
         });
