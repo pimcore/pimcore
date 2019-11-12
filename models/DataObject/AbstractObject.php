@@ -384,28 +384,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        $className = DataObject::class;
-        // get classname
-        if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
-            $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
-        }
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-        if (!empty($config['class'])) {
-            $className = ltrim($config['class'], '\\');
-        }
-
-        if (is_array($config)) {
-            if ($className) {
-                $listClass = ucfirst($className) . '\\Listing';
-                $list = self::getModelFactory()->build($listClass);
-            }
-
-            $list->setValues($config);
-            $count = $list->getTotalCount();
-
-            return $count;
-        }
+        return $count;
     }
 
     /**
