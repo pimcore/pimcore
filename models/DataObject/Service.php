@@ -143,8 +143,8 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
 
-        foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
-            if($fieldDefinition->getUnique()) {
+        foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+            if ($fieldDefinition->getUnique()) {
                 $new->set($fieldDefinition->getName(), null);
                 $new->setPublished(false);
             }
@@ -205,8 +205,8 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
 
-        foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
-            if($fieldDefinition->getUnique()) {
+        foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+            if ($fieldDefinition->getUnique()) {
                 $new->set($fieldDefinition->getName(), null);
                 $new->setPublished(false);
             }

@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
@@ -31,7 +32,6 @@ use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
