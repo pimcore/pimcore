@@ -3,10 +3,11 @@
 ## 6.3.0
 - Asset Metadata: character `~` is not allowed anymore for (predefined/custom) metadata naming. All existing and new metadata name with '~' converts to '---'. This change is introduced to support Localized columns in asset grid [#5093](https://github.com/pimcore/pimcore/pull/5093)
 
-### Removed jQuery from Admin UI & E-Commerce Back Office
-  [BC Break] Replaced jQuery functions & libraries with vanilla JS or ExtJS equivalents. [Read more](https://github.com/pimcore/pimcore/pull/5222#issuecomment-552452543)
-  
- - Following files have been removed:
+#### Removed jQuery from Admin UI & E-Commerce Back Office
+[BC Break] Replaced jQuery functions & libraries with vanilla JS or ExtJS equivalents. [Read more](https://github.com/pimcore/pimcore/pull/5222#issuecomment-552452543)  
+To get jQuery back in the admin UI, please use the [this code snippet](https://gist.github.com/brusch/73b3afda260550718298630579dc2d06).
+
+The following files have been removed:
   ```
   bundles/AdminBundle/Resources/public/js/lib/jquery-3.4.1.min.js
   bundles/EcommerceFrameworkBundle/Resources/public/vendor/jquery-1.11.1.min.js
