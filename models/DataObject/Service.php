@@ -115,7 +115,7 @@ class Service extends Model\Element\Service
      * @param AbstractObject $target
      * @param AbstractObject $source
      *
-     * @return mixed
+     * @return AbstractObject|void
      */
     public function copyRecursive($target, $source)
     {
@@ -131,9 +131,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        /**
-         * @var AbstractObject $new
-         */
+        /** @var Concrete $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
@@ -144,6 +142,14 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+            if($fieldDefinition->getUnique()) {
+                $new->set($fieldDefinition->getName(), null);
+                $new->setPublished(false);
+            }
+        }
+
         $new->save();
 
         // add to store
@@ -177,8 +183,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
-        $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
-        Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
+        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+        AbstractObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -186,6 +192,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /** @var Concrete $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
 
@@ -197,9 +204,17 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+            if($fieldDefinition->getUnique()) {
+                $new->set($fieldDefinition->getName(), null);
+                $new->setPublished(false);
+            }
+        }
+
         $new->save();
 
-        Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChildren($target, $new);
 

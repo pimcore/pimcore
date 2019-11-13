@@ -31,6 +31,7 @@ use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1128,7 +1129,9 @@ class Service extends Model\AbstractModel
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('writeResource'));
-        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher(
+            Collection::class
+        ));
 
         if ($element instanceof DataObject\Concrete) {
             DataObject\Service::loadAllObjectFields($element);
