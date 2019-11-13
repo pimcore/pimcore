@@ -2282,3 +2282,15 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 /** END notifications **/
+
+.x-body .sf-minitoolbar {
+    left:0;
+    right:auto;
+    bottom: 200px;
+    background: #0C0F12;
+    text-align: center;
+}
+
+.x-body .sf-minitoolbar a {
+    width: 48px;
+}
