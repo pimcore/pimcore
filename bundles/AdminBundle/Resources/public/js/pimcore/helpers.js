@@ -1382,10 +1382,21 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     data.append("csrfToken", pimcore.settings['csrfToken']);
 
     var request = new XMLHttpRequest();
+
+    // these wrappers simulate the jQuery behavior
+    var successWrapper = function (ev) {
+        var data = JSON.parse(request.responseText);
+        callbackSuccess(data, request.statusText, request);
+    };
+
+    var errorWrapper = function (ev) {
+        callbackFailure(request, request.statusText, ev);
+    };
+
     request.upload.addEventListener("progress", callbackProgress, false);
-    request.addEventListener("load", callbackSuccess, false);
-    request.addEventListener("error", callbackFailure, false);
-    request.addEventListener("abort", callbackFailure, false);
+    request.addEventListener("load", successWrapper, false);
+    request.addEventListener("error", errorWrapper, false);
+    request.addEventListener("abort", errorWrapper, false);
     request.open('POST', url);
     request.send(data);
 };
@@ -2808,7 +2819,7 @@ pimcore.helpers.showQuickSearch = function () {
         win.close();
     });
     pimcore.helpers.treeNodeThumbnailPreviewHide();
-    Ext.get("pimcore_tooltip").hide();
+    pimcore.helpers.treeToolTipHide();
 
     var quicksearchContainer = Ext.get('pimcore_quicksearch');
     quicksearchContainer.show();
@@ -2954,8 +2965,6 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
                             success(evt);
                         },
                         function (evt) {
-                        console.log('progress');
-                        console.log(evt);
                             //progress
                             if (evt.lengthComputable) {
                                 var percentComplete = evt.loaded / evt.total;
