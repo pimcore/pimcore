@@ -251,7 +251,7 @@ Ext.onReady(function () {
                 }
             } else {
                 var message = t("error_general");
-                if(jsonData['message']) {
+                if(jsonData && jsonData['message']) {
                     message = jsonData['message'] + "<br><br>" + t("error_general");
                 }
 
@@ -794,7 +794,7 @@ Ext.onReady(function () {
                 );
 
             }
-            
+
         }
         pimcore.globalmanager.add("tree_locate_configs", locateConfigs);
 
