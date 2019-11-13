@@ -189,48 +189,10 @@ pimcore.document.tree = Class.create({
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
             "itemmouseenter": function (el, record, item, index, e, eOpts) {
-
-                if (record.data.qtipCfg) {
-                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
-
-                    if (record.data.qtipCfg.text) {
-                        text += record.data.qtipCfg.text;
-                    } else {
-                        text += (t("type") + ": "+ t(record.data.type));
-                    }
-
-                    var pimcore_tooltip = Ext.get('pimcore_tooltip');
-
-                    pimcore_tooltip.show();
-                    pimcore_tooltip.update(text);
-                    pimcore_tooltip.removeCls('right');
-
-                    var offsetTabPanel = Ext.get('pimcore_panel_tabs').getXY();
-
-                    var offsetTreeNode = Ext.get(item).getXY();
-
-                    var parentTree = el.ownerCt.ownerCt;
-
-                    if(parentTree.region == 'west') {
-                        pimcore_tooltip.applyStyles({
-                            top: (offsetTreeNode[1] + 8) + "px",
-                            left: offsetTabPanel[0] + "px",
-                            right: 'auto'
-                        });
-                    }
-
-                    if(parentTree.region == 'east') {
-                        pimcore_tooltip.addCls('right');
-                        pimcore_tooltip.applyStyles({
-                            top: (offsetTreeNode[1] + 8) + "px",
-                            right: (parentTree.width + 35) + "px",
-                            left: 'auto'
-                        });
-                    }
-                }
+                pimcore.helpers.treeToolTipShow(el, record, item);
             },
             "itemmouseleave": function () {
-                Ext.get('pimcore_tooltip').hide();
+                pimcore.helpers.treeToolTipHide();
             }
         };
 
