@@ -107,8 +107,10 @@ function FormatJSON(oData, sIndent) {
         var sHTML = "[";
     } else {
         var iCount = 0;
-        for (const key in oData) {
-            if (oData.hasOwnProperty(key)) iCount++;
+        for (let key in oData) {
+            if (oData.hasOwnProperty(key)) {
+                iCount++;
+            }
         }
         if (iCount == 0) { // object is empty
             return "{}";
@@ -118,8 +120,9 @@ function FormatJSON(oData, sIndent) {
 
     // loop through items
     var iCount = 0;
-    for (const sKey in oData) {
-        var vValue = oData[sKey];
+    var vValue = null;
+    for (let sKey in oData) {
+        vValue = oData[sKey];
         if (iCount > 0) {
             sHTML += ",";
         }
