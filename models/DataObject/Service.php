@@ -115,7 +115,7 @@ class Service extends Model\Element\Service
      * @param AbstractObject $target
      * @param AbstractObject $source
      *
-     * @return mixed
+     * @return AbstractObject
      */
     public function copyRecursive($target, $source)
     {
@@ -131,9 +131,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        /**
-         * @var AbstractObject $new
-         */
+        /** @var Concrete $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
@@ -144,6 +142,14 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+            if($fieldDefinition->getUnique()) {
+                $new->set($fieldDefinition->getName(), null);
+                $new->setPublished(false);
+            }
+        }
+
         $new->save();
 
         // add to store
@@ -202,6 +208,7 @@ class Service extends Model\Element\Service
         foreach($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
             if($fieldDefinition->getUnique()) {
                 $new->set($fieldDefinition->getName(), null);
+                $new->setPublished(false);
             }
         }
 
