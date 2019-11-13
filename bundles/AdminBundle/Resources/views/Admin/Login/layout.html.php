@@ -15,7 +15,6 @@ $config = $this->config;
     <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
 
     <link rel="stylesheet" href="/bundles/pimcoreadmin/css/login.css" type="text/css"/>
-    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= time(); ?>"/>
@@ -84,8 +83,6 @@ $config = $this->config;
     KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
 </div>
 
-
-<script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->output('below_footer') ?>

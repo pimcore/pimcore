@@ -29,10 +29,3 @@ $this->get("translate")->setDomain("admin");
 </form>
 
 <a href="<?= $view->router()->path('pimcore_admin_logout') ?>"><?= $this->translate("Back to Login"); ?></a>
-
-
-<?php $view->slots()->start('below_footer') ?>
-<script type="text/javascript">
-    $("#_auth_code").select();
-</script>
-<?php $view->slots()->stop() ?>
