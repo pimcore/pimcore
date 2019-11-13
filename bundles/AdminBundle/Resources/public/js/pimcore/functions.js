@@ -107,10 +107,11 @@ function FormatJSON(oData, sIndent) {
         var sHTML = "[";
     } else {
         var iCount = 0;
-        jQuery.each(oData, function() {
-            iCount++;
-            return;
-        });
+        for (let key in oData) {
+            if (oData.hasOwnProperty(key)) {
+                iCount++;
+            }
+        }
         if (iCount == 0) { // object is empty
             return "{}";
         }
@@ -119,7 +120,9 @@ function FormatJSON(oData, sIndent) {
 
     // loop through items
     var iCount = 0;
-    jQuery.each(oData, function(sKey, vValue) {
+    var vValue = null;
+    for (let sKey in oData) {
+        vValue = oData[sKey];
         if (iCount > 0) {
             sHTML += ",";
         }
@@ -151,7 +154,7 @@ function FormatJSON(oData, sIndent) {
 
         // loop
         iCount++;
-    });
+    }
 
     // close object
     if (sDataType == "array") {

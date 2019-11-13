@@ -177,38 +177,10 @@ pimcore.object.tree = Class.create({
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
             "itemmouseenter": function (el, record, item, index, e, eOpts) {
-
-                if (record.data.qtipCfg) {
-                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
-
-                    if (record.data.qtipCfg.text) {
-                        text += record.data.qtipCfg.text;
-                    } else {
-                        text += (t("type") + ": "+ t(record.data.type));
-                    }
-
-                    jQuery("#pimcore_tooltip").show();
-                    jQuery("#pimcore_tooltip").html(text);
-                    jQuery("#pimcore_tooltip").removeClass('right');
-
-                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
-
-                    var offsetTreeNode = jQuery(item).offset();
-
-                    var parentTree = el.ownerCt.ownerCt;
-
-                    if(parentTree.region == 'west') {
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
-                    }
-
-                    if(parentTree.region == 'east') {
-                        jQuery("#pimcore_tooltip").addClass('right');
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
-                    }
-                }
+                pimcore.helpers.treeToolTipShow(el, record, item);
             },
             "itemmouseleave": function () {
-                jQuery("#pimcore_tooltip").hide();
+                pimcore.helpers.treeToolTipHide();
             }
         };
 

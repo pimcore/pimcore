@@ -1381,26 +1381,24 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     data.append("filename", file.name);
     data.append("csrfToken", pimcore.settings['csrfToken']);
 
-    jQuery.ajax({
-        xhr: function () {
-            var xhr = new window.XMLHttpRequest();
+    var request = new XMLHttpRequest();
 
-            //Upload progress
-            xhr.upload.addEventListener("progress", function (evt) {
-                callbackProgress(evt);
-            }, false);
+    // these wrappers simulate the jQuery behavior
+    var successWrapper = function (ev) {
+        var data = JSON.parse(request.responseText);
+        callbackSuccess(data, request.statusText, request);
+    };
 
-            return xhr;
-        },
-        processData: false,
-        contentType: false,
-        type: 'POST',
-        url: url,
-        data: data,
-        success: callbackSuccess,
-        error: callbackFailure
-    });
+    var errorWrapper = function (ev) {
+        callbackFailure(request, request.statusText, ev);
+    };
 
+    request.upload.addEventListener("progress", callbackProgress, false);
+    request.addEventListener("load", successWrapper, false);
+    request.addEventListener("error", errorWrapper, false);
+    request.addEventListener("abort", errorWrapper, false);
+    request.open('POST', url);
+    request.send(data);
 };
 
 
@@ -2427,26 +2425,35 @@ pimcore.helpers.hideRedundantSeparators = function (menu) {
 };
 
 pimcore.helpers.initMenuTooltips = function () {
+    Ext.each(Ext.query("[data-menu-tooltip]:not(.initialized)"), function (el) {
+        var item = Ext.get(el);
 
-    var items = jQuery("[data-menu-tooltip]:not(.initialized)");
-    items.mouseenter(function (e) {
-        jQuery("#pimcore_tooltip").show();
-        jQuery("#pimcore_tooltip").removeClass('right');
-        jQuery("#pimcore_tooltip").html(jQuery(this).data("menu-tooltip"));
+        if (item) {
+            item.on("mouseenter", function (e) {
+                var pimcore_tooltip = Ext.get('pimcore_tooltip');
+                var item = Ext.get(e.target);
+                pimcore_tooltip.show();
+                pimcore_tooltip.removeCls('right');
+                pimcore_tooltip.update(item.getAttribute("data-menu-tooltip"));
 
-        var closestEl = jQuery(e.target).closest('[data-menu-tooltip]');
-        var offset = closestEl.offset();
-        var top = offset.top;
-        top = top + (closestEl.height() / 2);
+                var offset = item.getXY();
+                var top = offset[1];
+                top = top + (item.getHeight() / 2);
 
-        jQuery("#pimcore_tooltip").css({top: top, left: 60, right: 'auto'});
+                pimcore_tooltip.applyStyles({
+                    top: top + "px",
+                    left: '60px',
+                    right: 'auto'
+                });
+            }.bind(this));
+
+            item.on("mouseleave", function (e) {
+                Ext.get('pimcore_tooltip').hide();
+            });
+
+            item.addCls("initialized", "true");
+        }
     });
-
-    items.mouseleave(function () {
-        jQuery("#pimcore_tooltip").hide();
-    });
-
-    items.addClass("initialized", "true");
 };
 
 pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) {
@@ -2812,7 +2819,7 @@ pimcore.helpers.showQuickSearch = function () {
         win.close();
     });
     pimcore.helpers.treeNodeThumbnailPreviewHide();
-    jQuery("#pimcore_tooltip").hide();
+    pimcore.helpers.treeToolTipHide();
 
     var quicksearchContainer = Ext.get('pimcore_quicksearch');
     quicksearchContainer.show();
@@ -3034,3 +3041,48 @@ pimcore.helpers.copyStringToClipboard = function (str) {
         selection.addRange(prevSelection);
     }
 };
+
+pimcore.helpers.treeToolTipShow = function (el, record, item) {
+
+    if (record.data.qtipCfg) {
+        var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
+
+        if (record.data.qtipCfg.text) {
+            text += record.data.qtipCfg.text;
+        } else {
+            text += (t("type") + ": "+ t(record.data.type));
+        }
+
+        var pimcore_tooltip = Ext.get('pimcore_tooltip');
+
+        pimcore_tooltip.show();
+        pimcore_tooltip.update(text);
+        pimcore_tooltip.removeCls('right');
+
+        var offsetTabPanel = Ext.get('pimcore_panel_tabs').getXY();
+        var offsetTreeNode = Ext.get(item).getXY();
+        var parentTree = el.ownerCt.ownerCt;
+
+        if(parentTree.region == 'west') {
+            pimcore_tooltip.applyStyles({
+                top: (offsetTreeNode[1] + 8) + "px",
+                left: offsetTabPanel[0] + "px",
+                right: 'auto'
+            });
+        }
+
+        if(parentTree.region == 'east') {
+            pimcore_tooltip.addCls('right');
+            pimcore_tooltip.applyStyles({
+                top: (offsetTreeNode[1] + 8) + "px",
+                right: (parentTree.width + 35) + "px",
+                left: 'auto'
+            });
+        }
+    }
+};
+
+pimcore.helpers.treeToolTipHide = function () {
+    Ext.get('pimcore_tooltip').hide();
+};
+
