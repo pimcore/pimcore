@@ -23,10 +23,10 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Pimcore\Model\Asset\Listing;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -382,7 +382,7 @@ class Asset extends Element\AbstractElement
      */
     public static function getList($config = [])
     {
-        if(!\is_array($config)) {
+        if (!\is_array($config)) {
             throw new \Exception('Unable to initiate list class - please provide valid configuration array');
         }
 
