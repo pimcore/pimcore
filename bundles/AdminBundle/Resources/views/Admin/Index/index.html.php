@@ -90,7 +90,7 @@ $user      = $userProxy->getUser();
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
-        var symfonyToolbarKey = 'sf2/profiler/toolbar/displayState';
+        var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
         if(!window.localStorage.getItem(symfonyToolbarKey)) {
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
