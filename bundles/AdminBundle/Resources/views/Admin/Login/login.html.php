@@ -82,6 +82,12 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
     // clear opened tabs store
     localStorage.removeItem("pimcore_opentabs");
     <?php } ?>
+
+    // hide symfony toolbar by default
+    var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
+    if(!window.localStorage.getItem(symfonyToolbarKey)) {
+        window.localStorage.setItem(symfonyToolbarKey, 'none');
+    }
 </script>
 
 <?php $view->slots()->stop() ?>
