@@ -563,9 +563,9 @@
     "rows_fixed": "Zeilen fixiert",
     "cols_fixed": "Spalten fixiert",
     "force_resize": "Größe ändern erzwingen",
-    "site_id": "Seiten ID",
-    "site_ids": "Seiten IDs",
-    "site_ids_tooltip": "Geben eine durch Kommas getrennte Liste mit Seiten-IDs an",
+    "site_id": "Site ID",
+    "site_ids": "Site IDs",
+    "site_ids_tooltip": "Stellen Sie eine durch Komma getrennte Liste mit Site-IDs zur Verfügung.",
     "predefined_hotspot_data_templates": "Vordefinierte Datenvorlagen",
     "hide_locale_labels_when_tabs_reached": "Gebietsschemabezeichnungen nach der Anzahl der Registerkarten ausblenden",
     "classificationstore_error_addkey_msg": "Fehler beim Hinzufügen des Schlüssels",
@@ -714,5 +714,6 @@
     "invitation_sent": "Einladung versendet",
     "invitation_link_sent": "Ein temporärer Login-Link wurde an folgende E-Mail-Adresse gesendet: \"%s\" ",
     "geopolyline": "Geografische Polylinie",
-    "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits"
+    "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits",
+    "classificationstore_group_by_key": "Gruppieren nach Key"
 }
