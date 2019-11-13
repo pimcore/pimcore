@@ -84,7 +84,8 @@ pimcore.object.classes.data.data = Class.create({
             name: "index",
             itemId: "index",
             checked: this.datax.index,
-            disabled: !in_array("index",this.availableSettingsFields)
+            disabled: !in_array("index",this.availableSettingsFields),
+            hidden: true
         });
 
         var uniqueCheckbox = new Ext.form.field.Checkbox({
@@ -96,7 +97,8 @@ pimcore.object.classes.data.data = Class.create({
             autoEl: {
                 tag: 'div',
                 'data-qtip': t('unique')
-            }
+            },
+            hidden: true
         });
 
         this.mandatoryCheckbox = new Ext.form.field.Checkbox({
@@ -197,6 +199,11 @@ pimcore.object.classes.data.data = Class.create({
                 checked: this.datax.visibleSearch,
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
             });
+
+            indexCheckbox.setHidden(false);
+            if (in_array("unique",this.availableSettingsFields)) {
+                uniqueCheckbox.setHidden(false);
+            }
         }
 
         var layoutSettings = [
