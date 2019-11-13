@@ -426,8 +426,22 @@ pimcore.settings.user.user.settings = Class.create({
                     success: function (response) {
                         var res = Ext.decode(response.responseText);
                         if (res["link"]) {
-                            Ext.MessageBox.alert("", t("login_as_this_user_description")
-                                + ' <br /><br /><textarea style="width:100%;height:70px;">' + res["link"] + "</textarea>");
+                            Ext.MessageBox.show({
+                                title: t("login_as_this_user"),
+                                msg: t("login_as_this_user_description")
+                                    + '<br /><br /><textarea style="width:100%;height:90px;" readonly="readonly">' + res["link"] + "</textarea>",
+                                buttons: Ext.MessageBox.YESNO,
+                                buttonText: {
+                                    yes: t("copy") + ' & ' + t("close"),
+                                    no: t("close")
+                                },
+                                scope: this,
+                                fn: function (result) {
+                                    if (result === 'yes') {
+                                        pimcore.helpers.copyStringToClipboard(res["link"]);
+                                    }
+                                }
+                            });
                         }
                     },
                     failure: function (response) {
