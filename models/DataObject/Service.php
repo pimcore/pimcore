@@ -115,7 +115,7 @@ class Service extends Model\Element\Service
      * @param AbstractObject $target
      * @param AbstractObject $source
      *
-     * @return AbstractObject
+     * @return AbstractObject|void
      */
     public function copyRecursive($target, $source)
     {
