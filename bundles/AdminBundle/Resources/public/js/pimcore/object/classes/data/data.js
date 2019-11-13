@@ -96,7 +96,7 @@ pimcore.object.classes.data.data = Class.create({
             disabled: !in_array("unique",this.availableSettingsFields),
             autoEl: {
                 tag: 'div',
-                'data-qtip': t('unique')
+                'data-qtip': t('unique_qtip')
             },
             hidden: true
         });
