@@ -15,7 +15,6 @@
 namespace Pimcore;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -125,14 +124,8 @@ class Bootstrap
         /** @var $loader \Composer\Autoload\ClassLoader */
         if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../vendor/autoload.php';
-        } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
-        } elseif (getenv('PIMCORE_PROJECT_ROOT') != '' && file_exists(getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php')) {
-            $loader = include getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php';
-        } elseif (getenv('PIMCORE_PROJECT_ROOT') != '') {
-            throw new Exception('Invalid Pimcore project root "' . getenv('PIMCORE_PROJECT_ROOT') . '"');
         } else {
-            throw new Exception('Unknown configuration! Pimcore project root not found, please set env variable PIMCORE_PROJECT_ROOT.');
+            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         }
 
         Config::initDebugDevMode();
