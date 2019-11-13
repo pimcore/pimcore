@@ -974,7 +974,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
-        $errors = [];
+        $subItems = [];
 
         if (!$omitMandatoryCheck) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
@@ -999,24 +999,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             }
                             try {
                                 $keyDef->checkValidity($value);
-                            } catch (\Exception $e) {
-                                $errors[] = [
-                                    'exception' => $e,
-                                    'language' => $validLanguage
-                                ];
+                            } catch (\Exception $exception) {
+                                $subItems[] = new Model\Element\ValidationException(
+                                    $exception->getMessage() . ' (' . $validLanguage . ')',
+                                    $exception->getCode(),
+                                    $exception->getPrevious()
+                                );
                             }
                         }
                     }
                 }
             }
         }
-        if ($errors) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error['exception']->getMessage() . ' (' . $error['language'] . ')';
-            }
+
+        if ($subItems) {
+            $messages = array_map(function (Model\Element\ValidationException $validationException) {
+                return $validationException->getMessage();
+            }, $subItems);
+
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
-            $validationException->setSubItems($errors);
+            $validationException->setSubItems($subItems);
             throw $validationException;
         }
     }
