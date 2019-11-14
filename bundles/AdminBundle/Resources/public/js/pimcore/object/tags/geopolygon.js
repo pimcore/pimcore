@@ -181,17 +181,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         }.bind(this));
     },
 
-    geocode: function () {
-        var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function(json) {
-          if( json[0].lat !== null && json[0].lon !== null) {
-              var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
-              this.getLeafletToolbar(map);
-            }
-        }.bind(this));
-
-    },
-
     getValue: function () {
         return this.data;
     },

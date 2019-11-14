@@ -26,7 +26,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
         this.fieldConfig = fieldConfig;
 
-        this.fieldConfig.classes =  this.fieldConfig.classes.filter(x => {
+        this.fieldConfig.classes =  this.fieldConfig.classes.filter(function (x) {
             if(x.classes == 'folder') {
                 this.dataObjectFolderAllowed = true;
                 return false;
@@ -186,7 +186,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 markDirty: false,
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
+                    draggroup: 'element'
                 },
                 listeners: {
                     refresh: function (gridview) {
@@ -402,6 +402,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
+            enableTextSelection: true,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);

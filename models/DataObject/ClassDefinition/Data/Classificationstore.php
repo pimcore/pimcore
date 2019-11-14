@@ -207,6 +207,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
 
         foreach ($items  as $groupId => $keys) {
+            if (!isset($data->getActiveGroups()[$groupId])) {
+                continue;
+            }
             foreach ($keys as $keyId => $languages) {
                 $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig->getEnabled()) {
@@ -415,8 +418,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getter = 'get' . ucfirst($this->getName());
         $classificationStore = $object->$getter();
         $items = $classificationStore->getItems();
+        $activeGroups = $classificationStore->getActiveGroups();
         if ($items) {
             foreach ($items as $groupId => $keys) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -486,6 +493,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $items = $data->getItems();
 
             foreach ($items as $groupId => $groupData) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 $groupResult = [];
 
                 foreach ($groupData as $keyId => $keyData) {
@@ -964,7 +974,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
-        $errors = [];
+        $subItems = [];
 
         if (!$omitMandatoryCheck) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
@@ -989,24 +999,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             }
                             try {
                                 $keyDef->checkValidity($value);
-                            } catch (\Exception $e) {
-                                $errors[] = [
-                                    'exception' => $e,
-                                    'language' => $validLanguage
-                                ];
+                            } catch (\Exception $exception) {
+                                $subItems[] = new Model\Element\ValidationException(
+                                    $exception->getMessage() . ' (' . $validLanguage . ')',
+                                    $exception->getCode(),
+                                    $exception->getPrevious()
+                                );
                             }
                         }
                     }
                 }
             }
         }
-        if ($errors) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error['exception']->getMessage() . ' (' . $error['language'] . ')';
-            }
+
+        if ($subItems) {
+            $messages = array_map(function (Model\Element\ValidationException $validationException) {
+                return $validationException->getMessage();
+            }, $subItems);
+
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
-            $validationException->setSubItems($errors);
+            $validationException->setSubItems($subItems);
             throw $validationException;
         }
     }

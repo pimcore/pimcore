@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
+use Pimcore\Model\Listing\AbstractListing;
 
 class Factory extends ImplementationLoader implements FactoryInterface
 {
@@ -41,7 +42,7 @@ class Factory extends ImplementationLoader implements FactoryInterface
      * @param string $name
      * @param array $params
      *
-     * @return AbstractModel
+     * @return AbstractModel|AbstractListing
      */
     public function build(string $name, array $params = []): AbstractModel
     {

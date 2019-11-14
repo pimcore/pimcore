@@ -349,15 +349,14 @@ class Document extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Document\\Listing';
+            $listClass = Listing::class;
             $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
-            $list->load();
 
             return $list;
         }
 
-        throw new \Exception('Unable to initiate list class - class not found or invalid configuration');
+        throw new \Exception('Unable to initiate list class - please provide valid configuration array');
     }
 
     /**
@@ -369,14 +368,10 @@ class Document extends Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $count = $list->getTotalCount();
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-            return $count;
-        }
+        return $count;
     }
 
     /**
@@ -1287,7 +1282,7 @@ class Document extends Element\AbstractElement
     /**
      * Set document properties.
      *
-     * @param array $properties
+     * @param Property[] $properties
      *
      * @return Document
      */
@@ -1364,9 +1359,9 @@ class Document extends Element\AbstractElement
         $parentVars = parent::__sleep();
         $blockedVars = ['dependencies', 'userPermissions', 'hasChildren', 'versions', 'scheduledTasks', 'parent'];
 
-        if (isset($this->_fulldump)) {
+        if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $finalVars[] = '_fulldump';
+            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
@@ -1384,7 +1379,7 @@ class Document extends Element\AbstractElement
 
     public function __wakeup()
     {
-        if (isset($this->_fulldump)) {
+        if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
             $originalElement = Document::getById($this->getId());
             if ($originalElement) {
@@ -1393,13 +1388,11 @@ class Document extends Element\AbstractElement
             }
         }
 
-        if (isset($this->_fulldump) && $this->properties !== null) {
+        if ($this->isInDumpState() && $this->properties !== null) {
             $this->renewInheritedProperties();
         }
 
-        if (isset($this->_fulldump)) {
-            unset($this->_fulldump);
-        }
+        $this->setInDumpState(false);
     }
 
     /**

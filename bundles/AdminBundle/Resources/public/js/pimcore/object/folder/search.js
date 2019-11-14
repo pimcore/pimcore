@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
+    gridType: 'object',
 
     title: t('search_edit'),
     icon: "pimcore_material_icon_search pimcore_material_icon",
@@ -371,7 +372,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             plugins: plugins,
             viewConfig: {
                 forceFit: false,
-                xtype: 'patchedgridview'
+                xtype: 'patchedgridview',
+                enableTextSelection: true
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
@@ -449,7 +451,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getExportButtons: function () {
         var buttons = [];
-        pimcore.globalmanager.get("pimcore.gridexport").forEach(function (exportType) {
+        pimcore.globalmanager.get("pimcore.object.gridexport").forEach(function (exportType) {
             buttons.push({
                 text: t(exportType.text),
                 iconCls: exportType.icon || "pimcore_icon_export",
@@ -567,4 +569,4 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 });
 
-pimcore.object.search.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.object.search.addMethods(pimcore.element.helpers.gridColumnConfig);

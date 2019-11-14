@@ -20,7 +20,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
 
         this.fieldConfig = fieldConfig;
-        var i;
 
         if (!data) {
             data = this.getInitialData();
@@ -35,12 +34,12 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             [""]
         ];
         if (this.fieldConfig.cols) {
-            for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
+            for (var i = 0; i < (this.fieldConfig.cols - 1); i++) {
                 data[0].push("");
             }
         }
         if (this.fieldConfig.rows) {
-            for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
+            for (var i = 0; i < (this.fieldConfig.rows - 1); i++) {
                 data.push(data[0]);
             }
         }
@@ -48,7 +47,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             try {
                 var dataRows = this.fieldConfig.data.split("\n");
                 var dataGrid = [];
-                for (i = 0; i < dataRows.length; i++) {
+                for (var i = 0; i < dataRows.length; i++) {
                     dataGrid.push(dataRows[i].split("|"));
                 }
 
@@ -187,6 +186,12 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         }
 
         tbar.push({
+            iconCls: "pimcore_icon_paste",
+            handler: this.pasteFromClipboard.bind(this)
+        });
+
+
+        tbar.push({
             iconCls: "pimcore_icon_empty",
             handler: this.emptyStore.bind(this)
         });
@@ -238,8 +243,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         this.store.on("update", function () {
             this.dirty = true;
         }.bind(this));
-        this.initGrid();
-    },
+        this.initGrid();},
 
     addColumn: function () {
 
@@ -328,6 +332,65 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     getCellEditValue: function () {
         return this.getValue();
     },
+
+    pasteFromClipboard: function() {
+        this.pasteField = new Ext.form.TextArea({
+            width: '100%',
+            emptyText: t("paste_here"),
+            validateOnChange: false,
+            enableKeyEvents: true,
+            listeners: {
+                change: function(){
+                    var value = this.pasteField.getValue();
+                    if (value) {
+
+                        var lines = value.split("\n");
+
+                        var result = [];
+
+                        if (lines) {
+                            for (var i = 0; i < lines.length; i++) {
+                                var line = lines[i];
+                                line = line.split("\t");
+                                result.push(line);
+                            }
+                        }
+                    }
+
+                    this.initStore(result);
+                    this.pasteWindow.close();
+                }.bind(this)
+            }
+        });
+
+        this.pasteWindow = new Ext.Window({
+            width: 500,
+            height: 200,
+            modal: true,
+            title: t('paste_clipboard'),
+            layout: "fit"
+        });
+
+        var panel = new Ext.Panel({
+            bodyStyle: "padding: 10px;",
+            items: [
+                this.pasteField,
+            ],
+            buttons: [
+                {
+                    text: t("cancel"),
+                    iconCls: "pimcore_icon_cancel",
+                    handler: function () {
+                        this.pasteWindow.close();
+                    }.bind(this)
+                }
+            ]
+        });
+        this.pasteWindow.add(panel);
+        this.pasteWindow.show();
+        this.pasteField.focus();
+
+    }
 
 
 });

@@ -426,8 +426,22 @@ pimcore.settings.user.user.settings = Class.create({
                     success: function (response) {
                         var res = Ext.decode(response.responseText);
                         if (res["link"]) {
-                            Ext.MessageBox.alert("", t("login_as_this_user_description")
-                                + ' <br /><br /><textarea style="width:100%;height:70px;">' + res["link"] + "</textarea>");
+                            Ext.MessageBox.show({
+                                title: t("login_as_this_user"),
+                                msg: t("login_as_this_user_description")
+                                    + '<br /><br /><textarea style="width:100%;height:90px;" readonly="readonly">' + res["link"] + "</textarea>",
+                                buttons: Ext.MessageBox.YESNO,
+                                buttonText: {
+                                    yes: t("copy") + ' & ' + t("close"),
+                                    no: t("close")
+                                },
+                                scope: this,
+                                fn: function (result) {
+                                    if (result === 'yes') {
+                                        pimcore.helpers.copyStringToClipboard(res["link"]);
+                                    }
+                                }
+                            });
                         }
                     },
                     failure: function (response) {
@@ -486,6 +500,11 @@ pimcore.settings.user.user.settings = Class.create({
             }));
         }
 
+        this.permissionsSet = new Ext.container.Container({
+            items: sectionArray,
+            hidden: this.currentUser.admin
+        });
+
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
             title: t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
@@ -533,7 +552,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: array_merge([this.generalSet, this.adminSet], sectionArray, [this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel]),
+            items: [this.generalSet, this.adminSet, this.permissionsSet, this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel],
             bodyStyle: "padding:10px;",
             autoScroll: true
         });

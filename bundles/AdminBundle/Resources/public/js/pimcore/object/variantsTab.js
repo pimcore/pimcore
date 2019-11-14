@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.variantsTab");
 pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath"],
     objecttype: "variant",
+    gridType: 'object',
 
     fieldObject: {},
     initialize: function (object) {
@@ -222,7 +223,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             trackMouseOver: true,
             viewConfig: {
                 forceFit: false,
-                xtype: 'patchedgridview'
+                xtype: 'patchedgridview',
+                enableTextSelection: true
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
@@ -396,4 +398,4 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
 });
 
-pimcore.object.variantsTab.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.object.variantsTab.addMethods(pimcore.element.helpers.gridColumnConfig);

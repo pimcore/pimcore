@@ -15,6 +15,8 @@ pimcore.registerNS("pimcore.element.selector.object");
 pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract, {
 
     fieldObject: {},
+    gridType: 'object',
+
     initStore: function () {
         return 0; // dummy
     },
@@ -662,4 +664,4 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 });
 
-pimcore.element.selector.object.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);

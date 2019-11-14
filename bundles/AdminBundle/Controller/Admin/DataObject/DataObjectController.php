@@ -95,7 +95,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $filteredTotalCount = 0;
 
         if ($object->hasChildren($objectTypes)) {
-            $limit = intval($request->get('limit'));
+            $limit = (int)$request->get('limit');
             if (!is_null($filter)) {
                 if (substr($filter, -1) != '*') {
                     $filter .= '*';
@@ -107,7 +107,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $limit = 100000000;
             }
 
-            $offset = intval($request->get('start'));
+            $offset = (int)$request->get('start');
 
             $childsList = new DataObject\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
@@ -430,7 +430,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
             $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
-
+            $objectData['childdata']['data']['general'] = $objectData['general'];
             /** -------------------------------------------------------------
              *   Load remaining general data from latest version
              *  ------------------------------------------------------------- */
@@ -999,7 +999,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($object instanceof DataObject\Concrete) {
             $latestVersion = $object->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
-                return $this->adminJson(['success' => false, 'message' => "You can't relocate if there's a newer not published version"]);
+                return $this->adminJson(['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"]);
             }
         }
 
@@ -1716,6 +1716,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
+                    if (!$data['published']) {
+                        $object->setOmitMandatoryCheck(true);
+                    }
 
                     $object->save();
 

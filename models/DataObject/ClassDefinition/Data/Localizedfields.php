@@ -301,6 +301,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
                     $fd = $this->getFielddefinition($name);
+                    $params['language'] = $language;
                     $localizedFields->setLocalizedValue(
                         $name,
                         $fd->getDataFromEditmode($fdata, $object, $params),
@@ -597,11 +598,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
-            return true;
-        }
-
-        return false;
+        return is_array($this->childs) && count($this->childs) > 0;
     }
 
     /**

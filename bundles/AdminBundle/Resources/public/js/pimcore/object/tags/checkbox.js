@@ -120,7 +120,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_delete",
                 cls: 'pimcore_button_transparent',
                 tooltip: t("set_to_null"),
-                hidden: !this.getObject().data.general.allowInheritance,
+                hidden: this.fieldConfig.hideEmptyButton || !this.getObject().data.general.allowInheritance,
                 handler: function () {
                     if (this.data !== null) {
                         this.dataChanged = true;

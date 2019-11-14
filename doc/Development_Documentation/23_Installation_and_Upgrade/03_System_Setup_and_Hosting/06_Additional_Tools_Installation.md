@@ -82,7 +82,7 @@ yarn global add sqip
 ```
 This should install `sqip` somewhere in your path.
 
-Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](http://internetpartner.info/en/tutorials/ubuntu/104-how-to-install-go-from-ubuntu-repositories-and-set-gopath.html) also.
+Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-18-04) also.
 
 Then run
 ```bash
