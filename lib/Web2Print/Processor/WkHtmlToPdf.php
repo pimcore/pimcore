@@ -121,7 +121,7 @@ class WkHtmlToPdf extends Processor
             'options' => []
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArgument('options');
     }
@@ -224,7 +224,7 @@ class WkHtmlToPdf extends Processor
             'dstFile' => $dstFile,
             'config' => $this->config
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         $params = $event->getArguments();
 

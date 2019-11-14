@@ -97,9 +97,10 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete asset cloning
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]));
+        ]),
+        AssetEvents::POST_COPY);
 
         return $new;
     }
@@ -135,9 +136,10 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete asset cloning
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]));
+        ]),
+        AssetEvents::POST_COPY);
 
         return $new;
     }

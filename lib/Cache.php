@@ -55,7 +55,7 @@ class Cache
         if (\Pimcore::hasKernel()) {
             \Pimcore::getContainer()
                 ->get('event_dispatcher')
-                ->dispatch(CoreCacheEvents::INIT, new Event());
+                ->dispatch(new Event(), CoreCacheEvents::INIT);
 
             if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
                 self::getHandler()->disable();

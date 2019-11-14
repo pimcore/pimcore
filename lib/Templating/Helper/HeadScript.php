@@ -559,9 +559,10 @@ class HeadScript extends CacheBusterAware
                 }
             }
 
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(new GenericEvent($this, [
                 'item' => $item
-            ]));
+            ]),
+            FrontendEvents::VIEW_HELPER_HEAD_SCRIPT);
 
             if (isset($item->attributes) && is_array($item->attributes)) {
                 $source = (string)($item->attributes['src'] ?? '');

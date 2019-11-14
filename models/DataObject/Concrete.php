@@ -277,7 +277,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this), DataObjectEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
             throw $e;
         }
@@ -302,9 +302,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                DataObjectEvents::PRE_UPDATE);
             }
 
             // scheduled tasks are saved always, they are not versioned!
@@ -322,17 +323,19 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                DataObjectEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e
-            ]));
+            ]),
+            DataObjectEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }

@@ -727,7 +727,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupElementName);
 
         $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::TAG_NAME);
 
         $tagName = $event->getTagName();
 

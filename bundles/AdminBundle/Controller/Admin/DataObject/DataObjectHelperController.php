@@ -1644,7 +1644,7 @@ class DataObjectHelperController extends AdminController
         $eventData->setContext($context);
 
         if ($job == 1) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+            \Pimcore::getEventDispatcher()->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
 
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');

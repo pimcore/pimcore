@@ -324,7 +324,7 @@ abstract class AbstractRestController extends AdminController
     public function dispatchBeforeLoadEvent(Request $request, FilterEvent $eventData)
     {
         if ($request->get('condition')) {
-            \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+            \Pimcore::getEventDispatcher()->dispatch($eventData, WebserviceEvents::BEFORE_LIST_LOAD);
             if (!$eventData->isConditionDirty()) {
                 throw new \Exception('the condition parameter is not supported anymore');
             }

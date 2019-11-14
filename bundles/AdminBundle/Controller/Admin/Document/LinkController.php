@@ -81,7 +81,7 @@ class LinkController extends DocumentControllerBase
             'data' => $data,
             'document' => $link
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
 
         if ($link->isAllowed('view')) {

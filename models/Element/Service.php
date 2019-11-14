@@ -929,7 +929,7 @@ class Service extends Model\AbstractModel
             'key' => $key,
             'type' => $type
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
         $key = $event->getArgument('key');
 
         // replace all 4 byte unicode characters

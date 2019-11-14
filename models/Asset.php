@@ -484,9 +484,9 @@ class Asset extends Element\AbstractElement
 
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -578,9 +578,9 @@ class Asset extends Element\AbstractElement
                 if ($differentOldPath) {
                     $updateEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
+                \Pimcore::getEventDispatcher()->dispatch($updateEvent, AssetEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
+                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_ADD);
             }
 
             return $this;
@@ -588,9 +588,9 @@ class Asset extends Element\AbstractElement
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -818,9 +818,10 @@ class Asset extends Element\AbstractElement
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                AssetEvents::PRE_UPDATE);
             }
 
             // set date
@@ -844,17 +845,19 @@ class Asset extends Element\AbstractElement
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e
-            ]));
+            ]),
+            AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -875,7 +878,7 @@ class Asset extends Element\AbstractElement
             $event = new GenericEvent($this, [
                 'frontendPath' => $path
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_PATH);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -997,7 +1000,7 @@ class Asset extends Element\AbstractElement
             throw new \Exception('root-node cannot be deleted');
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -1049,7 +1052,7 @@ class Asset extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, $failureEvent);
+            \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
             throw $e;
         }
@@ -1060,7 +1063,7 @@ class Asset extends Element\AbstractElement
         // clear asset from registry
         \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
     /**

@@ -124,9 +124,10 @@ abstract class PageSnippet extends Model\Document
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                DocumentEvents::PRE_UPDATE);
             }
 
             // set date
@@ -150,17 +151,19 @@ abstract class PageSnippet extends Model\Document
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
+                \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this, [
                     'saveVersionOnly' => true
-                ]));
+                ]),
+                DocumentEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e
-            ]));
+            ]),
+            DocumentEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -187,7 +190,7 @@ abstract class PageSnippet extends Model\Document
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE_FAILURE);
             Logger::error($e);
             throw $e;
         }

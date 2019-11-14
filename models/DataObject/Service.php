@@ -170,9 +170,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]));
+        ]),
+        DataObjectEvents::POST_COPY);
 
         return $new;
     }
@@ -223,9 +224,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(new DataObjectEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]));
+        ]),
+        DataObjectEvents::POST_COPY);
 
         return $new;
     }

@@ -321,13 +321,13 @@ class ClassDefinition extends Model\AbstractModel
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_ADD,
-                new ClassDefinitionEvent($this)
+                new ClassDefinitionEvent($this),
+                DataObjectClassDefinitionEvents::PRE_ADD
             );
         } else {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_UPDATE,
-                new ClassDefinitionEvent($this)
+                new ClassDefinitionEvent($this),
+                DataObjectClassDefinitionEvents::PRE_UPDATE
             );
         }
 
@@ -523,13 +523,13 @@ class ClassDefinition extends Model\AbstractModel
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
+                new ClassDefinitionEvent($this),
+                DataObjectClassDefinitionEvents::POST_UPDATE
             );
         } else {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
+                new ClassDefinitionEvent($this),
+                DataObjectClassDefinitionEvents::POST_ADD
             );
         }
     }

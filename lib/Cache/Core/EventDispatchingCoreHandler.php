@@ -63,10 +63,10 @@ class EventDispatchingCoreHandler extends CoreHandler
     protected function setEnabled($enabled)
     {
         $this->dispatcher->dispatch(
+            new Event(),
             $this->isEnabled()
                 ? CoreCacheEvents::ENABLE
-                : CoreCacheEvents::DISABLE,
-            new Event()
+                : CoreCacheEvents::DISABLE
         );
     }
 

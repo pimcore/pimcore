@@ -885,7 +885,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             'list' => $definitions,
             'objectId' => $request->get('object_id')
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
 
         if ($forObjectEditor) {
@@ -943,7 +943,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             'list' => $list,
             'objectId' => $request->get('object_id')
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA);
         $list = $event->getArgument('list');
 
         return $this->adminJson(['fieldcollections' => $list]);
@@ -1266,7 +1266,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             'list' => $definitions,
             'objectId' => $request->get('object_id')
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
 
         if ($forObjectEditor) {
@@ -1336,7 +1336,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             'list' => $list,
             'objectId' => $request->get('object_id')
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA);
         $list = $event->getArgument('list');
 
         return $this->adminJson(['objectbricks' => $list]);

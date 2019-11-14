@@ -86,7 +86,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             'data' => $data,
             'document' => $page
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
 
         if ($page->isAllowed('view')) {
             $data = $event->getArgument('data');

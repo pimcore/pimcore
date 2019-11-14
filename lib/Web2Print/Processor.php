@@ -102,18 +102,20 @@ abstract class Processor
         $pdf = null;
 
         try {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
+            \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($document, [
                 'processor' => $this,
                 'jobConfig' => $jobConfigFile->config
-            ]));
+            ]),
+            DocumentEvents::PRINT_PRE_PDF_GENERATION);
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
 
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_POST_PDF_GENERATION, new DocumentEvent($document, [
+            \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($document, [
                 'filename' => $document->getPdfFileName(),
                 'pdf' => $pdf
-            ]));
+            ]),
+            DocumentEvents::PRINT_POST_PDF_GENERATION);
 
             $document->setLastGenerated((time() + 1));
             $document->save();
