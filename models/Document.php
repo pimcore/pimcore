@@ -898,7 +898,9 @@ class Document extends Element\AbstractElement
                                 preg_replace('@^' . $site->getRootPath() . '/@', '/', $this->getRealFullPath());
                         }
                     }
-                } elseif ($config->general->domain) {
+                }
+
+                if(!$link && $config->general->domain) {
                     $link = $scheme . $config->general->domain . $this->getRealFullPath();
                 }
             }
