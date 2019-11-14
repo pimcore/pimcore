@@ -1,6 +1,6 @@
 <?php
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -28,7 +28,7 @@ class EventDispatchingCoreHandler extends CoreHandler
     protected $dispatcher;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(PimcoreCacheItemPoolInterface $adapter, WriteLockInterface $writeLock, EventDispatcherInterface $dispatcher)
     {
@@ -38,7 +38,7 @@ class EventDispatchingCoreHandler extends CoreHandler
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function enable()
     {
@@ -48,7 +48,7 @@ class EventDispatchingCoreHandler extends CoreHandler
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function disable()
     {
@@ -58,20 +58,7 @@ class EventDispatchingCoreHandler extends CoreHandler
     }
 
     /**
-     * @param bool $enabled
-     */
-    protected function setEnabled($enabled)
-    {
-        $this->dispatcher->dispatch(
-            $this->isEnabled()
-                ? CoreCacheEvents::ENABLE
-                : CoreCacheEvents::DISABLE,
-            new Event()
-        );
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function purge()
     {
@@ -81,5 +68,18 @@ class EventDispatchingCoreHandler extends CoreHandler
         $this->dispatcher->dispatch(CoreCacheEvents::PURGE, $purgeEvent);
 
         return $purgeEvent->getResult();
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    protected function setEnabled($enabled)
+    {
+        $this->dispatcher->dispatch(
+            new Event(),
+            $this->isEnabled()
+                ? CoreCacheEvents::ENABLE
+                : CoreCacheEvents::DISABLE
+        );
     }
 }

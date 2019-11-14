@@ -1,6 +1,6 @@
 <?php
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -9,7 +9,6 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    User
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -49,11 +48,12 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return AbstractUser|null
+     * @return null|AbstractUser
      */
     public static function getById($id)
     {
-        $cacheKey = 'user_' . $id;
+        $cacheKey = 'user_'.$id;
+
         try {
             if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
                 $user = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -61,7 +61,7 @@ class AbstractUser extends Model\AbstractModel
                 $user = new static();
                 $user->getDao()->getById($id);
 
-                if (get_class($user) == 'Pimcore\\Model\\User\\AbstractUser') {
+                if ('Pimcore\\Model\\User\\AbstractUser' == get_class($user)) {
                     $className = Service::getClassNameForType($user->getType());
                     $user = $className::getById($user->getId());
                 }
@@ -92,7 +92,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self|null
+     * @return null|self
      */
     public static function getByName($name)
     {
@@ -175,25 +175,26 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @return $this
-     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function save()
     {
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_UPDATE, new UserRoleEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_ADD, new UserRoleEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::PRE_ADD);
         }
 
         if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
-            throw new \Exception('Invalid name for user/role `' . $this->getName() . '` (allowed characters: a-z A-Z 0-9 -.~_@)');
+            throw new \Exception('Invalid name for user/role `'.$this->getName().'` (allowed characters: a-z A-Z 0-9 -.~_@)');
         }
 
         $this->beginTransaction();
+
         try {
             if (!$this->getId()) {
                 $this->getDao()->create();
@@ -204,13 +205,14 @@ class AbstractUser extends Model\AbstractModel
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
+
             throw $e;
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_UPDATE, new UserRoleEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_ADD, new UserRoleEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new UserRoleEvent($this), UserRoleEvents::POST_ADD);
         }
 
         return $this;

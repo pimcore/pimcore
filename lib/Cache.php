@@ -1,6 +1,6 @@
 <?php
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -34,7 +34,7 @@ class Cache
     }
 
     /**
-     * Get the cache handler implementation
+     * Get the cache handler implementation.
      *
      * @return CoreHandlerInterface
      */
@@ -55,7 +55,8 @@ class Cache
         if (\Pimcore::hasKernel()) {
             \Pimcore::getContainer()
                 ->get('event_dispatcher')
-                ->dispatch(CoreCacheEvents::INIT, new Event());
+                ->dispatch(new Event(), CoreCacheEvents::INIT)
+    ;
 
             if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
                 self::getHandler()->disable();
@@ -64,7 +65,7 @@ class Cache
     }
 
     /**
-     * Returns the content of the requested cache entry
+     * Returns the content of the requested cache entry.
      *
      * @param string $key
      *
@@ -76,14 +77,14 @@ class Cache
     }
 
     /**
-     * Save an item to the cache (deferred to shutdown if force is false and forceImmediateWrite is not set)
+     * Save an item to the cache (deferred to shutdown if force is false and forceImmediateWrite is not set).
      *
-     * @param mixed $data
-     * @param string $key
-     * @param array $tags
-     * @param int|\DateInterval|null $lifetime
-     * @param int $priority
-     * @param bool $force
+     * @param mixed                  $data
+     * @param string                 $key
+     * @param array                  $tags
+     * @param null|\DateInterval|int $lifetime
+     * @param int                    $priority
+     * @param bool                   $force
      *
      * @return bool
      */
@@ -93,7 +94,7 @@ class Cache
     }
 
     /**
-     * Remove an item from the cache
+     * Remove an item from the cache.
      *
      * @param $key
      *
@@ -105,7 +106,7 @@ class Cache
     }
 
     /**
-     * Empty the cache
+     * Empty the cache.
      *
      * @return bool
      */
@@ -115,7 +116,7 @@ class Cache
     }
 
     /**
-     * Removes entries from the cache matching the given tag
+     * Removes entries from the cache matching the given tag.
      *
      * @param string $tag
      *
@@ -127,7 +128,7 @@ class Cache
     }
 
     /**
-     * Removes entries from the cache matching the given tags
+     * Removes entries from the cache matching the given tags.
      *
      * @param array $tags
      *
@@ -143,7 +144,7 @@ class Cache
     }
 
     /**
-     * Adds a tag to the shutdown queue
+     * Adds a tag to the shutdown queue.
      *
      * @param string $tag
      */
@@ -163,7 +164,7 @@ class Cache
     }
 
     /**
-     * Remove tag from the list ignored on save
+     * Remove tag from the list ignored on save.
      *
      * @param string $tag
      */
@@ -173,7 +174,7 @@ class Cache
     }
 
     /**
-     * Add tag to the list ignored on clear. Tags in this list won't be cleared via clearTags()
+     * Add tag to the list ignored on clear. Tags in this list won't be cleared via clearTags().
      *
      * @param string $tag
      */
@@ -183,7 +184,7 @@ class Cache
     }
 
     /**
-     * Remove tag from the list ignored on clear
+     * Remove tag from the list ignored on clear.
      *
      * @param string $tag
      */
@@ -193,7 +194,7 @@ class Cache
     }
 
     /**
-     * Write and clean up cache
+     * Write and clean up cache.
      *
      * @param bool $forceWrite
      */
@@ -203,7 +204,7 @@ class Cache
     }
 
     /**
-     * Disables the complete pimcore cache
+     * Disables the complete pimcore cache.
      */
     public static function disable()
     {
@@ -211,7 +212,7 @@ class Cache
     }
 
     /**
-     * Enables the pimcore cache
+     * Enables the pimcore cache.
      */
     public static function enable()
     {

@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
@@ -41,22 +41,22 @@ class Pimcore extends Module\Symfony
             'purge_class_directory' => true,
 
             // initializes objects from definitions, only if connect_db and initialize_db
-            'setup_objects' => false
+            'setup_objects' => false,
         ]);
 
         parent::__construct($moduleContainer, $config);
     }
 
     /**
-     * @return Pimcore|Module
+     * @return Module|Pimcore
      */
     public function getPimcoreModule()
     {
-        return $this->getModule('\\' . __CLASS__);
+        return $this->getModule('\\'.__CLASS__);
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\Kernel|Kernel
+     * @return Kernel|\Symfony\Component\HttpKernel\Kernel
      */
     public function getKernel()
     {
@@ -91,7 +91,42 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * Initialize the kernel (see parent Symfony module)
+     * {@inheritdoc}
+     */
+    public function _before(\Codeception\TestInterface $test)
+    {
+        parent::_before($test);
+
+        // default pimcore state is non-admin
+        $this->unsetAdminMode();
+    }
+
+    /**
+     * Set pimcore into admin state.
+     */
+    public function setAdminMode()
+    {
+        \Pimcore::setAdminMode();
+        Document::setHideUnpublished(false);
+        DataObject\AbstractObject::setHideUnpublished(false);
+        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject\Localizedfield::setGetFallbackValues(false);
+    }
+
+    /**
+     * Set pimcore into non-admin state.
+     */
+    public function unsetAdminMode()
+    {
+        \Pimcore::unsetAdminMode();
+        Document::setHideUnpublished(true);
+        DataObject\AbstractObject::setHideUnpublished(true);
+        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject\Localizedfield::setGetFallbackValues(true);
+    }
+
+    /**
+     * Initialize the kernel (see parent Symfony module).
      */
     protected function initializeKernel()
     {
@@ -106,19 +141,19 @@ class Pimcore extends Module\Symfony
 
         $this->kernel = \Pimcore\Bootstrap::kernel();
 
-        if ($this->config['cache_router'] === true) {
+        if (true === $this->config['cache_router']) {
             $this->persistService('router', true);
         }
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
-        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new \Symfony\Component\EventDispatcher\Event(), TestEvents::KERNEL_BOOTED);
     }
 
     protected function setupPimcoreDirectories()
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY
+            PIMCORE_ASSET_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -138,8 +173,6 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @param Connection $connection
-     *
      * @return string
      */
     protected function getDbName(Connection $connection)
@@ -148,7 +181,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * Connect to DB and optionally initialize a new DB
+     * Connect to DB and optionally initialize a new DB.
      */
     protected function setupDbConnection()
     {
@@ -187,13 +220,11 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * Initialize (drop, re-create and setup) the test DB
-     *
-     * @param Connection $connection
-     *
-     * @return bool
+     * Initialize (drop, re-create and setup) the test DB.
      *
      * @throws ModuleException
+     *
+     * @return bool
      */
     protected function initializeDb(Connection $connection)
     {
@@ -210,7 +241,7 @@ class Pimcore extends Module\Symfony
         $installer->setImportDatabaseDataDump(false);
         $installer->setupDatabase([
             'username' => 'admin',
-            'password' => microtime()
+            'password' => microtime(),
         ]);
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
@@ -219,9 +250,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * Drop and re-create the DB
-     *
-     * @param Connection $connection
+     * Drop and re-create the DB.
      */
     protected function dropAndCreateDb(Connection $connection)
     {
@@ -229,8 +258,7 @@ class Pimcore extends Module\Symfony
         $params = $connection->getParams();
         $config = $connection->getConfiguration();
 
-        unset($params['url']);
-        unset($params['dbname']);
+        unset($params['url'], $params['dbname']);
 
         // use a dedicated setup connection as the framework connection is bound to the DB and will
         // fail if the DB doesn't exist
@@ -244,13 +272,11 @@ class Pimcore extends Module\Symfony
         }
 
         $this->debug(sprintf('[DB] Creating DB %s', $dbName));
-        $schemaManager->createDatabase($connection->quoteIdentifier($dbName) . ' charset=utf8mb4');
+        $schemaManager->createDatabase($connection->quoteIdentifier($dbName).' charset=utf8mb4');
     }
 
     /**
      * Try to connect to the DB and set constant if connection was successful.
-     *
-     * @param Connection $connection
      */
     protected function connectDb(Connection $connection)
     {
@@ -262,51 +288,16 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * Remove and re-create class directory
+     * Remove and re-create class directory.
      */
     protected function purgeClassDirectory()
     {
         $filesystem = new Filesystem();
         if (file_exists(PIMCORE_CLASS_DIRECTORY)) {
-            $this->debug('[INIT] Purging class directory ' . PIMCORE_CLASS_DIRECTORY);
+            $this->debug('[INIT] Purging class directory '.PIMCORE_CLASS_DIRECTORY);
 
             $filesystem->remove(PIMCORE_CLASS_DIRECTORY);
             $filesystem->mkdir(PIMCORE_CLASS_DIRECTORY, 0755);
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function _before(\Codeception\TestInterface $test)
-    {
-        parent::_before($test);
-
-        // default pimcore state is non-admin
-        $this->unsetAdminMode();
-    }
-
-    /**
-     * Set pimcore into admin state
-     */
-    public function setAdminMode()
-    {
-        \Pimcore::setAdminMode();
-        Document::setHideUnpublished(false);
-        DataObject\AbstractObject::setHideUnpublished(false);
-        DataObject\AbstractObject::setGetInheritedValues(false);
-        DataObject\Localizedfield::setGetFallbackValues(false);
-    }
-
-    /**
-     * Set pimcore into non-admin state
-     */
-    public function unsetAdminMode()
-    {
-        \Pimcore::unsetAdminMode();
-        Document::setHideUnpublished(true);
-        DataObject\AbstractObject::setHideUnpublished(true);
-        DataObject\AbstractObject::setGetInheritedValues(true);
-        DataObject\Localizedfield::setGetFallbackValues(true);
     }
 }
