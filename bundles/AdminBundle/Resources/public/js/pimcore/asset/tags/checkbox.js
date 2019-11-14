@@ -32,7 +32,7 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
             width: this.getColumnWidth(field, 40),
             sortable: false,
             filter: this.getGridColumnFilter(field),
-            dataIndex: field.key
+            dataIndex: field.key,
         });
 
         return columnConfig;

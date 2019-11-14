@@ -29,7 +29,8 @@ pimcore.asset.tags.textarea = Class.create(pimcore.asset.tags.abstract, {
             sortable:false,
             dataIndex:field.key,
             filter: this.getGridColumnFilter(field),
-            getEditor: this.getGridColumnEditor.bind(this, field)
+            getEditor: this.getGridColumnEditor.bind(this, field),
+            renderer: this.getRenderer(field)
         };
     },
 
