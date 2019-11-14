@@ -872,9 +872,10 @@ class AssetHelperController extends AdminController
         $metadataItems = [];
         $tmp = [];
         foreach ($list as $item) {
-            //only allow unique metadata columns
-            if (!in_array($item->getName(), $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
-                $tmp[] = $item->getName();
+            //only allow unique metadata columns with subtypes
+            $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
+            if (!in_array($uniqueKey, $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
+                $tmp[] = $uniqueKey;
                 /** @var $item Metadata\Predefined */
                 $item->expand();
                 $metadataItems[] = [
