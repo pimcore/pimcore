@@ -1457,17 +1457,22 @@ class Service extends Model\Element\Service
             return $data;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !\Pimcore\Tool::classExists($className)) {
+        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+        if (!$className || $calculator === null) {
             Logger::error('Class does not exist: ' . $className);
 
             return null;
         }
 
+        if(!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
+            @trigger_error('Using a calculator class which does not implement '.Model\DataObject\ClassDefinition\CalculatorClassInterface::class.' is deprecated', \E_USER_DEPRECATED);
+        }
+
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
 
-        if (method_exists($className, 'getCalculatedValueForEditMode')) {
-            $result = call_user_func($className . '::getCalculatedValueForEditMode', $object, $data);
+        if (method_exists($calculator, 'getCalculatedValueForEditMode')) {
+            $result = call_user_func([$calculator, 'getCalculatedValueForEditMode'], $object, $data);
         } else {
             $result = self::getCalculatedFieldValue($object, $data);
         }
@@ -1504,13 +1509,14 @@ class Service extends Model\Element\Service
             return null;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !\Pimcore\Tool::classExists($className)) {
+        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+        if (!$className || $calculator === null) {
             Logger::error('Calculator class "' . $className.'" does not exist -> '.$fieldname.'=null');
 
             return null;
         }
 
-        if (method_exists($className, 'compute')) {
+        if (method_exists($calculator, 'compute')) {
             $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
@@ -1518,7 +1524,7 @@ class Service extends Model\Element\Service
                     || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
-            $result = call_user_func($className . '::compute', $object, $data);
+            $result = call_user_func([$calculator, 'compute'], $object, $data);
             Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
             return $result;

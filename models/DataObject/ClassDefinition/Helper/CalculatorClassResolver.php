@@ -17,19 +17,13 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 
-class LinkGeneratorResolver extends ClassResolver
+class CalculatorClassResolver extends ClassResolver
 {
-    /**
-     * @param $generatorClass
-     *
-     * @return LinkGeneratorInterface
-     */
-    public static function resolveGenerator($generatorClass)
+    public static function resolveCalculatorClass($calculatorClass)
     {
-        return self::resolve($generatorClass, static function($generator) {
-            return $generator instanceof LinkGeneratorInterface;
-        });
+        return self::resolve($calculatorClass);
     }
 }
