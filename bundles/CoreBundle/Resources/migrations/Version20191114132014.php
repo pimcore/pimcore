@@ -20,6 +20,6 @@ class Version20191114132014 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        // no need to revert that change (it's kind of a bug that this index is missing)
+        $this->addSql('ALTER TABLE `documents_hardlink` DROP INDEX `sourceId`');
     }
 }
