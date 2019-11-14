@@ -143,7 +143,7 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
 
-        if($new instanceof Concrete) {
+        if ($new instanceof Concrete) {
             foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
                 if ($fieldDefinition->getUnique()) {
                     $new->set($fieldDefinition->getName(), null);
@@ -207,7 +207,7 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
 
-        if($new instanceof Concrete) {
+        if ($new instanceof Concrete) {
             foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
                 if ($fieldDefinition->getUnique()) {
                     $new->set($fieldDefinition->getName(), null);
