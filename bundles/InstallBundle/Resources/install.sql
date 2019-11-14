@@ -184,7 +184,8 @@ CREATE TABLE `documents_hardlink` (
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childrenFromSource` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY `id` (`id`)
+  PRIMARY KEY `id` (`id`),
+  KEY `sourceId` (`sourceId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_link`;
