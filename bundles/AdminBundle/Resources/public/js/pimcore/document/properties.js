@@ -21,10 +21,10 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
 
     inheritableKeys: ["language"],
 
-    getPropertyData: function (name) {
-
+    getPropertyData: function (name, key) {
+        var key = (key ? key : "data");
         if (this.element.data.properties[name]) {
-            return this.element.data.properties[name]["data"];
+            return this.element.data.properties[name][key];
         }
 
         return null;
@@ -38,6 +38,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
             this.layout = $super();
 
             var languageData = this.getPropertyData("language");
+            var languageInheritance = this.getPropertyData("language", "inherited");
 
             var languagestore = [["", t("none")]];
             var websiteLanguages = pimcore.settings.websiteLanguages;
@@ -69,18 +70,30 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
                 mode: "local",
                 value: languageData,
                 width: 260,
+                disabled: languageInheritance,
                 listeners: {
                     "afterrender": setLanguageIcon,
                     "select": setLanguageIcon
                 }
             });
 
+            var languageOverwrite = new Ext.form.Checkbox({
+                fieldLabel: t('overwrite_parent_language'),
+                labelWidth: 170,
+                value: !languageInheritance,
+                listeners: {
+                    "change" : function (field, checked) {
+                        language.setDisabled(!checked);
+                    }.bind(this)
+                }
+            });
+
             this.languagesPanel = new Ext.form.FormPanel({
                 bodyStyle: "padding: 10px;",
                 autoWidth: true,
-                height: 65,
+                height: 100,
                 collapsible: false,
-                items: [language]
+                items: [languageOverwrite, language]
             });
 
             var systempropertiesItems = [this.languagesPanel];
