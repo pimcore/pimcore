@@ -150,11 +150,13 @@
 
 #pimcore_loading.loaded {
     position: absolute;
-    z-index: 10;
+    z-index: 15;
     left: 8px;
-    bottom: 210px;
+    bottom: 200px;
     width:44px;
+    height: 25px;
     padding:0;
+    background: #0C0F12;
 }
 
 #pimcore_loading.loaded .spinner {
@@ -2286,9 +2288,10 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 .x-body .sf-minitoolbar {
     left:0;
     right:auto;
-    bottom: 200px;
+    bottom: 195px;
     background: #0C0F12;
     text-align: center;
+    z-index: 12;
 }
 
 .x-body .sf-minitoolbar a {
