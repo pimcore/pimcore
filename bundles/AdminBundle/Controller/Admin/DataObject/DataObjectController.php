@@ -596,6 +596,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $rel['fullpath'] = $rel['path'];
                         $rel['classname'] = $rel['subtype'];
                         $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
+                        $rel['published'] = (bool)$rel['published'];
                         $data[] = $rel;
                     }
                 } else {
