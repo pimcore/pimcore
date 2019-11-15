@@ -19,6 +19,7 @@ class ClassResolver
                 try {
                     $service = \Pimcore::getKernel()->getContainer()->get($serviceName);
                     self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
+
                     return self::$cache[$class];
                 } catch (\Exception $e) {
                     Logger::error($e);
@@ -26,6 +27,7 @@ class ClassResolver
             } else {
                 $service = new $class;
                 self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
+
                 return self::$cache[$class];
             }
         }
@@ -33,8 +35,9 @@ class ClassResolver
         return null;
     }
 
-    private static function returnValidServiceOrNull($service, callable $validationCallback = null) {
-        if($validationCallback && !$validationCallback($service)) {
+    private static function returnValidServiceOrNull($service, callable $validationCallback = null)
+    {
+        if ($validationCallback && !$validationCallback($service)) {
             return null;
         }
 

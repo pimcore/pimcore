@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 
 class LinkGeneratorResolver extends ClassResolver
@@ -28,7 +27,7 @@ class LinkGeneratorResolver extends ClassResolver
      */
     public static function resolveGenerator($generatorClass)
     {
-        return self::resolve($generatorClass, static function($generator) {
+        return self::resolve($generatorClass, static function ($generator) {
             return $generator instanceof LinkGeneratorInterface;
         });
     }

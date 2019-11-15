@@ -1464,7 +1464,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if(!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
+        if (!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
             @trigger_error('Using a calculator class which does not implement '.Model\DataObject\ClassDefinition\CalculatorClassInterface::class.' is deprecated', \E_USER_DEPRECATED);
         }
 

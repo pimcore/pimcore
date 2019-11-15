@@ -833,6 +833,7 @@ class Document extends Element\AbstractElement
      * Returns the full path of the document including the key (path+key)
      *
      * @param bool $force
+     *
      * @return string
      */
     public function getFullPath(bool $force = false)
@@ -880,7 +881,7 @@ class Document extends Element\AbstractElement
                 $parent = $parent->getParent();
             }
 
-            if(!$link) {
+            if (!$link) {
                 $config = \Pimcore\Config::getSystemConfig();
 
                 // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
@@ -900,13 +901,13 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if(!$link && $config->general->domain) {
+                if (!$link && $config->general->domain) {
                     $link = $scheme . $config->general->domain . $this->getRealFullPath();
                 }
             }
         }
 
-        if(!$link) {
+        if (!$link) {
             $link = $this->getPath() . $this->getKey();
         }
 

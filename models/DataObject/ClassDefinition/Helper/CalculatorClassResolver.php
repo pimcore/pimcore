@@ -16,10 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
-use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
-use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
-
 class CalculatorClassResolver extends ClassResolver
 {
     public static function resolveCalculatorClass($calculatorClass)
