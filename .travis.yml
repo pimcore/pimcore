@@ -41,7 +41,7 @@ matrix:
       php: 7.2
 
 
-    - name: "All Tests - PHP 7.3 Symfony 3.4"
+    - name: "All Tests - PHP 7.3 Symfony 4"
       os: linux
       sudo: required
       php: 7.3
