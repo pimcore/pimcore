@@ -961,7 +961,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param DataObject\Classificationstore $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception
@@ -975,6 +975,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $items = $data->getItems();
         $validLanguages = $this->getValidLanguages();
         $subItems = [];
+        $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
@@ -990,7 +991,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();
-                            $value = $items[$activeGroupId][$keyId][$validLanguage];
+
+                            $object = $data->getObject();
+                            if ($object->getClass()->getAllowInherit()) {
+                                DataObject\AbstractObject::setGetInheritedValues(true);
+                                $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
+                                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+                            } else {
+                                $value = $items[$activeGroupId][$keyId][$validLanguage];
+                            }
 
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
 
