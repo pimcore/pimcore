@@ -640,7 +640,10 @@ class GridHelperService
                 if ($operator == 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } elseif ($operator == 'IN') {
-                    $value = '(' . implode(',',$value) . ')';
+                    $quoted = array_map(function ($val) use ($db) {
+                        return $db->quote($val);
+                    }, $value);
+                    $value = '(' . implode(',',$quoted) . ')';
                 } else {
                     $value = $db->quote($value);
                 }
