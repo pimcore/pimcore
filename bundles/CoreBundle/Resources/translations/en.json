@@ -915,5 +915,6 @@
   "default_metadata": "Default Metadata",
   "asset_export_warning": "Please note that the export does not support some fields(e.g. preview, size). Press OK to continue with the export.",
   "paste_clipboard": "Paste Clipboard",
-  "paste_here": "Paste your clipboard data here"
+  "paste_here": "Paste your clipboard data here",
+  "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Cannot save Metadata!</b><br />Please try to edit the metadata in Asset."
 }

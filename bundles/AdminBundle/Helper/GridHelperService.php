@@ -630,7 +630,7 @@ class GridHelperService
                     }
                     $filter['value'] = strtotime($filter['value']);
                 } elseif ($filterType == 'list') {
-                    $operator = '=';
+                    $operator = 'IN';
                 } elseif ($filterType == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int) $filter['value'];
@@ -638,7 +638,14 @@ class GridHelperService
                 // system field
                 $value = $filter['value'];
                 if ($operator == 'LIKE') {
-                    $value = '%' . $value . '%';
+                    $value = $db->quote('%' . $value . '%');
+                } elseif ($operator == 'IN') {
+                    $quoted = array_map(function ($val) use ($db) {
+                        return $db->quote($val);
+                    }, $value);
+                    $value = '(' . implode(',',$quoted) . ')';
+                } else {
+                    $value = $db->quote($value);
                 }
 
                 if ($filterField == 'fullpath') {
@@ -651,7 +658,7 @@ class GridHelperService
                         $language = $filterDef[1];
                     }
                     $language = str_replace(['none', 'default'], '', $language);
-                    $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $db->quote($value) . ' AND `language` = ' . $db->quote($language). ')';
+                    $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
                     $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($value);
                 }
