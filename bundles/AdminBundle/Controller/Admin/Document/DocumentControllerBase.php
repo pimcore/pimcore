@@ -274,10 +274,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      * @param $propertyValue
      * @return bool
      */
-    protected function getPropertyInheritance($document, $propertyName, $propertyValue)
+    protected function getPropertyInheritance(Model\Document $document, $propertyName, $propertyValue)
     {
-        if ($parentDocument = Model\Document::getById($document->getParentId())) {
-            return $propertyValue == $parentDocument->getProperty($propertyName);
+        if ($document->getParent()) {
+            return $propertyValue == $document->getParent()->getProperty($propertyName);
         }
 
         return false;
