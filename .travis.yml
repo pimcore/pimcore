@@ -24,26 +24,27 @@ matrix:
       os: linux
       sudo: required
       php: 7.2
+      env:
+        - SYMFONY_VERSION="^3.4"
 
     - name: "All Tests - PHP 7.3 Symfony 3.4"
       os: linux
       sudo: required
       php: 7.3
+      env:
+        - SYMFONY_VERSION="^3.4"
 
     # Symfony 4.* all tests
     - name: "All Tests - PHP 7.2 Symfony 4"
       os: linux
       sudo: required
       php: 7.2
-      env:
-        - SYMFONY_VERSION="^4.0"
+
 
     - name: "All Tests - PHP 7.3 Symfony 3.4"
       os: linux
       sudo: required
       php: 7.3
-      env:
-        - SYMFONY_VERSION="^4.0"
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 Symfony 3.4"
@@ -51,6 +52,7 @@ matrix:
       sudo: required
       php: 7.2
       env:
+        - SYMFONY_VERSION="^3.4"
         - PIMCORE_TEST_SUITE=rest
         - PIMCORE_TEST_ENV=http
 
@@ -59,10 +61,11 @@ matrix:
       sudo: required
       php: 7.3
       env:
+        - SYMFONY_VERSION="^3.4"
         - PIMCORE_TEST_SUITE=rest
         - PIMCORE_TEST_ENV=http
 
-    - name: "Redis Cache Tests - PHP 7.2 Symfony 3.4"
+    - name: "Redis Cache Tests - PHP 7.2 Symfony 4"
       os: linux
       php: 7.2
       env:
@@ -75,12 +78,14 @@ matrix:
       os: linux
       php: 7.2
       env:
+        - SYMFONY_VERSION="^3.4"
         - TASK_TESTS=0
         - TASK_STAN=1
     - name: "PHPStan Tests - PHP 7.3 Symfony 3.4"
       os: linux
       php: 7.3
       env:
+        - SYMFONY_VERSION="^3.4"
         - TASK_TESTS=0
         - TASK_STAN=1
 
@@ -91,7 +96,6 @@ matrix:
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
-        - SYMFONY_VERSION="^4.0"
 
     - name: "PHPStan Tests - PHP 7.3 Symfony 4"
       os: linux
@@ -99,10 +103,9 @@ matrix:
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
-        - SYMFONY_VERSION="^4.0"
 
     # Test Docs
-    - name: "Documentation - PHP 7.2 Symfony 3.4"
+    - name: "Documentation"
       os: linux
       php: 7.2
       env:
@@ -128,7 +131,7 @@ env:
     - PIMCORE_TEST_URL=http://pimcore-test.dev
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
-    - SYMFONY_VERSION=^3.4
+    - SYMFONY_VERSION=^4.0
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 
 
