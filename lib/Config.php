@@ -263,7 +263,7 @@ class Config
         return $config;
     }
 
-    private static function getArrayValueSave($keys, $array)
+    private static function getArrayValue($keys, $array)
     {
         $len = count($keys);
         $pointer = $array;
@@ -292,132 +292,132 @@ class Config
             //legacy system configuration mapping
             $systemConfig = new \Pimcore\Config\Config([
                 'general' => [
-                    'timezone' => self::getArrayValueSave(['general', 'timezone'], $config),
-                    'path_variable' => self::getArrayValueSave(['general', 'path_variable'], $config),
-                    'domain' => self::getArrayValueSave(['general', 'domain'], $config),
-                    'redirect_to_maindomain' => self::getArrayValueSave(['general', 'redirect_to_maindomain'], $config),
-                    'language' => self::getArrayValueSave(['general', 'language'], $config),
-                    'validLanguages' => self::getArrayValueSave(['general', 'valid_languages'], $config),
-                    'fallbackLanguages' => self::getArrayValueSave(['general', 'fallback_languages'], $config),
-                    'defaultLanguage' => self::getArrayValueSave(['general', 'default_language'], $config),
-                    'loginscreencustomimage' => self::getArrayValueSave(['branding', 'login_screen_custom_image'], $config),
-                    'disableusagestatistics' => self::getArrayValueSave(['general', 'disable_usage_statistics'], $config),
-                    'debug_admin_translations' => self::getArrayValueSave(['general', 'debug_admin_translations'], $config),
-                    'instanceIdentifier' => self::getArrayValueSave(['general', 'instance_identifier'], $config),
-                    'show_cookie_notice' => self::getArrayValueSave(['general', 'show_cookie_notice'], $config)
+                    'timezone' => self::getArrayValue(['general', 'timezone'], $config),
+                    'path_variable' => self::getArrayValue(['general', 'path_variable'], $config),
+                    'domain' => self::getArrayValue(['general', 'domain'], $config),
+                    'redirect_to_maindomain' => self::getArrayValue(['general', 'redirect_to_maindomain'], $config),
+                    'language' => self::getArrayValue(['general', 'language'], $config),
+                    'validLanguages' => self::getArrayValue(['general', 'valid_languages'], $config),
+                    'fallbackLanguages' => self::getArrayValue(['general', 'fallback_languages'], $config),
+                    'defaultLanguage' => self::getArrayValue(['general', 'default_language'], $config),
+                    'loginscreencustomimage' => self::getArrayValue(['branding', 'login_screen_custom_image'], $config),
+                    'disableusagestatistics' => self::getArrayValue(['general', 'disable_usage_statistics'], $config),
+                    'debug_admin_translations' => self::getArrayValue(['general', 'debug_admin_translations'], $config),
+                    'instanceIdentifier' => self::getArrayValue(['general', 'instance_identifier'], $config),
+                    'show_cookie_notice' => self::getArrayValue(['general', 'show_cookie_notice'], $config)
                 ],
                 'documents' => [
                     'versions' => [
-                        'days' => self::getArrayValueSave(['documents', 'versions', 'days'], $config),
-                        'steps' => self::getArrayValueSave(['documents', 'versions', 'steps'], $config)
+                        'days' => self::getArrayValue(['documents', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['documents', 'versions', 'steps'], $config)
                     ],
-                    'error_pages' => self::getArrayValueSave(['documents', 'error_pages'], $config),
-                    'createredirectwhenmoved' => self::getArrayValueSave(['documents', 'create_redirect_when_moved'], $config),
-                    'allowtrailingslash' => self::getArrayValueSave(['documents', 'allow_trailing_slash'], $config),
-                    'generatepreview' => self::getArrayValueSave(['documents', 'generate_preview'], $config)
+                    'error_pages' => self::getArrayValue(['documents', 'error_pages'], $config),
+                    'createredirectwhenmoved' => self::getArrayValue(['documents', 'create_redirect_when_moved'], $config),
+                    'allowtrailingslash' => self::getArrayValue(['documents', 'allow_trailing_slash'], $config),
+                    'generatepreview' => self::getArrayValue(['documents', 'generate_preview'], $config)
                 ],
                 'objects' => [
                     'versions' => [
-                        'days' => self::getArrayValueSave(['objects', 'versions', 'days'], $config),
-                        'steps' => self::getArrayValueSave(['objects', 'versions', 'steps'], $config)
+                        'days' => self::getArrayValue(['objects', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['objects', 'versions', 'steps'], $config)
                     ]
                 ],
                 'assets' => [
                     'versions' => [
-                        'days' => self::getArrayValueSave(['assets', 'versions', 'days'], $config),
-                        'steps' => self::getArrayValueSave(['assets', 'versions', 'steps'], $config)
+                        'days' => self::getArrayValue(['assets', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['assets', 'versions', 'steps'], $config)
                     ],
-                    'icc_rgb_profile' => self::getArrayValueSave(['assets', 'icc_rgb_profile'], $config),
-                    'icc_cmyk_profile' => self::getArrayValueSave(['assets', 'icc_cmyk_profile'], $config),
-                    'hide_edit_image' => self::getArrayValueSave(['assets', 'hide_edit_image'], $config),
-                    'disable_tree_preview' => self::getArrayValueSave(['assets', 'disable_tree_preview'], $config)
+                    'icc_rgb_profile' => self::getArrayValue(['assets', 'icc_rgb_profile'], $config),
+                    'icc_cmyk_profile' => self::getArrayValue(['assets', 'icc_cmyk_profile'], $config),
+                    'hide_edit_image' => self::getArrayValue(['assets', 'hide_edit_image'], $config),
+                    'disable_tree_preview' => self::getArrayValue(['assets', 'disable_tree_preview'], $config)
                 ],
                 'services' => [
                     'google' => [
-                        'client_id' => self::getArrayValueSave(['services', 'google', 'client_id'], $config),
-                        'email' => self::getArrayValueSave(['services', 'google', 'email'], $config),
-                        'simpleapikey' => self::getArrayValueSave(['services', 'google', 'simple_api_key'], $config),
-                        'browserapikey' => self::getArrayValueSave(['services', 'google', 'browser_api_key'], $config)
+                        'client_id' => self::getArrayValue(['services', 'google', 'client_id'], $config),
+                        'email' => self::getArrayValue(['services', 'google', 'email'], $config),
+                        'simpleapikey' => self::getArrayValue(['services', 'google', 'simple_api_key'], $config),
+                        'browserapikey' => self::getArrayValue(['services', 'google', 'browser_api_key'], $config)
                     ]
                 ],
                 'cache' => [
-                    'enabled' => self::getArrayValueSave(['cache', 'enabled'], $config),
-                    'lifetime' => self::getArrayValueSave(['cache', 'lifetime'], $config),
-                    'excludePatterns' => self::getArrayValueSave(['cache', 'exclude_patterns'], $config),
-                    'excludeCookie' => self::getArrayValueSave(['cache', 'exclude_cookie'], $config)
+                    'enabled' => self::getArrayValue(['cache', 'enabled'], $config),
+                    'lifetime' => self::getArrayValue(['cache', 'lifetime'], $config),
+                    'excludePatterns' => self::getArrayValue(['cache', 'exclude_patterns'], $config),
+                    'excludeCookie' => self::getArrayValue(['cache', 'exclude_cookie'], $config)
                 ],
                 'webservice' => [
-                    'enabled' => self::getArrayValueSave(['webservice', 'enabled'], $config)
+                    'enabled' => self::getArrayValue(['webservice', 'enabled'], $config)
                 ],
                 'httpclient' => [
-                    'adapter' => self::getArrayValueSave(['httpclient', 'adapter'], $config),
-                    'proxy_host' => self::getArrayValueSave(['httpclient', 'proxy_host'], $config),
-                    'proxy_port' => self::getArrayValueSave(['httpclient', 'proxy_port'], $config),
-                    'proxy_user' => self::getArrayValueSave(['httpclient', 'proxy_user'], $config),
-                    'proxy_pass' => self::getArrayValueSave(['httpclient', 'proxy_pass'], $config)
+                    'adapter' => self::getArrayValue(['httpclient', 'adapter'], $config),
+                    'proxy_host' => self::getArrayValue(['httpclient', 'proxy_host'], $config),
+                    'proxy_port' => self::getArrayValue(['httpclient', 'proxy_port'], $config),
+                    'proxy_user' => self::getArrayValue(['httpclient', 'proxy_user'], $config),
+                    'proxy_pass' => self::getArrayValue(['httpclient', 'proxy_pass'], $config)
                 ],
                 'email' => [
                     'sender' => [
-                        'name' => self::getArrayValueSave(['email', 'sender', 'name'], $config),
-                        'email' => self::getArrayValueSave(['email', 'sender', 'email'], $config)
+                        'name' => self::getArrayValue(['email', 'sender', 'name'], $config),
+                        'email' => self::getArrayValue(['email', 'sender', 'email'], $config)
                     ],
                     'return' => [
-                        'name' => self::getArrayValueSave(['email', 'return', 'name'], $config),
-                        'email' => self::getArrayValueSave(['email', 'return', 'email'], $config)
+                        'name' => self::getArrayValue(['email', 'return', 'name'], $config),
+                        'email' => self::getArrayValue(['email', 'return', 'email'], $config)
                     ],
-                    'method' => self::getArrayValueSave(['email', 'method'], $config),
+                    'method' => self::getArrayValue(['email', 'method'], $config),
                     'smtp' => [
-                        'host' => self::getArrayValueSave(['email', 'smtp', 'host'], $config),
-                        'port' => self::getArrayValueSave(['email', 'smtp', 'port'], $config),
-                        'ssl' => self::getArrayValueSave(['email', 'smtp', 'encryption'], $config),
+                        'host' => self::getArrayValue(['email', 'smtp', 'host'], $config),
+                        'port' => self::getArrayValue(['email', 'smtp', 'port'], $config),
+                        'ssl' => self::getArrayValue(['email', 'smtp', 'encryption'], $config),
                         'name' => 'smtp',
                         'auth' => [
-                            'method' => self::getArrayValueSave(['email', 'smtp', 'auth_mode'], $config),
-                            'username' => self::getArrayValueSave(['email', 'smtp', 'username'], $config),
-                            'password' => self::getArrayValueSave(['email', 'smtp', 'password'], $config)
+                            'method' => self::getArrayValue(['email', 'smtp', 'auth_mode'], $config),
+                            'username' => self::getArrayValue(['email', 'smtp', 'username'], $config),
+                            'password' => self::getArrayValue(['email', 'smtp', 'password'], $config)
                         ],
                     ],
                     'debug' => [
-                        'emailaddresses' => self::getArrayValueSave(['email', 'debug', 'email_addresses'], $config)
+                        'emailaddresses' => self::getArrayValue(['email', 'debug', 'email_addresses'], $config)
                     ]
                 ],
                 'newsletter' => [
                     'sender' => [
-                        'name' => self::getArrayValueSave(['newsletter', 'sender', 'name'], $config),
-                        'email' => self::getArrayValueSave(['newsletter', 'sender', 'email'], $config)
+                        'name' => self::getArrayValue(['newsletter', 'sender', 'name'], $config),
+                        'email' => self::getArrayValue(['newsletter', 'sender', 'email'], $config)
                     ],
                     'return' => [
-                        'name' => self::getArrayValueSave(['newsletter', 'return', 'name'], $config),
-                        'email' => self::getArrayValueSave(['newsletter', 'return', 'name'], $config)
+                        'name' => self::getArrayValue(['newsletter', 'return', 'name'], $config),
+                        'email' => self::getArrayValue(['newsletter', 'return', 'name'], $config)
                     ],
-                    'method' => self::getArrayValueSave(['newsletter', 'method'], $config),
+                    'method' => self::getArrayValue(['newsletter', 'method'], $config),
                     'smtp' => [
-                        'host' => self::getArrayValueSave(['newsletter', 'smtp', 'host'], $config),
-                        'port' => self::getArrayValueSave(['newsletter', 'smtp', 'port'], $config),
-                        'ssl' => self::getArrayValueSave(['newsletter', 'smtp', 'encryption'], $config),
+                        'host' => self::getArrayValue(['newsletter', 'smtp', 'host'], $config),
+                        'port' => self::getArrayValue(['newsletter', 'smtp', 'port'], $config),
+                        'ssl' => self::getArrayValue(['newsletter', 'smtp', 'encryption'], $config),
                         'name' => 'smtp',
                         'auth' => [
-                            'method' => self::getArrayValueSave(['newsletter', 'smtp', 'auth_mode'], $config),
-                            'username' => self::getArrayValueSave(['newsletter', 'smtp', 'username'], $config),
-                            'password' => self::getArrayValueSave(['newsletter', 'smtp', 'password'], $config)
+                            'method' => self::getArrayValue(['newsletter', 'smtp', 'auth_mode'], $config),
+                            'username' => self::getArrayValue(['newsletter', 'smtp', 'username'], $config),
+                            'password' => self::getArrayValue(['newsletter', 'smtp', 'password'], $config)
                         ],
                     ],
-                    'debug' => self::getArrayValueSave(['newsletter', 'debug', 'email_addresses'], $config),
-                    'usespecific' => self::getArrayValueSave(['newsletter', 'use_specific'], $config)
+                    'debug' => self::getArrayValue(['newsletter', 'debug', 'email_addresses'], $config),
+                    'usespecific' => self::getArrayValue(['newsletter', 'use_specific'], $config)
                 ],
                 'branding' => [
-                    'login_screen_invert_colors' => self::getArrayValueSave(['branding', 'login_screen_invert_colors'], $config),
-                    'color_login_screen' => self::getArrayValueSave(['branding', 'color_login_screen'], $config),
-                    'color_admin_interface' => self::getArrayValueSave(['branding', 'color_admin_interface'], $config)
+                    'login_screen_invert_colors' => self::getArrayValue(['branding', 'login_screen_invert_colors'], $config),
+                    'color_login_screen' => self::getArrayValue(['branding', 'color_login_screen'], $config),
+                    'color_admin_interface' => self::getArrayValue(['branding', 'color_admin_interface'], $config)
                 ],
                 'applicationlog' => [
                     'mail_notification' => [
-                        'send_log_summary' => self::getArrayValueSave(['applicationlog', 'mail_notification', 'send_log_summary'], $config),
-                        'filter_priority' => self::getArrayValueSave(['applicationlog', 'mail_notification', 'filter_priority'], $config),
-                        'mail_receiver' => self::getArrayValueSave(['applicationlog', 'mail_notification', 'mail_receiver'], $config)
+                        'send_log_summary' => self::getArrayValue(['applicationlog', 'mail_notification', 'send_log_summary'], $config),
+                        'filter_priority' => self::getArrayValue(['applicationlog', 'mail_notification', 'filter_priority'], $config),
+                        'mail_receiver' => self::getArrayValue(['applicationlog', 'mail_notification', 'mail_receiver'], $config)
                     ],
-                    'archive_treshold' => self::getArrayValueSave(['applicationlog', 'archive_treshold'], $config),
-                    'archive_alternative_database' => self::getArrayValueSave(['applicationlog', 'archive_alternative_database'], $config)
+                    'archive_treshold' => self::getArrayValue(['applicationlog', 'archive_treshold'], $config),
+                    'archive_alternative_database' => self::getArrayValue(['applicationlog', 'archive_alternative_database'], $config)
                 ]
             ]);
         }
