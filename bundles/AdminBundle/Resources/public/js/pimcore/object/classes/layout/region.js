@@ -30,6 +30,25 @@ pimcore.object.classes.layout.region = Class.create(pimcore.object.classes.layou
 
     getIconClass: function () {
         return "pimcore_icon_region";
-    }
+    },
 
+    getLayout: function ($super) {
+        $super();
+
+        this.layout.add({
+            xtype: "form",
+            bodyStyle: "padding: 10px;",
+            style: "margin: 10px 0 10px 0",
+            items: [
+                {
+                    xtype: "textfield",
+                    name: "icon",
+                    fieldLabel: t("icon"),
+                    value: this.datax.icon
+                }
+            ]
+        });
+
+        return this.layout;
+    }
 });
