@@ -1,3 +1,5 @@
+# see https://docs.travis-ci.com/user/customizing-the-build/
+
 notifications:
   email:
     - travis-ci@pimcore.org
@@ -8,77 +10,91 @@ language: php
 services:
   - redis
 
+# see https://docs.travis-ci.com/user/installing-dependencies
 addons:
   mariadb: '10.3'
   hosts:
     - pimcore-test.dev
 
+# see https://docs.travis-ci.com/user/build-matrix/
 matrix:
   include:
     # Symfony 3.4 all tests
-    - os: linux
+    - name: "All Tests - PHP 7.2 Symfony 3.4"
+      os: linux
       sudo: required
       php: 7.2
 
-    - os: linux
+    - name: "All Tests - PHP 7.3 Symfony 3.4"
+      os: linux
       sudo: required
       php: 7.3
 
     # Symfony 4.* all tests
-    - os: linux
+    - name: "All Tests - PHP 7.2 Symfony 4"
+      os: linux
       sudo: required
       php: 7.2
       env:
         - SYMFONY_VERSION="^4.0"
 
-    - os: linux
+    - name: "All Tests - PHP 7.3 Symfony 3.4"
+      os: linux
       sudo: required
       php: 7.3
       env:
         - SYMFONY_VERSION="^4.0"
 
     # Other Tests
-    - os: linux
+    - name: "REST Tests - PHP 7.2 Symfony 3.4"
+      os: linux
       sudo: required
       php: 7.2
       env:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
+        - PIMCORE_TEST_SUITE=rest
+        - PIMCORE_TEST_ENV=http
 
-    - os: linux
+    - name: "REST Tests - PHP 7.3 Symfony 3.4"
+      os: linux
       sudo: required
       php: 7.3
       env:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
+        - PIMCORE_TEST_SUITE=rest
+        - PIMCORE_TEST_ENV=http
 
-    - os: linux
+    - name: "Redis Cache Tests - PHP 7.2 Symfony 3.4"
+      os: linux
       php: 7.2
       env:
-          - PIMCORE_TEST_SUITE=cache
-          - PIMCORE_TEST_GROUP=cache.core.redis
-          - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
+        - PIMCORE_TEST_SUITE=cache
+        - PIMCORE_TEST_GROUP=cache.core.redis
+        - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
 
-    # Test Stan
-    - os: linux
+    # Test Stan - see https://github.com/phpstan/phpstan
+    - name: "PHPStan Tests - PHP 7.2 Symfony 3.4"
+      os: linux
       php: 7.2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
-    - os: linux
+    - name: "PHPStan Tests - PHP 7.3 Symfony 3.4"
+      os: linux
       php: 7.3
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
     # Test Stan Symfony ^4.0
-    - os: linux
+    - name: "PHPStan Tests - PHP 7.2 Symfony 4"
+      os: linux
       php: 7.2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
         - SYMFONY_VERSION="^4.0"
-    - os: linux
+
+    - name: "PHPStan Tests - PHP 7.3 Symfony 4"
+      os: linux
       php: 7.3
       env:
         - TASK_TESTS=0
@@ -86,7 +102,8 @@ matrix:
         - SYMFONY_VERSION="^4.0"
 
     # Test Docs
-    - os: linux
+    - name: "Documentation - PHP 7.2 Symfony 3.4"
+      os: linux
       php: 7.2
       env:
         - TASK_TESTS=0
@@ -114,16 +131,19 @@ env:
     - SYMFONY_VERSION=^3.4
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 
+
+# see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:
   - mysql --version
   - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
+# see https://docs.travis-ci.com/user/job-lifecycle/
 install:
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-tests.sh; fi
   - if [ $TASK_STAN == 1 ]; then .travis/setup-tests.sh; fi
   - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
 
-
+# see https://docs.travis-ci.com/user/job-lifecycle/
 before_script:
   - yes | pecl install imagick
   - phpenv config-rm xdebug.ini
@@ -131,6 +151,7 @@ before_script:
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
   - if [ $TASK_STAN == 1 ]; then .travis/setup-php.sh; fi
 
+# see https://docs.travis-ci.com/user/job-lifecycle/
 script:
   - if [ $TASK_TESTS == 1 ]; then .travis/run-tests.sh; fi
   - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi
