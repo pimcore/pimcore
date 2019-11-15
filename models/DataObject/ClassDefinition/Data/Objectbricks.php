@@ -220,7 +220,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$params['objectFromVersion'] && method_exists($fielddefinition, 'getLazyLoading')
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\Block) {
 
@@ -248,11 +248,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
-                    if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    } else {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    }
+                    $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
                 }
             }
             $result->objectData = $data;
