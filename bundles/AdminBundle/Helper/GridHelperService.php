@@ -643,7 +643,7 @@ class GridHelperService
                     $quoted = array_map(function ($val) use ($db) {
                         return $db->quote($val);
                     }, $value);
-                    $value = '(' . implode(',',$quoted) . ')';
+                    $value = '(' . implode(',', $quoted) . ')';
                 } else {
                     $value = $db->quote($value);
                 }

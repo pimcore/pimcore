@@ -110,11 +110,13 @@ class Document extends Model\Asset
     {
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
+
             return new Document\ImageThumbnail(null);
         }
 
-        if(!$this->getCustomSetting('document_page_count')) {
+        if (!$this->getCustomSetting('document_page_count')) {
             Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
+
             return new Document\ImageThumbnail(null);
         }
 

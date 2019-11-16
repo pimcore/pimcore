@@ -62,7 +62,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                         $property->setDataFromEditmode($value);
                         $property->setInheritable($propertyData['inheritable']);
 
-                        if($propertyName == "language") {
+                        if ($propertyName == 'language') {
                             $property->setInherited($this->getPropertyInheritance($document, $propertyName, $value));
                         }
 
@@ -267,11 +267,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         $document->setProperties($properties);
     }
 
-
     /**
      * @param $document
      * @param $propertyName
      * @param $propertyValue
+     *
      * @return bool
      */
     protected function getPropertyInheritance(Model\Document $document, $propertyName, $propertyValue)
