@@ -1761,7 +1761,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         array_shift($icons);
         array_shift($icons);
-
+        
+        foreach ($icons as &$icon) {
+            $icon = $path . "/" . $icon;
+        }
+        
         $event = new GenericEvent($this, [
             'icons' => $icons,
             'classId' => $classId
@@ -1771,10 +1775,9 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $result = [];
         foreach ($icons as $icon) {
-            $fullpath = $path . "/" . $icon;
             $result[] = [
-                'text' => "<img src='{$fullpath}'>",
-                'value' => $fullpath
+                'text' => "<img src='{$icon}'>",
+                'value' => $icon
             ];
         }
 
