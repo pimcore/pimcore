@@ -1746,6 +1746,42 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
+     * @Route("/get-icons", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function getIconsAction(Request $request)
+    {
+        $classId = $request->get('classId');
+
+        $path = "/bundles/pimcoreadmin/img/data-object-icons";
+        $icons = scandir(PIMCORE_WEB_ROOT.$path);
+
+        array_shift($icons);
+        array_shift($icons);
+
+        $event = new GenericEvent($this, [
+            'icons' => $icons,
+            'classId' => $classId
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECT_ICONS_PRE_SEND_DATA, $event);
+        $icons = $event->getArgument("icons");
+
+        $result = [];
+        foreach ($icons as $icon) {
+            $fullpath = $path . "/" . $icon;
+            $result[] = [
+                'text' => "<img src='{$fullpath}'>",
+                'value' => $fullpath
+            ];
+        }
+
+        return $this->adminJson($result);
+    }
+
+    /**
      * @Route("/suggest-class-identifier")
      *
      * @param Request $request
