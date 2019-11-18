@@ -78,6 +78,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @var bool
      */
+    public $allowToCreateNewObject = false;
+
+    /**
+     * @var bool
+     */
     public $optimizedAdminLoading = false;
 
     /**
@@ -939,6 +944,22 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVisibleFields()
     {
         return $this->visibleFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowToCreateNewObject(): bool
+    {
+        return (bool) $this->allowToCreateNewObject;
+    }
+
+    /**
+     * @param bool $allowToCreateNewObject
+     */
+    public function setAllowToCreateNewObject($allowToCreateNewObject)
+    {
+        $this->allowToCreateNewObject = $allowToCreateNewObject;
     }
 
     /**
