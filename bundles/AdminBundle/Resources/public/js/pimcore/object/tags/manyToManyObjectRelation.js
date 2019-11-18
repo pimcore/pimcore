@@ -691,19 +691,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     }
     ,
 
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
-
-    }
-    ,
-
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {

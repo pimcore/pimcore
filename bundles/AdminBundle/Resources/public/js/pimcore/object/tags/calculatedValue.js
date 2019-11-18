@@ -75,10 +75,6 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-        return true;
-    },
-
     getGridColumnFilter: function (field) {
         return {type: 'string', dataIndex: field.key};
     },
