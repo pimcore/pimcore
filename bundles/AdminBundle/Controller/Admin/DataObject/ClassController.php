@@ -1757,13 +1757,10 @@ class ClassController extends AdminController implements EventedControllerInterf
         $classId = $request->get('classId');
 
         $path = "/bundles/pimcoreadmin/img/object-icons";
-        $icons = scandir(PIMCORE_WEB_ROOT . $path);
-
-        array_shift($icons);
-        array_shift($icons);
+        $icons = rscandir(PIMCORE_WEB_ROOT . $path);
         
         foreach ($icons as &$icon) {
-            $icon = $path . "/" . $icon;
+            $icon = str_replace(PIMCORE_WEB_ROOT, "", $icon);
         }
         
         $event = new GenericEvent($this, [
