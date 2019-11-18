@@ -53,13 +53,6 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
         return this.getValue();
     },
 
-    isInvalidMandatory: function () {
-        if (this.isMandatory() && !this.getValue()) {
-            return true;
-        }
-        return false;
-    },
-
     getGridColumnEditor: function (field) {
         var editorConfig = {};
 

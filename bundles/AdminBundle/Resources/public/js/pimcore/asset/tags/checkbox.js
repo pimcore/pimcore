@@ -91,10 +91,6 @@ pimcore.asset.tags.checkbox = Class.create(pimcore.asset.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory:function () {
-        return false;
-    },
-
     isDirty:function () {
         return this.dataChanged;
     }

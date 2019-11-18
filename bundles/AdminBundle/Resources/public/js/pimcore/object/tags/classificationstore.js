@@ -370,40 +370,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         return false;
     },
 
-    isInvalidMandatory: function () {
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-        var currentLanguage;
-
-        for (var i=0; i < this.frontendLanguages.length; i++) {
-
-            currentLanguage = this.frontendLanguages[i];
-
-            for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
-                if(this.languageElements[currentLanguage][s].isMandatory()) {
-                    var languageElement = this.languageElements[currentLanguage][s];
-                    try {
-                        if (languageElement.isInvalidMandatory()) {
-                            invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                                + currentLanguage.toUpperCase() + " ("
-                                + this.languageElements[currentLanguage][s].getName() + ")");
-                            isInvalid = true;
-                        }
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            }
-        }
-
-        // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
-            return invalidMandatoryFields;
-        }
-
-        return isInvalid;
-    },
-
     createGroupFieldset: function (language, group, groupedChildItems, isNew) {
         var groupId = group.id;
         var groupTitle = group.description ? group.name + " - " + group.description : group.name;

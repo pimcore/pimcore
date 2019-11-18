@@ -183,12 +183,6 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-        var value = this.getValue();
-
-        return true;
-    },
-
     isDirty: function () {
         if (!this.isRendered()) {
             return false;

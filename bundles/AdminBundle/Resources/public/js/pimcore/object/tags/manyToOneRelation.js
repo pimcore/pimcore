@@ -461,13 +461,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         return isAllowed;
     },
 
-    isInvalidMandatory: function () {
-        if (this.data.id) {
-            return false;
-        }
-        return true;
-    },
-
     requestNicePathData: function () {
         if (this.data.id) {
             var targets = new Ext.util.Collection();

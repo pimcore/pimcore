@@ -237,17 +237,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-
-        // no render check is necessary because the input component returns the right values even if it is not
-        // rendered
-        var value = this.getValue();
-        if (value.longitude && value.latitude) {
-            return false;
-        }
-        return true;
-    },
-
     isDirty: function () {
         if (!this.isRendered()) {
             return false;
