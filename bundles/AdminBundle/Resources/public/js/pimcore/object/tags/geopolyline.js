@@ -28,7 +28,16 @@ pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract,
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
-            style: 'float:left;margin-top:0px;'
+            style: 'float:left;margin-top:0px;',
+            listeners: {
+                render: function (cmp) {
+                    cmp.getEl().on('keypress', function (e) {
+                        if (e.getKey() === e.ENTER) {
+                            this.geocode();
+                        }
+                    }.bind(this));
+                }.bind(this)
+            }
         });
 
         this.component = new Ext.Panel({
