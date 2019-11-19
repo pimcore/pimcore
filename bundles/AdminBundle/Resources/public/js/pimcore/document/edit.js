@@ -377,7 +377,7 @@ pimcore.document.edit = Class.create({
         }
     },
 
-    getValues: function () {
+    getValues: function (only) {
 
         var values = {};
 
@@ -391,11 +391,17 @@ pimcore.document.edit = Class.create({
 
             for (var i = 0; i < editables.length; i++) {
                 try {
-                    if (editables[i].getName() && !editables[i].getInherited()) {
-                        editableName = editables[i].getName();
-                        values[editableName] = {};
-                        values[editableName].data = editables[i].getValue();
-                        values[editableName].type = editables[i].getType();
+                    if(only == "validate") {
+                        if(editables[i].requiredError) {
+                            editableName = editables[i].getName();
+                            this.frame.editables[i].checkValue(true);
+                            values[editableName] = editables[i];
+                        }
+                    } else if (editables[i].getName() && !editables[i].getInherited()) {
+                            editableName = editables[i].getName();
+                            values[editableName] = {};
+                            values[editableName].type = editables[i].getType();
+                            values[editableName].data = editables[i].getValue();
                     }
                 } catch (e) {
                 }

@@ -437,5 +437,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 pimcore.globalmanager.get("new_notifications").getWindow().destroy();
             }
             pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
+    },
+
+    getRequiredEditables : function () {
+        return this.edit.getValues("validate");
     }
 });
