@@ -304,7 +304,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         // 5px padding (-10)
         var body = this.getBody();
 
-        if (this.data.id) {
+        if (this.data && this.data['id']) {
             var width = null;
             var height = null;
 
@@ -330,15 +330,13 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             });
 
             this.getFileInfo(path);
-        } {
-            this.fileinfo
+        } else {
+            this.fileinfo = null;
             body.setStyle({});
         }
 
         body.removeCls("pimcore_droptarget_image");
         body.repaint();
-
-
 
         this.showPreview();
     },
@@ -555,6 +553,4 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     setContainer: function (container) {
         this.container = container;
     }
-
-})
-;
+});
