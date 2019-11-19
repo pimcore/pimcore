@@ -78,7 +78,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @var bool
      */
-    public $allowToCreateNewObject = false;
+    public $allowToCreateNewObject = true;
 
     /**
      * @var bool

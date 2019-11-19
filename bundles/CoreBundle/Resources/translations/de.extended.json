@@ -716,5 +716,5 @@
     "geopolyline": "Geografische Polylinie",
     "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits",
     "classificationstore_group_by_key": "Gruppieren nach Key",
-    "allow_to_create_new_object":  "Allow to create a new object in relation field"
+    "allow_to_create_new_object":  "Erlaube ein neues Objekt im Relationsfeld anzulegen"
 }
