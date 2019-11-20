@@ -220,6 +220,12 @@ class Bootstrap
         }
 
         self::prepareEnvVariables();
+        
+        // load custom constants
+        $customConstantsEnvFile = PIMCORE_PROJECT_ROOT . '/app/constants-env.php';
+        if (file_exists($customConstantsEnvFile)) {
+            include_once $customConstantsFile;
+        }
 
         $resolveConstant = function (string $name, $default, bool $define = true) {
             // return constant if defined
