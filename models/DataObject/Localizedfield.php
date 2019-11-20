@@ -287,13 +287,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
     public function getFieldDefinition($name, $context = [])
     {
-        if ($context && $context['containerType'] == 'fieldcollection') {
+        if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
-        } elseif ($context && $context['containerType'] == 'objectbrick') {
+        } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
-        } elseif ($context && $context['containerType'] == 'block') {
+        } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
             $blockDefinition = $object->getClass()->getFieldDefinition($containerKey);
@@ -317,15 +317,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     protected function getFieldDefinitions($context = [], $params = [])
     {
-        if ($context && $context['containerType'] == 'fieldcollection') {
+        if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
             $container = $fcDef->getFieldDefinition('localizedfields');
-        } elseif ($context && $context['containerType'] == 'objectbrick') {
+        } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
             $containerKey = $context['containerKey'];
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
             $container = $brickDef->getFieldDefinition('localizedfields');
-        } elseif ($context && $context['containerType'] == 'block') {
+        } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['fieldname'];
             $object = $this->getObject();
             /**
@@ -399,7 +399,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
 
         $allowInheritance = $fieldDefinition->supportsInheritance();
-        if ($context && ($context['containerType'] == 'block' || $context['containerType'] == 'fieldcollection')) {
+        if (isset($context['containerType']) && ($context['containerType'] == 'block' || $context['containerType'] == 'fieldcollection')) {
             $allowInheritance = false;
         }
 
@@ -421,7 +421,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
                             $parentContainer = $parent;
 
-                            if ($context && $context['containerType'] == 'objectbrick') {
+                            if (isset($context['containerType']) && $context['containerType'] == 'objectbrick') {
                                 $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
                                 $brickContainer = $parent->$brickContainerGetter();
                                 $brickGetter = 'get' . $context['containerKey'];
