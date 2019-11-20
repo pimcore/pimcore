@@ -660,7 +660,14 @@ class GridHelperService
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($value);
+                    if ($filter['type'] == 'date' && $operator == '=') {
+                        //if the equal operator is chosen with the date type, condition has to be changed
+                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                        $conditionFilters[] = $filterField . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                    } else {
+                        $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
+                    }
+
                 }
             }
         }
