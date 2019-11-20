@@ -62,7 +62,6 @@ final class ImageOptimizeTask implements TaskInterface
                 } else {
                     $this->logger->debug('Skip optimizing of '.$file." because it doesn't exist anymore");
                 }
-
             }
 
             TmpStore::delete($id);
