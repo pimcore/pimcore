@@ -381,6 +381,8 @@ class Document extends Element\AbstractElement
      */
     public function save()
     {
+        $isUpdate = false;
+
         try {
             // additional parameters (e.g. "versionNote" for the version note)
             $params = [];
@@ -388,7 +390,6 @@ class Document extends Element\AbstractElement
                 $params = func_get_arg(0);
             }
 
-            $isUpdate = false;
             $preEvent = new DocumentEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
@@ -400,6 +401,7 @@ class Document extends Element\AbstractElement
             $params = $preEvent->getArguments();
 
             $this->correctPath();
+            $differentOldPath = null;
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
