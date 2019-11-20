@@ -144,6 +144,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     hidden: (this.data['customSettings'] && this.data['customSettings']['faceCoordinates']) ? false : true,
                     style: "margin-top: 5px",
                     handler: function () {
+                        this.data['customSettings']['disableFaceDetection'] = !this.data['customSettings']['disableFaceDetection'];
                         var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
                         features.forEach(function (feature) {
                            Ext.get(feature).toggle();
@@ -450,16 +451,16 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             if (this.data['customSettings']['faceCoordinates']) {
                 this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                    this.addImageFeature(coord);
+                    this.addImageFeature(coord, this.data['customSettings']['disableFaceDetection']);
                 }.bind(this));
-
             }
         }
     },
 
-    addImageFeature: function (coords) {
+    addImageFeature: function (coords, hidden) {
         var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
-        var imageFeature = area.insertHtml('afterBegin', '<div class="image_feature"></div>', true);
+        var visibilty = hidden ? 'hidden' : 'visible';
+        var imageFeature = area.insertHtml('afterBegin', '<div class="image_feature" style="visibility: '+visibilty+'"></div>', true);
         imageFeature.setTop(coords['y'] + "%");
         imageFeature.setLeft(coords['x'] + "%");
         imageFeature.setWidth(coords['width'] + "%");
@@ -521,6 +522,10 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     "y": y
                 }
             });
+        }
+
+        if (this.data['customSettings']['disableFaceDetection']) {
+            parameters["disableFaceDetection"] = true;
         }
 
         return parameters;

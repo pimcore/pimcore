@@ -933,6 +933,12 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 // image specific data
                 if ($asset instanceof Asset\Image) {
+                    if ($request->get('disableFaceDetection')) {
+                        $asset->setCustomSetting('disableFaceDetection', true);
+                    } else {
+                        $asset->removeCustomSetting('disableFaceDetection');
+                    }
+
                     if ($request->get('image')) {
                         $imageData = $this->decodeJson($request->get('image'));
                         if (isset($imageData['focalPoint'])) {
