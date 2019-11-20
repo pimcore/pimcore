@@ -224,7 +224,7 @@ class Bootstrap
         // load custom constants
         $customConstantsEnvFile = PIMCORE_PROJECT_ROOT . '/app/constants-env.php';
         if (file_exists($customConstantsEnvFile)) {
-            include_once $customConstantsFile;
+            include_once $customConstantsEnvFile;
         }
 
         $resolveConstant = function (string $name, $default, bool $define = true) {
