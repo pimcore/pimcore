@@ -1049,7 +1049,9 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if (Runtime::isRegistered('object_' . $o_parentId)) {
                 $parent = self::getById($o_parentId);
-                $parent->setChildren(array_merge($parent->getChildren(), [$parent]));
+                if($parent instanceof self) {
+                    $parent->setChildren(array_merge($parent->getChildren(), [$parent]));
+                }
             }
         }
         $this->o_parentId = $o_parentId;
@@ -1180,7 +1182,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 $this->o_hasChildren[self::getChildrenCacheKey($child)] = true;
                 $this->o_children[self::getChildrenCacheKey($child)][] = $child;
             }
-
         }
 
         return $this;
