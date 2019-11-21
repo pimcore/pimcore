@@ -1209,7 +1209,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParent($o_parent)
     {
-        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $newParentId = 0;
+        if($o_parent instanceof self) {
+            $newParentId = $o_parent->getId();
+            $o_parent->setChildren([]);
+        }
         $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
 
