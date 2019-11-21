@@ -14,13 +14,27 @@
 
 namespace Pimcore\Event\Ecommerce;
 
+use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
+use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
+
 final class IndexServiceEvents
 {
+
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\IndexEvent")
+     * Fired when error occurs during processing attributes for index. Event can influence handling of that error (like ignoring, throwing exceptions, etc.)
+     *
+     * @Event("Pimcore\Event\Model\Ecommerce\PreprocessAttributeErrorEvent")
      *
      * @var string
      */
     const ATTRIBUTE_PROCESSING_ERROR = 'pimcore.ecommerce.indexservice.preProcessAttributeError';
-    const GENERAL_PREPROCESSING_ERROR = 'pimcore.ecommerce.indexservice.generalPreprocessingError';
+
+    /**
+     * Fired when error occurs during pre processing index data. Event can influence handling of that error (like throwing exceptions, etc.)
+     *
+     * @Event("Pimcore\Event\Model\Ecommerce\PreprocessErrorEvent")
+     *
+     * @var string
+     */
+    const GENERAL_PREPROCESSING_ERROR = 'pimcore.ecommerce.indexservice.generalPreProcessingError';
 }
