@@ -20,16 +20,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseControll
 abstract class Controller extends BaseController
 {
     /**
-     * @param ContainerInterface $container
-     *
-     * @return ContainerInterface
-     */
-    public function setContainer(ContainerInterface $container)
-    {
-        return parent::setContainer($container);
-    }
-
-    /**
      * Gets a container configuration parameter by its name.
      *
      * @param string $name
