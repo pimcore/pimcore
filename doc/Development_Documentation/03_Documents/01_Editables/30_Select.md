@@ -15,10 +15,11 @@ The select editable generates select-box component in Editmode.
 
 ## Methods
 
-| Name        | Return | Description                                                           |
-|-------------|--------|-----------------------------------------------------------------------|
-| `getData()` | string | Value of the select, this is useful to get the value even in editmode |
-| `isEmpty()` | bool   | Whether the editable is empty or not.                                 |
+| Name                    | Return | Description                                                           |
+|-------------------------|--------|-----------------------------------------------------------------------|
+| `getData()`             | string | Value of the select, this is useful to get the value even in editmode |
+| `isEmpty()`             | bool   | Whether the editable is empty or not                                  |
+| `setDataFromResource()` | void   | Set a default value for the select                                    |
 
 ## Examples
 
@@ -75,29 +76,35 @@ Frontend:
 
 ### Preselect an Option
 
-You can ***preselect*** an option in your select editable by using `setDataFromResource()`.
+You can ***preselect*** an option in your select editable by using `setDataFromResource()`. Be sure to use the preselection before you define your select.
 
 <div class="code-section">
     
 ```php
-if($this->editmode):
-    if($this->select("valid_for")->isEmpty()):
-        $this->select("valid_for")->setDataFromResource("unlimited");
-    endif;
-    
-    ...
-    
+if($this->editmode && $this->select("valid_for")->isEmpty()):
+    $this->select("valid_for")->setDataFromResource("unlimited");
 endif;
+
+echo $this->select("valid_for", [
+    "store" => [
+        ['one-month', 'One month'],
+        ['three-months', 'Three months'],
+        ['unlimited', 'Unlimited']
+    ]
+]);
 ```
 
 ```twig
-{% if editmode %}
-    {% if pimcore_select("valid_for").isEmpty() %}
-        {% do pimcore_select("valid_for").setDataFromResource("unlimited") %}
-    {% endif %}
-    
-    ...
-    
+{% if editmode and pimcore_select("valid_for").isEmpty() %}
+    {% do pimcore_select("valid_for").setDataFromResource("unlimited") %}
 {% endif %}
+
+{{ pimcore_select("valid_for", {
+    "store": [
+        ["one-month", "One month"],
+        ["three-months", "Three months"],
+        ["unlimited", "Unlimited"]
+    ]
+}) }}
 ```
 </div>
