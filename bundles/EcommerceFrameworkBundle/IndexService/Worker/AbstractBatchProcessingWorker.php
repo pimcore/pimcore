@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexStati;
 use Pimcore\Event\Ecommerce\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
@@ -26,8 +25,6 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides worker functionality for batch preparing data and updating index
@@ -36,6 +33,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements BatchProcessingWorkerInterface
 {
+    const INDEX_STATUS_PREPARATION_STATUS_DONE = 0;
+    const INDEX_STATUS_PREPARATION_STATUS_ERROR = 5;
+
+
     /**
      * returns name for store table
      *
@@ -291,7 +292,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         'preparation_worker_timestamp' => 0,
                         'preparation_worker_id' => $this->db->quote(null),
                         'in_preparation_queue' => (int)false,
-                        'preparation_status' => IndexStati::PREPARATION_STATUS_DONE,
+                        'preparation_status' => self::INDEX_STATUS_PREPARATION_STATUS_DONE,
                         'preparation_error' => ''
                     ];
 
@@ -317,7 +318,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         //'preparation_worker_timestamp' => 0,
                         //'preparation_worker_id' => $this->db->quote(null),
                         'in_preparation_queue' => (int)true,
-                        'preparation_status' => IndexStati::PREPARATION_STATUS_ERROR,
+                        'preparation_status' => self::INDEX_STATUS_PREPARATION_STATUS_ERROR,
                         'preparation_error' => $preparationErrorDb
                     ];
                     Logger::alert(sprintf('Mark product "%s" with preparation error.', $subObjectId),
