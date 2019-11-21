@@ -491,7 +491,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         preparation_status = '',
                         preparation_error = '',
                         trigger_info = ?,
-                        in_preparation_queue = 1 WHERE tenant = ?";
+                        in_preparation_queue = 1 WHERE tenant = ? FOR UPDATE";
         $this->db->query($query, [
             sprintf('Reset preparation queue in "%s".', $className),
             $this->name
