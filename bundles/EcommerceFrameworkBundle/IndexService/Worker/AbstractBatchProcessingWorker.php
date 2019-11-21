@@ -447,7 +447,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->beginTransaction();
             $query = "SELECT o_id, data FROM {$this->getStoreTableName()} 
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
-                . intval($limit);
+                . intval($limit) . " FOR UPDATE";
 
             $entries = $this->db->fetchAll($query,[$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 
@@ -491,7 +491,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         preparation_status = '',
                         preparation_error = '',
                         trigger_info = ?,
-                        in_preparation_queue = 1 WHERE tenant = ? FOR UPDATE";
+                        in_preparation_queue = 1 WHERE tenant = ?";
         $this->db->query($query, [
             sprintf('Reset preparation queue in "%s".', $className),
             $this->name
