@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
 
 namespace Pimcore\Event\Model\Ecommerce\IndexService;
 
@@ -11,20 +22,26 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
     /**
      * @var Attribute
      */
-    private $attribute;
+    protected $attribute;
 
-    private $skipAttribute = true; //skip attribute is currently the default behavior.
+    /**
+     * skip attribute is currently the default behavior.
+     * @var bool
+     */
+    protected $skipAttribute = true;
 
     /**
      * PreprocessAttributeErrorEvent constructor.
      * @param Attribute $attribute
-     * @param \Exception $exception
+     * @param bool $skipAttribute
      */
-    public function __construct(Attribute $attribute, \Exception $exception)
+    public function __construct(Attribute $attribute, \Exception $exception, bool $skipAttribute = true, bool $throwException = false)
     {
-        parent::__construct($exception);
+        parent::__construct($exception, $throwException);
         $this->attribute = $attribute;
-    }
+        $this->skipAttribute = $skipAttribute;
+    } 
+
 
     /**
      * @return Attribute
@@ -37,7 +54,7 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
     /**
      * @return bool
      */
-    public function isSkipAttribute(): bool
+    public function doSkipAttribute(): bool
     {
         return $this->skipAttribute;
     }

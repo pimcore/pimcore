@@ -236,7 +236,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
                         $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 
-                        if ($event->isSkipAttribute()) {
+                        if ($event->doSkipAttribute()) {
                             Logger::err(
                                 sprintf(
                                     'Exception in IndexService when processing the attribute "%s": %s',
@@ -244,7 +244,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                                     $event->getException()->getMessage()
                                 )
                             );
-                        } elseif ($event->isPropagationStopped()) {
+                        } elseif ($event->doThrowException()) {
                             throw $e;
                         } else {
                             $attributeErrors[$attribute->getName()] = $e->getMessage();
@@ -273,7 +273,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
                     $event = new PreprocessErrorEvent($e);
                     $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
-                    if ($event->isPropagationStopped()) {
+                    if ($event->doThrowException()) {
                         throw $e;
                     } else {
                         $generalErrors[] = $e->getMessage();
