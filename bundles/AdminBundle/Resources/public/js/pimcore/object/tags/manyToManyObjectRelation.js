@@ -66,7 +66,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
 
@@ -688,19 +688,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
     empty: function () {
         this.store.removeAll();
-    }
-    ,
-
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
-
     }
     ,
 

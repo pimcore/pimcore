@@ -115,7 +115,7 @@ class Service extends Model\Element\Service
      * @param AbstractObject $target
      * @param AbstractObject $source
      *
-     * @return mixed
+     * @return AbstractObject|void
      */
     public function copyRecursive($target, $source)
     {
@@ -131,9 +131,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        /**
-         * @var AbstractObject $new
-         */
+        /** @var Concrete $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
@@ -144,6 +142,16 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        if ($new instanceof Concrete) {
+            foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+                if ($fieldDefinition->getUnique()) {
+                    $new->set($fieldDefinition->getName(), null);
+                    $new->setPublished(false);
+                }
+            }
+        }
+
         $new->save();
 
         // add to store
@@ -177,8 +185,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
-        $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
-        Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
+        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+        AbstractObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -186,6 +194,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /** @var Concrete $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
 
@@ -197,9 +206,19 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
+
+        if ($new instanceof Concrete) {
+            foreach ($new->getClass()->getFieldDefinitions() as $fieldDefinition) {
+                if ($fieldDefinition->getUnique()) {
+                    $new->set($fieldDefinition->getName(), null);
+                    $new->setPublished(false);
+                }
+            }
+        }
+
         $new->save();
 
-        Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChildren($target, $new);
 
@@ -1438,17 +1457,22 @@ class Service extends Model\Element\Service
             return $data;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !\Pimcore\Tool::classExists($className)) {
+        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+        if (!$className || $calculator === null) {
             Logger::error('Class does not exist: ' . $className);
 
             return null;
         }
 
+        if (!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
+            @trigger_error('Using a calculator class which does not implement '.Model\DataObject\ClassDefinition\CalculatorClassInterface::class.' is deprecated', \E_USER_DEPRECATED);
+        }
+
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
 
-        if (method_exists($className, 'getCalculatedValueForEditMode')) {
-            $result = call_user_func($className . '::getCalculatedValueForEditMode', $object, $data);
+        if (method_exists($calculator, 'getCalculatedValueForEditMode')) {
+            $result = call_user_func([$calculator, 'getCalculatedValueForEditMode'], $object, $data);
         } else {
             $result = self::getCalculatedFieldValue($object, $data);
         }
@@ -1485,13 +1509,14 @@ class Service extends Model\Element\Service
             return null;
         }
         $className = $fd->getCalculatorClass();
-        if (!$className || !\Pimcore\Tool::classExists($className)) {
+        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+        if (!$className || $calculator === null) {
             Logger::error('Calculator class "' . $className.'" does not exist -> '.$fieldname.'=null');
 
             return null;
         }
 
-        if (method_exists($className, 'compute')) {
+        if (method_exists($calculator, 'compute')) {
             $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
@@ -1499,7 +1524,7 @@ class Service extends Model\Element\Service
                     || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
-            $result = call_user_func($className . '::compute', $object, $data);
+            $result = call_user_func([$calculator, 'compute'], $object, $data);
             Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
             return $result;

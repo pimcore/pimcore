@@ -144,6 +144,7 @@ pimcore.asset.helpers.grid = Class.create({
         this.store = new Ext.data.Store({
             remoteSort: true,
             remoteFilter: true,
+            autoLoad: true,
             autoDestroy: true,
             fields: readerFields,
             proxy: proxy,

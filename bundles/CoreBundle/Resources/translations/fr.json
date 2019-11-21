@@ -905,10 +905,15 @@
     "access_denied": "Accès refusé !",
     "access_denied_description": "Vous ne disposez pas des autorisations suffisantes pour ouvrir l'élément ou effectuer l'action souhaitée.",
     "validation_failed": "Validation échouée !",
-    "export_xlsx": "XLSX Export",
-    "object_export_warning": "Please note that the export does not support all data types. Press OK to continue with the export.",
-    "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
-    "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
-    "paste_clipboard": "Paste Clipboard",
-    "paste_here": "Paste your clipboard data here"
+    "export_xlsx": "Exportation XLSX",
+    "object_export_warning": "Veuillez noter que l'exportation ne prend pas en charge tous les types de données. Appuyez sur OK pour continuer l'exportation.",
+    "web2print_enableLenientHttpsMode": "Activer le mode HTTPS clément",
+    "web2print_enableLenientHttpsMode_txt": "Activez cette option si PDFreactor ne parvient pas à se connecter via HTTPS",
+    "paste_clipboard": "Coller Presse-papiers",
+    "paste_here": "Collez vos données de presse-papiers ici",
+    "asset_metadata": "Elément métadonnées",
+    "predefined_metadata": "Métadonnées prédéfinies",
+    "default_metadata": "Métadonnées par défaut",
+    "asset_export_warning": "Veuillez noter que l’exportation ne prend pas en charge certains champs (par exemple, aperçu, taille). Appuyez sur OK pour continuer l'exportation.",
+    "share_via_notifications": "Partager via des notifications"
 }

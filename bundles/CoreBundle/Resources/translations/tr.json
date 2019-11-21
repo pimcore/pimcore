@@ -910,5 +910,10 @@
     "web2print_enableLenientHttpsMode": "Enable lenient HTTPS mode",
     "web2print_enableLenientHttpsMode_txt": "Enable this option if PDFreactor fails to connect successfully via HTTPS",
     "paste_clipboard": "Paste Clipboard",
-    "paste_here": "Paste your clipboard data here"
+    "paste_here": "Paste your clipboard data here",
+    "asset_metadata": "Asset Metadata",
+    "predefined_metadata": "Predefined Metadata",
+    "default_metadata": "Default Metadata",
+    "asset_export_warning": "Please note that the export does not support some fields(e.g. preview, size). Press OK to continue with the export.",
+    "share_via_notifications": "Share via Notifications"
 }

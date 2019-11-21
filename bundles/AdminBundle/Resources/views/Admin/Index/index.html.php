@@ -90,7 +90,7 @@ $user      = $userProxy->getUser();
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
-        var symfonyToolbarKey = 'sf2/profiler/toolbar/displayState';
+        var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
         if(!window.localStorage.getItem(symfonyToolbarKey)) {
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
@@ -215,7 +215,6 @@ $scriptLibs = array(
 
     // library
     "lib/class.js",
-    "lib/jquery-3.4.1.min.js",
     "lib/ext/ext-all" . $debugSuffix . ".js",
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 

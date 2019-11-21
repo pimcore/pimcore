@@ -34,7 +34,8 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             dataIndex: field.key,
             renderer: renderer,
             filter: this.getGridColumnFilter(field),
-            getEditor: this.getGridColumnEditor.bind(this, field)
+            getEditor: this.getGridColumnEditor.bind(this, field),
+            renderer: this.getRenderer(field)
         };
     },
 
@@ -136,12 +137,17 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        var options = [];
+        var store = Ext.create('Ext.data.JsonStore', {
+            fields: ['key', "value"],
+            data: this.prepareStoreDataAndFilterLabels(field.layout.config)
+        });
 
         return {
             type: 'list',
             dataIndex: field.key,
-            options: field.layout.config.split(',')
+            labelField: "key",
+            idField: "value",
+            options: store
         };
     },
 

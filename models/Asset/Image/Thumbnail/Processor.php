@@ -354,8 +354,9 @@ class Processor
         $generated = true;
 
         if ($contentOptimizedFormat) {
-            $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
-            TmpStore::add($tmpStoreKey, '-', 'image-optimize-queue');
+            $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
+            $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
+            TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
         }
 
         clearstatcache();

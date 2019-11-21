@@ -26,32 +26,40 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
         }
 
         this.htmlId = id + "_editable";
-        var checked = "";
+
+        var elContainer = Ext.get(id);
+
+        var inputCheckbox = document.createElement("input");
+        inputCheckbox.setAttribute('name', this.htmlId);
+        inputCheckbox.setAttribute('type', 'checkbox');
+        inputCheckbox.setAttribute('value', 'true');
+        inputCheckbox.setAttribute('id', this.htmlId);
         if(data) {
-            checked = ' checked="checked"';
+            inputCheckbox.setAttribute('checked', 'checked');
         }
 
-        var elContainer = jQuery(document.getElementById(id));
-
-        elContainer.append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
-
-        this.elComponent = jQuery(document.getElementById(this.htmlId));
+        elContainer.appendChild(inputCheckbox);
 
         if(options["label"]) {
-            elContainer.append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');
+            var labelCheckbox = document.createElement("label");
+            labelCheckbox.setAttribute('for', this.htmlId);
+            labelCheckbox.innerText = options["label"];
+            elContainer.appendChild(labelCheckbox);
         }
+
+        this.elComponent = Ext.get(this.htmlId);
 
         // onchange event
         if (options.onchange) {
-            this.elComponent.change(eval(options.onchange));
+            this.elComponent.on('change', eval(options.onchange));
         }
         if (options.reload) {
-            this.elComponent.change(this.reloadDocument);
+            this.elComponent.on('change', this.reloadDocument);
         }
     },
 
     getValue: function () {
-        return this.elComponent.get(0).checked;
+        return this.elComponent.dom.checked;
     },
 
     getType: function () {

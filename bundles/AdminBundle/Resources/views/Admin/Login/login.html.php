@@ -63,8 +63,8 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
     <script type="text/javascript">
         function showLogin() {
-            $("#loginform").show();
-            $("#browserinfo").hide();
+            document.getElementById('loginform').style.display = 'block';
+            document.getElementById('browserinfo').style.display = 'none';
         }
     </script>
     <style type="text/css">
@@ -82,7 +82,12 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
     // clear opened tabs store
     localStorage.removeItem("pimcore_opentabs");
     <?php } ?>
-    $("#username").select();
+
+    // hide symfony toolbar by default
+    var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
+    if(!window.localStorage.getItem(symfonyToolbarKey)) {
+        window.localStorage.setItem(symfonyToolbarKey, 'none');
+    }
 </script>
 
 <?php $view->slots()->stop() ?>

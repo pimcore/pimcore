@@ -16,10 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\PathFormatterInterface;
 
-class PathFormatterResolver
+class PathFormatterResolver extends ClassResolver
 {
     public static $formatterCache = [];
 
@@ -30,28 +29,8 @@ class PathFormatterResolver
      */
     public static function resolvePathFormatter($formatterClass): ?PathFormatterInterface
     {
-        if ($formatterClass) {
-            $formatter = null;
-
-            if (isset(self::$formatterCache[$formatterClass])) {
-                return self::$formatterCache[$formatterClass];
-            }
-            if (substr($formatterClass, 0, 1) == '@') {
-                $serviceName = substr($formatterClass, 1);
-                try {
-                    $formatter = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                } catch (\Exception $e) {
-                    Logger::error($e);
-                }
-            } else {
-                $formatter = new $formatterClass;
-            }
-
-            if ($formatter instanceof PathFormatterInterface) {
-                return $formatter;
-            }
-        }
-
-        return null;
+        return self::resolve($formatterClass, static function ($formatter) {
+            return $formatter instanceof PathFormatterInterface;
+        });
     }
 }

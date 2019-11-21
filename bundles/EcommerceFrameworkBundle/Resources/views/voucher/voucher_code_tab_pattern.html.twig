@@ -10,14 +10,14 @@
 
     <div class="container-fluid">
         <div id="content">
-            <ul class="nav nav-tabs">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab">
+                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
                         <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab">
+                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
                         <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
                     </a>
                 </li>
@@ -133,12 +133,12 @@
                                         <div class="form-group col-sm-6">
                                             <label>{{ ('bundle_ecommerce_voucherservice_filter-from-date')|trans([],'admin') }}</label>
                                             <input type="text" name="creation_from" value="{{ app.request.get('creation_from') }}"
-                                                   placeholder="YYYY/MM/DD" class="js-datepicker form-control"/>
+                                                   placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
                                         </div>
                                         <div class="form-group  col-sm-6">
                                                 <label>{{ ('bundle_ecommerce_voucherservice_filter-to-date')|trans([],'admin') }}</label>
                                                 <input type="text" name="creation_to" value="{{ app.request.get('creation_to') }}"
-                                                       placeholder="YYYY/MM/DD" class="js-datepicker form-control"/>
+                                                       placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -211,38 +211,44 @@
 
     <!--Script for tab view-->
     <script>
-        $(document).ready(function ($) {
-            var documentBody = $('body');
-
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var documentBody = document.getElementsByTagName("body")[0];
             /**
              *  Init Datepicker
              */
-            $('.js-datepicker').pickadate({
-                formatSubmit: 'yyyy-mm-dd',
-                format: 'yyyy-mm-dd',
-                disabled: true
-            });
+            flatpickr(".js-datepicker", {allowInput: true});
 
-            var form = $('.js-filter-form');
+            var form = document.querySelector('.js-filter-form');
 
-            documentBody.on('click', 'th span.sort', function (e) {
-                if($(this).hasClass('active')){
-                    $(this).toggleClass('fa-chevron-down').toggleClass('fa-chevron-up');
-                }
+            documentBody.querySelectorAll('th span.sort').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    if (this.classList.contains('active')) {
+                        console.log(this.classList);
+                        if (this.classList.contains('fa-chevron-down')) {
+                            this.classList.remove('fa-chevron-down');
+                            this.classList.add('fa-chevron-up');
+                        } else {
+                            this.classList.remove('fa-chevron-up');
+                            this.classList.add('fa-chevron-down');
+                        }
+                    }
 
-                var criteria = $("<input>").attr("type", "hidden")
-                    .attr("name", "sort_criteria").val($(this).data('criteria'));
+                    var criteria = document.createElement('input');
+                    criteria.setAttribute('type', 'hidden');
+                    criteria.setAttribute('name', 'sort_criteria');
+                    criteria.setAttribute('value', this.getAttribute('data-criteria'));
 
+                    var sort_order = this.classList.contains('fa-chevron-down') ? "DESC" : "ASC";
+                    var order = document.createElement('input');
+                    order.setAttribute('type', 'hidden');
+                    order.setAttribute('name', 'sort_order');
+                    order.setAttribute('value', sort_order);
 
-                var sort_order = $(this).hasClass('fa-chevron-down') ? "DESC" : "ASC";
+                    form.appendChild(criteria);
+                    form.appendChild(order);
 
-                var order = $("<input>").attr("type", "hidden")
-                    .attr("name", "sort_order").val(sort_order);
-
-                form.append(criteria);
-                form.append(order);
-
-                form.submit();
+                    form.submit();
+                });
             });
 
             /**
@@ -251,25 +257,27 @@
             var initSort = function () {
                 var criteria = "{{ app.request.get('sort_criteria') }}";
                 var order = "{{ app.request.get('sort_order') }}";
-                var sortItemActive = $('th .sort[data-criteria="' + criteria + '"]');
-                var sortItems = $('th .sort');
+                var sortItemActive = document.querySelector('th .sort[data-criteria="' + criteria + '"]');
+                var sortItems = document.querySelector('th .sort');
 
                 if (criteria) {
-                    sortItems.removeClass('active');
-                    sortItemActive.addClass('active');
+                    sortItems.classList.remove('active');
+                    sortItemActive.classList.add('active');
                 }
 
-                if (order == "ASC") {
-                    sortItemActive.removeClass("fa-chevron-down");
-                    sortItemActive.addClass("fa-chevron-up");
-                } else {
-                    sortItemActive.removeClass("fa-chevron-up");
-                    sortItemActive.addClass("fa-chevron-down");
+                if (sortItemActive) {
+                    if (order == "ASC") {
+                        sortItemActive.classList.remove("fa-chevron-down");
+                        sortItemActive.classList.add("fa-chevron-up");
+                    } else {
+                        sortItemActive.classList.remove("fa-chevron-up");
+                        sortItemActive.classList.add("fa-chevron-down");
+                    }
                 }
+
             };
 
             initSort();
-
         });
     </script>
 {% endblock %}

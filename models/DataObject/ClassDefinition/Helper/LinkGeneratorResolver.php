@@ -16,13 +16,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 
-class LinkGeneratorResolver
+class LinkGeneratorResolver extends ClassResolver
 {
-    public static $generatorCache = [];
-
     /**
      * @param $generatorClass
      *
@@ -30,26 +27,8 @@ class LinkGeneratorResolver
      */
     public static function resolveGenerator($generatorClass)
     {
-        if ($generatorClass) {
-            if (isset(self::$generatorCache[$generatorClass])) {
-                return self::$generatorCache[$generatorClass];
-            }
-            if (substr($generatorClass, 0, 1) == '@') {
-                $serviceName = substr($generatorClass, 1);
-                try {
-                    $generator = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                } catch (\Exception $e) {
-                    Logger::error($e);
-                }
-            } else {
-                $generator = new $generatorClass;
-            }
-
-            if ($generator instanceof LinkGeneratorInterface) {
-                return $generator;
-            }
-        }
-
-        return null;
+        return self::resolve($generatorClass, static function ($generator) {
+            return $generator instanceof LinkGeneratorInterface;
+        });
     }
 }

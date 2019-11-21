@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
@@ -1128,7 +1129,9 @@ class Service extends Model\AbstractModel
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('writeResource'));
-        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher(
+            Collection::class
+        ));
 
         if ($element instanceof DataObject\Concrete) {
             DataObject\Service::loadAllObjectFields($element);

@@ -73,14 +73,18 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     obj.label =  child.data.text;
                     if(child.data.dataType == "system") {
                         obj.key = child.data.text + '~system';
-                    } else if(child.data.dataType == "asset" || child.data.dataType == "object" || child.data.dataType == "document") {
+                    } else {
+                        obj.key = child.data.layout.name;
+                    }
+
+                    if(child.data.dataType == "asset" || child.data.dataType == "object" || child.data.dataType == "document") {
                         child.data.layout.subtype = child.data.dataType;
                         child.data.layout.fieldtype = 'manyToOneRelation';
-                    } else if(child.data.language) {
-                        obj.key = child.data.text + '~' + child.data.language;
+                    }
+
+                    if(child.data.language) {
+                        obj.key = child.data.layout.name + '~' + child.data.language;
                         obj.label = child.data.layout.title = child.data.text + ' (' + child.data.language + ')';
-                    } else {
-                        obj.key = child.data.text;
                     }
 
                     obj.language = child.data.language;
@@ -210,12 +214,12 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 } else {
                     if(nodeConf.layout) {
                         var text = nodeConf.layout.name;
+                        var subType = nodeConf.layout.subtype;
                     } else {
                         var text = nodeConf.label;
                     }
-                    var subType = nodeConf.type;
 
-                    if (nodeConf.dataType !== "system" && this.showFieldname && subType) {
+                    if (nodeConf.dataType !== "system" && subType) {
                         text = text + " (" + subType + ")";
                     }
 

@@ -8,7 +8,7 @@
     "email_blacklist": "E-Mail Blacklist",
     "OK": "Ok",
     "optional": "optional",
-    "search_replace_assignments_error": "Bitte wähle die zu ersetzenden Items und das neue Zielitem aus.",
+    "search_replace_assignments_error": "Bitte wähle die zu ersetzenden Items und das neue Zielelement aus.",
     "replace_assignments_in_selected_elements": "Die Zuweisung in den ausgewählten Elementen ersetzen",
     "search_replace_assignments": "Suche & Ersetze Zuweisungen",
     "imageadvanced": "Bild Erweitert",
@@ -253,7 +253,7 @@
     "settings": "Einstellungen",
     "properties": "Eigenschaften",
     "versions": "Versionen",
-    "add": "Hinzufügen",
+    "add": "Addieren",
     "date": "Datum",
     "user": "Benutzer",
     "note": "Anmerkung",
@@ -910,5 +910,10 @@
     "web2print_enableLenientHttpsMode": "Aktivieren Sie nachsichtigen HTTPS-Modus",
     "web2print_enableLenientHttpsMode_txt": "Aktivieren Sie diese Option, wenn PDFreactor über HTTPS keine Verbindung herstellen kann",
     "paste_clipboard": "Zwischenablage einfügen",
-    "paste_here": "Fügen Sie hier Ihre Daten aus der Zwischenablage ein"
+    "paste_here": "Fügen Sie hier Ihre Daten aus der Zwischenablage ein",
+    "asset_metadata": "Asset-Metadaten",
+    "predefined_metadata": "Vordefinierte Metadaten",
+    "default_metadata": "Standardmetadaten",
+    "asset_export_warning": "Bitte beachten Sie, dass der Export einige Felder (z. B. Vorschau, Größe) nicht unterstützt. Klicken Sie auf OK, um mit dem Export fortzufahren.",
+    "share_via_notifications": "Über Benachrichtigungen teilen"
 }
