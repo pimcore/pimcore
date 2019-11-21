@@ -8,6 +8,7 @@ use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
 
@@ -21,7 +22,7 @@ class ArrayAdapterProxyTest extends ArrayAdapterTest
         createCachePool as _createCachePool;
     }
 
-    public function createCachePool($defaultLifetime = 0)
+    public function createCachePool(int $defaultLifetime = 0): CacheItemPoolInterface
     {
         $this->defaultLifetime = $defaultLifetime;
 
