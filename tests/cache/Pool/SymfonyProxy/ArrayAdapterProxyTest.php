@@ -21,6 +21,12 @@ class ArrayAdapterProxyTest extends AdapterTestCase
         createCachePool as _createCachePool;
     }
 
+    protected $skippedTests = [
+        'testGetMetadata' => 'ArrayAdapter does not keep metadata.',
+        'testDeferredSaveWithoutCommit' => 'Assumes a shared cache which ArrayAdapter is not.',
+        'testSaveWithoutExpire' => 'Assumes a shared cache which ArrayAdapter is not.',
+    ];
+
     public function createCachePool($defaultLifetime = 0)
     {
         $this->defaultLifetime = $defaultLifetime;
