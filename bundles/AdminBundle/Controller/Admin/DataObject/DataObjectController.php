@@ -472,7 +472,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             if(!$ok){
                 if (count($validLayouts) > 0) {
-                    $currentLayoutId = $validLayouts[array_key_first($validLayouts)]->getId();
+                    $currentLayoutId = reset($validLayouts)->getId();
                 }
             }
 
