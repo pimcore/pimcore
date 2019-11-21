@@ -1039,7 +1039,11 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
+
         if ($o_parentId != $this->o_parentId) {
+            $this->o_parent = null;
+            $this->o_parentId = $o_parentId;
+
             if($this instanceof DirtyIndicatorInterface) {
                 $this->markFieldDirty('o_parentId');
             }
@@ -1050,12 +1054,11 @@ class AbstractObject extends Model\Element\AbstractElement
             if (Runtime::isRegistered('object_' . $o_parentId)) {
                 $parent = self::getById($o_parentId);
                 if($parent instanceof self) {
+                    $this->o_parent = $parent;
                     $parent->setChildren(array_merge($parent->getChildren(), [$parent]));
                 }
             }
         }
-        $this->o_parentId = $o_parentId;
-        $this->o_parent = null;
 
         return $this;
     }
