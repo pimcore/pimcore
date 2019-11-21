@@ -1046,6 +1046,11 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->o_siblings = null;
             $this->o_hasSiblings = null;
+
+            if (Runtime::isRegistered('object_' . $o_parentId)) {
+                $parent = self::getById($o_parentId);
+                $parent->setChildren(array_merge($parent->getChildren(), [$parent]));
+            }
         }
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
@@ -1212,7 +1217,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $newParentId = 0;
         if($o_parent instanceof self) {
             $newParentId = $o_parent->getId();
-            $o_parent->setChildren([]);
+            $o_parent->setChildren(array_merge($o_parent->getChildren(), [$o_parent]));
         }
         $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
