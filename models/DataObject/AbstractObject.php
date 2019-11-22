@@ -1051,12 +1051,10 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_siblings = null;
             $this->o_hasSiblings = null;
 
-            if (Runtime::isRegistered('object_' . $o_parentId)) {
-                $parent = self::getById($o_parentId);
-                if($parent instanceof self) {
-                    $this->o_parent = $parent;
-                    $parent->setChildren(array_merge($parent->getChildren(), [$parent]));
-                }
+            $parent = self::getById($o_parentId);
+            if($parent instanceof self) {
+                $this->o_parent = $parent;
+                $parent->setChildren(array_merge($parent->getChildren([$parent->getType()]), [$parent]));
             }
         }
 
@@ -1205,7 +1203,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function getParent()
     {
         if ($this->o_parent === null) {
-            $this->setParent(AbstractObject::getById($this->getParentId()));
+            $this->setParent(self::getById($this->getParentId()));
         }
 
         return $this->o_parent;
@@ -1221,7 +1219,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $newParentId = 0;
         if($o_parent instanceof self) {
             $newParentId = $o_parent->getId();
-            $o_parent->setChildren(array_merge($o_parent->getChildren(), [$o_parent]));
+            $o_parent->setChildren(array_merge($o_parent->getChildren([$o_parent->getType()]), [$o_parent]));
         }
         $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
