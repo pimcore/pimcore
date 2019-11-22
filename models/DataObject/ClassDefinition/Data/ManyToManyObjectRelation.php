@@ -951,7 +951,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function isAllowToCreateNewObject(): bool
     {
-        return (bool) $this->allowToCreateNewObject;
+        return $this->allowToCreateNewObject;
     }
 
     /**
@@ -959,7 +959,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function setAllowToCreateNewObject($allowToCreateNewObject)
     {
-        $this->allowToCreateNewObject = $allowToCreateNewObject;
+        $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
     }
 
     /**
