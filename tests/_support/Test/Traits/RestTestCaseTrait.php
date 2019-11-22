@@ -24,7 +24,7 @@ trait RestTestCaseTrait
      */
     protected $authenticateUser = 'rest';
 
-    public function setUp()
+    public function setUp(): void
     {
         /** @var $this TestCase */
         parent::setUp();

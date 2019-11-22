@@ -8,7 +8,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class AssetTest extends RestTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
