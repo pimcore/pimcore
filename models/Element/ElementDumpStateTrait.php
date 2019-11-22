@@ -20,11 +20,6 @@ namespace Pimcore\Model\Element;
 trait ElementDumpStateTrait
 {
     /**
-     * @var string
-     */
-    public static $dumpStateProperty = '_fulldump';
-
-    /**
      * @var bool
      */
     protected $_fulldump = false;
@@ -45,10 +40,5 @@ trait ElementDumpStateTrait
     public function isInDumpState(): bool
     {
         return $this->_fulldump;
-    }
-
-    public function getDumpStateProperty(): string
-    {
-        return self::$dumpStateProperty;
     }
 }

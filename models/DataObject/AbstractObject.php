@@ -1228,7 +1228,6 @@ class AbstractObject extends Model\Element\AbstractElement
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object

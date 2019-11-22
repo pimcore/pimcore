@@ -195,7 +195,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys', 'object', $this->getDumpStateProperty()];
+        $blockedVars = ['loadedLazyKeys', 'object'];
         $finalVars = [];
 
         if (!$this->isInDumpState()) {
