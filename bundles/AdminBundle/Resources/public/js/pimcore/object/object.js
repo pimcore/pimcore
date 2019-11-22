@@ -368,11 +368,22 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.save.bind(this, "version"),
-                menu: [{
-                    text: t('save_close'),
-                    iconCls: "pimcore_icon_save",
-                    handler: this.unpublishClose.bind(this)
-                }]
+                menu: [
+                    {
+                        text: t('save_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: function() {
+                            this.save("version");
+                            this.close();
+                        }.bind(this)
+                    },
+                    {
+                        text: t('save_only_scheduled_tasks'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.save.bind(this, "scheduler", "scheduler"),
+                        hidden: !this.isAllowed("settings") || this.data.general.o_published
+                    }
+                ]
             });
 
 
@@ -383,21 +394,21 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
-                    text: t('save_pubish_close'),
-                    iconCls: "pimcore_icon_save",
-                    handler: this.publishClose.bind(this)
-                },
+                        text: t('save_pubish_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.publishClose.bind(this)
+                    },
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "version"),
-                        hidden: !this.isAllowed("save")
+                        hidden: !this.isAllowed("save") || !this.data.general.o_published
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings")
+                        hidden: !this.isAllowed("settings") || !this.data.general.o_published
                     }
                 ]
             });
@@ -642,17 +653,20 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return data;
     },
 
+    close: function() {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
+    },
+
     saveClose: function (only) {
         if (this.save()) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }
     },
 
     publishClose: function () {
         this.publish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this))
     },
 
@@ -693,8 +707,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     unpublishClose: function () {
         this.unpublish();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        this.close();
     },
 
     saveToSession: function (callback) {
