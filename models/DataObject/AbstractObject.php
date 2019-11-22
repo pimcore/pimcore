@@ -1051,10 +1051,12 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_siblings = null;
             $this->o_hasSiblings = null;
 
-            $parent = self::getById($o_parentId);
-            if($parent instanceof self) {
-                $this->o_parent = $parent;
-                $parent->setChildren(array_merge($parent->getChildren([$parent->getType()]), [$parent]));
+            if (Runtime::isRegistered('object_' . $o_parentId)) {
+                $parent = self::getById($o_parentId);
+                if($parent instanceof self) {
+                    $this->o_parent = $parent;
+                    $parent->setChildren(array_merge($parent->getChildren([$parent->getType()]), [$parent]));
+                }
             }
         }
 
