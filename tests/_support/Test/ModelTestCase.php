@@ -12,7 +12,7 @@ abstract class ModelTestCase extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 

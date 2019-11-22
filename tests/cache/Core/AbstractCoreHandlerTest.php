@@ -49,7 +49,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->cache = $this->createCachePool();
         $this->cache->setLogger(static::$logger);
@@ -122,7 +122,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function setUpBeforeClass(): void
+    public static function setUpBeforeClass()
     {
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
@@ -130,7 +130,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         static::handleLogOutput();
     }
