@@ -10,7 +10,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         TestHelper::cleanUp();

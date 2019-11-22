@@ -8,7 +8,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function tearDown(): void
+    public function tearDown()
     {
         Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
     }

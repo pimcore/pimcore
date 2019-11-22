@@ -8,7 +8,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
@@ -16,7 +16,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         TestHelper::cleanUp();
     }
 
-    public function tearDown(): void
+    public function tearDown()
     {
         TestHelper::cleanUp();
         parent::tearDown();

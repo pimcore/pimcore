@@ -22,7 +22,7 @@ class ListingTest extends ModelTestCase
         $this->testDataHelper = $testData;
     }
 
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -30,7 +30,7 @@ class ListingTest extends ModelTestCase
         $this->prepareData();
     }
 
-    public function tearDown(): void
+    public function tearDown()
     {
         TestHelper::cleanUp();
         parent::tearDown();

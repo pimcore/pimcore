@@ -9,7 +9,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         TestHelper::cleanUp();
