@@ -465,12 +465,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //Fallback if $currentLayoutId is not set or empty string
             //Uses first valid layout instead of admin layout when empty
             $ok = false;
-            foreach ($validLayouts as $key => $layout){
-                if($currentLayoutId == $layout->getId()){
+            foreach ($validLayouts as $key => $layout) {
+                if ($currentLayoutId == $layout->getId()) {
                     $ok = true;
                 }
             }
-            if(!$ok){
+            if (!$ok) {
                 if (count($validLayouts) > 0) {
                     $currentLayoutId = reset($validLayouts)->getId();
                 }
