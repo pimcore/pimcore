@@ -1357,9 +1357,9 @@ class Service extends Model\Element\Service
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
             }
 
-            if ($context['containerType'] === 'fieldcollection') {
+            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
-            } elseif ($context['containerType'] === 'objectbrick') {
+            } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
                 $context['ownerType'] = 'localizedfield';

@@ -49,7 +49,7 @@ class SearchController extends AdminController
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $requestedLanguage = $allParams['language'];
+        $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);

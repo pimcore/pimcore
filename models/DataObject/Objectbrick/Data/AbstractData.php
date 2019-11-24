@@ -95,7 +95,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return mixed
+     * @return DataObject\Objectbrick\Definition
      */
     public function getDefinition()
     {
