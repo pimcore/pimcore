@@ -21,7 +21,6 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 @ini_set('display_errors', 'On');
 
 $maxExecutionTime = 0;
