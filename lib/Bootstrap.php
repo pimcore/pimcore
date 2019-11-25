@@ -332,7 +332,7 @@ class Bootstrap
         }
 
         if ($debug) {
-            Debug::enable();
+            Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
             @ini_set('display_errors', 'On');
         }
 
