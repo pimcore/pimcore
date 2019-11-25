@@ -34,7 +34,7 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
             ->setName('ecommerce:indexservice:reset-queue')
             ->setDescription('Resets the preparation or index-update queue (ONLY NEEDED if store table is out of sync)')
             ->addArgument('queue', InputArgument::REQUIRED, 'Queue to reset (preparation|update-index)')
-            ->addOption('tenant', null, InputOption::VALUE_REQUIRED, 'Tenant to perform action on');
+            ->addOption('tenant', null, InputOption::VALUE_REQUIRED, 'Tenant to perform action on. "*" means all tenants.');
     }
 
     /**
@@ -53,17 +53,28 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
 
         $updater = Factory::getInstance()->getIndexService();
 
-        /** @var AbstractBatchProcessingWorker $worker */
-        $worker = $updater->getTenantWorker($tenant);
-
-        if (! $worker instanceof AbstractBatchProcessingWorker) {
-            throw new \Exception('Tenant is not of type AbstractBatchProcessingWorker');
+        if ($tenant == "*") {
+            $tenants = $updater->getTenants();
+        } else {
+            $tenants = [$tenant];
         }
 
-        if ($queue == 'preparation') {
-            $worker->resetPreparationQueue();
-        } elseif ($queue == 'update-index') {
-            $worker->resetIndexingQueue();
+        foreach ($tenants as $tenant) {
+
+            /** @var AbstractBatchProcessingWorker $worker */
+            $worker = $updater->getTenantWorker($tenant);
+
+            $output->writeln("<info>Process tenant {$tenant}...</info>");
+
+            if (!$worker instanceof AbstractBatchProcessingWorker) {
+                throw new \Exception('Tenant is not of type AbstractBatchProcessingWorker');
+            }
+
+            if ($queue == 'preparation') {
+                $worker->resetPreparationQueue();
+            } elseif ($queue == 'update-index') {
+                $worker->resetIndexingQueue();
+            }
         }
     }
 }
