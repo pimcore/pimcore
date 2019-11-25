@@ -350,6 +350,37 @@ pimcore.settings.email.log = Class.create({
                 ]
             },
             {
+                xtype:'actioncolumn',
+                width: 30,
+                menuText: t('email_log_forward'),
+                items:[
+                    {
+                        tooltip: t('email_log_forward'),
+                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/email-forward.svg',
+                        handler: function (grid, rowIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
+
+                            Ext.Ajax.request({
+                                url: '/admin/email/show-email-log?id=' + rec.get('id') + '&type=details',
+                                success: function(response){
+                                    var data = Ext.decode( response.responseText );
+                                    var win = this.getForwardEmailWindow(data);
+                                    win.show();
+                                }.bind(this),
+                                failure: function () {
+                                    alert('Could not foward email');
+                                },
+                            });
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {
+                            if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
+                                return 'pimcore_hidden';
+                            }
+                        }
+                    }
+                ]
+            },
+            {
                 xtype: 'actioncolumn',
                 width: 30,
                 menuText: t('delete'),
@@ -431,5 +462,106 @@ pimcore.settings.email.log = Class.create({
         this.grid.store.reload();
         this.grid.getView().refresh();
 
+    },
+
+    getForwardEmailWindow: function (data) {
+        if (data) {
+            var emailType = data.emailLogExistsHtml ? 'html' : 'text';
+            var emailPreviewUrl = '/admin/email/show-email-log?id=' + data.id + '&type=' + emailType;
+
+            var win =  new Ext.Window({
+                width: 800,
+                height: 600,
+                modal: true,
+                title: t("email_log_forward"),
+                layout: "fit",
+                closeAction: "close",
+                items: [{
+                    xtype: "form",
+                    bodyStyle: "padding:10px;",
+                    itemId: "form",
+                    items: [
+                        {
+                            xtype: 'hiddenfield',
+                            name: 'id',
+                            value: data.id
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "subject",
+                            value: data.subject,
+                            fieldLabel: t("subject"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "from",
+                            value: data.from,
+                            fieldLabel: t("from"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "replyto",
+                            fieldLabel: t("replyTo"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "to",
+                            fieldLabel: t("to"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "cc",
+                            fieldLabel: t("cc"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "bcc",
+                            fieldLabel: t("bcc"),
+                        },
+                        {
+                            xtype: 'panel',
+                            height: 250,
+                            layout: 'fit',
+                            items : [{
+                                xtype : 'box',
+                                autoEl: {tag: 'iframe', src: emailPreviewUrl}
+                            }]
+                        }
+
+                    ],
+                    defaults: {
+                        width: 780
+                    }
+                }],
+                buttons: [{
+                    text: t("send"),
+                    iconCls: "pimcore_icon_email",
+                    handler: function () {
+                        var params = win.getComponent("form").getForm().getFieldValues();
+                        Ext.Ajax.request({
+                            url: '/admin/email/resend-email',
+                            method: 'POST',
+                            success: function(response){
+                                var data = Ext.decode( response.responseText );
+                                if(data.success){
+                                    Ext.Msg.alert(t('email_log_forward'),
+                                        t('email_log_resend_window_success_message'));
+                                    win.close();
+                                }else{
+                                    Ext.Msg.alert(t('email_log_forward'),
+                                        t('email_log_resend_window_error_message'));
+                                }
+                            },
+                            failure: function () {
+                                alert('Could not forward email');
+                            },
+                            params: params
+                        });
+                    }
+                }]
+            });
+
+            return win;
+        }
     }
 });
