@@ -21,6 +21,7 @@ trait ElementDumpStateTrait
 {
     /**
      * This needs to be equal to the value of ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME
+     *
      * @var bool
      */
     protected $_fulldump = false;
