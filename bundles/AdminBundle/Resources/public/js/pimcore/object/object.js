@@ -825,7 +825,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         // Reload layout when explicitly set to false
         if (params['layoutId'] === false) {
             params['layoutId'] = null;
-        } else if (!params['layoutId']) {
+        } else if (params['layoutId'] !== 0 && !params['layoutId']) {
             params['layoutId'] = this.data.currentLayoutId;
         }
 
