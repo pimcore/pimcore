@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -69,9 +70,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();
@@ -329,17 +330,17 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             return;
         }
 
-        $this->prepareDataForIndex($object);
+        $subObjectIds = $this->prepareDataForIndex($object);
 
         //updates data for all subentries
-        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach ($subObjectIds as $subObjectId => $object) {
             $this->doUpdateIndex($subObjectId);
         }
 
-        $this->commitUpdateIndex();
-
-        $this->fillupPreparationQueue($object);
+        if (count($subObjectIds) > 0) {
+            $this->commitUpdateIndex();
+            $this->fillupPreparationQueue($object);
+        }
     }
 
     /**
