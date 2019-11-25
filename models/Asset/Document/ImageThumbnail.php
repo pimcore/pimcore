@@ -55,7 +55,17 @@ class ImageThumbnail
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
+        $path = str_replace(
+            [
+                PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails',
+                PIMCORE_WEB_ROOT,
+            ],
+            [
+                '',
+                '',
+            ],
+            $fsPath
+        );
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [
