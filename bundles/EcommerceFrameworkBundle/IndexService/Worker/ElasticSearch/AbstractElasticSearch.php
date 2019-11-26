@@ -55,11 +55,18 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $indexName;
 
     /**
-     * The Version number of the Index (we increas the Version number if the mapping cant be changed (reindexing process))
+     * The Version number of the Index (we increase the Version number if the mapping cant be changed (reindexing process))
      *
      * @var int
      */
     protected $indexVersion = 0;
+
+    /**
+     * Hash of current index settings - used for checking, if putSettings is necessary
+     *
+     * @var string
+     */
+    protected $settingsHash = '';
 
     /**
      * @var array
@@ -70,6 +77,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * @var array
      */
     protected $indexStoreMetaData = [];
+
 
     /**
      * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
@@ -113,14 +121,28 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     protected function determineAndSetCurrentIndexVersion()
     {
-        $version = $this->getIndexVersion();
         if (is_readable($this->getVersionFile())) {
-            $version = (int)trim(file_get_contents($this->getVersionFile()));
+
+            $fileContent = file_get_contents($this->getVersionFile());
+            $data = explode('|', $fileContent);
+
+            $this->indexVersion = intval($data[0]);
+            $this->settingsHash = trim($data[1]);
+
         } else {
-            \Pimcore\File::mkdir(dirname($this->getVersionFile()));
-            file_put_contents($this->getVersionFile(), $this->getIndexVersion());
+            $this->updateVersionFile();
         }
-        $this->indexVersion = $version;
+    }
+
+    protected function updateVersionFile() {
+        $versionFile = $this->getVersionFile();
+        if(!is_readable($versionFile)) {
+            \Pimcore\File::mkdir(dirname($versionFile));
+        }
+
+        $version = $this->getIndexVersion();
+        $settingsHash = $this->settingsHash;
+        return file_put_contents($versionFile, $version . '|' . $settingsHash);
     }
 
     /**
@@ -515,7 +537,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         Logger::info('Index-Actions - Start Reindex Mode - Version Number: ' . $this->indexVersion.' Index Name: ' . $this->getIndexNameVersion());
 
         //set the new version here so other processes write in the new index
-        $result = file_put_contents($this->getVersionFile(), $this->indexVersion);
+        $result = $this->updateVersionFile();
         if (!$result) {
             throw new \Exception("Can't write version file: " . $this->getVersionFile());
         }
@@ -684,6 +706,23 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         try {
             $result = $esClient->indices()->putMapping($params);
             Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
+
+            $newSettingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
+
+            if($newSettingsHash !== $this->settingsHash) {
+                $this->settingsHash = $newSettingsHash;
+
+                $esClient->indices()->putSettings([
+                    'index' => $this->getIndexNameVersion(),
+                    'body' => [
+                        'index' => $this->tenantConfig->getIndexSettings()
+                    ]
+                ]);
+
+            }
+
+            Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+
         } catch (\Exception $e) {
             Logger::info($e->getMessage());
 
@@ -795,5 +834,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
+
+        $this->settingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
+        $this->updateVersionFile();
     }
 }
