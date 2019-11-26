@@ -2151,7 +2151,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 
-.strikeThrough {
+.strikeThrough input {
     text-decoration: line-through;
     color: #777;
 }
