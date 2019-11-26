@@ -253,7 +253,6 @@ class PageController extends DocumentControllerBase
         if ($path === '') {
             return $this->adminJson([
                 'success' => $success,
-                'message' => $message
             ]);
         }
 
