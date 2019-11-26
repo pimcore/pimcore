@@ -245,10 +245,8 @@ class PageController extends DocumentControllerBase
     {
         $docId = $request->get('id');
         $path = (string) trim($request->get('path'));
-        $path = rtrim($path, '/');
 
         $success = true;
-        $message = null;
 
         if ($path === '') {
             return $this->adminJson([
@@ -256,8 +254,11 @@ class PageController extends DocumentControllerBase
             ]);
         }
 
+        $message = '';
+        $path = rtrim($path, '/');
+
         // must start with /
-        if (strpos($path, '/') !== 0) {
+        if ($path !== '' && strpos($path, '/') !== 0) {
             $success = false;
             $message = "URL must start with /.";
         }
@@ -280,7 +281,7 @@ class PageController extends DocumentControllerBase
 
         if ($list->getTotalCount() > 0) {
             $success = false;
-            $message .= "\n URL path already exists.";
+            $message .= "<br>URL path already exists.";
         }
 
         return $this->adminJson([
