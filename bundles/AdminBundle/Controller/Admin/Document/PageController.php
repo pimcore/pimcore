@@ -256,7 +256,8 @@ class PageController extends DocumentControllerBase
             $message .= "\n URL must start with /.";
         }
 
-        if (strlen($path) < 2) {
+        // Cannot check for length <2, because that would falsely flag empty pretty URL/URL slugs
+        if (strlen($path) === 1) {
             $success = false;
             $message .= "\n URL must be at least 2 characters long.";
         }
