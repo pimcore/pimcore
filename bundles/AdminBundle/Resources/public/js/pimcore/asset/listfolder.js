@@ -138,7 +138,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         this.store.getProxy().extraParams = {
-            limit: itemsPerPage,
             folderId: this.element.data.id,
             "fields[]": fieldParam,
             language: this.gridLanguage,
