@@ -15,7 +15,6 @@
 namespace Pimcore\Event\Model\Ecommerce\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
-use Symfony\Component\EventDispatcher\Event;
 
 class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
 {
@@ -26,12 +25,14 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
 
     /**
      * skip attribute is currently the default behavior.
+     *
      * @var bool
      */
     protected $skipAttribute = true;
 
     /**
      * PreprocessAttributeErrorEvent constructor.
+     *
      * @param Attribute $attribute
      * @param bool $skipAttribute
      */
@@ -40,8 +41,7 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
         parent::__construct($exception, $throwException);
         $this->attribute = $attribute;
         $this->skipAttribute = $skipAttribute;
-    } 
-
+    }
 
     /**
      * @return Attribute
@@ -61,12 +61,13 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
 
     /**
      * @param bool $skipAttribute
+     *
      * @return PreprocessErrorEvent
      */
     public function setSkipAttribute(bool $skipAttribute): PreprocessErrorEvent
     {
         $this->skipAttribute = $skipAttribute;
+
         return $this;
     }
-
 }

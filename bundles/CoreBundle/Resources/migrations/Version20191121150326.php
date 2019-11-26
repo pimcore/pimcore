@@ -21,11 +21,9 @@ class Version20191121150326 extends AbstractPimcoreMigration
         $indexService = $factory->getIndexService();
         $tenants = $indexService->getTenants();
 
-        foreach($tenants as $tenant) {
-
+        foreach ($tenants as $tenant) {
             $tenantWorker = $indexService->getTenantWorker($tenant);
-            if($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
+            if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
                 $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                 $method->setAccessible(true);
                 $tableName = $method->invoke($tenantWorker);
@@ -39,12 +37,8 @@ class Version20191121150326 extends AbstractPimcoreMigration
                 $this->addSql("CREATE INDEX `update_worker_index` 	ON `$tableName` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`);");
                 $this->addSql("CREATE INDEX `preparation_status_index` ON `$tableName` (`tenant`,`preparation_status`);");
                 $this->addSql("CREATE INDEX `worker_id_index` ON `$tableName` (`worker_id`);");
-
             }
-
-
         }
-
     }
 
     /**
@@ -56,11 +50,9 @@ class Version20191121150326 extends AbstractPimcoreMigration
         $indexService = $factory->getIndexService();
         $tenants = $indexService->getTenants();
 
-        foreach($tenants as $tenant) {
-
+        foreach ($tenants as $tenant) {
             $tenantWorker = $indexService->getTenantWorker($tenant);
-            if($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
+            if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
                 $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                 $method->setAccessible(true);
                 $tableName = $method->invoke($tenantWorker);
@@ -74,9 +66,7 @@ class Version20191121150326 extends AbstractPimcoreMigration
                     DROP COLUMN preparation_error,
                     DROP COLUMN trigger_info;"
                 );
-
             }
         }
-
     }
 }

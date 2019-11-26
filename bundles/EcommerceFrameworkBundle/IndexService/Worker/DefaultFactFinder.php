@@ -173,9 +173,10 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      * prepare data for index creation and store is in store table
      *
      * @param IndexableInterface $object
+     *
      * @return array returns the processed sub-objects that can be used for the index update.
      */
-    public function prepareDataForIndex(IndexableInterface $object) : array
+    public function prepareDataForIndex(IndexableInterface $object): array
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 

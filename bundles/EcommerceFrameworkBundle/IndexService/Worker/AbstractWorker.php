@@ -49,7 +49,7 @@ abstract class AbstractWorker implements WorkerInterface
     /**
      * @var EventDispatcherInterface\
      */
-    protected  $eventDispatcher;
+    protected $eventDispatcher;
 
     public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {

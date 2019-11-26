@@ -14,12 +14,8 @@
 
 namespace Pimcore\Event\Ecommerce;
 
-use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
-use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
-
 final class IndexServiceEvents
 {
-
     /**
      * Fired when error occurs during processing attributes for index. Event can influence handling of that error (like ignoring, throwing exceptions, etc.)
      *

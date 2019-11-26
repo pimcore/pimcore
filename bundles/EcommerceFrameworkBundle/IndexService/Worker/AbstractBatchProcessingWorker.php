@@ -36,7 +36,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     const INDEX_STATUS_PREPARATION_STATUS_DONE = 0;
     const INDEX_STATUS_PREPARATION_STATUS_ERROR = 5;
 
-
     /**
      * returns name for store table
      *
@@ -178,6 +177,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      * prepare data for index creation and store is in store table
      *
      * @param IndexableInterface $object
+     *
      * @return array returns the processed subobjects that can be used for the index update.
      */
     public function prepareDataForIndex(IndexableInterface $object)
@@ -232,7 +232,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {
-
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
                         $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 
@@ -249,7 +248,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         } else {
                             $attributeErrors[$attribute->getName()] = $e->getMessage();
                         }
-
                     }
                 }
 
@@ -295,19 +293,18 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         'preparation_status' => self::INDEX_STATUS_PREPARATION_STATUS_DONE,
                         'preparation_error' => ''
                     ];
-
                 } else {
-                    $preparationError = "";
+                    $preparationError = '';
                     if (count($generalErrors) > 0) {
-                        $preparationError = implode(", ", $generalErrors);
+                        $preparationError = implode(', ', $generalErrors);
                     }
                     if (count($attributeErrors) > 0) {
-                        $preparationError .= 'Attribute errors: '.$preparationErrorDb = implode(",", array_keys($attributeErrors));
+                        $preparationError .= 'Attribute errors: '.$preparationErrorDb = implode(',', array_keys($attributeErrors));
                     }
 
                     $preparationErrorDb = $preparationError;
                     if (strlen($preparationErrorDb) > 255) {
-                        $preparationErrorDb = substr($preparationErrorDb,0,252)."...";
+                        $preparationErrorDb = substr($preparationErrorDb, 0, 252).'...';
                     }
                     $insertData = [
                         'o_id' => $subObjectId,
@@ -448,23 +445,27 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->beginTransaction();
             $query = "SELECT o_id, data FROM {$this->getStoreTableName()} 
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
-                . intval($limit) . " FOR UPDATE";
+                . intval($limit) . ' FOR UPDATE';
 
-            $entries = $this->db->fetchAll($query,[$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+            $entries = $this->db->fetchAll($query, [$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 
             if (count($entries) > 0) {
-                $queueIds = array_map(function($e) { return $e['o_id']; }, $entries);
-                $ids = implode(",", $queueIds);
+                $queueIds = array_map(function ($e) {
+                    return $e['o_id'];
+                }, $entries);
+                $ids = implode(',', $queueIds);
                 $updateQuery = "UPDATE {$this->getStoreTableName()} SET worker_id = ?, worker_timestamp = ? WHERE o_id in ({$ids}) and tenant=?";
                 $this->db->query($updateQuery, [$workerId, $workerTimestamp, $this->name]);
             }
             $this->db->commit();
-
         } catch (\Exception $e) {
-            Logger::warn("Error during processUpdateIndexQueue().");
-            try { $this->db->rollBack(); } catch (\Exception $e) {
-                Logger::error("Error on rollback in processUpdateIndexQueue().");
+            Logger::warn('Error during processUpdateIndexQueue().');
+            try {
+                $this->db->rollBack();
+            } catch (\Exception $e) {
+                Logger::error('Error on rollback in processUpdateIndexQueue().');
             }
+
             return 0;
         }
 
