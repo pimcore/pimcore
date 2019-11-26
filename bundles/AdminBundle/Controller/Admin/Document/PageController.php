@@ -244,11 +244,18 @@ class PageController extends DocumentControllerBase
     public function checkPrettyUrlAction(Request $request)
     {
         $docId = $request->get('id');
-        $path = trim($request->get('path'));
+        $path = (string) trim($request->get('path'));
         $path = rtrim($path, '/');
 
         $success = true;
         $message = null;
+
+        if ($path === '') {
+            return $this->adminJson([
+                'success' => $success,
+                'message' => $message
+            ]);
+        }
 
         // must start with /
         if (strpos($path, '/') !== 0) {
@@ -256,8 +263,7 @@ class PageController extends DocumentControllerBase
             $message .= "\n URL must start with /.";
         }
 
-        // Cannot check for length <2, because that would falsely flag empty pretty URL/URL slugs
-        if (strlen($path) === 1) {
+        if (strlen($path) < 2) {
             $success = false;
             $message .= "\n URL must be at least 2 characters long.";
         }
