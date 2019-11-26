@@ -93,6 +93,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $filteredTotalCount = 0;
+        $limit = 0;
 
         if ($object->hasChildren($objectTypes)) {
             $limit = (int)$request->get('limit');
@@ -193,7 +194,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
         $objects = $event->getArgument('objects');
 
-        if ($request->get('limit')) {
+        if ($limit) {
             return $this->adminJson([
                 'offset' => $offset,
                 'limit' => $limit,
@@ -204,9 +205,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
                 'inSearch' => intval($request->get('inSearch'))
             ]);
-        } else {
-            return $this->adminJson($objects);
         }
+
+        return $this->adminJson($objects);
     }
 
     /**
@@ -599,8 +600,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $data = [];
 
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
-                    $data = $relations[0];
-                    $data['published'] = (bool)$data['published'];
+                    if (isset($relations[0])) {
+                        $data = $relations[0];
+                        $data['published'] = (bool)$data['published'];
+                    }
                 } elseif (
                     ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
                     || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields() && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation)

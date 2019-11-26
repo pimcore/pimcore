@@ -471,6 +471,9 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
             // additional parameters (e.g. "versionNote" for the version note)
             $params = [];
@@ -478,7 +481,6 @@ class Asset extends Element\AbstractElement
                 $params = func_get_arg(0);
             }
 
-            $isUpdate = false;
 
             $preEvent = new AssetEvent($this, $params);
 

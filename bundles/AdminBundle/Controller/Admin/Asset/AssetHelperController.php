@@ -283,10 +283,10 @@ class AssetHelperController extends AdminController
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName;
-        $settings['gridConfigDescription'] = $gridConfigDescription;
-        $settings['shareGlobally'] = $sharedGlobally;
-        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,

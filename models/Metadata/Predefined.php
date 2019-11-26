@@ -354,7 +354,7 @@ class Predefined extends Model\AbstractModel
             case 'document':
             case 'asset':
             case 'object':
-                {
+                $element = null;
                 if (is_numeric($this->data)) {
                     $element = Element\Service::getElementById($this->type, $this->data);
                 }
@@ -363,11 +363,6 @@ class Predefined extends Model\AbstractModel
                 } else {
                     $this->data = '';
                 }
-            }
-
-            break;
-            default:
-        //nothing to do
         }
     }
 }

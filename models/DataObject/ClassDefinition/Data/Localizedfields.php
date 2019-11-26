@@ -951,7 +951,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
+                if (isset($values[$fd->getName()])) {
+                    $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
+                }
             }
         }
 

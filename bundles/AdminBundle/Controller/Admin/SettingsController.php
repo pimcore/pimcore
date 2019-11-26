@@ -1178,7 +1178,7 @@ class SettingsController extends AdminController
         /** @var $item Asset\Image\Thumbnail\Config */
         foreach ($items as $item) {
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (empty($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
                         'text' => $item->getGroup(),
@@ -1799,17 +1799,19 @@ class SettingsController extends AdminController
                 });
             }
 
-            $list->setOrder(function ($a, $b) use ($sortingSettings) {
+            $list->setOrder(static function ($a, $b) use ($sortingSettings) {
                 if (!$sortingSettings) {
                     return 0;
                 }
                 $orderKey = $sortingSettings['orderKey'];
-                if ($a[$orderKey] == $b[$orderKey]) {
+                $aValue = $a[$orderKey] ?? null;
+                $bValue = $b[$orderKey] ?? null;
+                if ($aValue == $bValue) {
                     return 0;
                 }
 
-                $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
-                if ($sortingSettings['order'] == 'DESC') {
+                $result = $aValue < $bValue ? -1 : 1;
+                if ($sortingSettings['order'] === 'DESC') {
                     $result = -1 * $result;
                 }
 
