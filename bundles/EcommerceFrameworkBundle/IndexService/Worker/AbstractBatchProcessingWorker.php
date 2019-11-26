@@ -62,7 +62,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
           `tenant` varchar(50) NOT NULL DEFAULT '',
-          `data` text CHARACTER SET latin1,
+          `data` longtext CHARACTER SET latin1,
           `crc_current` bigint(11) DEFAULT NULL,
           `crc_index` bigint(11) DEFAULT NULL,
           `worker_timestamp` int(11) DEFAULT NULL,
