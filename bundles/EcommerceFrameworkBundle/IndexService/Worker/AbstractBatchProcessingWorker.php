@@ -47,8 +47,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * @param $objectId
      * @param null $data
+     * @param null $metadata
      */
-    abstract protected function doUpdateIndex($objectId, $data = null);
+    abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
 
     /**
      * creates store table
@@ -446,7 +447,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             //statement can take several seconds on large-scale systems.
 
             $this->db->beginTransaction();
-            $query = "SELECT o_id, data FROM {$this->getStoreTableName()} 
+            $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()} 
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
                 . intval($limit) . " FOR UPDATE";
 
@@ -472,7 +473,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         foreach ($entries as $entry) {
             Logger::info("Worker $workerId updating index for element " . $entry['id']);
             $data = json_decode($entry['data'], true);
-            $this->doUpdateIndex($entry['o_id'], $data);
+            $this->doUpdateIndex($entry['o_id'], $data, $entry['metadata']);
         }
 
         return count($entries);

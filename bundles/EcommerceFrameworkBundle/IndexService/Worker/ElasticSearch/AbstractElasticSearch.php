@@ -67,6 +67,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $bulkIndexData = [];
 
     /**
+     * @var array
+     */
+    protected $indexStoreMetaData = [];
+
+    /**
      * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      */
@@ -343,54 +348,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
-    /**
-     * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
-     *
-     * @param array $indexSystemData
-     * @param int $objectid
-     */
-    protected function deleteMovedParentRelations($indexSystemData)
-    {
-        $esClient = $this->getElasticSearchClient();
-
-        $variants = $esClient->search([
-            'index' => $this->getIndexNameVersion(),
-            'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
-            'body' => [
-                '_source' => false,
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            'term' => [
-                                'system.o_id' => $indexSystemData['o_id']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        $hits = $variants['hits']['hits'] ?? [];
-
-        foreach ($hits as $hit) {
-            if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
-                $params = [
-                    'index' => $this->getIndexNameVersion(),
-                    'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
-                    'id' => $indexSystemData['o_id'],
-                    'parent' => $hit['_parent']
-                ];
-                $esClient->delete($params);
-            }
-        }
-    }
-
-    protected function doUpdateIndex($objectId, $data = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
-            $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
-            if ($data) {
-                $data = json_decode($data, true);
+            $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            if ($dataEntry) {
+                $data = json_decode($dataEntry['data'], true);
+                $metadata = $dataEntry['metadata'];
 
                 $jsonDecodeError = json_last_error();
                 if ($jsonDecodeError !== JSON_ERROR_NONE) {
@@ -431,6 +395,12 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
+            if($metadata !== null && $routingId != $metadata) {
+                //routing has changed, need to delete old ES entry
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $metadata]];
+
+            }
+
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
@@ -440,6 +410,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];
             }
             $this->bulkIndexData[] = $bulkIndexData;
+            $this->indexStoreMetaData[$objectId] = $routingId;
 
             //save new indexed element to mockup cache
             $this->saveToMockupCache($objectId, $data);
@@ -475,7 +446,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $data = [
                     'update_status' => $response['index']['status'],
                     'update_error' => null,
+                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
                 ];
+
                 if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
@@ -488,6 +461,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         // reset
         $this->bulkIndexData = [];
+        $this->indexStoreMetaData = [];
 
         //check for eventual resetting re-index mode
         $this->completeReindexMode();

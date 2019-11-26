@@ -109,8 +109,9 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      *
      * @param $objectId
      * @param null $data
+     * @param null $metadata
      */
-    public function doUpdateIndex($objectId, $data = null)
+    public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
