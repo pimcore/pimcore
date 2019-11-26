@@ -360,6 +360,7 @@ $thumb = $asset->getThumbnail($thumbnailConfig);
 $file = $thumb->getFileSystemPath();
 ```
 
-## Downloading thumbnails from the asset detail page
+## Downloading Asset Thumbnails
 
-Besides embedding thumbnails into CMS pages and distributing them via other channels, pimcore backend user can download a thumbnail of an asset stright from pimcore backend. In order to make a thumbnail downloadable in backend "List as option in download section on image detail view" must be set under "Advanced" in the thumbnail settings. All thumbnails with this option enabled are listed in the "Thumbnail" drop-down under "Download Thumbnail" on the detail page of an Asset. To download the thumbnail of the asset choose the thumbnail from the list and hit the "Download" button.
+Besides embedding thumbnails into CMS pages and distributing them via other channels, backend users can download a thumbnail of an asset. 
+In order to make a thumbnail downloadable, mark "List as option in download section on image detail view" option in Image Thumbnail Advanced settings. All thumbnails with this option enabled are listed in the "Download Thumbnail" dropdown on the detail view of an Asset. To download the thumbnail of the asset choose the thumbnail from the list and hit the "Download" button.
