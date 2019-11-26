@@ -1912,7 +1912,7 @@ span.warning {
 
 .pimcore_main_accordion .pimcore_tree_no_root_node .x-tree-view .x-grid-item-container {
     padding-top: 0;
-    margin-left: 15px;
+    padding-left: 30px;
 }
 
 .pimcore_main_splitter {
