@@ -291,8 +291,9 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      *
      * @param $objectId
      * @param null $data
+     * @param null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
     }
 
