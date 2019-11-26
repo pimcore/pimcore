@@ -75,6 +75,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           `preparation_status` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
           `preparation_error` VARCHAR(255) NULL DEFAULT NULL,
           `trigger_info` VARCHAR(255) NULL DEFAULT NULL,
+          `metadata` text,
           PRIMARY KEY (`o_id`,`tenant`),
           KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`),
           KEY `preparation_status_index` (`tenant`,`preparation_status`),
