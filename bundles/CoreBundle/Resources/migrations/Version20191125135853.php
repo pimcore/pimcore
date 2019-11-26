@@ -3,6 +3,8 @@
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20191125135853 extends AbstractPimcoreMigration
