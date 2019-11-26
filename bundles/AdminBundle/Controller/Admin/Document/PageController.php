@@ -260,17 +260,17 @@ class PageController extends DocumentControllerBase
         // must start with /
         if (strpos($path, '/') !== 0) {
             $success = false;
-            $message .= "\n URL must start with /.";
+            $message = "URL must start with /.";
         }
 
         if (strlen($path) < 2) {
             $success = false;
-            $message .= "\n URL must be at least 2 characters long.";
+            $message .= "<br>URL must be at least 2 characters long.";
         }
 
         if (!Element\Service::isValidPath($path, 'document')) {
             $success = false;
-            $message .= "\n URL is invalid.";
+            $message .= "<br>URL is invalid.";
         }
 
         $list = new Document\Listing();
