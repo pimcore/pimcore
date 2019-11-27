@@ -127,6 +127,7 @@ pimcore.element.dependencies = Class.create({
             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiresStore, {pageSize: itemsPerPage})
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
+        this.requiresGrid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
         
         this.requiresStore.load({
             callback : function(records, operation, success) {
