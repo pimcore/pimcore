@@ -119,7 +119,7 @@ class MySql
                 if ($doAdd) {
                     $columnsToAdd[$attribute->getName()] = $attribute->getType();
                 }
-            } else if($attribute->getType() != $columns[$attribute->getName()]['Type']) {
+            } elseif ($attribute->getType() != $columns[$attribute->getName()]['Type']) {
                 $columnsToModify[$attribute->getName()] = $attribute->getType();
             }
 

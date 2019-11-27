@@ -20,11 +20,9 @@ class Version20191125135853 extends AbstractPimcoreMigration
             $indexService = $factory->getIndexService();
             $tenants = $indexService->getTenants();
 
-            foreach($tenants as $tenant) {
-
+            foreach ($tenants as $tenant) {
                 $tenantWorker = $indexService->getTenantWorker($tenant);
                 if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
                     $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                     $method->setAccessible(true);
                     $tableName = $method->invoke($tenantWorker);
@@ -33,7 +31,6 @@ class Version20191125135853 extends AbstractPimcoreMigration
                     CHANGE COLUMN `data` `data` longtext CHARACTER SET latin1;"
                     );
                 }
-
             }
         }
     }
@@ -48,11 +45,9 @@ class Version20191125135853 extends AbstractPimcoreMigration
             $indexService = $factory->getIndexService();
             $tenants = $indexService->getTenants();
 
-            foreach($tenants as $tenant) {
-
+            foreach ($tenants as $tenant) {
                 $tenantWorker = $indexService->getTenantWorker($tenant);
                 if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
                     $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                     $method->setAccessible(true);
                     $tableName = $method->invoke($tenantWorker);
@@ -61,7 +56,6 @@ class Version20191125135853 extends AbstractPimcoreMigration
                     CHANGE COLUMN `data` `data` text CHARACTER SET latin1;"
                     );
                 }
-
             }
         }
     }

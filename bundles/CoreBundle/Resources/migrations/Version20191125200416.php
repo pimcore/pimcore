@@ -23,11 +23,9 @@ class Version20191125200416 extends AbstractPimcoreMigration
             $indexService = $factory->getIndexService();
             $tenants = $indexService->getTenants();
 
-            foreach($tenants as $tenant) {
-
+            foreach ($tenants as $tenant) {
                 $tenantWorker = $indexService->getTenantWorker($tenant);
-                if($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
+                if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
                     $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                     $method->setAccessible(true);
                     $tableName = $method->invoke($tenantWorker);
@@ -35,12 +33,9 @@ class Version20191125200416 extends AbstractPimcoreMigration
                     $this->addSql("ALTER TABLE `$tableName`
                     ADD metadata TEXT NULL;
                 ");
-
                 }
-
             }
         }
-
     }
 
     /**
@@ -48,17 +43,14 @@ class Version20191125200416 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-
         if (PimcoreEcommerceFrameworkBundle::isEnabled()) {
             $factory = Factory::getInstance();
             $indexService = $factory->getIndexService();
             $tenants = $indexService->getTenants();
 
             foreach ($tenants as $tenant) {
-
                 $tenantWorker = $indexService->getTenantWorker($tenant);
                 if ($tenantWorker instanceof AbstractBatchProcessingWorker) {
-
                     $method = new \ReflectionMethod(get_class($tenantWorker), 'getStoreTableName');
                     $method->setAccessible(true);
                     $tableName = $method->invoke($tenantWorker);
@@ -66,11 +58,8 @@ class Version20191125200416 extends AbstractPimcoreMigration
                     $this->addSql("ALTER TABLE `$tableName`
                     DROP COLUMN metadata;
                 ");
-
                 }
-
             }
         }
-
     }
 }

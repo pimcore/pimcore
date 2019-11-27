@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Notification\Service;
 
 use Pimcore\Model\User;
-use Pimcore\Model\User\Role;
 
 class UserService
 {
@@ -36,7 +35,7 @@ class UserService
         $rolesList->load();
         $roles = $rolesList->getRoles();
 
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             $condition[] = "CONCAT(',', roles, ',') LIKE '%," . $role->getId() . ",%'";
         }
 
@@ -45,8 +44,8 @@ class UserService
         $userListing->setOrderKey('name');
         $userListing->setOrder('ASC');
 
-        $condition[] = "admin = 1";
-        $userListing->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(" OR ", $condition) . ")", '%,notifications,%');
+        $condition[] = 'admin = 1';
+        $userListing->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(' OR ', $condition) . ')', '%,notifications,%');
         $userListing->addConditionParam('id != ?', $loggedIn->getId());
         $userListing->addConditionParam('active = ?', '1');
         $userListing->load();

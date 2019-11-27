@@ -78,7 +78,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     protected $indexStoreMetaData = [];
 
-
     /**
      * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
@@ -122,26 +121,26 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected function determineAndSetCurrentIndexVersion()
     {
         if (is_readable($this->getVersionFile())) {
-
             $fileContent = file_get_contents($this->getVersionFile());
             $data = explode('|', $fileContent);
 
             $this->indexVersion = intval($data[0]);
             $this->settingsHash = trim($data[1]);
-
         } else {
             $this->updateVersionFile();
         }
     }
 
-    protected function updateVersionFile() {
+    protected function updateVersionFile()
+    {
         $versionFile = $this->getVersionFile();
-        if(!is_readable($versionFile)) {
+        if (!is_readable($versionFile)) {
             \Pimcore\File::mkdir(dirname($versionFile));
         }
 
         $version = $this->getIndexVersion();
         $settingsHash = $this->settingsHash;
+
         return file_put_contents($versionFile, $version . '|' . $settingsHash);
     }
 
@@ -417,10 +416,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
-            if($metadata !== null && $routingId != $metadata) {
+            if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
                 $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $metadata]];
-
             }
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
@@ -709,7 +707,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
             $newSettingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
 
-            if($newSettingsHash !== $this->settingsHash) {
+            if ($newSettingsHash !== $this->settingsHash) {
                 $this->settingsHash = $newSettingsHash;
 
                 $esClient->indices()->putSettings([
@@ -718,11 +716,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                         'index' => $this->tenantConfig->getIndexSettings()
                     ]
                 ]);
-
             }
 
             Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
-
         } catch (\Exception $e) {
             Logger::info($e->getMessage());
 
