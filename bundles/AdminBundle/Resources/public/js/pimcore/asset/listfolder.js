@@ -253,6 +253,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             columns : gridColumns,
+            bufferedRenderer: false,
             plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
