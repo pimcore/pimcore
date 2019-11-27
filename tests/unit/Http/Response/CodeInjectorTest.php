@@ -39,7 +39,7 @@ class CodeInjectorTest extends TestCase
      */
     private $codePart = '<!-- INJECTED -->';
 
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 

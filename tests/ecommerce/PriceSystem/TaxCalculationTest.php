@@ -26,7 +26,7 @@ class TaxCalculationTest extends EcommerceTestCase
     /**
      * @inheritDoc
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 
