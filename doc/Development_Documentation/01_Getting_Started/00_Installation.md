@@ -29,18 +29,15 @@ COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton my-project
 COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo my-project
 ```
 
-
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
 Keep in mind, that Pimcore needs to be installed **outside** of the **document root**.
 Specific configurations and optimizations for your web server are available here:
 [Apache](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md),
 [Nginx](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 
-Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var`
-([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
+Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var` ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files 
-in place, e.g. `app/config/config_[env_name].yml`. 
+If you're running the installation using a [custom environment name](../21_Deployment/03_Multi_Environment.md), ensure you already have the right config files in place, e.g. `app/config/config_[env_name].yml`. 
 
 ## 3. Create Database
 
@@ -72,7 +69,7 @@ have a look at the logs as a starting point when debugging installation issues.
 
 ## 5. Maintenance Cron Job
 
-```text
+```bash
 */5 * * * * /your/project/bin/console maintenance
 ```
 

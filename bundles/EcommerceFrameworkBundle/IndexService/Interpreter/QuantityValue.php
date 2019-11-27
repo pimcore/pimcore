@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuantityValue implements InterpreterInterface
@@ -30,7 +31,7 @@ class QuantityValue implements InterpreterInterface
                 $unit = $value->getUnit();
                 $value = $value->getValue();
 
-                if ($unit->getFactor()) {
+                if ($unit instanceof Unit && $unit->getFactor()) {
                     $value *= $unit->getFactor();
                 }
 

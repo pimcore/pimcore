@@ -462,6 +462,20 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
+            //Fallback if $currentLayoutId is not set or empty string
+            //Uses first valid layout instead of admin layout when empty
+            $ok = false;
+            foreach ($validLayouts as $key => $layout) {
+                if ($currentLayoutId == $layout->getId()) {
+                    $ok = true;
+                }
+            }
+            if (!$ok) {
+                if (count($validLayouts) > 0) {
+                    $currentLayoutId = reset($validLayouts)->getId();
+                }
+            }
+
             //master layout has id 0 so we check for is_null()
             if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
                 if (count($validLayouts) == 1) {

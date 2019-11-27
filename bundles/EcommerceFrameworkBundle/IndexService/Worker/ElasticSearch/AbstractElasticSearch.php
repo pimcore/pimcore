@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -54,11 +55,18 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $indexName;
 
     /**
-     * The Version number of the Index (we increas the Version number if the mapping cant be changed (reindexing process))
+     * The Version number of the Index (we increase the Version number if the mapping cant be changed (reindexing process))
      *
      * @var int
      */
     protected $indexVersion = 0;
+
+    /**
+     * Hash of current index settings - used for checking, if putSettings is necessary
+     *
+     * @var string
+     */
+    protected $settingsHash = '';
 
     /**
      * @var array
@@ -66,12 +74,17 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $bulkIndexData = [];
 
     /**
+     * @var array
+     */
+    protected $indexStoreMetaData = [];
+
+    /**
      * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();
@@ -107,14 +120,28 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     protected function determineAndSetCurrentIndexVersion()
     {
-        $version = $this->getIndexVersion();
         if (is_readable($this->getVersionFile())) {
-            $version = (int)trim(file_get_contents($this->getVersionFile()));
+            $fileContent = file_get_contents($this->getVersionFile());
+            $data = explode('|', $fileContent);
+
+            $this->indexVersion = intval($data[0]);
+            $this->settingsHash = trim($data[1]);
         } else {
-            \Pimcore\File::mkdir(dirname($this->getVersionFile()));
-            file_put_contents($this->getVersionFile(), $this->getIndexVersion());
+            $this->updateVersionFile();
         }
-        $this->indexVersion = $version;
+    }
+
+    protected function updateVersionFile()
+    {
+        $versionFile = $this->getVersionFile();
+        if (!is_readable($versionFile)) {
+            \Pimcore\File::mkdir(dirname($versionFile));
+        }
+
+        $version = $this->getIndexVersion();
+        $settingsHash = $this->settingsHash;
+
+        return file_put_contents($versionFile, $version . '|' . $settingsHash);
     }
 
     /**
@@ -329,67 +356,26 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             return;
         }
 
-        $this->prepareDataForIndex($object);
+        $subObjectIds = $this->prepareDataForIndex($object);
 
         //updates data for all subentries
-        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         foreach ($subObjectIds as $subObjectId => $object) {
             $this->doUpdateIndex($subObjectId);
         }
 
-        $this->commitUpdateIndex();
-
-        $this->fillupPreparationQueue($object);
-    }
-
-    /**
-     * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
-     *
-     * @param array $indexSystemData
-     * @param int $objectid
-     */
-    protected function deleteMovedParentRelations($indexSystemData)
-    {
-        $esClient = $this->getElasticSearchClient();
-
-        $variants = $esClient->search([
-            'index' => $this->getIndexNameVersion(),
-            'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
-            'body' => [
-                '_source' => false,
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            'term' => [
-                                'system.o_id' => $indexSystemData['o_id']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-
-        $hits = $variants['hits']['hits'] ?? [];
-
-        foreach ($hits as $hit) {
-            if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
-                $params = [
-                    'index' => $this->getIndexNameVersion(),
-                    'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
-                    'id' => $indexSystemData['o_id'],
-                    'parent' => $hit['_parent']
-                ];
-                $esClient->delete($params);
-            }
+        if (count($subObjectIds) > 0) {
+            $this->commitUpdateIndex();
+            $this->fillupPreparationQueue($object);
         }
     }
 
-    protected function doUpdateIndex($objectId, $data = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
-            $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
-            if ($data) {
-                $data = json_decode($data, true);
+            $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            if ($dataEntry) {
+                $data = json_decode($dataEntry['data'], true);
+                $metadata = $dataEntry['metadata'];
 
                 $jsonDecodeError = json_last_error();
                 if ($jsonDecodeError !== JSON_ERROR_NONE) {
@@ -430,6 +416,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
+            if ($metadata !== null && $routingId != $metadata) {
+                //routing has changed, need to delete old ES entry
+                $this->bulkIndexData[] = ['delete' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $metadata]];
+            }
+
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
@@ -439,6 +430,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];
             }
             $this->bulkIndexData[] = $bulkIndexData;
+            $this->indexStoreMetaData[$objectId] = $routingId;
 
             //save new indexed element to mockup cache
             $this->saveToMockupCache($objectId, $data);
@@ -474,7 +466,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $data = [
                     'update_status' => $response['index']['status'],
                     'update_error' => null,
+                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
                 ];
+
                 if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
@@ -487,6 +481,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         // reset
         $this->bulkIndexData = [];
+        $this->indexStoreMetaData = [];
 
         //check for eventual resetting re-index mode
         $this->completeReindexMode();
@@ -540,7 +535,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         Logger::info('Index-Actions - Start Reindex Mode - Version Number: ' . $this->indexVersion.' Index Name: ' . $this->getIndexNameVersion());
 
         //set the new version here so other processes write in the new index
-        $result = file_put_contents($this->getVersionFile(), $this->indexVersion);
+        $result = $this->updateVersionFile();
         if (!$result) {
             throw new \Exception("Can't write version file: " . $this->getVersionFile());
         }
@@ -709,6 +704,21 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         try {
             $result = $esClient->indices()->putMapping($params);
             Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
+
+            $newSettingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
+
+            if ($newSettingsHash !== $this->settingsHash) {
+                $this->settingsHash = $newSettingsHash;
+
+                $esClient->indices()->putSettings([
+                    'index' => $this->getIndexNameVersion(),
+                    'body' => [
+                        'index' => $this->tenantConfig->getIndexSettings()
+                    ]
+                ]);
+            }
+
+            Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
         } catch (\Exception $e) {
             Logger::info($e->getMessage());
 
@@ -820,5 +830,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
+
+        $this->settingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
+        $this->updateVersionFile();
     }
 }

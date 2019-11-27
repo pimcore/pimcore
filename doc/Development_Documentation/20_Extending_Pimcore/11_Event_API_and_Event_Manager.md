@@ -38,6 +38,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Translation](https://github.com/pimcore/pimcore/blob/master/lib/Event/TranslationEvents.php)
 - [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/master/lib/Event/BundleManagerEvents.php)
 - [Web Services](https://github.com/pimcore/pimcore/blob/master/lib/Event/WebserviceEvents.php)
+- [Ecommerce::Index Service](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/IndexServiceEvents.php)
 - [Ecommerce::Checkout Manager](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/CheckoutManagerEvents.php)
 - [Ecommerce::Commit Order Processor](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/CommitOrderProcessorEvents.php)
 - [Ecommerce::Order Agent](https://github.com/pimcore/pimcore/blob/master/lib/Event/Ecommerce/OrderAgentEvents.php)

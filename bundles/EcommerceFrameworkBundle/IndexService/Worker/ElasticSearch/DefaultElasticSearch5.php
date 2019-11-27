@@ -252,12 +252,55 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     }
 
     /**
+     * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
+     *
+     * @param array $indexSystemData
+     * @param int $objectid
+     */
+    protected function deleteMovedParentRelations($indexSystemData)
+    {
+        $esClient = $this->getElasticSearchClient();
+
+        $variants = $esClient->search([
+            'index' => $this->getIndexNameVersion(),
+            'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
+            'body' => [
+                '_source' => false,
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            'term' => [
+                                'system.o_id' => $indexSystemData['o_id']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $hits = $variants['hits']['hits'] ?? [];
+
+        foreach ($hits as $hit) {
+            if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
+                $params = [
+                    'index' => $this->getIndexNameVersion(),
+                    'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
+                    'id' => $indexSystemData['o_id'],
+                    'parent' => $hit['_parent']
+                ];
+                $esClient->delete($params);
+            }
+        }
+    }
+
+    /**
      * only prepare data for updating index
      *
      * @param $objectId
      * @param null $data
+     * @param null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
