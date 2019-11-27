@@ -494,12 +494,14 @@ pimcore.settings.email.log = Class.create({
                             xtype: 'textfield',
                             name: "subject",
                             value: data.subject,
+                            allowBlank : false,
                             fieldLabel: t("subject"),
                         },
                         {
                             xtype: 'textfield',
                             name: "from",
                             value: data.from,
+                            allowBlank : false,
                             fieldLabel: t("from"),
                         },
                         {
@@ -510,6 +512,7 @@ pimcore.settings.email.log = Class.create({
                         {
                             xtype: 'textfield',
                             name: "to",
+                            allowBlank : false,
                             fieldLabel: t("to"),
                         },
                         {
@@ -541,27 +544,30 @@ pimcore.settings.email.log = Class.create({
                     text: t("send"),
                     iconCls: "pimcore_icon_email",
                     handler: function () {
-                        var params = win.getComponent("form").getForm().getFieldValues();
-                        Ext.Ajax.request({
-                            url: '/admin/email/resend-email',
-                            method: 'POST',
-                            success: function(response){
-                                var data = Ext.decode( response.responseText );
-                                if(data.success){
-                                    Ext.Msg.alert(t('email_log_forward'),
-                                        t('email_log_resend_window_success_message'));
-                                    win.close();
-                                }else{
+                        var form = win.getComponent("form").getForm();
+                        var params = form.getFieldValues();
+                        if (form.isValid()) {
+                            Ext.Ajax.request({
+                                url: '/admin/email/resend-email',
+                                method: 'POST',
+                                success: function (response) {
+                                    var data = Ext.decode(response.responseText);
+                                    if (data.success) {
+                                        Ext.Msg.alert(t('email_log_forward'),
+                                            t('email_log_resend_window_success_message'));
+                                        win.close();
+                                    } else {
+                                        Ext.Msg.alert(t('email_log_forward'),
+                                            t('email_log_resend_window_error_message'));
+                                    }
+                                },
+                                failure: function () {
                                     Ext.Msg.alert(t('email_log_forward'),
                                         t('email_log_resend_window_error_message'));
-                                }
-                            },
-                            failure: function () {
-                                Ext.Msg.alert(t('email_log_forward'),
-                                    t('email_log_resend_window_error_message'));
-                            },
-                            params: params
-                        });
+                                },
+                                params: params
+                            });
+                        }
                     }
                 }]
             });
