@@ -55,12 +55,12 @@ class TmpStore extends Model\AbstractModel
     public $serialized = false;
 
     /**
-     * @var Lock
+     * @var TmpStore
      */
     protected static $instance;
 
     /**
-     * @return Lock
+     * @return TmpStore
      */
     protected static function getInstance()
     {
