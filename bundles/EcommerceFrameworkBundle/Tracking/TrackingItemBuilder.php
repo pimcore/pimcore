@@ -41,7 +41,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     public function buildProductImpressionItem(ProductInterface $product)
     {
         $item = new ProductImpression();
-        $this->addProductAttributes($item, $product);
+        $this->initProductAttributes($item, $product);
 
         $item
             ->setId($product->getId())
@@ -73,7 +73,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      * @param AbstractProductData $item the tracking item that is going to be serialized later on.
      * @param ProductInterface $product
      */
-    protected function addProductAttributes(AbstractProductData $item, ProductInterface $product) {
+    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product) {
         $item
             ->setId($product->getOSProductNumber())
             ->setName($this->normalizeName($product->getOSName()))
@@ -100,7 +100,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         $item = new ProductAction();
         $item->setQuantity($quantity);
 
-        $this->addProductAttributes($item, $product);
+        $this->initProductAttributes($item, $product);
 
         // set price if product is ready to check out
         if ($product instanceof CheckoutableInterface) {
@@ -199,7 +199,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
             ->setPrice(Decimal::create($orderItem->getTotalPrice())->div($orderItem->getAmount())->asNumeric())
             ->setQuantity($orderItem->getAmount());
 
-        $this->addProductAttributes($item, $product);
+        $this->initProductAttributes($item, $product);
 
         return $item;
     }
@@ -220,7 +220,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         $item->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
             ->setQuantity($cartItem->getCount());
 
-        $this->addProductAttributes($item, $product);
+        $this->initProductAttributes($item, $product);
 
         return $item;
     }
