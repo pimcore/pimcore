@@ -334,7 +334,8 @@ pimcore.settings.email.log = Class.create({
                                                 }
                                             },
                                             failure: function () {
-                                                alert('Could not resend email');
+                                                Ext.Msg.alert(t('email_log_resend'),
+                                                    t('email_log_resend_window_error_message'));
                                             },
                                             params: { id : rec.get('id') }
                                         });
@@ -368,7 +369,8 @@ pimcore.settings.email.log = Class.create({
                                     win.show();
                                 }.bind(this),
                                 failure: function () {
-                                    alert('Could not foward email');
+                                    Ext.Msg.alert(t('email_log_forward'),
+                                        t('email_log_resend_window_error_message'));
                                 },
                             });
                         }.bind(this),
@@ -395,11 +397,13 @@ pimcore.settings.email.log = Class.create({
                             success: function(response){
                                 var data = Ext.decode( response.responseText );
                                 if(!data.success){
-                                    alert('Could not delete email log');
+                                    Ext.Msg.alert(t('error'),
+                                        t('error_deleting_item'));
                                 }
                             },
                             failure: function () {
-                                alert('Could not delete email log');
+                                Ext.Msg.alert(t('error'),
+                                    t('error_deleting_item'));
                             },
                             params: { id : rec.get('id') }
                         });
@@ -553,7 +557,8 @@ pimcore.settings.email.log = Class.create({
                                 }
                             },
                             failure: function () {
-                                alert('Could not forward email');
+                                Ext.Msg.alert(t('email_log_forward'),
+                                    t('email_log_resend_window_error_message'));
                             },
                             params: params
                         });
