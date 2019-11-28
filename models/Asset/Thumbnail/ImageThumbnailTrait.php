@@ -265,7 +265,8 @@ trait ImageThumbnailTrait
         return $this->mimetype;
     }
 
-    protected function convertToWebPath(string $filesystemPath): string {
+    protected function convertToWebPath(string $filesystemPath): string
+    {
         $path = preg_replace([
             '@^' . preg_quote(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails') . '@',
             '@^' . preg_quote(PIMCORE_WEB_ROOT . '/image-thumbnails') . '@',

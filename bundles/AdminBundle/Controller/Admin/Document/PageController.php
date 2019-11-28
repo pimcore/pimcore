@@ -260,17 +260,17 @@ class PageController extends DocumentControllerBase
         // must start with /
         if ($path !== '' && strpos($path, '/') !== 0) {
             $success = false;
-            $message[] = "URL must start with /.";
+            $message[] = 'URL must start with /.';
         }
 
         if (strlen($path) < 2) {
             $success = false;
-            $message[] = "URL must be at least 2 characters long.";
+            $message[] = 'URL must be at least 2 characters long.';
         }
 
         if (!Element\Service::isValidPath($path, 'document')) {
             $success = false;
-            $message[] = "URL is invalid.";
+            $message[] = 'URL is invalid.';
         }
 
         $list = new Document\Listing();
@@ -281,7 +281,7 @@ class PageController extends DocumentControllerBase
 
         if ($list->getTotalCount() > 0) {
             $success = false;
-            $message[] = "URL path already exists.";
+            $message[] = 'URL path already exists.';
         }
 
         return $this->adminJson([
