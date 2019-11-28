@@ -26,11 +26,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $units = null;
-
-    /**
      * @param $key
      *
      * @return bool
@@ -49,11 +44,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getUnits()
     {
-        if ($this->units == null) {
-            $this->getDao()->load();
-        }
-
-        return $this->units;
+        return $this->getData();
     }
 
     /**
@@ -61,6 +52,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setUnits($units)
     {
-        $this->units = $units;
+        return $this->setData($units);
     }
 }

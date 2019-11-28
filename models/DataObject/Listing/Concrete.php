@@ -54,7 +54,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function __construct()
     {
-        $this->initDao('\\Pimcore\\Model\\DataObject\\Listing\\Concrete');
+        $this->initDao(__CLASS__);
     }
 
     /**

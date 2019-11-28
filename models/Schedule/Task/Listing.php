@@ -26,20 +26,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $tasks = null;
-
-    /**
      * @return Model\Schedule\Task[]
      */
     public function getTasks()
     {
-        if ($this->tasks === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->tasks;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +40,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setTasks($tasks)
     {
-        $this->tasks = $tasks;
-
-        return $this;
+        return $this->setData($tasks);
     }
 }

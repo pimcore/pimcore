@@ -23,10 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var array
-     */
-    public $carts;
 
     public function __construct()
     {
@@ -48,11 +44,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getCarts()
     {
-        if (empty($this->carts)) {
-            $this->load();
-        }
-
-        return $this->carts;
+        return $this->getData();
     }
 
     /**
@@ -62,6 +54,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function setCarts($carts)
     {
-        $this->carts = $carts;
+        return $this->setData($carts);
     }
 }

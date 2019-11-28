@@ -28,20 +28,13 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $notes = null;
-
-    /**
      * @param $notes
      *
      * @return $this
      */
     public function setNotes($notes)
     {
-        $this->notes = $notes;
-
-        return $this;
+        return $this->setData($notes);
     }
 
     /**
@@ -49,10 +42,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getNotes()
     {
-        if ($this->notes === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->notes;
+        return $this->getData();
     }
 }

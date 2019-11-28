@@ -26,20 +26,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $gridConfigs = null;
-
-    /**
      * @return Model\GridConfig[]
      */
     public function getGridConfigs()
     {
-        if ($this->gridConfigs === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->gridConfigs;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +40,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setGridConfigs($gridConfigs)
     {
-        $this->gridConfigs = $gridConfigs;
-
-        return $this;
+        return $this->setData($gridConfigs);
     }
 }

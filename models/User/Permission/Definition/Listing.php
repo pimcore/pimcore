@@ -26,20 +26,13 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $definitions = null;
-
-    /**
      * @param $definitions
      *
      * @return $this
      */
     public function setDefinitions($definitions)
     {
-        $this->definitions = $definitions;
-
-        return $this;
+        return $this->setData($definitions);
     }
 
     /**
@@ -47,10 +40,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getDefinitions()
     {
-        if ($this->definitions === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->definitions;
+        return $this->getData();
     }
 }

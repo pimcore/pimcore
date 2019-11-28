@@ -25,10 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var array
-     */
-    public $cartItems;
 
     /**
      * @var array
@@ -59,21 +55,17 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getCartItems()
     {
-        if (empty($this->cartItems)) {
-            $this->load();
-        }
-
-        return $this->cartItems;
+        return $this->getData();
     }
 
     /**
      * @param CartItemInterface[] $cartItems
      *
-     * @return void
+     * @return static
      */
     public function setCartItems($cartItems)
     {
-        $this->cartItems = $cartItems;
+        return $this->setData($cartItems);
     }
 
     /**

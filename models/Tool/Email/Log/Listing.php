@@ -26,20 +26,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
-     */
-    protected $emailLogs = null;
-
-    /**
      * @return Model\Tool\Email\Log[]
      */
     public function getEmailLogs()
     {
-        if ($this->emailLogs === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->emailLogs;
+        return $this->getData();
     }
 
     /**
@@ -51,8 +42,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setEmailLogs($emailLogs)
     {
-        $this->emailLogs = $emailLogs;
-
-        return $this;
+        return $this->setData($emailLogs);
     }
 }

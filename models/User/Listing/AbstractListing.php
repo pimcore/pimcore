@@ -31,18 +31,11 @@ class AbstractListing extends Model\Listing\AbstractListing
     public $type;
 
     /**
-     * Contains the results of the list. They are all an instance of User
-     *
-     * @var array
-     */
-    public $items = [];
-
-    /**
      * @return array
      */
     public function getItems()
     {
-        return $this->items;
+        return $this->getData();
     }
 
     /**
@@ -52,9 +45,7 @@ class AbstractListing extends Model\Listing\AbstractListing
      */
     public function setItems($items)
     {
-        $this->items = $items;
-
-        return $this;
+        return $this->setData($items);
     }
 
     /**

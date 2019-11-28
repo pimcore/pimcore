@@ -26,20 +26,13 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
-     */
-    protected $workflowStates = null;
-
-    /**
      * @param $workflowStates
      *
      * @return $this
      */
     public function setWorkflowStates($workflowStates)
     {
-        $this->workflowStates = $workflowStates;
-
-        return $this;
+        return $this->setData($workflowStates);
     }
 
     /**
@@ -47,10 +40,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getWorkflowStates()
     {
-        if ($this->workflowStates === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->workflowStates;
+        return $this->getData();
     }
 }

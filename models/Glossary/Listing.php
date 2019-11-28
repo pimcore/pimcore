@@ -25,21 +25,13 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var array|null
-     */
-    protected $glossary = null;
 
     /**
      * @return Model\Glossary[]
      */
     public function getGlossary()
     {
-        if ($this->glossary === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->glossary;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +41,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setGlossary($glossary)
     {
-        $this->glossary = $glossary;
-
-        return $this;
+        return $this->setData($glossary);
     }
 }

@@ -25,16 +25,12 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $layoutDefinitions = null;
-
-    /**
      * @param array $layoutDefinitions
+     * @return self
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
-        $this->layoutDefinitions = $layoutDefinitions;
+        return $this->setData($layoutDefinitions);
     }
 
     /**
@@ -42,10 +38,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getLayoutDefinitions()
     {
-        if ($this->layoutDefinitions === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->layoutDefinitions;
+        return $this->getData();
     }
 }

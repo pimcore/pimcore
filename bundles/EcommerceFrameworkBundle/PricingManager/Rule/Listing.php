@@ -24,11 +24,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var RuleInterface[]
-     */
-    protected $rules;
-
-    /**
      * @var bool
      */
     protected $validate;
@@ -56,21 +51,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getRules()
     {
-        // load rules if not loaded yet
-        if (empty($this->rules)) {
-            $this->load();
-        }
-
-        return $this->rules;
+        return $this->getData();
     }
 
     /**
      * @param RuleInterface[] $rules
      *
-     * @return void
+     * @return self
      */
     public function setRules(array $rules)
     {
-        $this->rules = $rules;
+        return $this->setData($rules);
     }
 }

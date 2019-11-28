@@ -26,20 +26,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $versions = null;
-
-    /**
      * @return Model\Version[]
      */
     public function getVersions()
     {
-        if ($this->versions === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->versions;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +40,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setVersions($versions)
     {
-        $this->versions = $versions;
-
-        return $this;
+        return $this->setData($versions);
     }
 }

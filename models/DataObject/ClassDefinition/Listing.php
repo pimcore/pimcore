@@ -25,20 +25,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $classes = null;
-
-    /**
      * @return Model\DataObject\ClassDefinition[]
      */
     public function getClasses()
     {
-        if ($this->classes === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->classes;
+        return $this->getData();
     }
 
     /**
@@ -48,8 +39,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setClasses($classes)
     {
-        $this->classes = $classes;
-
-        return $this;
+        return $this->setData($classes);
     }
 }

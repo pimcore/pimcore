@@ -26,20 +26,11 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $importConfigShares = null;
-
-    /**
      * @return Model\ImportConfigShare[]
      */
     public function getImportConfigShares(): array
     {
-        if ($this->importConfigShares === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->importConfigShares;
+        return $this->getData();
     }
 
     /**
@@ -47,6 +38,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setImportConfigShares(array $importConfigShares)
     {
-        $this->importConfigShares = $importConfigShares;
+        return $this->setData($importConfigShares);
     }
 }

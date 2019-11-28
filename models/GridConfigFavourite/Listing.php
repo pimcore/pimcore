@@ -25,21 +25,13 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var array|null
-     */
-    protected $gridconfigFavourites = null;
 
     /**
      * @return Model\GridConfigFavourite[]
      */
     public function getGridconfigFavourites()
     {
-        if ($this->gridconfigFavourites === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->gridconfigFavourites;
+        return $this->getData();
     }
 
     /**
@@ -47,6 +39,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setGridconfigFavourites($gridconfigFavourites)
     {
-        $this->gridconfigFavourites = $gridconfigFavourites;
+        return $this->setData($gridconfigFavourites);
     }
 }

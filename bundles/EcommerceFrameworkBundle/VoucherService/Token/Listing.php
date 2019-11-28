@@ -23,10 +23,8 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    public $tokens;
-
     /**
      * @param  $key
      *
@@ -109,11 +107,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
      */
     public function getTokenList()
     {
-        if (empty($this->tokens)) {
-            $this->load();
-        }
-
-        return $this->tokens;
+        return $this->getData();
     }
 
     public static function getCodes($seriesId, $params)
@@ -344,7 +338,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
      */
     public function getTokens()
     {
-        return $this->tokens;
+        return $this->getData();
     }
 
     /**
@@ -352,7 +346,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
      */
     public function setTokens($tokens)
     {
-        $this->tokens = $tokens;
+        return $this->setData($tokens);
     }
 
     /**
@@ -361,64 +355,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function current()
-    {
-        $this->getTokens();
-        $var = current($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed|void
-     */
-    public function next()
-    {
-        $this->getTokens();
-        $var = next($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getTOkens();
-        $var = key($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getTokens();
-        $var = $this->current() !== false;
-
-        return $var;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
-    public function rewind()
-    {
-        $this->getTokens();
-        reset($this->tokens);
     }
 
     /**

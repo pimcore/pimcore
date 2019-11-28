@@ -75,23 +75,20 @@ class Service extends Model\Element\Service
         $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
-        $classes = $classesList->load();
 
         $classesToCheck = [];
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                $fieldDefinitions = $class->getFieldDefinitions();
-                $dataKeys = [];
-                if (is_array($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $tag) {
-                        if ($tag instanceof ClassDefinition\Data\User) {
-                            $dataKeys[] = $tag->getName();
-                        }
+        foreach ($classesList as $class) {
+            $fieldDefinitions = $class->getFieldDefinitions();
+            $dataKeys = [];
+            if (is_array($fieldDefinitions)) {
+                foreach ($fieldDefinitions as $tag) {
+                    if ($tag instanceof ClassDefinition\Data\User) {
+                        $dataKeys[] = $tag->getName();
                     }
                 }
-                if (is_array($dataKeys) and count($dataKeys) > 0) {
-                    $classesToCheck[$class->getName()] = $dataKeys;
-                }
+            }
+            if (is_array($dataKeys) and count($dataKeys) > 0) {
+                $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
 
@@ -160,7 +157,7 @@ class Service extends Model\Element\Service
         $children = $source->getChildren([
             AbstractObject::OBJECT_TYPE_OBJECT,
             AbstractObject::OBJECT_TYPE_VARIANT,
-            AbstractObject::OBJECT_TYPE_FOLDER
+            AbstractObject::OBJECT_TYPE_FOLDER,
         ], true);
 
         foreach ($children as $child) {
@@ -1263,7 +1260,7 @@ class Service extends Model\Element\Service
         $layoutDefinitions = $class->getLayoutDefinitions();
 
         $result = [
-            'layoutDefinition' => $layoutDefinitions
+            'layoutDefinition' => $layoutDefinitions,
         ];
 
         if (!$objectId) {

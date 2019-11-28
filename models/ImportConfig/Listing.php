@@ -25,21 +25,13 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var array|null
-     */
-    protected $importconfigs = null;
 
     /**
      * @return Model\ImportConfig[]
      */
     public function getImportconfigs(): array
     {
-        if ($this->importconfigs === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->importconfigs;
+        return $this->getData();
     }
 
     /**
@@ -47,6 +39,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setImportconfigs(array $importconfigs)
     {
-        $this->importconfigs = $importconfigs;
+        return $this->setData($importconfigs);
     }
 }

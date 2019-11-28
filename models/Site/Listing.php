@@ -25,21 +25,13 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var array|null
-     */
-    protected $sites = null;
 
     /**
      * @return Model\Site[]
      */
     public function getSites()
     {
-        if ($this->sites === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->sites;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +41,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setSites($sites)
     {
-        $this->sites = $sites;
-
-        return $this;
+        return $this->setData($sites);
     }
 }

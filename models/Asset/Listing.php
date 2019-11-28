@@ -29,35 +29,24 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    /**
-     * @var array|null
-     */
-    protected $assets = null;
-
     /**
      * @return Model\Asset[]
      */
     public function getAssets()
     {
-        if ($this->assets === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->assets;
+        return $this->getData();
     }
 
     /**
-     * @param string $assets
+     * @param Model\Asset[] $assets
      *
      * @return $this
      */
     public function setAssets($assets)
     {
-        $this->assets = $assets;
-
-        return $this;
+        return $this->setData($assets);
     }
 
     /**
@@ -93,58 +82,5 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * Methods for Iterator
-     */
-    public function rewind()
-    {
-        $this->getAssets();
-        reset($this->assets);
-    }
-
-    /**
-     * @return Model\Asset
-     */
-    public function current()
-    {
-        $this->getAssets();
-        $var = current($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getAssets();
-        $var = key($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return Model\Asset
-     */
-    public function next()
-    {
-        $this->getAssets();
-        $var = next($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getAssets();
-        $var = $this->current() !== false;
-
-        return $var;
     }
 }

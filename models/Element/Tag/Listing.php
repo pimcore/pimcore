@@ -28,20 +28,13 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     */
-    protected $tags = null;
-
-    /**
      * @param $tags
      *
      * @return $this
      */
     public function setTags($tags)
     {
-        $this->tags = $tags;
-
-        return $this;
+        return $this->setData($tags);
     }
 
     /**
@@ -49,10 +42,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTags()
     {
-        if ($this->tags === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->tags;
+        return $this->getData();
     }
 }

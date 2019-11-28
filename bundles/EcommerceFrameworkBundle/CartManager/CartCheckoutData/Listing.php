@@ -23,10 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var array
-     */
-    public $cartCheckoutDataItems;
 
     /**
      * @var array
@@ -45,20 +41,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getCartCheckoutDataItems()
     {
-        if (empty($this->cartCheckoutDataItems)) {
-            $this->load();
-        }
-
-        return $this->cartCheckoutDataItems;
+        return $this->getData();
     }
 
     /**
      * @param array $cartCheckoutDataItems
      *
-     * @return void
+     * @return self
      */
     public function setCartCheckoutDataItems($cartCheckoutDataItems)
     {
-        $this->cartCheckoutDataItems = $cartCheckoutDataItems;
+        return $this->setData($cartCheckoutDataItems);
     }
 }

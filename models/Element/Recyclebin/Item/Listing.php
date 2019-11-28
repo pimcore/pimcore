@@ -25,21 +25,13 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var array|null
-     */
-    protected $items = null;
 
     /**
      * @return Model\Element\Recyclebin\Item[]
      */
     public function getItems()
     {
-        if ($this->items === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->items;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +41,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setItems($items)
     {
-        $this->items = $items;
-
-        return $this;
+        return $this->setData($items);
     }
 }

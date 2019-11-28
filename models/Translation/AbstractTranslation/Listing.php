@@ -29,20 +29,11 @@ class Listing extends Model\Listing\AbstractListing
     protected static $cacheLimit = 5000;
 
     /**
-     * @var array|null
-     */
-    protected $translations = null;
-
-    /**
      * @return \Pimcore\Model\Translation\AbstractTranslation[]
      */
     public function getTranslations()
     {
-        if ($this->translations === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->translations;
+        return $this->getData();
     }
 
     /**
@@ -52,9 +43,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setTranslations($translations)
     {
-        $this->translations = $translations;
-
-        return $this;
+        return $this->setData($translations);
     }
 
     /**
