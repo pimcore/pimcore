@@ -341,6 +341,7 @@ abstract class PageSnippet extends Model\Document
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
+                $this->elements = $this->elements ?? [];
                 $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);

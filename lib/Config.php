@@ -766,7 +766,7 @@ class Config
                     continue;
                 }
 
-                if ($tmpData['hidden']) {
+                if (!empty($tmpData['hidden'])) {
                     continue;
                 }
 
@@ -786,7 +786,7 @@ class Config
         }
 
         foreach ($tmpResult as $resultItem) {
-            if ($resultItem['hidden']) {
+            if (!empty($resultItem['hidden'])) {
                 continue;
             }
 

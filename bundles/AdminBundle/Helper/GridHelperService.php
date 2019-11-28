@@ -475,7 +475,7 @@ class GridHelperService
         $featureFilters = [];
 
         // create filter condition
-        if ($requestParams['filter']) {
+        if (!empty($requestParams['filter'])) {
             $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
             $featureFilters = $this->getFeatureFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureFilters) {
@@ -483,11 +483,11 @@ class GridHelperService
             }
         }
 
-        if ($requestParams['condition'] && $adminUser->isAdmin()) {
+        if (!empty($requestParams['condition']) && $adminUser->isAdmin()) {
             $conditionFilters[] = '(' . $requestParams['condition'] . ')';
         }
 
-        if ($requestParams['query']) {
+        if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
                 $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
@@ -505,7 +505,7 @@ class GridHelperService
         }
 
         $list->setCondition(implode(' AND ', $conditionFilters));
-        if (!$requestParams['batch'] && empty($requestParams['ids'])) {
+        if (empty($requestParams['batch']) && empty($requestParams['ids'])) {
             $list->setLimit($limit);
             $list->setOffset($start);
         }
@@ -528,7 +528,7 @@ class GridHelperService
         $list->setOrder($order);
 
         //parameters specified in the objects grid
-        if ($requestParams['ids']) {
+        if (!empty($requestParams['ids'])) {
             $quotedIds = [];
             foreach ($requestParams['ids'] as $id) {
                 $quotedIds[] = $list->quote($id);
@@ -546,7 +546,7 @@ class GridHelperService
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
 
-        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
+        if (empty($requestParams['filter']) && empty($requestParams['condition']) && empty($requestParams['sort'])) {
             $list->setIgnoreLocalizedFields(true);
         }
 

@@ -875,13 +875,13 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv) {
-                $where = $cv['where'];
+            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+                $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->where($where);
                 }
 
-                $customViewJoins = $cv['joins'];
+                $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
@@ -893,7 +893,7 @@ class Service extends Model\AbstractModel
                     }
                 }
 
-                if ($cv['having']) {
+                if (!empty($cv['having'])) {
                     $select->having($cv['having']);
                 }
             });
