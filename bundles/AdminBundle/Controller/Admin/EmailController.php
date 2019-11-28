@@ -284,7 +284,11 @@ class EmailController extends AdminController
             $mail->preventDebugInformationAppending();
             $mail->setIgnoreDebugMode(true);
 
-            if(empty($request->get('to'))) {
+            if(!empty($request->get('to'))) {
+                $emailLog->setTo(null);
+                $emailLog->setCc(null);
+                $emailLog->setBcc(null);
+            } else {
                 $mail->disableLogging();
             }
 
