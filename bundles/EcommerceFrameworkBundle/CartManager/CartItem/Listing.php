@@ -25,7 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array
      */

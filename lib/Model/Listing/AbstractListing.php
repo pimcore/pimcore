@@ -448,7 +448,10 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
         return $this->conditionVariablesFromSetCondition;
     }
 
-    public function getData(): ?array
+    /**
+     * @return array|null
+     */
+    public function getData()
     {
         if ($this->data === null) {
             $this->getDao()->load();
