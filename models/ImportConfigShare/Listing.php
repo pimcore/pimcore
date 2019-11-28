@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $importConfigShares = null;
+
+    public function __construct()
+    {
+        $this->importConfigShares =& $this->data;
+    }
+
+    /**
      * @return Model\ImportConfigShare[]
      */
     public function getImportConfigShares(): array

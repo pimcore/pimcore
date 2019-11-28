@@ -33,6 +33,11 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
+     * @var array|null
+     */
+    protected $objects = null;
+
+    /**
      * @var bool
      */
     public $unpublished = false;
@@ -41,6 +46,11 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      * @var array
      */
     public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
+
+    public function __construct()
+    {
+        $this->objects =& $this->data;
+    }
 
     /**
      * @return array

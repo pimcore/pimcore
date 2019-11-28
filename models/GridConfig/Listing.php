@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $gridConfigs = null;
+
+    public function __construct()
+    {
+        $this->gridConfigs =& $this->data;
+    }
+
+    /**
      * @return Model\GridConfig[]
      */
     public function getGridConfigs()

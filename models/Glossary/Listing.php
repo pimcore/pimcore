@@ -25,6 +25,15 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var array|null
+     */
+    protected $glossary = null;
+
+    public function __construct()
+    {
+        $this->glossary =& $this->data;
+    }
 
     /**
      * @return Model\Glossary[]

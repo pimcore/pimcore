@@ -25,6 +25,15 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var array|null
+     */
+    protected $items = null;
+
+    public function __construct()
+    {
+        $this->items =& $this->data;
+    }
 
     /**
      * @return Model\Element\Recyclebin\Item[]

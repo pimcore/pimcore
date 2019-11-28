@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $units = null;
+
+    public function __construct()
+    {
+        $this->units =& $this->data;
+    }
+
+    /**
      * @param $key
      *
      * @return bool

@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $tasks = null;
+
+    public function __construct()
+    {
+        $this->tasks =& $this->data;
+    }
+
+    /**
      * @return Model\Schedule\Task[]
      */
     public function getTasks()

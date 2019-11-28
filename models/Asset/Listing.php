@@ -32,6 +32,16 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
+     * @var array|null
+     */
+    protected $assets = null;
+
+    public function __construct()
+    {
+        $this->assets =& $this->data;
+    }
+
+    /**
      * @return Model\Asset[]
      */
     public function getAssets()

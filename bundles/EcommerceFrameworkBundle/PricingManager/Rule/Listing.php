@@ -24,9 +24,19 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
+     * @var RuleInterface[]
+     */
+    protected $rules;
+
+    /**
      * @var bool
      */
     protected $validate;
+
+    public function __construct()
+    {
+        $this->rules =& $this->data;
+    }
 
     /**
      * @param bool $state

@@ -26,9 +26,19 @@ use Pimcore\Model\Listing\AbstractListing;
 class Listing extends AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $notifications = null;
+
+    /**
      * @var array
      */
     protected $data;
+
+    public function __construct()
+    {
+        $this->notifications =& $this->data;
+    }
 
     /**
      * @param string $key

@@ -23,6 +23,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
+    /**
+     * @var array
+     */
+    public $cartCheckoutDataItems;
+
+    public function __construct()
+    {
+        $this->cartCheckoutDataItems =& $this->data;
+    }
 
     /**
      * @var array

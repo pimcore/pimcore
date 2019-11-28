@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $versions = null;
+
+    public function __construct()
+    {
+        $this->versions =& $this->data;
+    }
+
+    /**
      * @return Model\Version[]
      */
     public function getVersions()

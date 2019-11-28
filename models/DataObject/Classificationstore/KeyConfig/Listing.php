@@ -25,9 +25,18 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var array|null
+     */
+    protected $list = null;
 
     /** @var bool */
     public $includeDisabled;
+
+    public function __construct()
+    {
+        $this->list =& $this->data;
+    }
 
     /**
      * @return Model\DataObject\Classificationstore\KeyConfig[]

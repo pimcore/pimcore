@@ -28,6 +28,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $tags = null;
+
+    public function __construct()
+    {
+        $this->tags =& $this->data;
+    }
+
+    /**
      * @param $tags
      *
      * @return $this

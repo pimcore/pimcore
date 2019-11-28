@@ -40,9 +40,19 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     public $objectTypeDocument = false;
 
     /**
+     * @var array|null
+     */
+    protected $documents = null;
+
+    /**
      * @var bool
      */
     public $unpublished = false;
+
+    public function __construct()
+    {
+        $this->documents =& $this->data;
+    }
 
     /**
      * @return Document[]

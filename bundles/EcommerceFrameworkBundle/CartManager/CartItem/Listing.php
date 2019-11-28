@@ -28,12 +28,22 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @var array
      */
+    public $cartItems;
+
+    /**
+     * @var array
+     */
     protected $order = ['ASC'];
 
     /**
      * @var array
      */
     protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
+
+    public function __construct()
+    {
+        $this->cartItems =& $this->data;
+    }
 
     /**
      * @var array

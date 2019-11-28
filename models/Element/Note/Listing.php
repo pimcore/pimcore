@@ -28,6 +28,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array|null
+     */
+    protected $notes = null;
+
+    public function __construct()
+    {
+        $this->notes =& $this->data;
+    }
+
+    /**
      * @param $notes
      *
      * @return $this

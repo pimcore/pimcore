@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array
+     */
+    protected $workflowStates = null;
+
+    public function __construct()
+    {
+        $this->workflowStates =& $this->data;
+    }
+
+    /**
      * @param $workflowStates
      *
      * @return $this

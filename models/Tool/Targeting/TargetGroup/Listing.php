@@ -27,6 +27,16 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var TargetGroup[]|null
+     */
+    protected $targetGroups = null;
+
+    public function __construct()
+    {
+        $this->targetGroups =& $this->data;
+    }
+
+    /**
      * @param TargetGroup[] $targetGroups
      *
      * @return $this

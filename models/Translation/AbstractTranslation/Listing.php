@@ -29,6 +29,16 @@ class Listing extends Model\Listing\AbstractListing
     protected static $cacheLimit = 5000;
 
     /**
+     * @var array|null
+     */
+    protected $translations = null;
+
+    public function __construct()
+    {
+        $this->translations =& $this->data;
+    }
+
+    /**
      * @return \Pimcore\Model\Translation\AbstractTranslation[]
      */
     public function getTranslations()

@@ -25,6 +25,15 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @var array|null
+     */
+    protected $importconfigs = null;
+
+    public function __construct()
+    {
+        $this->importconfigs =& $this->data;
+    }
 
     /**
      * @return Model\ImportConfig[]

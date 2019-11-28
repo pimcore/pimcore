@@ -26,6 +26,16 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
+     * @var array
+     */
+    protected $list = null;
+
+    public function __construct()
+    {
+        $this->list =& $this->data;
+    }
+
+    /**
      * @return Model\DataObject\Classificationstore\StoreConfig[]
      */
     public function getList()
