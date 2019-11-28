@@ -621,14 +621,17 @@ class GridHelperService
                         $operator = '=';
                     }
                 } elseif ($filterType == 'date') {
+                    $filter['value'] = strtotime($filter['value']);
                     if ($filterOperator == 'lt') {
                         $operator = '<';
                     } elseif ($filterOperator == 'gt') {
                         $operator = '>';
                     } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
+                        $operator = 'BETWEEN';
+                        //if the equal operator is chosen with the date type, condition has to be changed
+                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                        $filter['value'] = $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                     }
-                    $filter['value'] = strtotime($filter['value']);
                 } elseif ($filterType == 'list') {
                     $operator = 'IN';
                 } elseif ($filterType == 'boolean') {
@@ -644,6 +647,7 @@ class GridHelperService
                         return $db->quote($val);
                     }, $value);
                     $value = '(' . implode(',', $quoted) . ')';
+                } elseif ($operator == 'BETWEEN') {
                 } else {
                     $value = $db->quote($value);
                 }
@@ -660,7 +664,7 @@ class GridHelperService
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($value);
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 }
             }
         }
