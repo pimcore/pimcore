@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyConfig\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\KeyConfig[] load()
+ * @method Model\DataObject\Classificationstore\KeyConfig current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

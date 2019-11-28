@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method Model\Element\Note\Listing\Dao getDao()
  * @method Model\Element\Note[] load()
+ * @method Model\Element\Note current()
  * @method int[] loadIdList()
  * @method int getTotalCount()
  */

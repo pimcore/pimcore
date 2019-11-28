@@ -18,7 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
 /**
- * @method CartItem[] load()
+ * @method CartItemInterface[] load()
+ * @method CartItemInterface current()
  * @method int getTotalCount()
  * @method int getTotalAmount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing\Dao getDao()

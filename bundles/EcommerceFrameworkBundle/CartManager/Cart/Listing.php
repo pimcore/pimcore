@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
 /**
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart[] load()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao getDao()
  */

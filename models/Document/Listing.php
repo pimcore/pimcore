@@ -24,6 +24,7 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Document[] load()
+ * @method Document current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()

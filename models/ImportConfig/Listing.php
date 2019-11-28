@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\ImportConfig\Listing\Dao getDao()
  * @method Model\ImportConfig[] load()
+ * @method Model\ImportConfig current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

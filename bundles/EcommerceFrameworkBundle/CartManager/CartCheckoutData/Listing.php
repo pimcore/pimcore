@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
 /**
  * @method CartCheckoutData[] load()
+ * @method CartCheckoutData current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao getDao()
  */

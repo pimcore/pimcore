@@ -22,6 +22,7 @@ use Pimcore\Model\Listing\AbstractListing;
 /**
  * @method Listing\Dao getDao()
  * @method Model\Notification[] load()
+ * @method Model\Notification current()
  */
 class Listing extends AbstractListing
 {

@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Tool\Email\Log\Listing\Dao getDao()
  * @method Model\Tool\Email\Log[] load()
+ * @method Model\Tool\Email\Log current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -23,6 +23,7 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Model\Asset[] load()
+ * @method Model\Asset current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()

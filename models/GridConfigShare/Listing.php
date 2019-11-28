@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\GridConfigShare\Listing\Dao getDao()
  * @method Model\GridConfigShare[] load()
+ * @method Model\GridConfigShare current()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -21,6 +21,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing\Dao getDao()
  * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
+ * @method Model\DataObject\ClassDefinition\CustomLayout current()
  */
 class Listing extends Model\Listing\AbstractListing
 {
