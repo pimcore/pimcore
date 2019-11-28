@@ -1206,6 +1206,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
+        /**
+         * @var $object DataObject\Concrete
+         */
         $object = DataObject::getById($request->get('id'));
         $originalModificationDate = $object->getModificationDate();
 
@@ -1323,8 +1326,22 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }, 'pimcore_objects');
 
             return $this->adminJson(['success' => true]);
+            
+        } elseif ($request->get('task') == 'scheduler') {
+
+            if($object->isAllowed('settings')) {
+                $object->saveScheduledTasks();
+                return $this->adminJson(['success' => true]);
+            }
+
         } elseif ($object->isAllowed('save')) {
-            $object->saveVersion();
+
+            if($object->isPublished()) {
+                $object->saveVersion();
+            } else {
+                $object->save();
+            }
+            
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject\AbstractObject::getById($object->getId(), true);
