@@ -41,6 +41,8 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     public function buildProductImpressionItem(ProductInterface $product)
     {
         $item = new ProductImpression();
+        $this->initProductAttributes($item, $product);
+
         $item
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
@@ -67,6 +69,25 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     }
 
     /**
+     * Init common product action attributes and add additional application-specific product action attributes.
+     * @param AbstractProductData $item the tracking item that is going to be serialized later on.
+     * @param ProductInterface $product
+     */
+    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product) {
+        $item
+            ->setId($product->getOSProductNumber())
+            ->setName($this->normalizeName($product->getOSName()))
+            ->setCategories($this->getProductCategories($product))
+            ->setBrand($this->getProductBrand($product))
+        ;
+
+        //
+        //Add additional data to tracking items of type "product".
+        //Example: $item->addAdditionalAttribute("ean", "test-EAN");
+        //
+    }
+
+    /**
      * Build a product action item
      *
      * @param ProductInterface|ElementInterface $product
@@ -77,11 +98,9 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     public function buildProductActionItem(ProductInterface $product, $quantity = 1)
     {
         $item = new ProductAction();
-        $item
-            ->setId($product->getId())
-            ->setName($this->normalizeName($product->getOSName()))
-            ->setCategories($this->getProductCategories($product))
-            ->setQuantity($quantity);
+        $item->setQuantity($quantity);
+
+        $this->initProductAttributes($item, $product);
 
         // set price if product is ready to check out
         if ($product instanceof CheckoutableInterface) {
@@ -176,13 +195,11 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
 
         $item = new ProductAction();
         $item
-            ->setId($orderItem->getProductNumber())
             ->setTransactionId($order->getOrdernumber())
-            ->setName($this->normalizeName($orderItem->getProductName()))
-            ->setCategories($this->getProductCategories($product))
-            ->setBrand($this->getProductBrand($product))
             ->setPrice(Decimal::create($orderItem->getTotalPrice())->div($orderItem->getAmount())->asNumeric())
             ->setQuantity($orderItem->getAmount());
+
+        $this->initProductAttributes($item, $product);
 
         return $item;
     }
@@ -200,13 +217,10 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         $product = $cartItem->getProduct();
 
         $item = new ProductAction();
-        $item
-            ->setId($product->getId())
-            ->setName($this->normalizeName($product->getOSName()))
-            ->setCategories($this->getProductCategories($product))
-            ->setBrand($this->getProductBrand($product))
-            ->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
+        $item->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
             ->setQuantity($cartItem->getCount());
+
+        $this->initProductAttributes($item, $product);
 
         return $item;
     }
