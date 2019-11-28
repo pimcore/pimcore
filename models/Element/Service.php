@@ -940,6 +940,8 @@ class Service extends Model\AbstractModel
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
+            $key = trim($key);
+            
             // replace URL reserved characters with a hyphen
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
         } elseif ($type === 'asset') {
