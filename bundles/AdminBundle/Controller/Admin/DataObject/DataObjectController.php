@@ -1329,22 +1329,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }, 'pimcore_objects');
 
             return $this->adminJson(['success' => true]);
-            
         } elseif ($request->get('task') == 'scheduler') {
-
-            if($object->isAllowed('settings')) {
+            if ($object->isAllowed('settings')) {
                 $object->saveScheduledTasks();
+
                 return $this->adminJson(['success' => true]);
             }
-
         } elseif ($object->isAllowed('save')) {
-
-            if($object->isPublished()) {
+            if ($object->isPublished()) {
                 $object->saveVersion();
             } else {
                 $object->save();
             }
-            
+
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject\AbstractObject::getById($object->getId(), true);

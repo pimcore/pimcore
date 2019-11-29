@@ -148,8 +148,9 @@ class EmailController extends AdminController
             }
 
             return $this->adminJson($params);
-        } else if ($request->get('type') == 'details') {
+        } elseif ($request->get('type') == 'details') {
             $data = $emailLog->getObjectVars();
+
             return $this->adminJson($data);
         } else {
             return new Response('No Type specified');
@@ -284,7 +285,7 @@ class EmailController extends AdminController
             $mail->preventDebugInformationAppending();
             $mail->setIgnoreDebugMode(true);
 
-            if(!empty($request->get('to'))) {
+            if (!empty($request->get('to'))) {
                 $emailLog->setTo(null);
                 $emailLog->setCc(null);
                 $emailLog->setBcc(null);

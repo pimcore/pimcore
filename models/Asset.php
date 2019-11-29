@@ -481,7 +481,6 @@ class Asset extends Element\AbstractElement
                 $params = func_get_arg(0);
             }
 
-
             $preEvent = new AssetEvent($this, $params);
 
             if ($this->getId()) {

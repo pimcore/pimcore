@@ -70,10 +70,12 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
 
     /**
      * Init common product action attributes and add additional application-specific product action attributes.
+     *
      * @param AbstractProductData $item the tracking item that is going to be serialized later on.
      * @param ProductInterface $product
      */
-    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product) {
+    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product)
+    {
         $item
             ->setId($product->getOSProductNumber())
             ->setName($this->normalizeName($product->getOSName()))

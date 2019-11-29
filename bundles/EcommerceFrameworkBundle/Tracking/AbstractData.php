@@ -74,29 +74,38 @@ abstract class AbstractData implements \JsonSerializable
 
     /**
      * Add an additional attribute.
+     *
      * @param $attribute
      * @param $value
+     *
      * @return $this
      */
-    public function addAdditionalAttribute($attribute, $value) {
+    public function addAdditionalAttribute($attribute, $value)
+    {
         $this->additionalAttributes[$attribute] = $value;
+
         return $this;
     }
 
     /**
      * Get an additional attribute.
+     *
      * @param $attribute
+     *
      * @return
      */
-    public function getAdditionalAttribute($attribute) {
+    public function getAdditionalAttribute($attribute)
+    {
         return $this->additionalAttributes[$attribute];
     }
 
     /**
      * Get all additional attributes.
+     *
      * @return array
      */
-    public function getAdditionalAttributes() {
+    public function getAdditionalAttributes()
+    {
         return $this->additionalAttributes;
     }
 
