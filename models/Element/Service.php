@@ -931,6 +931,7 @@ class Service extends Model\AbstractModel
         ]);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
+        $key = trim($key);
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
@@ -950,7 +951,6 @@ class Service extends Model\AbstractModel
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
-            $key = trim($key);
             $key = ltrim($key, '. ');
         }
 
