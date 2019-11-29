@@ -1603,7 +1603,7 @@ class DataObjectHelperController extends AdminController
                 'targetFields' => $availableFields,
                 'selectedGridColumns' => $selectedGridColumns,
                 'resolverSettings' => $resolverSettings ?? null,
-                'shareSettings' => $shareSettings?? null,
+                'shareSettings' => $shareSettings ?? null,
                 'csvSettings' => $dialect,
                 'rows' => $rows,
                 'cols' => $cols ?? null,

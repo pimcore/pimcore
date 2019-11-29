@@ -83,7 +83,7 @@ class ImageThumbnail
             $config = $this->getConfig();
             $config->setFilenameSuffix('page-' . $this->page);
             $path = null;
-            $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+            $deferred = $deferredAllowed && $this->deferred;
 
             try {
                 if (!$deferred) {
