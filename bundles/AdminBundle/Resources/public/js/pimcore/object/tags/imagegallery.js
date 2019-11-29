@@ -195,7 +195,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                         while (this.component.items.length > 1) {
                             var item = this.component.items.getAt(0);
                             this.component.remove(item);
-                            this.dirty = true;
+                            this.markDirty();
                         }
                         Ext.resumeLayouts();
                         this.component.updateLayout();
@@ -370,12 +370,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 this.component.moveBefore(item, item.previousSibling());
             }
         }
-        this.dirty = true;
+        this.markDirty();
     },
 
     add: function (me) {
 
-        this.dirty = true;
+        this.markDirty();
         var pos = 0;
 
         var itemCount = this.component.items.length;
@@ -403,7 +403,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     addDataFromSelector: function (item) {
 
         if (item) {
-            this.dirty = true;
+            this.markDirty();
             var hotspotImage = new pimcore.object.tags.hotspotimage({id: item.id}, this.getDefaultFieldConfig(), this.hotspotConfig);
             hotspotImage.updateContext(this.context);
             var itemCount = this.component.items.length;
@@ -414,11 +414,15 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     },
 
     delete: function (item) {
-        this.dirty = true;
+        this.markDirty();
         this.component.remove(item);
     },
 
     notifyDrop: function() {
+        this.markDirty();
+    },
+
+    markDirty: function() {
         this.dirty = true;
     },
 

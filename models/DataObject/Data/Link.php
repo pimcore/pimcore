@@ -396,6 +396,7 @@ class Link implements OwnerAwareFieldInterface
     public function setPath($path)
     {
         if (!empty($path)) {
+            $matchedElement = null;
             if ($this->getLinktype() == 'internal' && $this->getInternalType()) {
                 $matchedElement = Service::getElementByPath($this->getInternalType(), $path);
                 if ($matchedElement) {

@@ -49,7 +49,7 @@ class SearchController extends AdminController
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $requestedLanguage = $allParams['language'];
+        $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);
@@ -65,9 +65,9 @@ class SearchController extends AdminController
 
         $query = $this->filterQueryParam($allParams['query']);
 
-        $types = explode(',', $allParams['type']);
-        $subtypes = explode(',', $allParams['subtype']);
-        $classnames = explode(',', $allParams['class']);
+        $types = explode(',', $allParams['type'] ?? '');
+        $subtypes = explode(',', $allParams['subtype'] ?? '');
+        $classnames = explode(',', $allParams['class'] ?? '');
 
         $offset = intval($allParams['start']);
         $limit = intval($allParams['limit']);
@@ -101,7 +101,7 @@ class SearchController extends AdminController
         //For objects - handling of bricks
         $fields = [];
         $bricks = [];
-        if ($allParams['fields']) {
+        if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
 
             foreach ($fields as $f) {
@@ -118,7 +118,7 @@ class SearchController extends AdminController
         }
 
         // filtering for objects
-        if ($allParams['filter'] && $allParams['class']) {
+        if (!empty($allParams['filter']) && !empty($allParams['class'])) {
             $class = DataObject\ClassDefinition::getByName($allParams['class']);
 
             // add Localized Fields filtering
@@ -197,8 +197,8 @@ class SearchController extends AdminController
         }
 
         //filtering for tags
-        $tagIds = $allParams['tagIds'];
-        if ($tagIds) {
+        if (!empty($allParams['tagIds'])) {
+            $tagIds = $allParams['tagIds'];
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
                     if ($allParams['considerChildTags'] == 'true') {

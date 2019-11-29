@@ -303,6 +303,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             $values = $this->decodeJson($request->get('data'), true);
 
             if (!empty($values['password'])) {
+                if (strlen($values['password']) < 10) {
+                    throw new \Exception('Passwords have to be at least 10 characters long');
+                }
                 $values['password'] = Tool\Authentication::getPasswordHash($user->getName(), $values['password']);
             }
 
@@ -427,9 +430,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         // object <=> user dependencies
         $userObjects = DataObject\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = [];
+        $hasHidden = false;
 
         foreach ($userObjects as $o) {
-            $hasHidden = false;
             if ($o->isAllowed('list')) {
                 $userObjectData[] = [
                     'path' => $o->getRealFullPath(),
@@ -569,6 +572,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                         if ($checkUser) {
                             $oldPasswordCheck = true;
                         }
+                    }
+
+                    if (strlen($values['new_password']) < 10) {
+                        throw new \Exception('Passwords have to be at least 10 characters long');
                     }
 
                     if ($oldPasswordCheck && $values['new_password'] == $values['retype_password']) {
@@ -792,8 +799,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function renew2FaSecretAction(Request $request)
     {
-        $this->checkCsrfToken($request);
-
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 
@@ -931,8 +936,10 @@ class UserController extends AdminController implements EventedControllerInterfa
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
-        $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
+        $token = Tool\Authentication::generateToken($user->getName());
+        $link = $this->generateUrl('pimcore_admin_login_check', [
+            'token' => $token,
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->adminJson([
             'success' => true,
@@ -1134,10 +1141,8 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $user->save();
                 }
 
-                $token = Tool\Authentication::generateToken($username, $user->getPassword());
-
+                $token = Tool\Authentication::generateToken($user->getName());
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);

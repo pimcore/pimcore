@@ -189,38 +189,10 @@ pimcore.document.tree = Class.create({
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
             "itemmouseenter": function (el, record, item, index, e, eOpts) {
-
-                if (record.data.qtipCfg) {
-                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
-
-                    if (record.data.qtipCfg.text) {
-                        text += record.data.qtipCfg.text;
-                    } else {
-                        text += (t("type") + ": "+ t(record.data.type));
-                    }
-
-                    jQuery("#pimcore_tooltip").show();
-                    jQuery("#pimcore_tooltip").html(text);
-                    jQuery("#pimcore_tooltip").removeClass('right');
-
-                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
-
-                    var offsetTreeNode = jQuery(item).offset();
-
-                    var parentTree = el.ownerCt.ownerCt;
-
-                    if(parentTree.region == 'west') {
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
-                    }
-
-                    if(parentTree.region == 'east') {
-                        jQuery("#pimcore_tooltip").addClass('right');
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
-                    }
-                }
+                pimcore.helpers.treeToolTipShow(el, record, item);
             },
             "itemmouseleave": function () {
-                jQuery("#pimcore_tooltip").hide();
+                pimcore.helpers.treeToolTipHide();
             }
         };
 
@@ -964,9 +936,10 @@ pimcore.document.tree = Class.create({
             {property: 'translatedName', direction: 'ASC'}]);
 
         document_types.each(function (documentMenu, typeRecord) {
+            var text = Ext.util.Format.htmlEncode(typeRecord.get("translatedName"));
             if (typeRecord.get("type") == "page") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "page", typeRecord.get("id"))
                 };
@@ -974,35 +947,35 @@ pimcore.document.tree = Class.create({
             }
             else if (typeRecord.get("type") == "snippet") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "snippet", typeRecord.get("id"))
                 };
                 menuOption = "snippet";
             } else if (typeRecord.get("type") == "email") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                 };
                 menuOption = "email";
             } else if (typeRecord.get("type") == "newsletter") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
                 };
                 menuOption = "newsletter";
             } else if (typeRecord.get("type") == "printpage") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
                 };
                 menuOption = "printPage";
             } else if (typeRecord.get("type") == "printcontainer") {
                 docTypeMenu = {
-                    text: typeRecord.get("translatedName"),
+                    text: text,
                     iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
                 };

@@ -384,9 +384,9 @@ class SettingsController extends AdminController
         if (file_exists($debugModeFile)) {
             $debugMode = include $debugModeFile;
         }
-        $valueArray['general']['debug'] = $debugMode['active'];
-        $valueArray['general']['debug_ip'] = $debugMode['ip'];
-        $valueArray['general']['devmode'] = $debugMode['devmode'];
+        $valueArray['general']['debug'] = $debugMode['active'] ?? false;
+        $valueArray['general']['debug_ip'] = $debugMode['ip'] ?? '';
+        $valueArray['general']['devmode'] = $debugMode['devmode'] ?? false;
 
         $response = [
             'values' => $valueArray,
@@ -466,8 +466,8 @@ class SettingsController extends AdminController
             ],
             'documents' => [
                 'versions' => [
-                    'days' => $values['documents.versions.days'],
-                    'steps' => $values['documents.versions.steps']
+                    'days' => $values['documents.versions.days'] ?? null,
+                    'steps' => $values['documents.versions.steps'] ?? null,
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
@@ -478,14 +478,14 @@ class SettingsController extends AdminController
             ],
             'objects' => [
                 'versions' => [
-                    'days' => $values['objects.versions.days'],
-                    'steps' => $values['objects.versions.steps']
+                    'days' => $values['objects.versions.days'] ?? null,
+                    'steps' => $values['objects.versions.steps'] ?? null,
                 ]
             ],
             'assets' => [
                 'versions' => [
-                    'days' => $values['assets.versions.days'],
-                    'steps' => $values['assets.versions.steps']
+                    'days' => $values['assets.versions.days'] ?? null,
+                    'steps' => $values['assets.versions.steps'] ?? null,
                 ],
                 'icc_rgb_profile' => $values['assets.icc_rgb_profile'],
                 'icc_cmyk_profile' => $values['assets.icc_cmyk_profile'],
@@ -587,7 +587,7 @@ class SettingsController extends AdminController
         File::putPhpFile($debugModeFile, to_php_data_file_format([
             'active' => $values['general.debug'],
             'ip' => $values['general.debug_ip'],
-            'devmode' => $values['general.devmode']
+            'devmode' => $values['general.devmode'],
         ]));
 
         // clear all caches
@@ -1178,7 +1178,7 @@ class SettingsController extends AdminController
         /** @var $item Asset\Image\Thumbnail\Config */
         foreach ($items as $item) {
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (empty($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
                         'text' => $item->getGroup(),
@@ -1799,17 +1799,19 @@ class SettingsController extends AdminController
                 });
             }
 
-            $list->setOrder(function ($a, $b) use ($sortingSettings) {
+            $list->setOrder(static function ($a, $b) use ($sortingSettings) {
                 if (!$sortingSettings) {
                     return 0;
                 }
                 $orderKey = $sortingSettings['orderKey'];
-                if ($a[$orderKey] == $b[$orderKey]) {
+                $aValue = $a[$orderKey] ?? null;
+                $bValue = $b[$orderKey] ?? null;
+                if ($aValue == $bValue) {
                     return 0;
                 }
 
-                $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
-                if ($sortingSettings['order'] == 'DESC') {
+                $result = $aValue < $bValue ? -1 : 1;
+                if ($sortingSettings['order'] === 'DESC') {
                     $result = -1 * $result;
                 }
 

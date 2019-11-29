@@ -289,21 +289,6 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         this.dataChanged = true;
     },
 
-    isInvalidMandatory: function () {
-        var empty = true;
-
-        this.store.each(function(record) {
-            for(var j = 0; j < this.fieldConfig.cols.length; j++) {
-                if(record.data[this.fieldConfig.cols[j].key] != null
-                                                        && record.data[this.fieldConfig.cols[j].key] != "") {
-                    empty = false;
-                }
-            }
-        }.bind(this));
-
-        return empty;
-    },
-
     getValue: function () {
         var tmData = [];
 
@@ -327,7 +312,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         if(!this.isRendered()) {
             return false;
         }
-        
+
         return this.dataChanged;
     }
 });

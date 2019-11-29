@@ -48,7 +48,8 @@ class Installer extends MigrationInstaller
               `name` varchar(250) COLLATE utf8_bin DEFAULT NULL,
               `creationDateTimestamp` int(10) NOT NULL,
               `modificationDateTimestamp` int(10) NOT NULL,
-              PRIMARY KEY (`id`)
+              PRIMARY KEY (`id`),
+              KEY `ecommerceframework_cart_userid_index` (`userid`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;',
         'ecommerceframework_cartcheckoutdata' =>
             'CREATE TABLE IF NOT EXISTS `ecommerceframework_cartcheckoutdata` (

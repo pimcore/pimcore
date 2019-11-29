@@ -94,7 +94,7 @@ prevent memory issues
 \Pimcore::collectGarbage();
 ```
 
-**WARNING:** This will flush the entire Zend_Registry!
+**WARNING:** This will flush the entire internal registry!
 
 To avoid this, you can pass an array with keys (indexes) which should stay in the registry eg. 
 

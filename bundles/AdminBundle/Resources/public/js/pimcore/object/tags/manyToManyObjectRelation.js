@@ -66,7 +66,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
 
@@ -410,9 +410,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             viewConfig: {
                 markDirty: false,
+                enableTextSelection: true,
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
+                    draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
@@ -610,6 +611,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
+            enableTextSelection: true,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
@@ -686,19 +688,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
     empty: function () {
         this.store.removeAll();
-    }
-    ,
-
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
-
     }
     ,
 

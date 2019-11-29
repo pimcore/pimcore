@@ -377,8 +377,6 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.collectionsStore.load();
-
         return this.grid
     },
 

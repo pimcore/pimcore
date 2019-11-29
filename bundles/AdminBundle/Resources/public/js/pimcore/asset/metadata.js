@@ -48,7 +48,15 @@ pimcore.asset.metadata = Class.create({
 
             var customKey = new Ext.form.TextField({
                 name: 'key',
-                emptyText: t('name')
+                emptyText: t('name'),
+                enableKeyEvents : true,
+                listeners: {
+                    keyup : function(el) {
+                        if (el.getValue().match(/[~]+/)) {
+                            el.setValue(el.getValue().replace(/[~]/g, "---"));
+                        }
+                    }
+                }
             });
 
             var customType = new Ext.form.ComboBox({
@@ -94,7 +102,13 @@ pimcore.asset.metadata = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                         extend: 'Ext.data.Model',
-                        fields: ['name', "type", {
+                        fields: [
+                        {
+                            name: 'name',
+                            convert: function (v, r) {
+                                return v.replace(/[~]/g, "---");
+                            }
+                        }, "type", {
                             name: "data",
                             convert: function (v, r) {
                                 if (r.data.type == "date" && v && !(v instanceof Date)) {
@@ -190,6 +204,7 @@ pimcore.asset.metadata = Class.create({
                                     allowBlank: false
                                 });
                             },
+                            renderer: Ext.util.Format.htmlEncode,
                             sortable: true,
                             width: 230
                         },
@@ -341,7 +356,7 @@ pimcore.asset.metadata = Class.create({
         if (value == "input") {
             value = "text";
         }
-        return '<div class="pimcore_icon_' + value + ' pimcore_property_grid_type_column" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div class="pimcore_icon_' + Ext.util.Format.htmlEncode(value) + ' pimcore_property_grid_type_column" name="' + Ext.util.Format.htmlEncode(record.data.name) + '">&nbsp;</div>';
     },
 
 
@@ -351,7 +366,7 @@ pimcore.asset.metadata = Class.create({
         var type = data.type;
 
         if (type == "textarea") {
-            return nl2br(value);
+            return nl2br(Ext.util.Format.htmlEncode(value));
         } else if (type == "document" || type == "asset" || type == "object") {
             if (value) {
                 return '<div class="pimcore_property_droptarget">' + value + '</div>';
@@ -373,7 +388,7 @@ pimcore.asset.metadata = Class.create({
             }
         }
 
-        return value;
+        return Ext.util.Format.htmlEncode(value);
     },
 
 

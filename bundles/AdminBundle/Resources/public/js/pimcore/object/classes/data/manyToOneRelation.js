@@ -107,12 +107,14 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
             fields: ["text"]
         });
         classesStore.load({
-            "callback": function (allowedClasses, success) {
-                classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
-                if (success) {
-                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
+            "callback": function (classesStore, allowedClasses, success) {
+                if (!classesStore.destroyed) {
+                    classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
+                    if (success) {
+                        Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
+                    }
                 }
-            }.bind(this, allowedClasses)
+            }.bind(this, classesStore, allowedClasses)
         });
 
         var documentTypeStore = new Ext.data.JsonStore({

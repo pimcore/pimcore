@@ -475,7 +475,7 @@ class GridHelperService
         $featureFilters = [];
 
         // create filter condition
-        if ($requestParams['filter']) {
+        if (!empty($requestParams['filter'])) {
             $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
             $featureFilters = $this->getFeatureFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureFilters) {
@@ -483,11 +483,11 @@ class GridHelperService
             }
         }
 
-        if ($requestParams['condition'] && $adminUser->isAdmin()) {
+        if (!empty($requestParams['condition']) && $adminUser->isAdmin()) {
             $conditionFilters[] = '(' . $requestParams['condition'] . ')';
         }
 
-        if ($requestParams['query']) {
+        if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
                 $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
@@ -505,7 +505,7 @@ class GridHelperService
         }
 
         $list->setCondition(implode(' AND ', $conditionFilters));
-        if (!$requestParams['batch'] && empty($requestParams['ids'])) {
+        if (empty($requestParams['batch']) && empty($requestParams['ids'])) {
             $list->setLimit($limit);
             $list->setOffset($start);
         }
@@ -528,7 +528,7 @@ class GridHelperService
         $list->setOrder($order);
 
         //parameters specified in the objects grid
-        if ($requestParams['ids']) {
+        if (!empty($requestParams['ids'])) {
             $quotedIds = [];
             foreach ($requestParams['ids'] as $id) {
                 $quotedIds[] = $list->quote($id);
@@ -546,9 +546,146 @@ class GridHelperService
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
 
-        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
+        if (empty($requestParams['filter']) && empty($requestParams['condition']) && empty($requestParams['sort'])) {
             $list->setIgnoreLocalizedFields(true);
         }
+
+        return $list;
+    }
+
+    public function prepareAssetListingForGrid($allParams, $adminUser)
+    {
+        $db = \Pimcore\Db::get();
+        $folder = Model\Asset::getById($allParams['folderId']);
+
+        $start = 0;
+        $limit = 0;
+        $orderKey = 'id';
+        $order = 'ASC';
+
+        if ($allParams['limit']) {
+            $limit = $allParams['limit'];
+        }
+        if ($allParams['start']) {
+            $start = $allParams['start'];
+        }
+
+        $orderKeyQuote = true;
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+        if ($sortingSettings['orderKey']) {
+            $orderKey = explode('~', $sortingSettings['orderKey'])[0];
+            if ($orderKey == 'fullpath') {
+                $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            } elseif ($orderKey == 'filename') {
+                $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            }
+
+            $order = $sortingSettings['order'];
+        }
+
+        $list = new Model\Asset\Listing();
+
+        $conditionFilters = [];
+        if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
+            $conditionFilters[] = 'parentId = ' . $folder->getId();
+        } else {
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+        }
+
+        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
+            $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
+        }
+
+        $conditionFilters[] = "type != 'folder'";
+        $filterJson = $allParams['filter'] ?? null;
+        if ($filterJson) {
+            $filters = json_decode($filterJson, true);
+            foreach ($filters as $filter) {
+                $operator = '=';
+
+                $filterDef = explode('~', $filter['property']);
+                $filterField = $filterDef[0];
+                $filterOperator = $filter['operator'];
+                $filterType = $filter['type'];
+
+                if ($filterType == 'string') {
+                    $operator = 'LIKE';
+                } elseif ($filterType == 'numeric') {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
+                } elseif ($filterType == 'date') {
+                    $filter['value'] = strtotime($filter['value']);
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = 'BETWEEN';
+                        //if the equal operator is chosen with the date type, condition has to be changed
+                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                        $filter['value'] = $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                    }
+                } elseif ($filterType == 'list') {
+                    $operator = 'IN';
+                } elseif ($filterType == 'boolean') {
+                    $operator = '=';
+                    $filter['value'] = (int) $filter['value'];
+                }
+                // system field
+                $value = $filter['value'];
+                if ($operator == 'LIKE') {
+                    $value = $db->quote('%' . $value . '%');
+                } elseif ($operator == 'IN') {
+                    $quoted = array_map(function ($val) use ($db) {
+                        return $db->quote($val);
+                    }, $value);
+                    $value = '(' . implode(',', $quoted) . ')';
+                } elseif ($operator == 'BETWEEN') {
+                } else {
+                    $value = $db->quote($value);
+                }
+
+                if ($filterField == 'fullpath') {
+                    $filterField = 'CONCAT(path,filename)';
+                }
+
+                if ($filterDef[1] != 'system') {
+                    $language = $allParams['language'];
+                    if (isset($filterDef[1])) {
+                        $language = $filterDef[1];
+                    }
+                    $language = str_replace(['none', 'default'], '', $language);
+                    $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
+                } else {
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
+                }
+            }
+        }
+
+        if (!$adminUser->isAdmin()) {
+            $userIds = $adminUser->getRoles();
+            $userIds[] = $adminUser->getId();
+            $conditionFilters[] = ' (
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+        }
+
+        $condition = implode(' AND ', $conditionFilters);
+
+        $list->setCondition($condition);
+        $list->setLimit($limit);
+        $list->setOffset($start);
+        $list->setOrder($order);
+        $list->setOrderKey($orderKey, $orderKeyQuote);
 
         return $list;
     }

@@ -215,13 +215,6 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-        if (this.getValue()) {
-            return false;
-        }
-        return true;
-    },
-
     isDirty: function () {
         if (!this.isRendered()) {
             return false;

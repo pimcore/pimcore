@@ -62,6 +62,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                         $property->setDataFromEditmode($value);
                         $property->setInheritable($propertyData['inheritable']);
 
+                        if ($propertyName == 'language') {
+                            $property->setInherited($this->getPropertyInheritance($document, $propertyName, $value));
+                        }
+
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
                         Logger::warning("Can't add " . $propertyName . ' to document ' . $document->getRealFullPath());
@@ -175,8 +179,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                 $document = $this->getLatestVersion($document);
             }
 
-            // set _fulldump otherwise the properties will be removed because of the session-serialize
-            $document->_fulldump = true;
+            // set dump state to true otherwise the properties will be removed because of the session-serialize
+            $document->setInDumpState(true);
             $this->setValuesToDocument($request, $document);
 
             $session->set($key, $document);
@@ -261,6 +265,22 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
+    }
+
+    /**
+     * @param $document
+     * @param $propertyName
+     * @param $propertyValue
+     *
+     * @return bool
+     */
+    protected function getPropertyInheritance(Model\Document $document, $propertyName, $propertyValue)
+    {
+        if ($document->getParent()) {
+            return $propertyValue == $document->getParent()->getProperty($propertyName);
+        }
+
+        return false;
     }
 
     /**

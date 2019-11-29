@@ -99,7 +99,7 @@ In the case above, it's `document`.
 
 ```php
 $tags = \Pimcore\Model\Element\Tag::getTagsForElement('document', 4);
-Zend_Debug::dump($tags);
+dump($tags);
 ```
 
 And as an output there is an the array with `Pimcore\Model\Element\Tag` as a row.

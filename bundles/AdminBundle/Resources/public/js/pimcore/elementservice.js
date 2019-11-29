@@ -307,7 +307,7 @@ pimcore.elementservice.getAffectedNodes = function(elementType, id) {
 
 
 pimcore.elementservice.applyNewKey = function(affectedNodes, elementType, id, value) {
-
+    value = Ext.util.Format.htmlEncode(value);
     for (var index = 0; index < affectedNodes.length; index++) {
         var record = affectedNodes[index];
         record.set("text", value);
@@ -359,8 +359,8 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                     record.set("text", originalText);
                     record.set("path", originalPath);
                 }
-                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
-                    "error");
+                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
+                    t(rdata.message));
                 return;
             }
 

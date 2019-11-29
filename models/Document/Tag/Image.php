@@ -304,15 +304,15 @@ class Image extends Model\Document\Tag
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        $this->id = $data['id'];
-        $this->alt = $data['alt'];
-        $this->cropPercent = $data['cropPercent'];
-        $this->cropWidth = $data['cropWidth'];
-        $this->cropHeight = $data['cropHeight'];
-        $this->cropTop = $data['cropTop'];
-        $this->cropLeft = $data['cropLeft'];
-        $this->marker = $data['marker'];
-        $this->hotspots = $data['hotspots'];
+        $this->id = $data['id'] ?? null;
+        $this->alt = $data['alt'] ?? null;
+        $this->cropPercent = $data['cropPercent'] ?? null;
+        $this->cropWidth = $data['cropWidth'] ?? null;
+        $this->cropHeight = $data['cropHeight'] ?? null;
+        $this->cropTop = $data['cropTop'] ?? null;
+        $this->cropLeft = $data['cropLeft'] ?? null;
+        $this->marker = $data['marker'] ?? null;
+        $this->hotspots = $data['hotspots'] ?? null;
 
         return $this;
     }
@@ -353,15 +353,15 @@ class Image extends Model\Document\Tag
                 $data['hotspots'] = $rewritePath($data['hotspots']);
             }
 
-            $this->id = $data['id'];
-            $this->alt = $data['alt'];
-            $this->cropPercent = $data['cropPercent'];
-            $this->cropWidth = $data['cropWidth'];
-            $this->cropHeight = $data['cropHeight'];
-            $this->cropTop = $data['cropTop'];
-            $this->cropLeft = $data['cropLeft'];
-            $this->marker = $data['marker'];
-            $this->hotspots = $data['hotspots'];
+            $this->id = $data['id'] ?? null;
+            $this->alt = $data['alt'] ?? null;
+            $this->cropPercent = $data['cropPercent'] ?? null;
+            $this->cropWidth = $data['cropWidth'] ?? null;
+            $this->cropHeight = $data['cropHeight'] ?? null;
+            $this->cropTop = $data['cropTop'] ?? null;
+            $this->cropLeft = $data['cropLeft'] ?? null;
+            $this->marker = $data['marker'] ?? null;
+            $this->hotspots = $data['hotspots'] ?? null;
         }
 
         return $this;

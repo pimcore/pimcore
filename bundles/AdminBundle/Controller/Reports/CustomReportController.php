@@ -389,9 +389,11 @@ class CustomReportController extends ReportsControllerBase
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
+        $headers = [];
         foreach ($columns as $column) {
             if ($column['export']) {
                 $fields[] = $column['name'];
+                $headers[] = !empty($column['label']) ? $column['label'] : $column['name'];
             }
         }
 
@@ -410,7 +412,7 @@ class CustomReportController extends ReportsControllerBase
         $fp = fopen($exportFile, 'w');
 
         if ($includeHeaders) {
-            fputcsv($fp, $fields, ';');
+            fputcsv($fp, $headers, ';');
         }
 
         foreach ($result['data'] as $row) {

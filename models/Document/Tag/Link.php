@@ -288,7 +288,7 @@ class Link extends Model\Document\Tag
                                 $this->data['path'] = $linkGenerator->generate(
                                     $object,
                                     [
-                                        'document' => Document::getById($this->getDocumentId()),
+                                        'document' => $this->getDocument(),
                                         'context' => $this,
                                     ]
                                 );
@@ -588,13 +588,13 @@ class Link extends Model\Document\Tag
                     $referencedDocument = Document::getById($this->data['internalId']);
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     $referencedAsset = Asset::getById($this->data['internalId']);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 }
             }

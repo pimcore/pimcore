@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Model\Property;
+
 interface ElementInterface
 {
     /**
@@ -118,7 +120,7 @@ interface ElementInterface
     public static function getTypes();
 
     /**
-     * @return array
+     * @return Property[]
      */
     public function getProperties();
 
