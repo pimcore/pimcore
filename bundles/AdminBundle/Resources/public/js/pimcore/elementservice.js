@@ -324,7 +324,6 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         var record;
         var id = options.id;
         var elementType = options.elementType;
-        value = value.trim();
         value = pimcore.helpers.getValidFilename(value, "document");
 
         if (options.sourceTree) {

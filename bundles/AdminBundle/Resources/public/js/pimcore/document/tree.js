@@ -1341,7 +1341,6 @@ pimcore.document.tree = Class.create({
             var submitFunction = function() {
                 var params = pageForm.getForm().getFieldValues();
                 messageBox.close();
-                params["key"] = params["key"].trim();
                 if(params["key"].length >= 1) {
                     params["type"] = type;
                     params["docTypeId"] = docTypeId;
