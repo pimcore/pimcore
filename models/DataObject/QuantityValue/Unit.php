@@ -112,6 +112,7 @@ class Unit extends Model\AbstractModel
     public static function getById($id)
     {
         try {
+            $table = null;
             if (Cache\Runtime::isRegistered(self::CACHE_KEY)) {
                 $table = Cache\Runtime::get(self::CACHE_KEY);
             }

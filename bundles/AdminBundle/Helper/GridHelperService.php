@@ -180,6 +180,7 @@ class GridHelperService
                 $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
                 $brickType = null;
+                $brickDescriptor = null;
                 if (!$field) {
 
                     // if the definition doesn't exist check for a localized field

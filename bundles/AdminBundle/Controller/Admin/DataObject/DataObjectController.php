@@ -679,6 +679,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
             if (is_array($allowedView) && count($allowedView) > 0) {
+                $haveAllowedViewDefault = null;
                 if ($layout->{'fieldtype'} == 'localizedfields') {
                     $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
@@ -694,6 +695,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                $haveAllowedEditDefault = null;
                 if ($layout->{'fieldtype'} == 'localizedfields') {
                     $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
@@ -821,6 +823,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $parent = DataObject::getById($request->get('parentId'));
 
         $message = '';
+        $object = null;
         if ($parent->isAllowed('create')) {
             $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
@@ -866,7 +869,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             Logger::debug($message);
         }
 
-        if ($success) {
+        if ($success && $object instanceof DataObject\AbstractObject) {
             return $this->adminJson([
                 'success' => $success,
                 'id' => $object->getId(),
@@ -1220,6 +1223,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object->setUserModification($this->getAdminUser()->getId());
 
         // data
+        $data = [];
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
             foreach ($data as $key => $value) {
@@ -1626,6 +1630,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     $user = Tool\Admin::getCurrentUser();
                     $allLanguagesAllowed = false;
+                    $languagePermissions = [];
                     if (!$user->isAdmin()) {
                         $languagePermissions = $object->getPermissions('lEdit', $user);
 
@@ -1680,6 +1685,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             }
                         } elseif (count($parts) > 1) {
                             $brickType = $parts[0];
+                            $brickDescriptor = null;
 
                             if (strpos($brickType, '?') !== false) {
                                 $brickDescriptor = substr($brickType, 1);
@@ -1819,11 +1825,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param string $brickType
      * @param string $key
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data|null
      */
     protected function getFieldDefinitionFromBrick($brickType, $key)
     {
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
+        $fieldDefinition = null;
         if ($brickDefinition) {
             $fieldDefinition = $brickDefinition->getFieldDefinition($key);
         }

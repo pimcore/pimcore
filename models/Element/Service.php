@@ -48,6 +48,7 @@ class Service extends Model\AbstractModel
     public static function getIdPath($element)
     {
         $path = '';
+        $ne = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
@@ -78,6 +79,7 @@ class Service extends Model\AbstractModel
     public static function getTypePath($element)
     {
         $path = '';
+        $ne = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
@@ -333,10 +335,12 @@ class Service extends Model\AbstractModel
      * @param  string $type
      * @param  string $path
      *
-     * @return ElementInterface
+     * @return ElementInterface|null
      */
     public static function getElementByPath($type, $path)
     {
+        $element = null;
+
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {

@@ -539,32 +539,33 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         if (empty($value)) {
             return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
-                $type = $value['type'];
-                $id = $value['id'];
+        }
 
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId($type, $id);
-                }
+        $value = (array) $value;
+        if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
+            $type = $value['type'];
+            $id = $value['id'];
+            $el = null;
 
-                if ($id) {
-                    $el = Element\Service::getElementById($type, $id);
-                }
-
-                if ($el instanceof Element\ElementInterface) {
-                    return $el;
-                } else {
-                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
-                    } else {
-                        throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
-                    }
-                }
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
+            if ($idMapper) {
+                $id = $idMapper->getMappedId($type, $id);
             }
+
+            if ($id) {
+                $el = Element\Service::getElementById($type, $id);
+            }
+
+            if ($el instanceof Element\ElementInterface) {
+                return $el;
+            } else {
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
+                } else {
+                    throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
+                }
+            }
+        } else {
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 

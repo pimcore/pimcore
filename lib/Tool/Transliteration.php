@@ -155,6 +155,7 @@ class Transliteration
                     } while (--$remaining);
 
                     $n = ord($head);
+                    $ord = null;
                     if ($n <= 0xdf) {
                         $ord = ($n - 192) * 64 + (ord($sequence[1]) - 128);
                     } elseif ($n <= 0xef) {
@@ -213,12 +214,7 @@ class Transliteration
                 $base = [];
                 // contains the $base variable
                 include($file);
-                if ($langcode != 'en' && isset($variant[$langcode])) {
-                    // Merge in language specific mappings.
-                    $map[$bank][$langcode] = $variant[$langcode] + $base;
-                } else {
-                    $map[$bank][$langcode] = $base;
-                }
+                $map[$bank][$langcode] = $base;
             } else {
                 $map[$bank][$langcode] = [];
             }

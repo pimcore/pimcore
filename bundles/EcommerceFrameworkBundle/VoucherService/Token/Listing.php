@@ -205,6 +205,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     {
         $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
             INNER JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' as r ON t.token = r.token';
+        $params = [];
+
         if (isset($seriesId)) {
             $query .= ' WHERE voucherSeriesId = ?';
             $params[] = $seriesId;

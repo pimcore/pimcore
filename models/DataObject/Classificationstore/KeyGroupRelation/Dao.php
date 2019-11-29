@@ -65,6 +65,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $type = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($type as $key => $value) {
             if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {

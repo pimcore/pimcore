@@ -127,8 +127,8 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
-
         // DB
+        $mysqlVersion = null;
         try {
             $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES 
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);

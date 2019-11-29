@@ -270,6 +270,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             $fields1 = $this->object1->{"get" . ucfirst($fieldName)}();
             $fields2 = $this->object2->{"get" . ucfirst($fieldName)}();
+            $fieldDefinitions1 = null;
+            $fieldItems1 = null;
+            $fieldDefinitions2 = null;
+            $fieldItems2 = null;
 
             if ($fields1) {
                 $fieldDefinitions1 = $fields1->getItemDefinitions();

@@ -63,9 +63,8 @@ class Dao extends Model\Dao\AbstractDao
         $dirtyRelations = [];
 
         // remove all relations
+        $db = Db::get();
         try {
-            $db = Db::get();
-
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields

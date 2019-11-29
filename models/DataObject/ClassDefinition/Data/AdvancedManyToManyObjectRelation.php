@@ -1135,6 +1135,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $columns = array_merge(['id', 'fullpath'], $this->getColumnKeys());
                 foreach ($items as $itemBeforeCleanup) {
                     $unique = $this->buildUniqueKeyForDiffEditor($itemBeforeCleanup);
+                    $item = [];
 
                     foreach ($itemBeforeCleanup as $key => $value) {
                         if (in_array($key, $columns)) {

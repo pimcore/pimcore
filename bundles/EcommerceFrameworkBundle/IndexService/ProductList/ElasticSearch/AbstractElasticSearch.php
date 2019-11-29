@@ -1244,6 +1244,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
          * @var $esClient \Elasticsearch\Client
          */
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+        $result = [];
 
         if ($esClient instanceof \Elasticsearch\Client) {
             if ($this->doScrollRequest) {

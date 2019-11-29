@@ -384,9 +384,10 @@ class Dao extends Model\Dao\AbstractDao
             return;
         }
         $object = $this->model->getObject();
+        $context = $this->model->getContext();
+        $container = null;
 
         try {
-            $context = $this->model->getContext();
             if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
                 $containerKey = $context['containerKey'];
                 if ($context['containerType'] === 'fieldcollection') {
@@ -444,6 +445,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $db = Db::get();
+        $dirtyLanguageCondition = null;
 
         if ($this->model->allLanguagesAreDirty() ||
             ($container instanceof DataObject\Fieldcollection\Definition

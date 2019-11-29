@@ -573,16 +573,16 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $isUpdate = false;
-            $differentOldPath = null;
-
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $params);
             if ($this->getId()) {

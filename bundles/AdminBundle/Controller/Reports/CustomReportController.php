@@ -286,6 +286,8 @@ class CustomReportController extends ReportsControllerBase
         $offset = $request->get('start', 0);
         $limit = $request->get('limit', 40);
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sort = null;
+        $dir = null;
         if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];

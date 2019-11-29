@@ -95,6 +95,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * @param Model\Property[] $properties
+     */
+    abstract public function setProperties($properties);
+
+    /**
      * @param  $name
      */
     public function removeProperty($name)
@@ -169,6 +174,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         // check for inherited
         return $this->getDao()->isLocked();
     }
+
+
+    /**
+     * @return string
+     */
+    abstract public function getLocked();
 
     /**
      * @return array

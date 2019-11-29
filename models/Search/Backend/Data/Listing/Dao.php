@@ -43,6 +43,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             } elseif ($entryData['maintype'] == 'object') {
                 $element = DataObject::getById($entryData['id']);
             } else {
+                $element = null;
                 Logger::err('unknown maintype ');
             }
             if ($element) {

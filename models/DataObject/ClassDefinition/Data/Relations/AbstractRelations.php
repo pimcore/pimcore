@@ -210,6 +210,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     {
         $db = Db::get();
         $data = null;
+        $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {

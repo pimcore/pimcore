@@ -124,6 +124,7 @@ class AssetHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request)
     {
         $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = null;
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -213,12 +214,14 @@ class AssetHelperController extends AdminController
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
 
+            $savedGridConfig = null;
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
 
             if ($savedGridConfig) {
+                $shared = null;
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -447,6 +450,7 @@ class AssetHelperController extends AdminController
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
             $favourite->setType($type);
+            $specializedConfigs = false;
 
             try {
                 if ($gridConfigId != 0) {
@@ -456,8 +460,6 @@ class AssetHelperController extends AdminController
 
                 $favourite->setObjectId(0);
                 $favourite->save();
-
-                $specializedConfigs = false;
             } catch (\Exception $e) {
                 $favourite->delete();
             }
@@ -527,6 +529,7 @@ class AssetHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
+                $gridConfig = null;
                 if ($gridConfigId) {
                     try {
                         $gridConfig = GridConfig::getById($gridConfigId);

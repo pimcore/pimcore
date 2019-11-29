@@ -587,8 +587,8 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_perspectives')) {
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
         } else {
+            $file = self::locateConfigFile('perspectives.php');
             try {
-                $file = self::locateConfigFile('perspectives.php');
                 $config = static::getConfigInstance($file);
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
