@@ -33,12 +33,6 @@ services:
     # GOOGLE TAG MANAGER
     #
 
-    Pimcore\Analytics\GoogleTagManager\Config\ConfigProvider: ~
-    Pimcore\Analytics\GoogleTagManager\Config\Config:
-        factory: 'Pimcore\Analytics\GoogleTagManager\Config\ConfigProvider:getConfig'
-
-    Pimcore\Analytics\GoogleTagManager\Tracker: ~
-
     Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
 
     #

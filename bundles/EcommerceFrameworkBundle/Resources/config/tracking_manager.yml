@@ -28,9 +28,8 @@ services:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
 
-    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\TagManager:
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager:
         arguments:
-            - '@Pimcore\Analytics\GoogleTagManager\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
 

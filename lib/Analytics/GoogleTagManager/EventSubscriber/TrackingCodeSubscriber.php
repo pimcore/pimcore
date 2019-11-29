@@ -17,16 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\GoogleTagManager\EventSubscriber;
 
-use Pimcore\Analytics\GoogleTagManager\Tracker;
+use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Tool;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
+use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
+use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Templating\EngineInterface;
+
 
 class TrackingCodeSubscriber implements EventSubscriberInterface
 {
@@ -35,63 +39,51 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
     use PreviewRequestTrait;
 
-    /**
-     * @var Tracker
-     */
-    private $tracker;
+    /** @var TrackingManager */
+    protected $trackingManager;
 
-    /**
-     * @var bool
-     */
-    private $enabled = true;
+    /** @var EngineInterface **/
+    protected $templatingEngine;
 
-    public function __construct(Tracker $tracker)
+    public function __construct(TrackingManager $trackingManager, EngineInterface $templatingEngine)
     {
-        $this->tracker = $tracker;
+        $this->trackingManager = $trackingManager;
+        $this->templatingEngine = $templatingEngine;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['onKernelResponse', -107]
+            GoogleTagManagerEvents::CODE_HEAD => ['onCodeHead'],
         ];
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onCodeHead(CodeEvent $event)
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
-        $request = $event->getRequest();
-        if (!$event->isMasterRequest()) {
-            return;
-        }
+        $activeTrackers = $this->trackingManager->getActiveTrackers();
 
-        // only inject analytics code on non-admin requests
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return;
-        }
+        foreach ($activeTrackers as $activeTracker) {
+            if ($activeTracker instanceof GoogleTagManager) {
 
-        if ($this->isPreviewRequest($request)) {
-            return;
-        }
+                $trackedCodes = $activeTracker->getTrackedCodes();
 
-        // output filters are disabled
-        if (!Tool::useFrontendOutputFilters($event->getRequest())) {
-            return;
-        }
+                if (empty($trackedCodes) || ! is_array($trackedCodes)) {
+                    return;
+                }
 
-        $response = $event->getResponse();
-        if (!$this->isHtmlResponse($response)) {
-            return;
-        }
+                $block = $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG);
 
-        $code = $this->tracker->generateCode();
-        if (empty($code)) {
-            return;
-        }
+                $code = $this->templatingEngine->render(
+                    '@PimcoreCore/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
+                    ['trackedCodes' => $trackedCodes]
+                );
 
-        $this->injectBeforeHeadEnd($response, $code);
+                $block->prepend($code);
+            }
+        }
     }
 }

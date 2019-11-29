@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 
 use AppBundle\Ecommerce\CartManager\Cart;
 use AppBundle\Ecommerce\Checkout\B2B\Step\Billing;
@@ -23,7 +23,6 @@ use AppBundle\Ecommerce\Tracking\TrackingItemBuilder;
 use AppBundle\Model\DataObject\ShopCategory;
 use AppBundle\Service\Formatter\PriceFormatter;
 use AppBundle\Traits\EnvironmentAware;
-use Pimcore\Analytics\GoogleTagManager\Tracker as TagManagerTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -38,13 +37,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TagManager extends Tracker implements
+class GoogleTagManager extends Tracker implements
     ProductViewInterface,
     ProductImpressionInterface,
     CartProductActionAddInterface,
@@ -54,15 +53,17 @@ class TagManager extends Tracker implements
     CheckoutCompleteInterface
 {
 
-    /** @var \Pimcore\Analytics\GoogleTagManager\Tracker */
-    protected $tracker;
+    const DEFERRED_DIMENSION_IMPRESSIONS = 'impressions';
 
-    public function __construct(TagManagerTracker $tracker, TrackingItemBuilderInterface $trackingItemBuilder, EngineInterface $templatingEngine, array $options = [], $assortmentTenants = [], $checkoutTenants = [])
-    {
-        parent::__construct($trackingItemBuilder, $templatingEngine, $options, $assortmentTenants, $checkoutTenants);
+    const DEFERRED_DIMENSIONS = [
+        self::DEFERRED_DIMENSION_IMPRESSIONS
+    ];
 
-        $this->tracker = $tracker;
-    }
+    /** @var string[] */
+    protected $trackedCodes = [];
+
+    /** @var [] */
+    protected $deferred = [];
 
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -77,18 +78,7 @@ class TagManager extends Tracker implements
     {
         $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
 
-        $call = [
-            "event" => "productImpression",
-            "ecommerce" => [
-                "impressions" => [
-                    $this->transformProductImpression($item),
-                ],
-            ],
-        ];
-
-        $result = $this->renderCall($call);
-
-        $this->tracker->addCodePart($result);
+        $this->addDeferredItem(self::DEFERRED_DIMENSION_IMPRESSIONS, $this->transformProductImpression($item));
     }
 
     public function trackProductView(ProductInterface $product)
@@ -107,7 +97,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
     public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
@@ -117,7 +107,6 @@ class TagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
-            "event" => "addToCart",
             "ecommerce" => [
                 "add" => [
                     "products" => [
@@ -129,7 +118,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
     public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
@@ -139,7 +128,6 @@ class TagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
-            "event" => "removeFromCart",
             "ecommerce" => [
                 "remove" => [
                     "products" => [
@@ -151,7 +139,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
      public function trackCheckout(CartInterface $cart)
@@ -173,7 +161,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
     public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
@@ -196,7 +184,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
     public function trackCheckoutComplete(AbstractOrder $order)
@@ -216,7 +204,7 @@ class TagManager extends Tracker implements
 
         $result = $this->renderCall($call);
 
-        $this->tracker->addCodePart($result);
+        $this->trackCode($result);
     }
 
     /**
@@ -310,11 +298,7 @@ class TagManager extends Tracker implements
      */
     private function formatPrice($price = null)
     {
-        if (is_numeric($price)) {
-            return number_format($price, 2, ".", "");
-        }
-
-        return $price;
+        return Decimal::fromNumeric($price)->asString();
     }
 
 
@@ -327,5 +311,44 @@ class TagManager extends Tracker implements
         return $this->renderTemplate('call', [
             'call' => $call,
         ]);
+    }
+
+    protected function addDeferredItem(string $dimension, array $item)
+    {
+        $this->deferred[$dimension][] = $item;
+    }
+
+    protected function getDeferredItems(string $dimension)
+    {
+        return $this->deferred[$dimension];
+    }
+
+    protected function consolidateDeferredDimensions()
+    {
+        foreach (self::DEFERRED_DIMENSIONS as $dimension) {
+            if ($items = $this->getDeferredItems($dimension)) {
+                $call = [
+                    "ecommerce" => [
+                        $dimension => $items,
+                    ],
+                ];
+
+                $result = $this->renderCall($call);
+
+                $this->trackCode($result);
+            }
+        }
+    }
+
+    public function getTrackedCodes(): array
+    {
+        $this->consolidateDeferredDimensions();
+
+        return $this->trackedCodes;
+    }
+
+    public function trackCode(string $code)
+    {
+        $this->trackedCodes[] = $code;
     }
 }
