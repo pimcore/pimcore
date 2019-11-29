@@ -64,7 +64,7 @@ Settings for default values of Mails sent via `Pimcore\Mail`.
 System settings about the CMS part of Pimcore.
 
 ### EU Cookie Policy Notice
-Pimcore has a default implementation for EU cookie policy that looks like as follows. 
+Pimcore has a default implementation for EU cookie policy that looks like as follows. When the buttons are pressed the hint disappears. In the case of the OK button a reminder in the localStorage (pc-cookie-accepted = true) is set and the notice won't be displayed again. If you want to set any tracking cookies when the terms are accepted you need to customize the template as described further down.
 
 ![Cookie Policy](../img/system-settings-sample.png)
 
@@ -77,13 +77,54 @@ texts and links:
 
 ##### Use a Custom Template Code
 
+You can customize the cookie notice via controller:
+
 ```php
 <?php
-// this example is inside a controller, but you can also inject the listener as dependency
 $cookieListener = $this->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener::class);
 $cookieListener->setTemplateCode("<b>Your Custom Template</b> ...");
+// or use loadTemplateFromResource
+$cookieListener->setCode("console.log('pimcore rocks')");
+// or loadCodeFromResource
 ```
 
+You can also customize the template by dependency injection. Add to your `services.yml`:
+
+```yaml
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
+        calls:
+            - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/cookieTemplate.html.php']]
+            - [loadCodeFromResource, ['@@AppBundle/Resources/misc/cookie-policy-custom-code.js']]
+            - [setTranslator, ['@translator']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+```
+You can use the default [template](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/misc/cookie-policy-default-template.html) and [code](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/misc/cookie-policy-default-code.js) as a starting point. It is important, that the javascript file keeps the `var code = templateCodePlaceholder;` and `document.body.insertAdjacentHTML("beforeend", code);` construct, since the template code is injected into the javascript and replaces the string "templateCodePlaceholder" (Don't put templateCodePlaceholder in quotation marks). If you need to set any tracking cookies the on click listeners are a good place to call your init-script.\
+e.g. Matomo/Piwik:
+```javascript
+    document.getElementById("pc-accept").onclick = function() {
+        document.getElementById("pc-cookie-notice").style.display = "none";
+        ls.setItem("pc-cookie-accepted", "true");
+        //activate tracking
+        _paq.push(['rememberConsentGiven'])
+    };
+```
+
+If you want to do even further customization you can extend the CookiePolicyNoticeListener class and override some functions like `getTranslations()` to fetch different/more keys from "Shared Translations". You need to disable the regular CookiePolicyNoticeListener and inject your own in the `services.yml`
+
+```yaml
+Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
+        calls:
+            - [disable]   
+                
+    AppBundle\DependencyInjection\SuperWeirdCookieMonsterListener:
+        calls:
+            - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/cookieTemplate.html.php']]
+            - [loadCodeFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-code.js']]
+            - [setTranslator, ['@translator']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+```
 ## Documents
 Settings for documents like version steps, default values and URL settings. 
 

@@ -124,6 +124,7 @@ services:
         public: true
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
+            - [loadCodeFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-code.js']]
             - [setTranslator, ['@translator']]
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }

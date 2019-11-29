@@ -1,11 +1,10 @@
-
 <style type="text/css">
     #pc-cookie-notice {
         background: #3c3c3c;
         color: #fff;
         position: fixed;
-        bottom:0;
-        left:0;
+        bottom: 0;
+        left: 0;
         width: 100%;
         box-sizing: border-box;
         padding: 5px 0 5px;
@@ -13,78 +12,108 @@
         font-size: 12px;
         z-index: 10000;
     }
-
+    
+    #pc-cookie-notice h1 {
+        font-size: 25px;
+        line-height: 40px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+    
     #pc-cookie-notice a {
         color: #fff;
         text-decoration: underline;
     }
-
+    
     #pc-cookie-notice #pc-icon {
         position: absolute;
         top: 5px;
         left: 5px;
     }
-
+    
     #pc-cookie-notice #pc-message {
         width: 100%;
-        padding: 0 55px 0 25px;
+        padding: 0 120px 0 25px;
     }
-
+    
     #pc-cookie-notice #pc-message span:after {
         content: attr(data-content);
     }
-
+    
     #pc-cookie-notice #pc-message a:after {
         content: attr(data-content);
     }
-
-    #pc-cookie-notice #pc-button {
+    
+    #pc-cookie-notice #pc-accept {
         position: absolute;
-        top: 3px;
+        top: 22px;
         right: 20px;
     }
-
-    #pc-cookie-notice #pc-button button {
+    
+    #pc-cookie-notice #pc-decline {
+        position: absolute;
+        top: 55px;
+        right: 20px;
+    }
+    
+    #pc-cookie-notice button {
         font-weight: bold;
-        background: #008d4c;
         border-radius: 2px;
-        border:1px solid #000;
+        border: 1px solid #000;
         padding: 1px 5px;
     }
-
-    #pc-cookie-notice #pc-button button:after {
+    
+    #pc-cookie-notice #pc-accept button {
+        background: #008d4c;
+    }
+    
+    #pc-cookie-notice #pc-decline button {
+        background: #f00;
+    }
+    
+    #pc-cookie-notice #pc-accept button:after {
         content: attr(data-content);
     }
-
+    
+    #pc-cookie-notice #pc-decline button:after {
+        content: attr(data-content);
+    }
+    
     @media (max-width: 750px) {
         #pc-cookie-notice #pc-icon {
             display: none;
         }
-
         #pc-cookie-notice #pc-message {
             padding-left: 5px;
         }
-
-        #pc-cookie-notice #pc-button {
-            right:5px;
-            top:5px;
+        #pc-cookie-notice #pc-accept {
+            right: 5px;
+            top: 5px;
         }
-
-        #pc-cookie-notice #pc-button button {
+        #pc-cookie-notice #pc-accept button {
+            padding: 5px 3px;
+        }
+        #pc-cookie-notice #pc-decline {
+            right: 5px;
+            top: 45px;
+        }
+        #pc-cookie-notice #pc-decline button {
             padding: 5px 3px;
         }
     }
-
 </style>
 
 <div id="pc-cookie-notice">
     <div id="pc-icon"></div>
     <div id="pc-message">
-        <span data-content="%text%"></span>
-        %link%
+        <h1>%header%</h1>
+        <span data-content="%text%"></span> %link%
     </div>
-    <div id="pc-button">
+    <div id="pc-accept">
         <button data-content="%ok%" aria-label="%ok%"></button>
     </div>
+    <div id="pc-decline">
+        <button data-content="%no%" aria-label="%no%"></button>
+    </div>
 </div>
-

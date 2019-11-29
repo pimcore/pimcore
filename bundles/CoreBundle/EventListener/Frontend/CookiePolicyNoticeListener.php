@@ -37,6 +37,11 @@ class CookiePolicyNoticeListener
     protected $templateCode = null;
 
     /**
+     * @var string
+     */
+    protected $code = null;
+
+    /**
      * @var KernelInterface
      */
     protected $kernel;
@@ -110,6 +115,33 @@ class CookiePolicyNoticeListener
     }
 
     /**
+     * @param $code
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function loadCodeFromResource($path)
+    {
+        $codeFile = $this->kernel->locateResource($path);
+        if (file_exists($codeFile)) {
+            $this->setCode(file_get_contents($codeFile));
+        }
+    }
+
+    /**
      * @return Translator
      */
     public function getTranslator()
@@ -168,28 +200,7 @@ class CookiePolicyNoticeListener
 
                 $templateCode = json_encode($template);
 
-                $code = '
-                        <script>
-                            (function () {
-                                var ls = window["localStorage"];
-                                if(ls && !ls.getItem("pc-cookie-accepted")) {
-            
-                                    var code = ' . $templateCode . ';
-                                    var ci = window.setInterval(function () {
-                                        if(document.body) {
-                                            clearInterval(ci);
-                                            document.body.insertAdjacentHTML("beforeend", code);
-            
-                                            document.getElementById("pc-button").onclick = function () {
-                                                document.getElementById("pc-cookie-notice").style.display = "none";
-                                                ls.setItem("pc-cookie-accepted", "true");
-                                            };
-                                        }
-                                    }, 100);
-                                }
-                            })();
-                        </script>
-                    ';
+                $injectedScript = '<script>' . str_replace('templateCodePlaceholder', $templateCode, $this->getCode()) . '</script>';
 
                 $content = $response->getContent();
 
@@ -197,7 +208,7 @@ class CookiePolicyNoticeListener
                 // this method is much faster than using simple_html_dom and uses less memory
                 $headEndPosition = stripos($content, '</head>');
                 if ($headEndPosition !== false) {
-                    $content = substr_replace($content, $code . '</head>', $headEndPosition, 7);
+                    $content = substr_replace($content, $injectedScript . '</head>', $headEndPosition, 7);
                 }
 
                 $response->setContent($content);
@@ -298,13 +309,69 @@ class CookiePolicyNoticeListener
                 'lv' => 'Sapratu',
                 'lt' => 'Supratau',
                 'ro' => 'Am înțeles',
+            ],
+            'no' => [
+                'en' => 'No',
+                'de' => 'Nein',
+                'it' => 'No',
+                'fr' => 'No',
+                'nl' => 'Nee',
+                'es' => 'Ningún',
+                'zh' => '没有',
+                'no' => 'Ikke',
+                'hu' => 'Nincs',
+                'sv' => 'Ingen',
+                'fi' => 'Ei',
+                'da' => 'Ingen',
+                'pl' => 'Nie',
+                'cs' => 'žádný',
+                'sk' => 'žiadny',
+                'pt' => 'não',
+                'hr' => 'Ne',
+                'sl' => 'no',
+                'sr' => 'не',
+                'ru' => 'нет',
+                'bg' => 'не',
+                'et' => 'ei',
+                'el' => 'όχι',
+                'lv' => 'nē',
+                'lt' => 'ne',
+                'ro' => 'nu',
+            ],
+            'header' => [
+                'en' => 'Cookies',
+                'de' => 'Cookies',
+                'it' => 'Cookies',
+                'fr' => 'Cookies',
+                'nl' => 'Cookies',
+                'es' => 'Cookies',
+                'zh' => 'Cookies',
+                'no' => 'Cookies',
+                'hu' => 'Cookies',
+                'sv' => 'Cookies',
+                'fi' => 'Cookies',
+                'da' => 'Cookies',
+                'pl' => 'Cookies',
+                'cs' => 'Cookies',
+                'sk' => 'Cookies',
+                'pt' => 'Cookies',
+                'hr' => 'Cookies',
+                'sl' => 'Cookies',
+                'sr' => 'Cookies',
+                'ru' => 'Cookies',
+                'bg' => 'Cookies',
+                'et' => 'Cookies',
+                'el' => 'Cookies',
+                'lv' => 'Cookies',
+                'lt' => 'Cookies',
+                'ro' => 'Cookies',
             ]
         ];
 
         $translations = [];
 
         if ($this->getTranslator()) {
-            foreach (['text', 'linkText', 'ok', 'linkTarget'] as $key) {
+            foreach (['text', 'linkText', 'ok', 'linkTarget', 'header', 'no'] as $key) {
                 $translationKey = 'cookie-policy-' . $key;
                 $translation = $this->getTranslator()->trans($translationKey);
                 if ($translation != $translationKey) {
