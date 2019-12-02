@@ -415,7 +415,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setCondition('o_parentId = ?', $this->getId());
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder('asc');
-            $list->setObjectTypes($objectTypes);
+            $list->setObjectTypes($loadTypes);
 
             foreach($list as $element) {
                 $this->o_children[self::getChildrenCacheKey($element)][] = $element;
