@@ -1053,10 +1053,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if (Runtime::isRegistered('object_' . $o_parentId)) {
                 $parent = self::getById($o_parentId);
-                if($parent instanceof self) {
-                    $this->o_parent = $parent;
-                    $parent->setChildren(array_merge($parent->getChildren([$parent->getType()]), [$parent]));
-                }
+                $parent->o_siblings = null;
+                $parent->o_hasSiblings = null;
             }
         }
 
@@ -1219,10 +1217,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParent($o_parent)
     {
         $newParentId = 0;
-        if($o_parent instanceof self) {
-            $newParentId = $o_parent->getId();
-            $o_parent->setChildren(array_merge($o_parent->getChildren([$o_parent->getType()]), [$o_parent]));
-        }
+
         $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
 
