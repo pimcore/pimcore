@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Tool\Admin;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -198,7 +199,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function isAllowed($type)
     {
-        $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+        if (php_sapi_name() === 'cli') {
+            return true;
+        }
+
+        $currentUser = Admin::getCurrentUser();
+
+        if (!$currentUser) {
+            return false;
+        }
+
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
