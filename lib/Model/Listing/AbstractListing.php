@@ -449,7 +449,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     public function getData()
     {
