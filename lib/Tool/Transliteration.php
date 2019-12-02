@@ -212,9 +212,15 @@ class Transliteration
             $file = __DIR__ . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
             if (file_exists($file)) {
                 $base = [];
+                $variant = [];
                 // contains the $base variable
                 include($file);
-                $map[$bank][$langcode] = $base;
+                if ($langcode !== 'en' && isset($variant[$langcode])) {
+                    // Merge in language specific mappings.
+                    $map[$bank][$langcode] = $variant[$langcode] + $base;
+                } else {
+                    $map[$bank][$langcode] = $base;
+                }
             } else {
                 $map[$bank][$langcode] = [];
             }

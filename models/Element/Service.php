@@ -41,27 +41,27 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  $element
+     * @param ElementInterface $element
      *
      * @return string
      */
     public static function getIdPath($element)
     {
         $path = '';
-        $ne = null;
+        $parentElement = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-            $nid = $element->getParentId();
-            $ne = self::getElementById($elementType, $nid);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
         }
 
-        if ($ne) {
-            $path = self::getIdPath($ne);
+        if ($parentElement) {
+            $path = self::getIdPath($parentElement);
         }
 
         if ($element) {
-            $path = $path . '/' . $element->getId();
+            $path .= '/' . $element->getId();
         }
 
         return $path;
@@ -70,7 +70,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return string
      *
@@ -79,21 +79,21 @@ class Service extends Model\AbstractModel
     public static function getTypePath($element)
     {
         $path = '';
-        $ne = null;
+        $parentElement = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-            $nid = $element->getParentId();
-            $ne = self::getElementById($elementType, $nid);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
         }
 
-        if ($ne) {
-            $path = self::getTypePath($ne);
+        if ($parentElement) {
+            $path = self::getTypePath($parentElement);
         }
 
         if ($element) {
             $type = $element->getType();
-            if ($type != 'folder') {
+            if ($type !== 'folder') {
                 if ($element instanceof Document) {
                     $type = 'document';
                 } elseif ($element instanceof DataObject\AbstractObject) {
@@ -104,7 +104,7 @@ class Service extends Model\AbstractModel
                     throw new \Exception('unknown type');
                 }
             }
-            $path = $path . '/' . $type;
+            $path .= '/' . $type;
         }
 
         return $path;
