@@ -875,13 +875,13 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv) {
-                $where = $cv['where'];
+            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+                $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->where($where);
                 }
 
-                $customViewJoins = $cv['joins'];
+                $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
@@ -893,7 +893,7 @@ class Service extends Model\AbstractModel
                     }
                 }
 
-                if ($cv['having']) {
+                if (!empty($cv['having'])) {
                     $select->having($cv['having']);
                 }
             });
@@ -931,6 +931,7 @@ class Service extends Model\AbstractModel
         ]);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
+        $key = trim($key);
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
@@ -950,7 +951,6 @@ class Service extends Model\AbstractModel
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
-            $key = trim($key);
             $key = ltrim($key, '. ');
         }
 

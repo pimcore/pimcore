@@ -873,10 +873,10 @@ class Document extends Element\AbstractElement
                     $hardlink = Document::getById($hardlinkId);
                     if (FrontendTool::isDocumentInCurrentSite($hardlink)) {
                         $siteRootPath = Site::getCurrentSite()->getRootPath();
-                        $siteRootPath = preg_quote($siteRootPath);
+                        $siteRootPath = preg_quote($siteRootPath, '@');
                         $hardlinkPath = preg_replace('@^' . $siteRootPath . '@', '', $hardlink->getRealFullPath());
 
-                        $link = preg_replace('@^' . preg_quote($parent->getRealFullPath()) . '@', $hardlinkPath, $this->getRealFullPath());
+                        $link = preg_replace('@^' . preg_quote($parent->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
                         break;
                     }
                 }
@@ -1004,7 +1004,7 @@ class Document extends Element\AbstractElement
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
-                        $rootPath = preg_quote($rootPath);
+                        $rootPath = preg_quote($rootPath, '@');
                         $link = preg_replace('@^' . $rootPath . '@', '', $this->path);
 
                         return $link;
@@ -1361,7 +1361,6 @@ class Document extends Element\AbstractElement
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object

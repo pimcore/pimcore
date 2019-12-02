@@ -250,12 +250,12 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function startPdfGenerationAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
-        if (empty($document)) {
-            throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
-        }
+        $allParams = json_decode($request->getContent(), true);
 
-        $allParams = array_merge($request->request->all(), $request->query->all());
+        $document = Document\PrintAbstract::getById($allParams['id']);
+        if (empty($document)) {
+            throw new \Exception('Document with id ' . $allParams['id'] . ' not found.');
+        }
 
         if (\Pimcore\Config::getSystemConfig()->general->domain) {
             $allParams['hostName'] = \Pimcore\Config::getSystemConfig()->general->domain;

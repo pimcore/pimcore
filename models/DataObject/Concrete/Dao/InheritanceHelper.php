@@ -292,7 +292,9 @@ class InheritanceHelper
                 foreach ($o->childs as $c) {
                     $this->getIdsToCheckForDeletionForValuefields($c, $fieldname);
                 }
-                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+                if (isset($this->deletionFieldIds[$fieldname])) {
+                    $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+                }
             }
         }
 
@@ -301,7 +303,9 @@ class InheritanceHelper
                 foreach ($o->childs as $c) {
                     $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
                 }
-                $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+                if (isset($this->deletionFieldIds[$fieldname])) {
+                    $this->updateQueryTableOnDelete($objectId, $this->deletionFieldIds[$fieldname], $fieldname);
+                }
             }
         }
 
@@ -368,7 +372,7 @@ class InheritanceHelper
 
             if (self::$useRuntimeCache) {
                 $queryCacheKey = 'tree_'.md5($query);
-                $parentIdGroups = self::$runtimeCache[$queryCacheKey];
+                $parentIdGroups = self::$runtimeCache[$queryCacheKey] ?? null;
             }
 
             if (!$parentIdGroups) {

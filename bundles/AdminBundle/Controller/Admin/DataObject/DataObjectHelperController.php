@@ -634,10 +634,10 @@ class DataObjectHelperController extends AdminController
         $sharedConfigs = $class ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName;
-        $settings['gridConfigDescription'] = $gridConfigDescription;
-        $settings['shareGlobally'] = $sharedGlobally;
-        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
@@ -672,11 +672,11 @@ class DataObjectHelperController extends AdminController
             $vis = $class->getPropertyVisibility();
             foreach (self::SYSTEM_COLUMNS as $sc) {
                 $key = $sc;
-                if ($key == 'fullpath') {
+                if ($key === 'fullpath') {
                     $key = 'path';
                 }
 
-                if (empty($types) && ($vis[$gridType][$key] || $gridType == 'all')) {
+                if (empty($types) && (!empty($vis[$gridType][$key]) || $gridType === 'all')) {
                     $availableFields[] = [
                         'key' => $sc,
                         'type' => 'system',

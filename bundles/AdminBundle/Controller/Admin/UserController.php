@@ -430,9 +430,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         // object <=> user dependencies
         $userObjects = DataObject\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = [];
+        $hasHidden = false;
 
         foreach ($userObjects as $o) {
-            $hasHidden = false;
             if ($o->isAllowed('list')) {
                 $userObjectData[] = [
                     'path' => $o->getRealFullPath(),

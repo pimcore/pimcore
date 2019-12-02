@@ -471,14 +471,15 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
             // additional parameters (e.g. "versionNote" for the version note)
             $params = [];
             if (func_num_args() && is_array(func_get_arg(0))) {
                 $params = func_get_arg(0);
             }
-
-            $isUpdate = false;
 
             $preEvent = new AssetEvent($this, $params);
 
@@ -1854,7 +1855,6 @@ class Asset extends Element\AbstractElement
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset

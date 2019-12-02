@@ -536,7 +536,7 @@ Ext.onReady(function () {
 
                             request.send(data);
                         }
-                    }
+                    };
                     request.send(data);
                 }
             }
@@ -708,7 +708,7 @@ Ext.onReady(function () {
             document: [],
             asset: [],
             object: []
-        }
+        };
 
         for (var i = 0; i < elementTree.length; i++) {
 
@@ -760,7 +760,6 @@ Ext.onReady(function () {
                         if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
-                            var treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
                             var treeCls = window.pimcore[treetype].customviews.tree;
 
                             tree = new treeCls({
@@ -778,7 +777,6 @@ Ext.onReady(function () {
                             pimcore.globalmanager.add("layout_" + treetype + "_tree_" + treeConfig.id, tree);
 
                             treepanel.setHidden(false);
-                            locateTree = treepanel;
                         }
                     }
                     break;
@@ -790,9 +788,7 @@ Ext.onReady(function () {
                     key: locateKey,
                     side: side,
                     tree: tree
-                }
-                );
-
+                });
             }
 
         }

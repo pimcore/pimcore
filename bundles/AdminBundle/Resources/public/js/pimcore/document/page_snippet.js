@@ -111,12 +111,20 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.unpublish.bind(this),
-                menu: [{
-                    text: t('save_close'),
-                    iconCls: "pimcore_icon_save",
-                    handler: this.save.bind(this)
-                }]
+                handler: this.save.bind(this),
+                menu: [
+                    {
+                        text: t('save_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.saveClose.bind(this)
+                    },
+                    {
+                        text: t('save_only_scheduled_tasks'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.save.bind(this, "scheduler","scheduler"),
+                        hidden: !this.isAllowed("settings") || this.data.published
+                    }
+                ]
             });
 
 
@@ -135,13 +143,13 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this),
-                        hidden: !this.isAllowed("save")
+                        hidden: !this.isAllowed("save") || !this.data.published
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler","scheduler"),
-                        hidden: !this.isAllowed("settings")
+                        hidden: !this.isAllowed("settings") || !this.data.published
                     }
                 ]
             });

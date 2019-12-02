@@ -425,7 +425,7 @@ class Configuration implements ConfigurationInterface
             ->validate()
                 ->always(function ($v) {
                     $enabled = null;
-                    if (is_bool($v['enabled'])) {
+                    if (isset($v['enabled']) && is_bool($v['enabled'])) {
                         $enabled = $v['enabled'];
                         unset($v['enabled']);
                     }
