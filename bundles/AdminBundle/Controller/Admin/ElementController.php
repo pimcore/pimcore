@@ -317,7 +317,7 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
 
-        if ($element) {
+        if ($element instanceof Element\AbstractElement) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
                 $item = Element\Service::getElementById($el['type'], $el['id']);

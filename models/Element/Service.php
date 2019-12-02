@@ -437,11 +437,11 @@ class Service extends Model\AbstractModel
     public static function getElementById($type, $id, $force = false)
     {
         $element = null;
-        if ($type == 'asset') {
+        if ($type === 'asset') {
             $element = Asset::getById($id, $force);
-        } elseif ($type == 'object') {
+        } elseif ($type === 'object') {
             $element = DataObject::getById($id, $force);
-        } elseif ($type == 'document') {
+        } elseif ($type === 'document') {
             $element = Document::getById($id, $force);
         }
 

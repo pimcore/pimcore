@@ -1783,6 +1783,8 @@ class DataObjectHelperController extends AdminController
      * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function doExportAction(Request $request, LocaleServiceInterface $localeService)
     {
@@ -1790,12 +1792,17 @@ class DataObjectHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
+        $delimiter = $settings['delimiter'] ?: ';';
 
-        $enableInheritance = $settings['enableInheritance'];
+        $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
 
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
+
+        if (!$class) {
+            throw new \Exception('No class definition found');
+        }
+
         $className = $class->getName();
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
