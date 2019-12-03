@@ -95,7 +95,10 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        $this->detectFaces();
+        if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
+            $this->detectFaces();
+        }
+
         if (!isset($this->customSettings['disableFocalPointDetection'])) {
             $this->detectFocalPoint();
         }
