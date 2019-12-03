@@ -693,6 +693,8 @@ class TranslationController extends AdminController
                     'type' => $element['type'],
                 ];
 
+                $el = null;
+
                 if ($element['children']) {
                     $el = Element\Service::getElementById($element['type'], $element['id']);
                     $baseClass = ELement\Service::getBaseClassNameForElement($element['type']);

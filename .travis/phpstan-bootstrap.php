@@ -19,4 +19,6 @@ if (!defined('TESTS_PATH')) {
     define('TESTS_PATH', __DIR__);
 }
 
-define('PIMCORE_TEST', true);
+if (!defined('TESTS_PATH')) {
+    define('PIMCORE_TEST', true);
+}
