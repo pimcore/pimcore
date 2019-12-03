@@ -36,7 +36,7 @@ class NumberRange extends AbstractFilterType
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
 
         if (empty($value)) {
             $value['from'] = $filterDefinition->getPreSelectFrom();
