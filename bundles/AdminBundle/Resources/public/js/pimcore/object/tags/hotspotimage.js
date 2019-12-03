@@ -54,7 +54,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return {
             text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
+            renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -77,6 +77,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                         if (value.crop) {
                             var cropParams = Ext.Object.toQueryString(value.crop);
                             url = Ext.String.urlAppend(url, cropParams);
+                        }
+
+                        // unfortunately we have to use a timeout here to adjust the height of grids configured
+                        // with autoHeight: true, there are no other events that would work, see also: https://github.com/pimcore/pimcore/pull/4337/files
+                        if (!view['refreshTimeout']) {
+                            view.refreshTimeout = window.setTimeout(function () {
+                                view.refresh();
+                            }, 1000);
                         }
 
                         url = url + '" />';
