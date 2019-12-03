@@ -20,6 +20,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class NotificationService
 {
@@ -136,6 +137,10 @@ class NotificationService
     {
         $this->beginTransaction();
         $notification = $this->find($id);
+
+        if($notification->getRecipient()->getId() != $recipientId) {
+            throw new AccessDeniedHttpException();
+        }
 
         if ($recipientId && $recipientId == $notification->getRecipient()->getId()) {
             $notification->setRead(true);

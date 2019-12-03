@@ -10,22 +10,16 @@ $this->get("translate")->setDomain("admin");
     <div id="hcenter">
         <div id="content">
 
-            <?php if ($this->success) { ?>
+            <?php if ($this->getRequest()->getMethod() === 'POST') { ?>
                 <div class="body info">
                     <?= $this->translate("A temporary login link has been sent to your email address."); ?>
                     <br/>
                     <?= $this->translate("Please check your mailbox."); ?>
                 </div>
             <?php } else { ?>
-                <?php if ($this->error) { ?>
-                    <div class="body error">
-                        <?= $this->translate('lostpassword_reset_error'); ?>
-                    </div>
-                <?php } else { ?>
-                    <div class="body info">
-                        <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
-                    </div>
-                <?php } ?>
+                <div class="body info">
+                    <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
+                </div>
 
                 <div id="loginform">
 
