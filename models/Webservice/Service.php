@@ -44,6 +44,8 @@ class Service
     /**
      * @param $id
      *
+     * @return array|string
+     *
      * @throws \Exception
      */
     public function getDocumentFolderById($id)
@@ -66,6 +68,8 @@ class Service
 
     /**
      * @param $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -90,6 +94,8 @@ class Service
     /**
      * @param $id
      *
+     * @return array|string
+     *
      * @throws \Exception
      */
     public function getDocumentHardLinkById($id)
@@ -112,6 +118,8 @@ class Service
 
     /**
      * @param $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -136,6 +144,8 @@ class Service
     /**
      * @param $id
      *
+     * @return array|string
+     *
      * @throws \Exception
      */
     public function getDocumentPageById($id)
@@ -159,7 +169,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -190,6 +202,8 @@ class Service
      * @param null $offset
      * @param null $limit
      * @param null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -253,6 +267,8 @@ class Service
     /**
      * @param $id
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function unpublishDocument($id)
@@ -276,6 +292,8 @@ class Service
     /**
      * @param $id
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function deleteDocument($id)
@@ -298,6 +316,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateDocumentPage($wsDocument)
@@ -316,6 +336,8 @@ class Service
 
     /**
      * @param $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -336,6 +358,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateDocumentSnippet($wsDocument)
@@ -354,6 +378,8 @@ class Service
 
     /**
      * @param $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -374,6 +400,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateDocumentHardlink($wsDocument)
@@ -392,6 +420,8 @@ class Service
 
     /**
      * @param $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -412,6 +442,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateObjectFolder($wsDocument)
@@ -431,6 +463,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateObjectConcrete($wsDocument)
@@ -448,7 +482,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -469,6 +505,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     public function updateAssetFile($wsDocument)
@@ -486,7 +524,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -507,7 +547,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -529,7 +571,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -551,7 +595,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -572,7 +618,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -593,7 +641,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -614,7 +664,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -635,7 +687,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -666,7 +720,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -688,7 +744,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -713,7 +771,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -736,8 +796,10 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param null $options
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -765,6 +827,8 @@ class Service
      * @param null $offset
      * @param null $limit
      * @param null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -832,7 +896,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -854,7 +920,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -876,7 +944,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -908,6 +978,8 @@ class Service
      * @param null $limit
      * @param null $groupBy
      * @param null $objectClass
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -986,7 +1058,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1009,7 +1083,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1085,6 +1161,8 @@ class Service
     /**
      * @param $wsDocument
      *
+     * @return bool
+     *
      * @throws \Exception
      */
     protected function updateDocument($wsDocument)
@@ -1109,6 +1187,8 @@ class Service
 
     /**
      * @param $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1138,6 +1218,8 @@ class Service
 
     /**
      * @param $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1184,7 +1266,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -1207,7 +1291,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */

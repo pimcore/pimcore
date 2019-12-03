@@ -320,6 +320,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $description
+     *
+     * @return self
      */
     public function setDescription($description)
     {
@@ -338,6 +340,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param array $items
+     *
+     * @return self
      */
     public function setItems($items)
     {
@@ -356,6 +360,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
+     * @return self
      */
     public function setName($name)
     {
@@ -374,6 +380,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $format
+     *
+     * @return self
      */
     public function setFormat($format)
     {
@@ -392,6 +400,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param mixed $quality
+     *
+     * @return self
      */
     public function setQuality($quality)
     {
