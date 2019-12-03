@@ -210,6 +210,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function isAllowed($type)
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+
+        if(!$currentUser) {
+            if(php_sapi_name() === 'cli') {
+                return true;
+            }
+
+            return false;
+        }
+
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
