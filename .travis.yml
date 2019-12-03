@@ -46,8 +46,6 @@ matrix:
           - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
     - os: linux
       php: 7.1
-      services: ~
-      addons: ~
       env:
         - TASK_TESTS=0
         - TASK_DOCS=1
