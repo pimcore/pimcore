@@ -57,7 +57,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @param array $carts
      *
-     * @return void
+     * @return static
      */
     public function setCarts($carts)
     {

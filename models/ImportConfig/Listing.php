@@ -46,6 +46,8 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $importconfigs
+     *
+     * @return static
      */
     public function setImportconfigs(array $importconfigs)
     {

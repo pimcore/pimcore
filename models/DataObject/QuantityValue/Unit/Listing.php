@@ -43,11 +43,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function isValidOrderKey($key)
     {
-        if ($key == 'abbreviation' || $key == 'group' || $key == 'id' || $key == 'longname') {
-            return true;
-        }
-
-        return false;
+        return $key === 'abbreviation' || $key === 'group' || $key === 'id' || $key === 'longname';
     }
 
     /**
@@ -60,6 +56,8 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $units
+     *
+     * @return static
      */
     public function setUnits($units)
     {
