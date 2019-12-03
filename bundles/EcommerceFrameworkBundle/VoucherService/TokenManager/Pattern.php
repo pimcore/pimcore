@@ -389,6 +389,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     {
         $query = 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
         $finalLength = $this->getFinalTokenLength();
+        $insertParts = [];
 
         if (sizeof($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
@@ -448,6 +449,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                         $checkTokenCount++;
                     }
                 } else {
+                    $token = null;
                     $checkTokenCount++;
                 }
 

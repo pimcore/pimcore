@@ -155,6 +155,7 @@ class Transliteration
                     } while (--$remaining);
 
                     $n = ord($head);
+                    $ord = null;
                     if ($n <= 0xdf) {
                         $ord = ($n - 192) * 64 + (ord($sequence[1]) - 128);
                     } elseif ($n <= 0xef) {
@@ -211,9 +212,10 @@ class Transliteration
             $file = __DIR__ . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
             if (file_exists($file)) {
                 $base = [];
+                $variant = [];
                 // contains the $base variable
                 include($file);
-                if ($langcode != 'en' && isset($variant[$langcode])) {
+                if ($langcode !== 'en' && isset($variant[$langcode])) {
                     // Merge in language specific mappings.
                     $map[$bank][$langcode] = $variant[$langcode] + $base;
                 } else {

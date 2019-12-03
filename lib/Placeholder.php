@@ -195,6 +195,7 @@ class Placeholder
      */
     public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)
     {
+        $contentString = null;
         if (is_string($mixed)) {
             $contentString = $mixed;
         } elseif ($mixed instanceof Model\Document) {
@@ -257,9 +258,6 @@ class Placeholder
                     $placeholderObject->setLocale();
 
                     $replaceWith = $placeholderObject->getReplacement();
-                    if (!isset($replaceWith)) {
-                        $replaceWith = $placeholderObject->getEmptyValue();
-                    }
                     $stringReplaced = str_replace($placeholderObject->getPlaceholderString(), $replaceWith, $stringReplaced);
                 } else {
                     Logger::warn('Ignoring Placeholder "' . $placeholder['placeholderClass'] . '" -> Class not Found or not an instance of Pimcore_Placeholder_Abstract!');

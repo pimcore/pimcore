@@ -231,6 +231,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
             );
         }
 
+        $geoAddressDelivery = null;
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
             $deliveryAddressCacheKey = 'pimcore_order_delivery_address_' . $order->getId();
             if (!$geoAddressDelivery = Cache::load($deliveryAddressCacheKey)) {
@@ -244,9 +245,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         // get customer info
+        $arrCustomerAccount = [];
         if ($order->getCustomer()) {
             // init
-            $arrCustomerAccount = [];
             $customer = $order->getCustomer();
 
             // register

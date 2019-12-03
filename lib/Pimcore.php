@@ -27,12 +27,12 @@ class Pimcore
     /**
      * @var bool|null
      */
-    protected static $debugMode = null;
+    protected static $debugMode;
 
     /**
      * @var bool|null
      */
-    protected static $devMode = null;
+    protected static $devMode;
 
     /**
      * @var bool
@@ -48,14 +48,6 @@ class Pimcore
      * @var \Composer\Autoload\ClassLoader
      */
     private static $autoloader;
-
-    public static function initConfiguration()
-    {
-        // custom error logging when debug flag is set
-        if (self::inDebugMode()) {
-            error_reporting(E_ALL & ~E_NOTICE);
-        }
-    }
 
     /**
      * @return bool

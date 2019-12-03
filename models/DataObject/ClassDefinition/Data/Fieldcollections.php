@@ -188,6 +188,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         $container = $object->$containerGetter();
                         if ($container) {
                             $items = $container->getItems();
+                            $invisibleData = null;
                             if ($items && count($items) > $oIndex) {
                                 $item = $items[$oIndex];
                                 $getter = 'get' . ucfirst($fd->getName());

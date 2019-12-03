@@ -192,6 +192,7 @@ class Ghostscript extends Adapter
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
             $pageRange = '';
+            $text = null;
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript

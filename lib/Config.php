@@ -587,8 +587,8 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_perspectives')) {
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
         } else {
+            $file = self::locateConfigFile('perspectives.php');
             try {
-                $file = self::locateConfigFile('perspectives.php');
                 $config = static::getConfigInstance($file);
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
@@ -766,7 +766,7 @@ class Config
                     continue;
                 }
 
-                if ($tmpData['hidden']) {
+                if (!empty($tmpData['hidden'])) {
                     continue;
                 }
 
@@ -777,7 +777,7 @@ class Config
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -786,7 +786,7 @@ class Config
         }
 
         foreach ($tmpResult as $resultItem) {
-            if ($resultItem['hidden']) {
+            if (!empty($resultItem['hidden'])) {
                 continue;
             }
 

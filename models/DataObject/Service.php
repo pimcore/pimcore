@@ -321,7 +321,7 @@ class Service extends Model\Element\Service
                         $helperDefinitions = self::getHelperDefinitions();
                         $haveHelperDefinition = true;
                     }
-                    if ($helperDefinitions[$key]) {
+                    if (!empty($helperDefinitions[$key])) {
                         $context['fieldname'] = $key;
                         $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
                     }
@@ -1354,9 +1354,9 @@ class Service extends Model\Element\Service
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
             }
 
-            if ($context['containerType'] === 'fieldcollection') {
+            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
-            } elseif ($context['containerType'] === 'objectbrick') {
+            } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
                 $context['ownerType'] = 'localizedfield';
@@ -1383,6 +1383,7 @@ class Service extends Model\Element\Service
     {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             if (is_array($allowedView) && count($allowedView) > 0) {
+                $haveAllowedViewDefault = null;
                 if ($layout->{'fieldtype'} === 'localizedfields') {
                     $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
@@ -1398,6 +1399,7 @@ class Service extends Model\Element\Service
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                $haveAllowedEditDefault = null;
                 if ($layout->{'fieldtype'} === 'localizedfields') {
                     $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
@@ -1439,7 +1441,7 @@ class Service extends Model\Element\Service
         }
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        /** @var $fd Model\DataObject\ClassDefinition\Data\CalculatedValue */
+        $fd = null;
         if ($ownerType === 'object') {
             $fd = $object->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType === 'localizedfield') {
@@ -1450,7 +1452,7 @@ class Service extends Model\Element\Service
             $fd = $data->getKeyDefinition();
         }
 
-        if (!$fd) {
+        if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return $data;
         }
         $className = $fd->getCalculatorClass();
@@ -1491,7 +1493,7 @@ class Service extends Model\Element\Service
         }
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        /** @var $fd Model\DataObject\ClassDefinition\Data\CalculatedValue */
+        $fd = null;
         if ($ownerType === 'object') {
             $fd = $object->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType === 'localizedfield') {
@@ -1502,7 +1504,7 @@ class Service extends Model\Element\Service
             $fd = $data->getKeyDefinition();
         }
 
-        if (!$fd) {
+        if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return null;
         }
         $className = $fd->getCalculatorClass();

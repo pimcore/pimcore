@@ -873,10 +873,10 @@ class Document extends Element\AbstractElement
                     $hardlink = Document::getById($hardlinkId);
                     if (FrontendTool::isDocumentInCurrentSite($hardlink)) {
                         $siteRootPath = Site::getCurrentSite()->getRootPath();
-                        $siteRootPath = preg_quote($siteRootPath);
+                        $siteRootPath = preg_quote($siteRootPath, '@');
                         $hardlinkPath = preg_replace('@^' . $siteRootPath . '@', '', $hardlink->getRealFullPath());
 
-                        $link = preg_replace('@^' . preg_quote($parent->getRealFullPath()) . '@', $hardlinkPath, $this->getRealFullPath());
+                        $link = preg_replace('@^' . preg_quote($parent->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
                         break;
                     }
                 }
@@ -1004,7 +1004,7 @@ class Document extends Element\AbstractElement
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
-                        $rootPath = preg_quote($rootPath);
+                        $rootPath = preg_quote($rootPath, '@');
                         $link = preg_replace('@^' . $rootPath . '@', '', $this->path);
 
                         return $link;

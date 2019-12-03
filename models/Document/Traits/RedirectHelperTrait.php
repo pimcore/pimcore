@@ -41,7 +41,7 @@ trait RedirectHelperTrait
                 $oldSite = Frontend::getSiteForDocument($oldDocument);
                 if ($oldSite) {
                     $redirect->setSourceSite($oldSite->getId());
-                    $oldPath = preg_replace('@^' . preg_quote($oldSite->getRootPath()) . '@', '', $oldPath);
+                    $oldPath = preg_replace('@^' . preg_quote($oldSite->getRootPath(), '@') . '@', '', $oldPath);
                     $redirect->setSource('@^' . $oldPath . '/?$@');
                 }
             }

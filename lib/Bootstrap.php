@@ -90,7 +90,6 @@ class Bootstrap
         // Error reporting is enabled in CLI
         @ini_set('display_errors', 'On');
         @ini_set('display_startup_errors', 'On');
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         if (!$pimcoreConsole) {
@@ -119,8 +118,6 @@ class Bootstrap
 
     public static function bootstrap()
     {
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-
         /** @var $loader \Composer\Autoload\ClassLoader */
         if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../vendor/autoload.php';
@@ -335,7 +332,7 @@ class Bootstrap
         }
 
         if ($debug) {
-            Debug::enable();
+            Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
             @ini_set('display_errors', 'On');
         }
 

@@ -320,7 +320,9 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     width: source.datax.width,
                     height: source.datax.height,
                     maxItems: source.datax.maxItems,
-                    renderType: source.datax.renderType
+                    renderType: source.datax.renderType,
+                    optionsProviderClass: source.datax.optionsProviderClass,
+                    optionsProviderData: source.datax.optionsProviderData
                 });
         }
     },

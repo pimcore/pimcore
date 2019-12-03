@@ -449,13 +449,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
-     * @return Document
+     * @return Document|null
      */
     public static function getByUrl($url)
     {
         $urlParts = parse_url($url);
+        $document = null;
+
         if ($urlParts['path']) {
             $document = Document::getByPath($urlParts['path']);
 
@@ -473,7 +475,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
-        //TODO: $document is not definied here, shouldn't be null returned here?
+
         return $document;
     }
 

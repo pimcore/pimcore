@@ -46,6 +46,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
+            'indexedValues' => $values,
             'document' => $this->request->get('contentDocument'),
             'fieldname' => $filterDefinition->getField(),
             'rootCategory' => $filterDefinition->getRootCategory(),
@@ -55,11 +56,12 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        $value = $params[$filterDefinition->getField()];
+        $value = $params[$filterDefinition->getField()] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$isReload) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

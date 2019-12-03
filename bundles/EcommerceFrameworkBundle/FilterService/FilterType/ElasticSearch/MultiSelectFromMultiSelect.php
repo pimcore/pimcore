@@ -40,9 +40,10 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
-        if (empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$isReload) {
             if (is_array($preSelect)) {
                 $value = $preSelect;
             } else {

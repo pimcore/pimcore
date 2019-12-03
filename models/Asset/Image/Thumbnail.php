@@ -49,17 +49,15 @@ class Thumbnail
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
-                $path = $this->asset->getRealFullPath();
+                $fsPath = $this->asset->getRealFullPath();
             }
         }
 
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
@@ -104,7 +102,7 @@ class Thumbnail
                 $this->filesystemPath = $this->asset->getRealFullPath();
             } else {
                 try {
-                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $deferred = $deferredAllowed && $this->deferred;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;

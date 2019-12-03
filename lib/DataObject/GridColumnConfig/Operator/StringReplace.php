@@ -53,6 +53,8 @@ class StringReplace extends AbstractOperator
                     $childValues = [$childValues];
                 }
 
+                $newValue = null;
+
                 if (is_array($childValues)) {
                     foreach ($childValues as $value) {
                         if (is_array($value)) {
@@ -66,8 +68,6 @@ class StringReplace extends AbstractOperator
                             $newValue = $this->replace($value);
                         }
                     }
-                } else {
-                    $newValue = null;
                 }
 
                 $newChildsResult[] = $newValue;
