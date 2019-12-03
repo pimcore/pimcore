@@ -180,6 +180,7 @@ class GridHelperService
                 $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
                 $brickType = null;
+                $brickDescriptor = null;
                 if (!$field) {
 
                     // if the definition doesn't exist check for a localized field
@@ -410,10 +411,10 @@ class GridHelperService
             $bricks = $this->extractBricks($fields);
         }
 
-        if ($requestParams['limit']) {
+        if (isset($requestParams['limit'])) {
             $limit = $requestParams['limit'];
         }
-        if ($requestParams['start']) {
+        if (isset($requestParams['start'])) {
             $start = $requestParams['start'];
         }
 
@@ -453,7 +454,7 @@ class GridHelperService
         }
 
         $conditionFilters = [];
-        if ($requestParams['only_direct_children'] == 'true') {
+        if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
             $conditionFilters[] = 'o_parentId = ' . $folder->getId();
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
@@ -563,10 +564,10 @@ class GridHelperService
         $orderKey = 'id';
         $order = 'ASC';
 
-        if ($allParams['limit']) {
+        if (isset($allParams['limit'])) {
             $limit = $allParams['limit'];
         }
-        if ($allParams['start']) {
+        if (isset($allParams['start'])) {
             $start = $allParams['start'];
         }
 
@@ -574,10 +575,10 @@ class GridHelperService
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
             $orderKey = explode('~', $sortingSettings['orderKey'])[0];
-            if ($orderKey == 'fullpath') {
+            if ($orderKey === 'fullpath') {
                 $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
-            } elseif ($orderKey == 'filename') {
+            } elseif ($orderKey === 'filename') {
                 $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
             }
@@ -591,10 +592,10 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
         }
 
-        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
+        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
             $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
         }
 

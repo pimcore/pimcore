@@ -73,6 +73,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function update()
     {
+        $data = [];
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);

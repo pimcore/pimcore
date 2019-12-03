@@ -282,6 +282,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
+        $id = null;
         if ($data) {
             if ($data->getData() instanceof Asset) {
                 $id = $data->getData()->getId();

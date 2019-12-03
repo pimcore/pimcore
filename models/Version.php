@@ -388,6 +388,7 @@ class Version extends AbstractModel
     {
         $data = null;
         $zipped = false;
+        $filePath = null;
 
         // check both the legacy file path and the new structure
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {

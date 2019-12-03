@@ -357,6 +357,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $multihrefMetadata = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['id']);
                 } elseif ($element['type'] == 'asset') {

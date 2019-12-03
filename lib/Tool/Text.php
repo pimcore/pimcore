@@ -192,6 +192,8 @@ class Text
             $s = $html->find('a[pimcore_id],img[pimcore_id]');
 
             foreach ($s as $el) {
+                $type = null;
+
                 // image
                 if ($el->src) {
                     $type = 'asset';
@@ -206,7 +208,7 @@ class Text
                     }
                 }
 
-                $newId = $idMapping[$type][$el->attr['pimcore_id']];
+                $newId = $idMapping[$type][$el->attr['pimcore_id']] ?? null;
                 if ($newId) {
                     //update id
 
@@ -446,7 +448,7 @@ class Text
             ]);
         }
 
-        if (!$encoding) {
+        if (empty($encoding)) {
             $encoding = 'UTF-8';
         }
 

@@ -176,6 +176,8 @@ $fields = $this->object->getClass()->getFieldDefinitions();
             ?>
         <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             $fields = $this->object->{"get" . ucfirst($fieldName)}();
+            $fieldDefinitions = null;
+            $fieldItems = null;
             if ($fields) {
                 $fieldDefinitions = $fields->getItemDefinitions();
                 $fieldItems = $fields->getItems();

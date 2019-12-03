@@ -585,6 +585,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function configureOptions()
     {
         if (!$this->validUnits) {
+            $table = null;
             try {
                 $table = null;
 

@@ -337,6 +337,7 @@ class SettingsController extends AdminController
 
         $locales = Tool::getSupportedLocales();
         $languageOptions = [];
+        $validLanguages = [];
         foreach ($locales as $short => $translation) {
             if (!empty($short)) {
                 $languageOptions[] = [
@@ -1933,6 +1934,7 @@ class SettingsController extends AdminController
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();
+        $params = [];
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';

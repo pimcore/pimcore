@@ -102,7 +102,7 @@ class Thumbnail
                 $this->filesystemPath = $this->asset->getRealFullPath();
             } else {
                 try {
-                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $deferred = $deferredAllowed && $this->deferred;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;

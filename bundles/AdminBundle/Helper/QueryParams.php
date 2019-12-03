@@ -97,6 +97,7 @@ class QueryParams
                     $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%') . ' ';
                 }
             } elseif ($f->type == 'numeric') {
+                $symbol = null;
                 if ($f->operator == 'eq') {
                     $symbol = ' = ';
                 } elseif ($f->operator == 'lt') {

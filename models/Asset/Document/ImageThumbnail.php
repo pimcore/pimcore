@@ -82,10 +82,10 @@ class ImageThumbnail
         } elseif (!$this->filesystemPath) {
             $config = $this->getConfig();
             $config->setFilenameSuffix('page-' . $this->page);
+            $path = null;
+            $deferred = $deferredAllowed && $this->deferred;
 
             try {
-                $path = null;
-                $deferred = ($deferredAllowed && $this->deferred) ? true : false;
                 if (!$deferred) {
                     $converter = \Pimcore\Document::getInstance();
                     $converter->load($this->asset->getFileSystemPath());

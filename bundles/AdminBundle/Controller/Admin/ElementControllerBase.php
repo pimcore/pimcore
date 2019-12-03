@@ -157,7 +157,6 @@ class ElementControllerBase extends AdminController
                     $hasDependency = $hasChilds;
                 }
 
-                $childs = 0;
                 if ($hasChilds) {
                     // get amount of childs
                     $listClass = '\Pimcore\Model\\' . Service::getBaseClassNameForElement($element) . '\Listing';
@@ -198,7 +197,7 @@ class ElementControllerBase extends AdminController
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $element = Service::getElementById($type, $id)->getKey();
+            $element = Service::getElementById($type, $ids[0])->getKey();
 
             if ($element instanceof ElementInterface) {
                 $elementKey = $element->getKey();

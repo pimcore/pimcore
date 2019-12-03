@@ -369,9 +369,9 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+            $queryCacheKey = 'tree_'.md5($query);
 
             if (self::$useRuntimeCache) {
-                $queryCacheKey = 'tree_'.md5($query);
                 $parentIdGroups = self::$runtimeCache[$queryCacheKey] ?? null;
             }
 

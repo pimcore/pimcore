@@ -83,7 +83,7 @@ class ImageThumbnail
     public function generate($deferredAllowed = true)
     {
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
-        $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+        $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if (!$this->asset) {

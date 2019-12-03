@@ -67,6 +67,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function update()
     {
+        $data = [];
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);
@@ -95,7 +96,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'productId=' . $this->db->quote($this->model->productId). ' AND cartId = ' . $this->db->quote($this->model->cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, 'productId=' . $this->db->quote($this->model->getProductId()). ' AND cartId = ' . $this->db->quote($this->model->cartId));
     }
 
     public function removeAllFromCart($cartId)

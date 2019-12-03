@@ -163,11 +163,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if (!$fd instanceof CalculatedValue) {
                 $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $params);
                 $brickData[$fd->getName()] = $fieldData->objectData;
-            }
-
-            $brickMetaData[$fd->getName()] = $fieldData->metaData;
-            if ($fieldData->metaData['inherited'] == true) {
-                $inherited = true;
+                $brickMetaData[$fd->getName()] = $fieldData->metaData;
+                if ($fieldData->metaData['inherited'] == true) {
+                    $inherited = true;
+                }
             }
         }
 
@@ -230,6 +229,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
                 $refKey = $key;
+                $refId = null;
             }
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
@@ -255,6 +255,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
+            $fieldValue = null;
             $editmodeValue = null;
             if (!empty($item)) {
                 $fieldValue = $item->$valueGetter();

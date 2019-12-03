@@ -293,6 +293,7 @@ class DataObjectHelperController extends AdminController
     public function deleteImportConfigAction(Request $request)
     {
         $configId = $request->get('importConfigId');
+        $config = null;
         try {
             $config = ImportConfig::getById($configId);
         } catch (\Exception $e) {
@@ -320,6 +321,7 @@ class DataObjectHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request)
     {
         $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = null;
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -440,12 +442,14 @@ class DataObjectHelperController extends AdminController
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
 
+            $savedGridConfig = null;
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
 
             if ($savedGridConfig) {
+                $shared = null;
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -912,6 +916,7 @@ class DataObjectHelperController extends AdminController
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
             $favourite->setType($type);
+            $specializedConfigs = false;
 
             try {
                 if ($gridConfigId != 0) {
@@ -921,7 +926,6 @@ class DataObjectHelperController extends AdminController
                 $favourite->setObjectId($objectId);
                 $favourite->save();
 
-                $specializedConfigs = false;
 
                 if ($global) {
                     $favourite->setObjectId(0);
@@ -996,6 +1000,7 @@ class DataObjectHelperController extends AdminController
             $configData['pimcore_revision'] = Version::getRevision();
 
             $importConfigId = $request->get('importConfigId');
+            $importConfig = null;
             if ($importConfigId) {
                 try {
                     $importConfig = ImportConfig::getById($importConfigId);
@@ -1065,6 +1070,7 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
+                $gridConfig = null;
                 if ($gridConfigId) {
                     try {
                         $gridConfig = GridConfig::getById($gridConfigId);
@@ -1509,6 +1515,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $count = 0;
+        $data = [];
         if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 $tmpData = [];
@@ -1564,6 +1571,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
+        $importConfig = null;
         try {
             $importConfig = ImportConfig::getById($importConfigId);
         } catch (\Exception $e) {
@@ -1594,11 +1602,11 @@ class DataObjectHelperController extends AdminController
                 'dataFields' => array_keys($data[0]),
                 'targetFields' => $availableFields,
                 'selectedGridColumns' => $selectedGridColumns,
-                'resolverSettings' => $resolverSettings,
-                'shareSettings' => $shareSettings,
+                'resolverSettings' => $resolverSettings ?? null,
+                'shareSettings' => $shareSettings ?? null,
                 'csvSettings' => $dialect,
                 'rows' => $rows,
-                'cols' => $cols,
+                'cols' => $cols ?? null,
                 'classId' => $classId,
                 'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
             ],
@@ -1775,6 +1783,8 @@ class DataObjectHelperController extends AdminController
      * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function doExportAction(Request $request, LocaleServiceInterface $localeService)
     {
@@ -1782,12 +1792,17 @@ class DataObjectHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
+        $delimiter = $settings['delimiter'] ?: ';';
 
-        $enableInheritance = $settings['enableInheritance'];
+        $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
 
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
+
+        if (!$class) {
+            throw new \Exception('No class definition found');
+        }
+
         $className = $class->getName();
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
@@ -1930,7 +1945,7 @@ class DataObjectHelperController extends AdminController
      * @param $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
     {
@@ -2067,6 +2082,8 @@ class DataObjectHelperController extends AdminController
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];
+                    $brickDescriptor = null;
+                    $innerContainer = null;
 
                     if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
@@ -2362,6 +2379,7 @@ class DataObjectHelperController extends AdminController
         $fields = null;
 
         $classList = [];
+        $classNameList = [];
 
         if ($request->get('classes')) {
             $classNameList = $request->get('classes');
