@@ -265,7 +265,7 @@ pimcore.object.helpers.grid = Class.create({
 
 
                     operatorColumnConfig.getEditor = function() {
-                        return new pimcore.object.helpers.gridCellEditor({
+                        return new pimcore.element.helpers.gridCellEditor({
                             fieldInfo: {
                                 layout: {
                                     noteditable: true

@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 foreach ($keyData as $language => $value) {
-                    $collectionId = $collectionMapping[$groupId];
+                    $collectionId = $collectionMapping[$groupId] ?? null;
                     $data = [
                         'o_id' => $objectId,
                         'collectionId' => $collectionId,

@@ -564,7 +564,7 @@ class Requirements
         $checks[] = new Check([
             'name' => 'Multibyte String (mbstring)',
             'link' => 'http://www.php.net/mbstring',
-            'state' => function_exists('mb_get_info') ? Check::STATE_OK : Check::STATE_ERROR,
+            'state' => function_exists('mb_strcut') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // file_info support

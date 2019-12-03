@@ -197,6 +197,8 @@ class Service
     {
         try {
             $conditionParts = [];
+            $finalCondition = null;
+
             if ($condition) {
                 $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
@@ -1061,6 +1063,8 @@ class Service
      */
     protected function getSaveCopyName($element, $key, $path)
     {
+        $equal = null;
+
         if ($element instanceof DataObject\AbstractObject) {
             $equal = DataObject\AbstractObject::getByPath($path . '/' . $key);
         } elseif ($element instanceof Document) {

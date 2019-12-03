@@ -549,10 +549,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $condition = '';
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $condition = '';
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -813,10 +813,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $conditionParts = [];
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $conditionParts = [];
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -927,6 +927,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
         $fieldname = $request->get('fieldname');
+        $data = [];
 
         if ($ids) {
             $db = \Pimcore\Db::get();
@@ -940,6 +941,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             }
 
             $groupIdList = [];
+            $groupId = null;
 
             $allowedGroupIds = null;
 

@@ -185,6 +185,7 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
+        $sqipBin = null;
 
         if (!$config['enabled']) {
             return false;

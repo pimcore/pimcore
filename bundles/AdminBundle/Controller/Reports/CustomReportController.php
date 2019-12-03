@@ -286,6 +286,8 @@ class CustomReportController extends ReportsControllerBase
         $offset = $request->get('start', 0);
         $limit = $request->get('limit', 40);
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sort = null;
+        $dir = null;
         if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
@@ -389,9 +391,11 @@ class CustomReportController extends ReportsControllerBase
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
+        $headers = [];
         foreach ($columns as $column) {
             if ($column['export']) {
                 $fields[] = $column['name'];
+                $headers[] = !empty($column['label']) ? $column['label'] : $column['name'];
             }
         }
 
@@ -410,7 +414,7 @@ class CustomReportController extends ReportsControllerBase
         $fp = fopen($exportFile, 'w');
 
         if ($includeHeaders) {
-            fputcsv($fp, $fields, ';');
+            fputcsv($fp, $headers, ';');
         }
 
         foreach ($result['data'] as $row) {

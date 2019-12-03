@@ -28,6 +28,13 @@ services:
         tags:
             - { name: container.service_locator }
 
+
+    #
+    # GOOGLE TAG MANAGER
+    #
+
+    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
+
     #
     # PIWIK
     #

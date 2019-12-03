@@ -421,6 +421,8 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
+            $target = null;
+
             if ($data['linktype'] == 'internal' && $data['internalType']) {
                 $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {

@@ -137,7 +137,7 @@ class UUID extends Model\AbstractModel
         }
 
         $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
-        $this->save();
+        $this->getDao()->save();
 
         return $this->uuid;
     }

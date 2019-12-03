@@ -202,7 +202,9 @@ class MultiCartManager implements CartManagerInterface
     {
         $this->checkForInit();
 
-        if (array_key_exists($params['id'], $this->carts)) {
+        $cartId = $params['id'] ?? null;
+
+        if ($cartId && isset($this->carts[$cartId])) {
             throw new InvalidConfigException('Cart with id ' . $params['id'] . ' already exists.');
         }
 
@@ -210,7 +212,7 @@ class MultiCartManager implements CartManagerInterface
             throw new InvalidConfigException('Cart name is missing');
         }
 
-        $cart = $this->cartFactory->create($this->environment, (string)$params['name'], $params['id'] ?? null, $params);
+        $cart = $this->cartFactory->create($this->environment, (string)$params['name'], $cartId, $params);
         $cart->save();
 
         $this->carts[$cart->getId()] = $cart;

@@ -26,10 +26,6 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
         }
 
         this.htmlId = id + "_editable";
-        var checked = "";
-        if(data) {
-            checked = ' checked="checked"';
-        }
 
         var elContainer = Ext.get(id);
 
@@ -38,7 +34,9 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
         inputCheckbox.setAttribute('type', 'checkbox');
         inputCheckbox.setAttribute('value', 'true');
         inputCheckbox.setAttribute('id', this.htmlId);
-        inputCheckbox.setAttribute('checked', 'true');
+        if(data) {
+            inputCheckbox.setAttribute('checked', 'checked');
+        }
 
         elContainer.appendChild(inputCheckbox);
 
@@ -61,7 +59,7 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
     },
 
     getValue: function () {
-        return this.elComponent.get(0).checked;
+        return this.elComponent.dom.checked;
     },
 
     getType: function () {

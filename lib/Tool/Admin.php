@@ -237,7 +237,7 @@ class Admin
     /**
      * @static
      *
-     * @return \Pimcore\Model\User
+     * @return \Pimcore\Model\User|null
      */
     public static function getCurrentUser()
     {
