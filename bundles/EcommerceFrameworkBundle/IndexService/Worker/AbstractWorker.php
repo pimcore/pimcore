@@ -47,7 +47,7 @@ abstract class AbstractWorker implements WorkerInterface
     protected $filterGroups;
 
     /**
-     * @var EventDispatcherInterface\
+     * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
