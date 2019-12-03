@@ -442,7 +442,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
                 $context['purpose'] = 'layout';
             }
 
+            $inheritanceEnabled = DataObject::getGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
             $options = $optionsProvider->{'getOptions'}($context, $this);
+            DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
             $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
@@ -489,6 +492,25 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             return $result;
         } else {
             return $data;
+        }
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        if ($operator === '=') {
+            $value = is_array($value) ? current($value) : $value;
+            $name = $params['name'] ?: $this->name;
+
+            return '`'.$name.'` LIKE '."'$value'".' ';
         }
     }
 }

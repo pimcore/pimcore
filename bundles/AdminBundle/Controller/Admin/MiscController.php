@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -353,6 +354,7 @@ class MiscController extends AdminController
         $success = false;
         $writeable = false;
         $file = $this->getFileexplorerPath($request, 'path');
+        $content = null;
         if (is_file($file)) {
             if (is_readable($file)) {
                 $content = file_get_contents($file);
@@ -366,7 +368,7 @@ class MiscController extends AdminController
             'content' => $content,
             'writeable' => $writeable,
             'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT) . '@', '', $file)
+            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file)
         ]);
     }
 
@@ -479,6 +481,7 @@ class MiscController extends AdminController
     public function fileexplorerDeleteAction(Request $request)
     {
         $this->checkPermission('fileexplorer');
+        $success = false;
 
         if ($request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
@@ -503,6 +506,7 @@ class MiscController extends AdminController
     public function fileexplorerRenameAction(Request $request)
     {
         $this->checkPermission('fileexplorer');
+        $success = false;
 
         if ($request->get('path') && $request->get('newPath')) {
             $file = $this->getFileexplorerPath($request, 'path');
@@ -691,6 +695,7 @@ class MiscController extends AdminController
     public function languageListAction(Request $request)
     {
         $locales = Tool::getSupportedLocales();
+        $options = [];
 
         foreach ($locales as $short => $translation) {
             $options[] = [
@@ -706,13 +711,18 @@ class MiscController extends AdminController
      * @Route("/phpinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @throws \Exception
      *
      * @return Response
      */
-    public function phpinfoAction(Request $request)
+    public function phpinfoAction(Request $request, ?Profiler $profiler)
     {
+        if ($profiler) {
+            $profiler->disable();
+        }
+
         if (!$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Permission denied');
         }
@@ -745,11 +755,15 @@ class MiscController extends AdminController
      * @TemplatePhp()
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return Response
      */
-    public function iconListAction(Request $request)
+    public function iconListAction(Request $request, ?Profiler $profiler)
     {
+        if ($profiler) {
+            $profiler->disable();
+        }
     }
 
     /**

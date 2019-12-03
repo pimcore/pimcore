@@ -79,22 +79,10 @@ class Requirements
             'state' => ($engines && in_arrayi('innodb', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
-        // myisam
+        // ARCHIVE & MyISAM
         $checks[] = new Check([
-            'name' => 'MyISAM Support',
-            'state' => ($engines && in_arrayi('myisam', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
-        ]);
-
-        // ARCHIVE
-        $checks[] = new Check([
-            'name' => 'ARCHIVE Support',
-            'state' => ($engines && in_arrayi('archive', $engines)) ? Check::STATE_OK : Check::STATE_WARNING
-        ]);
-
-        // memory
-        $checks[] = new Check([
-            'name' => 'MEMORY Support',
-            'state' => ($engines && in_arrayi('memory', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
+            'name' => 'ARCHIVE or MyISAM Support',
+            'state' => ($engines && (in_arrayi('archive', $engines) || in_arrayi('myisam', $engines))) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         // check database charset =>  utf-8 encoding
@@ -576,7 +564,7 @@ class Requirements
         $checks[] = new Check([
             'name' => 'Multibyte String (mbstring)',
             'link' => 'http://www.php.net/mbstring',
-            'state' => function_exists('mb_get_info') ? Check::STATE_OK : Check::STATE_ERROR,
+            'state' => function_exists('mb_strcut') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // file_info support
@@ -652,7 +640,7 @@ class Requirements
         $checks[] = new Check([
             'name' => 'curl',
             'link' => 'http://www.php.net/curl',
-            'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_WARNING
+            'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // WebP for active image adapter

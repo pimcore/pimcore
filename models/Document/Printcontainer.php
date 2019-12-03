@@ -105,7 +105,7 @@ class Printcontainer extends Document\PrintAbstract
     {
         $dirty = parent::pdfIsDirty();
         if (!$dirty) {
-            $dirty = ($this->getLastGenerated() < $this->getLastedChildModificationDate());
+            $dirty = ($this->getLastGenerated() < $this->getDao()->getLastedChildModificationDate());
         }
 
         return $dirty;

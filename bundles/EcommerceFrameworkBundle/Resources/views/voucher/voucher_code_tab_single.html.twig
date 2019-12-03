@@ -7,21 +7,21 @@
 
     <div class="container-fluid">
         <div id="content">
-            <ul class="nav nav-tabs">
+            <ul  id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab">
+                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
                         <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab">
+                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
                         <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
                     </a>
                 </li>
             </ul>
 
             <div id="my-tab-content" class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="manager">
+                <div role="tabpanel" class="tab-pane active"  aria-labelledby="manager-tab"  id="manager">
                     <div class="row">
                         <div class="col col-sm-12">
                             <h2>{{ ('bundle_ecommerce_voucherservice_usage-headline')|trans([],'admin') }}</h2>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="statistics">
+                <div role="tabpanel" class="tab-pane"  aria-labelledby="statistics-tab"  id="statistics">
                     <div class="row">
                         <div class="col col-sm-12">
                             <h2>{{ ('bundle_ecommerce_voucherservice_tab-statistics-headline')|trans([],'admin') }}</h2>

@@ -541,7 +541,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
             }
             $context['fieldname'] = $this->getName();
 
+            $inheritanceEnabled = DataObject::getGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
             $options = $optionsProvider->{'getOptions'}($context, $this);
+            DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
             $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);

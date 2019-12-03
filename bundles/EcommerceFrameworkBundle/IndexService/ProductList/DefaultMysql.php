@@ -379,7 +379,7 @@ class DefaultMysql implements ProductListInterface
         if (count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
             $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
-            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
+            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$priceSystemName], null, null, $this->order, $this->getOffset(), $this->getLimit());
         } elseif (count($priceSystemArrays) == 0) {
             //nothing to do
         } else {
@@ -570,7 +570,7 @@ class DefaultMysql implements ProductListInterface
             case ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
                 //make sure, that only variant objects are considered
-                $condition .= ' AND o_id != o_virtualProductId ';
+                $condition .= ' AND a.o_id != o_virtualProductId ';
                 break;
 
             case ProductListInterface::VARIANT_MODE_HIDE:
@@ -595,7 +595,12 @@ class DefaultMysql implements ProductListInterface
             $searchstring = '';
             foreach ($this->queryConditions as $queryConditionPartArray) {
                 foreach ($queryConditionPartArray as $queryConditionPart) {
-                    $searchstring .= '+' . $queryConditionPart . '* ';
+                    //check if there are any mysql special characters in query condition - if so, then quote condition
+                    if (str_replace(['+', '-', '<', '>', '(', ')', '~', '*'], '', $queryConditionPart) != $queryConditionPart) {
+                        $searchstring .= '+"' . $queryConditionPart . '" ';
+                    } else {
+                        $searchstring .= '+' . $queryConditionPart . '* ';
+                    }
                 }
             }
 

@@ -25,11 +25,12 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
         $field = $filterDefinition->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$isReload) {
             $value = $preSelect;
         }
 

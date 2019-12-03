@@ -108,7 +108,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $setter = 'set' . ucfirst($type);
 
                 if ($brick instanceof DataObject\DirtyIndicatorInterface) {
-                    $brick->markFieldDirty($key, false);
+                    $brick->markFieldDirty('_self', false);
                 }
 
                 $this->model->$setter($brick);

@@ -304,34 +304,39 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         // 5px padding (-10)
         var body = this.getBody();
 
-        var width = null;
-        var height = null;
+        if (this.data && this.data['id']) {
+            var width = null;
+            var height = null;
 
-        if (this.panel) {
-            this.originalWidth = this.panel.initialConfig.width;
-            this.originalHeight = this.panel.initialConfig.height;
+            if (this.panel) {
+                this.originalWidth = this.panel.initialConfig.width;
+                this.originalHeight = this.panel.initialConfig.height;
 
-            width = this.originalWidth - 10;
-            height = this.originalHeight - 10;
+                width = this.originalWidth - 10;
+                height = this.originalHeight - 10;
+            } else {
+                width = body.getWidth() - 10;
+                height = body.getHeight() - 10;
+            }
+
+            var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width
+                + "&height=" + height + "&contain=true" + "&" + Ext.urlEncode(this.crop);
+
+
+            body.setStyle({
+                backgroundImage: "url(" + path + ")",
+                backgroundPosition: "center center",
+                backgroundRepeat: "no-repeat"
+            });
+
+            this.getFileInfo(path);
         } else {
-            width = body.getWidth() - 10;
-            height = body.getHeight() - 10;
+            this.fileinfo = null;
+            body.setStyle({});
         }
-
-        var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width
-            + "&height=" + height + "&contain=true" + "&" + Ext.urlEncode(this.crop);
-
-
-        body.setStyle({
-            backgroundImage: "url(" + path + ")",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat"
-        });
 
         body.removeCls("pimcore_droptarget_image");
         body.repaint();
-
-        this.getFileInfo(path);
 
         this.showPreview();
     },
@@ -548,6 +553,4 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     setContainer: function (container) {
         this.container = container;
     }
-
-})
-;
+});

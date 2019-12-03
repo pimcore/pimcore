@@ -126,7 +126,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
     {
         $name = $request->get('name');
         $storeId = $request->get('storeId');
-        $alreadyExist = false;
         $config = Classificationstore\GroupConfig::getByName($name, $storeId);
 
         if (!$config) {
@@ -134,9 +133,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $config->setStoreId($storeId);
             $config->setName($name);
             $config->save();
-        }
 
-        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
+            return $this->adminJson(['success' => true, 'id' => $config->getName()]);
+        } else {
+            return $this->adminJson(['success' => false, 'id' => $config->getName(), 'message' => 'classificationstore_error_group_exists_msg']);
+        }
     }
 
     /**
@@ -548,10 +549,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $condition = '';
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $condition = '';
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -812,10 +813,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $conditionParts = [];
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $conditionParts = [];
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -926,12 +927,13 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
         $fieldname = $request->get('fieldname');
+        $data = [];
 
         if ($ids) {
             $db = \Pimcore\Db::get();
             $mappedData = [];
             $groupsData = $db->fetchAll('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
-                'ids' => $ids
+                'ids' => implode(',', array_filter($ids, 'intval')),
             ]);
 
             foreach ($groupsData as $groupData) {
@@ -939,6 +941,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             }
 
             $groupIdList = [];
+            $groupId = null;
 
             $allowedGroupIds = null;
 
@@ -1451,11 +1454,16 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function getPageAction(Request $request)
     {
-        $table = 'classificationstore_' . $request->get('table');
+        $tableSuffix = $request->get('table');
+        if (!in_arrayi($tableSuffix, ['keys', 'groups'])) {
+            $tableSuffix = 'keys';
+        }
+
+        $table = 'classificationstore_' . $tableSuffix;
         $db = \Pimcore\Db::get();
-        $id = $request->get('id');
-        $storeId = $request->get('storeId');
-        $pageSize = $request->get('pageSize');
+        $id = (int) $request->get('id');
+        $storeId = (int) $request->get('storeId');
+        $pageSize = (int) $request->get('pageSize');
 
         if ($request->get('sortKey')) {
             $sortKey = $request->get('sortKey');
@@ -1464,6 +1472,15 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $sortKey = 'name';
             $sortDir = 'ASC';
         }
+
+        if (!in_arrayi($sortDir, ['DESC', 'ASC'])) {
+            $sortDir = 'DESC';
+        }
+
+        if (!in_arrayi($sortKey, ['name', 'title', 'description', 'id', 'type', 'creationDate', 'modificationDate', 'enabled', 'parentId', 'storeId'])) {
+            $sortKey = 'name';
+        }
+
         $sorter = ' order by `' . $sortKey .  '` ' . $sortDir;
 
         if ($table == 'keys') {

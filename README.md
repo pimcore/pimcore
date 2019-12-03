@@ -62,13 +62,8 @@ Images, videos, PDF, Word/Excel documents and other files can be managed and org
 ![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
 Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
 
-#### Basic Demo (CMS)
-_Admin-URL_: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
-_Username_: `admin`  
-_Password_: `demo`
-
-#### Advanced Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-_Admin-URL_: [https://demo-advanced.pimcore.org/admin](https://demo-advanced.pimcore.org/admin)  
+#### Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
+_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

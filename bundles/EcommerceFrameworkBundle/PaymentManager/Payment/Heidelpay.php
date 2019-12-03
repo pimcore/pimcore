@@ -206,6 +206,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         }
 
         $clientMessage = '';
+        $payment = null;
+        $paymentInfo = null;
 
         try {
             $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent($order);

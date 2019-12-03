@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -467,6 +468,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 if (array_diff($new, $old) || array_diff($old, $new)) {
                     $class->save();
                 } else {
+                    // still, the brick fields definitions could have changed.
+                    Cache::clearTag('class_'.$class->getId());
                     Logger::debug('Objectbrick ' . $this->getKey() . ', no change for class ' . $class->getName());
                 }
             }

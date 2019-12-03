@@ -47,9 +47,9 @@ You are not required to distribute them at all, however.
 However, when distributing your own Pimcore-based work, it is important to keep in mind what the GPLv3 applies to. 
 The GPLv3 on code applies to code that interacts with that code, but not to data. 
 That is, Pimcore's PHP code is under the GPLv3, and so all PHP code that interacts with it must also be 
-under the GPLv3 or GPLv3 compatible. Images, JavaScript, and Flash files that PHP sends to the browser are not 
-affected by the GPL because they are data. However, Pimcore's JavaScript, including the copy of jQuery that is 
-included with Pimcore, is itself under the GPLv3 as well, so any Javascript that interacts with Pimcore's JavaScript 
+under the GPLv3 or GPLv3 compatible. Images and JSON files that PHP sends to the browser are not 
+affected by the GPL because they are data. However, Pimcore's JavaScript is itself under the GPLv3 as well, so any 
+Javascript that interacts with Pimcore's JavaScript 
 in the browser must also be under the GPLv3 or a GPLv3 compatible license.
 
 When distributing your own plugin, module or theme, therefore, 

@@ -126,9 +126,9 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             $relation['ownertype'] = 'localizedfield';
             $relation['ownername'] = 'localizedfield';
             $context = $object->getContext();
-            if ($context && ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'objectbrick')) {
+            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
                 $fieldname = $context['fieldname'];
-                $index = $context['index'];
+                $index = $context['index'] ?? null;
                 $relation['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
             }
 
@@ -163,17 +163,13 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $context = $params['context'];
 
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($context['containerType'] != 'fieldcollection' && $object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
+            if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
+                if ($object instanceof DataObject\Localizedfield) {
+                    if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return;
                     }
-                }
-            } else {
-                if ($context['containerType'] !== 'fieldcollection' && $this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
-                        return;
-                    }
+                } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
+                    return;
                 }
             }
         }
@@ -214,6 +210,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     {
         $db = Db::get();
         $data = null;
+        $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
@@ -224,14 +221,14 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
-            if (isset($params['context']) && isset($params['context']['containerType']) && (($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick'))) {
-                $context = $params['context'];
-                $fieldname = $context['fieldname'];
-                if ($params['context']['containerType'] == 'fieldcollection') {
-                    $index = $context['index'];
-                    $filter = '/' . $params['context']['containerType'] . '~' . $fieldname . '/' . $index . '/%';
+            $context = $params['context'] ?? null;
+            if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
+                $fieldname = $context['fieldname'] ?? null;
+                if ($context['containerType'] === 'fieldcollection') {
+                    $index = $context['index'] ?? null;
+                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
                 } else {
-                    $filter = '/' . $params['context']['containerType'] .'~' . $fieldname . '/%';
+                    $filter = '/' . $context['containerType'] .'~' . $fieldname . '/%';
                 }
                 $relations = $db->fetchAll(
                     'SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",

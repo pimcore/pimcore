@@ -45,7 +45,7 @@ class Helper
         if (!$op) {
             $op = 'AND';
         }
-        $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
+        $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<=', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
                 '$not' => 'NOT'];
         $ops = array_keys($mappingTable);
 

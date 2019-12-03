@@ -201,7 +201,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $fieldData[$language][$key] = $fdata;
                     if (!$fd->isEmpty($fdata)) {
                         $inherited = $level > 1;
-                        if ($params['context'] && $params['context']['containerType'] == 'block') {
+                        if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'block') {
                             $inherited = false;
                         }
 
@@ -211,7 +211,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             }
         }
 
-        if ($params['context'] && $params['context']['containerType'] == 'block') {
+        if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'block') {
             $inheritanceAllowed = false;
         }
 
@@ -238,7 +238,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 if ($foundEmptyValue) {
                     $parentData = null;
                     // still some values are passing, ask the parent
-                    if ($params['context'] && $params['context']['containerType'] == 'objectbrick') {
+                    if (isset($params['context']['containerType']) && $params['context']['containerType'] === 'objectbrick') {
                         $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
                         $brickContainer = $parent->$brickContainerGetter();
                         $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
@@ -301,6 +301,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
                     $fd = $this->getFielddefinition($name);
+                    $params['language'] = $language;
                     $localizedFields->setLocalizedValue(
                         $name,
                         $fd->getDataFromEditmode($fdata, $object, $params),
@@ -325,8 +326,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $result = new \stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
-            $context = $params['context'];
-            if ($context && $context['containerType'] == 'objectbrick') {
+            $context = $params['context'] ?? null;
+            if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
                 $result->$key = 'NOT SUPPORTED';
             } else {
                 $result->$key = $object->{'get' . ucfirst($fd->getName())}();
@@ -597,11 +598,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     public function hasChildren()
     {
-        if (is_array($this->childs) && count($this->childs) > 0) {
-            return true;
-        }
-
-        return false;
+        return is_array($this->childs) && count($this->childs) > 0;
     }
 
     /**
@@ -954,7 +951,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
+                if (isset($values[$fd->getName()])) {
+                    $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
+                }
             }
         }
 
@@ -976,7 +975,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $dependencies = array_merge($dependencies, $fd->resolveDependencies($values[$fd->getName()]));
+                if (isset($values[$fd->getName()])) {
+                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($values[$fd->getName()]));
+                }
             }
         }
 
@@ -1108,6 +1109,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         $conf = \Pimcore\Config::getSystemConfig();
+        $languages = [];
         if ($conf->general->validLanguages) {
             $languages = explode(',', $conf->general->validLanguages);
         }

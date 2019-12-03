@@ -10,7 +10,7 @@ screen shot shows.
 **Solution**
 
 1) Create a bundle with a Pimcore Backend Interface java script extension as described 
-[here](https://www.pimcore.org/docs/5.0.0/Extending_Pimcore/Bundle_Developers_Guide/Plugin_Backend_UI.html). 
+[here](../../Development_Documentation/20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Plugin_Backend_UI.md). 
 
 2) Implement a listener for the `postOpenObject` event like follows: 
 

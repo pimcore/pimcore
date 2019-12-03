@@ -94,7 +94,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function isEmpty()
     {
-        return $this->value;
+        return !$this->value;
     }
 
     /**
@@ -102,7 +102,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function isChecked()
     {
-        return $this->isEmpty();
+        return $this->value;
     }
 
     /**

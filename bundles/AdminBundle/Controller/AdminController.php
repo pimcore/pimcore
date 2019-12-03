@@ -104,6 +104,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function checkPermissionsHasOneOf(array $permissions)
     {
         $allowed = false;
+        $permission = null;
         foreach ($permissions as $permission) {
             if ($this->getAdminUser()->isAllowed($permission)) {
                 $allowed = true;

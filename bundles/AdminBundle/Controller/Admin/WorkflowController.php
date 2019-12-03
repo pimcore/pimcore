@@ -217,6 +217,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         foreach ($workflowManager->getAllWorkflowsForSubject($this->element) as $workflow) {
             $workflowConfig = $workflowManager->getWorkflowConfig($workflow->getName());
 
+            $svg = null;
             $msg = '';
             try {
                 $svg = $this->getWorkflowSvg($workflow);

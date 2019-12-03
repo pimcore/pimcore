@@ -205,6 +205,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         // check for permission
         $parentDocument = Document::getById(intval($request->get('parentId')));
+        $document = null;
         if ($parentDocument->isAllowed('create')) {
             $intendedPath = $parentDocument->getRealFullPath() . '/' . $request->get('key');
 
@@ -307,7 +308,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             Logger::debug($errorMessage);
         }
 
-        if ($success) {
+        if ($success && $document instanceof Document) {
             if ($request->get('translationsBaseDocument')) {
                 $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
 
@@ -326,12 +327,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'id' => $document->getId(),
                 'type' => $document->getType()
             ]);
-        } else {
-            return $this->adminJson([
-                'success' => $success,
-                'message' => $errorMessage
-            ]);
         }
+
+        return $this->adminJson([
+            'success' => $success,
+            'message' => $errorMessage
+        ]);
     }
 
     /**
@@ -405,7 +406,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($document instanceof Document\PageSnippet) {
             $latestVersion = $document->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $document->getModificationDate()) {
-                return $this->adminJson(['success' => false, 'message' => "You can't relocate if there's a newer not published version"]);
+                return $this->adminJson(['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"]);
             }
         }
 

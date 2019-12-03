@@ -49,6 +49,10 @@ trait ObjectVarTrait
      */
     public function getObjectVar($var)
     {
+        if (!property_exists($this, $var)) {
+            return null;
+        }
+
         return $this->{$var};
     }
 

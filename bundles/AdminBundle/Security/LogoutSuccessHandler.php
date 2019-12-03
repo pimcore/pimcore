@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 
 /**
@@ -57,12 +58,12 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
     protected $eventDispatcher;
 
     /**
-     * @param TokenStorage $tokenStorage
+     * @param TokenStorageInterface $tokenStorage
      * @param RouterInterface $router
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        TokenStorage $tokenStorage,
+        TokenStorageInterface $tokenStorage,
         RouterInterface $router,
         EventDispatcherInterface $eventDispatcher
     ) {

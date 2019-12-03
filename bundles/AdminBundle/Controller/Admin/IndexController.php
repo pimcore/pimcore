@@ -17,9 +17,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Linfo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
@@ -36,10 +38,12 @@ use Pimcore\Version;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController extends AdminController
+class IndexController extends AdminController implements EventedControllerInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -62,6 +66,7 @@ class IndexController extends AdminController
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
+     * @param CsrfProtectionListener $csrfProtectionListener
      *
      * @return ViewModel
      *
@@ -71,7 +76,8 @@ class IndexController extends AdminController
         Request $request,
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
-        Executor $maintenanceExecutor
+        Executor $maintenanceExecutor,
+        CsrfProtectionListener $csrfProtectionListener
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -83,7 +89,7 @@ class IndexController extends AdminController
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
@@ -121,8 +127,8 @@ class IndexController extends AdminController
      */
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
-
         // DB
+        $mysqlVersion = null;
         try {
             $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES 
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
@@ -225,10 +231,11 @@ class IndexController extends AdminController
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
+     * @param CsrfProtectionListener $csrfProtectionListener
      *
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener)
     {
         $config = $view->config;
         $settings = new ViewModel([
@@ -288,10 +295,11 @@ class IndexController extends AdminController
 
         $this
             ->addSystemVarSettings($settings)
-            ->addCsrfToken($settings, $user)
             ->addMaintenanceSettings($settings, $maintenanceExecutor)
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
+
+        $settings->csrfToken = $csrfProtectionListener->getCsrfToken();
 
         return $settings;
     }
@@ -348,27 +356,6 @@ class IndexController extends AdminController
         }
 
         $settings->session_gc_maxlifetime = (int)$session_gc_maxlifetime;
-
-        return $this;
-    }
-
-    /**
-     * @param ViewModel $settings
-     * @param User $user
-     *
-     * @return $this
-     */
-    protected function addCsrfToken(ViewModel $settings, User $user)
-    {
-        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
-            if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
-                $adminSession->set('csrfToken', sha1(microtime() . $user->getName() . uniqid()));
-            }
-
-            return $adminSession->get('csrfToken');
-        });
-
-        $settings->csrfToken = $csrfToken;
 
         return $this;
     }
@@ -444,7 +431,7 @@ class IndexController extends AdminController
 
                 if ($rootNode) {
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
@@ -458,5 +445,14 @@ class IndexController extends AdminController
         $settings->customviews = $cvData;
 
         return $this;
+    }
+
+    public function onKernelController(FilterControllerEvent $event)
+    {
+    }
+
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
 }

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
@@ -291,6 +293,7 @@ class DataObjectHelperController extends AdminController
     public function deleteImportConfigAction(Request $request)
     {
         $configId = $request->get('importConfigId');
+        $config = null;
         try {
             $config = ImportConfig::getById($configId);
         } catch (\Exception $e) {
@@ -318,6 +321,7 @@ class DataObjectHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request)
     {
         $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = null;
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -438,12 +442,14 @@ class DataObjectHelperController extends AdminController
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
 
+            $savedGridConfig = null;
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
 
             if ($savedGridConfig) {
+                $shared = null;
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -632,10 +638,10 @@ class DataObjectHelperController extends AdminController
         $sharedConfigs = $class ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName;
-        $settings['gridConfigDescription'] = $gridConfigDescription;
-        $settings['shareGlobally'] = $sharedGlobally;
-        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
@@ -670,11 +676,11 @@ class DataObjectHelperController extends AdminController
             $vis = $class->getPropertyVisibility();
             foreach (self::SYSTEM_COLUMNS as $sc) {
                 $key = $sc;
-                if ($key == 'fullpath') {
+                if ($key === 'fullpath') {
                     $key = 'path';
                 }
 
-                if (empty($types) && ($vis[$gridType][$key] || $gridType == 'all')) {
+                if (empty($types) && (!empty($vis[$gridType][$key]) || $gridType === 'all')) {
                     $availableFields[] = [
                         'key' => $sc,
                         'type' => 'system',
@@ -899,6 +905,7 @@ class DataObjectHelperController extends AdminController
             $searchType = $request->get('searchType');
             $global = $request->get('global');
             $user = $this->getAdminUser();
+            $type = $request->get('type');
 
             $favourite = new GridConfigFavourite();
             $favourite->setOwnerId($user->getId());
@@ -908,6 +915,8 @@ class DataObjectHelperController extends AdminController
             }
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
+            $favourite->setType($type);
+            $specializedConfigs = false;
 
             try {
                 if ($gridConfigId != 0) {
@@ -917,7 +926,6 @@ class DataObjectHelperController extends AdminController
                 $favourite->setObjectId($objectId);
                 $favourite->save();
 
-                $specializedConfigs = false;
 
                 if ($global) {
                     $favourite->setObjectId(0);
@@ -928,7 +936,8 @@ class DataObjectHelperController extends AdminController
                     . 'ownerId = ' . $user->getId()
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
-                    . ' and objectId != ' . $objectId . ' and objectId != 0');
+                    . ' and objectId != ' . $objectId . ' and objectId != 0'
+                    . ' and type != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
@@ -991,6 +1000,7 @@ class DataObjectHelperController extends AdminController
             $configData['pimcore_revision'] = Version::getRevision();
 
             $importConfigId = $request->get('importConfigId');
+            $importConfig = null;
             if ($importConfigId) {
                 try {
                     $importConfig = ImportConfig::getById($importConfigId);
@@ -1060,6 +1070,7 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
+                $gridConfig = null;
                 if ($gridConfigId) {
                     try {
                         $gridConfig = GridConfig::getById($gridConfigId);
@@ -1492,7 +1503,7 @@ class DataObjectHelperController extends AdminController
         $dialect = $request->get('dialect');
         $dialect = json_decode($request->get('dialect'));
         $success = true;
-        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
+        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geopolyline', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
 
         $classId = $request->get('classId');
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
@@ -1504,6 +1515,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $count = 0;
+        $data = [];
         if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 $tmpData = [];
@@ -1559,6 +1571,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
+        $importConfig = null;
         try {
             $importConfig = ImportConfig::getById($importConfigId);
         } catch (\Exception $e) {
@@ -1589,11 +1602,11 @@ class DataObjectHelperController extends AdminController
                 'dataFields' => array_keys($data[0]),
                 'targetFields' => $availableFields,
                 'selectedGridColumns' => $selectedGridColumns,
-                'resolverSettings' => $resolverSettings,
-                'shareSettings' => $shareSettings,
+                'resolverSettings' => $resolverSettings ?? null,
+                'shareSettings' => $shareSettings ?? null,
                 'csvSettings' => $dialect,
                 'rows' => $rows,
-                'cols' => $cols,
+                'cols' => $cols ?? null,
                 'classId' => $classId,
                 'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
             ],
@@ -1675,31 +1688,35 @@ class DataObjectHelperController extends AdminController
         $rowId = $skipFirstRow ? $job + 1 : $job;
 
         try {
-            $configData->classId = $request->get('classId');
-            $resolver = $importService->getResolver($configData->resolverSettings->strategy);
+            if ($rowData !== false) {
+                $configData->classId = $request->get('classId');
+                $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-            /** @var $object DataObject\Concrete */
-            $object = $resolver->resolve($configData, $parentId, $rowData);
+                /** @var $object DataObject\Concrete */
+                $object = $resolver->resolve($configData, $parentId, $rowData);
 
-            $context = $eventData->getContext();
+                $context = $eventData->getContext();
 
-            $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
+                $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
 
-            $eventData->setObject($object);
-            $eventData->setRowData($rowData);
+                $eventData->setObject($object);
+                $eventData->setRowData($rowData);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-            $object->setUserModification($this->getUser());
-            $object->save();
+                $object->setUserModification($this->getUser());
+                $object->save();
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
 
-            if ($job >= $importJobTotal) {
-                $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                if ($job >= $importJobTotal) {
+                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                }
+
+                return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
+            } else {
+                throw new \Exception('empty row');
             }
-
-            return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
@@ -1766,6 +1783,8 @@ class DataObjectHelperController extends AdminController
      * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function doExportAction(Request $request, LocaleServiceInterface $localeService)
     {
@@ -1773,12 +1792,17 @@ class DataObjectHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
+        $delimiter = $settings['delimiter'] ?: ';';
 
-        $enableInheritance = $settings['enableInheritance'];
+        $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
 
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
+
+        if (!$class) {
+            throw new \Exception('No class definition found');
+        }
+
         $className = $class->getName();
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
@@ -1849,6 +1873,37 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
+     * @Route("/download-xlsx-file", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function downloadXlsxFileAction(Request $request)
+    {
+        $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
+        $csvFile = $this->getCsvFile($fileHandle);
+        if (file_exists($csvFile)) {
+            $csvReader = new Csv();
+            $csvReader->setDelimiter(';');
+            $csvReader->setEnclosure('""');
+            $csvReader->setSheetIndex(0);
+
+            $spreadsheet = $csvReader->load($csvFile);
+            $writer = new Xlsx($spreadsheet);
+            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
+            $writer->save($xlsxFilename);
+
+            $response = new BinaryFileResponse($xlsxFilename);
+            $response->headers->set('Content-Type', 'application/xlsx');
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
+            $response->deleteFileAfterSend(true);
+
+            return $response;
+        }
+    }
+
+    /**
      * @param $field
      *
      * @return string
@@ -1890,7 +1945,7 @@ class DataObjectHelperController extends AdminController
      * @param $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
     {
@@ -2027,6 +2082,8 @@ class DataObjectHelperController extends AdminController
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];
+                    $brickDescriptor = null;
+                    $innerContainer = null;
 
                     if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
@@ -2143,155 +2200,159 @@ class DataObjectHelperController extends AdminController
         $success = true;
 
         try {
-            $object = DataObject::getById($request->get('job'));
+            if ($request->get('data')) {
+                $params = $this->decodeJson($request->get('data'), true);
+                $object = DataObject::getById($params['job']);
 
-            if ($object) {
-                if (!$object->isAllowed('publish')) {
-                    throw new \Exception("Permission denied. You don't have the rights to save this object.");
-                }
+                if ($object) {
+                    $name = $params['name'];
 
-                $append = $request->get('append');
+                    if (!$object->isAllowed('save') || ($name === 'published' && !$object->isAllowed('publish'))) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                    }
 
-                $className = $object->getClassName();
-                $class = DataObject\ClassDefinition::getByName($className);
-                $value = $request->get('value');
-                if ($request->get('valueType') == 'object') {
-                    $value = $this->decodeJson($value);
-                }
+                    $append = $params['append'];
 
-                $name = $request->get('name');
-                $parts = explode('~', $name);
+                    $className = $object->getClassName();
+                    $class = DataObject\ClassDefinition::getByName($className);
+                    $value = $params['value'];
+                    if ($params['valueType'] == 'object') {
+                        $value = $this->decodeJson($value);
+                    }
 
-                if (substr($name, 0, 1) == '~') {
-                    $type = $parts[1];
-                    $field = $parts[2];
-                    $keyid = $parts[3];
+                    $parts = explode('~', $name);
 
-                    if ($type == 'classificationstore') {
-                        $requestedLanguage = $request->get('language');
-                        if ($requestedLanguage) {
-                            if ($requestedLanguage != 'default') {
-                                //                $this->get('translator')->setLocale($requestedLanguage);
-                                $request->setLocale($requestedLanguage);
-                            }
-                        } else {
-                            $requestedLanguage = $request->getLocale();
-                        }
+                    if (substr($name, 0, 1) == '~') {
+                        $type = $parts[1];
+                        $field = $parts[2];
+                        $keyid = $parts[3];
 
-                        $groupKeyId = explode('-', $keyid);
-                        $groupId = $groupKeyId[0];
-                        $keyid = $groupKeyId[1];
-
-                        $getter = 'get' . ucfirst($field);
-                        if (method_exists($object, $getter)) {
-
-                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
+                        if ($type == 'classificationstore') {
+                            $requestedLanguage = $params['language'];
+                            if ($requestedLanguage) {
+                                if ($requestedLanguage != 'default') {
+                                    //                $this->get('translator')->setLocale($requestedLanguage);
+                                    $request->setLocale($requestedLanguage);
+                                }
+                            } else {
+                                $requestedLanguage = $request->getLocale();
                             }
 
-                            /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
-                            $fd = $class->getFieldDefinition($field);
-                            $keyConfig = $fd->getKeyConfiguration($keyid);
-                            $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                            $groupKeyId = explode('-', $keyid);
+                            $groupId = $groupKeyId[0];
+                            $keyid = $groupKeyId[1];
 
-                            /** @var $classificationStoreData DataObject\Classificationstore */
-                            $classificationStoreData = $object->$getter();
-                            $classificationStoreData->setLocalizedKeyValue(
-                                $groupId,
-                                $keyid,
-                                $dataDefinition->getDataFromEditmode($value),
-                                $csLanguage
-                            );
+                            $getter = 'get' . ucfirst($field);
+                            if (method_exists($object, $getter)) {
+
+                                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                                $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                $csLanguage = $requestedLanguage;
+                                if (!$csFieldDefinition->isLocalized()) {
+                                    $csLanguage = 'default';
+                                }
+
+                                /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+                                $fd = $class->getFieldDefinition($field);
+                                $keyConfig = $fd->getKeyConfiguration($keyid);
+                                $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+                                /** @var $classificationStoreData DataObject\Classificationstore */
+                                $classificationStoreData = $object->$getter();
+                                $classificationStoreData->setLocalizedKeyValue(
+                                    $groupId,
+                                    $keyid,
+                                    $dataDefinition->getDataFromEditmode($value),
+                                    $csLanguage
+                                );
+                            }
                         }
-                    }
-                } elseif (count($parts) > 1) {
-                    // check for bricks
-                    $brickType = $parts[0];
-                    $brickKey = $parts[1];
-                    $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    } elseif (count($parts) > 1) {
+                        // check for bricks
+                        $brickType = $parts[0];
+                        $brickKey = $parts[1];
+                        $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                    $fieldGetter = 'get' . ucfirst($brickField);
-                    $brickGetter = 'get' . ucfirst($brickType);
-                    $valueSetter = 'set' . ucfirst($brickKey);
+                        $fieldGetter = 'get' . ucfirst($brickField);
+                        $brickGetter = 'get' . ucfirst($brickType);
+                        $valueSetter = 'set' . ucfirst($brickKey);
 
-                    $brick = $object->$fieldGetter()->$brickGetter();
-                    if (empty($brick)) {
-                        $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
-                        $brickSetter = 'set' . ucfirst($brickType);
-                        $brick = new $classname($object);
-                        $object->$fieldGetter()->$brickSetter($brick);
-                    }
+                        $brick = $object->$fieldGetter()->$brickGetter();
+                        if (empty($brick)) {
+                            $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
+                            $brickSetter = 'set' . ucfirst($brickType);
+                            $brick = new $classname($object);
+                            $object->$fieldGetter()->$brickSetter($brick);
+                        }
 
-                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
-                    $field = $brickClass->getFieldDefinition($brickKey);
+                        $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
+                        $field = $brickClass->getFieldDefinition($brickKey);
 
-                    $newData = $field->getDataFromEditmode($value, $object);
-
-                    if ($append) {
-                        $valueGetter = 'get' . ucfirst($brickKey);
-                        $existingData = $brick->$valueGetter();
-                        $newData = $field->appendData($existingData, $newData);
-                    }
-                    $brick->$valueSetter($newData);
-                } else {
-                    // everything else
-                    $field = $class->getFieldDefinition($name);
-                    if ($field) {
                         $newData = $field->getDataFromEditmode($value, $object);
 
                         if ($append) {
-                            $existingData = $object->{'get' . $name}();
+                            $valueGetter = 'get' . ucfirst($brickKey);
+                            $existingData = $brick->$valueGetter();
                             $newData = $field->appendData($existingData, $newData);
                         }
-                        $object->setValue($name, $newData);
+                        $brick->$valueSetter($newData);
                     } else {
-                        // check if it is a localized field
-                        if ($request->get('language')) {
-                            $localizedField = $class->getFieldDefinition('localizedfields');
-                            if ($localizedField) {
-                                $field = $localizedField->getFieldDefinition($name);
-                                if ($field) {
-                                    $getter = 'get' . $name;
-                                    $setter = 'set' . $name;
-                                    /** @var $field DataObject\ClassDefinition\Data */
-                                    $newData = $field->getDataFromEditmode($value, $object);
-                                    if ($append) {
-                                        $existingData = $object->$getter($request->get('language'));
-                                        $newData = $field->appendData($existingData, $newData);
-                                    }
+                        // everything else
+                        $field = $class->getFieldDefinition($name);
+                        if ($field) {
+                            $newData = $field->getDataFromEditmode($value, $object);
 
-                                    $object->$setter($newData, $request->get('language'));
+                            if ($append) {
+                                $existingData = $object->{'get' . $name}();
+                                $newData = $field->appendData($existingData, $newData);
+                            }
+                            $object->setValue($name, $newData);
+                        } else {
+                            // check if it is a localized field
+                            if ($params['language']) {
+                                $localizedField = $class->getFieldDefinition('localizedfields');
+                                if ($localizedField) {
+                                    $field = $localizedField->getFieldDefinition($name);
+                                    if ($field) {
+                                        $getter = 'get' . $name;
+                                        $setter = 'set' . $name;
+                                        /** @var $field DataObject\ClassDefinition\Data */
+                                        $newData = $field->getDataFromEditmode($value, $object);
+                                        if ($append) {
+                                            $existingData = $object->$getter($params['language']);
+                                            $newData = $field->appendData($existingData, $newData);
+                                        }
+
+                                        $object->$setter($newData, $params['language']);
+                                    }
+                                }
+                            }
+
+                            // seems to be a system field, this is actually only possible for the "published" field yet
+                            if ($name == 'published') {
+                                if ($value === 'false' || empty($value)) {
+                                    $object->setPublished(false);
+                                } else {
+                                    $object->setPublished(true);
                                 }
                             }
                         }
-
-                        // seems to be a system field, this is actually only possible for the "published" field yet
-                        if ($name == 'published') {
-                            if ($value == 'false' || empty($value)) {
-                                $object->setPublished(false);
-                            } else {
-                                $object->setPublished(true);
-                            }
-                        }
                     }
-                }
 
-                try {
-                    // don't check for mandatory fields here
-                    $object->setOmitMandatoryCheck(!$object->isPublished());
-                    $object->setUserModification($this->getAdminUser()->getId());
-                    $object->save();
-                    $success = true;
-                } catch (\Exception $e) {
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                }
-            } else {
-                Logger::debug('DataObjectController::batchAction => There is no object left to update.');
+                    try {
+                        // don't check for mandatory fields here
+                        $object->setOmitMandatoryCheck(!$object->isPublished());
+                        $object->setUserModification($this->getAdminUser()->getId());
+                        $object->save();
+                        $success = true;
+                    } catch (\Exception $e) {
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                    }
+                } else {
+                    Logger::debug('DataObjectController::batchAction => There is no object left to update.');
 
-                return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                    return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                }
             }
         } catch (\Exception $e) {
             Logger::err($e);
@@ -2315,6 +2376,7 @@ class DataObjectHelperController extends AdminController
         $fields = null;
 
         $classList = [];
+        $classNameList = [];
 
         if ($request->get('classes')) {
             $classNameList = $request->get('classes');

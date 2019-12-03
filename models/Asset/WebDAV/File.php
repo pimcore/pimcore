@@ -83,14 +83,14 @@ class File extends DAV\File
             // for details see Asset\WebDAV\Tree::move()
             $log = Asset\WebDAV\Service::getDeleteLog();
 
-            $this->asset->_fulldump = true;
+            $this->asset->setInDumpState(true);
             $log[$this->asset->getRealFullPath()] = [
                 'id' => $this->asset->getId(),
                 'timestamp' => time(),
                 'data' => \Pimcore\Tool\Serialize::serialize($this->asset)
             ];
 
-            unset($this->asset->_fulldump);
+            $this->asset->setInDumpState(false);
 
             Asset\WebDAV\Service::saveDeleteLog($log);
         } else {
