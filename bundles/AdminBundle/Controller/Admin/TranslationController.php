@@ -711,13 +711,35 @@ class TranslationController extends AdminController
                         ($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?',
                         [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']
                     );
-                    $idList = $list->loadIdList();
+                    $childs = $list->load();
 
-                    foreach ($idList as $id) {
-                        $elements[$element['type'] . '_' . $id] = [
-                            'id' => $id,
+                    foreach ($childs as $child) {
+                        $childId = $child->getId();
+                        $elements[$element['type'] . '_' . $childId] = [
+                            'id' => $childId,
                             'type' => $element['type'],
                         ];
+                        if ($element['relations']) {
+                            $childDependencies = $child->getDependencies()->getRequires();
+                            foreach ($childDependencies as $cd) {
+                                if ($cd['type'] == "object" || $cd['type'] == "document") {
+                                    $elements[$cd['type'] . '_' . $cd['id']] = $cd;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($element['relations']) {
+                    if (!$el instanceof Element\AbstractElement) {
+                        $el = Element\Service::getElementById($element['type'], $element['id']);
+                    }
+
+                    $dependencies = $el->getDependencies()->getRequires();
+                    foreach ($dependencies as $dependency) {
+                        if ($dependency['type'] == "object" || $dependency['type'] == "document") {
+                            $elements[$dependency['type'] . '_' . $dependency['id']] = $dependency;
+                        }
                     }
                 }
             }
