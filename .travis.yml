@@ -14,7 +14,7 @@ services:
   - redis
 
 addons:
-  mariadb: '10.1'
+  mariadb: '10.3'
   hosts:
     - pimcore-test.dev
 
