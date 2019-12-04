@@ -381,7 +381,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $db = Db::get();
 
         $oldRelations = $db->fetchAll('SELECT src_id FROM object_relations_' . $this->getOwnerClassId().' WHERE dest_id=? AND fieldname=? AND ownertype = \'object\'', [$object->getId(), $this->getOwnerFieldName()]);
-        $oldRelations = array_map(function($oldRelation) {
+        $oldRelations = array_map(static function($oldRelation) {
             return $oldRelation['src_id'];
         }, $oldRelations);
 
@@ -421,7 +421,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
 
         if(count($deletedRelationIds) > 0) {
-            $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=REPLACE(`'.$this->getOwnerFieldName().'`, \','.$object->getId().'\', \'\') WHERE oo_id IN ('.implode(',', $deletedRelationIds).')');
+            $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=IF(`'.$this->getOwnerFieldName().'`=\','.$object->getId().',\', NULL, REPLACE(`'.$this->getOwnerFieldName().'`, \','.$object->getId().',\', \',\')) WHERE oo_id IN ('.implode(',', $deletedRelationIds).')');
         }
 
         foreach($deletedRelationIds as $deletedRelationId) {
@@ -433,6 +433,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $return = [];
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
+
             foreach ($data as $reverseObject) {
                 if ($reverseObject instanceof DataObject\Concrete) {
                     $return[] = [
@@ -457,7 +458,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         $latestVersion = $reverseObject->getLatestVersion();
                         if(!$latestVersion || $reverseObject->getVersionCount() === $latestVersion->getVersionCount()) {
                             DataObject\AbstractObject::clearDependentCacheByObjectId($reverseObject->getId());
-
                         }
 
                         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($reverseObject));
@@ -467,17 +467,26 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             if(count($newRelationIds) > 0) {
-                $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(`'.$this->getOwnerFieldName().'`, \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $newRelationIds).')');
+                $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(IFNULL(`'.$this->getOwnerFieldName().'`, \',\'), \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $newRelationIds).')');
+
+                $inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->getOwnerClassId());
+                $inheritanceHelper->addRelationToCheck($this->getOwnerFieldName(), DataObject\ClassDefinition::getById($this->getOwnerClassId())->getFieldDefinition($this->getOwnerFieldName()));
+
+                foreach($newRelationIds as $newRelationId) {
+                    $inheritanceHelper->doUpdate($newRelationId);
+                }
             }
 
             return $return;
-        } elseif (is_array($data) && count($data) === 0) {
+        }
+
+        if (is_array($data) && count($data) === 0) {
             //give empty array if data was not null
             return [];
-        } else {
-            //return null if data was null - this indicates data was not loaded
-            return null;
         }
+
+        //return null if data was null - this indicates data was not loaded
+        return null;
     }
 
     /** Enrich relation with type-specific data.
