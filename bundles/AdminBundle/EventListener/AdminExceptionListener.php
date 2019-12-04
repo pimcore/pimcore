@@ -74,7 +74,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
-                $data['traceString'] = $ex->getTraceAsString();
+                $data['traceString'] = 'in ' . $ex->getFile() . $ex->getLine() . "\n" . $ex->getTraceAsString();
             }
 
             if ($ex instanceof ValidationException) {
