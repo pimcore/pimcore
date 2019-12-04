@@ -30,6 +30,11 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
+     * @var string[]
+     */
+    protected static $hasListenersCache = [];
+
+    /**
      * @param $asset
      * @param null $config
      * @param bool $deferred
@@ -59,14 +64,29 @@ class Thumbnail
 
         $path = $this->convertToWebPath($fsPath);
 
-        $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
-            'frontendPath' => $path
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument('frontendPath');
+        if($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
+            $event = new GenericEvent($this, [
+                'filesystemPath' => $fsPath,
+                'frontendPath' => $path
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            $path = $event->getArgument('frontendPath');
+        }
 
         return $path;
+    }
+
+    /**
+     * @param string $eventName
+     * @return bool
+     */
+    protected function hasListeners(string $eventName): bool
+    {
+        if(!isset(self::$hasListenersCache[$eventName])) {
+            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+        }
+
+        return self::$hasListenersCache[$eventName];
     }
 
     /**
@@ -112,10 +132,12 @@ class Thumbnail
             }
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
-            'deferred' => $deferred,
-            'generated' => $generated
-        ]));
+        if($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+                'deferred' => $deferred,
+                'generated' => $generated
+            ]));
+        }
     }
 
     /**
@@ -212,7 +234,7 @@ class Thumbnail
             'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
 
         $customAttributes = [];
-        if (array_key_exists('attributes', $options) && is_array($options['attributes'])) {
+        if (isset($options['attributes']) && is_array($options['attributes'])) {
             $customAttributes = $options['attributes'];
         }
 
@@ -265,7 +287,7 @@ class Thumbnail
                 continue;
             }
 
-            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, 'data-') === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || isset($customAttributes[$key]) || strpos($key, 'data-') === 0)) {
                 continue;
             }
 
@@ -407,7 +429,7 @@ class Thumbnail
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
 
-        if (array_key_exists($name, $mediaConfigs)) {
+        if (isset($mediaConfigs[$name])) {
             $thumbConfigRes = clone $thumbConfig;
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
