@@ -830,6 +830,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fields: fields
             }, this.component.getView())
         );
+
+        // unfortunately we have to use a timeout here to adjust the height of grids configured
+        // with autoHeight: true, there are no other events that would work, see also:
+        // - https://github.com/pimcore/pimcore/pull/4337
+        // - https://github.com/pimcore/pimcore/pull/4909
+        // - https://github.com/pimcore/pimcore/pull/5367
+        window.setTimeout(function() {
+            this.component.getView().refresh();
+        }.bind(this), 500);
     },
 
     normalizeTargetData: function (targets) {
