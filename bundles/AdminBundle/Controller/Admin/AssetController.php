@@ -1376,6 +1376,8 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Asset $asset
+     *
+     * @return string|null
      */
     protected function getDocumentPreviewPdf(Asset $asset)
     {

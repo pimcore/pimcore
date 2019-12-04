@@ -229,6 +229,8 @@ function array_to_html_attribute_string($array)
 
 /**
  * @param string $var
+ *
+ * @return string
  */
 function urlencode_ignore_slash($var)
 {

@@ -278,6 +278,8 @@ class WorkflowController extends AdminController implements EventedControllerInt
     /**
      * @param Workflow $workflow
      *
+     * @return string
+     *
      * @throws \Exception
      */
     private function getWorkflowSvg(Workflow $workflow)

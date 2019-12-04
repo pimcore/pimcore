@@ -443,6 +443,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
+     * @return array
+     *
      * @throws \Exception
      */
     public function getForWebserviceExport($object, $params = [])

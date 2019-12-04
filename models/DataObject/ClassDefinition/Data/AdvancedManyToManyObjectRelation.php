@@ -181,6 +181,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null $object
      * @param mixed $params
      *
+     * @return string|null
+     *
      * @throws \Exception
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
