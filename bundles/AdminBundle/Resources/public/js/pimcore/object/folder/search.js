@@ -232,9 +232,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         var gridColumns = gridHelper.getGridColumns();
 
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
-
         this.searchQuery = function(field) {
             this.store.getProxy().setExtraParam("query", field.getValue());
             this.pagingtoolbar.moveFirst();
