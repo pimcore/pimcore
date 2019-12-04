@@ -155,7 +155,7 @@ class Config extends Model\AbstractModel
      */
     public static function getByName($name)
     {
-        $cacheKey = 'imagethumb_' . crc32($name);
+        $cacheKey = self::getCacheKey($name);
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -180,6 +180,30 @@ class Config extends Model\AbstractModel
         $clone = clone $thumbnail;
 
         return $clone;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected static function getCacheKey(string $name): string
+    {
+        return 'imagethumb_' . crc32($name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public static function exists(string $name): bool
+    {
+        $cacheKey = self::getCacheKey($name);
+        if(\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return true;
+        }
+
+        $thumbnail = new self();
+        return $thumbnail->getDao()->exists($name);
     }
 
     /**
