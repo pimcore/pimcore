@@ -629,7 +629,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param $method
      * @param $arguments
      *
-     * @return Model\Listing\AbstractListing
+     * @return Model\Listing\AbstractListing|Concrete|null
      *
      * @throws \Exception
      */
