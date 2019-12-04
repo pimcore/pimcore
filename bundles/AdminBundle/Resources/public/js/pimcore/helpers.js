@@ -442,7 +442,9 @@ pimcore.helpers.isValidFilename = function (value) {
 pimcore.helpers.getValidFilenameCache = {};
 
 pimcore.helpers.getValidFilename = function (value, type) {
-
+    
+    value = value.trim();
+    
     if (pimcore.helpers.getValidFilenameCache[value + type]) {
         return pimcore.helpers.getValidFilenameCache[value + type];
     }

@@ -334,6 +334,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             }
 
             //read data
+            $data = [];
             if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations', 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                     $data[] = $rowData;

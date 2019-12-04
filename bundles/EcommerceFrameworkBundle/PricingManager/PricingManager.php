@@ -208,7 +208,7 @@ class PricingManager implements PricingManagerInterface
      */
     public function getValidRules()
     {
-        if (empty($this->rules)) {
+        if (is_null($this->rules)) {
             /** @var Rule\Listing $rules */
             $rules = $this->getRuleListing();
             $rules->setCondition('active = 1');

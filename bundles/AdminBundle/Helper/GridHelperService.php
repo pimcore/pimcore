@@ -180,6 +180,7 @@ class GridHelperService
                 $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
                 $brickType = null;
+                $brickDescriptor = null;
                 if (!$field) {
 
                     // if the definition doesn't exist check for a localized field
@@ -410,10 +411,10 @@ class GridHelperService
             $bricks = $this->extractBricks($fields);
         }
 
-        if ($requestParams['limit']) {
+        if (isset($requestParams['limit'])) {
             $limit = $requestParams['limit'];
         }
-        if ($requestParams['start']) {
+        if (isset($requestParams['start'])) {
             $start = $requestParams['start'];
         }
 
@@ -453,7 +454,7 @@ class GridHelperService
         }
 
         $conditionFilters = [];
-        if ($requestParams['only_direct_children'] == 'true') {
+        if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
             $conditionFilters[] = 'o_parentId = ' . $folder->getId();
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
@@ -475,7 +476,7 @@ class GridHelperService
         $featureFilters = [];
 
         // create filter condition
-        if ($requestParams['filter']) {
+        if (!empty($requestParams['filter'])) {
             $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
             $featureFilters = $this->getFeatureFilters($requestParams['filter'], $class, $requestedLanguage);
             if ($featureFilters) {
@@ -483,11 +484,11 @@ class GridHelperService
             }
         }
 
-        if ($requestParams['condition'] && $adminUser->isAdmin()) {
+        if (!empty($requestParams['condition']) && $adminUser->isAdmin()) {
             $conditionFilters[] = '(' . $requestParams['condition'] . ')';
         }
 
-        if ($requestParams['query']) {
+        if (!empty($requestParams['query'])) {
             $query = $this->filterQueryParam($requestParams['query']);
             if (!empty($query)) {
                 $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
@@ -505,7 +506,7 @@ class GridHelperService
         }
 
         $list->setCondition(implode(' AND ', $conditionFilters));
-        if (!$requestParams['batch'] && empty($requestParams['ids'])) {
+        if (empty($requestParams['batch']) && empty($requestParams['ids'])) {
             $list->setLimit($limit);
             $list->setOffset($start);
         }
@@ -528,7 +529,7 @@ class GridHelperService
         $list->setOrder($order);
 
         //parameters specified in the objects grid
-        if ($requestParams['ids']) {
+        if (!empty($requestParams['ids'])) {
             $quotedIds = [];
             foreach ($requestParams['ids'] as $id) {
                 $quotedIds[] = $list->quote($id);
@@ -546,7 +547,7 @@ class GridHelperService
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
 
-        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
+        if (empty($requestParams['filter']) && empty($requestParams['condition']) && empty($requestParams['sort'])) {
             $list->setIgnoreLocalizedFields(true);
         }
 
@@ -563,10 +564,10 @@ class GridHelperService
         $orderKey = 'id';
         $order = 'ASC';
 
-        if ($allParams['limit']) {
+        if (isset($allParams['limit'])) {
             $limit = $allParams['limit'];
         }
-        if ($allParams['start']) {
+        if (isset($allParams['start'])) {
             $start = $allParams['start'];
         }
 
@@ -574,10 +575,10 @@ class GridHelperService
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
             $orderKey = explode('~', $sortingSettings['orderKey'])[0];
-            if ($orderKey == 'fullpath') {
+            if ($orderKey === 'fullpath') {
                 $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
-            } elseif ($orderKey == 'filename') {
+            } elseif ($orderKey === 'filename') {
                 $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
             }
@@ -591,10 +592,10 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
         }
 
-        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
+        if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
             $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
         }
 
@@ -621,14 +622,17 @@ class GridHelperService
                         $operator = '=';
                     }
                 } elseif ($filterType == 'date') {
+                    $filter['value'] = strtotime($filter['value']);
                     if ($filterOperator == 'lt') {
                         $operator = '<';
                     } elseif ($filterOperator == 'gt') {
                         $operator = '>';
                     } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
+                        $operator = 'BETWEEN';
+                        //if the equal operator is chosen with the date type, condition has to be changed
+                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                        $filter['value'] = $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                     }
-                    $filter['value'] = strtotime($filter['value']);
                 } elseif ($filterType == 'list') {
                     $operator = 'IN';
                 } elseif ($filterType == 'boolean') {
@@ -644,6 +648,7 @@ class GridHelperService
                         return $db->quote($val);
                     }, $value);
                     $value = '(' . implode(',', $quoted) . ')';
+                } elseif ($operator == 'BETWEEN') {
                 } else {
                     $value = $db->quote($value);
                 }
@@ -660,7 +665,7 @@ class GridHelperService
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
                 } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $db->quote($value);
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 }
             }
         }

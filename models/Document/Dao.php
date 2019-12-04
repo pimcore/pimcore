@@ -42,7 +42,7 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
         }
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Document with the ID ' . $id . " doesn't exists");

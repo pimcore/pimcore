@@ -21,7 +21,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     exportProcessUrl: "/admin/object-helper/do-export",
 
     openColumnConfig: function (allowPreview) {
-        var fields = this.getGridConfig().columns;
+        var gridConfig = this.getGridConfig();
+        var fields = gridConfig.columns;
 
         var fieldKeys = Object.keys(fields);
 
@@ -57,8 +58,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }
 
         var columnConfig = {
-            language: this.gridLanguage,
-            pageSize: this.gridPageSize,
+            language: gridConfig.language,
+            pageSize: gridConfig.pageSize,
             classid: this.classId,
             objectId: objectId,
             selectedGridColumns: visibleColumns

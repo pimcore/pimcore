@@ -178,8 +178,9 @@ class NotificationService
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $offset = (int) $options['offset'] ?? 0;
-        $limit = (int) $options['limit'] ?? 0;
+        $options += ['offset' => 0, 'limit' => 0];
+        $offset = (int) $options['offset'];
+        $limit = (int) $options['limit'];
 
         $this->beginTransaction();
 

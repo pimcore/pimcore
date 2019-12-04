@@ -138,7 +138,7 @@ env:
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^4.0
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
-
+    - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:

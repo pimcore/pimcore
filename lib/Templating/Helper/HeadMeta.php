@@ -343,11 +343,6 @@ class HeadMeta extends AbstractHelper
 
         $modifiersString = '';
         foreach ($item->modifiers as $key => $value) {
-            if (!is_null($this->view) && $this->view->doctype()->isHtml5()
-                && $key == 'scheme') {
-                throw new Exception('Invalid modifier '
-                    . '"scheme" provided; not supported by HTML5');
-            }
             if (!in_array($key, $this->_modifierKeys)) {
                 continue;
             }

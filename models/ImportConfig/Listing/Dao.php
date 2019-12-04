@@ -50,6 +50,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM importconfigs ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

@@ -82,7 +82,7 @@
   "children": "Children",
   "elements_to_export": "Elements to Export",
   "xliff_export_documents": "If you want to translate eg. the whole \/en tree to a different language, first create a copy of \/en, eg. \/de then export \/de for translation. When importing the translated XLIFF the English contents in \/de will be overwritten by the German translation in the XLIFF file.",
-  "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten.",
+  "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten. Use Relations checkbox to include Objects & Documents from Dependencies e.g. Relation fields, Properties etc.",
   "xliff_export_notice": "Here you can select the documents and objects you want to export for external translation.",
   "important_notice": "Important Notice",
   "xliff_import_notice": "Select a translated XLIFF file which was previously exported by pimcore and then translated by a localization service provider (LSP) or by a CAT application. Please aware that the import will overwrite the elements which were selected by the import (read also export).",

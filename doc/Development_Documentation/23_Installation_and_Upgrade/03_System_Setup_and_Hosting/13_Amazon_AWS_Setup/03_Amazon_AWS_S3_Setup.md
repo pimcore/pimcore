@@ -98,7 +98,6 @@ class S3Listener implements EventSubscriberInterface
             AssetEvents::IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
             AssetEvents::VIDEO_IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
             AssetEvents::DOCUMENT_IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
-            AssetEvents::DOCUMENT_IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
         ];
     }
 

@@ -342,7 +342,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         Ext.Ajax.request({
             url: "/admin/printpage/start-pdf-generation",
             method: 'POST',
-            params: params,
+            jsonData: params,
             success: function(response) {
                 result = Ext.decode(response.responseText);
                 if(result.success) {

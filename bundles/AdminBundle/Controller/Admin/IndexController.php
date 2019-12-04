@@ -127,8 +127,8 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
-
         // DB
+        $mysqlVersion = null;
         try {
             $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES 
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
@@ -431,7 +431,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
                 if ($rootNode) {
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node

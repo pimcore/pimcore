@@ -153,6 +153,7 @@ class LinkController extends DocumentControllerBase
             $path = $data['path'];
 
             if (!empty($path)) {
+                $target = null;
                 if ($data['linktype'] == 'internal' && $data['internalType']) {
                     $target = Element\Service::getElementByPath($data['internalType'], $path);
                     if ($target) {

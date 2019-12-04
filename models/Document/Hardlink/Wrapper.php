@@ -109,7 +109,7 @@ trait Wrapper
                 $c = Service::wrap($result);
                 if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                     $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath()) . '@',
+                    $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath(), '@') . '@',
                         $hardLink->getRealPath(), $c->getRealPath()));
 
                     return $c;
@@ -136,7 +136,7 @@ trait Wrapper
                     $c = Service::wrap($c);
                     if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                         $c->setHardLinkSource($hardLink);
-                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
+                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath(), '@') . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
 
                         $children[] = $c;
                     }

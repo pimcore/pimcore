@@ -264,4 +264,16 @@ trait ImageThumbnailTrait
 
         return $this->mimetype;
     }
+
+    protected function convertToWebPath(string $filesystemPath): string
+    {
+        $path = preg_replace([
+            '@^' . preg_quote(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '@') . '@',
+            '@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@',
+        ], '', $filesystemPath);
+
+        $path = urlencode_ignore_slash($path);
+
+        return $path;
+    }
 }

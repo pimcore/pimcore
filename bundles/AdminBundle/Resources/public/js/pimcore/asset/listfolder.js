@@ -138,7 +138,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         this.store.getProxy().extraParams = {
-            limit: itemsPerPage,
             folderId: this.element.data.id,
             "fields[]": fieldParam,
             language: this.gridLanguage,
@@ -254,6 +253,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             columns : gridColumns,
+            bufferedRenderer: false,
             plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,

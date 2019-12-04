@@ -420,6 +420,7 @@ class HeadLink extends CacheBusterAware
         $type = 'text/css';
         $media = 'screen';
         $conditionalStylesheet = false;
+        $extras = [];
         $href = array_shift($args);
 
         if ($this->_isDuplicateStylesheet($href)) {

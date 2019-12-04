@@ -86,7 +86,7 @@ class MySql
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
           `o_virtualProductActive` TINYINT(1) NOT NULL,
-          `o_classId` int(11) NOT NULL,
+          `o_classId` varchar(50) NOT NULL,
           `o_parentId` $idColumnType,
           `o_type` varchar(20) NOT NULL,
           `categoryIds` varchar(255) NOT NULL,
@@ -119,7 +119,7 @@ class MySql
                 if ($doAdd) {
                     $columnsToAdd[$attribute->getName()] = $attribute->getType();
                 }
-            } else if($attribute->getType() != $columns[$attribute->getName()]['Type']) {
+            } elseif ($attribute->getType() != $columns[$attribute->getName()]['Type']) {
                 $columnsToModify[$attribute->getName()] = $attribute->getType();
             }
 
@@ -127,7 +127,7 @@ class MySql
         }
 
         foreach ($columnsToDelete as $c) {
-            if (!in_array($c, $systemColumns)) {
+            if (!in_array($c['Field'], $systemColumns)) {
                 $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c['Field'] . '`;');
             }
         }

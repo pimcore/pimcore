@@ -48,6 +48,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $gridconfigs = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($gridconfigs as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('gridconfigs'))) {

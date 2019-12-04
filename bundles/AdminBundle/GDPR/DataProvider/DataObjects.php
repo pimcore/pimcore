@@ -213,9 +213,8 @@ class DataObjects extends Elements implements DataProviderInterface
             if ($element instanceof Concrete) {
                 $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
                 $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'];
+                $elements[] = $data;
             }
-
-            $elements[] = $data;
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit

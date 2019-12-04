@@ -37,6 +37,8 @@ class Sql extends AbstractAdapter
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
+        $data = [];
+        $total = 0;
 
         if ($baseQuery) {
             $total = $db->fetchOne($baseQuery['count']);
@@ -177,6 +179,7 @@ class Sql extends AbstractAdapter
                     $value = $filter['value'] ;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
+                    $maxValue = null;
                     if ($type == 'date') {
                         if ($operator == 'eq') {
                             $maxValue = strtotime($value . '+23 hours 59 minutes');

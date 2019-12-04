@@ -342,6 +342,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/upload-base64' . uniqid() . '.tmp';
             $data = preg_replace('@^data:[^,]+;base64,@', '', $request->get('data'));
             File::put($sourcePath, base64_decode($data));
+        } else {
+            throw new \Exception('The filename of the asset is empty');
         }
 
         $parentId = $request->get('parentId');
@@ -361,6 +363,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $maxRetries = 5;
+            $newParent = null;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
@@ -375,7 +378,9 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
             }
-            $parentId = $newParent->getId();
+            if ($newParent) {
+                $parentId = $newParent->getId();
+            }
         } elseif (!$request->get('parentId') && $parentPath) {
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
@@ -406,6 +411,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
+        $asset = null;
 
         if ($parentAsset->isAllowed('create')) {
             if (is_file($sourcePath) && filesize($sourcePath) < 1) {
@@ -1239,6 +1245,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $video = Asset::getById(intval($request->get('id')));
         } elseif ($request->get('path')) {
             $video = Asset::getByPath($request->get('path'));
+        } else {
+            throw new \Exception('could not load video asset');
         }
 
         if (!$video->isAllowed('view')) {
@@ -2348,6 +2356,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $page = $request->get('page');
+        $text = null;
         if ($asset instanceof Asset\Document) {
             $text = $asset->getText($page);
         }
