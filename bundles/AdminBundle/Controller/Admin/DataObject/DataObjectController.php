@@ -644,7 +644,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objectbricks && is_array($value)) {
                 // make sure that the objectbricks participate in the inheritance detection process
                 foreach ($value as $singleBrickData) {
-                    if ($singleBrickData['inherited']) {
+                    if (!empty($singleBrickData['inherited'])) {
                         $isInheritedValue = true;
                     }
                 }
@@ -1136,18 +1136,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $updatedObject->saveIndex($newIndex);
 
                 Db::get()->executeUpdate(
-                    'UPDATE '.$list->getDao()->getTableName().' o, 
+                    'UPDATE '.$list->getDao()->getTableName().' o,
                     (
-                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id 
-                        FROM '.$list->getDao()->getTableName().', 
-                        (SELECT @n := -1) variable 
+                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                        FROM '.$list->getDao()->getTableName().',
+                        (SELECT @n := -1) variable
                         WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
                         "','", [
                             DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
                             DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
                             DataObject\AbstractObject::OBJECT_TYPE_FOLDER
                         ]
-                    ).'\') 
+                    ).'\')
                             ORDER BY o_index, o_id=?
                         ) tmp
                     ) order_table
