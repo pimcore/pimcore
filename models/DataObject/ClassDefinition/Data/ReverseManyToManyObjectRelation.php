@@ -424,10 +424,23 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=IF(`'.$this->getOwnerFieldName().'`=\','.$object->getId().',\', NULL, REPLACE(`'.$this->getOwnerFieldName().'`, \','.$object->getId().',\', \',\')) WHERE oo_id IN ('.implode(',', $deletedRelationIds).')');
         }
 
+        $inheritanceHelper = null;
+        $reverseClassDefinition = DataObject\ClassDefinition::getById($this->getOwnerClassId());
+        if($reverseClassDefinition->getAllowInherit()) {
+            $inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->getOwnerClassId());
+            $inheritanceHelper->addRelationToCheck(
+                $this->getOwnerFieldName(), $reverseClassDefinition->getFieldDefinition($this->getOwnerFieldName())
+            );
+        }
+
         foreach($deletedRelationIds as $deletedRelationId) {
             $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
 
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($deletedRelation));
+
+            if($reverseClassDefinition->getAllowInherit() && $inheritanceHelper !== null) {
+                $inheritanceHelper->doUpdate($deletedRelationId);
+            }
         }
 
         $return = [];
@@ -469,11 +482,11 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             if(count($newRelationIds) > 0) {
                 $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(IFNULL(`'.$this->getOwnerFieldName().'`, \',\'), \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $newRelationIds).')');
 
-                $inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->getOwnerClassId());
-                $inheritanceHelper->addRelationToCheck($this->getOwnerFieldName(), DataObject\ClassDefinition::getById($this->getOwnerClassId())->getFieldDefinition($this->getOwnerFieldName()));
-
-                foreach($newRelationIds as $newRelationId) {
-                    $inheritanceHelper->doUpdate($newRelationId);
+                $reverseClassDefinition = DataObject\ClassDefinition::getById($this->getOwnerClassId());
+                if($reverseClassDefinition->getAllowInherit() && $inheritanceHelper !== null) {
+                    foreach($newRelationIds as $newRelationId) {
+                        $inheritanceHelper->doUpdate($newRelationId);
+                    }
                 }
             }
 
