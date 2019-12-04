@@ -82,7 +82,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * preisregel details als json ausgeben
+     * get priceing rule details as json
      *
      * @Route("/get", methods={"GET"})
      *
