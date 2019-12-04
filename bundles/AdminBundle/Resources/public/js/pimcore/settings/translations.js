@@ -93,7 +93,7 @@ pimcore.settings.translations = Class.create({
         ];
 
         for (var i = 0; i < languages.length; i++) {
-            readerFields.push({name: "_" + languages[i]});
+            readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
             var columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
