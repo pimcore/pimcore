@@ -143,7 +143,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        // check for a parent hardlink with childs
+        // check for a parent hardlink with children
         if (!$document instanceof Document) {
             $hardlinkedParentDocument = $this->documentService->getNearestDocumentByPath($context->getPath(), true);
             if ($hardlinkedParentDocument instanceof Document\Hardlink) {
