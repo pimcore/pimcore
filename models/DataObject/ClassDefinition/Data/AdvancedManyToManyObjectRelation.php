@@ -280,15 +280,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
-                        $value = $relation[$c['key']];
+                        $value = $relation[$c['key']] ?? null;
 
                         if ($c['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 
@@ -1019,7 +1015,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
+                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? false) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();

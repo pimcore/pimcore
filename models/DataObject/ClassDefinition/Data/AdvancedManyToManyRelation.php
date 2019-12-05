@@ -384,15 +384,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
-                        $value = $element[$key];
+                        $value = $element[$key] ?? null;
 
                         if ($columnConfig['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 
