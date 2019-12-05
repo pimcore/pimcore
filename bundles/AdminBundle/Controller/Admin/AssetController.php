@@ -2257,7 +2257,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     foreach ($data as $key => $value) {
                         $fieldDef = explode('~', $key);
                         $key = $fieldDef[0];
-                        if ($fieldDef[1]) {
+                        if (isset($fieldDef[1])) {
                             $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                         }
 

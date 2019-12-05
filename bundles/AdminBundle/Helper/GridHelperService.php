@@ -657,15 +657,15 @@ class GridHelperService
                     $filterField = 'CONCAT(path,filename)';
                 }
 
-                if ($filterDef[1] != 'system') {
+                if (isset($filter[1]) && $filterDef[1] == 'system') {
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
+                } else {
                     $language = $allParams['language'];
                     if (isset($filterDef[1])) {
                         $language = $filterDef[1];
                     }
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
-                } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 }
             }
         }
