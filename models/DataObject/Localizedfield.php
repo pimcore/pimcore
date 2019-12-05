@@ -379,7 +379,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
-            $valueData->setContextualData('localizedfield', 'localizedfields', null, $language);
+            $valueData->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $fieldDefinition);
             $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
 
             return $data;
