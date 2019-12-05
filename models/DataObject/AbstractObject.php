@@ -1053,8 +1053,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if (Runtime::isRegistered('object_' . $o_parentId)) {
                 $parent = self::getById($o_parentId);
-                $parent->o_children = null;
-                $parent->o_hasChildren = null;
+                if($parent instanceof self) {
+                    $parent->o_children = null;
+                    $parent->o_hasChildren = null;
+                }
             }
         }
 
