@@ -352,9 +352,10 @@ class Video extends Model\Document\Tag
     {
         $asset = Asset::getById($this->id);
         $options = $this->getOptions();
+        $thumbnailOption = $options['thumbnail'] ?? null;
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
-        if (!\Pimcore\Video::isAvailable() || !$options['thumbnail']) {
+        if (!\Pimcore\Video::isAvailable() || !$thumbnailOption) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 return $this->getHtml5Code(['mp4' => (string) $asset]);
             }
@@ -362,12 +363,12 @@ class Video extends Model\Document\Tag
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $options['thumbnail']) {
-            $thumbnail = $asset->getThumbnail($options['thumbnail']);
+        if ($asset instanceof Asset\Video && $thumbnailOption) {
+            $thumbnail = $asset->getThumbnail($thumbnailOption);
             if ($thumbnail) {
                 if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
                     // try to get the dimensions out ouf the video thumbnail
-                    $imageThumbnailConf = $asset->getThumbnailConfig($options['thumbnail'])->getEstimatedDimensions();
+                    $imageThumbnailConf = $asset->getThumbnailConfig($thumbnailOption)->getEstimatedDimensions();
                     $imageThumbnailConf['format'] = 'JPEG';
                 } else {
                     $imageThumbnailConf = $options['imagethumbnail'];
@@ -408,7 +409,7 @@ class Video extends Model\Document\Tag
                     return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
             } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options['thumbnail'] . "'");
+                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
             }
         } else {
             return $this->getEmptyCode();
