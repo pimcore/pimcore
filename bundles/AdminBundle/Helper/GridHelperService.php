@@ -657,7 +657,7 @@ class GridHelperService
                     $filterField = 'CONCAT(path,filename)';
                 }
 
-                if (isset($filter[1]) && $filterDef[1] == 'system') {
+                if (isset($filterDef[1]) && $filterDef[1] == 'system') {
                     $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 } else {
                     $language = $allParams['language'];
