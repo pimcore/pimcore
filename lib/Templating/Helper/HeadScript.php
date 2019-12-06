@@ -261,6 +261,7 @@ class HeadScript extends CacheBusterAware
             $mode = strtolower($matches['mode']);
             $type = 'text/javascript';
             $attrs = [];
+            $index = null;
 
             if ('offsetSet' == $action) {
                 $index = array_shift($args);
@@ -517,11 +518,7 @@ class HeadScript extends CacheBusterAware
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        if ($this->view) {
-            $useCdata = $this->view->doctype()->isXhtml() ? true : false;
-        } else {
-            $useCdata = $this->useCdata ? true : false;
-        }
+        $useCdata = $this->useCdata ? true : false;
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
         $escapeEnd = ($useCdata) ? '//]]>' : '//-->';
 

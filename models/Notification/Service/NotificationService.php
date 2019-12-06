@@ -20,6 +20,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class NotificationService
 {
@@ -146,6 +147,10 @@ class NotificationService
         $this->beginTransaction();
         $notification = $this->find($id);
 
+        if ($notification->getRecipient()->getId() != $recipientId) {
+            throw new AccessDeniedHttpException();
+        }
+
         if ($recipientId && $recipientId == $notification->getRecipient()->getId()) {
             $notification->setRead(true);
             $notification->save();
@@ -173,8 +178,9 @@ class NotificationService
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $offset = (int) $options['offset'] ?? 0;
-        $limit = (int) $options['limit'] ?? 0;
+        $options += ['offset' => 0, 'limit' => 0];
+        $offset = (int) $options['offset'];
+        $limit = (int) $options['limit'];
 
         $this->beginTransaction();
 
@@ -190,18 +196,20 @@ class NotificationService
 
     /**
      * @param int $user
-     * @param int $interval
+     * @param int $lastUpdate
      *
      * @return array
+     *
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findLastUnread(int $user, int $interval): array
+    public function findLastUnread(int $user, int $lastUpdate): array
     {
         $listing = new Listing();
         $listing->setCondition(
             'recipient = ? AND `read` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', time() - $interval)
+                date('Y-m-d H:i:s', $lastUpdate)
             ]
         );
         $listing->setOrderKey('creationDate');

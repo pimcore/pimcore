@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 abstract class Data
 {
@@ -1189,23 +1190,34 @@ abstract class Data
             return $params['injectedData'];
         }
 
-        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? null;
 
-        if ($context) {
-            if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'block') {
+        if (isset($context['containerType'])) {
+            if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
                 if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield) {
                     $fieldname = $context['fieldname'];
-                    $index = $context['index'];
+                    $index = $context['index'] ?? null;
 
                     if ($object instanceof DataObject\Concrete) {
                         $containerGetter = 'get' . ucfirst($fieldname);
                         $container = $object->$containerGetter();
+                        if (!$container && $context['containerType'] === 'block') {
+                            // no data, so check if inheritance is enabled + there is parent value
+                            if ($object->getClass()->getAllowInherit()) {
+                                try {
+                                    $container = $object->getValueFromParent($fieldname);
+                                } catch (InheritanceParentNotFoundException $e) {
+                                    //nothing to do here - just no parent data available
+                                }
+                            }
+                        }
+
                         if ($container) {
-                            $originalIndex = $context['oIndex'];
+                            $originalIndex = $context['oIndex'] ?? null;
 
                             // field collection or block items
-                            if (!is_null($originalIndex)) {
-                                if ($context['containerType'] == 'block') {
+                            if ($originalIndex !== null) {
+                                if ($context['containerType'] === 'block') {
                                     $items = $container;
                                 } else {
                                     $items = $container->getItems();
@@ -1214,7 +1226,7 @@ abstract class Data
                                 if ($items && count($items) > $originalIndex) {
                                     $item = $items[$originalIndex];
 
-                                    if ($context['containerType'] == 'block') {
+                                    if ($context['containerType'] === 'block') {
                                         $data = $item[$this->getName()];
                                         if ($data instanceof DataObject\Data\BlockElement) {
                                             $data = $data->getData();
@@ -1246,8 +1258,7 @@ abstract class Data
                         return $data;
                     }
                 }
-            }
-            if ($context['containerType'] == 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
+            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -1273,7 +1284,7 @@ abstract class Data
 
                     return $data;
                 }
-            } elseif ($context['containerType'] == 'classificationstore') {
+            } elseif ($context['containerType'] === 'classificationstore') {
                 $fieldname = $context['fieldname'];
                 $getter = 'get' . ucfirst($fieldname);
                 if (method_exists($object, $getter)) {

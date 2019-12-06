@@ -158,9 +158,5 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        return !(this.unitField.getValue() && this.inputField.getValue());
     }
 });

@@ -1,10 +1,8 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
 {% spaceless -%}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/pickadate.classic.css')) %}
-    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/pickadate.classic.date.css')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/picker.js')) %}
-    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/picker.date.js')) %}
+    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
 {%- endspaceless %}
 
 {% set urlParams = app.request.query.all %}
@@ -24,11 +22,11 @@
                                     'productType' :   ('bundle_ecommerce.back-office.order-list.filter-product-type')|trans([],'admin') } %}
                                 {% set selected = app.request.get('search', 'order') %}
                                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-target="#">
-                                    <span data-bind="label">{{ arrFields[selected] }}</span>
+                                    <span id="search-filter-label" data-bind="label">{{ arrFields[selected] }}</span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {% for field,label in arrFields %}
-                                        <li><a class="dropdown-item" href="#" data-value="{{ field }}">{{ label }}</a></li>
+                                        <li><a class="dropdown-item search-filter-item" href="#" data-value="{{ field }}">{{ label }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -39,13 +37,13 @@
                     <div class="form-group col-md-2">
                         <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
-                            <input type="text" class="form-control date" name="from" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.from'|trans([],'admin') }}" value="{{ app.request.get('from') }}">
+                            <input type="text" id="date-from" class="form-control date" name="from" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.from'|trans([],'admin') }}" value="{{ app.request.get('from') }}">
                         </div>
                     </div>
                     <div class="form-group col-md-2">
                         <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
-                            <input type="text" class="form-control date" name="till" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.to'|trans([],'admin') }}" value="{{ app.request.get('till') }}">
+                            <input type="text" id="date-till" class="form-control date" name="till" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.to'|trans([],'admin') }}" value="{{ app.request.get('till') }}">
                         </div>
                     </div>
                     {% set list = listPricingRule.load() %}
@@ -126,30 +124,16 @@
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}
-        $(document).ready(function() {
-            $("input.date").pickadate({
-                format: "dd.mm.yyyy"
-                , close: false
-                , firstDay: 1
-                , editable: true
-                , autoclose: true
-            }).on('change', function(){
-                $('input.date').close();
+            //datepicker
+            flatpickr(".date", {allowInput: true});
+
+            document.querySelectorAll('.search-filter-item').forEach(function(el){
+                el.addEventListener('click', function() {
+                    document.querySelector('#search-filter-label').innerHTML = this.text;
+                    document.querySelector('#search-query').setAttribute("value", this.getAttribute('data-value'));
+                });
             });
 
-
-            $('#search-filter .dropdown-menu li').on('click', function (e) {
-
-                $(this).closest( '.input-group-btn' )
-                    .find( '[data-bind="label"]' ).text( $(this).text() )
-                    .end()
-                    .children( '.dropdown-toggle' ).dropdown( 'toggle' );
-
-                $('#search-query').val( $(this).find('[data-value]').data('value') );
-
-                return false;
-            });
-        });
     {% do pimcore_head_script().captureEnd() %}
 {% endblock %}
 

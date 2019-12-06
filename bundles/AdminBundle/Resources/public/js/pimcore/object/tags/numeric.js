@@ -170,20 +170,6 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-
-        if (!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0))) {
-            return false;
-        } else if (!this.isRendered()) {
-            return true;
-        }
-
-        if (this.getValue()) {
-            return false;
-        }
-        return true;
-    },
-
     isDirty: function () {
         var dirty = false;
 

@@ -175,16 +175,26 @@ pimcore.notification.helper.deleteAll = function (callback) {
     });
 };
 
+pimcore.notification.helper.setLastUpdateTimestamp = function () {
+    this.lastUpdateTimestamp = parseInt(new Date().getTime() / 1000, 10);
+};
+pimcore.notification.helper.setLastUpdateTimestamp();
+
 pimcore.notification.helper.updateFromServer = function () {
     var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("notifications")) {
+    if (!document.hidden && user.isAllowed("notifications")) {
         Ext.Ajax.request({
-            url: "/admin/notification/find-last-unread?interval=" + 30,
+            url: "/admin/notification/find-last-unread",
+            params: {
+                lastUpdate: this.lastUpdateTimestamp
+            },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
                 pimcore.notification.helper.updateCount(data.unread);
                 pimcore.notification.helper.showNotifications(data.data);
             }
         });
+
+        pimcore.notification.helper.setLastUpdateTimestamp();
     }
 };

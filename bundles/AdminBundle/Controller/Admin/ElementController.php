@@ -91,6 +91,7 @@ class ElementController extends AdminController
         }
 
         if ($el) {
+            $subtype = null;
             if ($el instanceof Asset || $el instanceof Document) {
                 $subtype = $el->getType();
             } elseif ($el instanceof DataObject\Concrete) {
@@ -305,6 +306,7 @@ class ElementController extends AdminController
      */
     public function findUsagesAction(Request $request)
     {
+        $element = null;
         if ($request->get('id')) {
             $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
         } elseif ($request->get('path')) {
@@ -315,7 +317,7 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
 
-        if ($element) {
+        if ($element instanceof Element\AbstractElement) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
                 $item = Element\Service::getElementById($el['type'], $el['id']);

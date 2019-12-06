@@ -374,7 +374,7 @@ class Block extends Model\Document\Tag implements BlockInterface
      */
     public function getElements()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

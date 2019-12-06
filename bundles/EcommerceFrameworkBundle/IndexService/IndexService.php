@@ -330,4 +330,20 @@ class IndexService
 
         return $this->getDefaultWorker();
     }
+
+    /**
+     * @param WorkerInterface[] $tenantWorkers
+     *
+     * @return IndexService
+     */
+    public function setTenantWorkers(array $tenantWorkers): self
+    {
+        $tenantWorkerAssocList = [];
+        foreach ($tenantWorkers as $tenantWorker) {
+            $tenantWorkerAssocList[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
+        }
+        $this->tenantWorkers = $tenantWorkerAssocList;
+
+        return $this;
+    }
 }

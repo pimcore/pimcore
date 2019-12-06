@@ -114,7 +114,7 @@ class GD extends Adapter
             imagesavealpha($this->resource, true);
         }
 
-        if ($format == 'jpeg' || $format == 'webp') {
+        if ($functionName === 'imagejpeg' || $functionName === 'imagewebp') {
             $functionName($this->resource, $path, $quality);
         } else {
             $functionName($this->resource, $path);

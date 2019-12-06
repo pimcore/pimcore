@@ -48,10 +48,6 @@ pimcore.object.tags.encryptedField = Class.create(pimcore.object.tags.abstract, 
         return this.delegate.getCellEditValue();
     },
 
-    isInvalidMandatory: function () {
-        return this.delegate.isInvalidMandatory();
-    },
-
     getGridColumnEditor: function (field) {
 
         return pimcore.object.tags[field.layout.delegateDatatype].prototype.getGridColumnEditor(this.getDelegateGridConfig(field));
@@ -67,7 +63,7 @@ pimcore.object.tags.encryptedField = Class.create(pimcore.object.tags.abstract, 
             return this.component;
         }
     },
-    
+
     getLayoutShow: function () {
         if (this.delegate) {
             this.component = this.delegate.getLayoutShow();

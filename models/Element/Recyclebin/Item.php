@@ -23,6 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
@@ -138,7 +139,7 @@ class Item extends Model\AbstractModel
             $className = get_class($element);
             $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
-            $dummy->setPath($element->getPath());
+            $dummy->setParentId($element->getParentId() ?: 1);
             $dummy->setKey($element->getKey());
             if ($element instanceof DataObject\Concrete) {
                 $dummy->setOmitMandatoryCheck(true);
@@ -155,7 +156,12 @@ class Item extends Model\AbstractModel
         }
 
         try {
-            $this->restoreChilds($element);
+            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+            AbstractObject::disableDirtyDetection();
+
+            $this->doRecursiveRestore($element);
+
+            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         } catch (\Exception $e) {
             Logger::error($e);
             if ($dummy) {
@@ -163,6 +169,7 @@ class Item extends Model\AbstractModel
             }
             throw $e;
         }
+
         $this->delete();
     }
 
@@ -237,7 +244,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface $element
+     * @param Element\ElementInterface|Element\ElementDumpStateInterface $element
      */
     public function loadChildren(Element\ElementInterface $element)
     {
@@ -251,10 +258,10 @@ class Item extends Model\AbstractModel
             $element->getScheduledTasks();
         }
 
-        $element->_fulldump = true;
+        $element->setInDumpState(true);
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
-        // with the property _fulldump set, because this would cause major issues in wakeUp()
+        // with the dump state set to true, because this would cause major issues in wakeUp()
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
         if (method_exists($element, 'getChildren')) {
@@ -273,8 +280,10 @@ class Item extends Model\AbstractModel
 
     /**
      * @param Element\ElementInterface $element
+     *
+     * @throws \Exception
      */
-    public function restoreChilds(Element\ElementInterface $element)
+    protected function doRecursiveRestore(Element\ElementInterface $element)
     {
         $restoreBinaryData = function ($element, $scope) {
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
@@ -295,15 +304,19 @@ class Item extends Model\AbstractModel
         }
         $element->save();
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
-                // don't use the getter because this will return an empty array (variants are excluded by default)
-                $childs = $element->getObjectVar('o_childs');
+                $children = $element->getChildren([], true);
+            } elseif ($element instanceof Document) {
+                $children = $element->getChildren(true);
             } else {
-                $childs = $element->getChildren();
+                $children = $element->getChildren();
             }
-            foreach ($childs as $child) {
-                $this->restoreChilds($child);
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    $child->setParentId($element->getId());
+                    $this->doRecursiveRestore($child);
+                }
             }
         }
     }

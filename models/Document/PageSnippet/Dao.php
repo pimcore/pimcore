@@ -50,7 +50,7 @@ abstract class Dao extends Model\Document\Dao
             /** @var Document\Tag $element */
             $element = $loader->build($elementRaw['type']);
             $element->setName($elementRaw['name']);
-            $element->setDocumentId($this->model->getId());
+            $element->setDocument($this->model);
             $element->setDataFromResource($elementRaw['data']);
 
             $elements[$elementRaw['name']] = $element;
@@ -63,7 +63,7 @@ abstract class Dao extends Model\Document\Dao
     /**
      * Get available versions fot the object and return an array of them
      *
-     * @return array
+     * @return Version[]
      */
     public function getVersions()
     {

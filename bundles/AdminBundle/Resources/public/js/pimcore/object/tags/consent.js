@@ -129,10 +129,5 @@ pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
 
     getName:function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory:function () {
-        return false;
     }
-
 });

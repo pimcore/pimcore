@@ -140,6 +140,12 @@ pimcore.element.abstract = Class.create({
     },
 
     checkForChanges: function () {
+
+        // do not run when tab is not active
+        if(document.hidden) {
+            return;
+        }
+
         // tab was closed before first cycle
         // stop change detector again
         if(this.tab.destroyed) {

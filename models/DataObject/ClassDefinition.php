@@ -253,7 +253,7 @@ class ClassDefinition extends Model\AbstractModel
     public function rename($name)
     {
         $this->deletePhpClasses();
-        $this->updateClassNameInObjects($name);
+        $this->getDao()->updateClassNameInObjects($name);
 
         $this->setName($name);
         $this->save();

@@ -382,9 +382,9 @@ class Video extends Model\Document\Tag
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
                     if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
-                        $image = (string) $customPreviewAsset->getThumbnail($imageThumbnailConf);
+                        $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
-                        $image = (string) $asset->getImageThumbnail($imageThumbnailConf);
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
                     }
                 }
 
@@ -857,38 +857,27 @@ class Video extends Model\Document\Tag
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <style type="text/css">
-                #' . $uid . ' {
-                    position:relative;
-                    background:#555 url('. $thumbnail . ') center center no-repeat;
-                }
                 #' . $uid . ' .pimcore_tag_video_progress_status {
-                    font-size:18px;
-                    color:#555;
-                    font-family:Arial,Verdana,sans-serif;
-                    line-height:66px;
                     box-sizing:content-box;
                     background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
                     padding:20px;
                     border:1px solid #555;
-                    text-align:center;
                     box-shadow: 2px 2px 5px #333;
                     border-radius:20px;
                     margin: 0 20px 0 20px;
-                    top: ' . (($this->getHeight() - 106) / 2) . 'px;
-                    left: 50%;
-                    margin-left:-66px;
+                    top: calc(50% - 66px);
+                    left: calc(50% - 66px);
                     position:absolute;
                     opacity: 0.8;
                 }
             </style>
-            <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
+            <div class="pimcore_tag_video_progress" id="' . $uid . '">
+                <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
                 <div class="pimcore_tag_video_progress_status"></div>
             </div>
         </div>';
-
-        $options = $this->getOptions();
 
         return $code;
     }

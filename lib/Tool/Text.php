@@ -192,6 +192,8 @@ class Text
             $s = $html->find('a[pimcore_id],img[pimcore_id]');
 
             foreach ($s as $el) {
+                $type = null;
+
                 // image
                 if ($el->src) {
                     $type = 'asset';
@@ -206,7 +208,7 @@ class Text
                     }
                 }
 
-                $newId = $idMapping[$type][$el->attr['pimcore_id']];
+                $newId = $idMapping[$type][$el->attr['pimcore_id']] ?? null;
                 if ($newId) {
                     //update id
 
@@ -255,7 +257,7 @@ class Text
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*((?:pimcore_id|pimcore_type)+=\"[0-9]+\")[^>]*((?:pimcore_id|pimcore_type)+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+        preg_match_all("@\<(a|img)[^>]*(pimcore_id=\"[0-9]+\")[^>]*(pimcore_type=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
         \Pimcore\Cache\Runtime::set($hash, $matches);
 
@@ -446,7 +448,7 @@ class Text
             ]);
         }
 
-        if (!$encoding) {
+        if (empty($encoding)) {
             $encoding = 'UTF-8';
         }
 

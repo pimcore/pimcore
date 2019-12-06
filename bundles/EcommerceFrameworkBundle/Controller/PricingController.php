@@ -23,6 +23,7 @@ use Pimcore\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -81,10 +82,15 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
+     * get priceing rule details as json
+     *
      * @Route("/get", methods={"GET"})
      *
      * @param Request $request
-     * preisregel details als json ausgeben
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundHttpException
      */
     public function getAction(Request $request)
     {
@@ -118,13 +124,18 @@ class PricingController extends AdminController implements EventedControllerInte
 
             return $this->adminJson($json);
         }
+
+        throw $this->createNotFoundException('Rule not found');
     }
 
     /**
+     * add new rule
+     *
      * @Route("/add", methods={"POST"})
      *
      * @param Request $request
-     * add new rule
+     *
+     * @return JsonResponse
      */
     public function addAction(Request $request)
     {
@@ -151,10 +162,13 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
+     * delete exiting rule
+     *
      * @Route("/delete", methods={"DELETE"})
      *
      * @param Request $request
-     * delete exiting rule
+     *
+     * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
@@ -178,10 +192,13 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
+     * save rule config
+     *
      * @Route("/save", methods={"PUT"})
      *
      * @param Request $request
-     * save rule config
+     *
+     * @return JsonResponse
      */
     public function saveAction(Request $request)
     {
@@ -272,6 +289,8 @@ class PricingController extends AdminController implements EventedControllerInte
      * @Route("/save-order", methods={"PUT"})
      *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function saveOrderAction(Request $request)
     {

@@ -227,6 +227,22 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 menu: this.getMetaInfoMenuItems()
             });
 
+            buttons.push({
+                tooltip: t("search_and_move"),
+                iconCls: "pimcore_material_icon_download_zip pimcore_material_icon",
+                scale: "medium",
+                handler: pimcore.helpers.searchAndMove.bind(this, this.data.general.o_id,
+                    function () {
+                        if (this.search.grid) {
+                            this.search.grid.getStore().reload();
+                        } else {
+                            this.reload();
+                        }
+                        //refresh complete object tree as moved object(s) source is unknown
+                        pimcore.elementservice.refreshRootNodeAllTrees("object");
+                    }.bind(this), "object")
+            });
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',

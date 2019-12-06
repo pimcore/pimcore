@@ -34,6 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $sanityCheck = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($sanityCheck as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('sanitycheck'))) {

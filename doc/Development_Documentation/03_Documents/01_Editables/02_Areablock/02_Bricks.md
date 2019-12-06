@@ -368,4 +368,4 @@ the compatibility they still need to be implemented the Pimcore 4 way in `websit
 
 ## Examples
 
-You can find many examples in the [demo / quick start package](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/master/src/AppBundle/Document/Areabrick).

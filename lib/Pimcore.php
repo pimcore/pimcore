@@ -27,12 +27,12 @@ class Pimcore
     /**
      * @var bool|null
      */
-    protected static $debugMode = null;
+    protected static $debugMode;
 
     /**
      * @var bool|null
      */
-    protected static $devMode = null;
+    protected static $devMode;
 
     /**
      * @var bool
@@ -48,14 +48,6 @@ class Pimcore
      * @var \Composer\Autoload\ClassLoader
      */
     private static $autoloader;
-
-    public static function initConfiguration()
-    {
-        // custom error logging when debug flag is set
-        if (self::inDebugMode()) {
-            error_reporting(E_ALL & ~E_NOTICE);
-        }
-    }
 
     /**
      * @return bool
@@ -164,7 +156,7 @@ class Pimcore
     }
 
     /**
-     * @return object|\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
      */
     public static function getEventDispatcher()
     {
@@ -269,6 +261,10 @@ class Pimcore
     {
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
+
+        if (self::getContainer() === null) {
+            return;
+        }
 
         // Check if this is a cache warming run and if this runs on an installed instance. If this is a cache warmup
         // we can't use self::isInstalled() as it will refer to the wrong caching dir.

@@ -331,6 +331,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         // delegate commit order to commit order processor
+        $order = null;
         try {
             $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         } catch (\Exception $e) {

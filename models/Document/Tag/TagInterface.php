@@ -87,4 +87,9 @@ interface TagInterface
      * @return array
      */
     public function getForWebserviceExport($document = null, $params = []);
+
+    /**
+     * @return bool
+     */
+    public function isEmpty();
 }

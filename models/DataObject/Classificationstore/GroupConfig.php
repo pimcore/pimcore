@@ -173,6 +173,8 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
+     * @return self
      */
     public function setName($name)
     {

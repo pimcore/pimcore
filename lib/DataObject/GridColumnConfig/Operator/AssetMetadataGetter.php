@@ -52,6 +52,8 @@ class AssetMetadataGetter extends AbstractOperator
                     $childValues = [$childValues];
                 }
 
+                $newValue = null;
+
                 if (is_array($childValues)) {
                     foreach ($childValues as $value) {
                         if (is_array($value)) {
@@ -65,8 +67,6 @@ class AssetMetadataGetter extends AbstractOperator
                             $newValue = $this->getMetadata($value);
                         }
                     }
-                } else {
-                    $newValue = null;
                 }
 
                 $newChildsResult[] = $newValue;

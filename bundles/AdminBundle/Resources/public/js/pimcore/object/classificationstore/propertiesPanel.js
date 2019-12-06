@@ -275,8 +275,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.store.load();
-
         this.layout.removeAll();
         this.layout.add(this.grid);
         this.layout.updateLayout();

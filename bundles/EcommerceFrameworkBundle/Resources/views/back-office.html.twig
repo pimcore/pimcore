@@ -12,8 +12,7 @@
             {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
             {% do pimcore_head_link().appendStylesheet('https://use.fontawesome.com/releases/v5.9.0/css/all.css') %}
             {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/back-office.css')) %}
-            {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap.bundle.min.js')) %}
-            {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/jquery-3.4.1.min.js')) %}
+            {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
 
 
         {%- endspaceless %}
@@ -64,27 +63,45 @@
         </div>
     {% endblock %}
 
+
+    <!-- Modal / Popup -->
+    <div class="modal" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div id="modal-content" class="modal-content"></div>
+        </div>
+    </div>
+
     {# output scripts added before #}
     {% block scripts deferred %}
         {{ pimcore_head_script() }}
     {% endblock %}
 
-    <!-- Modal / Popup -->
-    <div class="modal" id="popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            </div>
-        </div>
-    </div>
-
     <script>
         var pimcore = parent.pimcore;
-        $('.popup-modal').on('click', function(e){
+        var popups = document.getElementsByClassName('popup-modal');
+        for (var i = 0; i < popups.length; i++) {
+            var element = popups[i];
 
-            console.log($(this).attr('href'));
-            e.preventDefault();
-            $('#popup').modal('show').find('.modal-content').load($(this).attr('href'));
-        });
+            element.onclick = function (e) {
+                e.preventDefault();
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var actionModal = document.getElementById('actionModal');
+                        var modal = new Modal(actionModal,
+                            {
+                                content: '<div id="modal-content" class="modal-content">' + this.response + '</div>', // sets modal content
+                            });
+
+                        modal.show();
+                    }
+                };
+
+                xhttp.open("GET", (this).getAttribute('href'), true);
+                xhttp.send();
+            };
+
+        }
     </script>
 
     </body>

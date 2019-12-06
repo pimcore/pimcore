@@ -659,10 +659,23 @@ pimcore.object.classes.klass = Class.create({
             return "Pimcore\\Model\\DataObject\\" + ucfirst(name);
         };
 
+        var iconStore = new Ext.data.ArrayStore({
+            proxy: {
+                url: '/admin/class/get-icons',
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                },
+                extraParams: {
+                    classId: this.getId()
+                }
+            },
+            fields: ["text", "value"]
+        });
         var iconField = new Ext.form.field.Text({
-            fieldLabel: t("icon"),
+            id: "iconfield-" + this.getId(),
             name: "icon",
-            width: 600,
+            width: 396,
             value: this.data.icon,
             listeners: {
                 "afterrender": function (el) {
@@ -759,15 +772,32 @@ pimcore.object.classes.klass = Class.create({
                 {
                     xtype: "fieldcontainer",
                     layout: "hbox",
+                    fieldLabel: t("icon"),
                     defaults: {
                         labelWidth: 200
                     },
                     items: [
-                        iconField, {
+                        iconField,
+                        {
+                            xtype: "combobox",
+                            store: iconStore,
+                            width: 50,
+                            valueField: 'value',
+                            displayField: 'text',
+                            listeners: {
+                                select: function (ele, rec, idx) {
+                                    var icon = ele.container.down("#iconfield-" + this.getId());
+                                    var newValue = rec.data.value;
+                                    icon.component.setValue(newValue);
+                                    icon.component.inputEl.applyStyles("background:url(" + newValue + ") right center no-repeat;");
+                                    return newValue;
+                                }.bind(this)
+                            }
+                        },
+                        {
                             iconCls: "pimcore_icon_refresh",
                             xtype: "button",
                             tooltip: t("refresh"),
-                            style: "margin-right: 5px;",
                             handler: function(iconField) {
                                 iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
                             }.bind(this, iconField)

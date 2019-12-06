@@ -45,6 +45,9 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/search-data-objects", methods={"GET"})
      */
     public function searchDataObjectsAction(Request $request, DataObjects $service)
@@ -66,6 +69,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     *
      * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)

@@ -536,9 +536,9 @@ class Tool
 
             foreach ($confArray['views'] as $tmp) {
                 if (isset($tmp['name'])) {
-                    $tmp['showroot'] = (bool) $tmp['showroot'];
+                    $tmp['showroot'] = !empty($tmp['showroot']);
 
-                    if ((bool) $tmp['hidden']) {
+                    if (!empty($tmp['hidden'])) {
                         continue;
                     }
 
