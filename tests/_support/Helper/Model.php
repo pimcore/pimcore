@@ -182,7 +182,7 @@ class Model extends AbstractDefinitionHelper
         $this->createUnittestClass('class-import.json');
         $unittestClass = $this->setupUnittestClass('unittest', 'class-import.json');
 
-        $allFieldsClass = $this->setupUnittestClass('allfields', 'class-allfields.json');
+//        $allFieldsClass = $this->setupUnittestClass('allfields', 'class-allfields.json');
 
         $cm->setupClass('inheritance', 'inheritance.json');
 
