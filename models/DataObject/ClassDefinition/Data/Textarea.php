@@ -306,6 +306,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function isFilterable(): bool
     {
-        return false;
+        return true;
     }
 }

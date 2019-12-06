@@ -397,6 +397,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     public function isFilterable(): bool
     {
-        return false;
+        return true;
     }
 }
