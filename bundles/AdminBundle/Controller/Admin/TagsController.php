@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Pimcore\Event\TagEvents;
+use Pimcore\Event\Model\TagEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -208,8 +210,10 @@ class TagsController extends AdminController
 
         $tag = Tag::getById($tagId);
         if ($tag) {
+            $event = new TagEvent($tag, array('assignmentElementId' => $assginmentCId, 'assignmentElementType' => $assginmentCType));
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD_TO_ELEMENT, $event);
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
-
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD_TO_ELEMENT, $event);
             return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
             return $this->adminJson(['success' => false]);
@@ -231,8 +235,10 @@ class TagsController extends AdminController
 
         $tag = Tag::getById($tagId);
         if ($tag) {
+            $event = new TagEvent($tag, array('assignmentElementId' => $assginmentCId, 'assignmentElementType' => $assginmentCType));
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_REMOVE_FROM_ELEMENT, $event);
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
-
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_REMOVE_FROM_ELEMENT, $event);
             return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
             return $this->adminJson(['success' => false]);
