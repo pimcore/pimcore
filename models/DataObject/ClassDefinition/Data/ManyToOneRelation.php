@@ -760,6 +760,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             ];
         }
 
+        if(!isset($data['id'], $data['type']))
+        {
+            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+        }
+
         if($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
             return;

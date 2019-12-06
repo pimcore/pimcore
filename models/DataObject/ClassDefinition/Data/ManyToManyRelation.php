@@ -1078,6 +1078,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             ];
         }
 
+        if(!isset($data['id'], $data['type']))
+        {
+            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+        }
+
         if($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data['type'].'|'.$data['id'].',%');
             return;
