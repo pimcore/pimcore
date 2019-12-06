@@ -957,6 +957,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
     public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
         if($data instanceof DataObject\Concrete) {
             $data = $data->getId();
