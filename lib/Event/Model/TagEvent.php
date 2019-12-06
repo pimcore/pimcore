@@ -62,7 +62,7 @@ class TagEvent extends Event
     }
 
     /**
-     * @return Array
+     * @return array
      */
     public function getArguments()
     {
