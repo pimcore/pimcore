@@ -635,7 +635,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public static function __callStatic($method, $arguments)
     {
-
         // check for custom static getters like DataObject::getByMyfield()
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
         $tmpObj = new static();

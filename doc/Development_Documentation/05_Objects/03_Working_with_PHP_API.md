@@ -96,6 +96,12 @@ $entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]
 
 //if necessary you can of course custom build your query
 $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure that you quote variables in conditions!
+
+// some data types support direct filtering
+$entries->filterByName('Jan'); // filters for name='Jan'
+$entries->filterByAge(18, '>='); // filters for age >= 18
+$entries->filterByCity(['New York', 'Chicago'], 'IN (?)'); // filters for city IN ('New York','Chicago')
+
 foreach ($entries as $entry) {
     $entry->getName();
 }
@@ -238,6 +244,9 @@ foreach ($list as $city) {
 
 ```php
 $list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limit | array($limit, $offset, $unpublished));
+
+// or
+$list = DataObject\News::getByFieldName($value, $locale, $limit | array($limit, $offset, $unpublished));
 ```
 
 
@@ -250,18 +259,28 @@ use \Pimcore\Model\DataObject;
 
 // get a list of cities in Austria by localized field using default locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich");
+// or
+$list = DataObject\City::getByCountry("Österreich");
  
 // get a city by localized name using default locale
 $city = DataObject\City::getByLocalizedfields("city", "Wels", null, 1);
+// or
+$city = DataObject\City::getByCity("Wels", null, 1);
  
 // get the first 10 cities in Austria by localized field using default locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich", null, 10);
+// or
+$list = DataObject\City::getByCountry("Österreich", null, 10);
   
 // get the first 10 cities in Austria by localized field "de" locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich", "de", 10);
+// or
+$list = DataObject\City::getByCountry("Österreich", "de", 10);
  
 //get a country by localized name in english
 $country = DataObject\Country::getByLocalizedfields("name", "Austria", "en", 1);
+// or
+$country = DataObject\Country::getByName("Austria", "en", 1);
 ```
 
 
