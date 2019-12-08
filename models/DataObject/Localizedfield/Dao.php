@@ -703,7 +703,6 @@ QUERY;
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
-              INDEX `ooo_id` (`ooo_id`),
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`)
@@ -715,7 +714,6 @@ QUERY;
               `ooo_id` int(11) NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
-              INDEX `ooo_id` (`ooo_id`),
               INDEX `language` (`language`)
             ) DEFAULT CHARSET=utf8mb4;"
             );
@@ -777,7 +775,6 @@ QUERY;
                       `ooo_id` int(11) NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
-                      INDEX `ooo_id` (`ooo_id`),
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
