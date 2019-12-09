@@ -15,11 +15,21 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
  */
 class Version20191208175348 extends AbstractPimcoreMigration
 {
+    private $tablesToProcess = [
+        '%_localized_%' => 'ooo_id',
+        'object_relations_%' => 'src_id',
+        'object_metadata_%' => 'o_id',
+        'object_classificationstore_data_%' => 'groupId',
+        'object_collection_%' => 'o_id',
+    ];
+
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
+        $db = \Pimcore\Db::get();
+
         $objectsTable = $schema->getTable('objects');
         if($objectsTable->hasIndex('path')) {
             $objectsTable->dropIndex('path');
@@ -140,63 +150,18 @@ class Version20191208175348 extends AbstractPimcoreMigration
             $users_workspaces_objectTable->dropIndex('cid');
         }
 
-        foreach((new Listing)->load() as $classDefinition) {
-            try {
-                $table = $schema->getTable('object_metadata_'.$classDefinition->getId());
-                if ($table->hasIndex('o_id')) {
-                    $table->dropIndex('o_id');
-                }
-            } catch(SchemaException $e) {}
-
-            try {
-                $table = $schema->getTable('object_relations_'.$classDefinition->getId());
-                if ($table->hasIndex('src_id')) {
-                    $table->dropIndex('src_id');
-                }
-            } catch(SchemaException $e) {}
-
-            $localizedFieldsDefinition = $classDefinition->getFieldDefinition('localizedfields');
-            if($localizedFieldsDefinition instanceof ClassDefinition\Data\Localizedfields) {
-                try {
-                    $table = $schema->getTable('object_localized_query_'.$classDefinition->getId());
-                    if ($table->hasIndex('ooo_id')) {
-                        $table->dropIndex('ooo_id');
+        foreach($this->tablesToProcess as $pattern => $indexToRemove) {
+            $tableNames = $db->fetchCol(sprintf("SHOW TABLES LIKE '%s';", $pattern));
+            foreach ($tableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    $table = $schema->getTable($tableName);
+                    if ($table->hasIndex($indexToRemove)) {
+                        $table->dropIndex($indexToRemove);
                     }
-                } catch(SchemaException $e) {}
-
-                try {
-                    $table = $schema->getTable('object_localized_data_'.$classDefinition->getId());
-                    if ($table->hasIndex('ooo_id')) {
-                        $table->dropIndex('ooo_id');
-                    }
-                } catch(SchemaException $e) {}
-
-                foreach((new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing())->load() as $brickListing) {
-                    try {
-                        $table = $schema->getTable('object_brick_localized_query_'.$brickListing->getKey().'_'.$classDefinition->getId());
-                        if ($table->hasIndex('ooo_id')) {
-                            $table->dropIndex('ooo_id');
-                        }
-                    } catch(SchemaException $e) {}
-
-                    try {
-                        $table = $schema->getTable('object_brick_localized_'.$brickListing->getKey().'_'.$classDefinition->getId());
-                        if ($table->hasIndex('ooo_id')) {
-                            $table->dropIndex('ooo_id');
-                        }
-                    } catch(SchemaException $e) {}
                 }
-            }
-
-            foreach((new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing())->load() as $fieldCollectionDefinition) {
-                try {
-                    $table = $schema->getTable($fieldCollectionDefinition->getDao()->getTableName($classDefinition));
-                    if ($table->hasIndex('o_id')) {
-                        $table->dropIndex('o_id');
-                    }
-                } catch(SchemaException $e) {}
             }
         }
+
     }
 
     /**
@@ -204,6 +169,8 @@ class Version20191208175348 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
+        $db = \Pimcore\Db::get();
+
         $objectsTable = $schema->getTable('objects');
         if(!$objectsTable->hasIndex('path')) {
             $objectsTable->addIndex(['o_path'], 'path');
@@ -319,61 +286,15 @@ class Version20191208175348 extends AbstractPimcoreMigration
             $users_workspaces_objectTable->addIndex(['cid'], 'cid');
         }
 
-        foreach((new Listing)->load() as $classDefinition) {
-            try {
-                $table = $schema->getTable('object_metadata_'.$classDefinition->getId());
-                if (!$table->hasIndex('o_id')) {
-                    $table->addIndex(['o_id'], 'o_id');
-                }
-            } catch(SchemaException $e) {}
-
-            try {
-                $table = $schema->getTable('object_relations_'.$classDefinition->getId());
-                if (!$table->hasIndex('src_id')) {
-                    $table->addIndex(['src_id'], 'src_id');
-                }
-            } catch(SchemaException $e) {}
-
-            $localizedFieldsDefinition = $classDefinition->getFieldDefinition('localizedfields');
-            if($localizedFieldsDefinition instanceof ClassDefinition\Data\Localizedfields) {
-                try {
-                    $table = $schema->getTable('object_localized_query_'.$classDefinition->getId());
-                    if (!$table->hasIndex('ooo_id')) {
-                        $table->addIndex(['ooo_id'], 'ooo_id');
+        foreach($this->tablesToProcess as $pattern => $indexToAdd) {
+            $tableNames = $db->fetchCol(sprintf("SHOW TABLES LIKE '%s';", $pattern));
+            foreach ($tableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    $table = $schema->getTable($tableName);
+                    if (!$table->hasIndex($indexToAdd) && $table->hasColumn($indexToAdd)) {
+                        $table->addIndex([$indexToAdd], $indexToAdd);
                     }
-                } catch(SchemaException $e) {}
-
-                try {
-                    $table = $schema->getTable('object_localized_data_'.$classDefinition->getId());
-                    if (!$table->hasIndex('ooo_id')) {
-                        $table->addIndex(['ooo_id'], 'ooo_id');
-                    }
-                } catch(SchemaException $e) {}
-
-                foreach((new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing())->load() as $brickListing) {
-                    try {
-                        $table = $schema->getTable('object_brick_localized_query_'.$brickListing->getKey().'_'.$classDefinition->getId());
-                        if (!$table->hasIndex('ooo_id')) {
-                            $table->addIndex(['ooo_id'], 'ooo_id');
-                        }
-                    } catch(SchemaException $e) {}
-
-                    try {
-                        $table = $schema->getTable('object_brick_localized_'.$brickListing->getKey().'_'.$classDefinition->getId());
-                        if (!$table->hasIndex('ooo_id')) {
-                            $table->addIndex(['ooo_id'], 'ooo_id');
-                        }
-                    } catch(SchemaException $e) {}
                 }
-            }
-
-            foreach((new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing())->load() as $fieldCollectionDefinition) {
-                try {
-                    $table = $schema->getTable($fieldCollectionDefinition->getDao()->getTableName($classDefinition));
-                    if (!$table->hasIndex('o_id')) {
-                        $table->addIndex(['o_id'], 'o_id');
-                    }
-                } catch(SchemaException $e) {}
             }
         }
     }
