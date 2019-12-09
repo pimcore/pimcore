@@ -121,8 +121,8 @@ class Version20191208175348 extends AbstractPimcoreMigration
         }
 
         $tree_locksTable = $schema->getTable('tree_locks');
-        if($tree_locksTable->hasIndex('cid')) {
-            $tree_locksTable->dropIndex('cid');
+        if($tree_locksTable->hasIndex('id')) {
+            $tree_locksTable->dropIndex('id');
         }
 
         $users_workspaces_assetTable = $schema->getTable('users_workspaces_asset');
