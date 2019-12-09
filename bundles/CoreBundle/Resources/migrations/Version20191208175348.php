@@ -140,8 +140,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
             $users_workspaces_objectTable->dropIndex('cid');
         }
 
-        /** @var ClassDefinition $classDefinition */
-        foreach(new Listing as $classDefinition) {
+        foreach((new Listing)->load() as $classDefinition) {
             try {
                 $table = $schema->getTable('object_metadata_'.$classDefinition->getId());
                 if ($table->hasIndex('o_id')) {
@@ -165,8 +164,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
                     }
                 } catch(SchemaException $e) {}
 
-                /** @var \Pimcore\Model\DataObject\Objectbrick\Definition $brickListing */
-                foreach(new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing() as $brickListing) {
+                foreach((new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing())->load() as $brickListing) {
                     try {
                         $table = $schema->getTable('object_brick_localized_query_'.$brickListing->getKey().'_'.$classDefinition->getId());
                         if ($table->hasIndex('ooo_id')) {
@@ -183,8 +181,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
                 }
             }
 
-            /** @var Definition $fieldCollectionDefinition */
-            foreach(new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing() as $fieldCollectionDefinition) {
+            foreach((new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing())->load() as $fieldCollectionDefinition) {
                 try {
                     $table = $schema->getTable($fieldCollectionDefinition->getDao()->getTableName($classDefinition));
                     if ($table->hasIndex('o_id')) {
@@ -315,8 +312,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
             $users_workspaces_objectTable->addIndex(['cid'], 'cid');
         }
 
-        /** @var ClassDefinition $classDefinition */
-        foreach(new Listing as $classDefinition) {
+        foreach((new Listing)->load() as $classDefinition) {
             try {
                 $table = $schema->getTable('object_metadata_'.$classDefinition->getId());
                 if (!$table->hasIndex('o_id')) {
@@ -340,8 +336,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
                     }
                 } catch(SchemaException $e) {}
 
-                /** @var \Pimcore\Model\DataObject\Objectbrick\Definition $brickListing */
-                foreach(new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing() as $brickListing) {
+                foreach((new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing())->load() as $brickListing) {
                     try {
                         $table = $schema->getTable('object_brick_localized_query_'.$brickListing->getKey().'_'.$classDefinition->getId());
                         if (!$table->hasIndex('ooo_id')) {
@@ -358,8 +353,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
                 }
             }
 
-            /** @var Definition $fieldCollectionDefinition */
-            foreach(new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing() as $fieldCollectionDefinition) {
+            foreach((new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing())->load() as $fieldCollectionDefinition) {
                 try {
                     $table = $schema->getTable($fieldCollectionDefinition->getDao()->getTableName($classDefinition));
                     if (!$table->hasIndex('o_id')) {
