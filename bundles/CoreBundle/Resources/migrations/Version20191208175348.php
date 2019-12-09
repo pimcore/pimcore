@@ -148,6 +148,13 @@ class Version20191208175348 extends AbstractPimcoreMigration
                 }
             } catch(SchemaException $e) {}
 
+            try {
+                $table = $schema->getTable('object_relations_'.$classDefinition->getId());
+                if ($table->hasIndex('src_id')) {
+                    $table->dropIndex('src_id');
+                }
+            } catch(SchemaException $e) {}
+
             $localizedFieldsDefinition = $classDefinition->getFieldDefinition('localizedfields');
             if($localizedFieldsDefinition instanceof ClassDefinition\Data\Localizedfields) {
                 try {
@@ -258,8 +265,8 @@ class Version20191208175348 extends AbstractPimcoreMigration
         }
 
         $importconfig_sharesTable = $schema->getTable('importconfig_shares');
-        if(!$importconfig_sharesTable->hasIndex('data.sharedRoleIds')) {
-            $importconfig_sharesTable->addIndex(['importConfigId'], 'data.sharedRoleIds');
+        if(!$importconfig_sharesTable->hasIndex('sharedRoleIds')) {
+            $importconfig_sharesTable->addIndex(['importConfigId'], 'sharedRoleIds');
         }
 
         $propertiesTable = $schema->getTable('properties');
@@ -317,6 +324,13 @@ class Version20191208175348 extends AbstractPimcoreMigration
                 $table = $schema->getTable('object_metadata_'.$classDefinition->getId());
                 if (!$table->hasIndex('o_id')) {
                     $table->addIndex(['o_id'], 'o_id');
+                }
+            } catch(SchemaException $e) {}
+
+            try {
+                $table = $schema->getTable('object_relations_'.$classDefinition->getId());
+                if (!$table->hasIndex('src_id')) {
+                    $table->addIndex(['src_id'], 'src_id');
                 }
             } catch(SchemaException $e) {}
 
