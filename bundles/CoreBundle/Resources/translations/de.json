@@ -253,7 +253,7 @@
     "settings": "Einstellungen",
     "properties": "Eigenschaften",
     "versions": "Versionen",
-    "add": "Addieren",
+    "add": "Hinzufügen",
     "date": "Datum",
     "user": "Benutzer",
     "note": "Anmerkung",
@@ -917,5 +917,6 @@
     "asset_export_warning": "Bitte beachten Sie, dass der Export einige Felder (z. B. Vorschau, Größe) nicht unterstützt. Klicken Sie auf OK, um mit dem Export fortzufahren.",
     "share_via_notifications": "Über Benachrichtigungen teilen",
     "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Metadaten können nicht gespeichert werden!</b><br />Versuchen Sie die Metadaten in Asset zu bearbeiten.",
-    "email_log_forward": "E-Mail weiterleiten"
+    "email_log_forward": "E-Mail weiterleiten",
+    "sum": "Addieren"
 }
