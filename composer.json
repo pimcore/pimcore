@@ -92,7 +92,7 @@
     "vrana/jush": "~2.0.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
-    "scheb/two-factor-bundle": "^3.8"
+    "scheb/two-factor-bundle": "^3.26"
   },
   "conflict": {
     "monolog/monolog": ">=2"
