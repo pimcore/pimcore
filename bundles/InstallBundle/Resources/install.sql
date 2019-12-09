@@ -468,7 +468,6 @@ CREATE TABLE `search_backend_data` (
   `data` longtext,
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
-  KEY `id` (`id`),
   KEY `fullpath` (`fullpath`),
   KEY `maintype` (`maintype`),
   KEY `type` (`type`),
