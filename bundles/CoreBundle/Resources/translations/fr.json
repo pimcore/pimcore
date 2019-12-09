@@ -917,5 +917,6 @@
     "asset_export_warning": "Veuillez noter que l’exportation ne prend pas en charge certains champs (par exemple, aperçu, taille). Appuyez sur OK pour continuer l'exportation.",
     "share_via_notifications": "Partager via des notifications",
     "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Impossible de sauvegarder les métadonnées !</ b><br />Essayez de modifier les métadonnées dans Asset.",
-    "email_log_forward": "E-mail transféré"
+    "email_log_forward": "E-mail transféré",
+    "sum": "Sum"
 }
