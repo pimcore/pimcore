@@ -110,6 +110,31 @@ class Version20191208175348 extends AbstractPimcoreMigration
         if($translations_adminTable->hasIndex('key')) {
             $translations_adminTable->dropIndex('key');
         }
+
+        $translations_websiteTable = $schema->getTable('translations_website');
+        if($translations_websiteTable->hasIndex('key')) {
+            $translations_websiteTable->dropIndex('key');
+        }
+
+        $tree_locksTable = $schema->getTable('tree_locks');
+        if($tree_locksTable->hasIndex('id')) {
+            $tree_locksTable->dropIndex('id');
+        }
+
+        $users_workspaces_assetTable = $schema->getTable('users_workspaces_asset');
+        if($users_workspaces_assetTable->hasIndex('cid')) {
+            $users_workspaces_assetTable->dropIndex('cid');
+        }
+
+        $users_workspaces_documentTable = $schema->getTable('users_workspaces_document');
+        if($users_workspaces_documentTable->hasIndex('cid')) {
+            $users_workspaces_documentTable->dropIndex('cid');
+        }
+
+        $users_workspaces_objectTable = $schema->getTable('users_workspaces_object');
+        if($users_workspaces_objectTable->hasIndex('cid')) {
+            $users_workspaces_objectTable->dropIndex('cid');
+        }
     }
 
     /**
@@ -205,6 +230,31 @@ class Version20191208175348 extends AbstractPimcoreMigration
         $translations_adminTable = $schema->getTable('translations_admin');
         if(!$translations_adminTable->hasIndex('key')) {
             $translations_adminTable->addIndex(['key'], 'key');
+        }
+
+        $translations_websiteTable = $schema->getTable('translations_website');
+        if(!$translations_websiteTable->hasIndex('key')) {
+            $translations_websiteTable->addIndex(['key'], 'key');
+        }
+
+        $tree_locksTable = $schema->getTable('tree_locks');
+        if(!$tree_locksTable->hasIndex('id')) {
+            $tree_locksTable->addIndex(['id'], 'id');
+        }
+
+        $users_workspaces_assetTable = $schema->getTable('users_workspaces_asset');
+        if(!$users_workspaces_assetTable->hasIndex('cid')) {
+            $users_workspaces_assetTable->addIndex(['cid'], 'cid');
+        }
+
+        $users_workspaces_documentTable = $schema->getTable('users_workspaces_document');
+        if(!$users_workspaces_documentTable->hasIndex('cid')) {
+            $users_workspaces_documentTable->addIndex(['cid'], 'cid');
+        }
+
+        $users_workspaces_objectTable = $schema->getTable('users_workspaces_object');
+        if(!$users_workspaces_objectTable->hasIndex('cid')) {
+            $users_workspaces_objectTable->addIndex(['cid'], 'cid');
         }
     }
 }
