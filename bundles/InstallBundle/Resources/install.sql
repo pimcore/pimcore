@@ -624,7 +624,6 @@ CREATE TABLE `tree_locks` (
   `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
   `locked` enum('self','propagate') default NULL,
   PRIMARY KEY (`id`,`type`),
-  KEY `id` (`id`),
   KEY `type` (`type`),
   KEY `locked` (`locked`)
 ) DEFAULT CHARSET=utf8mb4;
