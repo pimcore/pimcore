@@ -87,7 +87,7 @@ class Version20191208175348 extends AbstractPimcoreMigration
 
         $importconfig_sharesTable = $schema->getTable('importconfig_shares');
         if($importconfig_sharesTable->hasIndex('data.sharedRoleIds')) {
-            $importconfig_sharesTable->dropIndex('data.sharedRoleIds');
+            $this->addSql('DROP INDEX `data.sharedRoleIds` ON importconfig_shares');
         }
 
         $propertiesTable = $schema->getTable('properties');
