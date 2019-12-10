@@ -450,6 +450,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
 
+            $addedRelationIds = [];
             foreach ($data as $reverseObject) {
                 if ($reverseObject instanceof DataObject\Concrete) {
                     $return[] = [
@@ -460,6 +461,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     ];
 
                     if(!in_array($reverseObject->getId(), $oldRelations)) {
+                        $addedRelationIds[] = $reverseObject->getId();
                         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($reverseObject));
 
                         $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
@@ -482,12 +484,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                 $counter++;
             }
 
-            if(count($newRelationIds) > 0) {
-                $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(IFNULL(`'.$this->getOwnerFieldName().'`, \',\'), \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $newRelationIds).')');
+            if(count($addedRelationIds) > 0) {
+                $db->executeUpdate('UPDATE object_query_'.$this->getOwnerClassId().' SET `'.$this->getOwnerFieldName().'`=CONCAT(IFNULL(`'.$this->getOwnerFieldName().'`, \',\'), \''.$object->getId().',\') WHERE oo_id IN ('.implode(',', $addedRelationIds).')');
 
                 $reverseClassDefinition = DataObject\ClassDefinition::getById($this->getOwnerClassId());
                 if($reverseClassDefinition->getAllowInherit() && $inheritanceHelper !== null) {
-                    foreach($newRelationIds as $newRelationId) {
+                    foreach($addedRelationIds as $newRelationId) {
                         $inheritanceHelper->doUpdate($newRelationId);
                     }
                 }
