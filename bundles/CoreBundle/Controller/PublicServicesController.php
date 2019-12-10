@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 
 class PublicServicesController extends Controller
 {
@@ -133,6 +134,10 @@ class PublicServicesController extends Controller
                     $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
                     return new BinaryFileResponse($thumbnailFile, 200, [
+                        // in certain cases where an event listener starts a session (e.g. when there's a firewall
+                        // configured for the entire site /*) the session event listener shouldn't modify the
+                        // cache control headers of this response
+                        AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                         'Content-Type' => $imageThumbnail->getMimeType()
