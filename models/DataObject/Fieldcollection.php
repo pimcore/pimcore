@@ -174,15 +174,31 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @param $index
-     *
-     * @return
-     *
-     * @todo: no return type definied here
+     * @return Fieldcollection\Data\AbstractData|void
      */
     public function get($index)
     {
         if ($this->items[$index]) {
             return $this->items[$index];
+        }
+    }
+
+    /**
+     * @param $index
+     * @return Fieldcollection\Data\AbstractData|void
+     */
+    public function getByOriginalIndex($index) {
+        if ($index === null) {
+            return;
+        }
+
+        if (is_array($this->items)) {
+            /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
+            foreach ($this->items as $item) {
+                if ($item->getIndex() === $index) {
+                    return $item;
+                }
+            }
         }
     }
 
@@ -260,7 +276,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         /**
          * @var Model\DataObject\Fieldcollection\Data\AbstractData $item
          */
-        $item = $this->get($index);
+
+        // lazy loading existing can be data if the item already had an index
+        $item = $this->getByOriginalIndex($index);
         if ($item && !$item->isLazyKeyLoaded($field)) {
             if ($type == $item->getType()) {
                 $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
