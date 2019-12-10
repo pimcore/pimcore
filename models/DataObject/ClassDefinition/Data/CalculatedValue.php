@@ -303,7 +303,13 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
 
-        $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
+        if($class instanceof DataObject\Objectbrick\Definition) {
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
+        } else {
+            $code .= "\t" . '$object = $this;'  . "\n";
+        }
+
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
@@ -342,10 +348,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $ownerType = 'objectbrick';
             $ownerName = $class->getClassDefinitions()[0]['fieldname']; // todo this is not really correct. Actually we need to find out the name of the brick container (an instance of \Pimcore\Model\DataObject\Objectbrick). This must happen during runtime as one brick can be used in multiple brick containers.
             $index = $class->getKey();
+
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
         } else {
             $ownerType = 'localizedfield';
             $ownerName = 'localizedfields';
             $index = null;
+
+            $code .= "\t" . '$object = $this;'  . "\n";
         }
 
         if($class instanceof DataObject\Fieldcollection\Definition) {
@@ -357,7 +367,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("'.$ownerType.'", "'.$ownerName.'", '.($index===null?'null':'"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
 
-        $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
