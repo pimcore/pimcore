@@ -238,23 +238,12 @@ trait ImageThumbnailTrait
                 'gif' => 'image/gif',
                 'tiff' => 'image/tiff',
                 'svg' => 'image/svg+xml',
+                'webp' => 'image/webp',
             ];
 
-            $targetFormat = strtolower($this->getConfig()->getFormat());
-            $format = $targetFormat;
-            $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
+            $format = $this->getFileExtension();
 
-            if ($targetFormat == 'source' || empty($targetFormat)) {
-                $format = Image\Thumbnail\Processor::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
-            } elseif ($targetFormat == 'print') {
-                $format = Image\Thumbnail\Processor::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
-                if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
-                    // return a webformat in admin -> tiff cannot be displayed in browser
-                    $format = 'png';
-                }
-            }
-
-            if (array_key_exists($format, $mapping)) {
+            if (isset($mapping[$format])) {
                 $this->mimetype = $mapping[$format];
             } else {
                 // unknown
@@ -263,6 +252,14 @@ trait ImageThumbnailTrait
         }
 
         return $this->mimetype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return \Pimcore\File::getFileExtension($this->getFileSystemPath(true));
     }
 
     protected function convertToWebPath(string $filesystemPath): string
