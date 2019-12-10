@@ -91,3 +91,6 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 </script>
 
 <?php $view->slots()->stop() ?>
+
+<?= $this->breachAttackRandomContent(); ?>
+

@@ -28,3 +28,7 @@ $this->get("translate")->setDomain("admin");
 <?php } ?>
 
 <a href="<?= $view->router()->path('pimcore_admin_login') ?>"><?= $this->translate("Back to Login"); ?></a>
+
+<?= $this->breachAttackRandomContent(); ?>
+
+
