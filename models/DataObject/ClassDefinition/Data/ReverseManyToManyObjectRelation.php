@@ -330,11 +330,14 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function preSetData($object, $data, $params = [])
     {
-        $oldRelations = (array)$object->get($this->getName());
+        $oldRelations = $object->get($this->getName());
+        $oldRelations = array_filter($oldRelations); // relations to removed objects appear as null items here
+
+        $data = array_filter((array)$data);
 
         $ownerFieldName = $this->getOwnerFieldName();
         /** @var DataObject\Concrete $item */
-        foreach ((array)$data as $item) {
+        foreach ($data as $item) {
             if(!$this->allowObjectRelation($item)) {
                 throw new \InvalidArgumentException('Object is not an instance of an allowed class in field "'.$this->getName().'"');
             }
@@ -350,12 +353,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $item->set($ownerFieldName, $reverseObjects);
         }
 
-        $oldRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+        $oldRelationIds = array_map(static function(DataObject\Concrete $newRelation) {
             return $newRelation->getId();
         }, $oldRelations);
-        $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+        $newRelationIds = array_map(static function(DataObject\Concrete $newRelation) {
             return $newRelation->getId();
-        }, (array)$data);
+        }, $data);
         $deletedRelationIds = array_diff($oldRelationIds, $newRelationIds);
 
         foreach($deletedRelationIds as $deletedRelationId) {
