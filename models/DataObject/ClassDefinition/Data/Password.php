@@ -162,7 +162,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $info = password_get_info($data);
 
             // is already a hashed string
-            if ($info['algo'] !== 0) {
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;
             }
         } else {
