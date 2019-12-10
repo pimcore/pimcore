@@ -603,6 +603,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     if (isset($relations[0])) {
                         $data = $relations[0];
                         $data['published'] = (bool)$data['published'];
+                    } else {
+                        $data = null;
                     }
                 } elseif (
                     ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
