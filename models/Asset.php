@@ -1525,6 +1525,7 @@ class Asset extends Element\AbstractElement
         $dest = fopen($destinationPath, 'w+', false, File::getContext());
         stream_copy_to_stream($src, $dest);
         fclose($dest);
+        $this->closeStream();
 
         @chmod($destinationPath, File::getDefaultMode());
 
