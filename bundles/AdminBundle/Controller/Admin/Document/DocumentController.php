@@ -1046,7 +1046,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'settings' => $childDocument->isAllowed('settings'),
                 'rename' => $childDocument->isAllowed('rename'),
                 'publish' => $childDocument->isAllowed('publish'),
-                'unpublish' => $childDocument->isAllowed('unpublish')
+                'unpublish' => $childDocument->isAllowed('unpublish'),
+                'create' => $childDocument->isAllowed('create')
             ]
         ];
 
@@ -1059,7 +1060,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
@@ -1075,7 +1075,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if (!$childDocument->hasChildren() && $childDocument->getType() == 'folder') {
                 $tmpDocument['iconCls'] = 'pimcore_icon_folder';
             }
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);
