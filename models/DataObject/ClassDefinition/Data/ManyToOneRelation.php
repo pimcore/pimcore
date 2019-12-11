@@ -752,7 +752,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+    /**
+     * @param DataObject\Listing      $listing
+     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
+     * @param string                  $operator SQL comparison operator, currently only "=" possible
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
         if($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),

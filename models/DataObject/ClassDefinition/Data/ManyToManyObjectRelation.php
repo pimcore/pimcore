@@ -962,7 +962,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return true;
     }
 
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+    /**
+     * @param DataObject\Listing      $listing
+     * @param DataObject\Concrete|int $data     object or object ID
+     * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
         if($data instanceof DataObject\Concrete) {
             $data = $data->getId();
         }

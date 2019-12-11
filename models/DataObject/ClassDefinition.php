@@ -487,6 +487,8 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
 
+        $cd .= "\n\n";
+
         if(\is_array($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {

@@ -1020,7 +1020,21 @@ abstract class Data
         $key = $this->getName();
 
         $code = '/**' . "\n";
-        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
+
+        $dataParamDoc = 'mixed $'.$key;
+        $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
+        if(preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $dataParamDoc = $dataParam[1].' $'.$key.' '.$dataParam[2];
+        }
+
+        $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
+        if(preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $operatorParamDoc = $dataParam[1].' $'.$key.' '.$dataParam[2];
+        }
+
+        $code .= '* @param '.$dataParamDoc."\n";
+        $code .= '* @param '.$operatorParamDoc."\n";
         $code .= '* @return static'."\n";
         $code .= '*/' . "\n";
         $code .= 'public function filterBy' . ucfirst($key) .' ($'.$key.', $operator = \'=\') {'."\n";
@@ -1431,7 +1445,12 @@ abstract class Data
         return false;
     }
 
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+    /**
+     * @param DataObject\Listing            $listing
+     * @param string|int|float|double|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
         if(strpos($operator, '?') === false) {
             $operator .= ' ?';
         }
