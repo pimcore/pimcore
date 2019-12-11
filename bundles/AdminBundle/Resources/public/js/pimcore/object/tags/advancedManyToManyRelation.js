@@ -19,6 +19,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     idProperty: "rowId",
     pathProperty: "path",
     allowBatchAppend: true,
+    allowBatchRemove: true,
     dataObjectFolderAllowed: false,
 
     initialize: function (data, fieldConfig) {

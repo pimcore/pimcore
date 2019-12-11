@@ -19,6 +19,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     idProperty: "id",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
