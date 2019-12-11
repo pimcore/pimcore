@@ -1455,6 +1455,6 @@ abstract class Data
             $operator .= ' ?';
         }
 
-        $listing->addConditionParam('`'.$this->getName().'` '.$operator, $data);
+        $listing->addConditionParam('`'.$this->getName().'` '.$operator, [$data]);
     }
 }

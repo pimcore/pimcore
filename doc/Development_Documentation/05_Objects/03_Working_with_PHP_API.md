@@ -100,7 +100,7 @@ $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure
 // some data types support direct filtering
 $entries->filterByName('Jan'); // filters for name='Jan'
 $entries->filterByAge(18, '>='); // filters for age >= 18
-$entries->filterByCity(['New York', 'Chicago'], 'IN (?)'); // filters for city IN ('New York','Chicago')
+$entries->filterByCity([['New York', 'Chicago']], 'IN (?)'); // filters for city IN ('New York','Chicago')
 
 foreach ($entries as $entry) {
     $entry->getName();
