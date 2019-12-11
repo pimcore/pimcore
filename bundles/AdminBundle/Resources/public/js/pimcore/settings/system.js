@@ -146,6 +146,7 @@ pimcore.settings.system = Class.create({
                                 typeAhead: true,
                                 value: this.getValue("general.language"),
                                 queryMode: 'local',
+                                mode: 'local',
                                 listWidth: 100,
                                 //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 store: pimcore.globalmanager.get("pimcorelanguages"),
