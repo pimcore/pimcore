@@ -74,14 +74,20 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
                         // only show 10 relations in the grid
                         var maxAmount = 10;
+                        var result = [];
+                        var i;
+                        for (i = 0; i < value.length && i < maxAmount; i++) {
+                            var item = value[i];
+                            result.push(item["fullpath"]);
+                        }
                         if (value.length > maxAmount) {
-                            value.splice(maxAmount, (value.length - maxAmount));
-                            value.push("...");
+                            result.push("...");
                         }
 
-                        return value.join("<br />");
+                        return result.join("<br />");
                     }
-                }.bind(this, field.key)
+                }.bind(this, field.key),
+            getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
@@ -704,6 +710,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
             this.requestNicePathData(toBeRequested);
         }
+    }
+    ,
+    getCellEditValue: function () {
+        return this.getValue();
     }
     ,
 
