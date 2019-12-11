@@ -222,7 +222,6 @@ class Dao extends Model\Dao\AbstractDao
             `type` VARCHAR(50) NULL,
             PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
             INDEX `o_id` (`o_id`),
-            INDEX `groupId` (`groupId`),
             INDEX `keyId` (`keyId`),
             INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)

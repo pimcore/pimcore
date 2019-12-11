@@ -1382,16 +1382,17 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function getDocumentPreviewPdf(Asset $asset)
     {
         $pdfFsPath = null;
-        if ($asset->getPageCount()) {
-            if ($asset->getMimetype() == 'application/pdf') {
-                $pdfFsPath = $asset->getFileSystemPath();
-            } elseif (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
-                try {
-                    $document = \Pimcore\Document::getInstance();
-                    $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
-                } catch (\Exception $e) {
-                    // nothing to do
-                }
+
+        if ($asset->getMimetype() == 'application/pdf') {
+            $pdfFsPath = $asset->getFileSystemPath();
+        }
+
+        if (!$pdfFsPath && $asset->getPageCount() && \Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+            try {
+                $document = \Pimcore\Document::getInstance();
+                $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
+            } catch (\Exception $e) {
+                // nothing to do
             }
         }
 
@@ -1592,7 +1593,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
                         'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
+                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true&grid=true',
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];
                 }
@@ -2256,7 +2257,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     foreach ($data as $key => $value) {
                         $fieldDef = explode('~', $key);
                         $key = $fieldDef[0];
-                        if ($fieldDef[1]) {
+                        if (isset($fieldDef[1])) {
                             $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                         }
 

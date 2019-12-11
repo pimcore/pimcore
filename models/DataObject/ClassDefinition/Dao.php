@@ -140,7 +140,6 @@ class Dao extends Model\Dao\AbstractDao
           `position` varchar(70) NOT NULL DEFAULT '0',
           PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`, `index`),
           KEY `index` (`index`),
-          KEY `src_id` (`src_id`),
           KEY `dest_id` (`dest_id`),
           KEY `fieldname` (`fieldname`),
           KEY `position` (`position`),

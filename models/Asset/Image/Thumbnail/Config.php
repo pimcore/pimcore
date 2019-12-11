@@ -30,6 +30,8 @@ class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
+    protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
+
     /**
      * format of array:
      * array(
@@ -157,6 +159,10 @@ class Config extends Model\AbstractModel
     {
         $cacheKey = self::getCacheKey($name);
 
+        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+            return self::getPreviewConfig();
+        }
+
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
             $thumbnail->setName($name);
@@ -202,6 +208,10 @@ class Config extends Model\AbstractModel
             return true;
         }
 
+        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+            return true;
+        }
+
         $thumbnail = new self();
         return $thumbnail->getDao()->exists($name);
     }
@@ -222,7 +232,7 @@ class Config extends Model\AbstractModel
 
         if (!$thumbnail) {
             $thumbnail = new self();
-            $thumbnail->setName('pimcore-system-treepreview');
+            $thumbnail->setName(self::PREVIEW_THUMBNAIL_NAME);
             $thumbnail->addItem('scaleByWidth', [
                 'width' => 400
             ]);

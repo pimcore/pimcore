@@ -80,6 +80,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method Cache cache($name, $lifetime = null, $force = false)
  * @method DeviceDetector device($default = null)
  * @method array getAllParams()
+ * @method array breachAttackRandomContent()
  * @method mixed getParam($key, $default = null)
  * @method Glossary glossary()
  * @method Container placeholder($placeholderName)

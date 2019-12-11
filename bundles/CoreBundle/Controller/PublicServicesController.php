@@ -40,6 +40,7 @@ class PublicServicesController extends Controller
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
+        $requestedFileExtension = strtolower(File::getFileExtension($filename));
         $asset = Asset::getById($assetId);
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
@@ -72,6 +73,14 @@ class PublicServicesController extends Controller
 
                 if (!$thumbnailConfig) {
                     throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
+                }
+
+                if(strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+                    $formatOverride = $requestedFileExtension;
+                    if(in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
+                        $formatOverride = 'pjpeg';
+                    }
+                    $thumbnailConfig->setFormat($formatOverride);
                 }
 
                 if ($asset instanceof Asset\Video) {
@@ -113,7 +122,6 @@ class PublicServicesController extends Controller
                 }
 
                 if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
-                    $requestedFileExtension = File::getFileExtension($filename);
                     $actualFileExtension = File::getFileExtension($thumbnailFile);
 
                     if ($actualFileExtension !== $requestedFileExtension) {
