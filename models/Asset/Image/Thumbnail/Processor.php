@@ -67,7 +67,7 @@ class Processor
             'tif' => 'tiff'
         ];
 
-        if (array_key_exists($format, $typeMappings)) {
+        if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
 
@@ -105,7 +105,10 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
-            $format = self::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
+            $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
+            if($format === 'jpeg') {
+                $format = 'pjpeg';
+            }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 

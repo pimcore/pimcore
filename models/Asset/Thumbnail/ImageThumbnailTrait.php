@@ -229,22 +229,11 @@ trait ImageThumbnailTrait
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            // get target mime type without actually generating the thumbnail (deferred)
-            $mapping = [
-                'png' => 'image/png',
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'pjpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'tiff' => 'image/tiff',
-                'svg' => 'image/svg+xml',
-                'webp' => 'image/webp',
-            ];
+            $fileExt = $this->getFileExtension();
+            $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
 
-            $format = $this->getFileExtension();
-
-            if (isset($mapping[$format])) {
-                $this->mimetype = $mapping[$format];
+            if (isset($mapping[$fileExt])) {
+                $this->mimetype = $mapping[$fileExt];
             } else {
                 // unknown
                 $this->mimetype = 'application/octet-stream';

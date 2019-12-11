@@ -160,7 +160,7 @@ class Imagick extends Adapter
      */
     public function getContentOptimizedFormat()
     {
-        $format = 'jpeg';
+        $format = 'pjpeg';
         if ($this->hasAlphaChannel()) {
             $format = 'png32';
         }
