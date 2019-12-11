@@ -50,6 +50,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
+        if (strlen(trim(strip_tags($this->model->getName()))) < 1) {
+            throw new \Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
+        }
+
         $this->db->beginTransaction();
         try {
             $dataAttributes = $this->model->getObjectVars();
