@@ -303,7 +303,7 @@ class Service extends Model\Element\Service
 
             $user = AdminTool::getCurrentUser();
 
-            if (empty($fields)) {
+            if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
             }
 
