@@ -1,8 +1,11 @@
 parameters:
+
+    #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
     reportUnmatchedIgnoredErrors: false
 
     symfony:
-        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml # Symfony ^4.0
+        #container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml # Symfony ^3.4
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
