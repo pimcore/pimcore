@@ -201,6 +201,9 @@ This is especially useful to get an object matching a foreign key, or get a list
 
 ```php
 $result = DataObject\ClassName::getByMyfieldname($value, [int $limit, int $offset]);
+
+// or for localized fields
+$result = DataObject\ClassName::getByMyfieldname($value, [string locale, int $limit, int $offset]);
 ```
 If you set no limit, a list object containing all matching objects is returned. If the limit is set to 1 
 the first matching object is returned directly (without listing). Only published objects are return.

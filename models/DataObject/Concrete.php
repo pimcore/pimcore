@@ -637,32 +637,35 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         // check for custom static getters like DataObject::getByMyfield()
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
-        $tmpObj = new static();
+        $classDefinition = ClassDefinition::getById(self::classId());
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
-        foreach ($tmpObj->getClass()->getFieldDefinitions() as $fd) {
+        foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
-        $propertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+        $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
 
-        if (!property_exists($tmpObj, $propertyName)) {
-            $localizedField = $tmpObj->getClass()->getFieldDefinition('localizedfields');
+        if (!$classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $localizedField = $classDefinition->getFieldDefinition('localizedfields');
             if($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                foreach($localizedField->getFieldDefinitions() as $localizedFieldDefinition) {
-                    if($propertyName === $localizedFieldDefinition->getName()) {
-                        $propertyName = 'localizedfields';
-                        \array_unshift($arguments, $localizedFieldDefinition->getName());
-                        break;
-                    }
+                $fieldnames = [];
+                foreach ($localizedField->getFieldDefinitions() as $fd) {
+                    $fieldnames[] = $fd->getName();
+                }
+                $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+                $localizedFieldDefinition = $localizedField->getFieldDefinition($realPropertyName);
+                if($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
+                    $realPropertyName = 'localizedfields';
+                    \array_unshift($arguments, $localizedFieldDefinition->getName());
                 }
             }
         }
 
-        if (property_exists($tmpObj, $propertyName)) {
-            $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
+        if ($classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $field = $classDefinition->getFieldDefinition($realPropertyName);
             if (!$field->isFilterable()) {
-                throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
+                throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
@@ -678,7 +681,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
 
                 if (!$localizedField->isFilterable()) {
-                    throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
+                    throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
@@ -693,7 +696,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $arguments = array_pad($arguments, 3, 0);
                 list($value, $limit, $offset) = $arguments;
 
-                $defaultCondition = $propertyName . ' = ' . Db::get()->quote($value) . ' ';
+                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition
                 ];
