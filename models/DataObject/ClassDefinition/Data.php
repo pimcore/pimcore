@@ -1030,7 +1030,7 @@ abstract class Data
 
         $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
         if(preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
-            $operatorParamDoc = $dataParam[1].' $'.$key.' '.$dataParam[2];
+            $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
         }
 
         $code .= '* @param '.$dataParamDoc."\n";
