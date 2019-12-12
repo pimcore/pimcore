@@ -454,7 +454,10 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function getData()
     {
         if ($this->data === null) {
-            $this->getDao()->load();
+            $dao = $this->getDao();
+            if(\method_exists($dao, 'load')) {
+                $this->getDao()->load();
+            }
         }
 
         return $this->data;
