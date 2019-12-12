@@ -246,10 +246,10 @@ foreach ($list as $city) {
 ### Get an Object List/Object by Localized Fields
 
 ```php
-$list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limit | array($limit, $offset, $unpublished));
+$list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limit | array('limit' => $limit, 'offset' => $offset, 'unpublished' => $unpublished));
 
 // or
-$list = DataObject\News::getByFieldName($value, $locale, $limit | array($limit, $offset, $unpublished));
+$list = DataObject\News::getByFieldName($value, $locale, $limit | array('limit' => $limit, 'offset' => $offset, 'unpublished' => $unpublished));
 ```
 
 
@@ -267,6 +267,8 @@ $list = DataObject\City::getByCountry("Österreich");
  
 // get a city by localized name using default locale
 $city = DataObject\City::getByLocalizedfields("city", "Wels", null, 1);
+// or
+$city = DataObject\City::getByLocalizedfields("city", "Wels", null, ['limit' => 1]);
 // or
 $city = DataObject\City::getByCity("Wels", null, 1);
  
