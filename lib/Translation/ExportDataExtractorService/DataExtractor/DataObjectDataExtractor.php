@@ -327,6 +327,10 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     }
 
                     foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
+                        //relations are loaded from dependencies
+                        if($fd instanceof Data\Relations\AbstractRelations) {
+                            continue;
+                        }
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         if (!empty($content)) {
@@ -399,6 +403,10 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     }
 
                     foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
+                        //relations are loaded from dependencies
+                        if($fd instanceof Data\Relations\AbstractRelations) {
+                            continue;
+                        }
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         if (!empty($content)) {
