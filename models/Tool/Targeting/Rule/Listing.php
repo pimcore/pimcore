@@ -29,6 +29,7 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Rule[]|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $targets = null;
 

@@ -27,6 +27,7 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $layoutDefinitions = null;
 

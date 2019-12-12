@@ -35,6 +35,7 @@ class AbstractListing extends Model\Listing\AbstractListing
      * Contains the results of the list. They are all an instance of User
      *
      * @var array
+     * @deprecated use getter/setter methods or $this->data
      */
     public $items = [];
 

@@ -28,6 +28,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array
+     * @deprecated use getter/setter methods or $this->data
      */
     public $cartItems;
 

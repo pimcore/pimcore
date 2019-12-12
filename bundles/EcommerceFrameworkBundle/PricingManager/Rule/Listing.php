@@ -26,6 +26,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var RuleInterface[]
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $rules;
 

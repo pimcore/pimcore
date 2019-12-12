@@ -35,6 +35,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $objects = null;
 

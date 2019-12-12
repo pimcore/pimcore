@@ -25,6 +25,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $entries = null;
 

@@ -26,6 +26,10 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
+    /**
+     * @var array
+     * @deprecated use getter/setter methods or $this->data
+     */
     public $tokens;
 
     public function __construct()

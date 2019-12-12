@@ -28,6 +28,7 @@ class Listing extends AbstractListing
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $notifications = null;
 
