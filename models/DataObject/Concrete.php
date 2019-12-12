@@ -671,13 +671,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 5, 0);
 
-                $localizedPropertyName = $arguments[0];
-                $value = $arguments[1];
-                $locale = $arguments[2];
-                $limit = $arguments[3]['limit'] ?? $arguments[3] ?? null;
-                $offset = $arguments[3]['offset'] ?? $arguments[4] ?? 0;
-                $unpublished = $arguments[3]['unpublished'] ?? $arguments[5] ?? false;
-                $condition = $arguments[3]['condition'] ?? null;
+                [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
 
                 $localizedField = $field->getFielddefinition($localizedPropertyName);
 
@@ -700,12 +694,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $arguments = array_pad($arguments, 3, 0);
-                $value = $arguments[0];
-
-                $limit = $arguments[1]['limit'] ?? $arguments[1] ?? null;
-                $offset = $arguments[1]['offset'] ?? $arguments[2] ?? 0;
-                $unpublished = $arguments[1]['unpublished'] ?? $arguments[3] ?? false;
-                $condition = $arguments[1]['condition'] ?? null;
+                [$value, $limit, $offset] = $arguments;
 
                 $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
@@ -713,28 +702,24 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 ];
             }
 
-            if(!empty($limit)) {
-                $listConfig['limit'] = $limit;
-            }
-
-            if(!empty($offset)) {
-                $listConfig['offset'] = $offset;
-            }
-
-            if(isset($unpublished)) {
-                $listConfig['unpublished'] = $unpublished;
-            }
-
-            if(isset($condition)) {
-                $listConfig['condition'] = $defaultCondition . $condition;
+            if (!is_array($limit)) {
+                if ($limit) {
+                    $listConfig['limit'] = $limit;
+                }
+                if ($offset) {
+                    $listConfig['offset'] = $offset;
+                }
+            } else {
+                $listConfig = array_merge($listConfig, $limit);
+                $listConfig['condition'] = $defaultCondition . $limit['condition'];
             }
 
             $list = static::getList($listConfig);
 
-            if (isset($limit) && $limit == 1) {
+            if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
 
-                return $elements[0] ?? null;
+                return isset($elements[0]) ? $elements[0] : null;
             }
 
             return $list;
