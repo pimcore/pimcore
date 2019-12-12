@@ -1367,6 +1367,17 @@ abstract class Data
     }
 
     /**
+     * @param $existingData
+     * @param $removeData
+     *
+     * @return mixed
+     */
+    public function removeData($existingData, $removeData)
+    {
+        return $existingData;
+    }
+
+    /**
      * Returns if datatype supports data inheritance
      *
      * @return bool

@@ -382,6 +382,37 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
+     * @inheritdoc
+     */
+    public function removeData($existingData, $removeData)
+    {
+        $newData = [];
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $removeMap = [];
+
+        /** @var $item Element\ElementInterface */
+        foreach ($removeData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            $removeMap[$key] = 1;
+        }
+
+        $newData = [];
+        /** @var $item Element\ElementInterface */
+        foreach ($existingData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+
+            if(!isset($removeMap[$key])) {
+                $newData[] = $item;
+            }
+        }
+
+        return $newData;
+    }
+
+    /**
      * @param $item
      *
      * @return string
