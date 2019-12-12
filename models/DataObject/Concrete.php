@@ -429,6 +429,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param ClassDefinition $o_class
+     *
+     * @return self
      */
     public function setClass($o_class)
     {
@@ -519,6 +521,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param bool $omitMandatoryCheck
+     *
+     * @return self
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
@@ -551,6 +555,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param array $scheduledTasks
+     *
+     * @return self
      */
     public function setScheduledTasks($scheduledTasks)
     {
@@ -622,6 +628,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @param $method
      * @param $arguments
+     *
+     * @return Model\Listing\AbstractListing|Concrete|null
      *
      * @throws \Exception
      */

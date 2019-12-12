@@ -5,16 +5,12 @@ Your goal is to store lots of products in Pimcore. Many of these products are va
 yellow t-shirt, a blue t-shirt, a red t-shirt etc. Most of the t-shirts' attributes have the same values and they 
 just differ in color and EAN code.
 
-One way to archive this is to make a generic t-shirt object and then create for each variant a child object within the 
-tree. This approach works fine, but if you have dozens or even hundreds of variants, your object tree becomes quite 
-big and confusing.
+One way to achieve this is to make a generic t-shirt object and then create for each variant a child object within the 
+tree which inherits most attributes and sets only those which differ. This approach works fine, but if you have dozens or even hundreds of variants, your object tree becomes quite big and confusing.
 
+This is where object variants come in. Basically, they are just objects which you can configure to be not shown in the object tree. In the tree, you just create the generic t-shirt. For each variant of this t-shirt, you create an object variant. While you can choose variants to not be shown in the tree, you will nevertheless be able to edit them via an own tab within the object editor.
 
-This is where object variants come in. Basically, they are just objects which aren't shown in the object tree. In the 
-tree, you just create the generic t-shirt. For each variant of this t-shirt, you create an object variant, which is 
-not shown in the object tree but in an own tab within the object editor.
-
-There is no other difference between objects and variants, therefore variants support all functionalitites as objects do. 
+The only difference between objects and variants in behaviour is that you cannot add an object of another class below a variant.
 
 So, you can create hundreds of object variants without blowing your object tree.
 

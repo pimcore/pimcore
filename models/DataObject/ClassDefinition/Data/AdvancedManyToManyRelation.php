@@ -190,6 +190,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
+     * @return string|null
+     *
      * @throws \Exception
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -382,15 +384,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
-                        $value = $element[$key];
+                        $value = $element[$key] ?? null;
 
                         if ($columnConfig['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 

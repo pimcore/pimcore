@@ -216,11 +216,12 @@ class Image extends Model\Document\Tag
         $image = $this->getImage();
 
         if ($image instanceof Asset) {
-            if ((isset($this->options['thumbnail']) && $this->options['thumbnail']) || $this->cropPercent) {
+            $thumbnailName = $this->options['thumbnail'] ?? null;
+            if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
                 $autoName = false;
 
-                $thumbConfig = $image->getThumbnailConfig($this->options['thumbnail']);
+                $thumbConfig = $image->getThumbnailConfig($thumbnailName);
                 if (!$thumbConfig && $this->cropPercent) {
                     $thumbConfig = new Asset\Image\Thumbnail\Config();
                 }

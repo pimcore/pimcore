@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element\Recyclebin;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Cache;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -194,7 +195,14 @@ class Item extends Model\AbstractModel
 
         // serialize data
         Element\Service::loadAllFields($this->element);
-        $data = Serialize::serialize($this->getElement());
+
+        //for full dump of relation fields in container types
+        //TODO: optimization required for serializing relations
+        $copier = new DeepCopy();
+        $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+        $copiedData = $copier->copy($this->getElement());
+
+        $data = Serialize::serialize($copiedData);
 
         $this->getDao()->save();
 

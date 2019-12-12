@@ -30,12 +30,6 @@ services:
 
 
     #
-    # GOOGLE TAG MANAGER
-    #
-
-    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
-
-    #
     # PIWIK
     #
 

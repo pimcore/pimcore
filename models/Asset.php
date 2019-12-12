@@ -1624,6 +1624,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $metadata
+     *
+     * @return self
      */
     public function setMetadata($metadata)
     {
@@ -1648,6 +1650,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $hasMetaData
+     *
+     * @return self
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1661,6 +1665,8 @@ class Asset extends Element\AbstractElement
      * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
      * @param null $data
      * @param null $language
+     *
+     * @return self
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {

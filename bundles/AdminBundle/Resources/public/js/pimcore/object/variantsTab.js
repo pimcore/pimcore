@@ -147,9 +147,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             ]
         });
 
-
-        this.gridfilters = gridHelper.getGridFilters();
-
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.languageInfo = new Ext.Toolbar.TextItem({

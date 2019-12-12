@@ -67,7 +67,7 @@ class Processor
             'tif' => 'tiff'
         ];
 
-        if (array_key_exists($format, $typeMappings)) {
+        if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
 
@@ -105,7 +105,10 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
-            $format = self::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
+            $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
+            if($format === 'jpeg') {
+                $format = 'pjpeg';
+            }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
@@ -165,11 +168,12 @@ class Processor
         $fsPath = $thumbDir . '/' . $filename;
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
+        // the configuration is saved for later use in
+        // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
         // so that it can be used also with dynamic configurations
         if ($deferred) {
-            // only add the config to the TmpStore if necessary (the config is auto-generated)
-            if (!Config::getByName($config->getName())) {
+            // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
+            if (!Config::exists($config->getName())) {
                 $configId = 'thumb_' . $asset->getId() . '__' . md5(self::returnPath($fsPath, false));
                 TmpStore::add($configId, $config, 'thumbnail_deferred');
             }

@@ -147,6 +147,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param bool $excludeFromSearchIndex
+     *
+     * @return self
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -253,6 +255,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param mixed $data
+     *
+     * @return array
      */
     public function resolveDependencies($data)
     {

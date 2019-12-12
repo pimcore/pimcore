@@ -153,10 +153,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var gridColumns = gridHelper.getGridColumns();
 
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
-
-
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.languageInfo = new Ext.Toolbar.TextItem({
