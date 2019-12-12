@@ -35,13 +35,6 @@ interface PricingManagerInterface
     public function applyCartRules(CartInterface $cart): array;
 
     /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return RuleInterface
-     */
-    public function getRule();
-
-    /**
      * Get map from action name to used class
      *
      * @return array

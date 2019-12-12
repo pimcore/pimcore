@@ -52,6 +52,15 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
+     * @param string $name
+     * @return bool
+     */
+    public function exists(string $name): bool
+    {
+        return (bool) $this->db->getById($this->model->getName());
+    }
+
+    /**
      * @throws \Exception
      */
     public function save()

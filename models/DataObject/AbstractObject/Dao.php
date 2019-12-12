@@ -537,18 +537,17 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      * @param bool $quote
      *
      * @return array
      */
     public function getChildPermissions($type, $user, $quote = true)
     {
-        //        $parentIds = $this->collectParentIds();
-
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
+        $permissions = [];
 
         try {
             if ($type && $quote) {

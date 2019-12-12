@@ -585,7 +585,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function configureOptions()
     {
         if (!$this->validUnits) {
+            $table = null;
             try {
+                $table = null;
+
                 if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
                     $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
                 }

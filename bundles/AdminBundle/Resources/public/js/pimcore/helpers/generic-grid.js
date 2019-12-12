@@ -126,6 +126,7 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
                         newValue = options.pageSize;
                     }
                     store.setPageSize(newValue);
+                    this.pageSize = newValue;
                     this.moveFirst();
                 }.bind(pagingtoolbar)
             }

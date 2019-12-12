@@ -36,9 +36,10 @@ interface TrackingItemBuilderInterface
      *
      * @param ProductInterface|ElementInterface $product
      *
+     * @param int $quantity
      * @return ProductAction
      */
-    public function buildProductActionItem(ProductInterface $product);
+    public function buildProductActionItem(ProductInterface $product, $quantity = 1);
 
     /**
      * Build a product impression object

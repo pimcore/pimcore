@@ -89,7 +89,7 @@ abstract class PageSnippet extends Model\Document
 
         if (is_array($this->getElements()) and count($this->getElements()) > 0) {
             foreach ($this->getElements() as $name => $element) {
-                if (!$element->getInherited() && !$element->isEmpty()) {
+                if (!$element->getInherited()) {
                     $element->setDao(null);
                     $element->setDocumentId($this->getId());
                     $element->save();
@@ -341,6 +341,7 @@ abstract class PageSnippet extends Model\Document
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
+                $this->elements = $this->elements ?? [];
                 $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
@@ -392,7 +393,7 @@ abstract class PageSnippet extends Model\Document
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if ($this->hasElement($name) && !$elements[$name]->isEmpty()) {
+        if ($this->hasElement($name)) {
             return $elements[$name];
         }
 

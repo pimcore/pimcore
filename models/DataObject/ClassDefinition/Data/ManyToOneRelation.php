@@ -219,9 +219,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'type' => $type,
                 'fieldname' => $this->getName()
             ]];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -238,7 +238,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             'data' => null
         ];
 
-        if ($data['dest_id'] && $data['type']) {
+        if (!empty($data['dest_id']) && !empty($data['type'])) {
             $element = Element\Service::getElementById($data['type'], $data['dest_id']);
             if ($element instanceof Element\ElementInterface) {
                 $result['data'] = $element;
@@ -262,10 +262,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
         $rData = $this->prepareDataForPersistence($data, $object, $params);
-
         $return = [];
-        $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
-        $return[$this->getName() . '__type'] = $rData[0]['type'];
+
+        if (!empty($rData[0]['dest_id']) && !empty($rData[0]['type'])) {
+            $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
+            $return[$this->getName() . '__type'] = $rData[0]['type'];
+        }
 
         return $return;
     }
@@ -307,7 +309,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data['id'] && $data['type']) {
+        if (!empty($data['id']) && !empty($data['type'])) {
             return Element\Service::getElementById($data['type'], $data['id']);
         }
 
@@ -537,32 +539,33 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         if (empty($value)) {
             return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
-                $type = $value['type'];
-                $id = $value['id'];
+        }
 
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId($type, $id);
-                }
+        $value = (array) $value;
+        if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
+            $type = $value['type'];
+            $id = $value['id'];
+            $el = null;
 
-                if ($id) {
-                    $el = Element\Service::getElementById($type, $id);
-                }
-
-                if ($el instanceof Element\ElementInterface) {
-                    return $el;
-                } else {
-                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
-                    } else {
-                        throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
-                    }
-                }
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
+            if ($idMapper) {
+                $id = $idMapper->getMappedId($type, $id);
             }
+
+            if ($id) {
+                $el = Element\Service::getElementById($type, $id);
+            }
+
+            if ($el instanceof Element\ElementInterface) {
+                return $el;
+            } else {
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
+                } else {
+                    throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
+                }
+            }
+        } else {
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 

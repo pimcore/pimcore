@@ -607,6 +607,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * @param $object
      * @param array $context
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {

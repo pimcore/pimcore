@@ -19,7 +19,8 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 
 | Name        | Return | Description                           |
 |-------------|--------|---------------------------------------|
-| `getData()` | array  | Get the value of the wysiwyg          |
+| `getData()` | string  | Get the __raw__ value of the wysiwyg          |
+| `frontend()` | string  | Get the __parsed__ value of the wysiwyg           |
 | `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 ## Examples

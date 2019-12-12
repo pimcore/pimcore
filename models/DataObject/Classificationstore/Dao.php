@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 foreach ($keyData as $language => $value) {
-                    $collectionId = $collectionMapping[$groupId];
+                    $collectionId = $collectionMapping[$groupId] ?? null;
                     $data = [
                         'o_id' => $objectId,
                         'collectionId' => $collectionId,
@@ -222,7 +222,6 @@ class Dao extends Model\Dao\AbstractDao
             `type` VARCHAR(50) NULL,
             PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
             INDEX `o_id` (`o_id`),
-            INDEX `groupId` (`groupId`),
             INDEX `keyId` (`keyId`),
             INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)

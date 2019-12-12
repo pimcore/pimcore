@@ -64,6 +64,8 @@ class StructuredTable implements OwnerAwareFieldInterface
      * @param $name
      * @param $arguments
      *
+     * @return mixed
+     *
      * @throws \Exception
      */
     public function __call($name, $arguments)

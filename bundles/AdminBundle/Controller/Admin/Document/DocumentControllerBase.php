@@ -138,7 +138,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
             foreach ($data as $name => $value) {
-                $data = $value['data'];
+                $data = $value['data'] ?? null;
                 $type = $value['type'];
                 $document->setRawElement($name, $type, $data);
             }

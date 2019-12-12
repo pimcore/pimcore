@@ -7,12 +7,13 @@ use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
-use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Tests\Adapter\AdapterTestCase;
 
 /**
  * @group cache.core.file
  */
-class FilesystemAdapterProxyTest extends FilesystemAdapterTest
+class FilesystemAdapterProxyTest extends AdapterTestCase
 {
     use SymfonyProxyTestTrait;
     use CacheItemPoolTestTrait {
@@ -28,6 +29,41 @@ class FilesystemAdapterProxyTest extends FilesystemAdapterTest
         $this->defaultLifetime = $defaultLifetime;
 
         return $this->_createCachePool();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::rmdir(sys_get_temp_dir().'/symfony-cache');
+    }
+
+    public static function rmdir(string $dir)
+    {
+        if (!file_exists($dir)) {
+            return;
+        }
+        if (!$dir || 0 !== strpos(\dirname($dir), sys_get_temp_dir())) {
+            throw new \Exception(__METHOD__."() operates only on subdirs of system's temp dir");
+        }
+        $children = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($children as $child) {
+            if ($child->isDir()) {
+                rmdir($child);
+            } else {
+                unlink($child);
+            }
+        }
+        rmdir($dir);
+    }
+
+    protected function isPruned(CacheItemPoolInterface $cache, string $name): bool
+    {
+        $getFileMethod = (new \ReflectionObject($cache))->getMethod('getFile');
+        $getFileMethod->setAccessible(true);
+
+        return !file_exists($getFileMethod->invoke($cache, $name));
     }
 
     /**

@@ -30,6 +30,11 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
+     * @var string[]
+     */
+    protected static $hasListenersCache = [];
+
+    /**
      * @param $asset
      * @param null $config
      * @param bool $deferred
@@ -49,26 +54,39 @@ class Thumbnail
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
-                $path = $this->asset->getRealFullPath();
+                $fsPath = $this->asset->getRealFullPath();
             }
         }
 
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
-        $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
-            'frontendPath' => $path
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument('frontendPath');
+        if($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
+            $event = new GenericEvent($this, [
+                'filesystemPath' => $fsPath,
+                'frontendPath' => $path
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            $path = $event->getArgument('frontendPath');
+        }
 
         return $path;
+    }
+
+    /**
+     * @param string $eventName
+     * @return bool
+     */
+    protected function hasListeners(string $eventName): bool
+    {
+        if(!isset(self::$hasListenersCache[$eventName])) {
+            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+        }
+
+        return self::$hasListenersCache[$eventName];
     }
 
     /**
@@ -104,7 +122,7 @@ class Thumbnail
                 $this->filesystemPath = $this->asset->getRealFullPath();
             } else {
                 try {
-                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $deferred = $deferredAllowed && $this->deferred;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
@@ -114,10 +132,12 @@ class Thumbnail
             }
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
-            'deferred' => $deferred,
-            'generated' => $generated
-        ]));
+        if($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+                'deferred' => $deferred,
+                'generated' => $generated
+            ]));
+        }
     }
 
     /**
@@ -130,32 +150,6 @@ class Thumbnail
     public function __toString()
     {
         return $this->getPath(true);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileExtension()
-    {
-        $mapping = [
-            'image/png' => 'png',
-            'image/jpeg' => 'jpg',
-            'image/gif' => 'gif',
-            'image/tiff' => 'tif',
-            'image/svg+xml' => 'svg',
-        ];
-
-        $mimeType = $this->getMimeType();
-
-        if (isset($mapping[$mimeType])) {
-            return $mapping[$mimeType];
-        }
-
-        if ($this->getAsset()) {
-            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-        }
-
-        return '';
     }
 
     /**
@@ -214,7 +208,7 @@ class Thumbnail
             'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
 
         $customAttributes = [];
-        if (array_key_exists('attributes', $options) && is_array($options['attributes'])) {
+        if (isset($options['attributes']) && is_array($options['attributes'])) {
             $customAttributes = $options['attributes'];
         }
 
@@ -267,7 +261,7 @@ class Thumbnail
                 continue;
             }
 
-            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, 'data-') === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || isset($customAttributes[$key]) || strpos($key, 'data-') === 0)) {
                 continue;
             }
 
@@ -409,7 +403,7 @@ class Thumbnail
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
 
-        if (array_key_exists($name, $mediaConfigs)) {
+        if (isset($mediaConfigs[$name])) {
             $thumbConfigRes = clone $thumbConfig;
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);

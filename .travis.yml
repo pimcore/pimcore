@@ -13,6 +13,12 @@ services:
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
   mariadb: '10.3'
+  artifacts:
+    s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
+    debug: true
+    paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
+#      - app/config
+      - var/logs
   hosts:
     - pimcore-test.dev
 
@@ -138,7 +144,7 @@ env:
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^4.0
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
-
+    - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:

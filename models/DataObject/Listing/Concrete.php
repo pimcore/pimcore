@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 /**
  * @method \Pimcore\Model\DataObject\Listing\Concrete\Dao getDao()
  * @method Model\Webservice\Data\DataObject\Concrete[] load()
+ * @method Model\Webservice\Data\DataObject\Concrete current()
  */
 abstract class Concrete extends Model\DataObject\Listing
 {
@@ -54,7 +55,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function __construct()
     {
-        $this->initDao('\\Pimcore\\Model\\DataObject\\Listing\\Concrete');
+        parent::__construct();
+        $this->initDao(__CLASS__);
     }
 
     /**

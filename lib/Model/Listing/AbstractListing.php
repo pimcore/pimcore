@@ -24,7 +24,7 @@ use Pimcore\Model\AbstractModel;
  *
  * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
-abstract class AbstractListing extends AbstractModel
+abstract class AbstractListing extends AbstractModel implements \Iterator
 {
     /**
      * @var string|array
@@ -83,6 +83,8 @@ abstract class AbstractListing extends AbstractModel
      * @var array
      */
     protected $conditionVariableTypes = [];
+
+    protected $data;
 
     /**
      * @return array
@@ -444,5 +446,77 @@ abstract class AbstractListing extends AbstractModel
     public function getConditionVariablesFromSetCondition()
     {
         return $this->conditionVariablesFromSetCondition;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        if ($this->data === null) {
+            $dao = $this->getDao();
+            if(\method_exists($dao, 'load')) {
+                $this->getDao()->load();
+            } else {
+                @trigger_error(
+                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 7.',
+                    \E_USER_DEPRECATED
+                );
+            }
+        }
+
+        return $this->data;
+    }
+
+    /**
+     * @return static
+     */
+    public function setData(array $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function current()
+    {
+        $this->getData();
+        return current($this->data);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function key()
+    {
+        $this->getData();
+        return key($this->data);
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function next()
+    {
+        $this->getData();
+        return next($this->data);
+    }
+
+    /**
+     * @return bool
+     */
+    public function valid()
+    {
+        $this->getData();
+        return $this->current() !== false;
+    }
+
+    public function rewind()
+    {
+        $this->getData();
+        reset($this->data);
     }
 }

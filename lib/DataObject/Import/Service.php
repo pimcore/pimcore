@@ -215,6 +215,8 @@ class Service
 
     /**
      * @param $gridConfig GridConfig
+     *
+     * @return \stdClass
      */
     public function createFromExportConfig($gridConfig)
     {

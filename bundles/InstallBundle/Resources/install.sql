@@ -41,7 +41,6 @@ CREATE TABLE `assets` (
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `path` (`path`),
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -53,8 +52,7 @@ CREATE TABLE `assets_metadata` (
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`cid`, `name`, `language`),
-	INDEX `name` (`name`),
-	INDEX `cid` (`cid`)
+	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;
@@ -71,7 +69,6 @@ CREATE TABLE `cache_tags` (
   `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`,`tag`),
-  INDEX `id` (`id`),
   INDEX `tag` (`tag`)
 ) DEFAULT CHARSET=ascii;
 
@@ -107,7 +104,6 @@ CREATE TABLE `dependencies` (
   PRIMARY KEY (`sourcetype`,`sourceid`,`targetid`,`targettype`),
   KEY `sourceid` (`sourceid`),
   KEY `targetid` (`targetid`),
-  KEY `sourcetype` (`sourcetype`),
   KEY `targettype` (`targettype`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -129,7 +125,6 @@ CREATE TABLE `documents` (
   UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
-  KEY `path` (`path`),
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -140,8 +135,7 @@ CREATE TABLE `documents_elements` (
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
-  PRIMARY KEY (`documentId`,`name`),
-  KEY `documentId` (`documentId`)
+  PRIMARY KEY (`documentId`,`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_email`;
@@ -233,7 +227,6 @@ CREATE TABLE `documents_translations` (
   `language` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`sourceId`,`language`),
   KEY `id` (`id`),
-  KEY `sourceId` (`sourceId`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -260,7 +253,6 @@ CREATE TABLE `edit_lock` (
   `sessionId` varchar(255) default NULL,
   `date` int(11) unsigned default NULL,
   PRIMARY KEY  (`id`),
-  KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -381,7 +373,6 @@ CREATE TABLE `objects` (
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
-  KEY `path` (`o_path`),
   KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
@@ -401,8 +392,7 @@ CREATE TABLE `properties` (
   PRIMARY KEY (`cid`,`ctype`,`name`),
   KEY `cpath` (`cpath`),
   KEY `inheritable` (`inheritable`),
-  KEY `ctype` (`ctype`),
-  KEY `cid` (`cid`)
+  KEY `ctype` (`ctype`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
@@ -478,7 +468,6 @@ CREATE TABLE `search_backend_data` (
   `data` longtext,
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
-  KEY `id` (`id`),
   KEY `fullpath` (`fullpath`),
   KEY `maintype` (`maintype`),
   KEY `type` (`type`),
@@ -519,8 +508,7 @@ CREATE TABLE `tags_assignment` (
   `ctype` enum('document','asset','object') NOT NULL,
   PRIMARY KEY (`tagid`,`cid`,`ctype`),
   KEY `ctype` (`ctype`),
-  KEY `ctype_cid` (`cid`,`ctype`),
-  KEY `tagid` (`tagid`)
+  KEY `ctype_cid` (`cid`,`ctype`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_rules`;
@@ -546,8 +534,7 @@ CREATE TABLE `targeting_storage` (
   `modificationDate` datetime DEFAULT NULL,
   PRIMARY KEY (`visitorId`,`scope`,`name`),
   KEY `targeting_storage_scope_index` (`scope`),
-  KEY `targeting_storage_name_index` (`name`),
-  KEY `targeting_storage_visitorId_index` (`visitorId`)
+  KEY `targeting_storage_name_index` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_target_groups`;
@@ -616,8 +603,7 @@ CREATE TABLE `translations_admin` (
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
-  KEY `language` (`language`),
-  KEY `key` (`key`)
+  KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `translations_website`;
@@ -628,8 +614,7 @@ CREATE TABLE `translations_website` (
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
-  KEY `language` (`language`),
-  KEY `key` (`key`)
+  KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tree_locks`;
@@ -638,7 +623,6 @@ CREATE TABLE `tree_locks` (
   `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
   `locked` enum('self','propagate') default NULL,
   PRIMARY KEY (`id`,`type`),
-  KEY `id` (`id`),
   KEY `type` (`type`),
   KEY `locked` (`locked`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -702,7 +686,6 @@ CREATE TABLE `users_workspaces_asset` (
   `versions` tinyint(1) DEFAULT '0',
   `properties` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `cid` (`cid`),
   KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -723,7 +706,6 @@ CREATE TABLE `users_workspaces_document` (
   `versions` tinyint(1) unsigned DEFAULT '0',
   `properties` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `cid` (`cid`),
   KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -747,7 +729,6 @@ CREATE TABLE `users_workspaces_object` (
   `lView` text,
   `layouts` text,
   PRIMARY KEY (`cid`, `userId`),
-  KEY `cid` (`cid`),
   KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -834,7 +815,6 @@ CREATE TABLE `classificationstore_relations` (
 	`mandatory` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
-	INDEX `groupId` (`groupId`),
 	INDEX `mandatory` (`mandatory`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
@@ -858,7 +838,6 @@ CREATE TABLE `classificationstore_collectionrelations` (
 	`groupId` INT(11) unsigned NOT NULL,
     `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
-	INDEX `colId` (`colId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -921,7 +900,6 @@ CREATE TABLE `gridconfig_favourites` (
 	`searchType` VARCHAR(50) NOT NULL DEFAULT '',
 	`type` enum('asset','object') NOT NULL DEFAULT 'object',
   PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
-	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
 	INDEX `searchType` (`searchType`)
 )
@@ -933,7 +911,6 @@ CREATE TABLE `gridconfig_shares` (
 	`gridConfigId` INT(11) NOT NULL,
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
-	INDEX `gridConfigId` (`gridConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;
@@ -963,7 +940,6 @@ CREATE TABLE `importconfig_shares` (
 	`importConfigId` INT(11) NOT NULL,
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
-	INDEX `data.sharedRoleIds` (`importConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;

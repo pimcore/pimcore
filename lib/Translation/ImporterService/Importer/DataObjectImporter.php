@@ -42,6 +42,7 @@ class DataObjectImporter extends AbstractElementImporter
         if ($attribute->getType() === Attribute::TYPE_BRICK_LOCALIZED_FIELD) {
             list($brickField, $brick, $field) = explode(DataObjectDataExtractor::BRICK_DELIMITER, $attribute->getName());
 
+            $brickGetter = null;
             $brickContainerGetter = 'get' . ucfirst($brickField);
             if ($brickContainer = $element->$brickContainerGetter()) {
                 $brickGetter = 'get' . ucfirst($brick);

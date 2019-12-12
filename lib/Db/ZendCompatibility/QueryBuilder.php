@@ -935,6 +935,7 @@ class QueryBuilder
         if (empty($name)) {
             $correlationName = $tableName = '';
         } elseif (is_array($name)) {
+            $correlationName = $tableName = '';
             // Must be array($correlationName => $tableName) or array($ident, ...)
             foreach ($name as $_correlationName => $_tableName) {
                 if (is_string($_correlationName)) {

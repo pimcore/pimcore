@@ -253,7 +253,7 @@
     "settings": "Einstellungen",
     "properties": "Eigenschaften",
     "versions": "Versionen",
-    "add": "Addieren",
+    "add": "Hinzufügen",
     "date": "Datum",
     "user": "Benutzer",
     "note": "Anmerkung",
@@ -766,7 +766,7 @@
     "indexFieldSelectionCombo_settings": "Einstellungen (Indexfeld Combobox)",
     "specificPriceField": "Spezifisches Preisfeld",
     "showAllFields": "Alle Felder anzeigen",
-    "considerTenants": "Consider Tenants",
+    "considerTenants": "Mandanten in Betracht ziehen",
     "bundle_ecommerce_mainmenu": "Online Shop",
     "bundle_ecommerce_pricing_rules": "Preisregeln",
     "bundle_ecommerce_pricing_config_behavior": "Verhalten",
@@ -782,7 +782,7 @@
     "bundle_ecommerce_pricing_config_condition_sold_count": "Anzahl",
     "bundle_ecommerce_pricing_config_condition_sold_count_cart": "Zähler am Warenkorb",
     "bundle_ecommerce_pricing_config_condition_voucherToken": "Gutschein",
-    "bundle_ecommerce_pricing_config_condition_tenant": "Tenant",
+    "bundle_ecommerce_pricing_config_condition_tenant": "Mandant",
     "bundle_ecommerce_pricing_config_condition_targetgroup": "Zielgruppe",
     "bundle_ecommerce_pricing_config_condition_targetgroup_threshold": "Schwellenwert",
     "bundle_ecommerce_pricing_config_action_gift": "Geschenk",
@@ -915,5 +915,8 @@
     "predefined_metadata": "Vordefinierte Metadaten",
     "default_metadata": "Standardmetadaten",
     "asset_export_warning": "Bitte beachten Sie, dass der Export einige Felder (z. B. Vorschau, Größe) nicht unterstützt. Klicken Sie auf OK, um mit dem Export fortzufahren.",
-    "share_via_notifications": "Über Benachrichtigungen teilen"
+    "share_via_notifications": "Über Benachrichtigungen teilen",
+    "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Metadaten können nicht gespeichert werden!</b><br />Versuchen Sie die Metadaten in Asset zu bearbeiten.",
+    "email_log_forward": "E-Mail weiterleiten",
+    "sum": "Addieren"
 }

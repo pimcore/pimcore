@@ -22,6 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
  * @method Model\User[] load()
+ * @method Model\User current()
  */
 class AbstractListing extends Model\Listing\AbstractListing
 {
@@ -34,15 +35,21 @@ class AbstractListing extends Model\Listing\AbstractListing
      * Contains the results of the list. They are all an instance of User
      *
      * @var array
+     * @deprecated use getter/setter methods or $this->data
      */
     public $items = [];
+
+    public function __construct()
+    {
+        $this->items =& $this->data;
+    }
 
     /**
      * @return array
      */
     public function getItems()
     {
-        return $this->items;
+        return $this->getData();
     }
 
     /**
@@ -52,9 +59,7 @@ class AbstractListing extends Model\Listing\AbstractListing
      */
     public function setItems($items)
     {
-        $this->items = $items;
-
-        return $this;
+        return $this->setData($items);
     }
 
     /**

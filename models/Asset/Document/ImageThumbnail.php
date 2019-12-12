@@ -55,8 +55,7 @@ class ImageThumbnail
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
@@ -83,10 +82,10 @@ class ImageThumbnail
         } elseif (!$this->filesystemPath) {
             $config = $this->getConfig();
             $config->setFilenameSuffix('page-' . $this->page);
+            $path = null;
+            $deferred = $deferredAllowed && $this->deferred;
 
             try {
-                $path = null;
-                $deferred = ($deferredAllowed && $this->deferred) ? true : false;
                 if (!$deferred) {
                     $converter = \Pimcore\Document::getInstance();
                     $converter->load($this->asset->getFileSystemPath());

@@ -59,6 +59,7 @@
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.0",
     "guzzlehttp/guzzle": "^6.3",
+    "http-interop/http-factory-guzzle": "^1.0.0",
     "hybridauth/hybridauth": "^2.12",
     "lcobucci/jwt": "^3.2",
     "league/csv": "^9.1",
@@ -90,7 +91,7 @@
     "vrana/jush": "~2.0.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
-    "scheb/two-factor-bundle": "^3.8",
+    "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9"
   },
   "conflict": {
@@ -158,7 +159,7 @@
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "6.3-dev"
+      "dev-master": "6.4-dev"
     }
   },
   "bin": ["bin/pimcore-install"]

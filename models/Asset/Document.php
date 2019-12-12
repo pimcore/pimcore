@@ -116,6 +116,7 @@ class Document extends Model\Asset
 
         if (!$this->getCustomSetting('document_page_count')) {
             Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
+            TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
 
             return new Document\ImageThumbnail(null);
         }
@@ -140,7 +141,7 @@ class Document extends Model\Asset
 
             return $text;
         } else {
-            Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
+            Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
         }
 
         return null;

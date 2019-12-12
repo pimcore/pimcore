@@ -124,6 +124,7 @@ class AssetHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request)
     {
         $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = null;
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -213,12 +214,14 @@ class AssetHelperController extends AdminController
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
 
+            $savedGridConfig = null;
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
 
             if ($savedGridConfig) {
+                $shared = null;
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -283,10 +286,10 @@ class AssetHelperController extends AdminController
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName;
-        $settings['gridConfigDescription'] = $gridConfigDescription;
-        $settings['shareGlobally'] = $sharedGlobally;
-        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
@@ -312,7 +315,11 @@ class AssetHelperController extends AdminController
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
         $defaulMetadataFields = ['copyright', 'alt', 'title'];
-        $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+        $predefined = null;
+
+        if (isset($field['fieldConfig']['layout']['name'])) {
+            $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+        }
 
         $key = $field['name'];
         if ($keyPrefix) {
@@ -322,7 +329,7 @@ class AssetHelperController extends AdminController
         $fieldDef = explode('~', $field['name']);
         $field['name'] = $fieldDef[0];
 
-        if ($fieldDef[1] == 'system') {
+        if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
             $type = 'system';
         } elseif (in_array($fieldDef[0], $defaulMetadataFields)) {
             $type = 'input';
@@ -344,14 +351,14 @@ class AssetHelperController extends AdminController
             'label' => $field['fieldConfig']['label'] ?? $key,
             'width' => $field['width'],
             'position' => $field['position'],
-            'language' => $field['fieldConfig']['language'],
-            'layout' => $field['fieldConfig']['layout'],
+            'language' => $field['fieldConfig']['language'] ?? null,
+            'layout' => $field['fieldConfig']['layout'] ?? null,
         ];
 
-        if ($type == 'select') {
+        if ($type === 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
-        } elseif ($type == 'document' || $type == 'asset' || $type == 'object') {
+        } elseif ($type === 'document' || $type === 'asset' || $type === 'object') {
             $result['layout']['fieldtype'] = 'manyToOneRelation';
             $result['layout']['subtype'] = $type;
         }
@@ -447,6 +454,7 @@ class AssetHelperController extends AdminController
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
             $favourite->setType($type);
+            $specializedConfigs = false;
 
             try {
                 if ($gridConfigId != 0) {
@@ -456,8 +464,6 @@ class AssetHelperController extends AdminController
 
                 $favourite->setObjectId(0);
                 $favourite->save();
-
-                $specializedConfigs = false;
             } catch (\Exception $e) {
                 $favourite->delete();
             }
@@ -527,6 +533,7 @@ class AssetHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
+                $gridConfig = null;
                 if ($gridConfigId) {
                     try {
                         $gridConfig = GridConfig::getById($gridConfigId);

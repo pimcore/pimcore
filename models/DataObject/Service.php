@@ -75,23 +75,20 @@ class Service extends Model\Element\Service
         $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
-        $classes = $classesList->load();
 
         $classesToCheck = [];
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                $fieldDefinitions = $class->getFieldDefinitions();
-                $dataKeys = [];
-                if (is_array($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $tag) {
-                        if ($tag instanceof ClassDefinition\Data\User) {
-                            $dataKeys[] = $tag->getName();
-                        }
+        foreach ($classesList as $class) {
+            $fieldDefinitions = $class->getFieldDefinitions();
+            $dataKeys = [];
+            if (is_array($fieldDefinitions)) {
+                foreach ($fieldDefinitions as $tag) {
+                    if ($tag instanceof ClassDefinition\Data\User) {
+                        $dataKeys[] = $tag->getName();
                     }
                 }
-                if (is_array($dataKeys) and count($dataKeys) > 0) {
-                    $classesToCheck[$class->getName()] = $dataKeys;
-                }
+            }
+            if (is_array($dataKeys) and count($dataKeys) > 0) {
+                $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
 
@@ -160,7 +157,7 @@ class Service extends Model\Element\Service
         $children = $source->getChildren([
             AbstractObject::OBJECT_TYPE_OBJECT,
             AbstractObject::OBJECT_TYPE_VARIANT,
-            AbstractObject::OBJECT_TYPE_FOLDER
+            AbstractObject::OBJECT_TYPE_FOLDER,
         ], true);
 
         foreach ($children as $child) {
@@ -303,7 +300,7 @@ class Service extends Model\Element\Service
 
             $user = AdminTool::getCurrentUser();
 
-            if (empty($fields)) {
+            if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
             }
 
@@ -324,7 +321,7 @@ class Service extends Model\Element\Service
                         $helperDefinitions = self::getHelperDefinitions();
                         $haveHelperDefinition = true;
                     }
-                    if ($helperDefinitions[$key]) {
+                    if (!empty($helperDefinitions[$key])) {
                         $context['fieldname'] = $key;
                         $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
                     }
@@ -1263,7 +1260,7 @@ class Service extends Model\Element\Service
         $layoutDefinitions = $class->getLayoutDefinitions();
 
         $result = [
-            'layoutDefinition' => $layoutDefinitions
+            'layoutDefinition' => $layoutDefinitions,
         ];
 
         if (!$objectId) {
@@ -1357,9 +1354,9 @@ class Service extends Model\Element\Service
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
             }
 
-            if ($context['containerType'] === 'fieldcollection') {
+            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
-            } elseif ($context['containerType'] === 'objectbrick') {
+            } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
                 $context['ownerType'] = 'localizedfield';
@@ -1386,6 +1383,7 @@ class Service extends Model\Element\Service
     {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             if (is_array($allowedView) && count($allowedView) > 0) {
+                $haveAllowedViewDefault = null;
                 if ($layout->{'fieldtype'} === 'localizedfields') {
                     $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
@@ -1401,6 +1399,7 @@ class Service extends Model\Element\Service
                 }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
+                $haveAllowedEditDefault = null;
                 if ($layout->{'fieldtype'} === 'localizedfields') {
                     $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
@@ -1442,7 +1441,7 @@ class Service extends Model\Element\Service
         }
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        /** @var $fd Model\DataObject\ClassDefinition\Data\CalculatedValue */
+        $fd = null;
         if ($ownerType === 'object') {
             $fd = $object->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType === 'localizedfield') {
@@ -1453,7 +1452,7 @@ class Service extends Model\Element\Service
             $fd = $data->getKeyDefinition();
         }
 
-        if (!$fd) {
+        if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return $data;
         }
         $className = $fd->getCalculatorClass();
@@ -1494,7 +1493,7 @@ class Service extends Model\Element\Service
         }
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        /** @var $fd Model\DataObject\ClassDefinition\Data\CalculatedValue */
+        $fd = null;
         if ($ownerType === 'object') {
             $fd = $object->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType === 'localizedfield') {
@@ -1505,7 +1504,7 @@ class Service extends Model\Element\Service
             $fd = $data->getKeyDefinition();
         }
 
-        if (!$fd) {
+        if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             return null;
         }
         $className = $fd->getCalculatorClass();

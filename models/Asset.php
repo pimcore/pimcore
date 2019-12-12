@@ -349,7 +349,7 @@ class Asset extends Element\AbstractElement
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'r+', false, File::getContext());
+                    $data['stream'] = fopen($data['sourcePath'], 'r', false, File::getContext());
                 }
 
                 unset($data['sourcePath']);
@@ -471,15 +471,16 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $isUpdate = false;
-
             $preEvent = new AssetEvent($this, $params);
 
             if ($this->getId()) {
@@ -944,6 +945,14 @@ class Asset extends Element\AbstractElement
     public function hasChildren()
     {
         return false;
+    }
+
+    /**
+     * @return Asset[]
+     */
+    public function getChildren()
+    {
+        return [];
     }
 
     /**
@@ -1615,6 +1624,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $metadata
+     *
+     * @return self
      */
     public function setMetadata($metadata)
     {
@@ -1639,6 +1650,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $hasMetaData
+     *
+     * @return self
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1652,6 +1665,8 @@ class Asset extends Element\AbstractElement
      * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
      * @param null $data
      * @param null $language
+     *
+     * @return self
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {
@@ -1854,7 +1869,6 @@ class Asset extends Element\AbstractElement
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset

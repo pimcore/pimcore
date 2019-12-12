@@ -166,10 +166,12 @@ class Site extends AbstractModel
     /**
      * @param $mixed
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getBy($mixed)
     {
+        $site = null;
+
         if (is_numeric($mixed)) {
             $site = self::getById($mixed);
         } elseif (is_string($mixed)) {

@@ -73,7 +73,6 @@ class Dao extends Model\Dao\AbstractDao
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
-          INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8mb4;");

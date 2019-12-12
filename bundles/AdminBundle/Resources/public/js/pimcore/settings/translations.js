@@ -93,7 +93,7 @@ pimcore.settings.translations = Class.create({
         ];
 
         for (var i = 0; i < languages.length; i++) {
-            readerFields.push({name: "_" + languages[i]});
+            readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
             var columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
@@ -103,7 +103,9 @@ pimcore.settings.translations = Class.create({
                 filter: 'string',
                 getEditor: this.getCellEditor.bind(this, languages[i]),
                 renderer: function (text) {
-                    return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
+                    if (text) {
+                        return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
+                    }
                 },
                 id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()
             };

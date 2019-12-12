@@ -44,6 +44,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $importConfigShare = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($importConfigShare as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('importconfig_shares'))) {

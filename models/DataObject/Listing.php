@@ -24,16 +24,18 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Model\DataObject[] load()
+ * @method Model\DataObject current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\DataObject\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $objects = null;
 
@@ -47,16 +49,17 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
      */
     public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
 
+    public function __construct()
+    {
+        $this->objects =& $this->data;
+    }
+
     /**
      * @return array
      */
     public function getObjects()
     {
-        if ($this->objects === null) {
-            $this->load();
-        }
-
-        return $this->objects;
+        return $this->getData();
     }
 
     /**
@@ -66,9 +69,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
      */
     public function setObjects($objects)
     {
-        $this->objects = $objects;
-
-        return $this;
+        return $this->setData($objects);
     }
 
     /**
@@ -194,59 +195,6 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * Methods for Iterator
-     */
-    public function rewind()
-    {
-        $this->getObjects();
-        reset($this->objects);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function current()
-    {
-        $this->getObjects();
-        $var = current($this->objects);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getObjects();
-        $var = key($this->objects);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function next()
-    {
-        $this->getObjects();
-        $var = next($this->objects);
-
-        return $var;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getObjects();
-        $var = $this->current() !== false;
-
-        return $var;
     }
 
     /**
