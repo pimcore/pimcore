@@ -255,6 +255,7 @@
   "items_per_page": "Items per page",
   "reload_pimcore_changes": "You have to reload Pimcore for the changes to take effect, would you like to do this now?",
   "info": "Info",
+  "area_brick_assign_info_message": "Please use drag & drop to assign a brick to the desired block",
   "metainfo_copy_id": "Copy ID to clipboard",
   "metainfo_copy_fullpath": "Copy full path to clipboard",
   "metainfo_copy_deeplink": "Copy deeplink to clipboard",
