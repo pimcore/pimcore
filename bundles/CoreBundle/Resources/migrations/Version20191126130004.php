@@ -17,7 +17,10 @@ class Version20191126130004 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         if (PimcoreEcommerceFrameworkBundle::isEnabled()) {
-            $this->addSql('CREATE INDEX IF NOT EXISTS ecommerceframework_cart_userid_index on ecommerceframework_cart (userid);');
+            $table = $schema->getTable('ecommerceframework_cart');
+            if(!$table->hasIndex('ecommerceframework_cart_userid_index')) {
+                $table->addIndex(['userid'], 'ecommerceframework_cart_userid_index');
+            }
         }
     }
 
@@ -27,7 +30,10 @@ class Version20191126130004 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         if (PimcoreEcommerceFrameworkBundle::isEnabled()) {
-            $this->addSql('DROP INDEX IF EXISTS ecommerceframework_cart_userid_index on ecommerceframework_cart;');
+            $table = $schema->getTable('ecommerceframework_cart');
+            if($table->hasIndex('ecommerceframework_cart_userid_index')) {
+                $table->dropIndex('ecommerceframework_cart_userid_index');
+            }
         }
     }
 }
