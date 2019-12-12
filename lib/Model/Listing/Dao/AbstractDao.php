@@ -26,6 +26,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
+     * @TODO abstract method to be activated in Pimcore 7
+     * @return array
+     */
+    /*abstract public function load();*/
+
+    /**
      * @return string
      */
     protected function getOrder()
