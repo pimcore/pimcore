@@ -37,18 +37,12 @@
 
 namespace Pimcore\Templating\Helper\Placeholder;
 
-use Pimcore\Event\DocumentEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Registry for placeholder containers
  */
 class ContainerService
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
 
     /**
      * @var int
@@ -65,24 +59,6 @@ class ContainerService
     public function __construct()
     {
         $this->_items[$this->currentIndex] = [];
-    }
-
-    /**
-     * TODO Pimcore 6 set event dispatcher as constructor parameter
-     *
-     * @internal
-     * @required
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-
-        // lazily add event listeners - these listeners are only added if the container service is actually built
-        // when rendering a new document, the index is pushed to create a new, empty context
-        $eventDispatcher->addListener(DocumentEvents::RENDERER_PRE_RENDER, [$this, 'pushIndex']);
-        $eventDispatcher->addListener(DocumentEvents::RENDERER_POST_RENDER, [$this, 'popIndex']);
     }
 
     public function pushIndex()

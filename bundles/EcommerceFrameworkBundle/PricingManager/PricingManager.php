@@ -239,18 +239,6 @@ class PricingManager implements PricingManagerInterface
     }
 
     /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return RuleInterface
-     */
-    public function getRule()
-    {
-        $class = $this->options['rule_class'];
-
-        return new $class();
-    }
-
-    /**
      * @return Rule\Listing
      */
     public function getRuleListing()

@@ -27,12 +27,14 @@ use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class Tracker extends AbstractTracker
 {
+    use LoggerAwareTrait;
+
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
     const BLOCK_BEFORE_SCRIPT = 'beforeScript';
     const BLOCK_BEFORE_INIT = 'beforeInit';
@@ -65,11 +67,6 @@ class Tracker extends AbstractTracker
      * @var string|null
      */
     private $defaultPath;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @var array
@@ -106,14 +103,6 @@ class Tracker extends AbstractTracker
     public function setDefaultPath(string $defaultPath = null)
     {
         $this->defaultPath = $defaultPath;
-    }
-
-    /**
-     * TODO Pimcore 6 set logger as constructor dependency
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     protected function buildCodeCollector(): CodeCollector
