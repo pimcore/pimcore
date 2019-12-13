@@ -32,11 +32,6 @@ class Listing extends AbstractListing
      */
     protected $notifications = null;
 
-    /**
-     * @var array
-     */
-    protected $data;
-
     public function __construct()
     {
         $this->notifications =& $this->data;
