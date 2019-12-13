@@ -47,7 +47,7 @@ pimcore:
             email: ''
             simple_api_key: ''
             browser_api_key: ''
-    cache:
+    fullpagecache:
         enabled: false
         lifetime: null
         exclude_patterns: ''

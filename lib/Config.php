@@ -340,11 +340,11 @@ class Config
                         'browserapikey' => self::getArrayValue(['services', 'google', 'browser_api_key'], $config)
                     ]
                 ],
-                'cache' => [
-                    'enabled' => self::getArrayValue(['cache', 'enabled'], $config),
-                    'lifetime' => self::getArrayValue(['cache', 'lifetime'], $config),
-                    'excludePatterns' => self::getArrayValue(['cache', 'exclude_patterns'], $config),
-                    'excludeCookie' => self::getArrayValue(['cache', 'exclude_cookie'], $config)
+                'fullpagecache' => [
+                    'enabled' => self::getArrayValue(['fullpagecache', 'enabled'], $config),
+                    'lifetime' => self::getArrayValue(['fullpagecache', 'lifetime'], $config),
+                    'excludePatterns' => self::getArrayValue(['fullpagecache', 'exclude_patterns'], $config),
+                    'excludeCookie' => self::getArrayValue(['fullpagecache', 'exclude_cookie'], $config)
                 ],
                 'webservice' => [
                     'enabled' => self::getArrayValue(['webservice', 'enabled'], $config)

@@ -364,11 +364,11 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['cache']['excludePatterns']);
+        if (!empty($valueArray['fullpagecache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['fullpagecache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['cache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['fullpagecache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
@@ -445,7 +445,7 @@ class SettingsController extends AdminController
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        $cacheExcludePatterns = $values['cache.excludePatterns'];
+        $cacheExcludePatterns = $values['fullpagecache.excludePatterns'];
         if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
@@ -501,11 +501,11 @@ class SettingsController extends AdminController
                     'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
-            'cache' => [
-                'enabled' => $values['cache.enabled'],
-                'lifetime' => $values['cache.lifetime'],
+            'fullpagecache' => [
+                'enabled' => $values['fullpagecache.enabled'],
+                'lifetime' => $values['fullpagecache.lifetime'],
                 'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['cache.excludeCookie']
+                'exclude_cookie' => $values['fullpagecache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']
