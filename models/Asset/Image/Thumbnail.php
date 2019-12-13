@@ -315,7 +315,7 @@ class Thumbnail
         $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
 
         // $this->getConfig() can be empty, the original image is returned
-        if ($this->getConfig() && $this->getConfig()->hasMedias()) {
+        if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
