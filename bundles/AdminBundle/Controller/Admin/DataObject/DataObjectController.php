@@ -1035,7 +1035,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 Logger::debug('prevented renaming object because of missing permissions ');
             }
 
-            if ($values['parentId']) {
+            if (!empty($values['parentId'])) {
                 $parent = DataObject::getById($values['parentId']);
 
                 //check if parent is changed
