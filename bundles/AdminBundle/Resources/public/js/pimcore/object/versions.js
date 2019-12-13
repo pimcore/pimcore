@@ -126,7 +126,8 @@ pimcore.object.versions = Class.create({
                     mode: 'MULTI'
                 }),
                 viewConfig: {
-                    xtype: 'patchedgridview'
+                    xtype: 'patchedgridview',
+                    enableTextSelection: true
                 }
             });
 

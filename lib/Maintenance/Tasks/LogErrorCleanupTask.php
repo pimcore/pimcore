@@ -20,14 +20,14 @@ use Pimcore\Maintenance\TaskInterface;
 final class LogErrorCleanupTask implements TaskInterface
 {
     /**
-     * @var Db\Connection
+     * @var Db\ConnectionInterface
      */
     private $db;
 
     /**
-     * @param Db\Connection $db
+     * @param Db\ConnectionInterface $db
      */
-    public function __construct(Db\Connection $db)
+    public function __construct(Db\ConnectionInterface $db)
     {
         $this->db = $db;
     }

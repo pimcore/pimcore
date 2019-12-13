@@ -189,38 +189,10 @@ pimcore.document.tree = Class.create({
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
             "itemmouseenter": function (el, record, item, index, e, eOpts) {
-
-                if (record.data.qtipCfg) {
-                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
-
-                    if (record.data.qtipCfg.text) {
-                        text += record.data.qtipCfg.text;
-                    } else {
-                        text += (t("type") + ": "+ t(record.data.type));
-                    }
-
-                    jQuery("#pimcore_tooltip").show();
-                    jQuery("#pimcore_tooltip").html(text);
-                    jQuery("#pimcore_tooltip").removeClass('right');
-
-                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
-
-                    var offsetTreeNode = jQuery(item).offset();
-
-                    var parentTree = el.ownerCt.ownerCt;
-
-                    if(parentTree.region == 'west') {
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
-                    }
-
-                    if(parentTree.region == 'east') {
-                        jQuery("#pimcore_tooltip").addClass('right');
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
-                    }
-                }
+                pimcore.helpers.treeToolTipShow(el, record, item);
             },
             "itemmouseleave": function () {
-                jQuery("#pimcore_tooltip").hide();
+                pimcore.helpers.treeToolTipHide();
             }
         };
 
@@ -363,11 +335,11 @@ pimcore.document.tree = Class.create({
         } else {
             var pasteMenu = [];
             var pasteInheritanceMenu = [];
-
-            if ((record.data.type == "page" || record.data.type == "email" || record.data.type == "folder"
+            var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
                 || record.data.type == "link" || record.data.type == "hardlink"
-                || record.data.type == "printpage" || record.data.type == "printcontainer")
-                && record.data.permissions.create) {
+                || record.data.type == "printpage" || record.data.type == "printcontainer");
+
+            if (childSupportedDocument && record.data.permissions.create) {
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
@@ -590,7 +562,7 @@ pimcore.document.tree = Class.create({
 
 
             //paste
-            if (pimcore.cutDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.pasteCut")) {
+            if (childSupportedDocument && pimcore.cutDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.pasteCut")) {
                 pasteMenu.push({
                     text: t("paste_cut_element"),
                     iconCls: "pimcore_icon_paste",
@@ -735,7 +707,7 @@ pimcore.document.tree = Class.create({
                 }));
             }
 
-            if (record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
+            if (childSupportedDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
                 advancedMenuItems.push({
                     text: t('search_and_move'),
                     iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

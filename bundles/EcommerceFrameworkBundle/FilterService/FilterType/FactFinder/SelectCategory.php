@@ -34,12 +34,14 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         // init
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+
+        $isReload = $params['is_reload'] ?? null;
 
         // set defaults
         //only works with Root categories!
 
-        if (empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$isReload) {
             $value[] = $preSelect->getId();
         }
 

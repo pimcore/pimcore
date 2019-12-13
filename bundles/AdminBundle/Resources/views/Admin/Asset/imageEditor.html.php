@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <base href="/bundles/pimcoreadmin/js/lib/minipaint/" />
     <script src="/bundles/pimcoreadmin/js/lib/minipaint/dist/bundle.js"></script>
-    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 </head>
 <body>
 <div class="wrapper">

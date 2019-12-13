@@ -714,5 +714,6 @@
     "invitation_sent": "Login Invitation sent",
     "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
     "geopolyline": "Geographic Polyline",
-    "classificationstore_error_group_exists_msg": "Group with this name already exists"
+    "classificationstore_error_group_exists_msg": "Group with this name already exists",
+    "classificationstore_group_by_key": "Group by key"
 }

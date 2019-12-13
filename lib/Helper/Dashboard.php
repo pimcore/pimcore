@@ -82,8 +82,8 @@ class Dashboard
 
             if (empty($this->dashboards)) {
                 $perspectiveCfg = Config::getRuntimePerspective();
-                $dasboardCfg = $perspectiveCfg['dashboards'] ? $perspectiveCfg['dashboards'] : [];
-                $this->dashboards = $dasboardCfg['predefined'] ? $dasboardCfg['predefined'] : [];
+                $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
+                $this->dashboards = $dasboardCfg['predefined'] ?? [];
             }
         }
 
@@ -160,8 +160,8 @@ class Dashboard
     public function getDisabledPortlets()
     {
         $perspectiveCfg = Config::getRuntimePerspective($this->user);
-        $dasboardCfg = $perspectiveCfg['dashboards'] ? $perspectiveCfg['dashboards'] : [];
+        $dasboardCfg = $perspectiveCfg['dashboards'] ?? [];
 
-        return isset($dasboardCfg['disabledPortlets']) ? $dasboardCfg['disabledPortlets'] : [];
+        return $dasboardCfg['disabledPortlets'] ?? [];
     }
 }

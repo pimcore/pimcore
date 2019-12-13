@@ -59,13 +59,6 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-        if (this.getValue() == false) {
-            return true;
-        }
-        return false;
-    },
-
     getGridColumnConfig: function (field) {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);

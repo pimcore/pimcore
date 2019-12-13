@@ -31,7 +31,7 @@ You can get Master document object by `getContentMasterDocument` method availabl
 
 ```php
 $document = \Pimcore\Model\Document\Page::getById(130);
-Zend_Debug::dump([
+dump([
     'master_document' => $document->getContentMasterDocument()->getKey(),
     'document' => $document->getKey()
 ]);

@@ -341,10 +341,11 @@ abstract class PageSnippet extends Model\Document
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
+                $this->elements = $this->elements ?? [];
                 $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
-                $this->elements[$name]->setDocumentId($this->getId());
+                $this->elements[$name]->setDocument($this);
             }
         } catch (\Exception $e) {
             Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());

@@ -70,6 +70,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $documentId;
 
     /**
+     * Element belongs to the document
+     *
+     * @var Document\PageSnippet
+     */
+    protected $document;
+
+    /**
      * @deprecated Unused - will be removed in 7.0
      *
      * @var null
@@ -334,6 +341,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         $this->documentId = (int) $id;
 
+        if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
+            $this->document = null;
+        }
+
         return $this;
     }
 
@@ -343,6 +354,31 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function getDocumentId()
     {
         return $this->documentId;
+    }
+
+    /**
+     * @param Document\PageSnippet $document
+     *
+     * @return $this
+     */
+    public function setDocument(Document\PageSnippet $document)
+    {
+        $this->document = $document;
+        $this->documentId = (int) $document->getId();
+
+        return $this;
+    }
+
+    /**
+     * @return Document\PageSnippet
+     */
+    public function getDocument()
+    {
+        if (!$this->document) {
+            $this->document = Document\PageSnippet::getById($this->documentId);
+        }
+
+        return $this->document;
     }
 
     /**
@@ -447,11 +483,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __sleep()
     {
+        $finalVars = [];
+        $parentVars = parent::__sleep();
+        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
 
-        // here the "normal" task of __sleep ;-)
-        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options', 'parentBlockNames'];
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+        foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
@@ -599,6 +635,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         unset($el['dao']);
         unset($el['documentId']);
+        unset($el['document']);
         unset($el['controller']);
         unset($el['view']);
         unset($el['editmode']);

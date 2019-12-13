@@ -1171,6 +1171,8 @@ class ClassController extends AdminController implements EventedControllerInterf
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
+        $fieldname = null;
+        $className = null;
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1373,6 +1375,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         foreach ($json as $groupName => $group) {
             foreach ($group as $groupItem) {
                 $displayName = null;
+                $icon = null;
 
                 if ($groupName == 'class') {
                     $name = $groupItem['name'];
@@ -1740,6 +1743,42 @@ class ClassController extends AdminController implements EventedControllerInterf
                     ];
                 }
             }
+        }
+
+        return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/get-icons", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function getIconsAction(Request $request)
+    {
+        $classId = $request->get('classId');
+
+        $path = '/bundles/pimcoreadmin/img/object-icons';
+        $icons = rscandir(PIMCORE_WEB_ROOT . $path);
+
+        foreach ($icons as &$icon) {
+            $icon = str_replace(PIMCORE_WEB_ROOT, '', $icon);
+        }
+
+        $event = new GenericEvent($this, [
+            'icons' => $icons,
+            'classId' => $classId
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECT_ICONS_PRE_SEND_DATA, $event);
+        $icons = $event->getArgument('icons');
+
+        $result = [];
+        foreach ($icons as $icon) {
+            $result[] = [
+                'text' => "<img src='{$icon}'>",
+                'value' => $icon
+            ];
         }
 
         return $this->adminJson($result);

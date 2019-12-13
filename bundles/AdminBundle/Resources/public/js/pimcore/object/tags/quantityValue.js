@@ -298,9 +298,5 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        return !(this.unitField.getValue() && this.inputField.getValue());
     }
 });

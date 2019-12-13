@@ -90,7 +90,7 @@ $user      = $userProxy->getUser();
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
-        var symfonyToolbarKey = 'sf2/profiler/toolbar/displayState';
+        var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
         if(!window.localStorage.getItem(symfonyToolbarKey)) {
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
@@ -215,7 +215,6 @@ $scriptLibs = array(
 
     // library
     "lib/class.js",
-    "lib/jquery-3.4.1.min.js",
     "lib/ext/ext-all" . $debugSuffix . ".js",
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 
@@ -343,8 +342,11 @@ $scripts = array(
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
+    "pimcore/element/gridexport/abstract.js",
+    "pimcore/element/helpers/gridColumnConfig.js",
+    "pimcore/element/helpers/gridConfigDialog.js",
+    "pimcore/element/helpers/gridCellEditor.js",
     "pimcore/object/helpers/grid.js",
-    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/import/csvPreviewTab.js",
     "pimcore/object/helpers/import/columnConfigurationTab.js",
@@ -355,7 +357,6 @@ $scripts = array(
     "pimcore/object/helpers/import/reportTab.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
-    "pimcore/object/helpers/gridCellEditor.js",
     "pimcore/object/helpers/metadataMultiselectEditor.js",
     "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/object/helpers/optionEditor.js",
@@ -365,6 +366,10 @@ $scripts = array(
     "pimcore/element/tag/configuration.js",
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
+    "pimcore/asset/helpers/metadataTree.js",
+    "pimcore/asset/helpers/gridConfigDialog.js",
+    "pimcore/asset/helpers/gridTabAbstract.js",
+    "pimcore/asset/helpers/grid.js",
 
     // documents
     "pimcore/document/properties.js",
@@ -400,6 +405,13 @@ $scripts = array(
     "pimcore/document/customviews/tree.js",
 
     // assets
+    "pimcore/asset/tags/abstract.js",
+    "pimcore/asset/tags/checkbox.js",
+    "pimcore/asset/tags/date.js",
+    "pimcore/asset/tags/input.js",
+    "pimcore/asset/tags/manyToOneRelation.js",
+    "pimcore/asset/tags/select.js",
+    "pimcore/asset/tags/textarea.js",
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
     "pimcore/asset/embedded_meta_data.js",
@@ -414,6 +426,8 @@ $scripts = array(
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
+    "pimcore/asset/gridexport/xlsx.js",
+    "pimcore/asset/gridexport/csv.js",
 
     // object
     "pimcore/object/helpers/edit.js",
@@ -614,7 +628,6 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/gridexport/abstract.js",
     "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
 

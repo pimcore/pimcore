@@ -229,7 +229,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -285,8 +285,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         foreach ($data as $rawBlockElement) {
             $resultElement = [];
 
-            $oIndex = $rawBlockElement['oIndex'];
-            $blockElement = $rawBlockElement['data'];
+            $oIndex = $rawBlockElement['oIndex'] ?? null;
+            $blockElement = $rawBlockElement['data'] ?? null;
             $blockElementDefinition = $this->getFieldDefinitions();
 
             /** @var $fd DataObject\ClassDefinition\Data */
@@ -350,10 +350,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $data = null;
 
-        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? null;
 
-        if ($context) {
-            if ($context['containerType'] == 'fieldcollection') {
+        if (isset($context['containerType'])) {
+            if ($context['containerType'] === 'fieldcollection') {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -381,7 +381,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         return null;
                     }
                 }
-            } elseif ($context['containerType'] == 'objectbrick') {
+            } elseif ($context['containerType'] === 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -995,11 +995,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $field = $this->getName();
         $db = Db::get();
+        $data = null;
 
         if ($container instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $data = null;
-
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
@@ -1008,7 +1007,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $context = $params['context'];
             $object = $context['object'];
 
-            if ($context && $context['containerType'] == 'fieldcollection') {
+            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
             } else {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
@@ -1163,7 +1162,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     foreach ($blockDefinitions as $fd) {
                         try {
-                            $blockElement = $item[$fd->getName()];
+                            $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
                                     throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');

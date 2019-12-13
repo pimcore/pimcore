@@ -106,7 +106,7 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
             width: 400,
             height: 300,
             modal: true,
-            title: t('settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

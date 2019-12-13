@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -348,7 +349,7 @@ class Asset extends Element\AbstractElement
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'r+', false, File::getContext());
+                    $data['stream'] = fopen($data['sourcePath'], 'r', false, File::getContext());
                 }
 
                 unset($data['sourcePath']);
@@ -381,15 +382,16 @@ class Asset extends Element\AbstractElement
      */
     public static function getList($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Asset\\Listing';
-
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $list->load();
-
-            return $list;
+        if (!\is_array($config)) {
+            throw new \Exception('Unable to initiate list class - please provide valid configuration array');
         }
+
+        $listClass = Listing::class;
+
+        $list = self::getModelFactory()->build($listClass);
+        $list->setValues($config);
+
+        return $list;
     }
 
     /**
@@ -399,14 +401,10 @@ class Asset extends Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        if (is_array($config)) {
-            $listClass = 'Pimcore\\Model\\Asset\\Listing';
-            $list = self::getModelFactory()->build($listClass);
-            $list->setValues($config);
-            $count = $list->getTotalCount();
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-            return $count;
-        }
+        return $count;
     }
 
     /**
@@ -473,15 +471,16 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $isUpdate = false;
-
             $preEvent = new AssetEvent($this, $params);
 
             if ($this->getId()) {
@@ -946,6 +945,14 @@ class Asset extends Element\AbstractElement
     public function hasChildren()
     {
         return false;
+    }
+
+    /**
+     * @return Asset[]
+     */
+    public function getChildren()
+    {
+        return [];
     }
 
     /**
@@ -1617,6 +1624,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $metadata
+     *
+     * @return self
      */
     public function setMetadata($metadata)
     {
@@ -1641,6 +1650,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $hasMetaData
+     *
+     * @return self
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1654,11 +1665,14 @@ class Asset extends Element\AbstractElement
      * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
      * @param null $data
      * @param null $language
+     *
+     * @return self
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {
         if ($name && $type) {
             $tmp = [];
+            $name = str_replace('~', '---', $name);
             if (!is_array($this->metadata)) {
                 $this->metadata = [];
             }
@@ -1685,10 +1699,11 @@ class Asset extends Element\AbstractElement
     /**
      * @param null $name
      * @param null $language
+     * @param bool $strictMatch
      *
-     * @return array
+     * @return array|null
      */
-    public function getMetadata($name = null, $language = null)
+    public function getMetadata($name = null, $language = null, $strictMatch = false)
     {
         $convert = function ($metaData) {
             if (in_array($metaData['type'], ['asset', 'document', 'object']) && is_numeric($metaData['data'])) {
@@ -1709,7 +1724,7 @@ class Asset extends Element\AbstractElement
                     if ($language == $md['language']) {
                         return $convert($md);
                     }
-                    if (empty($md['language'])) {
+                    if (empty($md['language']) && !$strictMatch) {
                         $data = $md;
                     }
                 }
@@ -1854,7 +1869,6 @@ class Asset extends Element\AbstractElement
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset

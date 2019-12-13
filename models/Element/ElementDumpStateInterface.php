@@ -19,6 +19,8 @@ namespace Pimcore\Model\Element;
 
 interface ElementDumpStateInterface
 {
+    public const DUMP_STATE_PROPERTY_NAME = '_fulldump';
+
     /**
      * Set to true to indicate that we are about to serialize the version data.
      *

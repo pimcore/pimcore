@@ -336,10 +336,10 @@ All dimensions are in percent and therefore independent from the image size, you
             <?php
             // outside the editmode: do something with the data
             if($this->image("myImage")->getHotspots()) {
-                \Zend_Debug::dump($this->image("myImage")->getHotspots());
+                dump($this->image("myImage")->getHotspots());
             }
             if($this->image("myImage")->getMarker()) {
-                \Zend_Debug::dump($this->image("myImage")->getMarker());
+                dump($this->image("myImage")->getMarker());
             }
             ?>
         <?php endif; ?>

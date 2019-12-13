@@ -56,6 +56,7 @@ class Dao extends Model\Dao\AbstractDao
         $version = $this->model->getObjectVars();
 
         // save main table
+        $data = [];
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('email_blacklist'))) {
                 if (is_bool($value)) {

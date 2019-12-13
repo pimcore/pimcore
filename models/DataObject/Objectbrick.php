@@ -309,6 +309,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function __wakeup()
     {
+        $brickGetter = null;
 
         // for backwards compatibility
         if (isset($this->object) && $this->object) {

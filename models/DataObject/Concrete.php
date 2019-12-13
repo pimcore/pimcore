@@ -185,8 +185,24 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($validationExceptions) {
             $message = 'Validation failed: ';
             $errors = [];
+            /** @var \Exception $e */
             foreach ($validationExceptions as $e) {
-                $errors[] = $e->getMessage();
+                $msg = $e->getMessage();
+
+                if ($e instanceof Model\Element\ValidationException) {
+                    $subItems = $e->getSubItems();
+                    if (is_array($subItems)) {
+                        $msg .= ' (';
+                        $subItemParts = [];
+                        /** @var \Exception $subItem */
+                        foreach ($subItems as $subItem) {
+                            $subItemParts[] = $subItem->getMessage();
+                        }
+                        $msg .= implode(',', $subItems);
+                        $msg .= ' (';
+                    }
+                }
+                $errors[] = $msg;
             }
             $message .= implode(' / ', $errors);
             $aggregatedExceptions = new Model\Element\ValidationException($message);
@@ -413,6 +429,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param ClassDefinition $o_class
+     *
+     * @return self
      */
     public function setClass($o_class)
     {
@@ -503,6 +521,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param bool $omitMandatoryCheck
+     *
+     * @return self
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
@@ -535,6 +555,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param array $scheduledTasks
+     *
+     * @return self
      */
     public function setScheduledTasks($scheduledTasks)
     {
@@ -606,6 +628,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @param $method
      * @param $arguments
+     *
+     * @return Model\Listing\AbstractListing|Concrete|null
      *
      * @throws \Exception
      */

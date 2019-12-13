@@ -318,6 +318,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $creationDate
+     *
+     * @return self
      */
     public function setCreationDate($creationDate)
     {
@@ -336,6 +338,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $modificationDate
+     *
+     * @return self
      */
     public function setModificationDate($modificationDate)
     {

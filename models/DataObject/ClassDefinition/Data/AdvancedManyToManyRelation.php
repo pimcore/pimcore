@@ -190,6 +190,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
+     * @return string|null
+     *
      * @throws \Exception
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -357,6 +359,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $multihrefMetadata = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['id']);
                 } elseif ($element['type'] == 'asset') {
@@ -381,15 +384,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
-                        $value = $element[$key];
+                        $value = $element[$key] ?? null;
 
                         if ($columnConfig['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 
@@ -731,16 +730,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->enrichRelation($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
+        $context = $params['context'] ?? null;
 
-        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
-            $context = $params['context'];
-            $index = $context['index'];
+        if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
+            $index = $context['index'] ?? null;
             $containerName = $context['fieldname'];
 
-            if ($params['context']['containerType'] == 'fieldcollection') {
-                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%';
+            if ($context['containerType'] === 'fieldcollection') {
+                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%';
             } else {
-                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/%';
+                $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
             $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
@@ -751,14 +750,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 . ' AND ' . $db->quoteInto('position = ?', $position);
 
-            if ($params && $params['context']) {
-                if ($params['context']['fieldname']) {
-                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
+            if ($context) {
+                if (!empty($context['fieldname'])) {
+                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
                 if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
-                    if ($params['context']['containerType']) {
-                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                    if ($context['containerType']) {
+                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
                 }
             }
@@ -827,16 +826,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function delete($object, $params = [])
     {
         $db = Db::get();
+        $context = $params['context'] ?? null;
 
-        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
-            $context = $params['context'];
-            $containerName = $context['fieldname'];
+        if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
+            $containerName = $context['fieldname'] ?? null;
 
-            if ($params['context']['containerType'] == 'objectbrick') {
+            if ($context['containerType'] === 'objectbrick') {
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/%')
+                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             } else {
@@ -845,7 +844,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%')
+                    . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             }
@@ -855,14 +854,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 'fieldname' => $this->getName(),
             ];
 
-            if ($params && $params['context']) {
-                if ($params['context']['fieldname']) {
-                    $deleteCondition['ownername'] = $params['context']['fieldname'];
+            if ($context) {
+                if (!empty($context['fieldname'])) {
+                    $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
                 if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
-                    if ($params['context']['containerType']) {
-                        $deleteCondition['ownertype'] = $params['context']['containerType'];
+                    if (!empty($context['containerType'])) {
+                        $deleteCondition['ownertype'] = $context['containerType'];
                     }
                 }
             }

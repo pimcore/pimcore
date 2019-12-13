@@ -704,27 +704,27 @@ class TestHelper
     }
 
     /**
-     * @param AbstractElement|null $root
+     * @param AbstractElement $root
      * @param string $type
      */
-    public static function cleanUpTree(AbstractElement $root = null, $type)
+    public static function cleanUpTree(AbstractElement $root, $type)
     {
-        if (!$root) {
-            return;
-        }
-
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
         }
 
-        if ($root and $root->hasChildren()) {
-            $childs = $root->getChildren();
+        if ($root instanceof AbstractObject) {
+            $children = $root->getChildren([], true);
+        } elseif ($root instanceof Document) {
+            $children = $root->getChildren(true);
+        } else {
+            $children = $root->getChildren();
+        }
 
-            /** @var AbstractElement|AbstractObject|Document|Asset $child */
-            foreach ($childs as $child) {
-                codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
-                $child->delete();
-            }
+        /** @var AbstractElement|AbstractObject|Document|Asset $child */
+        foreach ($children as $child) {
+            codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
+            $child->delete();
         }
     }
 

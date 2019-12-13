@@ -384,28 +384,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        $className = DataObject::class;
-        // get classname
-        if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
-            $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
-        }
+        $list = static::getList($config);
+        $count = $list->getTotalCount();
 
-        if (!empty($config['class'])) {
-            $className = ltrim($config['class'], '\\');
-        }
-
-        if (is_array($config)) {
-            if ($className) {
-                $listClass = ucfirst($className) . '\\Listing';
-                $list = self::getModelFactory()->build($listClass);
-            }
-
-            $list->setValues($config);
-            $count = $list->getTotalCount();
-
-            return $count;
-        }
+        return $count;
     }
 
     /**
@@ -591,16 +573,16 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $isUpdate = false;
-            $differentOldPath = null;
-
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $params);
             if ($this->getId()) {
@@ -1246,7 +1228,6 @@ class AbstractObject extends Model\Element\AbstractElement
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object

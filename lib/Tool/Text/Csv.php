@@ -232,6 +232,7 @@ class Csv
     protected function deviation($array)
     {
         $avg = array_sum($array) / count($array);
+        $variance = [];
         foreach ($array as $value) {
             $variance[] = pow($value - $avg, 2);
         }

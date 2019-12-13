@@ -740,6 +740,7 @@ class Menu extends AbstractRenderer
             $foundDepth = $found['depth'];
         } else {
             $foundPage = null;
+            $foundDepth = null;
         }
 
         // create iterator

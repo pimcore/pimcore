@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
+    gridType: 'object',
 
     title: t('search_edit'),
     icon: "pimcore_material_icon_search pimcore_material_icon",
@@ -231,9 +232,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         var gridColumns = gridHelper.getGridColumns();
 
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
-
         this.searchQuery = function(field) {
             this.store.getProxy().setExtraParam("query", field.getValue());
             this.pagingtoolbar.moveFirst();
@@ -314,15 +312,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
         });
 
-        this.searchAndMoveButton = new Ext.Button({
-            text: t("search_and_move"),
-            iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
-            handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
-                function () {
-                    this.store.reload();
-                }.bind(this), "object")
-        });
-
         var exportButtons = this.getExportButtons();
         var firstButton = exportButtons.pop();
 
@@ -390,7 +379,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 this.clearFilterButton, "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.sqlEditor, this.sqlButton, "-",
-                this.searchAndMoveButton, "-",
                 this.exportButton, "-",
                 this.columnConfigButton,
                 this.saveColumnConfigButton
@@ -450,7 +438,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getExportButtons: function () {
         var buttons = [];
-        pimcore.globalmanager.get("pimcore.gridexport").forEach(function (exportType) {
+        pimcore.globalmanager.get("pimcore.object.gridexport").forEach(function (exportType) {
             buttons.push({
                 text: t(exportType.text),
                 iconCls: exportType.icon || "pimcore_icon_export",
@@ -568,4 +556,4 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 });
 
-pimcore.object.search.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.object.search.addMethods(pimcore.element.helpers.gridColumnConfig);

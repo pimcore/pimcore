@@ -539,38 +539,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         return false;
-    },
-
-    isInvalidMandatory: function () {
-        var element;
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-
-        for(var s=0; s<this.component.items.items.length; s++) {
-            if(this.currentElements[this.component.items.items[s].key]) {
-                element = this.currentElements[this.component.items.items[s].key];
-
-                var elementFieldNames = Object.keys(element.fields);
-
-                for (var u=0; u < elementFieldNames.length; u++) {
-                    var elementFieldName = elementFieldNames[u];
-                    if(element.fields[elementFieldName].isMandatory()) {
-                        if(element.fields[elementFieldName].isInvalidMandatory()) {
-                            invalidMandatoryFields.push(element.fields[elementFieldName].getTitle() + " ("
-                                                                    + element.fields[elementFieldName].getName() + ")");
-                            isInvalid = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
-            return invalidMandatoryFields;
-        }
-
-        return isInvalid;
     }
 });
 

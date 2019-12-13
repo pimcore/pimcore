@@ -99,7 +99,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
      */
     protected function doClear($namespace)
     {
-        return $this->adapter->clear();
+        return $this->adapter->clear($namespace);
     }
 
     /**

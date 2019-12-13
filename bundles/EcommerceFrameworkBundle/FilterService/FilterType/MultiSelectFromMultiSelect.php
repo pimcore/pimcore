@@ -37,7 +37,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
             $explode = explode(WorkerInterface::MULTISELECT_DELIMITER, $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e)) {
-                    if ($values[$e]) {
+                    if (!empty($values[$e])) {
                         $values[$e]['count'] += $v['count'];
                     } else {
                         $values[$e] = ['value' => $e, 'count' => $v['count']];
@@ -71,9 +71,10 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
-        if (empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$isReload) {
             if (is_array($preSelect)) {
                 $value = $preSelect;
             } else {

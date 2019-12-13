@@ -1,8 +1,11 @@
 parameters:
+
+    #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
     reportUnmatchedIgnoredErrors: false
 
     symfony:
-        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml # Symfony ^4.0
+        #container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml # Symfony ^3.4
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
@@ -40,14 +43,14 @@ parameters:
             message: '#Undefined variable: \$(this|view|app)#'
             path: '**/*.js.php'
         -
-            message: '/Zend_Log/'
-            path: '**/Log/ApplicationLogger.php'
-        -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
         -
             message: '/an undefined static method.*getParameter\(\)./'
             path: '**/Controller/Controller.php'
+        -
+            message: '/NO_AUTO_CACHE_CONTROL_HEADER/'
+            path: '**/Controller/PublicServicesController.php'
         -
             message: '/__construct\(\) does not call parent constructor/'
             path: '**/Migrations/Version.php'

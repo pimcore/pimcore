@@ -163,11 +163,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if (!$fd instanceof CalculatedValue) {
                 $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $params);
                 $brickData[$fd->getName()] = $fieldData->objectData;
-            }
-
-            $brickMetaData[$fd->getName()] = $fieldData->metaData;
-            if ($fieldData->metaData['inherited'] == true) {
-                $inherited = true;
+                $brickMetaData[$fd->getName()] = $fieldData->metaData;
+                if ($fieldData->metaData['inherited'] == true) {
+                    $inherited = true;
+                }
             }
         }
 
@@ -220,7 +219,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$params['objectFromVersion'] && method_exists($fielddefinition, 'getLazyLoading')
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\Block) {
 
@@ -230,6 +229,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
                 $refKey = $key;
+                $refId = null;
             }
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
@@ -248,17 +248,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
-                    if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    } else {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    }
+                    $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
                 }
             }
             $result->objectData = $data;
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
+            $fieldValue = null;
             $editmodeValue = null;
             if (!empty($item)) {
                 $fieldValue = $item->$valueGetter();
@@ -740,39 +737,41 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if ($data instanceof DataObject\Objectbrick) {
                 $validationExceptions = [];
 
-                $items = $data->getItems();
-                foreach ($items as $item) {
-                    if ($item->getDoDelete()) {
-                        continue;
-                    }
+                $allowedTypes = $this->getAllowedTypes();
+                foreach ($allowedTypes as $allowedType) {
+                    $getter = 'get' . ucfirst($allowedType);
+                    /** @var DataObject\Objectbrick\Data\AbstractData $item */
+                    $item = $data->$getter();
 
-                    if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                        continue;
-                    }
+                    if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
+                        if ($item->getDoDelete()) {
+                            continue;
+                        }
 
-                    if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                        continue;
-                    }
+                        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                            continue;
+                        }
 
-                    //needed when new brick is added but not saved yet - then validity check fails.
-                    if (!$item->getFieldname()) {
-                        $item->setFieldname($data->getFieldname());
-                    }
+                        //needed when new brick is added but not saved yet - then validity check fails.
+                        if (!$item->getFieldname()) {
+                            $item->setFieldname($data->getFieldname());
+                        }
 
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        try {
-                            $key = $fd->getName();
-                            $getter = 'get' . ucfirst($key);
-                            $fd->checkValidity($item->$getter());
-                        } catch (Model\Element\ValidationException $ve) {
-                            $ve->addContext($this->getName());
-                            $validationExceptions[] = $ve;
+                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            try {
+                                $key = $fd->getName();
+                                $getter = 'get' . ucfirst($key);
+                                $fd->checkValidity($item->$getter());
+                            } catch (Model\Element\ValidationException $ve) {
+                                $ve->addContext($this->getName());
+                                $validationExceptions[] = $ve;
+                            }
                         }
                     }
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }
@@ -899,10 +898,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         return $editmodeData;
     }
 
-    /** See parent class.
+    /**
+     * See parent class.
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

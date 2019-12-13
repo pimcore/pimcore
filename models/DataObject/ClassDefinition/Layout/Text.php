@@ -116,9 +116,13 @@ class Text extends Model\DataObject\ClassDefinition\Layout
         $this->border = $border;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param $object Model\DataObject\Concrete
      * @param array $context additional contextual data
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {

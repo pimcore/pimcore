@@ -191,7 +191,7 @@ class Link extends Model\Document\Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {
@@ -288,7 +288,7 @@ class Link extends Model\Document\Tag
                                 $this->data['path'] = $linkGenerator->generate(
                                     $object,
                                     [
-                                        'document' => Document::getById($this->getDocumentId()),
+                                        'document' => $this->getDocument(),
                                         'context' => $this,
                                     ]
                                 );
@@ -421,6 +421,8 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
+            $target = null;
+
             if ($data['linktype'] == 'internal' && $data['internalType']) {
                 $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {
@@ -588,13 +590,13 @@ class Link extends Model\Document\Tag
                     $referencedDocument = Document::getById($this->data['internalId']);
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     $referencedAsset = Asset::getById($this->data['internalId']);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 }
             }

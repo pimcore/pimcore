@@ -11,12 +11,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.gridexport.csv");
-pimcore.gridexport.csv = Class.create(pimcore.gridexport.abstract, {
+pimcore.registerNS("pimcore.object.gridexport.csv");
+pimcore.object.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),
     warningText: t('csv_object_export_warning'),
     downloadUrl: "/admin/object-helper/download-csv-file",
+    getObjectSettingsContainer: function () {
+        var enableInheritance = new Ext.form.Checkbox({
+            fieldLabel: t('enable_inheritance'),
+            name: 'enableInheritance',
+            inputValue: true,
+            labelWidth: 200
+        });
+
+        return new Ext.form.FieldSet({
+            title: t('object_settings'),
+            items: [
+                enableInheritance
+            ]
+        });
+    },
     getExportSettingsContainer: function () {
         return new Ext.form.FieldSet({
             title: t('csv_settings'),
@@ -33,4 +48,4 @@ pimcore.gridexport.csv = Class.create(pimcore.gridexport.abstract, {
     }
 });
 
-pimcore.globalmanager.get("pimcore.gridexport").push(new pimcore.gridexport.csv())
+pimcore.globalmanager.get("pimcore.object.gridexport").push(new pimcore.object.gridexport.csv());

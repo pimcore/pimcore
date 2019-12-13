@@ -66,7 +66,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
 
@@ -74,14 +74,20 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
                         // only show 10 relations in the grid
                         var maxAmount = 10;
+                        var result = [];
+                        var i;
+                        for (i = 0; i < value.length && i < maxAmount; i++) {
+                            var item = value[i];
+                            result.push(item["fullpath"]);
+                        }
                         if (value.length > maxAmount) {
-                            value.splice(maxAmount, (value.length - maxAmount));
-                            value.push("...");
+                            result.push("...");
                         }
 
-                        return value.join("<br />");
+                        return result.join("<br />");
                     }
-                }.bind(this, field.key)
+                }.bind(this, field.key),
+            getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
@@ -691,19 +697,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     }
     ,
 
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
-
-    }
-    ,
-
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
@@ -717,6 +710,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
             this.requestNicePathData(toBeRequested);
         }
+    }
+    ,
+    getCellEditValue: function () {
+        return this.getValue();
     }
     ,
 
@@ -843,6 +840,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fields: fields
             }, this.component.getView())
         );
+
+        // unfortunately we have to use a timeout here to adjust the height of grids configured
+        // with autoHeight: true, there are no other events that would work, see also:
+        // - https://github.com/pimcore/pimcore/pull/4337
+        // - https://github.com/pimcore/pimcore/pull/4909
+        // - https://github.com/pimcore/pimcore/pull/5367
+        window.setTimeout(function() {
+            this.component.getView().refresh();
+        }.bind(this), 500);
     },
 
     normalizeTargetData: function (targets) {

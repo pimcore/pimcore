@@ -16,11 +16,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 
-class OptionsProviderResolver
+class OptionsProviderResolver extends ClassResolver
 {
     const MODE_SELECT = 1;
 
@@ -30,29 +29,9 @@ class OptionsProviderResolver
 
     public static function resolveProvider($providerClass, $mode)
     {
-        if ($providerClass) {
-            if (isset(self::$providerCache[$providerClass])) {
-                return self::$providerCache[$providerClass];
-            }
-            if (substr($providerClass, 0, 1) == '@') {
-                $serviceName = substr($providerClass, 1);
-                try {
-                    $provider = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                } catch (\Exception $e) {
-                    Logger::error($e);
-                }
-            } else {
-                $provider = new $providerClass;
-            }
-
-            if (($mode == self::MODE_SELECT && ($provider instanceof  SelectOptionsProviderInterface))
-                    || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface))) {
-                self::$providerCache[$providerClass] = $provider;
-
-                return $provider;
-            }
-        }
-
-        return null;
+        return self::resolve($providerClass, function ($provider) use ($mode) {
+            return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
+                || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface));
+        });
     }
 }

@@ -205,6 +205,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         // check for permission
         $parentDocument = Document::getById(intval($request->get('parentId')));
+        $document = null;
         if ($parentDocument->isAllowed('create')) {
             $intendedPath = $parentDocument->getRealFullPath() . '/' . $request->get('key');
 
@@ -307,7 +308,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             Logger::debug($errorMessage);
         }
 
-        if ($success) {
+        if ($success && $document instanceof Document) {
             if ($request->get('translationsBaseDocument')) {
                 $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
 
@@ -326,12 +327,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'id' => $document->getId(),
                 'type' => $document->getType()
             ]);
-        } else {
-            return $this->adminJson([
-                'success' => $success,
-                'message' => $errorMessage
-            ]);
         }
+
+        return $this->adminJson([
+            'success' => $success,
+            'message' => $errorMessage
+        ]);
     }
 
     /**
@@ -1045,7 +1046,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'settings' => $childDocument->isAllowed('settings'),
                 'rename' => $childDocument->isAllowed('rename'),
                 'publish' => $childDocument->isAllowed('publish'),
-                'unpublish' => $childDocument->isAllowed('unpublish')
+                'unpublish' => $childDocument->isAllowed('unpublish'),
+                'create' => $childDocument->isAllowed('create')
             ]
         ];
 
@@ -1058,7 +1060,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
@@ -1074,7 +1075,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if (!$childDocument->hasChildren() && $childDocument->getType() == 'folder') {
                 $tmpDocument['iconCls'] = 'pimcore_icon_folder';
             }
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);

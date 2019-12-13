@@ -27,7 +27,16 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
-            style: 'float: left;margin-top:0px;'
+            style: 'float: left;margin-top:0px;',
+            listeners: {
+                render: function (cmp) {
+                    cmp.getEl().on('keypress', function (e) {
+                        if (e.getKey() === e.ENTER) {
+                            this.geocode();
+                        }
+                    }.bind(this));
+                }.bind(this)
+            }
         });
         this.currentLocationTextNode = new Ext.Toolbar.TextItem({
             text: '&nbsp;'
@@ -181,34 +190,12 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         }.bind(this));
     },
 
-    geocode: function () {
-        var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function(json) {
-          if( json[0].lat !== null && json[0].lon !== null) {
-              var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
-              this.getLeafletToolbar(map);
-            }
-        }.bind(this));
-
-    },
-
     getValue: function () {
         return this.data;
     },
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        var value = this.getValue();
-
-        // @TODO
-        /*if (value.longitude && value.latitude) {
-            return false;
-        }*/
-
-        return true;
     },
 
     isDirty: function() {
