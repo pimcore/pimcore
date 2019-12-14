@@ -959,7 +959,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var $childDef DataObject\ClassDefinition\Data */
+            /** @var DataObject\ClassDefinition\Data $childDef */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

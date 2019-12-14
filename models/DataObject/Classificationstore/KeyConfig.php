@@ -59,13 +59,17 @@ class KeyConfig extends Model\AbstractModel
      */
     public $title;
 
-    /** The key description.
-     * @var
+    /**
+     * The key description.
+     *
+     * @var string
      */
     public $description;
 
-    /** The key type ("text", "number", etc...)
-     * @var
+    /**
+     * The key type ("text", "number", etc...)
+     *
+     * @var string
      */
     public $type;
 
@@ -232,16 +236,20 @@ class KeyConfig extends Model\AbstractModel
         return $this->name;
     }
 
-    /** Returns the key description.
-     * @return mixed
+    /**
+     * Returns the key description.
+     *
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /** Sets the key description
-     * @param $description
+    /**
+     * Sets the key description
+     *
+     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\KeyConfig
      */
@@ -340,7 +348,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
@@ -348,7 +356,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $type
+     * @param string $type
      */
     public function setType($type)
     {

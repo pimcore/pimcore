@@ -130,9 +130,7 @@ class DefaultService implements ServiceInterface
     {
         $offer = new $this->offerClass();
 
-        /**
-         * @var $offer AbstractOffer
-         */
+        /** @var AbstractOffer $offer */
         $offer->setParent($this->getParentFolder());
         $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);

@@ -1977,9 +1977,7 @@ class Asset extends Element\AbstractElement
 
             foreach ($metaData as $md) {
                 if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
-                    /**
-                     * @var $elementData ElementInterface
-                     */
+                    /** @var ElementInterface $elementData */
                     $elementData = $md['data'];
                     $elementType = $md['type'];
                     $key = $elementType . '_' . $elementData->getId();

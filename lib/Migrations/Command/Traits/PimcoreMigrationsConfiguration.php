@@ -50,7 +50,7 @@ trait PimcoreMigrationsConfiguration
 
     protected function configureCommand(string $name)
     {
-        /** @var $this AbstractCommand */
+        /** @var AbstractCommand $this */
         $this
             ->setName(sprintf('pimcore:migrations:%s', $name))
             ->addOption(
@@ -76,7 +76,7 @@ trait PimcoreMigrationsConfiguration
 
     protected function getMigrationConfiguration(InputInterface $input, OutputInterface $output): Configuration
     {
-        /** @var $this AbstractCommand */
+        /** @var AbstractCommand $this */
         if (!$this->migrationConfiguration) {
             $factory = $this->getApplication()->getKernel()->getContainer()->get(ConfigurationFactory::class);
 

@@ -89,7 +89,7 @@ class GridHelperService
                 $fieldName = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                 $csFieldDefinition = $class->getFieldDefinition($fieldName);
 
                 $language = $requestedLanguage;
@@ -384,9 +384,7 @@ class GridHelperService
         $className = $class->getName();
 
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-        /**
-         * @var $list DataObject\Listing\Concrete
-         */
+        /** @var DataObject\Listing\Concrete $list */
         $list = new $listClass();
 
         $colMappings = [
@@ -519,7 +517,7 @@ class GridHelperService
             $parts = explode('_', $orderKey);
 
             $fieldname = $parts[1];
-            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
             $csFieldDefinition = $class->getFieldDefinition($fieldname);
             $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
             $featureJoins[] = $sortingSettings;

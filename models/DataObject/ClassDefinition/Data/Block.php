@@ -124,11 +124,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($data as $blockElements) {
                 $resultElement = [];
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
+                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -173,10 +171,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             foreach ($unserializedData as $blockElements) {
                 $items = [];
-                /** @var $blockElement DataObject\Data\BlockElement */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
 
-                    /** @var $fd DataObject\ClassDefinition\Data */
+                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -192,7 +190,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $blockElementRaw['data'] = $dataFromResource;
 
                     if ($blockElementRaw['type'] == 'localizedfields') {
-                        /** @var $data DataObject\Localizedfield */
+                        /** @var DataObject\Localizedfield $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
@@ -242,11 +240,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
                 $idx++;
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
+                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -275,7 +271,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -289,7 +285,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $blockElement = $rawBlockElement['data'] ?? null;
             $blockElementDefinition = $this->getFieldDefinitions();
 
-            /** @var $fd DataObject\ClassDefinition\Data */
+            /** @var DataObject\ClassDefinition\Data $fd */
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
@@ -389,7 +385,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
@@ -466,11 +462,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
                 $idx++;
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
+                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -508,12 +502,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($value as $blockElementsData) {
                 $resultElement = [];
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
 
-                    /** @var $fd DataObject\ClassDefinition\Data */
+                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -953,12 +945,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         $lf = $this->getFielddefinition('localizedfields');
         if ($lf && is_array($data)) {
-            /** @var $item DataObject\Data\BlockElement */
+            /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {
                 if (is_array($item)) {
                     foreach ($item as $itemElement) {
                         if ($itemElement->getType() == 'localizedfields') {
-                            /** @var $itemElementData DataObject\Localizedfield */
+                            /** @var DataObject\Localizedfield $itemElementData */
                             $itemElementData = $itemElement->getData();
                             $itemElementData->setObject($object);
 

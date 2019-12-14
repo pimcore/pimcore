@@ -232,7 +232,7 @@ class SettingsController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
-            /** @var $item Metadata\Predefined */
+            /** @var Metadata\Predefined $item */
             $item->expand();
             $result[] = $item;
         }
@@ -923,7 +923,7 @@ class SettingsController extends AdminController
             $list->load();
 
             $routes = [];
-            /** @var $route Staticroute */
+            /** @var Staticroute $route */
             foreach ($list->getRoutes() as $route) {
                 if (is_array($route->getSiteId())) {
                     $route = json_encode($route);
@@ -1180,7 +1180,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (empty($groups[$item->getGroup()])) {
@@ -1381,7 +1381,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {

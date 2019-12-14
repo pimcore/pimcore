@@ -774,7 +774,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
                 if ($light) {
-                    /** @var $client Client */
+                    /** @var Client $client */
                     $client = ClientFactory::createHttpClient();
 
                     $assetType = $asset->getType();

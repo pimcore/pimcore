@@ -263,7 +263,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
                 /**
-                 * @var $def DataObject\ClassDefinition\Data
+                 * @var DataObject\ClassDefinition\Data $def
                  */
                 $cd .= $def->getGetterCodeObjectbrick($this);
 

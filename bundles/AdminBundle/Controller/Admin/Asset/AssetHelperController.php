@@ -96,7 +96,7 @@ class AssetHelperController extends AdminController
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
 
-        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
@@ -487,7 +487,7 @@ class AssetHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -675,9 +675,7 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /**
-         * @var $list \Pimcore\Model\Asset\Listing
-         */
+        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -883,7 +881,7 @@ class AssetHelperController extends AdminController
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
             if (!in_array($uniqueKey, $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $uniqueKey;
-                /** @var $item Metadata\Predefined */
+                /** @var Metadata\Predefined $item */
                 $item->expand();
                 $metadataItems[] = [
                     'title' => $item->getName(),

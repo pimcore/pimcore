@@ -579,9 +579,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $deletedItems = [];
             foreach ($list as $asset) {
-                /**
-                 * @var $asset Asset
-                 */
+                /** @var Asset $asset */
                 $deletedItems[$asset->getId()] = $asset->getRealFullPath();
                 if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
@@ -609,15 +607,12 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param $element
+     * @param Asset $element
      *
      * @return array
      */
     protected function getTreeNodeConfig($element)
     {
-        /**
-         * @var $asset Asset
-         */
         $asset = $element;
 
         $tmpAsset = [

@@ -95,7 +95,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             <?php } ?>
         <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
 
-            /** @var $storedata DataObject\Classificationstore */
+            /** @var DataObject\Classificationstore $storedata */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
 
@@ -136,13 +136,13 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 if  (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
                     continue;
                 }
-                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                /** @var DataObject\Classificationstore\GroupConfig $groupDefinition */
                 $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
                 if (!$groupDefinition) {
                     continue;
                 }
 
-                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
                 foreach ($keyGroupRelations as $keyGroupRelation) {
@@ -205,7 +205,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                                     if ($bricks1) {
                                         $brick1Value = $bricks1->{"get" . $asAllowedType}();
                                         if ($brick1Value) {
-                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            /** @var DataObject\Localizedfield $localizedBrickValues */
                                             $localizedBrickValues = $brick1Value->getLocalizedFields();
                                             $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                             $v1 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
@@ -215,7 +215,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                                     if ($bricks2) {
                                         $brick2Value = $bricks2->{"get" . $asAllowedType}();
                                         if ($brick2Value) {
-                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            /** @var DataObject\Localizedfield $localizedBrickValues */
                                             $localizedBrickValues = $brick2Value->getLocalizedFields();
                                             $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                             $v2 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);

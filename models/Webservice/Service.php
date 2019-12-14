@@ -245,7 +245,7 @@ class Service
             $list->setUnpublished(1);
 
             $items = [];
-            /** @var $doc Document */
+            /** @var Document $doc */
             foreach ($list as $doc) {
                 $item = new Webservice\Data\Document\Listing\Item();
                 $item->id = $doc->getId();
@@ -1328,9 +1328,7 @@ class Service
     {
         if (in_array($type, ['website', 'admin'])) {
             $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
-            /**
-             * @var $list \Pimcore\Model\Translation\Website\Listing
-             */
+            /** @var \Pimcore\Model\Translation\Website\Listing $list */
             $list = new $listClass();
             if ($key = $params['key']) {
                 $list->addConditionParam(' `key` LIKE ' . \Pimcore\Db::get()->quote('%' . $key . '%'), '');

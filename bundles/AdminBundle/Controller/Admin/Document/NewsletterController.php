@@ -369,7 +369,7 @@ class NewsletterController extends DocumentControllerBase
             return $this->adminJson(['success' => false, 'count' => '0', 'message' => $msg]);
         }
 
-        /** @var $addressAdapterFactory AddressSourceAdapterFactoryInterface */
+        /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
@@ -411,7 +411,7 @@ class NewsletterController extends DocumentControllerBase
             ]);
         }
 
-        /** @var $addressAdapterFactory AddressSourceAdapterFactoryInterface */
+        /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 

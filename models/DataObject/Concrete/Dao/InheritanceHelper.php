@@ -63,7 +63,7 @@ class InheritanceHelper
     protected $fieldDefinitions = [];
 
     /**
-     * @var
+     * @var string
      */
     protected $classId;
 
@@ -103,11 +103,11 @@ class InheritanceHelper
     protected $idField;
 
     /**
-     * @param $classId
-     * @param null $idField
-     * @param null $storetable
-     * @param null $querytable
-     * @param null $relationtable
+     * @param string $classId
+     * @param string|null $idField
+     * @param string|null $storetable
+     * @param string|null $querytable
+     * @param string|null $relationtable
      */
     public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null)
     {

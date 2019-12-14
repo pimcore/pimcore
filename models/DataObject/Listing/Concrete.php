@@ -38,7 +38,7 @@ abstract class Concrete extends Model\DataObject\Listing
     protected $className;
 
     /**
-     * @var string|
+     * @var string
      */
     protected $locale;
 
@@ -110,7 +110,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param mixed $locale
+     * @param string $locale
      *
      * @return $this
      */

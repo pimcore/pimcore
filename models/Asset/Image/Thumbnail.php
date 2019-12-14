@@ -181,9 +181,7 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
-        /**
-         * @var $image Image
-         */
+        /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];
         $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element

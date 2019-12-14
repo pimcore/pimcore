@@ -632,7 +632,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var $brickDefinition DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 

@@ -1,5 +1,5 @@
 <?php
-/** @var $view \Pimcore\Templating\PhpEngine */
+/** @var \Pimcore\Templating\PhpEngine $view */
 
 $config = $this->config;
 

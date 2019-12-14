@@ -73,7 +73,7 @@ class Workflow extends AbstractModel
     /**
      * The default status of the element
      *
-     * @var
+     * @var string
      */
     public $defaultStatus;
 
@@ -443,7 +443,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDefaultStatus()
     {
@@ -451,7 +451,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @param mixed $defaultStatus
+     * @param string $defaultStatus
      */
     public function setDefaultStatus($defaultStatus)
     {

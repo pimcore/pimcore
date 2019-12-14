@@ -53,12 +53,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     protected $_objectService;
 
     /**
-     * @var
+     * @var array
      */
     private $objectData;
 
     /**
-     * @var
+     * @var array
      */
     private $metaData;
 
@@ -1214,9 +1214,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
-        /**
-         * @var $object DataObject\Concrete
-         */
+        /** @var DataObject\Concrete $object */
         $object = DataObject::getById($request->get('id'));
         $originalModificationDate = $object->getModificationDate();
 
@@ -1385,7 +1383,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     if (isset($data[$fd->getName()])) {
                         $allowedTypes = $fd->getAllowedTypes();
                         foreach ($allowedTypes as $type) {
-                            /** @var $fdDef DataObject\Fieldcollection\Definition */
+                            /** @var DataObject\Fieldcollection\Definition $fdDef */
                             $fdDef = DataObject\Fieldcollection\Definition::getByKey($type);
                             $childDefinitions = $fdDef->getFieldDefinitions();
                             foreach ($childDefinitions as $childDef) {
@@ -1658,14 +1656,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                 $getter = 'get' . ucfirst($field);
                                 if (method_exists($object, $getter)) {
 
-                                    /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                                    /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                     $csLanguage = $requestedLanguage;
                                     if (!$csFieldDefinition->isLocalized()) {
                                         $csLanguage = 'default';
                                     }
 
-                                    /** @var $classificationStoreData DataObject\Classificationstore */
+                                    /** @var DataObject\Classificationstore $classificationStoreData */
                                     $classificationStoreData = $object->$getter();
 
                                     $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
@@ -1722,7 +1720,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             }
 
                             if ($brickDescriptor) {
-                                /** @var $localizedFields DataObject\Localizedfield */
+                                /** @var DataObject\Localizedfield $localizedFields */
                                 $localizedFields = $brick->getLocalizedfields();
                                 $localizedFields->setLocalizedValue($brickKey, $value);
                             } else {

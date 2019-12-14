@@ -235,7 +235,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($request->get('oid')) {
             $object = DataObject\Concrete::getById($request->get('oid'));
             $class = $object->getClass();
-            /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
             $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -855,7 +855,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $rootElement = [];
 
         $data = [];
-        /** @var $config Classificationstore\KeyGroupRelation */
+        /** @var Classificationstore\KeyGroupRelation $config */
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
@@ -1134,7 +1134,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                     $keyIdList = $keyIdList->load();
                     if ($keyIdList) {
                         $keyIds = [];
-                        /** @var $keyEntry Classificationstore\KeyGroupRelation */
+                        /** @var Classificationstore\KeyGroupRelation $keyEntry */
                         foreach ($keyIdList as $keyEntry) {
                             $keyIds[] = $keyEntry->getKeyId();
                         }
@@ -1422,7 +1422,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $result = [];
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
-        /** @var $item Classificationstore\StoreConfig */
+        /** @var Classificationstore\StoreConfig $item */
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),

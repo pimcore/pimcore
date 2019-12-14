@@ -141,7 +141,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         if (!$items) {
             return;
         }
-        /** @var $items ValidationException[] */
+        /** @var ValidationException[] $items */
         foreach ($items as $e) {
             if ($e->getMessage()) {
                 $message .= '<b>' . $e->getMessage() . '</b>';
