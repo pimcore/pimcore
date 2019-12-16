@@ -170,7 +170,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             foreach ($unserializedData as $blockElements) {
                 $items = [];
-                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
@@ -496,7 +495,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($value as $blockElementsData) {
                 $resultElement = [];
 
-                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
