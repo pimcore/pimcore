@@ -55,7 +55,7 @@ matrix:
     - name: "All Tests - PHP 7.4 Symfony 4"
       os: linux
       sudo: required
-      php: "7.4snapshot"
+      php: 7.4
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 Symfony 3.4"
