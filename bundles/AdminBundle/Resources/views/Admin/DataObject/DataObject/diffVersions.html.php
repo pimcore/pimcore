@@ -95,8 +95,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             <?php } ?>
         <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
 
-            /** @var DataObject\Classificationstore $storedata */
+            /** @var DataObject\Classificationstore $storedata1 */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
+            /** @var DataObject\Classificationstore $storedata2 */
             $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
 
             $existingGroups = array();
@@ -142,9 +143,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                     continue;
                 }
 
-                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
                     $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());

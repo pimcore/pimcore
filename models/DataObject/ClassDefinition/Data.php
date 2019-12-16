@@ -1251,7 +1251,7 @@ abstract class Data
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
-                            /** @var DataObject\Localizedfield $localizedFields */
+                            /** @var DataObject\Localizedfield $data */
                             $data = $brickData->getLocalizedFields();
                             // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
 

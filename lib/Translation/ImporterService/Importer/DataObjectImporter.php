@@ -60,7 +60,7 @@ class DataObjectImporter extends AbstractElementImporter
 
         if ($attribute->getType() === Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD) {
             list($blockName, $blockIndex, $fieldname, $sourceLanguage) = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
-            /** @var array $blockData */
+            /** @var array $originalBlockData */
             $originalBlockData = $element->{'get' . $blockName}($sourceLanguage);
             $originalBlockItem = $originalBlockData[$blockIndex];
             $originalBlockItemData = $originalBlockItem[$fieldname];

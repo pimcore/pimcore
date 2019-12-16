@@ -1185,7 +1185,6 @@ class ClassController extends AdminController implements EventedControllerInterf
         foreach ($list as $item) {
             if ($request->query->has('class_id') && $request->query->has('field_name')) {
                 $keep = false;
-                /** @var DataObject\Objectbrick\Definition $type */
                 $clsDefs = $item->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
@@ -1298,7 +1297,6 @@ class ClassController extends AdminController implements EventedControllerInterf
             $className = $classDefinition->getName();
 
             foreach ($list as $type) {
-                /** @var DataObject\Objectbrick\Definition $type */
                 $clsDefs = $type->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
@@ -1641,8 +1639,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $objectBrickJson->key = $key;
                 $result['objectbrick'][] = $objectBrickJson;
             } elseif ($item['type'] == 'customlayout') {
-                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 /** @var DataObject\ClassDefinition\CustomLayout $customLayout */
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
                 $customLayout->className = $class->getName();

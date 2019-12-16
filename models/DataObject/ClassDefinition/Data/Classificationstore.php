@@ -987,9 +987,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         continue;
                     }
 
-                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     $keyGroupRelations = $groupDefinition->getRelations();
 
+                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();

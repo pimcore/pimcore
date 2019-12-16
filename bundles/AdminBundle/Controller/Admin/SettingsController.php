@@ -231,8 +231,8 @@ class SettingsController extends AdminController
         $subType = $request->get('subType');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
+        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
-            /** @var Metadata\Predefined $item */
             $item->expand();
             $result[] = $item;
         }

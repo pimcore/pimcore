@@ -80,9 +80,9 @@ $fields = $element->getClass()->getFieldDefinitions();
                     continue;
                 }
 
-                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
                     $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()),

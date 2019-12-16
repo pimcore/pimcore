@@ -228,16 +228,15 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
 
-                    /** @var array $blockItems */
+                    /** @var array $blocks */
                     $blocks = $object->{'get' . ucfirst($fd->getName())}();
 
                     if ($blocks) {
-                        /** @var DataObject\Data\BlockElement $blockItem */
                         $blockIdx = -1;
+                        /** @var DataObject\Data\BlockElement[] $blockItems */
                         foreach ($blocks as $blockItems) {
                             $blockIdx++;
                             if ($blockItems) {
-                                /** @var DataObject\Data\BlockElement $blockItem */
                                 foreach ($blockItems as $blockItem) {
                                     if ($blockItem->getType() == 'localizedfields') {
 
