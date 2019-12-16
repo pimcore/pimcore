@@ -259,7 +259,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
                 if(unitId) {
                     for(var i in value) {
-                        value[i] = [value[i], unitId];
+                        value[i] = [[value[i], unitId]];
                     }
                 }
 

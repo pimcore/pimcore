@@ -26,7 +26,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
 class GridHelperService
 {
@@ -142,52 +141,10 @@ class GridHelperService
 
         // create filter condition
         $conditionPartsFilters = [];
-        $db = \Pimcore\Db::get();
 
         if ($filterJson) {
+            $db = \Pimcore\Db::get();
             $filters = json_decode($filterJson, true);
-
-            foreach($filters as $index => $filter) {
-                if ($filter['type'] === 'quantityValue' && is_array($filter['value'])) {
-                    /** @var UnitConversionService $converter */
-                    $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
-
-                    $filterValue = $filter['value'][0];
-                    $filterUnit = DataObject\QuantityValue\Unit::getById($filter['value'][1]);
-
-                    if(!$filterUnit instanceof DataObject\QuantityValue\Unit) {
-                        continue;
-                    }
-
-                    $filterQuantityValue = new DataObject\Data\QuantityValue($filterValue, $filterUnit->getId());
-
-                    $baseUnit = $filterUnit->getBaseunit();
-                    if ($baseUnit === null) {
-                        $baseUnit = $filterUnit;
-                    }
-
-                    unset($filters[$index]);
-
-                    $unitListing = new DataObject\QuantityValue\Unit\Listing();
-                    $unitListing->setCondition('baseunit='.$db->quote($baseUnit->getId()).' OR id='.$filterUnit->getId());
-                    foreach($unitListing->load() as $unit) {
-                        $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
-                        $filters[] = [
-                            'value' => $convertedQuantityValue->getValue(),
-                            'type' => 'numeric',
-                            'operator' => $filter['operator'],
-                            'property' => $filter['property'].'__value'
-                        ];
-
-                        $filters[] = [
-                            'value' => $convertedQuantityValue->getUnitId(),
-                            'type' => 'numeric',
-                            'operator' => 'eq',
-                            'property' => $filter['property'].'__unit'
-                        ];
-                    }
-                }
-            }
 
             foreach ($filters as $filter) {
                 $operator = '=';
@@ -197,14 +154,6 @@ class GridHelperService
 
                 if ($filter['type'] == 'string') {
                     $operator = 'LIKE';
-                } elseif ($filter['type'] == 'numeric') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
                 } elseif ($filter['type'] == 'date') {
                     if ($filterOperator == 'lt') {
                         $operator = '<';
@@ -219,6 +168,14 @@ class GridHelperService
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int)$filter['value'];
+                } else {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
                 }
 
                 $field = $class->getFieldDefinition($filterField);
@@ -265,6 +222,7 @@ class GridHelperService
                 }
                 if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
                     // custom field
+                    $db = \Pimcore\Db::get();
                     $brickPrefix = '';
 
                     $ommitPrefix = false;
