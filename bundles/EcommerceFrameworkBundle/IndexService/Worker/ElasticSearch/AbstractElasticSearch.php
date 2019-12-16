@@ -267,7 +267,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                     $mapping['store'] = false;
                 }
 
-                if ($type == 'object') {
+                if ($type == 'object' || $type == 'nested') {
                     unset($mapping['store']);
                 }
 
