@@ -84,6 +84,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     protected $conditionVariableTypes = [];
 
+    /**
+     * @var array|null
+     */
     protected $data;
 
     /**
@@ -469,9 +472,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
+     * @param array|null $data
+     *
      * @return static
      */
-    public function setData(array $data): self
+    public function setData(?array $data): self
     {
         $this->data = $data;
 
