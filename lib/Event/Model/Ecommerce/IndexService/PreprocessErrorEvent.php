@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\Event;
 class PreprocessErrorEvent extends Event
 {
     /**
-     * @var \Exception
+     * @var \Throwable
      */
     protected $exception;
 
@@ -31,7 +31,7 @@ class PreprocessErrorEvent extends Event
     /**
      * PreprocessErrorEvent constructor.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      * @param bool $throwException
      */
     public function __construct(\Throwable $exception, bool $throwException = true)
@@ -41,9 +41,9 @@ class PreprocessErrorEvent extends Event
     }
 
     /**
-     * @return \Exception
+     * @return \Throwable
      */
-    public function getException(): \Exception
+    public function getException(): \Throwable
     {
         return $this->exception;
     }
