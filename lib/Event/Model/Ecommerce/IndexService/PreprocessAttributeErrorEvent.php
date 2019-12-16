@@ -36,7 +36,7 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
      * @param Attribute $attribute
      * @param bool $skipAttribute
      */
-    public function __construct(Attribute $attribute, \Exception $exception, bool $skipAttribute = true, bool $throwException = false)
+    public function __construct(Attribute $attribute, \Throwable $exception, bool $skipAttribute = true, bool $throwException = false)
     {
         parent::__construct($exception, $throwException);
         $this->attribute = $attribute;
