@@ -239,12 +239,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             }
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
-
-            // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
-            if (count($relations) < 1) {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
-            }
-            // HACK END
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
