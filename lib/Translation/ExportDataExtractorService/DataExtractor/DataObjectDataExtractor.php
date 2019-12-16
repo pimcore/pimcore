@@ -128,7 +128,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
          * @var Localizedfields $fd
          */
         if ($fd = $object->getClass()->getFieldDefinition('localizedfields')) {
-            $definitions = $fd->getFielddefinitions();
+            $definitions = $fd->getFieldDefinitions();
 
             $locale = str_replace('-', '_', $result->getSourceLanguage());
             if (!Tool::isValidLanguage($locale)) {
@@ -224,7 +224,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
 
                 /** @var DataObject\ClassDefinition\Data\Localizedfields $blockLocalizedFieldDefinition */
-                $blockLocalizedFieldDefinition = $fd->getFielddefinition('localizedfields');
+                $blockLocalizedFieldDefinition = $fd->getFieldDefinition('localizedfields');
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
 

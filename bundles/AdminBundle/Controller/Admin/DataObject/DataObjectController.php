@@ -1815,7 +1815,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $localized = $class->getFieldDefinition('localizedfields');
         if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFielddefinition($key);
+            $fieldDefinition = $localized->getFieldDefinition($key);
         }
 
         return $fieldDefinition;

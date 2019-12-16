@@ -1067,7 +1067,7 @@ class TranslationController extends AdminController
                     $hasContent = false;
 
                     if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
-                        $definitions = $fd->getFielddefinitions();
+                        $definitions = $fd->getFieldDefinitions();
 
                         $locale = str_replace('-', '_', $source);
                         if (!Tool::isValidLanguage($locale)) {

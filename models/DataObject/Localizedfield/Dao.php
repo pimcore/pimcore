@@ -108,7 +108,7 @@ class Dao extends Model\Dao\AbstractDao
             $container = $this->model->getClass();
         }
 
-        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(
+        $fieldDefinitions = $container->getFieldDefinition('localizedfields')->getFieldDefinitions(
             ['suppressEnrichment' => true]
         );
 
@@ -417,7 +417,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $fieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-            $childDefinitions = $fieldDefinition->getFielddefinitions(['suppressEnrichment' => true]);
+            $childDefinitions = $fieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
@@ -543,7 +543,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($data as $row) {
-            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(
+            foreach ($container->getFieldDefinition('localizedfields')->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
                 if ($fd) {
@@ -739,8 +739,8 @@ QUERY;
             $container = $this->model->getClass();
         }
 
-        $localizedFieldDefinition = $container->getFielddefinition('localizedfields', ['suppressEnrichment' => true]);
-        foreach ($localizedFieldDefinition->getFielddefinitions(['suppressEnrichment' => true]) as $value) {
+        $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
+        foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                 if ($value->getColumnType()) {
                     $key = $value->getName();
@@ -792,15 +792,15 @@ QUERY;
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
-                    $fieldDefinitions = $container->getFielddefinition(
+                    $fieldDefinitions = $container->getFieldDefinition(
                         'localizedfields',
                         ['suppressEnrichment' => true]
-                    )->getFielddefinitions(['suppressEnrichment' => true]);
+                    )->getFieldDefinitions(['suppressEnrichment' => true]);
                 } else {
-                    $fieldDefinitions = $this->model->getClass()->getFielddefinition(
+                    $fieldDefinitions = $this->model->getClass()->getFieldDefinition(
                         'localizedfields',
                         ['suppressEnrichment' => true]
-                    )->getFielddefinitions(['suppressEnrichment' => true]);
+                    )->getFieldDefinitions(['suppressEnrichment' => true]);
                 }
 
                 // add non existing columns in the table

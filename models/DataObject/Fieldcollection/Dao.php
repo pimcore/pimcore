@@ -179,7 +179,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $childDefinitions = $definition->getFielddefinitions(['suppressEnrichment' => true]);
+            $childDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {

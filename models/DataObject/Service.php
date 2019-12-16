@@ -782,7 +782,7 @@ class Service extends Model\Element\Service
                 /**
                  * @var ClassDefinition\Data\Select $definition
                  */
-                $definition = $class->getFielddefinition($definition);
+                $definition = $class->getFieldDefinition($definition);
             }
 
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {

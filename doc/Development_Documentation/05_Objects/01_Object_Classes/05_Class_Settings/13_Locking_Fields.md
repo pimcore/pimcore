@@ -11,7 +11,7 @@ The following example will lock every field inside the class with the ID 7.
 
 ```php
 $class = DataObject\ClassDefinition::getById(7);
-$fields = $class->getFielddefinitions();
+$fields = $class->getFieldDefinitions();
  
 foreach ($fields as $field) {
    $field->setLocked(true);
