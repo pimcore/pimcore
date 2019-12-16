@@ -287,6 +287,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return array_key_exists($language, $this->items);
     }
 
+    /**
+     * @param string $name
+     * @param array $context
+     *
+     * @return ClassDefinition\Data|null
+     */
     public function getFieldDefinition($name, $context = [])
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {

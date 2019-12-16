@@ -243,7 +243,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                                         /** @var DataObject\Localizedfield $blockItemData */
                                         $blockItemData = $blockItem->getData();
 
-                                        /** @var DataObject\ClassDefinition\Data $blockLocalizedFieldDefinition */
                                         foreach ($blockLocalizedFieldsDefinitions as $blockLocalizedFieldDefinition) {
                                             // check allowed datatypes
                                             if (!in_array(

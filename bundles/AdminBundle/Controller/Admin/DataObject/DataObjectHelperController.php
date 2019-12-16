@@ -2321,13 +2321,13 @@ class DataObjectHelperController extends AdminController
                         } else {
                             // check if it is a localized field
                             if ($params['language']) {
+                                /** @var DataObject\Localizedfield $localizedField */
                                 $localizedField = $class->getFieldDefinition('localizedfields');
                                 if ($localizedField) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
                                         $setter = 'set' . $name;
-                                        /** @var DataObject\ClassDefinition\Data $field */
                                         $newData = $field->getDataFromEditmode($value, $object);
                                         if ($append) {
                                             $existingData = $object->$getter($params['language']);
@@ -2454,6 +2454,11 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['availableFields' => $availableFields]);
     }
 
+    /**
+     * @param DataObject\ClassDefinition\Data[] $fds
+     * @param bool $firstOne
+     * @param DataObject\ClassDefinition\Data[] $commonFields
+     */
     protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)
     {
         foreach ($fds as $fd) {

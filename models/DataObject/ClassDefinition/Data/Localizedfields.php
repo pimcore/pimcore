@@ -827,10 +827,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $context additional contextual data
      *
-     * @return mixed
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFielddefinition($name, $context = [])
     {
@@ -846,7 +846,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return $fieldDefinition;
         }
 
-        return;
+        return null;
     }
 
     /**
