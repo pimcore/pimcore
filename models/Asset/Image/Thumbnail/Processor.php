@@ -54,6 +54,11 @@ class Processor
     ];
 
     /**
+     * @var null|bool
+     */
+    protected static $hasWebpSupport = null;
+
+    /**
      * @param $format
      * @param array $allowed
      * @param string $fallback
@@ -143,7 +148,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if ($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
             $format = 'webp';
         }
 
@@ -347,7 +352,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
+        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -393,5 +398,26 @@ class Processor
         }
 
         return $path;
+    }
+
+    /**
+     * @param bool|null $webpSupport
+     * @return bool|null
+     */
+    public static function setHasWebpSupport(?bool $webpSupport):?bool {
+        $prevValue = self::$hasWebpSupport;
+        self::$hasWebpSupport = $webpSupport;
+        return $prevValue;
+    }
+
+    /**
+     * @return bool
+     */
+    protected static function hasWebpSupport(): bool {
+        if(self::$hasWebpSupport !== null) {
+            return self::$hasWebpSupport;
+        }
+
+        return Frontend::hasWebpSupport();
     }
 }

@@ -319,6 +319,14 @@ class Thumbnail
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
+            $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+
+            if($isAutoFormat) {
+                $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
+                // ensure the default image is not WebP
+                $this->filesystemPath = null;
+                $path = $this->getPath(true);
+            }
 
             $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
@@ -355,7 +363,15 @@ class Thumbnail
                     unset($sourceTagAttributes['srcset']);
                 }
 
-                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
+                $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                if($isAutoFormat) {
+                    $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
+                    $html .= "\t" . $sourceHtmlWebP . "\n";
+                }
+
+                $html .= "\t" . $sourceHtml . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
@@ -381,6 +397,10 @@ class Thumbnail
             $html .= '</picture>' . "\n";
 
             $htmlImgTag = $html;
+
+            if(isset($webpSupportBackup)) {
+                Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
+            }
         }
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
