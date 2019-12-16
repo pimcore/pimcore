@@ -476,7 +476,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      *
      * @return static
      */
-    public function setData(array $data = null): self
+    public function setData(?array $data): self
     {
         $this->data = $data;
 
