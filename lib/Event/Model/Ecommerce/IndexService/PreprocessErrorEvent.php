@@ -49,6 +49,14 @@ class PreprocessErrorEvent extends Event
     }
 
     /**
+     * @param bool $throwException
+     */
+    public function setThrowException(bool $throwException): void
+    {
+        $this->throwException = $throwException;
+    }
+    
+    /**
      * @return bool
      */
     public function doThrowException(): bool
