@@ -30,9 +30,11 @@ class Version20191125200416 extends AbstractPimcoreMigration
                     $method->setAccessible(true);
                     $tableName = $method->invoke($tenantWorker);
 
-                    $this->addSql("ALTER TABLE `$tableName`
-                    ADD metadata TEXT NULL;
-                ");
+                    $table = $schema->getTable($tableName);
+                    if (!$table->hasColumn('metadata')) {
+                        $table->addColumn('metadata', 'text', ['notnull' => false, 'default'=>'null', 'length'=>65535]);
+                    }
+
                 }
             }
         }
