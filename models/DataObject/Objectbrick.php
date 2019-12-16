@@ -403,7 +403,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 if ($brickData) {
                     $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
                     $fds = $brickDef->getFieldDefinitions();
-                    /** @var Model\DataObject\ClassDefinition\Data $fd */
                     foreach ($fds as $fd) {
                         $fieldGetter = 'get' . ucfirst($fd->getName());
                         $fieldValue = $brickData->$fieldGetter();

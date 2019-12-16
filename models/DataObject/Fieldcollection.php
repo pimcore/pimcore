@@ -331,7 +331,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                 $fcType = $item->getType();
                 $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 $fds = $fieldcolDef->getFieldDefinitions();
-                /** @var Model\DataObject\ClassDefinition\Data $fd */
                 foreach ($fds as $fd) {
                     $fieldGetter = 'get' . ucfirst($fd->getName());
                     $fieldValue = $item->$fieldGetter();

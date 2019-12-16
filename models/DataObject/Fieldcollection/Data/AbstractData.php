@@ -103,7 +103,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return mixed
+     * @return Model\DataObject\Fieldcollection\Definition
      */
     public function getDefinition()
     {

@@ -126,7 +126,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -173,8 +172,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $items = [];
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
-
-                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -242,7 +239,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -285,7 +281,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $blockElement = $rawBlockElement['data'] ?? null;
             $blockElementDefinition = $this->getFieldDefinitions();
 
-            /** @var DataObject\ClassDefinition\Data $fd */
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
@@ -464,7 +459,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -504,8 +498,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-
-                    /** @var DataObject\ClassDefinition\Data $fd */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -695,7 +687,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -726,10 +718,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $context additional contextual data
      *
-     * @return mixed
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFielddefinition($name, $context = [])
     {
@@ -743,7 +735,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             return $fieldDefinition;
         }
 
-        return;
+        return null;
     }
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
@@ -1192,7 +1184,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $blockDefinitions = $this->getFieldDefinitions();
 
         if (is_array($blockDefinitions)) {
-            /** @var Data $fd */
             foreach ($blockDefinitions as $field) {
                 if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                     $field->setLazyLoading(false);

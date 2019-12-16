@@ -873,7 +873,8 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
+     * @param array $context
      *
      * @return DataObject\ClassDefinition\Data|bool
      */

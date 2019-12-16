@@ -246,13 +246,8 @@ class TestHelper
 
                     /** @var ObjectModel\Fieldcollection\Data\AbstractData $item */
                     foreach ($items as $item) {
-                        /** @var ObjectModel\Fieldcollection\Definition $def */
                         $def = $item->getDefinition();
 
-                        /**
-                         * @var string $k
-                         * @var ObjectModel\ClassDefinition\Data $v
-                         */
                         foreach ($def->getFieldDefinitions() as $k => $v) {
                             $getter = 'get' . ucfirst($v->getName());
                             $fieldValue = $item->$getter();

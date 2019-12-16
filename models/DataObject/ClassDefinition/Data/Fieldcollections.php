@@ -180,7 +180,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
-                /** @var Data $fd */
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $invisible = $fd->getInvisible();
                     if ($invisible && !is_null($oIndex)) {

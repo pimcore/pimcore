@@ -69,8 +69,6 @@ class Dao extends Model\Dao\AbstractDao
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
             if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  DataObject\DirtyIndicatorInterface) {
-
-                /* @var  $fd DataObject\ClassDefinition\Data */
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
