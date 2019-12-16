@@ -142,9 +142,9 @@ class GridHelperService
 
         // create filter condition
         $conditionPartsFilters = [];
+        $db = \Pimcore\Db::get();
 
         if ($filterJson) {
-            $db = \Pimcore\Db::get();
             $filters = json_decode($filterJson, true);
 
             foreach($filters as $index => $filter) {
@@ -152,22 +152,40 @@ class GridHelperService
                     /** @var UnitConversionService $converter */
                     $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
 
-                    $baseValue = $filter['value'][0];
-                    $baseUnitId = $filter['value'][1];
-                    $baseQuantityValue = new DataObject\Data\QuantityValue($baseValue, $baseUnitId);
+                    $filterValue = $filter['value'][0];
+                    $filterUnit = DataObject\QuantityValue\Unit::getById($filter['value'][1]);
 
-                    $unitListing = new DataObject\QuantityValue\Unit\Listing();
-                    $unitListing->addConditionParam('baseunit=?', $baseUnitId);
-                    foreach($unitListing as $unit) {
-                        $filters[] = [
-                            'value' => $converter->convert($baseQuantityValue, $unit),
-                            'type' => 'numeric',
-                            'operator' => $filter['operator'],
-                            'property' => $filter['property']
-                        ];
+                    if(!$filterUnit instanceof DataObject\QuantityValue\Unit) {
+                        continue;
+                    }
+
+                    $filterQuantityValue = new DataObject\Data\QuantityValue($filterValue, $filterUnit->getId());
+
+                    $baseUnit = $filterUnit->getBaseunit();
+                    if ($baseUnit === null) {
+                        $baseUnit = $filterUnit;
                     }
 
                     unset($filters[$index]);
+
+                    $unitListing = new DataObject\QuantityValue\Unit\Listing();
+                    $unitListing->setCondition('baseunit='.$db->quote($baseUnit->getId()).' OR id='.$filterUnit->getId());
+                    foreach($unitListing->load() as $unit) {
+                        $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
+                        $filters[] = [
+                            'value' => $convertedQuantityValue->getValue(),
+                            'type' => 'numeric',
+                            'operator' => $filter['operator'],
+                            'property' => $filter['property'].'__value'
+                        ];
+
+                        $filters[] = [
+                            'value' => $convertedQuantityValue->getUnitId(),
+                            'type' => 'numeric',
+                            'operator' => 'eq',
+                            'property' => $filter['property'].'__unit'
+                        ];
+                    }
                 }
             }
 
@@ -247,7 +265,6 @@ class GridHelperService
                 }
                 if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
                     // custom field
-                    $db = \Pimcore\Db::get();
                     $brickPrefix = '';
 
                     $ommitPrefix = false;
