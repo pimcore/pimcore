@@ -580,9 +580,7 @@ class Agent implements OrderAgentInterface
 
         $paymentInformationCollection = $order->getPaymentInfo();
 
-        /**
-         * @var $currentPaymentInformation PaymentInfo
-         */
+        /** @var PaymentInfo $currentPaymentInformation */
         $currentPaymentInformation = null;
         if (empty($paymentInformationCollection)) {
             $paymentInformationCollection = new Fieldcollection();

@@ -102,7 +102,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $tabPosition = 'top';
 
     /**
-     * @var
+     * @var int
      */
     public $hideLabelsWhenTabsReached;
 
@@ -801,10 +801,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
 
@@ -824,10 +820,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         }
 
         foreach ($this->getFieldDefinitions() as $fd) {
-
-            /**
-             * @var $fd DataObject\ClassDefinition\Data
-             */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
 
@@ -835,10 +827,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $context additional contextual data
      *
-     * @return mixed
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFielddefinition($name, $context = [])
     {
@@ -854,13 +846,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return $fieldDefinition;
         }
 
-        return;
+        return null;
     }
 
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -1331,7 +1323,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getHideLabelsWhenTabsReached()
     {
@@ -1339,7 +1331,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $hideLabelsWhenTabsReached
+     * @param int $hideLabelsWhenTabsReached
      *
      * @return $this
      */

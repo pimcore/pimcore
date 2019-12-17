@@ -62,7 +62,7 @@ class GoogleTagManager extends Tracker implements
     /** @var string[] */
     protected $trackedCodes = [];
 
-    /** @var [] */
+    /** @var array */
     protected $deferred = [];
 
     protected function configureOptions(OptionsResolver $resolver)

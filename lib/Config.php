@@ -175,7 +175,7 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var $item WebsiteSetting */
+                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 

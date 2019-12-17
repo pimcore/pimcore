@@ -26,7 +26,7 @@ trait TargetingDocumentDaoTrait
 {
     public function hasTargetGroupSpecificElements(): bool
     {
-        /** @var $this PageSnippet\Dao */
+        /** @var PageSnippet\Dao $this */
         $count = $this->db->fetchOne(
             'SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?',
             [
@@ -40,7 +40,7 @@ trait TargetingDocumentDaoTrait
 
     public function getTargetGroupSpecificElementNames(): array
     {
-        /** @var $this PageSnippet\Dao */
+        /** @var PageSnippet\Dao $this */
         $names = $this->db->fetchCol(
             'SELECT name FROM documents_elements WHERE documentId = ? AND name LIKE ?',
             [

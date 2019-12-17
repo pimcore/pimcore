@@ -335,10 +335,10 @@ class Service extends Model\Element\Service
                         $keyid = $groupKeyId[1];
                         $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
-                            /** @var $classificationStoreData Classificationstore */
+                            /** @var Classificationstore $classificationStoreData */
                             $classificationStoreData = $object->$getter();
 
-                            /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                            /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                             $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                             $csLanguage = $requestedLanguage;
                             if (!$csFieldDefinition->isLocalized()) {
@@ -536,7 +536,7 @@ class Service extends Model\Element\Service
 
             if (!empty($config->renderer)) {
                 $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
-                /** @var $rendererImpl Model\DataObject\ClassDefinition\Data */
+                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
                 $rendererImpl = new $classname();
                 if (method_exists($rendererImpl, 'getDataForGrid')) {
                     $result = $rendererImpl->getDataForGrid($result, $object, []);
@@ -1581,7 +1581,7 @@ class Service extends Model\Element\Service
         $fieldDefinitions = $fd->getFieldDefinitions();
 
         if (is_array($fieldDefinitions)) {
-            /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data */
+            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
             foreach ($fieldDefinitions as $fieldDefinition) {
                 $value = $container->getObjectVar($fieldDefinition->getName());
 

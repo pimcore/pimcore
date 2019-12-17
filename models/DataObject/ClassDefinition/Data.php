@@ -104,8 +104,10 @@ abstract class Data
      */
     public $visibleSearch = true;
 
-    /** If set to true then null values will not be exported.
-     * @var
+    /**
+     * If set to true then null values will not be exported.
+     *
+     * @var bool
      */
     protected static $dropNullValues;
 
@@ -1130,7 +1132,7 @@ abstract class Data
     }
 
     /**
-     * @param  $dropNullValues
+     * @param bool $dropNullValues
      */
     public static function setDropNullValues($dropNullValues)
     {
@@ -1138,7 +1140,7 @@ abstract class Data
     }
 
     /**
-     * @return
+     * @return bool
      */
     public static function getDropNullValues()
     {
@@ -1245,11 +1247,11 @@ abstract class Data
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
-                            /** @var $localizedFields DataObject\Localizedfield */
+                            /** @var DataObject\Localizedfield $data */
                             $data = $brickData->getLocalizedFields();
                             // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
 
@@ -1271,7 +1273,7 @@ abstract class Data
                     $keyId = $context['keyId'];
                     $language = $context['language'];
 
-                    /** @var $classificationStoreData DataObject\Classificationstore */
+                    /** @var DataObject\Classificationstore $classificationStoreData */
                     $classificationStoreData = $object->$getter();
                     $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
 

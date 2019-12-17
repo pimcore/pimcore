@@ -71,7 +71,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $relationType = true;
 
     /**
-     * @var
+     * @var array
      */
     public $visibleFields;
 

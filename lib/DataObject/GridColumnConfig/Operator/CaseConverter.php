@@ -51,7 +51,7 @@ class CaseConverter extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var $childValue string */
+            /** @var string $childValue */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
                     if ($this->capitalization == 1) {

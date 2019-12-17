@@ -196,7 +196,7 @@ class DataObjectHelperController extends AdminController
 
                 if ($sharedGridConfigs) {
                     $found = false;
-                    /** @var $sharedConfig GridConfigShare */
+                    /** @var GridConfigShare $sharedConfig */
                     foreach ($sharedGridConfigs as $sharedConfig) {
                         if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
                             $found = true;
@@ -236,7 +236,7 @@ class DataObjectHelperController extends AdminController
         $list = array_merge($list, $importService->getSharedImportConfigs($user, $classId));
         $result = [];
         if ($list) {
-            /** @var $config ImportConfig */
+            /** @var ImportConfig $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -271,7 +271,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         if ($list) {
-            /** @var $config Config */
+            /** @var Config $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -367,7 +367,7 @@ class DataObjectHelperController extends AdminController
         $class = null;
         $fields = null;
 
-        /** @var $class DataObject\ClassDefinition */
+        /** @var DataObject\ClassDefinition $class */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
@@ -1435,7 +1435,7 @@ class DataObjectHelperController extends AdminController
 
             $attributes = $selectedGridColumn->attributes;
 
-            /** @var $config ConfigElementInterface */
+            /** @var ConfigElementInterface $config */
             $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
@@ -1692,7 +1692,7 @@ class DataObjectHelperController extends AdminController
                 $configData->classId = $request->get('classId');
                 $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-                /** @var $object DataObject\Concrete */
+                /** @var DataObject\Concrete $object */
                 $object = $resolver->resolve($configData, $parentId, $rowData);
 
                 $context = $eventData->getContext();
@@ -1806,9 +1806,7 @@ class DataObjectHelperController extends AdminController
         $className = $class->getName();
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
-        /**
-         * @var $list \Pimcore\Model\DataObject\Listing
-         */
+        /** @var \Pimcore\Model\DataObject\Listing $list */
         $list = new $listClass();
 
         $quotedIds = [];
@@ -2059,7 +2057,7 @@ class DataObjectHelperController extends AdminController
                             $definition = json_decode($keyConfig->getDefinition());
                             $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
-                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                             $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
                             $csLanguage = $requestedLanguage;
                             if (!$csFieldDefinition->isLocalized()) {
@@ -2249,19 +2247,19 @@ class DataObjectHelperController extends AdminController
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
 
-                                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;
                                 if (!$csFieldDefinition->isLocalized()) {
                                     $csLanguage = 'default';
                                 }
 
-                                /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                                 $fd = $class->getFieldDefinition($field);
                                 $keyConfig = $fd->getKeyConfiguration($keyid);
                                 $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                                /** @var $classificationStoreData DataObject\Classificationstore */
+                                /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
@@ -2323,13 +2321,13 @@ class DataObjectHelperController extends AdminController
                         } else {
                             // check if it is a localized field
                             if ($params['language']) {
+                                /** @var DataObject\Localizedfield $localizedField */
                                 $localizedField = $class->getFieldDefinition('localizedfields');
                                 if ($localizedField) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
                                         $setter = 'set' . $name;
-                                        /** @var $field DataObject\ClassDefinition\Data */
                                         $newData = $field->getDataFromEditmode($value, $object);
                                         if ($append) {
                                             $existingData = $object->$getter($params['language']);
@@ -2417,7 +2415,7 @@ class DataObjectHelperController extends AdminController
             ];
         }
 
-        /** @var $commonFields DataObject\ClassDefinition\Data[] */
+        /** @var DataObject\ClassDefinition\Data[] $commonFields */
         $commonFields = [];
 
         $firstOne = true;
@@ -2456,6 +2454,11 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['availableFields' => $availableFields]);
     }
 
+    /**
+     * @param DataObject\ClassDefinition\Data[] $fds
+     * @param bool $firstOne
+     * @param DataObject\ClassDefinition\Data[] $commonFields
+     */
     protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)
     {
         foreach ($fds as $fd) {

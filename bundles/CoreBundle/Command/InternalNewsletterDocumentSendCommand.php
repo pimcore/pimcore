@@ -97,9 +97,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             );
         }
 
-        /**
-         * @var $addressAdapterFactory AddressSourceAdapterFactoryInterface
-         */
+        /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 

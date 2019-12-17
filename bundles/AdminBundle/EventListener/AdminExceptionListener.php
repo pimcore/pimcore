@@ -132,16 +132,15 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $items
-     * @param $message
-     * @param $detailedInfo
+     * @param ValidationException[] $items
+     * @param string $message
+     * @param string $detailedInfo
      */
     protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
     {
         if (!$items) {
             return;
         }
-        /** @var $items ValidationException[] */
         foreach ($items as $e) {
             if ($e->getMessage()) {
                 $message .= '<b>' . $e->getMessage() . '</b>';

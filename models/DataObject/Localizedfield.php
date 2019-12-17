@@ -66,8 +66,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     private static $strictMode;
 
-    /** @var
+    /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
+     *
+     * @var array|null
      */
     protected $o_dirtyLanguages;
 
@@ -285,6 +287,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return array_key_exists($language, $this->items);
     }
 
+    /**
+     * @param string $name
+     * @param array $context
+     *
+     * @return ClassDefinition\Data|null
+     */
     public function getFieldDefinition($name, $context = [])
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
@@ -504,7 +512,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $containerDefinition = ClassDefinition::getById($classId);
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
-            /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data */
+            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
             $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
             if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'fieldcollection') {
@@ -632,6 +640,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $this->o_dirtyLanguages = null;
     }
 
+    /**
+     * @return array|null
+     */
     public function getDirtyLanguages()
     {
         return $this->o_dirtyLanguages;

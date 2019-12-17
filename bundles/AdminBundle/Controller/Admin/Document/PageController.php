@@ -52,9 +52,7 @@ class PageController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /**
-         * @var $page Document\Page
-         */
+        /** @var Document\Page $page */
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 

@@ -32,12 +32,12 @@ class MarkerHotspotItem implements \ArrayAccess
     public $type = '';
 
     /**
-     * @var
+     * @var mixed
      */
     public $value;
 
     /**
-     * @param $data
+     * @param array $data
      */
     public function __construct($data)
     {

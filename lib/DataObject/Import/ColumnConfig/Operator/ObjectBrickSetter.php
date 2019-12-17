@@ -79,7 +79,7 @@ class ObjectBrickSetter extends AbstractOperator
         if (!$childs || !$brick) {
             return;
         } else {
-            /** @var $child AbstractConfigElement */
+            /** @var AbstractConfigElement $child */
             foreach ($childs as $child) {
                 $child->process($element, $brick, $rowData, $colIndex, $context);
             }

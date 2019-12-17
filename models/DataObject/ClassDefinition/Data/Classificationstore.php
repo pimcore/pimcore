@@ -465,7 +465,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     private function doGetForWebserviceExport($object, $params = [], &$result = [], $level = 0)
     {
 
-        /** @var $data DataObject\Classificationstore */
+        /** @var DataObject\Classificationstore $data */
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($this->isLocalized()) {
@@ -834,7 +834,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function getKeyConfiguration($keyId)
     {
-        /** @var $keyConfig DataObject\Classificationstore\KeyConfig */
+        /** @var DataObject\Classificationstore\KeyConfig $keyConfig */
         $keyConfig = DataObject\Classificationstore\DefinitionCache::get($keyId);
 
         return $keyConfig;
@@ -987,9 +987,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         continue;
                     }
 
-                    /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
                     $keyGroupRelations = $groupDefinition->getRelations();
 
+                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();
@@ -1144,7 +1144,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $getter = 'get' . ucfirst($this->getName());
-        /** @var $classificationStore DataObject\Classificationstore */
+        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
@@ -1184,7 +1184,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $getter = 'get' . ucfirst($this->getName());
-        /** @var $classificationStore DataObject\Classificationstore */
+        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
@@ -1238,7 +1238,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $groupList->setOrder(['ASC', 'ASC']);
         $groupList = $groupList->load();
 
-        /** @var $group DataObject\Classificationstore\GroupConfig */
+        /** @var DataObject\Classificationstore\GroupConfig $group */
         foreach ($groupList as $group) {
             $keyList = [];
 
@@ -1247,7 +1247,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
+            /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
             foreach ($relation as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
@@ -1299,7 +1299,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var $item DataObject\Classificationstore\CollectionGroupRelation */
+            /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }

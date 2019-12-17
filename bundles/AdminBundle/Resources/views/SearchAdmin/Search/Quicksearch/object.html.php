@@ -43,7 +43,7 @@ $fields = $element->getClass()->getFieldDefinitions();
                 <?php break; } ?>
         <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
 
-            /** @var $storedata DataObject\Classificationstore */
+            /** @var DataObject\Classificationstore $storedata */
             $storedata = $definition->getVersionPreview($element->getValueForFieldName($fieldName));
 
             $existingGroups = array();
@@ -74,15 +74,15 @@ $fields = $element->getClass()->getFieldDefinitions();
                 if (!$activeGroups[$activeGroupId]) {
                     continue;
                 }
-                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                /** @var DataObject\Classificationstore\GroupConfig $groupDefinition */
                 $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
                 if (!$groupDefinition) {
                     continue;
                 }
 
-                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
                     $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()),
@@ -136,7 +136,7 @@ $fields = $element->getClass()->getFieldDefinitions();
                                         <div class="limit-height">
                                             <?php
                                                 if ($brickValue) {
-                                                    /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                                    /** @var DataObject\Localizedfield $localizedBrickValues */
                                                     $localizedBrickValues = $brickValue->getLocalizedFields();
                                                     $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                                     $versionPreview = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
