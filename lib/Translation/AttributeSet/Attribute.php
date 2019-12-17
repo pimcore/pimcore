@@ -41,6 +41,11 @@ class Attribute
     private $content;
 
     /**
+     * @var string[]
+     */
+    private $targetContent = [];
+
+    /**
      * @var bool
      */
     private $isReadonly;
@@ -52,13 +57,15 @@ class Attribute
      * @param string $name
      * @param string $content
      * @param bool $isReadonly
+     * @param string[] $targetContent
      */
-    public function __construct(string $type, string $name, string $content, bool $isReadonly = false)
+    public function __construct(string $type, string $name, string $content, bool $isReadonly = false, array $targetContent = [])
     {
         $this->type = $type;
         $this->name = $name;
         $this->content = $content;
         $this->isReadonly = $isReadonly;
+        $this->targetContent = $targetContent;
     }
 
     /**
@@ -83,6 +90,14 @@ class Attribute
     public function getContent(): string
     {
         return $this->content;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTargetContent(): array
+    {
+        return $this->targetContent;
     }
 
     /**

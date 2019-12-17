@@ -65,7 +65,9 @@ class Xliff12Exporter implements ExporterInterface
                     continue;
                 }
 
-                $this->addTransUnitNode($body, $attribute->getType() . self::DELIMITER . $attribute->getName(), $attribute->getContent(), $attributeSet->getSourceLanguage());
+                $targetContent = $attribute->getTargetContent()[$targetLanguage] ?? null;
+
+                $this->addTransUnitNode($body, $attribute->getType() . self::DELIMITER . $attribute->getName(), $attribute->getContent(), $attributeSet->getSourceLanguage(), $targetContent, $targetLanguage);
             }
         }
 
@@ -99,21 +101,33 @@ class Xliff12Exporter implements ExporterInterface
     /**
      * @param $xml
      * @param $name
-     * @param $content
-     * @param $source
+     * @param $sourceContent
+     * @param $sourceLang
+     * @param $targetContent
+     * @param $targetLang
      */
-    protected function addTransUnitNode(\SimpleXMLElement $xml, $name, $content, $source)
+    protected function addTransUnitNode(\SimpleXMLElement $xml, $name, $sourceContent, $sourceLang, $targetContent, $targetLang)
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));
 
         $sourceNode = $transUnit->addChild('source');
-        $sourceNode->addAttribute('xmlns:xml:lang', $source);
+        $sourceNode->addAttribute('xmlns:xml:lang', $sourceLang);
 
         $node = dom_import_simplexml($sourceNode);
         $no = $node->ownerDocument;
         $f = $no->createDocumentFragment();
-        $f->appendXML($this->xliffEscaper->escapeXliff($content));
+        $f->appendXML($this->xliffEscaper->escapeXliff($sourceContent));
         @$node->appendChild($f);
+
+        if (!empty($targetContent)) {
+            $targetNode = $transUnit->addChild('target');
+            $targetNode->addAttribute('xmlns:xml:lang', $targetLang);
+
+            $tNode = dom_import_simplexml($targetNode);
+            $targetFragment = $no->createDocumentFragment();
+            $targetFragment->appendXML($this->xliffEscaper->escapeXliff($targetContent));
+            @$tNode->appendChild($targetFragment);
+        }
     }
 }
