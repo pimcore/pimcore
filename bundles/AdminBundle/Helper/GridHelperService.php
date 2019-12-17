@@ -406,7 +406,7 @@ class GridHelperService
 
         $fields = [];
         $bricks = [];
-        if ($requestParams['fields']) {
+        if (!empty($requestParams['fields'])) {
             $fields = $requestParams['fields'];
             $bricks = $this->extractBricks($fields);
         }

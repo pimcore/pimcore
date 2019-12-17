@@ -411,7 +411,7 @@ class AssetHelperController extends AdminController
         $newData = [];
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
-            if ($item->isOperator) {
+            if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
 
                 $item->key = $itemKey;
