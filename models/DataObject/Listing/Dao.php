@@ -19,11 +19,12 @@ namespace Pimcore\Model\DataObject\Listing;
 
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
- * @property \Pimcore\Model\DataObject\Listing $model
+ * @property \Pimcore\Model\DataObject\Listing\Concrete $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -173,6 +174,44 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $query = $this->getQuery();
+
+        if (\Pimcore::inDebugMode()) {
+            try {
+                $explain = $this->db->fetchAll('EXPLAIN '.$query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+                $optimizable = false;
+                foreach($explain as $explainRow) {
+                    if(empty($explainRow['key']) && $explainRow['rows'] > 100) {
+                        $optimizable = true;
+                        break;
+                    }
+                }
+
+                if($optimizable) {
+                    $classDefinition = DataObject\ClassDefinition::getById($this->model->getClassId());
+                    $indexCandidates = [];
+                    if(preg_match_all('/.*?`?(?<columnName>[a-zA-Z]\w*|\S+)`?\s*(?:=|<|>|<>)\s*(?:`.+?`|\S+)/', $this->model->getCondition(), $columnNames, PREG_SET_ORDER)) {
+                        foreach ($columnNames as $columnName) {
+                            $fieldDefinition = $classDefinition->getFieldDefinition($columnName['columnName']);
+
+                            if ($fieldDefinition instanceof DataObject\ClassDefinition\Data
+                                && !$fieldDefinition->getIndex()) {
+                                $indexCandidates[] = $fieldDefinition->getName();
+                            }
+                        }
+
+                        if (count($indexCandidates) > 0) {
+                            Logger::info(
+                                'Query execution plan for "'.$query
+                                .'" seems not to be optimal, please considier adding an index to fields '.implode(
+                                    ',', $indexCandidates
+                                ).' of data object class '.$classDefinition->getName()
+                            );
+                        }
+                    }
+                }
+            } catch(\Exception $e) {
+            }
+        }
         $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
