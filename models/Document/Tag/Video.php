@@ -783,7 +783,7 @@ class Video extends Model\Document\Tag
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
                 'duration' => $durationString,
-                'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
+                //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
@@ -792,7 +792,13 @@ class Video extends Model\Document\Tag
                 $thumbnail = $video->getImageThumbnail([]);
             }
 
-            if (!preg_match('@https?://@', $thumbnail)) {
+            $jsonLd['contentUrl'] = $urls['mp4'];
+            if (!preg_match('@https?://@', $urls['mp4'])) {
+                $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
+            }
+
+            $jsonLd['thumbnailUrl'] = (string)$thumbnail;
+            if (!preg_match('@https?://@', (string)$thumbnail)) {
                 $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
             }
 
