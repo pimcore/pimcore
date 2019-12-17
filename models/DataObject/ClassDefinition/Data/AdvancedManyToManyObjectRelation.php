@@ -1015,7 +1015,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             if (!$fd) {
                 $fieldFound = false;
                 /** @var Localizedfields|null $localizedfields */
-                $localizedfields = $class->getFieldDefinition('localizedfields');
+                $localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
                 if ($localizedfields) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
