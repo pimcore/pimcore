@@ -792,9 +792,9 @@ class Video extends Model\Document\Tag
                 $thumbnail = $video->getImageThumbnail([]);
             }
 
-            $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
-            if (preg_match('@https?://@', $urls['mp4'])) {
-                $jsonLd['contentUrl'] = $urls['mp4'];
+            $jsonLd['contentUrl'] = $urls['mp4'];
+            if (!preg_match('@https?://@', $urls['mp4'])) {
+                $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
             }
 
             $jsonLd['thumbnailUrl'] = (string)$thumbnail;
