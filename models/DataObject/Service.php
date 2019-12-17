@@ -534,7 +534,7 @@ class Service extends Model\Element\Service
         if (isset($result->value)) {
             $result = $result->value;
 
-            if ($config->renderer) {
+            if (!empty($config->renderer)) {
                 $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
                 /** @var $rendererImpl Model\DataObject\ClassDefinition\Data */
                 $rendererImpl = new $classname();
