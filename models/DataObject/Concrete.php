@@ -899,8 +899,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             }
 
-            $object = $this;
-            $filterFn = function($row) use ($object, $descriptor, $likes) {
+            $filterFn = function($row) use ($descriptor, $likes) {
                 foreach ($descriptor as $column => $expectedValue) {
                     $actualValue = $row[$column];
                     if (isset($likes[$column])) {
