@@ -241,6 +241,20 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @param $data
      * @param null $object
      * @param mixed $params
@@ -249,18 +263,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
-
-        return null;
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**

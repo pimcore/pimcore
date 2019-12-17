@@ -285,8 +285,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         foreach ($data as $rawBlockElement) {
             $resultElement = [];
 
-            $oIndex = $rawBlockElement['oIndex'];
-            $blockElement = $rawBlockElement['data'];
+            $oIndex = $rawBlockElement['oIndex'] ?? null;
+            $blockElement = $rawBlockElement['data'] ?? null;
             $blockElementDefinition = $this->getFieldDefinitions();
 
             /** @var $fd DataObject\ClassDefinition\Data */

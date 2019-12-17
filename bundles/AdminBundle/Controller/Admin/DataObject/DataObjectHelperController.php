@@ -129,7 +129,7 @@ class DataObjectHelperController extends AdminController
         $userIds = implode(',', $userIds);
         $db = Db::get();
 
-        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
@@ -962,7 +962,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -2215,6 +2215,7 @@ class DataObjectHelperController extends AdminController
                     }
 
                     $append = $params['append'];
+                    $remove = $params['remove'];
 
                     $className = $object->getClassName();
                     $class = DataObject\ClassDefinition::getByName($className);
@@ -2298,6 +2299,11 @@ class DataObjectHelperController extends AdminController
                             $existingData = $brick->$valueGetter();
                             $newData = $field->appendData($existingData, $newData);
                         }
+                        if ($remove) {
+                            $valueGetter = 'get' . ucfirst($brickKey);
+                            $existingData = $brick->$valueGetter();
+                            $newData = $field->removeData($existingData, $newData);
+                        }
                         $brick->$valueSetter($newData);
                     } else {
                         // everything else
@@ -2308,6 +2314,10 @@ class DataObjectHelperController extends AdminController
                             if ($append) {
                                 $existingData = $object->{'get' . $name}();
                                 $newData = $field->appendData($existingData, $newData);
+                            }
+                            if ($remove) {
+                                $existingData = $object->{'get' . $name}();
+                                $newData = $field->removeData($existingData, $newData);
                             }
                             $object->setValue($name, $newData);
                         } else {
@@ -2324,6 +2334,10 @@ class DataObjectHelperController extends AdminController
                                         if ($append) {
                                             $existingData = $object->$getter($params['language']);
                                             $newData = $field->appendData($existingData, $newData);
+                                        }
+                                        if ($remove) {
+                                            $existingData = $object->$getter($request->get('language'));
+                                            $newData = $field->removeData($existingData, $newData);
                                         }
 
                                         $object->$setter($newData, $params['language']);

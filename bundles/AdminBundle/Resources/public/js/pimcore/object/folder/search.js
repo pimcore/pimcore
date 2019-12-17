@@ -28,6 +28,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.searchType = searchType;
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
+        this.batchRemoveColumns = [];
     },
 
     getLayout: function () {
@@ -220,7 +221,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             existingFilters = this.store.getFilters();
         }
 
-        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         if (this.sortinfo) {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }

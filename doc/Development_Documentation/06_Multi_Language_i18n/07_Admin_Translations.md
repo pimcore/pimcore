@@ -42,3 +42,11 @@ Admin translations underly the same case sensitivity logic as [shared translatio
 }) }}
  ```
  
+#### Adding your own admin languages (since v6.3.6)
+Pimcore comes with a set of translations which are managed by [POEditor](https://pimcore.com/en/resources/translations). 
+However, the amount of available languages is limited, because only languages with certain translation progress are
+included in the main distribution. 
+If you want make additional languages available for the admin interface, you can do so by putting a symfony translation
+file for the desired language into the default path for the symfony translator 
+(e.g. use `translations/admin.af.yml` for making `Afrikaans` available, the translation file can be also empty). 
+If you haven't configured anything different this is `%kernel.project_dir%/translations` for Symfony 4 projects. 

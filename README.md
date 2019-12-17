@@ -70,7 +70,7 @@ _Password_: `demo`
 ## Getting Started
 _**Only 3 commands to start!**_ 😎
 ```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton:dev-master ./my-project
+COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton ./my-project
 cd ./my-project
 ./vendor/bin/pimcore-install
 ```

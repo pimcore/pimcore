@@ -120,6 +120,11 @@ class Config extends Model\AbstractModel
     public $filenameSuffix;
 
     /**
+     * @var bool
+     */
+    public $forcePictureTag = false;
+
+    /**
      * @param $config
      *
      * @return self|bool
@@ -844,6 +849,22 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForcePictureTag(): bool
+    {
+        return $this->forcePictureTag;
+    }
+
+    /**
+     * @param bool $forcePictureTag
+     */
+    public function setForcePictureTag(bool $forcePictureTag): void
+    {
+        $this->forcePictureTag = $forcePictureTag;
     }
 
     /**

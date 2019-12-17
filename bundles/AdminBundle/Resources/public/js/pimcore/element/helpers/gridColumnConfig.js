@@ -261,7 +261,7 @@ pimcore.element.helpers.gridColumnConfig = {
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, false);
             }.bind(this, grid)
         });
         menu.add(batchAllMenu);
@@ -272,7 +272,7 @@ pimcore.element.helpers.gridColumnConfig = {
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, false);
             }.bind(this, grid)
         });
         menu.add(batchSelectedMenu);
@@ -283,7 +283,7 @@ pimcore.element.helpers.gridColumnConfig = {
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, true);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendAllMenu);
@@ -294,10 +294,34 @@ pimcore.element.helpers.gridColumnConfig = {
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, true);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendSelectedMenu);
+
+
+        var batchRemoveAllMenu = new Ext.menu.Item({
+            text: t("batch_remove_all"),
+            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, true);
+            }.bind(this, grid)
+        });
+        menu.add(batchRemoveAllMenu);
+
+        var batchRemoveSelectedMenu = new Ext.menu.Item({
+            text: t("batch_remove_selected"),
+            iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, true);
+            }.bind(this, grid)
+        });
+        menu.add(batchRemoveSelectedMenu);
+
         //
         menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
             var menu = grid.headerCt.getMenu();
@@ -320,10 +344,18 @@ pimcore.element.helpers.gridColumnConfig = {
                 batchAppendAllMenu.hide();
                 batchAppendSelectedMenu.hide();
             }
+
+            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchRemoveColumns ? this.batchRemoveColumns : [], columnDataIndex)) {
+                batchRemoveAllMenu.show();
+                batchRemoveSelectedMenu.show();
+            } else {
+                batchRemoveAllMenu.hide();
+                batchRemoveSelectedMenu.hide();
+            }
         }.bind(this, batchAllMenu, batchSelectedMenu, grid));
     },
 
-    batchPrepare: function (columnIndex, onlySelected, append) {
+    batchPrepare: function (columnIndex, onlySelected, append, remove) {
         // no batch for system properties
         if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
@@ -335,7 +367,7 @@ pimcore.element.helpers.gridColumnConfig = {
             for (var i = 0; i < selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex, jobs, append, true);
+            this.batchOpen(columnIndex, jobs, append, remove, true);
 
         } else {
 
@@ -371,7 +403,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append, false);
+                        this.batchOpen(columnIndex, rdata.jobs, append, remove, false);
                     }
 
                 }.bind(this, columnIndex)
@@ -380,7 +412,7 @@ pimcore.element.helpers.gridColumnConfig = {
 
     },
 
-    batchOpen: function (columnIndex, jobs, append, onlySelected) {
+    batchOpen: function (columnIndex, jobs, append, remove, onlySelected) {
 
         columnIndex = columnIndex - 1;
 
@@ -435,7 +467,7 @@ pimcore.element.helpers.gridColumnConfig = {
                     text: t("save"),
                     handler: function () {
                         if (formPanel.isValid()) {
-                            this.batchProcess(jobs, append, editor, fieldInfo, true);
+                            this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
                         }
                     }.bind(this)
                 }
@@ -443,7 +475,8 @@ pimcore.element.helpers.gridColumnConfig = {
         });
         var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
         var appendTitle = onlySelected ? "batch_append_selected_to" : "batch_append_to";
-        var title = append ? t(appendTitle) + " " + fieldInfo.text : t(batchTitle) + " " + fieldInfo.text;
+        var removeTitle = onlySelected ? "batch_remove_selected_from" : "batch_remove_from";
+        var title = remove ? t(removeTitle) + " " + fieldInfo.text : (append ? t(appendTitle) + " " + fieldInfo.text : t(batchTitle) + " " + fieldInfo.text);
         this.batchWin = new Ext.Window({
             autoScroll: true,
             modal: false,
@@ -457,7 +490,7 @@ pimcore.element.helpers.gridColumnConfig = {
         this.batchWin.updateLayout();
     },
 
-    batchProcess: function (jobs, append, editor, fieldInfo, initial) {
+    batchProcess: function (jobs, append,  remove, editor, fieldInfo, initial) {
         if (initial) {
             this.batchErrors = [];
             this.batchJobCurrent = 0;
@@ -528,6 +561,9 @@ pimcore.element.helpers.gridColumnConfig = {
         if (append) {
             this.batchParameters.append = 1;
         }
+        if (remove) {
+            this.batchParameters.remove = 1;
+        }
 
         Ext.Ajax.request({
             url: this.batchProcessUrl,
@@ -554,7 +590,7 @@ pimcore.element.helpers.gridColumnConfig = {
 
                 window.setTimeout(function () {
                     this.batchJobCurrent++;
-                    this.batchProcess(jobs, append);
+                    this.batchProcess(jobs, append, remove);
                 }.bind(this), 400);
             }.bind(this, jobs, this.batchParameters.job)
         });

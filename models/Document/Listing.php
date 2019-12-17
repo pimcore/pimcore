@@ -24,13 +24,14 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Document[] load()
+ * @method Document current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -41,6 +42,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
 
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $documents = null;
 
@@ -49,16 +51,17 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
      */
     public $unpublished = false;
 
+    public function __construct()
+    {
+        $this->documents =& $this->data;
+    }
+
     /**
      * @return Document[]
      */
     public function getDocuments()
     {
-        if ($this->documents === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->documents;
+        return $this->getData();
     }
 
     /**
@@ -68,9 +71,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
      */
     public function setDocuments($documents)
     {
-        $this->documents = $documents;
-
-        return $this;
+        return $this->setData($documents);
     }
 
     /**
@@ -154,70 +155,5 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * Methods for Iterator
-     */
-
-    /**
-     * Rewind the listing back to te start.
-     */
-    public function rewind()
-    {
-        $this->getDocuments();
-        reset($this->documents);
-    }
-
-    /**
-     * Returns the current listing row.
-     *
-     * @return Document
-     */
-    public function current()
-    {
-        $this->getDocuments();
-        $var = current($this->documents);
-
-        return $var;
-    }
-
-    /**
-     * Returns the current listing row key.
-     *
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getDocuments();
-        $var = key($this->documents);
-
-        return $var;
-    }
-
-    /**
-     * Returns the next listing row key.
-     *
-     * @return mixed
-     */
-    public function next()
-    {
-        $this->getDocuments();
-        $var = next($this->documents);
-
-        return $var;
-    }
-
-    /**
-     * Checks whether the listing contains more entries.
-     *
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getDocuments();
-        $var = $this->current() !== false;
-
-        return $var;
     }
 }
