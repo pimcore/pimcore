@@ -71,7 +71,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $relationType = true;
 
     /**
-     * @var array
+     * @var string|null
      */
     public $visibleFields;
 
@@ -685,8 +685,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->relationType = $masterDefinition->relationType;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -697,7 +698,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $classIds = $this->getClasses();
 
-        if (empty($classIds)) {
+        if (empty($classIds[0]['classes'])) {
             return;
         }
 
@@ -705,9 +706,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } elseif (is_string($classId)) {
-            $class = DataObject\ClassDefinition::getByName($classId);
         } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
             return;
         }
 
@@ -922,7 +925,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string|null $visibleFields
      *
      * @return $this
      */
@@ -937,7 +940,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getVisibleFields()
     {
