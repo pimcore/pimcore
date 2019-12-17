@@ -118,6 +118,11 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
+     * @var bool
+     */
+    public $cacheRawRelationData = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions = [];
@@ -379,11 +384,22 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+
+        $imlementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        if ($this->getCacheRawRelationData()) {
+            $imlementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+        }
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $imlementsBlock . ' {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
         $cd .= "\n\n";
+
+        if ($this->getCacheRawRelationData()) {
+            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
+            $cd .= "\n\n";
+        }
 
         if ($this->getUseTraits()) {
             $cd .= 'use '.$this->getUseTraits().";\n";
@@ -1283,4 +1299,24 @@ class ClassDefinition extends Model\AbstractModel
 
         return $generator;
     }
+
+    /**
+     * @return bool
+     */
+    public function getCacheRawRelationData(): bool
+    {
+        return $this->cacheRawRelationData;
+    }
+
+    /**
+     * @param $cacheRawRelationData
+     * @return $this
+     */
+    public function setCacheRawRelationData($cacheRawRelationData)
+    {
+        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
+        return $this;
+    }
+
+
 }

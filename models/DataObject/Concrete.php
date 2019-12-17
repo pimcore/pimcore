@@ -881,4 +881,58 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         return;
     }
+
+    /**
+     * @param $descriptor
+     * @return array|mixed|mixed[]
+     */
+    public function retrieveRelationData($descriptor) {
+
+        if ($this instanceof CacheRawRelationDataInterface) {
+            $unfilteredData = $this->__getRawRelationData();
+
+            $likes = [];
+            foreach ($descriptor as $column => $expectedValue) {
+                $trimmed = rtrim($expectedValue, '%');
+                if (strlen($trimmed) < strlen($expectedValue)) {
+                    $likes[$column] = $trimmed;
+                }
+            }
+
+            $object = $this;
+            $filterFn = function($row) use ($object, $descriptor, $likes) {
+                foreach ($descriptor as $column => $expectedValue) {
+                    $actualValue = $row[$column];
+                    if (isset($likes[$column])) {
+                        $expectedValue = $likes[$column];
+                        if (strpos($actualValue, $expectedValue) !== 0) {
+                            return false;
+                        }
+                    } else if ($actualValue != $expectedValue) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+
+            $filteredData = array_filter($unfilteredData, $filterFn);
+
+            return $filteredData;
+        } else {
+            $db = Db::get();
+            $conditionParts = ['src_id = ' . $this->getId()];
+            foreach ($descriptor as $key => $value) {
+                $lastChar = $value[strlen($value) - 1];
+                if ($lastChar === "%") {
+                    $conditionParts[] = $key . " LIKE " . $db->quote($value);
+                } else {
+                    $conditionParts[] = $key . " = " . $db->quote($value);
+                }
+            }
+
+            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ' , $conditionParts);
+            $result = $db->fetchAll($query);
+            return $result;
+        }
+    }
 }
