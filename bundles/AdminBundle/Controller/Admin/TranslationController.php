@@ -1066,7 +1066,9 @@ class TranslationController extends AdminController
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
-                    if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $fd */
+                    $fd = $element->getClass()->getFieldDefinition('localizedfields');
+                    if ($fd) {
                         $definitions = $fd->getFieldDefinitions();
 
                         $locale = str_replace('-', '_', $source);

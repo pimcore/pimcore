@@ -115,8 +115,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param (DataObject\Concrete $document
+     * @param DataObject\Concrete $object
      * @param AttributeSet $result
+     * @param array|null $exportAttributes
      *
      * @return DataObjectDataExtractor
      *
@@ -124,10 +125,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      */
     protected function addLocalizedFields(DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null): DataObjectDataExtractor
     {
-        /**
-         * @var Localizedfields $fd
-         */
-        if ($fd = $object->getClass()->getFieldDefinition('localizedfields')) {
+        /** @var Localizedfields|null $fd */
+        $fd = $object->getClass()->getFieldDefinition('localizedfields');
+        if ($fd) {
             $definitions = $fd->getFieldDefinitions();
 
             $locale = str_replace('-', '_', $result->getSourceLanguage());
@@ -307,16 +307,16 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 foreach ($fieldDefinition->getAllowedTypes() ?: [] as $brickType) {
                     $brickGetter = 'get' . ucfirst($brickType);
 
-                    /**
-                     * @var DataObject\Objectbrick\Data\AbstractData $brick
-                     */
+                    /** @var DataObject\Objectbrick\Data\AbstractData $brick */
                     if (!$brick = $brickContainer->$brickGetter()) {
                         continue;
                     }
 
                     $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
 
-                    if (!$localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields')) {
+                    /** @var Localizedfields $localizedFieldsDefinition */
+                    $localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields');
+                    if (!$localizedFieldsDefinition) {
                         continue;
                     }
 
@@ -391,7 +391,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                         continue;
                     }
 
-                    if (!$localizedFieldsDefinition = $definition->getFieldDefinition('localizedfields')) {
+                    /** @var Localizedfields $localizedFieldsDefinition */
+                    $localizedFieldsDefinition = $definition->getFieldDefinition('localizedfields');
+                    if (!$localizedFieldsDefinition) {
                         continue;
                     }
 
