@@ -652,7 +652,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $filterUnit = Model\DataObject\QuantityValue\Unit::getById($value[1]);
 
         if(!$filterUnit instanceof Model\DataObject\QuantityValue\Unit) {
-            return '1';
+            return '1=1';
         }
 
         $filterQuantityValue = new Model\DataObject\Data\QuantityValue($filterValue, $filterUnit->getId());
