@@ -310,9 +310,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $object = $this->getObject();
             $container = $object->getClass();
         }
-        $fieldDefinition = $container->getFieldDefinition('localizedfields')->getFieldDefinition($name);
+        /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
+        $localizedFields = $container->getFieldDefinition('localizedfields');
 
-        return $fieldDefinition;
+        return $localizedFields->getFieldDefinition($name);
     }
 
     /**
@@ -336,10 +337,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['fieldname'];
             $object = $this->getObject();
-            /**
-             * @var Model\DataObject\ClassDefinition\Data\Block $container
-             */
-            $container = $object->getClass()->getFieldDefinition($containerKey)->getFieldDefinition('localizedfields');
+            /** @var Model\DataObject\ClassDefinition\Data\Block $block */
+            $block = $object->getClass()->getFieldDefinition($containerKey);
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
+            $container = $block->getFieldDefinition('localizedfields');
         } else {
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
@@ -512,7 +513,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $containerDefinition = ClassDefinition::getById($classId);
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
-            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
             $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
             if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'fieldcollection') {

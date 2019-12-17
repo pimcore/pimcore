@@ -185,10 +185,10 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -202,7 +202,7 @@ class Definition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
