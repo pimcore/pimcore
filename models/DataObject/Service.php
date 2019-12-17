@@ -392,7 +392,8 @@ class Service extends Model\Element\Service
                     // if the definition is not set try to get the definition from localized fields
                     if (!$def) {
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
-                        if ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
+                        $locFields = $object->getClass()->getFieldDefinition('localizedfields');
+                        if ($locFields) {
                             $def = $locFields->getFieldDefinition($key, $context);
                             if ($def) {
                                 $needLocalizedPermissions = true;

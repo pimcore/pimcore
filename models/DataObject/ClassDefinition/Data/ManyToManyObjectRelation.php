@@ -722,7 +722,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             if (!$fd) {
                 $fieldFound = false;
                 /** @var Localizedfields|null $localizedfields */
-                if ($localizedfields = $class->getFieldDefinition('localizedfields')) {
+                $localizedfields = $class->getFieldDefinition('localizedfields');
+                if ($localizedfields) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();

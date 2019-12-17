@@ -514,6 +514,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'block') {
             $classId = $contextInfo['classId'];
             $containerDefinition = ClassDefinition::getById($classId);
+            /** @var Model\DataObject\ClassDefinition\Data\Block $blockDefinition */
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
@@ -529,6 +530,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                 $containerDefinition = $this->getObject()->getClass();
             }
 
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
         }
