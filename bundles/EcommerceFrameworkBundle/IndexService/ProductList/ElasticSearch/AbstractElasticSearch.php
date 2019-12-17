@@ -1241,7 +1241,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function sendRequest(array $params)
     {
         /**
-         * @var $esClient \Elasticsearch\Client
+         * @var \Elasticsearch\Client $esClient
          */
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
         $result = [];

@@ -53,7 +53,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::disable();
         Cache::clearAll();
 
-        /** @var $csField \Pimcore\Model\DataObject\Classificationstore */
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField = $o->getCsstore();
         $this->assertTrue($csField instanceof \Pimcore\Model\DataObject\Classificationstore, 'type mismatch');
 

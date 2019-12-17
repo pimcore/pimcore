@@ -95,9 +95,7 @@ class PimcoreUrl extends Helper
         }
 
         if (isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
-            /**
-             * @var $object Concrete
-             */
+            /** @var Concrete $object */
             $object = $parameters['object'];
             if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 unset($parameters['object']);

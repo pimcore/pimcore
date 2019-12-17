@@ -259,7 +259,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                         $userRoleRelationListing->setCondition('FIND_IN_SET(' . $user->getId() . ',roles)');
                         $userRoleRelationListing = $userRoleRelationListing->load();
                         if ($userRoleRelationListing) {
-                            /** @var $relatedUser User */
+                            /** @var User $relatedUser */
                             foreach ($userRoleRelationListing as $relatedUser) {
                                 $userRoles = $relatedUser->getRoles();
                                 if (is_array($userRoles)) {
@@ -405,9 +405,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             return $this->adminJson(['success' => false]);
         }
 
-        /**
-         * @var $user User
-         */
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -866,7 +864,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function reset2FaSecretAction(Request $request)
     {
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = User::getById(intval($request->get('id')));
         $success = true;
@@ -1100,7 +1098,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var $role User\Role */
+        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [

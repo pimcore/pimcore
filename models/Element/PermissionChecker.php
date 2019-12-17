@@ -63,7 +63,7 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var $user User */
+        /** @var User $user */
         foreach ($users as $user) {
             $userPermission = [];
             $userPermission['userId'] = $user->getId();

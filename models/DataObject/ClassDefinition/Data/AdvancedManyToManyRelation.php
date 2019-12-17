@@ -143,7 +143,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     }
 
                     if ($source instanceof DataObject\Concrete) {
-                        /** @var $metaData DataObject\Data\ElementMetadata */
+                        /** @var DataObject\Data\ElementMetadata $metaData */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(
                                 'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -240,7 +240,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $targets = [];
             $existingTargets = [];
 
-            /** @var $metaObject DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
@@ -284,7 +284,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $existingTargets[$targetType] = $resultMap;
             }
 
-            /** @var $metaObject DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $key => $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
@@ -1037,7 +1037,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (is_array($value)) {
             $result = [];
-            /** @var $elementMetadata DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

@@ -1066,7 +1066,7 @@ class Service extends Model\AbstractModel
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
             $result = [];
-            /** @var $version Model\Version */
+            /** @var Model\Version $version */
             foreach ($versions as $version) {
                 $name = $version['user']['name'];
                 $id = $version['user']['id'];

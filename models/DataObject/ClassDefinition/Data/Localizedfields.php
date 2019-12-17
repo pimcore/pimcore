@@ -102,7 +102,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $tabPosition = 'top';
 
     /**
-     * @var
+     * @var int
      */
     public $hideLabelsWhenTabsReached;
 
@@ -835,10 +835,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $context additional contextual data
      *
-     * @return mixed
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFielddefinition($name, $context = [])
     {
@@ -854,7 +854,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return $fieldDefinition;
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -1331,7 +1331,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getHideLabelsWhenTabsReached()
     {
@@ -1339,7 +1339,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $hideLabelsWhenTabsReached
+     * @param int $hideLabelsWhenTabsReached
      *
      * @return $this
      */

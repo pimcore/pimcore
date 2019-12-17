@@ -184,9 +184,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
             throw new \RuntimeException(sprintf('Could not find Custom Report Adapter with type %s', $type));
         }
 
-        /**
-         * @var $factory Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface
-         */
+        /** @var Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface $factory */
         $factory = $serviceLocator->get($type);
 
         return $factory->create($configuration, $fullConfig);

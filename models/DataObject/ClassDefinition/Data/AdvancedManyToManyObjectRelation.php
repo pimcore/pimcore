@@ -26,12 +26,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
     /**
-     * @var
+     * @var string
      */
     public $allowedClassId;
 
     /**
-     * @var
+     * @var array
      */
     public $visibleFields;
 
@@ -141,7 +141,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     }
 
                     if ($source instanceof DataObject\Concrete) {
-                        /** @var $metaData DataObject\Data\ObjectMetadata */
+                        /** @var DataObject\Data\ObjectMetadata $metaData */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
@@ -1061,7 +1061,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         if (is_array($value)) {
             $result = [];
-            /** @var $elementMetadata DataObject\Data\ObjectMetadata */
+            /** @var DataObject\Data\ObjectMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

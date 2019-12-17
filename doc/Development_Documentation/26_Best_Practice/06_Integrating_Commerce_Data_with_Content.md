@@ -87,7 +87,7 @@ class MyProductTeaser extends AbstractAreabrick
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
  * @var \Pimcore\Templating\GlobalVariables $app
- * @var $product \AppBundle\Model\DefaultProduct
+ * @var \AppBundle\Model\DefaultProduct $product
  */
 
 $product = $this->product;

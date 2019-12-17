@@ -181,9 +181,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function activeGenerateProcessAction(Request $request)
     {
-        /**
-         * @var $document Document\Printpage
-         */
+        /** @var Document\Printpage $document */
         $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');

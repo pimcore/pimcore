@@ -118,7 +118,7 @@ class Bootstrap
 
     public static function bootstrap()
     {
-        /** @var $loader \Composer\Autoload\ClassLoader */
+        /** @var \Composer\Autoload\ClassLoader $loader */
         if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../vendor/autoload.php';
         } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {

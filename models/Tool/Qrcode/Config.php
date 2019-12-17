@@ -40,7 +40,7 @@ class Config extends Model\AbstractModel
     public $url = '';
 
     /**
-     * @var
+     * @var string
      */
     public $foreColor = '';
 
@@ -65,7 +65,7 @@ class Config extends Model\AbstractModel
     public $creationDate;
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return Config
      *
@@ -84,7 +84,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -104,7 +104,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -124,7 +124,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
      * @return $this
      */
@@ -144,7 +144,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $backgroundColor
+     * @param string $backgroundColor
      *
      * @return $this
      */
@@ -164,7 +164,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $foreColor
+     * @param string $foreColor
      *
      * @return $this
      */
@@ -184,7 +184,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $googleAnalytics
+     * @param bool $googleAnalytics
      *
      * @return $this
      */

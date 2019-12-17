@@ -83,7 +83,7 @@ class Asset extends Model\Webservice\Data
     public $customSettings;
 
     /**
-     * @var
+     * @var array
      */
     public $metadata;
 

@@ -275,9 +275,7 @@ class TaxCalculationTest extends EcommerceTestCase
             }
         ]);
 
-        /**
-         * @var $product AbstractProduct
-         */
+        /** @var AbstractProduct $product */
         $product = Stub::construct(AbstractProduct::class, [], [
             'getId' => function () {
                 return 5;
