@@ -202,7 +202,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                         if (count($indexCandidates) > 0) {
                             Logger::info(
                                 'Query execution plan for "'.$query
-                                .'" seems not to be optimal, please consider adding an index to fields '.implode(
+                                .'" seems not to be optimal, please consider adding an index to field(s) '.implode(
                                     ',', $indexCandidates
                                 ).' of data object class '.$classDefinition->getName()
                             );
