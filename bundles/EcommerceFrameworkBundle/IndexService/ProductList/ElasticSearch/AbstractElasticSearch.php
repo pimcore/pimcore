@@ -1253,6 +1253,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 $params['body']['size'] = $this->getLimit();
             }
 
+            $eventDispatcher = \Pimcore::getEventDispatcher();
+            $preSendRequestEvent = new PreSendRequestEvent($params);
+            $eventDispatcher->dispatch(IndexServiceEvents::PRE_SEND_REQUST_ELASTIC_SEARCH, $preSendRequestEvent);
+
+            if ($preSendRequestEvent->getStopRequest()) {
+                return $result;
+            }
+            
             $result = $esClient->search($params);
 
             if ($this->doScrollRequest) {
@@ -1260,7 +1268,16 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 $scrollId = $result['_scroll_id'];
 
                 while (true) {
-                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
+                    $scrollOptions = ['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive];
+
+                    $preSendRequestEvent = new PreSendRequestEvent($scrollOptions);
+                    $eventDispatcher->dispatch(IndexServiceEvents::PRE_SEND_REQUST_ELASTIC_SEARCH, $preSendRequestEvent);
+
+                    if ($preSendRequestEvent->getStopRequest()) {
+                        return $result;
+                    }
+
+                    $additionalResult = $esClient->scroll($scrollOptions);
 
                     if (count($additionalResult['hits']['hits'])) {
                         $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
