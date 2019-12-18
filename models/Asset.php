@@ -752,6 +752,10 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        if(!$type) {
+            throw new \Exception('Asset type could not be determined');
+        }
+
         $this->postPersistData();
 
         // save properties
