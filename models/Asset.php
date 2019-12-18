@@ -752,7 +752,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if(!$type) {
+        if(!$this->getType()) {
             throw new \Exception('Asset type could not be determined');
         }
 
