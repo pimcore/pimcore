@@ -392,8 +392,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
             return $data;
         }
-
-        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
+        
+        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -455,6 +455,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 if ($this->languageExists($l)) {
+                    if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading())  {
+                        $this->loadLazyField($fieldDefinition, $name, $l);
+                    }
                     if (array_key_exists($name, $this->items[$l])) {
                         if ($data = $this->getLocalizedValue($name, $l)) {
                             break;
