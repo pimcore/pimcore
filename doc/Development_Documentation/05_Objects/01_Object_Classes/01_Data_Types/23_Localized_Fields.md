@@ -33,6 +33,18 @@ You can do this in `Settings` -> `System Settings` -> `Localization & Internatio
 
 ![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
 
+## Inheritance
+
+Fallback and inherited values are evaluated in a vertical way first. This is contrary to the [Classification Store](13_Classification_Store.md) where the evaluation is done in a horizontal way. If no value for the current language is found, the parent level is checked. 
+
+If walking up the inheritance levels yields no result, the fallback language of the lowermost level will be checked in the same way. (Also walking up the inheritance levels for this language). 
+
+Consider the following example and let’s assume that English is the fallback language for German. We request the German value for the object at level 3. 
+Since the only value can be found on level 1 for the default language the tree is traversed as depicted.
+
+
+![Language value levels in Localized Fields](../../../img/Objects_LocalizedFields_levels.png)
+
 
 ## Working with PHP API
 
