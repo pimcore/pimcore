@@ -19,6 +19,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchCon
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Event\Ecommerce\IndexServiceEvents;
+use Pimcore\Event\Model\Ecommerce\IndexService\PreSendRequestEvent;
 
 abstract class AbstractElasticSearch implements ProductListInterface
 {
