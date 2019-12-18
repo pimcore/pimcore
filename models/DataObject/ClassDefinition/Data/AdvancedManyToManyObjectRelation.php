@@ -31,7 +31,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $allowedClassId;
 
     /**
-     * @var array
+     * @var string|null
      */
     public $visibleFields;
 
@@ -815,7 +815,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string|null $visibleFields
      *
      * @return $this
      */
@@ -837,7 +837,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getVisibleFields()
     {
@@ -982,8 +982,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $this->columns = $masterDefinition->columns;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -998,6 +1000,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             $class = DataObject\ClassDefinition::getById($classId);
         } else {
             $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
+            return;
         }
 
         if (!$this->visibleFields) {
