@@ -893,9 +893,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             $likes = [];
             foreach ($descriptor as $column => $expectedValue) {
-                $trimmed = rtrim($expectedValue, '%');
-                if (strlen($trimmed) < strlen($expectedValue)) {
-                    $likes[$column] = $trimmed;
+                if (is_string($expectedValue)) {
+                    $trimmed = rtrim($expectedValue, '%');
+                    if (strlen($trimmed) < strlen($expectedValue)) {
+                        $likes[$column] = $trimmed;
+                    }
                 }
             }
 
@@ -921,7 +923,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $db = Db::get();
             $conditionParts = ['src_id = ' . $this->getId()];
             foreach ($descriptor as $key => $value) {
-                $lastChar = $value[strlen($value) - 1];
+                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
                 if ($lastChar === "%") {
                     $conditionParts[] = $key . " LIKE " . $db->quote($value);
                 } else {
