@@ -385,12 +385,12 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "*/\n\n";
 
 
-        $imlementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
         if ($this->getCacheRawRelationData()) {
-            $imlementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
         }
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $imlementsBlock . ' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
