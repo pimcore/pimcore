@@ -193,8 +193,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                         foreach ($columnNames as $columnName) {
                             $fieldDefinition = $classDefinition->getFieldDefinition($columnName['columnName']);
 
-                            if ($fieldDefinition instanceof DataObject\ClassDefinition\Data
-                                && !$fieldDefinition->getIndex()) {
+                            if ($fieldDefinition instanceof DataObject\ClassDefinition\Data && !$fieldDefinition->getIndex() && !$fieldDefinition->getUnique()) {
                                 $indexCandidates[] = $fieldDefinition->getName();
                             }
                         }
