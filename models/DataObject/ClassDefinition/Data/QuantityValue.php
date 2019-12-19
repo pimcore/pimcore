@@ -657,10 +657,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         $filterQuantityValue = new Model\DataObject\Data\QuantityValue($filterValue, $filterUnit->getId());
 
-        $baseUnit = $filterUnit->getBaseunit();
-        if ($baseUnit === null) {
-            $baseUnit = $filterUnit;
-        }
+        $baseUnit = $filterUnit->getBaseunit() ?? $filterUnit;
 
         $unitListing = new Model\DataObject\QuantityValue\Unit\Listing();
         $unitListing->setCondition('baseunit='.Db::get()->quote($baseUnit->getId()).' OR id='.Db::get()->quote($filterUnit->getId()));
@@ -686,6 +683,4 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return implode(' OR ', $conditions);
     }
-
-
 }
