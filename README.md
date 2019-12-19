@@ -31,7 +31,7 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
-No matter if your're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
+No matter if you're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
 UI design (web documents by a template and structured data with a intuitive graphical editor), Pimcore knows 
 how to persist the data efficiently and optimized for fast access.
 
