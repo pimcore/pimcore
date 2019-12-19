@@ -1623,7 +1623,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array|\stdClass $metadata mandatory keys: name, type - optional keys: data, language
+     * @param array|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
      */
