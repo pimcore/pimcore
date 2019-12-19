@@ -21,7 +21,6 @@ use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\TagNameEvent;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -30,7 +29,6 @@ use Pimcore\Model\Webservice;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\HtmlUtils;
-use Pimcore\View;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -72,12 +70,21 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $documentId;
 
     /**
-     * @var \Pimcore\Controller\Action
+     * Element belongs to the document
+     *
+     * @var Document\PageSnippet
+     */
+    protected $document;
+
+    /**
+     * @deprecated Unused - will be removed in 7.0
+     *
+     * @var null
      */
     protected $controller;
 
     /**
-     * @var ViewModelInterface|View
+     * @var ViewModelInterface
      */
     protected $view;
 
@@ -334,6 +341,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         $this->documentId = (int) $id;
 
+        if ($this->document instanceof PageSnippet && $this->document->getId() !== $this->documentId) {
+            $this->document = null;
+        }
+
         return $this;
     }
 
@@ -343,6 +354,31 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function getDocumentId()
     {
         return $this->documentId;
+    }
+
+    /**
+     * @param Document\PageSnippet $document
+     *
+     * @return $this
+     */
+    public function setDocument(Document\PageSnippet $document)
+    {
+        $this->document = $document;
+        $this->documentId = (int) $document->getId();
+
+        return $this;
+    }
+
+    /**
+     * @return Document\PageSnippet
+     */
+    public function getDocument()
+    {
+        if (!$this->document) {
+            $this->document = Document\PageSnippet::getById($this->documentId);
+        }
+
+        return $this->document;
     }
 
     /**
@@ -366,7 +402,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param \Pimcore\Controller\Action $controller
+     * @deprecated
+     *
+     * @param null $controller
      *
      * @return $this
      */
@@ -378,7 +416,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return \Pimcore\Controller\Action
+     * @deprecated
+     *
+     * @return null
      */
     public function getController()
     {
@@ -386,7 +426,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return $this
      */
@@ -398,7 +438,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return ViewModelInterface|View
+     * @return ViewModelInterface
      */
     public function getView()
     {
@@ -443,11 +483,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __sleep()
     {
+        $finalVars = [];
+        $parentVars = parent::__sleep();
+        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
 
-        // here the "normal" task of __sleep ;-)
-        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options', 'parentBlockNames'];
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+        foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
@@ -461,18 +501,28 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @return string
      */
+    public function render()
+    {
+        if ($this->editmode) {
+            return $this->admin();
+        }
+
+        return $this->frontend();
+    }
+
+    /**
+     * direct output to the frontend
+     *
+     * @return string
+     */
     public function __toString()
     {
         $result = '';
 
         try {
-            if ($this->editmode) {
-                $result = $this->admin();
-            } else {
-                $result = $this->frontend();
-            }
+            $result = $this->render();
         } catch (\Throwable $e) {
-            if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+            if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
 
@@ -585,6 +635,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         unset($el['dao']);
         unset($el['documentId']);
+        unset($el['document']);
         unset($el['controller']);
         unset($el['view']);
         unset($el['editmode']);
@@ -704,5 +755,19 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         return $name;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return object
+     */
+    public function sanitizeWebserviceData($data)
+    {
+        if (is_array($data)) {
+            $data = (object) $data;
+        }
+
+        return $data;
     }
 }

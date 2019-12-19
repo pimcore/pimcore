@@ -135,6 +135,8 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param int $offset
      * @param int $limit
+     *
+     * @return array
      */
     public function getRequiredBy($offset = null, $limit = null)
     {

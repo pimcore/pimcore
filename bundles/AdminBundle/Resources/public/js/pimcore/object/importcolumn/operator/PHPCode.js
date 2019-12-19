@@ -116,7 +116,7 @@ pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridc
             width: 600,
             height: 300,
             modal: true,
-            title: t('operator_phpcode_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

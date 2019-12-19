@@ -82,9 +82,13 @@ pimcore.report.panel = Class.create({
             for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
 
                 group = pimcore.report.broker.groups[i];
+
+                var groupIconCls = group.iconCls ? group.iconCls : '';
+                groupIconCls = groupIconCls + ' ' + groupIconCls.replace(/^pimcore_nav_icon_/, 'pimcore_icon_');
+
                 var groupNodeConfig = {
                     text: group.name,
-                    iconCls: group.iconCls,
+                    iconCls: groupIconCls,
                     leaf: false
 
                 };
@@ -104,9 +108,13 @@ pimcore.report.panel = Class.create({
                             }
 
                             if (reportClass.prototype.matchType(this.type)) {
+
+                                var iconCls = reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls();
+                                iconCls = iconCls + ' ' + iconCls.replace(/^pimcore_nav_icon_/, 'pimcore_icon_');
+
                                 var childConfig = {
                                     text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
-                                    iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
+                                    iconCls: iconCls,
                                     leaf: true,
                                     xdata: {
                                         reportClass: reportClass,

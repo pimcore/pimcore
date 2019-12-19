@@ -31,6 +31,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public $fieldtype = 'calculatedValue';
 
+    /** @var string */
+    public $elementType = 'input';
+
     /**
      * @var float
      */
@@ -61,6 +64,28 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
+
+    /**
+     * @return string
+     */
+    public function getElementType(): string
+    {
+        return $this->elementType;
+    }
+
+    /**
+     * @param string $elementType
+     *
+     * @return $this
+     */
+    public function setElementType($elementType)
+    {
+        if ($elementType) {
+            $this->elementType = $elementType;
+        }
+
+        return $this;
+    }
 
     /**
      * @return int
@@ -326,7 +351,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -388,7 +413,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
@@ -413,7 +438,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -438,7 +463,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -463,7 +488,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
@@ -485,7 +510,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *

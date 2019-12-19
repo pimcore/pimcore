@@ -40,7 +40,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
     {
         // init
         $field = $this->getField($filterDefinition);
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
 
         // set default preselect
         if (empty($value)) {

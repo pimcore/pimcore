@@ -243,6 +243,14 @@ class Environment implements EnvironmentInterface
     }
 
     /**
+     * @param Currency $currency
+     */
+    public function setDefaultCurrency(Currency $currency)
+    {
+        $this->defaultCurrency = $currency;
+    }
+
+    /**
      * @return Currency
      */
     public function getDefaultCurrency()

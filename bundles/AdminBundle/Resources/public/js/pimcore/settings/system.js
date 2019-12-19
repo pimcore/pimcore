@@ -146,6 +146,7 @@ pimcore.settings.system = Class.create({
                                 typeAhead: true,
                                 value: this.getValue("general.language"),
                                 queryMode: 'local',
+                                mode: 'local',
                                 listWidth: 100,
                                 //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 store: pimcore.globalmanager.get("pimcorelanguages"),
@@ -293,7 +294,7 @@ pimcore.settings.system = Class.create({
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
-                            value: t('valid_languages_frontend_description'),
+                            value: t('valid_languages_frontend_description') + " <br /><br />" + t('delete_language_note'),
                             cls: "pimcore_extra_label_bottom"
                         },
                             {

@@ -253,4 +253,9 @@ class AbstractUser extends Model\AbstractModel
 
         return $this;
     }
+
+    public function update()
+    {
+        $this->getDao()->update();
+    }
 }

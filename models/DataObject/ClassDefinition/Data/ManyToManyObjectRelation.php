@@ -25,6 +25,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
 
     /**
      * Static type of this element
@@ -70,7 +71,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $relationType = true;
 
     /**
-     * @var
+     * @var string|null
      */
     public $visibleFields;
 
@@ -78,6 +79,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var bool
      */
     public $optimizedAdminLoading = false;
+
+    /**
+     * @var array
+     */
+    public $visibleFieldDefinitions = [];
 
     /**
      * @return bool
@@ -235,6 +241,20 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @param $data
      * @param null $object
      * @param mixed $params
@@ -243,18 +263,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
-
-        return null;
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -676,8 +685,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->relationType = $masterDefinition->relationType;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -688,7 +698,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $classIds = $this->getClasses();
 
-        if (empty($classIds)) {
+        if (empty($classIds[0]['classes'])) {
             return;
         }
 
@@ -696,9 +706,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } elseif (is_string($classId)) {
-            $class = DataObject\ClassDefinition::getByName($classId);
         } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
             return;
         }
 
@@ -862,7 +874,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     ]
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params)
             ];
 
             $newData = [];
@@ -913,7 +925,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string|null $visibleFields
      *
      * @return $this
      */
@@ -928,7 +940,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getVisibleFields()
     {

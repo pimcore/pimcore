@@ -11,16 +11,16 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Console\AbstractCommand;
 use Pimcore\Workflow\Dumper\GraphvizDumper;
 use Pimcore\Workflow\Dumper\StateMachineGraphvizDumper;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Workflow\Marking;
 
-class WorkflowDumpCommand extends ContainerAwareCommand
+class WorkflowDumpCommand extends AbstractCommand
 {
     protected static $defaultName = 'pimcore:workflow:dump';
 
@@ -55,10 +55,10 @@ EOF
         $serviceId = $input->getArgument('name');
         if ($container->has('workflow.'.$serviceId)) {
             $workflow = $container->get('workflow.'.$serviceId);
-            $dumper = $this->getContainer()->get(GraphvizDumper::class);
+            $dumper = $container->get(GraphvizDumper::class);
         } elseif ($container->has('state_machine.'.$serviceId)) {
             $workflow = $container->get('state_machine.'.$serviceId);
-            $dumper = $this->getContainer()->get(StateMachineGraphvizDumper::class);
+            $dumper = $container->get(StateMachineGraphvizDumper::class);
         } else {
             throw new InvalidArgumentException(sprintf('No service found for "workflow.%1$s" nor "state_machine.%1$s".', $serviceId));
         }

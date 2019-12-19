@@ -95,7 +95,9 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        $this->detectFocalPoint();
+        if (!isset($this->customSettings['disableFocalPointDetection'])) {
+            $this->detectFocalPoint();
+        }
     }
 
     public function detectFocalPoint()
@@ -164,6 +166,7 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
+        $sqipBin = null;
 
         if (!$config['enabled']) {
             return false;
@@ -266,6 +269,20 @@ EOT;
         $svgPath = preg_replace("/\.p?jpe?g$/", '-low-quality-preview.svg', $path);
 
         return $svgPath;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLowQualityPreviewDataUri(): ?string
+    {
+        $file = $this->getLowQualityPreviewFileSystemPath();
+        $dataUri = null;
+        if (file_exists($file)) {
+            $dataUri = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
+        }
+
+        return $dataUri;
     }
 
     /**
@@ -442,6 +459,15 @@ EOT;
                     }
                 }
             }
+        }
+
+        if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
+            // persist dimensions to database
+            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting('imageWidth', $width);
+            $this->setCustomSetting('imageHeight', $height);
+            $this->getDao()->updateCustomSettings();
+            $this->clearDependentCache();
         }
 
         return $dimensions;

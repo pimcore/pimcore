@@ -103,7 +103,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         if (!this.editPanel) {
             var url = '/admin/asset/image-editor?id=' + this.id;
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
             var frameId = 'asset_image_edit_' + this.id;
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
@@ -437,9 +436,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     },
 
     initPreviewImage: function () {
-        var date = new Date();
-        var dc = date.getTime();
-        var html = '<img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&hdpi=true&_dc=' + dc + '">';
+
+        var html = '<img src="' + this.data.imageInfo['previewUrl'] + '">';
         Ext.get(this.previewContainerId).setHtml(html);
 
         this.previewMode = 'image';
@@ -453,7 +451,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
                     this.addImageFeature(coord);
                 }.bind(this));
-
             }
         }
     },

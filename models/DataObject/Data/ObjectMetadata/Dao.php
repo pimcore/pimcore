@@ -28,6 +28,11 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
+     * @var null
+     */
+    protected $tableDefinitions = null;
+
+    /**
      * @param DataObject\Concrete $object
      * @param $ownertype
      * @param $ownername
@@ -78,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $position
      * @param $index
      *
-     * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
+     * @return null|DataObject\Data\ObjectMetadata
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
@@ -123,7 +128,6 @@ class Dao extends Model\Dao\AbstractDao
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
-              INDEX `o_id` (`o_id`),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),

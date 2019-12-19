@@ -27,6 +27,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
 
     /**
      * Static type of this element
@@ -252,6 +255,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['dest_id']);
                 } elseif ($element['type'] == 'asset') {
@@ -361,6 +365,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $elements = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['id']);
                 } elseif ($element['type'] == 'asset') {
@@ -714,7 +719,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);

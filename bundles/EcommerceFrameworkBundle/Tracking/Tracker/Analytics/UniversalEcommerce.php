@@ -83,13 +83,15 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
      */
     protected function transformTransaction(Transaction $transaction)
     {
-        return $this->filterNullValues([
+        return $this->filterNullValues(array_merge([
             'id' => $transaction->getId(),                     // Transaction ID. Required.
             'affiliation' => $transaction->getAffiliation() ?: '',      // Affiliation or store name.
             'revenue' => $transaction->getTotal(),                  // Grand Total.
             'shipping' => round($transaction->getShipping(), 2),               // Shipping.
             'tax' => round($transaction->getTax(), 2)                     // Tax.
-        ]);
+        ],
+                $transaction->getAdditionalAttributes())
+        );
     }
 
     /**
@@ -101,13 +103,13 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
      */
     protected function transformProductAction(ProductAction $item)
     {
-        return $this->filterNullValues([
+        return $this->filterNullValues(array_merge([
             'id' => $item->getTransactionId(),                    // Transaction ID. Required.
             'sku' => $item->getId(),                               // SKU/code.
             'name' => $item->getName(),                             // Product name. Required.
             'category' => $item->getCategory(),                         // Category or variation.
             'price' => round($item->getPrice(), 2),                            // Unit price.
             'quantity' => $item->getQuantity() ?: 1,                    // Quantity.
-        ]);
+        ], $item->getAdditionalAttributes()));
     }
 }

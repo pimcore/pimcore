@@ -80,12 +80,14 @@ class DefinitionCache
     }
 
     /**
-     * @param $config
+     * @param KeyConfig|GroupConfig $config
      *
-     * @return string
+     * @return string|null
      */
     protected static function getType($config)
     {
+        $type = null;
+
         if ($config instanceof KeyConfig) {
             $type = 'key';
         } elseif ($config instanceof GroupConfig) {

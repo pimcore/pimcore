@@ -59,7 +59,7 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function getDataEditmode()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         return Text::wysiwygText($this->text, [
             'document' => $document,
@@ -74,7 +74,7 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function frontend()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         return Text::wysiwygText($this->text, [
                 'document' => $document,
@@ -128,10 +128,7 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
+        $data = $this->sanitizeWebserviceData($wsElement->value);
 
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;

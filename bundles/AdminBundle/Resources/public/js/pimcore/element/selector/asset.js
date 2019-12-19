@@ -190,7 +190,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             var columns = [
                 {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
+                        return '<div style="height: 16px;" class="pimcore_icon_'
                             + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },

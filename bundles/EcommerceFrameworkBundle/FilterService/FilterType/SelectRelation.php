@@ -79,9 +79,10 @@ class SelectRelation extends AbstractFilterType
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
-        if (empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$isReload) {
             $o = $preSelect;
             if (!empty($o)) {
                 if (is_object($o)) {
@@ -97,11 +98,7 @@ class SelectRelation extends AbstractFilterType
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
-            //            if($isPrecondition) {
-            //                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
-            //            } else {
             $productList->addRelationCondition($field, 'dest = ' . $productList->quote($value));
-            //            }
         }
 
         return $currentFilter;

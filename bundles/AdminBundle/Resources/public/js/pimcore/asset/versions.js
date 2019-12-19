@@ -43,10 +43,15 @@ pimcore.asset.versions = Class.create({
 
             this.store = new Ext.data.Store({
                 model: modelName,
-                sorters: [{
-                    property: 'id',
-                    direction: 'DESC'
-                }],
+                sorters: [
+                    {
+                        property: 'versionCount',
+                        direction: 'DESC'
+                    },
+                    {
+                        property: 'id',
+                        direction: 'DESC'
+                    }],
                 proxy: {
                     type: 'ajax',
                     url: "/admin/element/get-versions",
@@ -149,7 +154,6 @@ pimcore.asset.versions = Class.create({
 
         var versionId = data.id;
         var url = "/admin/asset/show-version?id=" + versionId;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.frameId).dom.src = url;
     },
 

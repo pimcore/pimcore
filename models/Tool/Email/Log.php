@@ -396,50 +396,9 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * Sets the creation date (unix timestamp)
-     *
-     * @param int $creationDate
-     *
-     * @return $this
-     *
-     * @todo: creationDate not found in class
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * Returns the creation date as unix timestamp
-     *
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * Saves the email log entry (forwards to $this->update())
-     */
     public function save()
     {
-        // set date
-        if (!(int)$this->getId()) {
-            $this->getDao()->create();
-        }
-        $this->update();
-    }
-
-    /**
-     * Updates and save the email log entry to the db and the file-system
-     */
-    protected function update()
-    {
-        $this->getDao()->update();
+        $this->getDao()->save();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
             File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }

@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Cache;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -174,7 +173,7 @@ class Snippet extends Model\Document\Tag
         } catch (\Exception $e) {
             Logger::error($e);
 
-            if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+            if (\Pimcore::inDebugMode()) {
                 return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
@@ -219,6 +218,8 @@ class Snippet extends Model\Document\Tag
      */
     public function isEmpty()
     {
+        $this->load();
+
         if ($this->snippet instanceof Document\Snippet) {
             return false;
         }
@@ -255,7 +256,7 @@ class Snippet extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id !== null) {
             $this->id = $data->id;
             if (is_numeric($this->id)) {
@@ -291,7 +292,9 @@ class Snippet extends Model\Document\Tag
      */
     public function load()
     {
-        $this->snippet = Document::getById($this->id);
+        if (!$this->snippet && $this->id) {
+            $this->snippet = Document::getById($this->id);
+        }
     }
 
     /**
@@ -320,7 +323,10 @@ class Snippet extends Model\Document\Tag
      */
     public function setSnippet($snippet)
     {
-        $this->snippet = $snippet;
+        if ($snippet instanceof Document\Snippet) {
+            $this->id = $snippet->getId();
+            $this->snippet = $snippet;
+        }
     }
 
     /**
@@ -328,6 +334,8 @@ class Snippet extends Model\Document\Tag
      */
     public function getSnippet()
     {
+        $this->load();
+
         return $this->snippet;
     }
 }

@@ -13,10 +13,6 @@ License: GPLv3
 pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
 http://www.sencha.com/license/  
 
-### jQuery by The jQuery Project
-License: MIT or GPLv2  
-http://jquery.org/license
-
 ### CKEditor by Frederico Knabben
 License: LGPL / GPLv2 / MPL  
 http://ckeditor.com/license

@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Event\Model\TargetGroupEvent;
+use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -230,6 +232,9 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup->setName($request->get('name'));
         $targetGroup->save();
 
+        $event = new TargetGroupEvent($targetGroup);
+        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_ADD, $event);
+
         $cache->clearTag('target_groups');
 
         return $this->adminJson(['success' => true, 'id' => $targetGroup->getId()]);
@@ -250,8 +255,11 @@ class TargetingController extends AdminController implements EventedControllerIn
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         if ($targetGroup) {
+            $event = new TargetGroupEvent($targetGroup);
             $targetGroup->delete();
             $success = true;
+
+            \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_DELETE, $event);
         }
 
         $cache->clearTag('target_groups');
@@ -290,6 +298,9 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup = TargetGroup::getById($request->get('id'));
         $targetGroup->setValues($data['settings']);
         $targetGroup->save();
+
+        $event = new TargetGroupEvent($targetGroup);
+        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_UPDATE, $event);
 
         $cache->clearTag('target_groups');
 

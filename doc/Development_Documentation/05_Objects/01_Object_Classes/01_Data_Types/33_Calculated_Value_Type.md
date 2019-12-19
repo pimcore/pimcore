@@ -14,28 +14,24 @@ called `sum` placed inside a localizedfields container.
 ![Calculated Value Configuration](../../../img/classes-datatypes-calculated.png)
 
 
-The first step is to provide a PHP calculator class implementing at least one static method which computes the result 
-for the `sum` field. An example is shown below.
+The first step is to provide a PHP calculator class implementing the `CalculatorClassInterface` interface. The `compute` method needs to be implemented which computes the result for the `sum` field. An example is shown below.
 
 The arguments passed into this method is the Pimcore object and the contextual information telling you which 
-calculated-value field is affected and where it is located it.
+calculated-value field is affected and where it is located at.
 
-The extent of information differs on which datatype is the owner of the calculated-value field 
+The extent of information depends on the datatype of the owner of the calculated-value field 
 (localizedfield, object brick etc.). The details are documented below.
 
 ```php
 namespace Website;
  
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
+use Pimcore\Model\DataObject\Data\CalculatedValue;
  
-class CalculatorDemo
+class CalculatorDemo implements CalculatorClassInterface
 {
-    /**
-     * @param $object Concrete
-     * @param $context \Pimcore\Model\DataObject\Data\CalculatedValue
-     * @return string
-     */
-    public static function compute($object, $context) {
+    public function compute(Concrete $object, CalculatedValue $context):string {
         if ($context->getFieldname() == "sum") {
             $language = $context->getPosition();
             return $object->getXValue($language) +  $object->getYValue($language);
@@ -48,16 +44,11 @@ class CalculatorDemo
 
 As we see here, the calculator class sums up the x and y values from the corresponding language tab.
 
-It is also possible to provide a different representation for edit mode by providing a second (optional) implementation just for this purpose. An example would be:
+In addition to the `compute` method you need to implement the `getCalculatedValueForEditMode` method. This method is used to display the value in object edit mode:
 ```php
-/**
- * @param $object
- * @param $context \Pimcore\Model\DataObject\Data\CalculatedValue
- * @return string
- */
-public static function getCalculatedValueForEditMode($object, $context) {
+public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string {
     $language = $context->getPosition();
-    $result = $object->getXValue($language) . " + " . $object->getYValue($language) . " = " . self::compute($object, $context);
+    $result = $object->getXValue($language) . " + " . $object->getYValue($language) . " = " . $this->compute($object, $context);
     return $result;
 }
 ```
@@ -66,6 +57,7 @@ The visual outcome would be as follows:
 
 ![Calculated Value Field](../../../img/classes-datatypes-calculated-field.png)
 
+You can also provide a Symfony service as calculator class via `@` prefix (e.g. `@service_name`).
 
 
 ## Working with PHP API

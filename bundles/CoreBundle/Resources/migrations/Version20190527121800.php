@@ -39,8 +39,8 @@ class Version20190527121800 extends AbstractPimcoreMigration
     public function migrateSystemConfiguration()
     {
         try {
-            $originalConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.php';
-            $newConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
+            $originalConfigFile = \Pimcore\Config::locateConfigFile('system.php');
+            $newConfigFile = str_replace('system.php', 'system.yml', $originalConfigFile);
 
             if (is_file($originalConfigFile)) {
                 //write new system.yml file in /var/config

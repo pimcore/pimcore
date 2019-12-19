@@ -82,7 +82,7 @@ yarn global add sqip
 ```
 This should install `sqip` somewhere in your path.
 
-Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](http://internetpartner.info/en/tutorials/ubuntu/104-how-to-install-go-from-ubuntu-repositories-and-set-gopath.html) also.
+Since SQIP requires [Primitive](https://github.com/fogleman/primitive) - which is written in [Go](https://golang.org/) - you need that [set-up](https://www.digitalocean.com/community/tutorials/how-to-install-go-on-ubuntu-18-04) also.
 
 Then run
 ```bash
@@ -103,10 +103,32 @@ apt-get install libimage-exiftool-perl
 
 ## WebP
 
-Install webp for [WebP-Support](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_WebP-Support)
+Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
 
 ```bash 
 apt-get install webp
 ```
 
+## Graphviz
 
+Install graphviz for [Workflow](../../07_Workflow_Management/README.md)
+
+```bash
+apt-get install graphviz
+```
+
+## Facedetect
+
+Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
+
+```bash
+apt-get install facedetect
+```
+
+# html2text
+
+Install html2text for [Pimcore mail](../../19_Development_Tools_and_Details/25_Email_Framework/01_Pimcore_Mail.md)
+
+```bash
+apt-get install html2text
+```

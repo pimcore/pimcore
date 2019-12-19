@@ -80,12 +80,11 @@ class FilterService
 
         if ($filterObject->getFilters()) {
             foreach ($filterObject->getFilters() as $filter) {
-
-                /**
-                 * @var $filter AbstractFilterDefinitionType
-                 */
+                /** @var AbstractFilterDefinitionType $filter */
                 $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
-
+            }
+            //do this in a separate loop in order to make sure that all filters are set when group by values are prepared
+            foreach ($filterObject->getFilters() as $filter) {
                 //prepare group by filters
                 $this->getFilterType($filter->getType())->prepareGroupByValues($filter, $productList);
             }
@@ -93,10 +92,7 @@ class FilterService
 
         if ($filterObject->getConditions()) {
             foreach ($filterObject->getConditions() as $condition) {
-
-                /**
-                 * @var $condition AbstractFilterDefinitionType
-                 */
+                /** @var AbstractFilterDefinitionType $condition */
                 $this->addCondition($condition, $productList, $currentFilter, [], true);
             }
         }

@@ -158,7 +158,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return '';
+        return $this->getDiffVersionPreview($data, $object, $params);
     }
 
     /**
@@ -288,27 +288,19 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        if (!empty($data)) {
-            $line = '';
-            $isFirst = true;
-            if (is_array($data)) {
-                foreach ($data as $point) {
-                    if (!$isFirst) {
-                        $line .= ' ';
-                    }
-                    $line .= $point->getLatitude() . ',' . $point->getLongitude();
-                    $isFirst = false;
-                }
+        $line = [];
 
-                return $line;
+        if (is_array($data)) {
+            foreach ($data as $point) {
+                $line[] = $point->getLatitude() . ',' . $point->getLongitude();
             }
         }
 
-        return;
+        return implode(' ', $line);
     }
 
     /** Encode value for packing it into a single column.
@@ -324,7 +316,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var $point DataObject\Data\Geopoint */
+                /** @var DataObject\Data\Geopoint $point */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -344,24 +336,23 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($value && $value['value']) {
+        if (isset($value['value'])) {
             $value = json_decode($value['value']);
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $newPoint = new DataObject\Data\Geopoint($point[1], $point[1]);
-                    $newPoint->setLatitude($point[0]);
-                    $newPoint->setLongitude($point[1]);
-                    $result[] = $newPoint;
+                    $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
                 }
             }
             $result = Serialize::serialize($result);
 
             return $result;
         }
+
+        return null;
     }
 }

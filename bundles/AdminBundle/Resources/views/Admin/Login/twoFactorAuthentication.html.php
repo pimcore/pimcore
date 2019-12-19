@@ -23,14 +23,13 @@ $this->get("translate")->setDomain("admin");
 
 <form method="post" action="<?=$this->url('pimcore_admin_2fa-verify')?>" autocomplete="off">
     <input name="_auth_code" id="_auth_code" type="password" placeholder="<?= $this->translate("2fa_code"); ?>" required autofocus>
+    <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
+
     <button type="submit"><?= $this->translate("Login"); ?></button>
 </form>
 
 <a href="<?= $view->router()->path('pimcore_admin_logout') ?>"><?= $this->translate("Back to Login"); ?></a>
 
+<?= $this->breachAttackRandomContent(); ?>
 
-<?php $view->slots()->start('below_footer') ?>
-<script type="text/javascript">
-    $("#_auth_code").select();
-</script>
-<?php $view->slots()->stop() ?>
+

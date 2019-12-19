@@ -74,7 +74,7 @@
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     background-size: 28px;
@@ -150,11 +150,13 @@
 
 #pimcore_loading.loaded {
     position: absolute;
-    z-index: 10;
+    z-index: 15;
     left: 8px;
-    bottom: 210px;
+    bottom: 200px;
     width:44px;
+    height: 25px;
     padding:0;
+    background: #0C0F12;
 }
 
 #pimcore_loading.loaded .spinner {
@@ -218,6 +220,12 @@
     border-right: 0px solid #2A2D30;
 }
 
+
+#assetMultiUploadField {
+    width: 10px;
+    position: absolute;
+    left: -1000px;
+}
 
 .pimcore_hidden {
     display:none !important;
@@ -1904,7 +1912,7 @@ span.warning {
 
 .pimcore_main_accordion .pimcore_tree_no_root_node .x-tree-view .x-grid-item-container {
     padding-top: 0;
-    margin-left: 15px;
+    padding-left: 30px;
 }
 
 .pimcore_main_splitter {
@@ -1915,7 +1923,7 @@ span.warning {
     background-color: #D0D2D4;
 }
 
-.pimcore_tree_node_root .x-tree-expander {
+.pimcore_tree_node_root .x-tree-expander, .pimcore_tree_node_root .x-tree-elbow-img {
     display: none;
 }
 
@@ -2143,7 +2151,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 
-.strikeThrough {
+.strikeThrough, .strikeThrough input {
     text-decoration: line-through;
     color: #777;
 }
@@ -2276,3 +2284,16 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 /** END notifications **/
+
+.x-body .sf-minitoolbar {
+    left:0;
+    right:auto;
+    bottom: 195px;
+    background: #0C0F12;
+    text-align: center;
+    z-index: 12;
+}
+
+.x-body .sf-minitoolbar a {
+    width: 48px;
+}

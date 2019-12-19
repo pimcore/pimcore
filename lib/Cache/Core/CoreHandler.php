@@ -19,6 +19,7 @@ use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
+use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -337,15 +338,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         if ($force || $this->forceImmediateWrite) {
-            if ($this->writeLock->hasLock()) {
-                $this->logger->warning(
-                    'Not saving {key} to cache as there\'s an active write lock',
-                    ['key' => $key]
-                );
-
-                return false;
-            }
-
             $item = $this->prepareCacheItem($key, $data, $lifetime);
             if (null === $item) {
                 // logging is done in prepare method if item could not be created
@@ -451,9 +443,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return null;
             }
 
-            // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
-            if (isset($data->_fulldump)) {
-                unset($data->_fulldump);
+            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+            if ($data instanceof ElementDumpStateInterface) {
+                $data->setInDumpState(false);
             }
         }
 

@@ -107,15 +107,6 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory:function () {
-
-        // no render check is necessary because the date compontent returns the right values even it is not rendered
-        if (this.getValue() == false) {
-            return true;
-        }
-        return false;
-    },
-
     isDirty:function () {
         var dirty = false;
 

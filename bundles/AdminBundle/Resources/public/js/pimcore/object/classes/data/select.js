@@ -299,7 +299,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     options: source.datax.options,
                     width: source.datax.width,
                     optionsProviderClass: source.datax.optionsProviderClass,
-                    optionsProviderData: source.datax.optionsProviderData
+                    optionsProviderData: source.datax.optionsProviderData,
+                    defaultValue: source.datax.defaultValue,
+                    columnLength : source.datax.columnLength
                 });
         }
     },

@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenInformation;
 
 /**
  * Interface for cart implementations of online shop framework
@@ -49,6 +50,9 @@ interface CartInterface
      * default implementation checks if order object exists and if order state is PAYMENT_PENDING
      *
      * @return bool
+     *
+     * @deprecated use checkout implementation V7 instead
+     *
      */
     public function isCartReadOnly();
 
@@ -319,6 +323,13 @@ interface CartInterface
      * @return string[]
      */
     public function getVoucherTokenCodes();
+
+    /**
+     * Returns detail information of added voucher codes and if they are considered by pricing rules
+     *
+     * @return PricingManagerTokenInformation[]
+     */
+    public function getPricingManagerTokenInformationDetails(): array;
 
     /**
      * @return bool

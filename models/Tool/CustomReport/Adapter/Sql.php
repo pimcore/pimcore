@@ -37,6 +37,8 @@ class Sql extends AbstractAdapter
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
+        $data = [];
+        $total = 0;
 
         if ($baseQuery) {
             $total = $db->fetchOne($baseQuery['count']);
@@ -177,6 +179,7 @@ class Sql extends AbstractAdapter
                     $value = $filter['value'] ;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
+                    $maxValue = null;
                     if ($type == 'date') {
                         if ($operator == 'eq') {
                             $maxValue = strtotime($value . '+23 hours 59 minutes');
@@ -199,13 +202,10 @@ class Sql extends AbstractAdapter
 
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
-                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';
+                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
                                     break;
                                 }
-                                $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' FROM_UNIXTIME(' . $db->quote($value) . ')';
-                                break;
                             }
-
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
                             break;
                         case '=':

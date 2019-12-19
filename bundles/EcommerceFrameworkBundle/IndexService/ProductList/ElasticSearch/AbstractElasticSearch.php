@@ -275,7 +275,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function addRelationCondition($fieldname, $condition)
     {
-        $this->relationConditions['relations.' . $fieldname][] = $condition;
+        $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
@@ -635,7 +635,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
-                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => reset($hit['fields']['system.priceSystemName'])];
+                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
             }
         }
         $priceSystemArrays = [];
@@ -772,7 +772,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($relationCondition)) {
                         $boolFilters[] = $relationCondition;
                     } else {
-                        $boolFilters[] = ['term' => [$fieldname => $relationCondition]];
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $relationCondition]];
                     }
                 }
             }
@@ -797,7 +797,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($filterCondition)) {
                         $boolFilters[] = $filterCondition;
                     } else {
-                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $filterCondition]];
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname, true) => $filterCondition]];
                     }
                 }
             }
@@ -827,8 +827,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
                         } else {
                             $fieldnames = $this->tenantConfig->getSearchAttributes();
                             $mappedFieldnames = [];
-                            foreach ($fieldnames as $fieldname) {
-                                $mappedFieldnames[] = $this->tenantConfig->getFieldNameMapped($fieldname);
+                            foreach ($fieldnames as $searchFieldnames) {
+                                $mappedFieldnames[] = $this->tenantConfig->getFieldNameMapped($searchFieldnames, true);
                             }
 
                             $queryFilters[] = ['multi_match' => [
@@ -867,7 +867,31 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValuesLoaded = false;
+        }
+    }
+
+    /**
+     * @param $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
+     * @param array $aggregationConfig
+     *
+     * @throws \Exception
+     */
+    public function prepareGroupByValuesWithConfig($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true, array $aggregationConfig = [])
+    {
+        if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            throw new \Exception('Custom sub aggregations are not supported for variant mode VARIANT_MODE_INCLUDE_PARENT_OBJECT');
+        }
+
+        if ($fieldname) {
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = [
+                'countValues' => $countValues,
+                'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded,
+                'aggregationConfig' => $aggregationConfig
+            ];
             $this->preparedGroupByValuesLoaded = false;
         }
     }
@@ -883,7 +907,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
     }
@@ -943,7 +967,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname, true), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -959,7 +983,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname, true), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -1052,6 +1076,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
             //relation conditions
             $specificFilters = $this->buildRelationConditions($specificFilters, array_merge($filteredFieldnames, [$shortFieldname => $shortFieldname]));
 
+            if (!empty($config['aggregationConfig'])) {
+                $aggregation = $config['aggregationConfig'];
+            } else {
+                $aggregation = [
+                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc']]
+                ];
+            }
+
             if ($specificFilters) {
                 $aggregations[$fieldname] = [
                     'filter' => [
@@ -1060,9 +1092,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                         ]
                     ],
                     'aggs' => [
-                        $fieldname => [
-                            'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc' ]]
-                        ]
+                        $fieldname => $aggregation
                     ]
                 ];
 
@@ -1073,9 +1103,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     ];
                 }
             } else {
-                $aggregations[$fieldname] = [
-                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc' ]]
-                ];
+                $aggregations[$fieldname] = $aggregation;
 
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
@@ -1108,11 +1136,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             if ($result['aggregations']) {
                 foreach ($result['aggregations'] as $fieldname => $aggregation) {
-                    if ($aggregation['buckets']) {
-                        $buckets = $aggregation['buckets'];
-                    } else {
-                        $buckets = $aggregation[$fieldname]['buckets'];
-                    }
+                    $buckets = $this->searchForBuckets($aggregation);
 
                     $groupByValueResult = [];
                     if ($buckets) {
@@ -1120,7 +1144,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
                             if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                                 $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
                             } else {
-                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['doc_count']];
+                                $data = $this->convertBucketValues($bucket);
+                                $groupByValueResult[] = $data;
                             }
                         }
                     }
@@ -1133,6 +1158,69 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+    /**
+     * Deep search for buckets in result aggregations array, as the structure of the result array
+     * may differ dependent on the used aggregations (i.e. date filters, nested aggr, ...)
+     *
+     * @param array $aggregations
+     *
+     * @return array
+     */
+    protected function searchForBuckets(array $aggregations)
+    {
+        if (array_key_exists('buckets', $aggregations)) {
+            return $aggregations['buckets'];
+        }
+
+        // usually the relevant key is at the very end of the array so we reverse the order
+        $aggregations = array_reverse($aggregations, true);
+
+        foreach ($aggregations as $aggregation) {
+            if (!is_array($aggregation)) {
+                continue;
+            }
+            $buckets = $this->searchForBuckets($aggregation);
+            if (!empty($buckets)) {
+                return $buckets;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Recursively convert aggregation data (sub-aggregations possible)
+     *
+     * @param array $bucket
+     *
+     * @return array
+     */
+    protected function convertBucketValues(array $bucket)
+    {
+        $data = [
+            'value' => $bucket['key'],
+            'count' => $bucket['doc_count']
+        ];
+
+        unset($bucket['key']);
+        unset($bucket['doc_count']);
+
+        if (!empty($bucket)) {
+            $subAggregationField = array_key_first($bucket);
+            $subAggregationBuckets = $bucket[$subAggregationField];
+
+            if (array_key_exists('key_as_string', $bucket)) {          // date aggregations
+                $data['key_as_string'] = $bucket['key_as_string'];
+            } elseif (is_array($subAggregationBuckets['buckets'])) {        // sub aggregations
+                foreach ($subAggregationBuckets['buckets'] as $bucket) {
+                    $data[$subAggregationField][] = $this->convertBucketValues($bucket);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -1153,9 +1241,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function sendRequest(array $params)
     {
         /**
-         * @var $esClient \Elasticsearch\Client
+         * @var \Elasticsearch\Client $esClient
          */
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+        $result = [];
 
         if ($esClient instanceof \Elasticsearch\Client) {
             if ($this->doScrollRequest) {

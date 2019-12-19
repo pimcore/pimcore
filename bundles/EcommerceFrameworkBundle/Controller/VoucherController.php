@@ -50,7 +50,7 @@ class VoucherController extends FrontendController
         Localizedfield::setGetFallbackValues(true);
 
         // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'php');
+        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     /**
@@ -69,6 +69,7 @@ class VoucherController extends FrontendController
         $paramsBag = [];
         if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
             $paramsBag['series'] = $onlineShopVoucherSeries;
+            $paramsBag['voucherType'] = $tokenManager->getConfiguration()->getType();
 
             if ($tokenManager instanceof ExportableTokenManagerInterface) {
                 $paramsBag['supportsExport'] = true;
@@ -80,7 +81,7 @@ class VoucherController extends FrontendController
         } else {
             $paramsBag['errors'] = ['bundle_ecommerce_voucherservice_msg-error-config-missing'];
 
-            return $this->render('PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php', $paramsBag);
+            return $this->render('PimcoreEcommerceFrameworkBundle:voucher:voucherCodeTabError.html.twig', $paramsBag);
         }
     }
 

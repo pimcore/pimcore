@@ -106,6 +106,8 @@ abstract class PrintAbstract extends Document\PageSnippet
 
     /**
      * @param $config
+     *
+     * @return mixed
      */
     public function generatePdf($config)
     {

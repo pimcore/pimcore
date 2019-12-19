@@ -16,6 +16,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     type: "multiselect",
     allowBatchAppend: true,
+    allowBatchRemove: true,
 
     initialize: function (data, fieldConfig) {
         this.data = data;

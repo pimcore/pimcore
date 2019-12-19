@@ -15,8 +15,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Model\AbstractModel;
 
-class Reservation extends \Pimcore\Model\AbstractModel
+class Reservation extends AbstractModel
 {
     public $id;
     public $token;

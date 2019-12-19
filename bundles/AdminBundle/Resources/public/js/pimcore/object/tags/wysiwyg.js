@@ -165,8 +165,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             entities_greek: false,
             entities_latin: false,
             extraAllowedContent: "*[pimcore_type,pimcore_id]",
-            baseFloatZIndex: 40000, // prevent that the editor gets displayed behind the grid cell editor window
-            enterMode: 2
+            baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
         };
 
         eConfig.toolbarGroups = [
@@ -193,13 +192,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig.height = this.fieldConfig.height;
         }
 
+        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
+            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
+        }
+
         if(this.fieldConfig.toolbarConfig) {
             var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
             eConfig = mergeObject(eConfig, elementCustomConfig);
-        }
-
-        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
         }
 
         try {
@@ -384,8 +383,9 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     getWindowCellEditor: function (field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-                fieldInfo: field
+        return new pimcore.element.helpers.gridCellEditor({
+                fieldInfo: field,
+                elementType: "object"
             }
         );
     },

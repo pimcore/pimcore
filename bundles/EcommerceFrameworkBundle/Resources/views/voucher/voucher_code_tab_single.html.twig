@@ -1,0 +1,137 @@
+{% extends '@PimcoreEcommerceFramework/voucher/voucher_layout.html.twig' %}
+
+{% block content %}
+    {% set seriesId = app.request.get('id') %}
+    {% set urlParams = app.request.query.all %}
+    {% set generateWarning = generateWarning is defined? null %}
+
+    <div class="container-fluid">
+        <div id="content">
+            <ul  id="tabs" class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
+                        <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
+                        <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
+                    </a>
+                </li>
+            </ul>
+
+            <div id="my-tab-content" class="tab-content">
+                <div role="tabpanel" class="tab-pane active"  aria-labelledby="manager-tab"  id="manager">
+                    <div class="row">
+                        <div class="col col-sm-12">
+                            <h2>{{ ('bundle_ecommerce_voucherservice_usage-headline')|trans([],'admin') }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="row header">
+                        <div class="col col-sm-4">
+                            <button type="button" class="btn btn-primary js-modal" data-modal="assignsettings">{{ ('bundle_ecommerce_voucherservice_assign-config')|trans([],'admin') }}</button>
+                        </div>
+
+                        <!--Info and Error Messages Container-->
+
+                        <div class="col col-sm-4">
+                            {% if msg['error'] is defined and msg['error'] is not null %}
+                                <div class="alert alert-danger js-fadeout"> {{ msg['error'] }} </div>
+                            {% elseif msg['success'] is defined and msg['success'] is not null %}
+                                <div class="alert alert-success js-fadeout"> {{ msg['success'] }}  </div>
+                            {% elseif msg['result'] is defined and msg['result'] is not null %}
+                                <div class="alert alert-info js-fadeout"> {{ msg['result'] }} </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col col-sm-4 text-right">
+                            <div class="btn-group">
+                                {% if supportsExport %}
+                                    {% set exportUrl = path('pimcore_ecommerce_backend_voucher_export-tokens', urlParams|merge({'format': 'csv'})) %}
+                                    <a class="btn btn-secondary" href="{{ exportUrl }}" target="_blank">
+                                        <span class="fa fa-file-export"></span>
+                                        {{ 'bundle_ecommerce_voucherservice_export-button'|trans([],'admin') }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row content-block token-container">
+
+                        <div class="col col-sm-8 token-overview">
+                            <div class=" row">
+                                <div class="col col-sm-5">
+                                    <h3 style="float: left;"><i class="fa fa-list"></i> {{ ('bundle_ecommerce_voucherservice_token-overview-headline')|trans([],'admin') }}</h3>
+                                </div>
+                                <div class="col col-sm-7 text-right">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-sm-12">
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                    <tr class="active">
+                                        <th><span class="sort fa fa-chevron-down" data-criteria="token"></span> {{ ('bundle_ecommerce_voucherservice_table-token')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort fa fa-chevron-down" data-criteria="usages"></span> {{ ('bundle_ecommerce_voucherservice_table-usages')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort fa fa-chevron-down" data-criteria="length"></span> {{ ('bundle_ecommerce_voucherservice_table-length')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort active fa fa-chevron-down" data-criteria="timestamp"></span> {{ ('bundle_ecommerce_voucherservice_table-date')|trans([],'admin') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if paginator is defined %}
+                                        {% for code in paginator %}
+                                            <tr>
+                                                <td class="token">{{ code['token'] }}</td>
+                                                <td class="text-center">{{ code['usages']|number_format }}</td>
+                                                <td class="text-center">{{ code['length']|number_format }}</td>
+                                                <td class="text-center">{{ code['timestamp'] }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane"  aria-labelledby="statistics-tab"  id="statistics">
+                    <div class="row">
+                        <div class="col col-sm-12">
+                            <h2>{{ ('bundle_ecommerce_voucherservice_tab-statistics-headline')|trans([],'admin') }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="row header">
+
+                        <div class="col col-sm-4">
+                            {% if error is defined %}
+                                <div class="alert alert-danger"> {{ error }} </div>
+                            {% endif %}
+                        </div>
+                        <div class="col col-sm-8 text-right">
+                            <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="fa fa-refresh"></span> {{ ('bundle_ecommerce_voucherservice_cleanup-reservations-button')|trans([],'admin') }}</button>
+                        </div>
+                    </div>
+
+                    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:statistics.html.twig" with {'statistics': statistics, 'colors': colors} %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Templates -->
+    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals/single:assign_settings_modal.html.twig" with {'settings': settings, 'generateWarning': generateWarning, 'urlParams': urlParams} %}
+    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals:cleanup_reservations_modal.html.twig" with {'urlParams': urlParams} %}
+
+
+    <!--Script for statistics-->
+    {% if statistics['usage'] is iterable  %}
+        {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:usage_statistic_script.html.twig" with {'usage': statistics['usage'], 'colors': colors} %}
+    {% endif %}
+{% endblock %}

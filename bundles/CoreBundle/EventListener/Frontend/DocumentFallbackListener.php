@@ -82,7 +82,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     protected function configureOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setDefaults([
-            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink']
+            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink', 'link', 'folder']
         ]);
 
         $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');

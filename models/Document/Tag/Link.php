@@ -71,6 +71,21 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementClasses($options = []): array
+    {
+        // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
+        // the default behavior of the parent method is to include the "class" attribute
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        return $classes;
+    }
+
+    /**
      * @see Document\Tag\TagInterface::frontend
      *
      * @return string
@@ -176,7 +191,7 @@ class Link extends Model\Document\Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {
@@ -273,7 +288,7 @@ class Link extends Model\Document\Tag
                                 $this->data['path'] = $linkGenerator->generate(
                                     $object,
                                     [
-                                        'document' => Document::getById($this->getDocumentId()),
+                                        'document' => $this->getDocument(),
                                         'context' => $this,
                                     ]
                                 );
@@ -406,6 +421,8 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
+            $target = null;
+
             if ($data['linktype'] == 'internal' && $data['internalType']) {
                 $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {
@@ -497,12 +514,10 @@ class Link extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        if ($wsElement->value->data instanceof \stdClass) {
-            $wsElement->value->data = (array)$wsElement->value->data;
-        }
+        $data = $this->sanitizeWebserviceData($wsElement->value);
 
-        if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
-            $this->data = $wsElement->value->data;
+        if (empty($data->data) or $data->data instanceof \stdClass) {
+            $this->data = $data->data instanceof \stdClass ? get_object_vars($data->data) : null;
             if ($this->data['internal']) {
                 if (intval($this->data['internalId']) > 0) {
                     $id = $this->data['internalId'];
@@ -546,6 +561,10 @@ class Link extends Model\Document\Tag
                             }
                         }
                     }
+
+                    if ($id) {
+                        $this->data['internalId'] = $id;
+                    }
                 }
             }
         } else {
@@ -571,13 +590,13 @@ class Link extends Model\Document\Tag
                     $referencedDocument = Document::getById($this->data['internalId']);
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     $referencedAsset = Asset::getById($this->data['internalId']);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 }
             }

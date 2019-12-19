@@ -90,7 +90,7 @@ $user      = $userProxy->getUser();
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
-        var symfonyToolbarKey = 'sf2/profiler/toolbar/displayState';
+        var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
         if(!window.localStorage.getItem(symfonyToolbarKey)) {
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
@@ -215,7 +215,6 @@ $scriptLibs = array(
 
     // library
     "lib/class.js",
-    "lib/jquery-3.4.1.min.js",
     "lib/ext/ext-all" . $debugSuffix . ".js",
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
 
@@ -343,8 +342,11 @@ $scripts = array(
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
+    "pimcore/element/gridexport/abstract.js",
+    "pimcore/element/helpers/gridColumnConfig.js",
+    "pimcore/element/helpers/gridConfigDialog.js",
+    "pimcore/element/helpers/gridCellEditor.js",
     "pimcore/object/helpers/grid.js",
-    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/import/csvPreviewTab.js",
     "pimcore/object/helpers/import/columnConfigurationTab.js",
@@ -355,7 +357,6 @@ $scripts = array(
     "pimcore/object/helpers/import/reportTab.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
-    "pimcore/object/helpers/gridCellEditor.js",
     "pimcore/object/helpers/metadataMultiselectEditor.js",
     "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/object/helpers/optionEditor.js",
@@ -365,6 +366,10 @@ $scripts = array(
     "pimcore/element/tag/configuration.js",
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
+    "pimcore/asset/helpers/metadataTree.js",
+    "pimcore/asset/helpers/gridConfigDialog.js",
+    "pimcore/asset/helpers/gridTabAbstract.js",
+    "pimcore/asset/helpers/grid.js",
 
     // documents
     "pimcore/document/properties.js",
@@ -379,6 +384,7 @@ $scripts = array(
     "pimcore/document/emails/settings.js",
     "pimcore/document/newsletters/settings.js",
     "pimcore/document/newsletters/sendingPanel.js",
+    "pimcore/document/newsletters/plaintextPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
     "pimcore/document/newsletters/addressSourceAdapters/report.js",
@@ -399,6 +405,13 @@ $scripts = array(
     "pimcore/document/customviews/tree.js",
 
     // assets
+    "pimcore/asset/tags/abstract.js",
+    "pimcore/asset/tags/checkbox.js",
+    "pimcore/asset/tags/date.js",
+    "pimcore/asset/tags/input.js",
+    "pimcore/asset/tags/manyToOneRelation.js",
+    "pimcore/asset/tags/select.js",
+    "pimcore/asset/tags/textarea.js",
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
     "pimcore/asset/embedded_meta_data.js",
@@ -413,12 +426,15 @@ $scripts = array(
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
     "pimcore/asset/customviews/tree.js",
+    "pimcore/asset/gridexport/xlsx.js",
+    "pimcore/asset/gridexport/csv.js",
 
     // object
     "pimcore/object/helpers/edit.js",
     "pimcore/object/helpers/layout.js",
     "pimcore/object/classes/class.js",
     "pimcore/object/class.js",
+    "pimcore/object/bulk-base.js",
     "pimcore/object/bulk-export.js",
     "pimcore/object/bulk-import.js",
     "pimcore/object/classes/data/data.js",          // THIS MUST BE THE FIRST FILE, DO NOT MOVE THIS DOWN !!!
@@ -457,6 +473,7 @@ $scripts = array(
     "pimcore/object/classes/data/geopoint.js",
     "pimcore/object/classes/data/geobounds.js",
     "pimcore/object/classes/data/geopolygon.js",
+    "pimcore/object/classes/data/geopolyline.js",
     "pimcore/object/classes/data/language.js",
     "pimcore/object/classes/data/password.js",
     "pimcore/object/classes/data/multiselect.js",
@@ -577,6 +594,7 @@ $scripts = array(
     "pimcore/object/tags/geobounds.js",
     "pimcore/object/tags/geopoint.js",
     "pimcore/object/tags/geopolygon.js",
+    "pimcore/object/tags/geopolyline.js",
     "pimcore/object/tags/language.js",
     "pimcore/object/tags/password.js",
     "pimcore/object/tags/multiselect.js",
@@ -610,6 +628,8 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
+    "pimcore/object/gridexport/xlsx.js",
+    "pimcore/object/gridexport/csv.js",
 
     //plugins
     "pimcore/plugin/broker.js",

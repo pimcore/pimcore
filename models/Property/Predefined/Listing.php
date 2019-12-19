@@ -42,7 +42,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @param array $properties
+     * @param \Pimcore\Model\Property\Predefined[] $properties
      *
      * @return $this
      */

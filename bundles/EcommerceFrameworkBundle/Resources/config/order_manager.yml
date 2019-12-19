@@ -8,6 +8,7 @@ services:
         arguments:
             - '@pimcore_ecommerce.environment'
             - '@pimcore_ecommerce.payment_manager'
+            - '@event_dispatcher'
             - []
 
     Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager:
@@ -15,4 +16,13 @@ services:
             - '@pimcore_ecommerce.environment'
             - '@?'
             - '@pimcore_ecommerce.voucher_service'
+            - []
+
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager:
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - '@?'
+            - '@pimcore_ecommerce.voucher_service'
+            - '@event_dispatcher'
             - []

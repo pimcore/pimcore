@@ -84,7 +84,6 @@ class Assets extends Elements implements DataProviderInterface
 
         foreach (array_keys($this->exportIds) as $id) {
             $theAsset = Asset::getById($id);
-            /** @var $theAsset */
             $webAsset = $this->service->getAssetFileById($id);
 
             $resultItem = json_decode(json_encode($webAsset), true);
@@ -201,7 +200,7 @@ class Assets extends Elements implements DataProviderInterface
         $hits = $searcherList->load();
 
         $elements = [];
-        /** @var $hit AbstractElement */
+        /** @var AbstractElement $hit */
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 

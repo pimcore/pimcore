@@ -32,7 +32,7 @@ pimcore.layout.toolbar = Class.create({
                     for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
                         var perspective = pimcore.settings.availablePerspectives[i];
                         var itemCfg = {
-                            text: perspective.name,
+                            text: t(perspective.name),
                             disabled: perspective.active,
                             handler: this.openPerspective.bind(this, perspective.name)
                         };
@@ -624,7 +624,6 @@ pimcore.layout.toolbar = Class.create({
                                         return;
                                     }
 
-                                    console.log(data);
                                     if (data && data.configured && data.url) {
                                         resolve(data.url);
                                     }
@@ -654,7 +653,7 @@ pimcore.layout.toolbar = Class.create({
                                     pimcore.helpers.openGenericIframeWindow(
                                         "piwik_iframe_integration",
                                         url,
-                                        "pimcore_nav_icon_matomo",
+                                        "pimcore_icon_matomo",
                                         "Matomo / Piwik"
                                     );
                                 },

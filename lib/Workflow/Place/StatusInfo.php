@@ -16,7 +16,7 @@ namespace Pimcore\Workflow\Place;
 
 use Pimcore\Workflow\Manager;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusInfo
 {

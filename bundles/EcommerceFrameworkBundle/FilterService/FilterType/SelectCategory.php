@@ -35,7 +35,7 @@ class SelectCategory extends AbstractFilterType
             $explode = explode(',', $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
-                    if ($values[$e]) {
+                    if (!empty($values[$e]) ) {
                         $count = $values[$e]['count'] + $v['count'];
                     } else {
                         $count = $v['count'];
@@ -52,6 +52,7 @@ class SelectCategory extends AbstractFilterType
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
+            'indexedValues' => $values,
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
             'rootCategory' => $filterDefinition->getRootCategory(),
@@ -64,11 +65,12 @@ class SelectCategory extends AbstractFilterType
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        $value = $params[$filterDefinition->getField()];
+        $value = $params[$filterDefinition->getField()] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$isReload) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

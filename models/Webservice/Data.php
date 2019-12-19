@@ -39,6 +39,10 @@ abstract class Data
             $blockedKeys[] = 'data';
         }
 
+        if ($object instanceof Model\Document\Tag\Relations) {
+            $blockedKeys[] = 'value';
+        }
+
         foreach ($keys as $key => $value) {
             $method = 'get' . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
@@ -80,7 +84,7 @@ abstract class Data
                     $noteList[] = Element\Service::getNoteData($note);
                 }
             }
-            $this->notes = $noteList;
+            $this->{'notes'} = $noteList;
         }
     }
 
@@ -138,11 +142,10 @@ abstract class Data
             $object->setProperties(null);
         }
 
-        if (is_array($this->properties)) {
+        if (isset($this->properties) && is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 
-                $dat = $propertyWs['data'];
                 $type = $propertyWs['type'];
                 if (in_array($type, ['object', 'document', 'asset'])) {
                     $id = $propertyWs['data'];

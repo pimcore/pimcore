@@ -315,7 +315,7 @@ class ClassController extends AbstractRestController
         $items = $list->getList();
 
         $relations = [];
-        /** @var $item DataObject\Classificationstore\CollectionGroupRelation */
+        /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
         foreach ($items as $item) {
             $relations[] = $item->getObjectVars();
         }

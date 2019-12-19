@@ -1,0 +1,85 @@
+<div class="paging">
+    {% if paginationVariables.pageCount is defined and paginationVariables.pageCount > 1 %}
+        <ul class="pagination float-right">
+            {% if paginationVariables.previous is defined %}
+                <li class="first">
+                    <a class="pagination-li" href="{{ pimcore_url({'page': paginationVariables.previous}) }}" rel="{{ paginationVariables.previous }}" >
+                        <span class="pag-text-label">
+                            <span class="fa fa-chevron-left"></span>
+                            {{ ('bundle_ecommerce_voucherservice_paging-previous')|trans([],'admin') }}
+                        </span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="first">
+                    <span class="pag-text-label">
+                        <span class="fa fa-chevron-left"></span>
+                        {{ ('bundle_ecommerce_voucherservice_paging-previous')|trans([],'admin') }}
+                    </span>
+                </li>
+            {% endif %}
+
+            {% for page in paginationVariables.pagesInRange %}
+                {% if page != paginationVariables.current %}
+                    <li><a class="pagination-li" href="{{ pimcore_url({'page': page}) }}" rel="{{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li class="current"><span class="active">{{ page }}</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if paginationVariables.next is defined %}
+                <li class="last">
+                    <a class="pagination-li" href="{{ pimcore_url({'page': paginationVariables.next}) }}" rel="{{ paginationVariables.next }}">
+                        <span class="pag-text-label">{{('bundle_ecommerce_voucherservice_paging-next')|trans([],'admin')  }}
+                            <span class="fa fa-chevron-right"></span>
+                        </span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="last">
+                    <span class="pag-text-label">
+                        {{  ('bundle_ecommerce_voucherservice_paging-next')|trans([],'admin') }}
+                        <span class="fa fa-chevron-right"></span>
+                    </span>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+
+</div>
+
+<style>
+
+    .paging ul.pagination li{
+        padding: 0 ;
+    }
+
+    .paging ul.pagination li a, ul.pagination li span {
+        border:0;
+        color:black;
+        display: inline-block;
+        font-size: 14px;
+        padding: 2px;
+        margin: -2px 2px 0;
+        text-decoration: none;
+    }
+
+    .paging ul.pagination  a:hover, ul.pagination  a:focus, ul.pagination li a.active, ul.pagination li span.active {
+        background: #ecf0f1;
+    }
+
+    .bg-pattern .paging ul.pagination  a:hover, .bg-pattern ul.pagination  a:focus, .bg-pattern ul.pagination li a.active, .bg-pattern ul.pagination li span.active {
+        text-decoration: underline;
+        background-color: transparent;
+    }
+
+    .paging ul.pagination span.pag-text-label{
+        font-weight: bold;
+    }
+
+    .paging .pagination li span, .paging .pagination li a{
+        background-color: transparent;
+    }
+
+</style>

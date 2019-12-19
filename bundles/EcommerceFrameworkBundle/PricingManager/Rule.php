@@ -64,12 +64,12 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @var string[]
      */
-    protected $label;
+    protected $label = [];
 
     /**
      * @var string[]
      */
-    protected $description;
+    protected $description = [];
 
     /**
      * @var BracketInterface
@@ -171,11 +171,11 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param string $locale
      *
-     * @return string
+     * @return string|null
      */
     public function getLabel($locale = null)
     {
-        return $this->label[$this->getLanguage($locale)];
+        return $this->label[$this->getLanguage($locale)] ?? null;
     }
 
     /**
@@ -215,11 +215,11 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param string $locale
      *
-     * @return string
+     * @return string|null
      */
     public function getDescription($locale = null)
     {
-        return $this->description[$this->getLanguage($locale)];
+        return $this->description[$this->getLanguage($locale)] ?? null;
     }
 
     /**
@@ -415,5 +415,24 @@ class Rule extends AbstractModel implements RuleInterface
         }
 
         return Factory::getInstance()->getEnvironment()->getSystemLocale();
+    }
+
+    /**
+     * @param string $typeClass
+     *
+     * @return ConditionInterface[]
+     */
+    public function getConditionsByType(string $typeClass): array
+    {
+        $conditions = [];
+
+        $rootCondition = $this->getCondition();
+        if ($rootCondition instanceof BracketInterface) {
+            $conditions = $rootCondition->getConditionsByType($typeClass);
+        } elseif ($rootCondition instanceof $typeClass) {
+            $conditions[] = $rootCondition;
+        }
+
+        return $conditions;
     }
 }

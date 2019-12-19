@@ -63,19 +63,20 @@ class Dao extends Model\Dao\AbstractDao
         $dirtyRelations = [];
 
         // remove all relations
+        $db = Db::get();
         try {
-            $db = Db::get();
-
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
             if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  DataObject\DirtyIndicatorInterface) {
-
-                /* @var  $fd DataObject\ClassDefinition\Data */
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
-                            if ($this->model->isFieldDirty($key) || $this->model->isFieldDirty('_self')) {
+                            if ($this->model->isFieldDirty('_self')) {
+                                $this->model->markFieldDirty($key);
+                            }
+
+                            if ($this->model->isFieldDirty($key)) {
                                 $dirtyRelations[] = $db->quote($key);
                             }
                         } else {
@@ -118,12 +119,12 @@ class Dao extends Model\Dao\AbstractDao
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                     ]);
                     $data[$key] = $insertData;
                 }
@@ -195,9 +196,11 @@ class Dao extends Model\Dao\AbstractDao
                         if (is_array($insertData)) {
                             $doInsert = false;
                             foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
+                                $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                if ($isEmpty && $oldDataValue == $parentDataValue) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } elseif ($oldData[$insertDataKey] != $insertDataValue) {
+                                } elseif ($oldDataValue != $insertDataValue) {
                                     $doInsert = true;
                                     break;
                                 }
@@ -207,25 +210,31 @@ class Dao extends Model\Dao\AbstractDao
                                 $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
                             }
                         } else {
-                            if ($isEmpty && $oldData[$key] == $parentData[$key]) {
+                            $oldDataValue = $oldData[$key] ?? null;
+                            $parentDataValue = $parentData[$key] ?? null;
+                            if ($isEmpty && $oldDataValue == $parentDataValue) {
                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } elseif ($oldData[$key] != $insertData) {
+                            } elseif ($oldDataValue != $insertData) {
                                 $this->inheritanceHelper->addRelationToCheck($key, $fd);
                             }
                         }
                     } else {
                         if (is_array($insertData)) {
                             foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
+                                $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                if ($isEmpty && $oldDataValue == $parentDataValue) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } elseif ($oldData[$insertDataKey] != $insertDataValue) {
+                                } elseif ($oldDataValue != $insertDataValue) {
                                     $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
                                 }
                             }
                         } else {
-                            if ($isEmpty && $oldData[$key] == $parentData[$key]) {
+                            $oldDataValue = $oldData[$key] ?? null;
+                            $parentDataValue = $parentData[$key] ?? null;
+                            if ($isEmpty && $oldDataValue == $parentDataValue) {
                                 // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } elseif ($oldData[$key] != $insertData) {
+                            } elseif ($oldDataValue != $insertData) {
                                 // data changed, do check and update
                                 $this->inheritanceHelper->addFieldToCheck($key, $fd);
                             }
@@ -301,12 +310,10 @@ class Dao extends Model\Dao\AbstractDao
                         continue;
                     }
 
-                    if ($fd->isRelationType()) {
-                        if ($oldData[$key] != null) {
+                    if (!empty($oldData[$key])) {
+                        if ($fd->isRelationType()) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);
-                        }
-                    } else {
-                        if ($oldData[$key] != null) {
+                        } else {
                             $this->inheritanceHelper->addFieldToCheck($key, $fd);
                         }
                     }

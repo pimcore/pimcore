@@ -360,7 +360,7 @@ class Block extends Model\Document\Tag implements BlockInterface
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))) {
             $this->indices = $data->indices;
             $this->current = $data->current;
@@ -374,7 +374,7 @@ class Block extends Model\Document\Tag implements BlockInterface
      */
     public function getElements()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

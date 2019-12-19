@@ -214,7 +214,7 @@ abstract class AbstractModel
     public function __sleep()
     {
         $finalVars = [];
-        $blockedVars = ['dao', '_fulldump', 'o_dirtyFields']; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+        $blockedVars = ['dao', 'o_dirtyFields'];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {

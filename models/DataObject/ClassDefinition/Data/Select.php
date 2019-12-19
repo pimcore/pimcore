@@ -89,6 +89,11 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $phpdocType = 'string';
 
     /**
+     * @var bool
+     */
+    public $dynamicOptions = false;
+
+    /**
      * @return int
      */
     public function getColumnLength()
@@ -416,9 +421,13 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param $object DataObject\Concrete
      * @param array $context additional contextual data
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
@@ -437,7 +446,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
                 $context['purpose'] = 'layout';
             }
 
+            $inheritanceEnabled = DataObject::getGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
             $options = $optionsProvider->{'getOptions'}($context, $this);
+            DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
             $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
@@ -484,6 +496,25 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             return $result;
         } else {
             return $data;
+        }
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        if ($operator === '=') {
+            $value = is_array($value) ? current($value) : $value;
+            $name = $params['name'] ?: $this->name;
+
+            return '`'.$name.'` LIKE '."'$value'".' ';
         }
     }
 }

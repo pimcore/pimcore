@@ -99,7 +99,7 @@ class InstallCommand extends Command
             ],
             'mysql-password' => [
                 'description' => 'MySQL password',
-                'mode' => InputOption::VALUE_REQUIRED,
+                'mode' => InputOption::VALUE_OPTIONAL,
                 'insecure' => true,
                 'hidden-input' => true,
                 'group' => 'db_credentials',
@@ -114,6 +114,12 @@ class InstallCommand extends Command
                 'mode' => InputOption::VALUE_REQUIRED,
                 'default' => 3306,
                 'group' => 'db_credentials',
+            ],
+            'mysql-ssl-cert-path' => [
+                'description' => 'MySQL SSL certificate path (if empty non-ssl connection assumed)',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => '',
+                'group' => 'db_credentials'
             ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
@@ -309,8 +315,8 @@ class InstallCommand extends Command
 
             $value = $input->getOption($name);
 
-            // Empty MySQL password allowed
-            if ($value || $name === 'mysql-password') {
+            // Empty MySQL password allowed, empty ssl cert path means it is not used
+            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path') {
                 $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {

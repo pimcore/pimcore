@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Event\WebserviceEvents;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
@@ -191,7 +190,7 @@ abstract class AbstractRestController extends AdminController
 
         if (!is_array($data)) {
             $message = 'Invalid data';
-            if (\Pimcore::inDebugMode(DebugMode::REST_ERRORS)) {
+            if (\Pimcore::inDebugMode()) {
                 $message .= ': ' . $error;
             }
 

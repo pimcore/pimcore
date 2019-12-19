@@ -222,10 +222,12 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
 
             buttons.push({
+                xtype: "splitbutton",
                 tooltip: t("show_metainfo"),
                 iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
-                handler: this.showMetaInfo.bind(this)
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
             });
 
             // only for videos and images
@@ -243,6 +245,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                             }
                         });
                     }.bind(this)
+                });
+            }
+
+            if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+                buttons.push({
+                    tooltip: t('share_via_notifications'),
+                    iconCls: "pimcore_icon_share",
+                    scale: "medium",
+                    handler: this.shareViaNotifications.bind(this)
                 });
             }
 
@@ -346,10 +357,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
-                    else {
-                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                            rdata.message, rdata.stack, rdata.code);
-                    }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
@@ -368,7 +375,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             failure: function () {
                 this.tab.unmask();
-            },
+            }.bind(this),
             params: this.getSaveData(only)
         });
     },
@@ -411,44 +418,60 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         pimcore.helpers.closeAsset(this.id);
     },
 
+    getMetaInfo: function() {
+        return {
+            id: this.data.id,
+            path: this.data.path + this.data.filename,
+            public_url: this.data.url,
+            type: this.data.type + " (MIME: " + this.data.mimetype + ")",
+            size: this.data.filesizeFormatted,
+            modificationdate: this.data.modificationDate,
+            creationdate: this.data.creationDate,
+            usermodification: this.data.userModification,
+            userowner: this.data.userOwner,
+            deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
+        };
+    },
+
     showMetaInfo: function() {
+        var metainfo = this.getMetaInfo();
 
         new pimcore.element.metainfo([
             {
                 name: "id",
-                value: this.data.id
+                value: metainfo.id
             }, {
                 name: "path",
-                value: this.data.path + this.data.filename
+                value: metainfo.path
             }, {
                 name: "public_url",
-                value: this.data.url
+                value: metainfo.public_url
             }, {
                 name: "type",
-                value: this.data.type + " (MIME: " + this.data.mimetype + ")"
+                value: metainfo.type
             }, {
                 name: "size",
-                value: this.data.filesizeFormatted
+                value: metainfo.size
             }, {
                 name: "modificationdate",
                 type: "date",
-                value: this.data.modificationDate
+                value: metainfo.modificationdate
             }, {
                 name: "creationdate",
                 type: "date",
-                value: this.data.creationDate
+                value: metainfo.creationdate
             }, {
                 name: "usermodification",
                 type: "user",
-                value: this.data.userModification
+                value: metainfo.usermodification
             }, {
                 name: "userowner",
                 type: "user",
-                value: this.data.userOwner
+                value: metainfo.userowner
             },
             {
                 name: "deeplink",
-                value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
+                value: metainfo.deeplink
             }
         ], "asset");
     },
@@ -463,6 +486,19 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
             pimcore.elementservice.editElementKey(options);
         }
-    }
+    },
 
+    shareViaNotifications: function () {
+        if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+            var elementData = {
+                id:this.id,
+                type:'asset',
+                published:true,
+                path:this.data.path + this.data.filename
+            };
+            if (pimcore.globalmanager.get("new_notifications")) {
+                pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+            }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
+    }
 });

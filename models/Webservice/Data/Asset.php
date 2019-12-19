@@ -83,7 +83,7 @@ class Asset extends Model\Webservice\Data
     public $customSettings;
 
     /**
-     * @var
+     * @var array
      */
     public $metadata;
 
@@ -91,6 +91,11 @@ class Asset extends Model\Webservice\Data
      * @var Model\Element\Note[]
      */
     public $notes;
+
+    /**
+     * @var array
+     */
+    public $childs;
 
     /**
      * @param Asset|Asset\Folder $object

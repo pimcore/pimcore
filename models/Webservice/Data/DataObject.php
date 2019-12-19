@@ -21,8 +21,10 @@ use Pimcore\Model;
 
 class DataObject extends Model\Webservice\Data
 {
-    /** If set to true then null values will not be exported.
-     * @var
+    /**
+     * If set to true then null values will not be exported.
+     *
+     * @var bool
      */
     protected static $dropNullValues;
 
@@ -72,6 +74,11 @@ class DataObject extends Model\Webservice\Data
     public $index;
 
     /**
+     * @var array
+     */
+    public $childs;
+
+    /**
      * @param $object
      * @param null $options
      */
@@ -94,7 +101,7 @@ class DataObject extends Model\Webservice\Data
     }
 
     /**
-     * @param  $dropNullValues
+     * @param bool $dropNullValues
      */
     public static function setDropNullValues($dropNullValues)
     {
@@ -102,7 +109,7 @@ class DataObject extends Model\Webservice\Data
     }
 
     /**
-     * @return
+     * @return bool
      */
     public static function getDropNullValues()
     {

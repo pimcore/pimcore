@@ -316,6 +316,11 @@
 }
 
 .pimcore_nav_icon_matomo {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/matomo.svg) center center no-repeat !important;
+    color: #d4291f;
+}
+
+.pimcore_icon_matomo {
     background: url(/bundles/pimcoreadmin/img/matomo.svg) center center no-repeat !important;
     color: #d4291f;
 }
@@ -450,6 +455,14 @@
 
 .pimcore_nav_icon_custom_report_default {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/bar_chart.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_custom_report_group_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/area_chart.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_custom_report_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/bar_chart.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_site {
@@ -601,7 +614,7 @@
 .pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
 .pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,.pimcore_icon_cr2,
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
-.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico {
+.pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
 }
 
@@ -1184,7 +1197,7 @@
 }
 
 .pimcore_icon_quantityValue {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/calculator.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f4c8.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_inputQuantityValue {
@@ -1296,6 +1309,10 @@
 
 .pimcore_icon_geopolygon {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/radar_plot.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_geopolyline {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/line_chart.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_time {
@@ -1821,6 +1838,10 @@
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg) center center no-repeat;
 }
 
+.pimcore_material_icon_text {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat;
+}
+
 .pimcore_material_icon_workflow {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-directions-24px.svg) center center no-repeat;
 }
@@ -1855,4 +1876,8 @@
 
 .pimcore_material_icon_variants {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-style-24px.svg) center center no-repeat;
+}
+
+.pimcore_icon_share {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/share.svg) center center no-repeat;
 }

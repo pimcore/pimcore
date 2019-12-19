@@ -209,7 +209,7 @@ class QuantityValueController extends AdminController
         $fromUnit = Unit::getById($fromUnitId);
         $toUnit = Unit::getById($toUnitId);
         if (!$fromUnit instanceof Unit || !$toUnit instanceof Unit) {
-            return null;
+            return $this->adminJson(['success' => false]);
         }
 
         /** @var UnitConversionService $converter */

@@ -181,19 +181,36 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $fieldname = $this->getName();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                    $invisible = $fd->getInvisible();
+                    if ($invisible && !is_null($oIndex)) {
+                        $containerGetter = 'get' . ucfirst($fieldname);
+                        $container = $object->$containerGetter();
+                        if ($container) {
+                            $items = $container->getItems();
+                            $invisibleData = null;
+                            if ($items && count($items) > $oIndex) {
+                                $item = $items[$oIndex];
+                                $getter = 'get' . ucfirst($fd->getName());
+                                $invisibleData = $item->$getter();
+                            }
+
+                            $collectionData[$fd->getName()] = $invisibleData;
+                        }
+                    } elseif (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                        $collectionParams = [
+                            'context' => [
+                                'containerType' => 'fieldcollection',
+                                'containerKey' => $collectionKey,
+                                'fieldname' => $fieldname,
+                                'index' => $count,
+                                'oIndex' => $oIndex
+                            ]
+                        ];
+
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
                             $collectionRaw['data'][$fd->getName()],
                             $object,
-                            [
-                                'context' => [
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $collectionKey,
-                                    'fieldname' => $fieldname,
-                                    'index' => $count,
-                                    'oIndex' => $oIndex
-                                ]
-                            ]
+                            $collectionParams
                         );
                     }
                 }
@@ -935,13 +952,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
-     * @param array $list
+     * @param DataObject\ClassDefinition\Data[] $container
+     * @param DataObject\ClassDefinition\Data[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var $childDef DataObject\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

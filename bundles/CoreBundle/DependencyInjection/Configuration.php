@@ -20,8 +20,8 @@ use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
-use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
-use Pimcore\Workflow\NotificationEmail\NotificationEmailService;
+use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
+use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -84,7 +84,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('flags')
-                    ->info('Generic map for feature flags, such as `zend_date`')
+                    ->info('Generic map for feature flags')
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('translations')
@@ -605,16 +605,23 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
-                        ->children()
-                            ->booleanNode('autoload')
-                                ->beforeNormalization()
-                                    ->ifString()
-                                    ->then(function ($v) {
-                                        return (bool)$v;
-                                    })
-                                ->end()
-                                ->defaultTrue()
+                    ->children()
+                        ->booleanNode('autoload')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
                             ->end()
+                            ->defaultTrue()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('newsletter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('defaultUrlPrefix')
+                            ->defaultNull()
                         ->end()
                     ->end()
                 ->end()
@@ -1443,7 +1450,7 @@ class Configuration implements ConfigurationInterface
                                                         ->booleanNode('versions')->info('versions permission as it can be configured in Pimcore workplaces')->end()
                                                         ->booleanNode('properties')->info('properties permission as it can be configured in Pimcore workplaces')->end()
                                                         ->booleanNode('modify')->info('a short hand for save, publish, unpublish, delete + rename')->end()
-                                                        ->integerNode('objectLayout')->info('if set, the user will see the configured custom data object layout')->end()
+                                                        ->scalarNode('objectLayout')->info('if set, the user will see the configured custom data object layout')->end()
                                                     ->end()
                                                 ->end()
                                             ->end()
@@ -1590,13 +1597,23 @@ class Configuration implements ConfigurationInterface
                                                                     ->end()
                                                                     ->info('Send a email notification to a list of user roles (role names) when the transition get\'s applied')
                                                                 ->end()
+                                                                ->arrayNode('channelType')
+                                                                    ->requiresAtLeastOneElement()
+                                                                    ->enumPrototype()
+                                                                        ->values([NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL, NotificationSubscriber::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION])
+                                                                        ->cannotBeEmpty()
+                                                                        ->defaultValue(NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL)
+                                                                    ->end()
+                                                                    ->info('Define which channel notification should be sent to, possible values "' . NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL . '" and "' . NotificationSubscriber::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION . '", default value is "' . NotificationSubscriber::NOTIFICATION_CHANNEL_MAIL . '".')
+                                                                    ->addDefaultChildrenIfNoneSet()
+                                                                ->end()
                                                                 ->enumNode('mailType')
-                                                                    ->values([NotificationEmailSubscriber::MAIL_TYPE_TEMPLATE, NotificationEmailSubscriber::MAIL_TYPE_DOCUMENT])
-                                                                    ->defaultValue(NotificationEmailSubscriber::MAIL_TYPE_TEMPLATE)
+                                                                    ->values([NotificationSubscriber::MAIL_TYPE_TEMPLATE, NotificationSubscriber::MAIL_TYPE_DOCUMENT])
+                                                                    ->defaultValue(NotificationSubscriber::MAIL_TYPE_TEMPLATE)
                                                                     ->info('Type of mail source.')
                                                                 ->end()
                                                                 ->scalarNode('mailPath')
-                                                                    ->defaultValue(NotificationEmailSubscriber::DEFAULT_MAIL_TEMPLATE_PATH)
+                                                                    ->defaultValue(NotificationSubscriber::DEFAULT_MAIL_TEMPLATE_PATH)
                                                                     ->info('Path to mail source - either Symfony path to template or fullpath to Pimcore document. Optional use ' . NotificationEmailService::MAIL_PATH_LANGUAGE_PLACEHOLDER . ' as placeholder for language.')
                                                                 ->end()
                                                             ->end()

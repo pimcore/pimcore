@@ -156,7 +156,7 @@ class Video extends Model\Asset
      * @param null $timeOffset
      * @param null $imageAsset
      *
-     * @return mixed|string
+     * @return Video\ImageThumbnail
      *
      * @throws \Exception
      */

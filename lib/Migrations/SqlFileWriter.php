@@ -50,6 +50,7 @@ class SqlFileWriter
             $this->throwInvalidArgumentException('Destination file must be specified.');
         }
 
+        $this->configuration = $configuration;
         $this->destPath = $destPath;
         $this->outputWriter = $outputWriter;
     }

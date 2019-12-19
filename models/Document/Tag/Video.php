@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -353,9 +352,10 @@ class Video extends Model\Document\Tag
     {
         $asset = Asset::getById($this->id);
         $options = $this->getOptions();
+        $thumbnailOption = $options['thumbnail'] ?? null;
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
-        if (!\Pimcore\Video::isAvailable() || !$options['thumbnail']) {
+        if (!\Pimcore\Video::isAvailable() || !$thumbnailOption) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 return $this->getHtml5Code(['mp4' => (string) $asset]);
             }
@@ -363,12 +363,12 @@ class Video extends Model\Document\Tag
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $options['thumbnail']) {
-            $thumbnail = $asset->getThumbnail($options['thumbnail']);
+        if ($asset instanceof Asset\Video && $thumbnailOption) {
+            $thumbnail = $asset->getThumbnail($thumbnailOption);
             if ($thumbnail) {
                 if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
                     // try to get the dimensions out ouf the video thumbnail
-                    $imageThumbnailConf = $asset->getThumbnailConfig($options['thumbnail'])->getEstimatedDimensions();
+                    $imageThumbnailConf = $asset->getThumbnailConfig($thumbnailOption)->getEstimatedDimensions();
                     $imageThumbnailConf['format'] = 'JPEG';
                 } else {
                     $imageThumbnailConf = $options['imagethumbnail'];
@@ -383,9 +383,9 @@ class Video extends Model\Document\Tag
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
                     if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
-                        $image = (string) $customPreviewAsset->getImageThumbnail($imageThumbnailConf);
+                        $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
-                        $image = (string) $asset->getImageThumbnail($imageThumbnailConf);
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
                     }
                 }
 
@@ -409,7 +409,7 @@ class Video extends Model\Document\Tag
                     return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
             } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options['thumbnail'] . "'");
+                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
             }
         } else {
             return $this->getEmptyCode();
@@ -437,7 +437,7 @@ class Video extends Model\Document\Tag
         }
 
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+        if (!\Pimcore::inDebugMode()) {
             $message = '';
         }
 
@@ -783,7 +783,7 @@ class Video extends Model\Document\Tag
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
                 'duration' => $durationString,
-                'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
+                //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
@@ -792,7 +792,13 @@ class Video extends Model\Document\Tag
                 $thumbnail = $video->getImageThumbnail([]);
             }
 
-            if (!preg_match('@https?://@', $thumbnail)) {
+            $jsonLd['contentUrl'] = $urls['mp4'];
+            if (!preg_match('@https?://@', $urls['mp4'])) {
+                $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
+            }
+
+            $jsonLd['thumbnailUrl'] = (string)$thumbnail;
+            if (!preg_match('@https?://@', (string)$thumbnail)) {
                 $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
             }
 
@@ -858,38 +864,27 @@ class Video extends Model\Document\Tag
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <style type="text/css">
-                #' . $uid . ' {
-                    position:relative;
-                    background:#555 url('. $thumbnail . ') center center no-repeat;
-                }
                 #' . $uid . ' .pimcore_tag_video_progress_status {
-                    font-size:18px;
-                    color:#555;
-                    font-family:Arial,Verdana,sans-serif;
-                    line-height:66px;
                     box-sizing:content-box;
                     background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
                     padding:20px;
                     border:1px solid #555;
-                    text-align:center;
                     box-shadow: 2px 2px 5px #333;
                     border-radius:20px;
                     margin: 0 20px 0 20px;
-                    top: ' . (($this->getHeight() - 106) / 2) . 'px;
-                    left: 50%;
-                    margin-left:-66px;
+                    top: calc(50% - 66px);
+                    left: calc(50% - 66px);
                     position:absolute;
                     opacity: 0.8;
                 }
             </style>
-            <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
+            <div class="pimcore_tag_video_progress" id="' . $uid . '">
+                <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
                 <div class="pimcore_tag_video_progress_status"></div>
             </div>
         </div>';
-
-        $options = $this->getOptions();
 
         return $code;
     }
@@ -926,7 +921,7 @@ class Video extends Model\Document\Tag
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id) {
             if ($data->type == 'asset') {
                 $this->id = $data->id;
