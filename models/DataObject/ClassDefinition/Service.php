@@ -242,8 +242,9 @@ class Service
     /**
      * @param array $array
      * @param bool $throwException
+     * @param bool $insideLocalizedField
      *
-     * @return bool
+     * @return mixed
      *
      * @throws \Exception
      */

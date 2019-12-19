@@ -1309,7 +1309,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $cacheRawRelationData
+     * @param bool $cacheRawRelationData
      * @return $this
      */
     public function setCacheRawRelationData($cacheRawRelationData)
