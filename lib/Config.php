@@ -709,7 +709,7 @@ class Config
         $config = self::getPerspectivesConfig()->toArray();
         $result = [];
 
-        if ($config[$currentConfigName]) {
+        if (isset($config[$currentConfigName])) {
             $result = $config[$currentConfigName];
         } else {
             $availablePerspectives = self::getAvailablePerspectives($currentUser);
