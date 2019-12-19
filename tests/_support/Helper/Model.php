@@ -16,19 +16,50 @@ class Model extends AbstractDefinitionHelper
         parent::_beforeSuite($settings);
     }
 
+
     /**
-     * @param $filename
+     * Set up a class which contains a classification store field
+     *
+     * @param array $params
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
      */
-    public function createUnittestClass($filename) {
+    public function setupPimcoreClass_Csstore($params = [], $name = "csstore", $filename = 'classificationstore.json') {
 
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
-        $name = "unittest";
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
 
-        if (!$cm->hasClass($name)) {
+            $csField = $this->createDataChild("classificationstore", "csstore");
+            $csField->setStoreId($params["storeId"]);
+            $panel->addChild($csField);
 
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+        return $class;
+    }
 
+    /**
+     * Set up a class which (hopefully) contains all data types
+     *
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Unittest($name = "unittest", $filename = 'class-import.json') {
+
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
             $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
             $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
@@ -65,6 +96,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "objectswithmetadata")
                 ->setLazyLoading(false)
+                ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ["position" => 1, "key" => "meta1", "type" => "text", "label" => "label1"],
                     ["position" => 2, "key" => "meta2", "type" => "text", "label" => "label2"]]));
@@ -154,24 +186,33 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($lFields);
-
             $panel->addChild($this->createDataChild("objectbricks", "mybricks"));
 
-
             $root->addChild($rootPanel);
-
-            $def = new ClassDefinition();
-            $def->setName($name);
-            $def->setLayoutDefinitions($root);
-            $json = ClassDefinition\Service::generateClassDefinitionJson($def);
-            $cm->saveJson($filename,$json);
+            $class = $this->createClass($name, $root, $filename);
         }
-
+        return $class;
     }
 
+    /**
+     * @param string $name
+     * @param ClassDefinition\Layout $layout
+     * @param string $filename
+     * @return ClassDefinition
+     */
+    protected function createClass($name, $layout, $filename) {
+        $cm = $this->getClassManager();
+        $def = new ClassDefinition();
+        $def->setName($name);
+        $def->setLayoutDefinitions($layout);
+        $json = ClassDefinition\Service::generateClassDefinitionJson($def);
+        $cm->saveJson($filename, $json);
+        $class = $cm->setupClass($name, $filename);
+        return $class;
+    }
 
     /**
-     * Initialize mode class definitions
+     * Initialize widely used class definitions
      */
     public function initializeDefinitions()
     {
@@ -179,43 +220,10 @@ class Model extends AbstractDefinitionHelper
 
         $cm->setupFieldcollection('unittestfieldcollection', 'fieldcollection-import.json');
 
-        $this->createUnittestClass('class-import.json');
-        $unittestClass = $this->setupUnittestClass('unittest', 'class-import.json');
-
-//        $allFieldsClass = $this->setupUnittestClass('allfields', 'class-allfields.json');
+        $this->setupPimcoreClass_Unittest();
 
         $cm->setupClass('inheritance', 'inheritance.json');
 
         $cm->setupObjectbrick('unittestBrick', 'brick-import.json');
-    }
-
-    /**
-     * Setup standard Unittest class
-     *
-     * @param string $name
-     * @param string $file
-     *
-     * @return ClassDefinition
-     */
-    public function setupUnittestClass($name = 'unittest', $file = 'class-import.json')
-    {
-
-        $cm = $this->getClassManager();
-
-        if (!$cm->hasClass($name)) {
-            /** @var ClassDefinition $class */
-            $class = $cm->setupClass($name, $file);
-
-            /** @var ClassDefinition\Data\ObjectsMetadata $fd */
-            $fd = $class->getFieldDefinition('objectswithmetadata');
-            if ($fd) {
-                $fd->setAllowedClassId($class->getName());
-                $class->save();
-            }
-
-            return $class;
-        }
-
-        return $cm->getClass($name);
     }
 }

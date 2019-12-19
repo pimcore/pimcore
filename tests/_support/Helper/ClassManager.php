@@ -212,8 +212,7 @@ class ClassManager extends Module
     {
         $this->assertNotEmpty($json);
 
-        $path = $this->resolveFilePath($filename, false);
-
+        $path = __DIR__ . '/../Resources/objects/' . $filename;
         file_put_contents($path, $json);
         return $path;
     }
