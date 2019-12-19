@@ -501,7 +501,8 @@ class ElementController extends AdminController
                 $editModeData = $fd->getDataForEditmode($data, $source);
                 if (is_array($editModeData)) {
                     foreach ($editModeData as $relationObjectAttribute) {
-                        $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
+                        $relationObjectAttribute['$$nicepath'] =
+                            isset($relationObjectAttribute[$idProperty]) && isset($result[$relationObjectAttribute[$idProperty]]) ? $result[$relationObjectAttribute[$idProperty]] : null;
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
                 } else {
