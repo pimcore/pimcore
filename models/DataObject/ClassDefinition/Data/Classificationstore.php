@@ -1355,10 +1355,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param int $storeId
+     *
+     * @return $this
      */
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId ? $storeId : 1;
+
+        return $this;
     }
 
     /**
