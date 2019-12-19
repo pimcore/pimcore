@@ -796,7 +796,7 @@ class Config
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
                     continue;
                 }
-                $customViewCfg = $cfConfigMapping[$customViewId];
+                $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
                 if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
@@ -895,7 +895,8 @@ class Config
 
             $currentConfigName = $user->getActivePerspective();
             if ($config && !in_array($currentConfigName, array_keys($config))) {
-                $currentConfigName = reset(array_keys($config));
+                $configNames = array_keys($config);
+                $currentConfigName = reset($configNames);
             }
         } else {
             $config = self::getPerspectivesConfig()->toArray();
@@ -945,7 +946,7 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-                if ($menuItem['hidden']) {
+                if (isset($menuItem['hidden']) && $menuItem['hidden']) {
                     return false;
                 }
 
