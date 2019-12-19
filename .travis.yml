@@ -76,14 +76,6 @@ matrix:
         - PIMCORE_TEST_SUITE=rest
         - PIMCORE_TEST_ENV=http
 
-    - name: "Redis Cache Tests - PHP 7.2 Symfony 4"
-      os: linux
-      php: 7.2
-      env:
-        - PIMCORE_TEST_SUITE=cache
-        - PIMCORE_TEST_GROUP=cache.core.redis
-        - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
-
     # Test Stan - see https://github.com/phpstan/phpstan
     - name: "PHPStan Tests - PHP 7.2 Symfony 3.4"
       os: linux
