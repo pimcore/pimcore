@@ -884,7 +884,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param array $descriptor
-     * @return array|mixed|mixed[]
+     * @return array
      */
     public function retrieveRelationData($descriptor) {
 
