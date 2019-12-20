@@ -125,6 +125,8 @@ class Bootstrap
             $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         } elseif (getenv('PIMCORE_PROJECT_ROOT') != '' && file_exists(getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php')) {
             $loader = include getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php';
+        } elseif (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
+            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
         } elseif (getenv('PIMCORE_PROJECT_ROOT') != '') {
             throw new \Exception('Invalid Pimcore project root "' . getenv('PIMCORE_PROJECT_ROOT') . '"');
         } else {
