@@ -121,22 +121,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Localizedfield $localizedField
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode($localizedField, $object = null, $params = [])
     {
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof DataObject\Localizedfield) {
+        if (!$localizedField instanceof DataObject\Localizedfield) {
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
+        $result = $this->doGetDataForEditMode($localizedField, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {

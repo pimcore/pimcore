@@ -190,6 +190,14 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->_loadedAllLazyData = true;
         }
 
+        foreach($this->getFieldDefinitions() as $fieldDefinition) {
+            if($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+                foreach (Tool::getValidLanguages() as $language) {
+                    $this->setLocalizedValue($fieldDefinition->getName(), null, $language, false);
+                }
+            }
+        }
+
         return $this->items;
     }
 
