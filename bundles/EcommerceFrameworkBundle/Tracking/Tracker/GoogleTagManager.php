@@ -74,9 +74,12 @@ class GoogleTagManager extends Tracker implements
         ]);
     }
 
-    public function trackProductImpression(ProductInterface $product)
+    /**
+     * @inheritDoc
+     */
+    public function trackProductImpression(ProductInterface $product, string $list = 'default')
     {
-        $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
+        $item = $this->trackingItemBuilder->buildProductImpressionItem($product, $list);
 
         $this->addDeferredItem(self::DEFERRED_DIMENSION_IMPRESSIONS, $this->transformProductImpression($item));
     }

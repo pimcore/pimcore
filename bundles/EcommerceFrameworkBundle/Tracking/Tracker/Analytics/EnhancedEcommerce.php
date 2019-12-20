@@ -91,12 +91,13 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * Track product view
      *
      * @param ProductInterface $product
+     * @param string $list
      */
-    public function trackProductImpression(ProductInterface $product)
+    public function trackProductImpression(ProductInterface $product, string $list = 'default')
     {
         $this->ensureDependencies();
 
-        $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
+        $item = $this->trackingItemBuilder->buildProductImpressionItem($product, $list);
 
         $parameters = [
             'productData' => $this->transformProductImpression($item)
