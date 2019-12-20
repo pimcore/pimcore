@@ -134,12 +134,13 @@ class TrackingManager implements TrackingManagerInterface
      * @implements IProductImpression
      *
      * @param ProductInterface $product
+     * @param string $list
      */
-    public function trackProductImpression(ProductInterface $product)
+    public function trackProductImpression(ProductInterface $product, string $list = 'default')
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ProductImpressionInterface) {
-                $tracker->trackProductImpression($product);
+                $tracker->trackProductImpression($product, $list);
             }
         }
     }
