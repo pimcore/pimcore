@@ -140,7 +140,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         if ($object) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
         }
-        /** @var $item DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{'get' . ucfirst($this->getName())}();
@@ -1044,7 +1044,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
+     * @param DataObject\ClassDefinition\Data[] $container
      * @param CalculatedValue[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])

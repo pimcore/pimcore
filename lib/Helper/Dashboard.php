@@ -106,7 +106,7 @@ class Dashboard
     public function getDashboard($key = 'welcome')
     {
         $dashboards = $this->loadFile();
-        $dashboard = $dashboards[$key];
+        $dashboard = $dashboards[$key] ?? null;
 
         if ($dashboard) {
             $disabledPortlets = array_keys($this->getDisabledPortlets());

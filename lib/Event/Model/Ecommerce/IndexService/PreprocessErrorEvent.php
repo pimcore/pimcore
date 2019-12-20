@@ -14,12 +14,12 @@
 
 namespace Pimcore\Event\Model\Ecommerce\IndexService;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 class PreprocessErrorEvent extends Event
 {
     /**
-     * @var \Exception
+     * @var \Throwable
      */
     protected $exception;
 
@@ -31,23 +31,31 @@ class PreprocessErrorEvent extends Event
     /**
      * PreprocessErrorEvent constructor.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      * @param bool $throwException
      */
-    public function __construct(\Exception $exception, bool $throwException = true)
+    public function __construct(\Throwable $exception, bool $throwException = true)
     {
         $this->exception = $exception;
         $this->throwException = $throwException;
     }
 
     /**
-     * @return \Exception
+     * @return \Throwable
      */
-    public function getException(): \Exception
+    public function getException(): \Throwable
     {
         return $this->exception;
     }
 
+    /**
+     * @param bool $throwException
+     */
+    public function setThrowException(bool $throwException): void
+    {
+        $this->throwException = $throwException;
+    }
+    
     /**
      * @return bool
      */

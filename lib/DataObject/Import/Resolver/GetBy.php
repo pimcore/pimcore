@@ -67,7 +67,7 @@ class GetBy extends AbstractResolver
         $classDefinition = ClassDefinition::getById($classId);
         $listClassName = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName() . '\\Listing');
 
-        /** @var $list Listing */
+        /** @var Listing $list */
         $list = $this->modelFactory->build($listClassName);
 
         $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);

@@ -239,12 +239,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             }
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
-
-            // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
-            if (count($relations) < 1) {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
-            }
-            // HACK END
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
@@ -362,7 +356,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
 
         $map = [];
 
-        /** @var $item Element\ElementInterface */
+        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $map[$key] = 1;
@@ -375,6 +369,37 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                 if (!isset($map[$key])) {
                     $newData[] = $item;
                 }
+            }
+        }
+
+        return $newData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeData($existingData, $removeData)
+    {
+        $newData = [];
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $removeMap = [];
+
+        /** @var Element\ElementInterface $item */
+        foreach ($removeData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            $removeMap[$key] = 1;
+        }
+
+        $newData = [];
+        /** @var Element\ElementInterface $item */
+        foreach ($existingData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+
+            if(!isset($removeMap[$key])) {
+                $newData[] = $item;
             }
         }
 
@@ -414,9 +439,9 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $values2 = array_values($array2);
 
         for ($i = 0; $i < $count1; $i++) {
-            /** @var $el1 Element\ElementInterface */
+            /** @var Element\ElementInterface $el1 */
             $el1 = $values1[$i];
-            /** @var $el2 Element\ElementInterface */
+            /** @var Element\ElementInterface $el2 */
             $el2 = $values2[$i];
 
             if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
@@ -443,7 +468,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $container DataObject\Fieldcollection */
+            /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -462,7 +487,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $container DataObject\Objectbrick */
+            /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());

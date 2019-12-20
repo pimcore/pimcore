@@ -75,23 +75,20 @@ class Service extends Model\Element\Service
         $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey('name');
         $classesList->setOrder('asc');
-        $classes = $classesList->load();
 
         $classesToCheck = [];
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                $fieldDefinitions = $class->getFieldDefinitions();
-                $dataKeys = [];
-                if (is_array($fieldDefinitions)) {
-                    foreach ($fieldDefinitions as $tag) {
-                        if ($tag instanceof ClassDefinition\Data\User) {
-                            $dataKeys[] = $tag->getName();
-                        }
+        foreach ($classesList as $class) {
+            $fieldDefinitions = $class->getFieldDefinitions();
+            $dataKeys = [];
+            if (is_array($fieldDefinitions)) {
+                foreach ($fieldDefinitions as $tag) {
+                    if ($tag instanceof ClassDefinition\Data\User) {
+                        $dataKeys[] = $tag->getName();
                     }
                 }
-                if (is_array($dataKeys) and count($dataKeys) > 0) {
-                    $classesToCheck[$class->getName()] = $dataKeys;
-                }
+            }
+            if (is_array($dataKeys) and count($dataKeys) > 0) {
+                $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
 
@@ -160,7 +157,7 @@ class Service extends Model\Element\Service
         $children = $source->getChildren([
             AbstractObject::OBJECT_TYPE_OBJECT,
             AbstractObject::OBJECT_TYPE_VARIANT,
-            AbstractObject::OBJECT_TYPE_FOLDER
+            AbstractObject::OBJECT_TYPE_FOLDER,
         ], true);
 
         foreach ($children as $child) {
@@ -303,7 +300,7 @@ class Service extends Model\Element\Service
 
             $user = AdminTool::getCurrentUser();
 
-            if (empty($fields)) {
+            if (is_null($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
             }
 
@@ -338,10 +335,10 @@ class Service extends Model\Element\Service
                         $keyid = $groupKeyId[1];
                         $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
-                            /** @var $classificationStoreData Classificationstore */
+                            /** @var Classificationstore $classificationStoreData */
                             $classificationStoreData = $object->$getter();
 
-                            /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                            /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                             $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                             $csLanguage = $requestedLanguage;
                             if (!$csFieldDefinition->isLocalized()) {
@@ -537,9 +534,9 @@ class Service extends Model\Element\Service
         if (isset($result->value)) {
             $result = $result->value;
 
-            if ($config->renderer) {
+            if (!empty($config->renderer)) {
                 $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
-                /** @var $rendererImpl Model\DataObject\ClassDefinition\Data */
+                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
                 $rendererImpl = new $classname();
                 if (method_exists($rendererImpl, 'getDataForGrid')) {
                     $result = $rendererImpl->getDataForGrid($result, $object, []);
@@ -1263,7 +1260,7 @@ class Service extends Model\Element\Service
         $layoutDefinitions = $class->getLayoutDefinitions();
 
         $result = [
-            'layoutDefinition' => $layoutDefinitions
+            'layoutDefinition' => $layoutDefinitions,
         ];
 
         if (!$objectId) {
@@ -1583,7 +1580,7 @@ class Service extends Model\Element\Service
         $fieldDefinitions = $fd->getFieldDefinitions();
 
         if (is_array($fieldDefinitions)) {
-            /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data */
+            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
             foreach ($fieldDefinitions as $fieldDefinition) {
                 $value = $container->getObjectVar($fieldDefinition->getName());
 

@@ -293,9 +293,7 @@ class FullPageCacheListener
         }
 
         if ($cacheItem) {
-            /**
-             * @var $response Response
-             */
+            /** @var Response $response */
             $response = $cacheItem;
             $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
             $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));

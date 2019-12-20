@@ -22,24 +22,27 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Schedule\Task\Listing\Dao getDao()
  * @method Model\Schedule\Task[] load()
+ * @method Model\Schedule\Task current()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $tasks = null;
+
+    public function __construct()
+    {
+        $this->tasks =& $this->data;
+    }
 
     /**
      * @return Model\Schedule\Task[]
      */
     public function getTasks()
     {
-        if ($this->tasks === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->tasks;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +52,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setTasks($tasks)
     {
-        $this->tasks = $tasks;
-
-        return $this;
+        return $this->setData($tasks);
     }
 }

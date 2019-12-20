@@ -370,7 +370,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $item = $this->get($brick);
         if ($item && !$item->isLazyKeyLoaded($field)) {
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($brick);
-            /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+            /** @var Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface $fieldDef */
             $fieldDef = $brickDef->getFieldDefinition($field);
             $context = [];
             $context['object'] = $this->getObject();
@@ -403,7 +403,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 if ($brickData) {
                     $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
                     $fds = $brickDef->getFieldDefinitions();
-                    /** @var $fd Model\DataObject\ClassDefinition\Data */
                     foreach ($fds as $fd) {
                         $fieldGetter = 'get' . ucfirst($fd->getName());
                         $fieldValue = $brickData->$fieldGetter();

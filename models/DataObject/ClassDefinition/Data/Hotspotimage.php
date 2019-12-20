@@ -555,7 +555,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
         $hotspotImage = $this->getDataFromResource($value);
 
-        /** @var $hotspotImage DataObject\Data\Hotspotimage */
+        /** @var DataObject\Data\Hotspotimage $hotspotImage */
         if (!$hotspotImage) {
             return null;
         }

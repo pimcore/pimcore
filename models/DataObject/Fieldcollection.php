@@ -32,13 +32,13 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     protected $items = [];
 
     /**
-     * @var
+     * @var string
      */
     protected $fieldname;
 
     /**
      * @param array $items
-     * @param null $fieldname
+     * @param string|null $fieldname
      */
     public function __construct($items = [], $fieldname = null)
     {
@@ -74,7 +74,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getFieldname()
     {
@@ -82,7 +82,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -174,15 +174,31 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @param $index
-     *
-     * @return
-     *
-     * @todo: no return type definied here
+     * @return Fieldcollection\Data\AbstractData|void
      */
     public function get($index)
     {
         if ($this->items[$index]) {
             return $this->items[$index];
+        }
+    }
+
+    /**
+     * @param $index
+     * @return Fieldcollection\Data\AbstractData|void
+     */
+    public function getByOriginalIndex($index) {
+        if ($index === null) {
+            return;
+        }
+
+        if (is_array($this->items)) {
+            /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
+            foreach ($this->items as $item) {
+                if ($item->getIndex() === $index) {
+                    return $item;
+                }
+            }
         }
     }
 
@@ -260,11 +276,13 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         /**
          * @var Model\DataObject\Fieldcollection\Data\AbstractData $item
          */
-        $item = $this->get($index);
+
+        // lazy loading existing can be data if the item already had an index
+        $item = $this->getByOriginalIndex($index);
         if ($item && !$item->isLazyKeyLoaded($field)) {
             if ($type == $item->getType()) {
                 $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
-                /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+                /** @var Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface $fieldDef */
                 $fieldDef = $fcDef->getFieldDefinition($field);
 
                 $params = [
@@ -308,12 +326,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     {
         $items = $this->getItems();
         if (is_array($items)) {
-            /** @var $item Model\DataObject\Fieldcollection\Data\AbstractData */
+            /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
             foreach ($items as $item) {
                 $fcType = $item->getType();
                 $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 $fds = $fieldcolDef->getFieldDefinitions();
-                /** @var $fd Model\DataObject\ClassDefinition\Data */
                 foreach ($fds as $fd) {
                     $fieldGetter = 'get' . ucfirst($fd->getName());
                     $fieldValue = $item->$fieldGetter();

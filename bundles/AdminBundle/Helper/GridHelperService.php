@@ -89,7 +89,7 @@ class GridHelperService
                 $fieldName = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                 $csFieldDefinition = $class->getFieldDefinition($fieldName);
 
                 $language = $requestedLanguage;
@@ -384,9 +384,7 @@ class GridHelperService
         $className = $class->getName();
 
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-        /**
-         * @var $list DataObject\Listing\Concrete
-         */
+        /** @var DataObject\Listing\Concrete $list */
         $list = new $listClass();
 
         $colMappings = [
@@ -406,7 +404,7 @@ class GridHelperService
 
         $fields = [];
         $bricks = [];
-        if ($requestParams['fields']) {
+        if (!empty($requestParams['fields'])) {
             $fields = $requestParams['fields'];
             $bricks = $this->extractBricks($fields);
         }
@@ -519,7 +517,7 @@ class GridHelperService
             $parts = explode('_', $orderKey);
 
             $fieldname = $parts[1];
-            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
             $csFieldDefinition = $class->getFieldDefinition($fieldname);
             $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
             $featureJoins[] = $sortingSettings;
@@ -657,15 +655,15 @@ class GridHelperService
                     $filterField = 'CONCAT(path,filename)';
                 }
 
-                if ($filterDef[1] != 'system') {
+                if (isset($filterDef[1]) && $filterDef[1] == 'system') {
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
+                } else {
                     $language = $allParams['language'];
                     if (isset($filterDef[1])) {
                         $language = $filterDef[1];
                     }
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
-                } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 }
             }
         }

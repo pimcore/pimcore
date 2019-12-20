@@ -180,7 +180,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
             'attr' => ['id' => 'payment_ogone_form']
         ]);
 
-        /** @var $paymentInfo \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
+        /** @var \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
         $paymentInfo = $config['paymentInfo'];
         //$order = $paymentInfo->getObject();
 

@@ -316,7 +316,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var $point DataObject\Data\Geopoint */
+                /** @var DataObject\Data\Geopoint $point */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),

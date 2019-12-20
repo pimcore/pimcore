@@ -13,6 +13,12 @@ services:
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
   mariadb: '10.3'
+  artifacts:
+    s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
+    debug: true
+    paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
+#      - app/config
+      - var/logs
   hosts:
     - pimcore-test.dev
 
@@ -49,7 +55,7 @@ matrix:
     - name: "All Tests - PHP 7.4 Symfony 4"
       os: linux
       sudo: required
-      php: "7.4snapshot"
+      php: 7.4
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 Symfony 3.4"

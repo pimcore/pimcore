@@ -175,7 +175,7 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var $item WebsiteSetting */
+                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
@@ -709,7 +709,7 @@ class Config
         $config = self::getPerspectivesConfig()->toArray();
         $result = [];
 
-        if ($config[$currentConfigName]) {
+        if (isset($config[$currentConfigName])) {
             $result = $config[$currentConfigName];
         } else {
             $availablePerspectives = self::getAvailablePerspectives($currentUser);
@@ -777,7 +777,7 @@ class Config
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -796,7 +796,7 @@ class Config
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
                     continue;
                 }
-                $customViewCfg = $cfConfigMapping[$customViewId];
+                $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
                 if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
@@ -895,7 +895,8 @@ class Config
 
             $currentConfigName = $user->getActivePerspective();
             if ($config && !in_array($currentConfigName, array_keys($config))) {
-                $currentConfigName = reset(array_keys($config));
+                $configNames = array_keys($config);
+                $currentConfigName = reset($configNames);
             }
         } else {
             $config = self::getPerspectivesConfig()->toArray();
@@ -945,7 +946,7 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-                if ($menuItem['hidden']) {
+                if (isset($menuItem['hidden']) && $menuItem['hidden']) {
                     return false;
                 }
 

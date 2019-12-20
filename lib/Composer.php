@@ -140,10 +140,7 @@ class Composer
 
     public static function prePackageUpdate(PackageEvent $event)
     {
-
-        /**
-         * @var $operation UpdateOperation
-         */
+        /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
         if ($operation->getInitialPackage()->getName() == 'pimcore/pimcore') {
             $operation->getInitialPackage()->getSourceReference();

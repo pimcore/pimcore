@@ -124,15 +124,14 @@ class DefaultService implements ServiceInterface
     }
 
     /**
+     * @param string $tempOfferNumber
+     *
      * @return AbstractOffer
      */
     protected function getNewOfferObject($tempOfferNumber)
     {
+        /** @var AbstractOffer $offer */
         $offer = new $this->offerClass();
-
-        /**
-         * @var $offer AbstractOffer
-         */
         $offer->setParent($this->getParentFolder());
         $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);

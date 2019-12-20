@@ -18,7 +18,7 @@ Dependency Injection is the preferred way of using a Path Formatter:
 
 ![Formatter Class DI](../../../img/formatter_class_di.png)
 
-There is still a BC layer to use class-names instead, but this is deprecated and will be removed with Pimcore 6.0.
+There is still a BC layer to use class-names instead, but this is deprecated and will be removed with Pimcore 7.0.
 
 ![Formatter Class](../../../img/formatter_class.png)
 

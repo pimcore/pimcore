@@ -26,12 +26,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
     /**
-     * @var
+     * @var string
      */
     public $allowedClassId;
 
     /**
-     * @var
+     * @var string|null
      */
     public $visibleFields;
 
@@ -141,7 +141,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     }
 
                     if ($source instanceof DataObject\Concrete) {
-                        /** @var $metaData DataObject\Data\ObjectMetadata */
+                        /** @var DataObject\Data\ObjectMetadata $metaData */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
@@ -280,15 +280,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
-                        $value = $relation[$c['key']];
+                        $value = $relation[$c['key']] ?? null;
 
                         if ($c['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 
@@ -718,7 +714,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -820,7 +815,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string|null $visibleFields
      *
      * @return $this
      */
@@ -842,7 +837,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getVisibleFields()
     {
@@ -987,8 +982,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $this->columns = $masterDefinition->columns;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1005,6 +1002,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             $class = DataObject\ClassDefinition::getByName($classId);
         }
 
+        if (!$class) {
+            return;
+        }
+
         if (!$this->visibleFields) {
             return;
         }
@@ -1019,7 +1020,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
+                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? false) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
@@ -1066,7 +1067,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         if (is_array($value)) {
             $result = [];
-            /** @var $elementMetadata DataObject\Data\ObjectMetadata */
+            /** @var DataObject\Data\ObjectMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

@@ -143,7 +143,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     }
 
                     if ($source instanceof DataObject\Concrete) {
-                        /** @var $metaData DataObject\Data\ElementMetadata */
+                        /** @var DataObject\Data\ElementMetadata $metaData */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(
                                 'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -240,7 +240,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $targets = [];
             $existingTargets = [];
 
-            /** @var $metaObject DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
@@ -284,7 +284,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $existingTargets[$targetType] = $resultMap;
             }
 
-            /** @var $metaObject DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $key => $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
@@ -384,15 +384,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
-                        $value = $element[$key];
+                        $value = $element[$key] ?? null;
 
                         if ($columnConfig['type'] == 'multiselect') {
-                            if ($value) {
-                                if (is_array($value) && count($value)) {
-                                    $value = implode(',', $value);
-                                }
-                            } else {
-                                $value = null;
+                            if (is_array($value) && count($value)) {
+                                $value = implode(',', $value);
                             }
                         }
 
@@ -802,7 +798,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -1042,7 +1037,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (is_array($value)) {
             $result = [];
-            /** @var $elementMetadata DataObject\Data\ElementMetadata */
+            /** @var DataObject\Data\ElementMetadata $elementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

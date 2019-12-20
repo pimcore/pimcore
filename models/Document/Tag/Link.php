@@ -191,7 +191,7 @@ class Link extends Model\Document\Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {

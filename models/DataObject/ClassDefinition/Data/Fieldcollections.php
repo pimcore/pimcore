@@ -180,7 +180,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
-                /** @var Data $fd */
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $invisible = $fd->getInvisible();
                     if ($invisible && !is_null($oIndex)) {
@@ -953,13 +952,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
-     * @param array $list
+     * @param DataObject\ClassDefinition\Data[] $container
+     * @param DataObject\ClassDefinition\Data[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var $childDef DataObject\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

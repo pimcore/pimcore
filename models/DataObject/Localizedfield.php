@@ -66,8 +66,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     private static $strictMode;
 
-    /** @var
+    /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
+     *
+     * @var array|null
      */
     protected $o_dirtyLanguages;
 
@@ -285,6 +287,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return array_key_exists($language, $this->items);
     }
 
+    /**
+     * @param string $name
+     * @param array $context
+     *
+     * @return ClassDefinition\Data|null
+     */
     public function getFieldDefinition($name, $context = [])
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
@@ -385,7 +393,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
+        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -447,10 +455,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 if ($this->languageExists($l)) {
-                    if (array_key_exists($name, $this->items[$l])) {
-                        if ($data = $this->getLocalizedValue($name, $l)) {
-                            break;
-                        }
+                    if ($data = $this->getLocalizedValue($name, $l)) {
+                        break;
                     }
                 }
             }
@@ -504,7 +510,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $containerDefinition = ClassDefinition::getById($classId);
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
-            /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data */
+            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
             $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
             if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'fieldcollection') {
@@ -632,6 +638,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $this->o_dirtyLanguages = null;
     }
 
+    /**
+     * @return array|null
+     */
     public function getDirtyLanguages()
     {
         return $this->o_dirtyLanguages;

@@ -32,21 +32,21 @@ class Relation extends Model\Document\Tag
     /**
      * ID of the source object
      *
-     * @var int
+     * @var int|null
      */
     public $id;
 
     /**
      * Type of the source object (document, asset, object)
      *
-     * @var string
+     * @var string|null
      */
     public $type;
 
     /**
      * Subtype of the source object (eg. page, link, video, news, ...)
      *
-     * @var string
+     * @var string|null
      */
     public $subtype;
 
@@ -137,9 +137,9 @@ class Relation extends Model\Document\Tag
             $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
-        $this->id = $data['id'];
-        $this->type = $data['type'];
-        $this->subtype = $data['subtype'];
+        $this->id = $data['id'] ?? null;
+        $this->type = $data['type'] ?? null;
+        $this->subtype = $data['subtype'] ?? null;
 
         $this->setElement();
 
@@ -155,9 +155,9 @@ class Relation extends Model\Document\Tag
      */
     public function setDataFromEditmode($data)
     {
-        $this->id = $data['id'];
-        $this->type = $data['type'];
-        $this->subtype = $data['subtype'];
+        $this->id = $data['id'] ?? null;
+        $this->type = $data['type'] ?? null;
+        $this->subtype = $data['subtype'] ?? null;
 
         $this->setElement();
 

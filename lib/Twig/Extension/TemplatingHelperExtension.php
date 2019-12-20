@@ -50,6 +50,7 @@ class TemplatingHelperExtension extends AbstractExtension
             'headStyle' => 'pimcore_head_style',
             'headTitle' => 'pimcore_head_title',
             'inlineScript' => 'pimcore_inline_script',
+            'breachAttackRandomContent' => 'pimcore_breach_attack_random_content',
             'placeholder' => 'pimcore_placeholder',
             'cache' => 'pimcore_cache',
             'device' => 'pimcore_device',
@@ -99,6 +100,7 @@ class TemplatingHelperExtension extends AbstractExtension
         new TwigFunction('pimcore_cache');
         new TwigFunction('pimcore_device');
         new TwigFunction('pimcore_url');
+        new TwigFunction('pimcore_breach_attack_random_content');
     }
 
     /**

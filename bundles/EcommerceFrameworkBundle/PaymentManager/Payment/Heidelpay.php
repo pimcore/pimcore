@@ -163,7 +163,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                     'heidelpay_amount' => $transaction->getPayment()->getAmount()->getCharged(),
                     'heidelpay_currency' => $transaction->getPayment()->getCurrency(),
                     'heidelpay_paymentType' => $transaction->getPayment()->getPaymentType()->jsonSerialize(),
-                    'heidelpay_paymentReference' => $config['paymentReference']
+                    'heidelpay_paymentReference' => $config['paymentReference'],
+                    'heidelpay_responseStatus' => '',
+                    'heidelpay_response' => $transaction->jsonSerialize()
                 ]
             );
             $orderAgent->updatePayment($paymentStatus);
@@ -240,7 +242,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_currency' => $payment->getCurrency(),
                         'heidelpay_paymentType' => $payment->getPaymentType()->jsonSerialize(),
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
-                        'heidelpay_paymentMethod' => get_class($payment->getPaymentType())
+                        'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
+                        'heidelpay_responseStatus' => 'completed',
+                        'heidelpay_response' => $payment->jsonSerialize()
                     ]
                 );
             } elseif ($payment->isPending()) {
@@ -254,7 +258,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_currency' => $payment->getCurrency(),
                         'heidelpay_paymentType' => $payment->getPaymentType()->jsonSerialize(),
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
-                        'heidelpay_paymentMethod' => get_class($payment->getPaymentType())
+                        'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
+                        'heidelpay_responseStatus' => 'pending',
+                        'heidelpay_response' => $payment->jsonSerialize()
                     ]
                 );
             }
@@ -292,6 +298,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                 'heidelpay_paymentMethod' => $payment ? get_class($payment->getPaymentType()) : '',
                 'heidelpay_clientMessage' => $clientMessage,
                 'heidelpay_merchantMessage' => $merchantMessage,
+                'heidelpay_responseStatus' => 'error',
+                'heidelpay_response' => $payment->jsonSerialize(),
             ]
         );
     }
@@ -390,6 +398,10 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
         $paymentInfo = $orderAgent->getCurrentPendingPaymentInfo();
 
         if (!$paymentInfo) {
+            return null;
+        }
+
+        if(empty($paymentInfo->getPaymentReference())) {
             return null;
         }
 

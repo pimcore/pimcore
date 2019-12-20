@@ -461,7 +461,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         $priceModifications = $order->getPriceModifications();
         foreach ($priceModifications as $modification) {
-            /** @var $modification OrderPriceModifications */
+            /** @var OrderPriceModifications $modification */
             $net = $modification->getNetAmount();
             $amount = $modification->getAmount();
             $taxRate = round((($amount / $net) - 1) * 100, 2);

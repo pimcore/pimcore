@@ -27,19 +27,23 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
 class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
+     * @param SessionListener $sessionListener
      *
      * @return BinaryFileResponse
      */
-    public function thumbnailAction(Request $request)
+    public function thumbnailAction(Request $request, SessionListener $sessionListener)
     {
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
+        $requestedFileExtension = strtolower(File::getFileExtension($filename));
         $asset = Asset::getById($assetId);
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
@@ -72,6 +76,14 @@ class PublicServicesController extends Controller
 
                 if (!$thumbnailConfig) {
                     throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
+                }
+
+                if(strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+                    $formatOverride = $requestedFileExtension;
+                    if(in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
+                        $formatOverride = 'pjpeg';
+                    }
+                    $thumbnailConfig->setFormat($formatOverride);
                 }
 
                 if ($asset instanceof Asset\Video) {
@@ -113,7 +125,6 @@ class PublicServicesController extends Controller
                 }
 
                 if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
-                    $requestedFileExtension = File::getFileExtension($filename);
                     $actualFileExtension = File::getFileExtension($thumbnailFile);
 
                     if ($actualFileExtension !== $requestedFileExtension) {
@@ -132,11 +143,26 @@ class PublicServicesController extends Controller
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
                     $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
-                    return new BinaryFileResponse($thumbnailFile, 200, [
+                    $headers = [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                         'Content-Type' => $imageThumbnail->getMimeType()
-                    ]);
+                    ];
+
+                    // in certain cases where an event listener starts a session (e.g. when there's a firewall
+                    // configured for the entire site /*) the session event listener shouldn't modify the
+                    // cache control headers of this response
+                    if(defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
+                        // this method of bypassing the session listener was introduced in Symfony 4, so we need
+                        // to check for the constant first
+                        $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
+                    } else {
+                        // @TODO to be removed in Pimcore 7
+                        // Symfony 3.4 doesn't support bypassing the session listener, so we just remove it
+                        \Pimcore::getEventDispatcher()->removeSubscriber($sessionListener);
+                    }
+
+                    return new BinaryFileResponse($thumbnailFile, 200, $headers);
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";

@@ -574,4 +574,21 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
         return $existingData;
     }
+
+    /**
+     * @param $existingData
+     * @param $removeData
+     *
+     * @return mixed
+     */
+    public function removeData($existingData, $removeData)
+    {
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $existingData = array_unique(array_diff($existingData, $removeData));
+
+        return $existingData;
+    }
 }

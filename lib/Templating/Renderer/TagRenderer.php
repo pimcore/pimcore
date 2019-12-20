@@ -89,7 +89,7 @@ class TagRenderer implements LoggerAwareInterface
 
                 $tag = $document->getElement($name);
 
-                // @TODO: BC layer, to be removed in v6.0
+                // @TODO: BC layer, to be removed in v7.0
                 $aliases = [
                     'href' => 'relation',
                     'multihref' => 'relations',

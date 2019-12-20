@@ -22,7 +22,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
             /** @var ClassDefinition $class */
             $class = $this->tester->setupClass($name, $file);
 
-            /** @var $fd ClassificationStoreDefinition */
+            /** @var ClassificationStoreDefinition $fd */
             $fd = $class->getFieldDefinition('csstore');
 
             $store = Classificationstore\StoreConfig::getByName('teststore');

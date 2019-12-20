@@ -56,6 +56,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function loadInternal(array $config, ContainerBuilder $container)
     {
+        // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
+        if(!$container->hasParameter('container.dumper.inline_class_loader')) {
+            $container->setParameter('container.dumper.inline_class_loader', true);
+        }
+
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);

@@ -233,7 +233,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         if (is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
                         $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 

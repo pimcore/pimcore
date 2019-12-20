@@ -61,30 +61,27 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     private $eventDispatcher;
 
+    /**
+     * @param RequestHelper $requestHelper
+     * @param ActionRenderer $actionRenderer
+     * @param FragmentRendererInterface $fragmentRenderer
+     * @param DocumentRouteHandler $documentRouteHandler
+     * @param DocumentTargetingConfigurator $targetingConfigurator
+     * @param EventDispatcherInterface $eventDispatcher
+     */
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
-        DocumentTargetingConfigurator $targetingConfigurator
+        DocumentTargetingConfigurator $targetingConfigurator,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->requestHelper = $requestHelper;
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
         $this->targetingConfigurator = $targetingConfigurator;
-    }
-
-    /**
-     * TODO Pimcore 6 set event dispatcher as constructor parameter
-     *
-     * @internal
-     * @required
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
-    {
         $this->eventDispatcher = $eventDispatcher;
     }
 

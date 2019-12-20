@@ -54,6 +54,11 @@ class Processor
     ];
 
     /**
+     * @var null|bool
+     */
+    protected static $hasWebpSupport = null;
+
+    /**
      * @param $format
      * @param array $allowed
      * @param string $fallback
@@ -67,7 +72,7 @@ class Processor
             'tif' => 'tiff'
         ];
 
-        if (array_key_exists($format, $typeMappings)) {
+        if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
 
@@ -105,7 +110,10 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
-            $format = self::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
+            $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
+            if($format === 'jpeg') {
+                $format = 'pjpeg';
+            }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
@@ -140,7 +148,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if ($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
             $format = 'webp';
         }
 
@@ -344,7 +352,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
+        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -390,5 +398,26 @@ class Processor
         }
 
         return $path;
+    }
+
+    /**
+     * @param bool|null $webpSupport
+     * @return bool|null
+     */
+    public static function setHasWebpSupport(?bool $webpSupport):?bool {
+        $prevValue = self::$hasWebpSupport;
+        self::$hasWebpSupport = $webpSupport;
+        return $prevValue;
+    }
+
+    /**
+     * @return bool
+     */
+    protected static function hasWebpSupport(): bool {
+        if(self::$hasWebpSupport !== null) {
+            return self::$hasWebpSupport;
+        }
+
+        return Frontend::hasWebpSupport();
     }
 }

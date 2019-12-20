@@ -153,32 +153,6 @@ class Thumbnail
     }
 
     /**
-     * @return string
-     */
-    public function getFileExtension()
-    {
-        $mapping = [
-            'image/png' => 'png',
-            'image/jpeg' => 'jpg',
-            'image/gif' => 'gif',
-            'image/tiff' => 'tif',
-            'image/svg+xml' => 'svg',
-        ];
-
-        $mimeType = $this->getMimeType();
-
-        if (isset($mapping[$mimeType])) {
-            return $mapping[$mimeType];
-        }
-
-        if ($this->getAsset()) {
-            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-        }
-
-        return '';
-    }
-
-    /**
      * @param string $path
      * @param array $options
      * @param Image $asset
@@ -207,9 +181,7 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
-        /**
-         * @var $image Image
-         */
+        /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];
         $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
@@ -341,10 +313,18 @@ class Thumbnail
         $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
 
         // $this->getConfig() can be empty, the original image is returned
-        if ($this->getConfig() && $this->getConfig()->hasMedias()) {
+        if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
+            $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+
+            if($isAutoFormat) {
+                $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
+                // ensure the default image is not WebP
+                $this->filesystemPath = null;
+                $path = $this->getPath(true);
+            }
 
             $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
@@ -381,7 +361,15 @@ class Thumbnail
                     unset($sourceTagAttributes['srcset']);
                 }
 
-                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
+                $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                if($isAutoFormat) {
+                    $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
+                    $html .= "\t" . $sourceHtmlWebP . "\n";
+                }
+
+                $html .= "\t" . $sourceHtml . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
@@ -407,6 +395,10 @@ class Thumbnail
             $html .= '</picture>' . "\n";
 
             $htmlImgTag = $html;
+
+            if(isset($webpSupportBackup)) {
+                Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
+            }
         }
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
