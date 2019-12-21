@@ -187,38 +187,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             extend: 'Ext.grid.filters.filter.Number',
             alias: 'grid.filter.quantityValue',
             type: 'quantityValue',
-            config: {
-                /**
-                 * @cfg {Object} [fields]
-                 * Configures field items individually. These properties override those defined
-                 * by `{@link #itemDefaults}`.
-                 *
-                 * Example usage:
-                 *
-                 *      fields: {
-                 *          // Override itemDefaults for one field:
-                 *          gt: {
-                 *              width: 200
-                 *          }
-                 *
-                 *          // "lt" and "eq" fields retain all itemDefaults
-                 *      },
-                 */
-                fields: {
-                    gt: {
-                        iconCls: Ext.baseCSSPrefix + 'grid-filters-gt',
-                        margin: '0 0 3px 0'
-                    },
-                    lt: {
-                        iconCls: Ext.baseCSSPrefix + 'grid-filters-lt',
-                        margin: '0 0 3px 0'
-                    },
-                    eq: {
-                        iconCls: Ext.baseCSSPrefix + 'grid-filters-eq',
-                        margin: '0 0 3px 0'
-                    }
-                }
-            },
             createMenu: function() {
                 var me = this;
                 me.callParent();
