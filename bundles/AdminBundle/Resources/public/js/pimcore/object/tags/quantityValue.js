@@ -249,17 +249,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
                 me.menu.insert(0, '-');
                 me.fields.unit = me.menu.insert(0, cfg);
-            }/*,
-            getValue: function(field) {
-                var me = this;
-                var value = me.callParent([field]);
-
-                for(var i in value) {
-                    value[i] = [value[i], me.fields.unit.getValue()];
-                }
-
-                return value;
-            }*/,
+            },
             setValue: function(value) {
                 var me = this;
                 var unitId = me.fields.unit.getValue();
