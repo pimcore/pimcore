@@ -264,6 +264,15 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 me.callParent([value]);
+            },
+            showMenu: function(menuItem) {
+                this.callParent([menuItem]);
+
+                for(var i in this.filter) {
+                    if(this.filter[i].getValue() !== null) {
+                        this.fields[i].setValue(this.filter[i].getValue()[0][0]);
+                    }
+                }
             }
         });
 
