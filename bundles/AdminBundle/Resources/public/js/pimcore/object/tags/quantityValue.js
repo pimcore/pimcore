@@ -174,7 +174,14 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function (field) {
-        pimcore.helpers.quantityValue.initUnitStore();
+        var store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'data',
+            fields: ['id', 'abbreviation']
+        });
+        pimcore.helpers.quantityValue.initUnitStore(function(data) {
+            store.loadData(data.data);
+        }, field.layout.validUnits);
 
         Ext.define('Ext.grid.filters.filter.QuantityValue', {
             extend: 'Ext.grid.filters.filter.Number',
@@ -224,7 +231,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     editable: false,
                     forceSelection: true,
                     hideEmptyLabel: false,
-                    store: pimcore.helpers.quantityValue.store,
+                    store: store,
                     valueField: 'id',
                     displayField: 'abbreviation',
                     margin: 0,
