@@ -362,18 +362,30 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner())) {
-                    if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst(
+                            $def->getName()
+                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+
+                    foreach($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst(
-                                $def->getName()
-                            ).' ($field, $value, $locale = null, $limit = 0) '."\n";
-                    } else {
-                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                            ).' getBy'.ucfirst(
+                                $localizedFieldDefinition->getName()
+                            ).' ($value, $locale = null, $limit = 0) '."\n";
                     }
+                } elseif($def->isFilterable()) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
                 }
             }
         }
@@ -474,6 +486,20 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
+
+        $cd .= "\n\n";
+
+        if(\is_array($this->getFieldDefinitions())) {
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+                if($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    foreach($def->getFieldDefinitions() as $localizedFieldDefinition) {
+                        $cd .= $localizedFieldDefinition->getFilterCode();
+                    }
+                } elseif($def->isFilterable()) {
+                    $cd .= $def->getFilterCode();
+                }
+            }
+        }
 
         $cd .= "\n\n";
         $cd .= "}\n";

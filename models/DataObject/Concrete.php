@@ -635,31 +635,43 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public static function __callStatic($method, $arguments)
     {
-
         // check for custom static getters like DataObject::getByMyfield()
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
-        $tmpObj = new static();
+        $classDefinition = ClassDefinition::getById(self::classId());
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
-        foreach ($tmpObj->getClass()->getFieldDefinitions() as $fd) {
+        foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
-        $propertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+        $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
 
-        if (property_exists($tmpObj, $propertyName)) {
-            // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'manyToManyRelation', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
+        if (!$classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $localizedField = $classDefinition->getFieldDefinition('localizedfields');
+            if($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                $fieldnames = [];
+                foreach ($localizedField->getFieldDefinitions() as $fd) {
+                    $fieldnames[] = $fd->getName();
+                }
+                $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+                $localizedFieldDefinition = $localizedField->getFieldDefinition($realPropertyName);
+                if($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
+                    $realPropertyName = 'localizedfields';
+                    \array_unshift($arguments, $localizedFieldDefinition->getName());
+                }
+            }
+        }
 
-            $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
-            if (!in_array($field->getFieldType(), $allowedDataTypes, true)) {
-                throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+        if ($classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $field = $classDefinition->getFieldDefinition($realPropertyName);
+            if (!$field->isFilterable()) {
+                throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 5, 0);
 
-                list($localizedPropertyName, $value, $locale, $limit, $offset) = $arguments;
+                [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
 
                 $localizedField = $field->getFielddefinition($localizedPropertyName);
 
@@ -668,8 +680,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
-                if (!in_array($localizedField->getFieldType(), $allowedDataTypes)) {
-                    throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+                if (!$localizedField->isFilterable()) {
+                    throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
@@ -682,9 +694,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $arguments = array_pad($arguments, 3, 0);
-                list($value, $limit, $offset) = $arguments;
+                [$value, $limit, $offset] = $arguments;
 
-                $defaultCondition = $propertyName . ' = ' . Db::get()->quote($value) . ' ';
+                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition
                 ];

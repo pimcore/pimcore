@@ -439,4 +439,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
         return parent::getFilterConditionExt($value, $operator, $params);
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }
