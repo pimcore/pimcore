@@ -241,19 +241,9 @@
     text-decoration: underline;
 }
 
-
-/* TODO to be removed */
-.pimcore_unpublished .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #777;
+.pimcore_navigation_exclude .x-tree-node-text {
+    color: #8e8e8e !important;
 }
-
-/* TODO to be removed */
-.pimcore_delete .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #ff0000;
-}
-
 
 .pimcore_unpublished span.x-tree-node-text{
     text-decoration: line-through;
