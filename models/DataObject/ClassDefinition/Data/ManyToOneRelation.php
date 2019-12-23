@@ -746,6 +746,36 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         return $value1 == $value2;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Listing      $listing
+     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
+     * @param string                  $operator SQL comparison operator, currently only "=" possible
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
+        if($data instanceof Element\ElementInterface) {
+            $data = [
+                'id' => $data->getId(),
+                'type' => Element\Service::getElementType($data)
+            ];
+        }
+
+        if(!isset($data['id'], $data['type']))
+        {
+            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+        }
+
+        if($operator === '=') {
+            $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
+            return;
+        }
+        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+    }
 }
 
 class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');
