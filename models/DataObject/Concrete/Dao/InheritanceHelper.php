@@ -200,7 +200,7 @@ class InheritanceHelper
      *
      * @throws \Exception
      */
-    public function doUpdate($oo_id, $createMissingChildrenRows = false)
+    public function doUpdate($oo_id, $createMissingChildrenRows = false, $params = [])
     {
         if (empty($this->fields) && empty($this->relations) && !$createMissingChildrenRows) {
             return;
@@ -217,7 +217,7 @@ class InheritanceHelper
         $o->values = $result;
 
         $this->treeIds = [];
-        $o->childs = $this->buildTree($result['id'], $fields);
+        $o->childs = $this->buildTree($result['id'], $fields, null, $params);
 
         if (!empty($this->fields)) {
             foreach ($this->fields as $fieldname) {
@@ -362,13 +362,17 @@ class InheritanceHelper
      *
      * @return array
      */
-    protected function buildTree($currentParentId, $fields = '', $parentIdGroups = null)
+    protected function buildTree($currentParentId, $fields = '', $parentIdGroups = null, $params = [])
     {
         $objects = [];
 
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
-            $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+            if (isset($params['language'])) {
+                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . \Pimcore\Db::get()->quote($object->getRealFullPath() . '/%') . ' ORDER BY LENGTH(o_path) ASC';
+            } else {
+                $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+            }
             $queryCacheKey = 'tree_'.md5($query);
 
             if (self::$useRuntimeCache) {
@@ -377,6 +381,16 @@ class InheritanceHelper
 
             if (!$parentIdGroups) {
                 $result = $this->db->fetchAll($query);
+
+
+                if (isset($params['language'])) {
+                    $language = $params['language'];
+                    $result = array_filter($result, function($row) use ($language) {
+                        if ($row['language'] === $language) {
+                            return true;
+                        }
+                    });
+                }
 
                 // group the results together based on the parent id's
                 $parentIdGroups = [];
