@@ -1103,15 +1103,19 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
+        $tmpDocument['cls'] = '';
+
         if ($childDocument instanceof Document\Page) {
             $tmpDocument['url'] = $childDocument->getFullPath();
             $site = Tool\Frontend::getSiteForDocument($childDocument);
             if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
-        }
 
-        $tmpDocument['cls'] = '';
+            if ($childDocument->getProperty('navigation_exclude')) {
+                $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
+            }
+        }
 
         if (!$childDocument->isPublished()) {
             $tmpDocument['cls'] .= 'pimcore_unpublished ';
