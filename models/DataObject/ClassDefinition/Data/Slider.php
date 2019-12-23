@@ -384,4 +384,9 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->increment = $masterDefinition->increment;
         $this->decimalPrecision = $masterDefinition->decimalPrecision;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

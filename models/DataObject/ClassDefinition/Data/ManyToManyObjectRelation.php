@@ -962,6 +962,29 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Listing      $listing
+     * @param DataObject\Concrete|int $data     object or object ID
+     * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
+        if($data instanceof DataObject\Concrete) {
+            $data = $data->getId();
+        }
+
+        if($operator === '=') {
+            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+            return;
+        }
+
+        parent::addListingFilter($listing, $data, $operator);
+    }
 }
 
 class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');

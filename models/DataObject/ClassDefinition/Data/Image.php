@@ -509,4 +509,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return Asset\Image::getById($id);
         }
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

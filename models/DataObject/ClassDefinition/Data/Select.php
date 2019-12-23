@@ -517,4 +517,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             return '`'.$name.'` LIKE '."'$value'".' ';
         }
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

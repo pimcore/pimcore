@@ -303,4 +303,9 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
         parent::checkValidity($data, $omitMandatoryCheck);
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

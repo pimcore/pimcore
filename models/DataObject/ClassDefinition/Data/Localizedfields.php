@@ -804,6 +804,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
+
+            /**
+             * @var $fd DataObject\ClassDefinition\Data
+             */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
 
@@ -823,6 +827,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         }
 
         foreach ($this->getFieldDefinitions() as $fd) {
+
+            /**
+             * @var $fd DataObject\ClassDefinition\Data
+             */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
 
@@ -855,7 +863,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data[]
+     * @return Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -1472,6 +1480,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @return bool
      */
     public function supportsDirtyDetection()
+    {
+        return true;
+    }
+
+    public function isFilterable(): bool
     {
         return true;
     }
