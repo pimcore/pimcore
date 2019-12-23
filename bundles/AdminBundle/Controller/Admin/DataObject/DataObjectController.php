@@ -632,7 +632,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                 $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
-                $fieldData->setContextualData('object', null, null, null);
+                $fieldData->setContextualData('object', null, null, null, null, null, $fielddefinition);
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             } else {
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);

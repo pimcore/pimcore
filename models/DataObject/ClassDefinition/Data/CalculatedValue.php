@@ -158,16 +158,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return float
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
-            $data = Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, [], $data);
+            return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
         }
 
         return $data;
@@ -303,9 +303,15 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
 
-        $code .= "\t" . '$data = Service::getCalculatedFieldValue($this, $data);' . "\n";
+        if($class instanceof DataObject\Objectbrick\Definition) {
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
+        } else {
+            $code .= "\t" . '$object = $this;'  . "\n";
+        }
+
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
@@ -338,12 +344,30 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}'  . "\n";
 
-        $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("localizedfield", "localizedfields", null, $language);' . "\n";
+        if($class instanceof DataObject\Objectbrick\Definition) {
+            $ownerType = 'objectbrick';
+            $index = $class->getKey();
 
-        $code .= "\t" . '$data = Service::getCalculatedFieldValue($this, $data);' . "\n";
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
+        } else {
+            $ownerType = 'localizedfield';
+            $index = null;
+
+            $code .= "\t" . '$object = $this;'  . "\n";
+        }
+
+        if($class instanceof DataObject\Fieldcollection\Definition) {
+            $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
+        } else {
+            $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
+        }
+
+        $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
+        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", $this->getFieldname(), '.($index===null?'null':'"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
+
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
@@ -373,7 +397,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
@@ -495,11 +519,18 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
+        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
+            $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
+        } else {
+            $classname = $class->getName();
+        }
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
 
