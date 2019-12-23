@@ -4,6 +4,7 @@ namespace Pimcore\Tests\Helper;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class Model extends AbstractDefinitionHelper
 {
@@ -243,8 +244,8 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param ClassDefinition\Layout $layout
      * @param string $filename
+     * @param $inheritanceAllowed
      * @return ClassDefinition
-     * @return $inheritanceAllowed
      */
     protected function createClass($name, $layout, $filename, $inheritanceAllowed = false) {
         $cm = $this->getClassManager();
@@ -254,8 +255,61 @@ class Model extends AbstractDefinitionHelper
         $def->setAllowInherit($inheritanceAllowed);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
-        $class = $cm->setupClass($name, $filename);
-        return $class;
+        return $cm->setupClass($name, $filename);
+    }
+
+    /**
+     * Sets up a Fieldcollection
+     *
+     * @param string $name
+     * @param string $filename
+     * @return Definition|null
+     * @throws \Exception
+     */
+    public function setupFieldcollection_Unittestfieldcollection($name = "unittestfieldcollection", $filename = 'fieldcollection-import.json') {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("input", "fieldinput1"));
+            $panel->addChild($this->createDataChild("input", "fieldinput2"));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "fieldRelation")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "fieldLazyRelation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename, true);
+        }
+        return $definition;
+
+    }
+
+    /**
+     * @param string $name
+     * @param ClassDefinition\Layout $layout
+     * @param string $filename
+     * @return Definition
+     */
+    protected function createFieldcollection($name, $layout, $filename) {
+        $cm = $this->getClassManager();
+        $def = new Definition();
+        $def->setKey($name);
+        $def->setLayoutDefinitions($layout);
+        $json = ClassDefinition\Service::generateFieldCollectionJson($def);
+        $cm->saveJson($filename, $json);
+        return $cm->setupFieldcollection($name, $filename);
     }
 
     /**
@@ -265,7 +319,7 @@ class Model extends AbstractDefinitionHelper
     {
         $cm = $this->getClassManager();
 
-        $cm->setupFieldcollection('unittestfieldcollection', 'fieldcollection-import.json');
+        $this->setupFieldcollection_Unittestfieldcollection();
 
         $this->setupPimcoreClass_Unittest();
         $this->setupPimcoreClass_Inheritance();
