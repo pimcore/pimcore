@@ -4,6 +4,7 @@ namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Inheritance;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -171,7 +172,9 @@ class LocalizedFieldTest extends ModelTestCase
      */
     public function testInvalidLocaleList()
     {
-        $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
+
+        // the following test should fail for invalid locales if in strict mode
+        Localizedfield::setStrictMode(true);
 
         // invalid locale
         $list = new Inheritance\Listing();
