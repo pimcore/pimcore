@@ -194,17 +194,64 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+
+    /**
+     * Used for inheritance tests
+     *
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Inheritance($name = "inheritance", $filename = 'inheritance.json') {
+
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName("localizedfields");
+            $lFields->addChild($this->createDataChild("input"));
+            $lFields->addChild($this->createDataChild("textarea"));
+            $lFields->addChild($this->createDataChild("wysiwyg"));
+
+            $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("Layout");
+            $otherPanel->addChild($this->createDataChild("input", "normalinput"));
+            $otherPanel->addChild($this->createDataChild("image", "yx"));
+            $otherPanel->addChild($this->createDataChild("slider"));
+            $otherPanel->addChild($this->createDataChild("manyToManyObjectRelation", "relationobjects")
+                ->setLazyLoading(false)
+                ->setClasses([]));
+
+            $panel->addChild($lFields);
+            $panel->addChild($otherPanel);
+            $panel->addChild($this->createDataChild("objectbricks", "mybricks"));
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+        return $class;
+    }
+
+
     /**
      * @param string $name
      * @param ClassDefinition\Layout $layout
      * @param string $filename
      * @return ClassDefinition
+     * @return $inheritanceAllowed
      */
-    protected function createClass($name, $layout, $filename) {
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false) {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
+        $def->setAllowInherit($inheritanceAllowed);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
         $class = $cm->setupClass($name, $filename);
@@ -221,8 +268,7 @@ class Model extends AbstractDefinitionHelper
         $cm->setupFieldcollection('unittestfieldcollection', 'fieldcollection-import.json');
 
         $this->setupPimcoreClass_Unittest();
-
-        $cm->setupClass('inheritance', 'inheritance.json');
+        $this->setupPimcoreClass_Inheritance();
 
         $cm->setupObjectbrick('unittestBrick', 'brick-import.json');
     }
