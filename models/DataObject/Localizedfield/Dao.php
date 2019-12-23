@@ -364,7 +364,9 @@ class Dao extends Model\Dao\AbstractDao
                 $queryTable = $this->getQueryTableName().'_'.$language;
                 $this->db->insertOrUpdate($queryTable, $data);
                 if ($inheritanceEnabled) {
-                    $this->inheritanceHelper->doUpdate($object->getId(), true);
+                    $this->inheritanceHelper->doUpdate($object->getId(), true, [
+                        'language' => $language
+                    ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
             }
