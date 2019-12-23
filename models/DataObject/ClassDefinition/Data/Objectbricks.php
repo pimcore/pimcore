@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
@@ -37,7 +38,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Objectbrick';
+    public $phpdocType = Objectbrick::class;
 
     /**
      * @var array
@@ -110,11 +111,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $getter = 'get' . ucfirst($allowedBrickType);
                 $params = [
                     'objectFromVersion' => $params['objectFromVersion'],
-                    'context' => [
+                    'context'           => [
                         'containerType' => 'objectbrick',
-                        'containerKey' => $allowedBrickType],
-                        'fieldname' => $this->getName()
-
+                        'containerKey'  => $allowedBrickType,
+                    ],
+                    'fieldname'         => $this->getName(),
                 ];
 
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType);
@@ -173,13 +174,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $calculatedChilds = [];
         self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
 
-        if ($calculatedChilds) {
-            foreach ($calculatedChilds as $fd) {
-                $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
-                $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
-                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
-                $brickData[$fd->getName()] = $fieldData;
-            }
+        foreach ($calculatedChilds as $fd) {
+            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+            $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+            $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
+            $brickData[$fd->getName()] = $fieldData;
         }
 
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
@@ -244,7 +243,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             }
             $data = [];
 
-            if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
+            if ($fielddefinition instanceof ManyToOneRelation) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
@@ -1046,18 +1045,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param DataObject\ClassDefinition\Data[] $container
-     * @param DataObject\ClassDefinition\Data[] $list
+     * @param CalculatedValue[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
+            /** @var $childDef DataObject\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
                 }
             }
         }

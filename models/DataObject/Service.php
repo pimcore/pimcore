@@ -1428,28 +1428,28 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      * @param array $params
      * @param $data Model\DataObject\Data\CalculatedValue
      *
-     * @return mixed|null
+     * @return string|null
      */
     public static function getCalculatedFieldValueForEditMode($object, $params = [], $data)
     {
         if (!$data) {
             return;
         }
+
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        $fd = null;
-        if ($ownerType === 'object') {
-            $fd = $object->getClass()->getFieldDefinition($fieldname);
-        } elseif ($ownerType === 'localizedfield') {
-            $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
-        } elseif ($ownerType === 'classificationstore') {
-            $fd = $data->getKeyDefinition();
-        } elseif ($ownerType === 'fieldcollection' || $ownerType === 'objectbrick') {
-            $fd = $data->getKeyDefinition();
+        $fd = $data->getKeyDefinition();
+
+        if($fd === null) {
+            if ($ownerType === 'object') {
+                $fd = $object->getClass()->getFieldDefinition($fieldname);
+            } elseif ($ownerType === 'localizedfield') {
+                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+            }
         }
 
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
@@ -1493,15 +1493,14 @@ class Service extends Model\Element\Service
         }
         $fieldname = $data->getFieldname();
         $ownerType = $data->getOwnerType();
-        $fd = null;
-        if ($ownerType === 'object') {
-            $fd = $object->getClass()->getFieldDefinition($fieldname);
-        } elseif ($ownerType === 'localizedfield') {
-            $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
-        } elseif ($ownerType === 'classificationstore') {
-            $fd = $data->getKeyDefinition();
-        } elseif ($ownerType === 'fieldcollection' || $ownerType === 'objectbrick') {
-            $fd = $data->getKeyDefinition();
+
+        $fd = $data->getKeyDefinition();
+        if($fd === null) {
+            if ($ownerType === 'object') {
+                $fd = $object->getClass()->getFieldDefinition($fieldname);
+            } elseif ($ownerType === 'localizedfield') {
+                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+            }
         }
 
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
