@@ -371,10 +371,11 @@ class InheritanceHelper
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
                 $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . \Pimcore\Db::get()->quote($object->getRealFullPath() . '/%') . ' ORDER BY LENGTH(o_path) ASC';
+                $queryCacheKey = 'tree_'.md5($query) . "_" . $params['language'];
             } else {
                 $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+                $queryCacheKey = 'tree_'.md5($query);
             }
-            $queryCacheKey = 'tree_'.md5($query);
 
             if (self::$useRuntimeCache) {
                 $parentIdGroups = self::$runtimeCache[$queryCacheKey] ?? null;
