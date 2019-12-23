@@ -121,22 +121,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param DataObject\Localizedfield $localizedField
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode($localizedField, $object = null, $params = [])
     {
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof DataObject\Localizedfield) {
+        if (!$localizedField instanceof DataObject\Localizedfield) {
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
+        $result = $this->doGetDataForEditMode($localizedField, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {
@@ -144,7 +144,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 $fieldDefinition = $this->getFielddefinition($key);
                 if ($fieldDefinition instanceof CalculatedValue) {
                     $childData = new DataObject\Data\CalculatedValue($fieldDefinition->getName());
-                    $childData->setContextualData('localizedfield', $this->getName(), null, $language);
+                    $ownerType = $params['context']['containerType'] ?? 'localizedfield';
+                    $ownerName = $params['fieldname'] ?? $this->getName();
+                    $index = $params['context']['containerKey'] ?? null;
+                    $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
                     $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
