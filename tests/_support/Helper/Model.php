@@ -290,10 +290,47 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $root->addChild($rootPanel);
-            $definition = $this->createFieldcollection($name, $root, $filename, true);
+            $definition = $this->createFieldcollection($name, $root, $filename);
         }
         return $definition;
+    }
 
+    /**
+     * Sets up an object brick
+     *
+     * @param string $name
+     * @param string $filename
+     * @return Definition|null
+     * @throws \Exception
+     */
+    public function setupObjectbrick_UnittestBrick($name = "unittestBrick", $filename = 'brick-import.json') {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getObjectbrick($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("input", "brickinput"));
+            $panel->addChild($this->createDataChild("manyToManyRelation", "brickRelation")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "brickLazyRelation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $root->addChild($rootPanel);
+            $definition = $this->createObjectbrick($name, $root, $filename, [
+                ['classname' => 'unittest', 'fieldname' => 'mybricks']
+
+            ]);
+        }
+        return $definition;
     }
 
     /**
@@ -313,6 +350,24 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * @param string $name
+     * @param ClassDefinition\Layout $layout
+     * @param string $filename
+     * @param $classDefinitions
+     * @return \Pimcore\Model\DataObject\Objectbrick\Definition
+     */
+    protected function createObjectbrick($name, $layout, $filename, $classDefinitions = []) {
+        $cm = $this->getClassManager();
+        $def = new \Pimcore\Model\DataObject\Objectbrick\Definition();
+        $def->setKey($name);
+        $def->setLayoutDefinitions($layout);
+        $def->setClassDefinitions($classDefinitions);
+        $json = ClassDefinition\Service::generateObjectBrickJson($def);
+        $cm->saveJson($filename, $json);
+        return $cm->setupObjectbrick($name, $filename);
+    }
+
+    /**
      * Initialize widely used class definitions
      */
     public function initializeDefinitions()
@@ -324,6 +379,6 @@ class Model extends AbstractDefinitionHelper
         $this->setupPimcoreClass_Unittest();
         $this->setupPimcoreClass_Inheritance();
 
-        $cm->setupObjectbrick('unittestBrick', 'brick-import.json');
+        $this->setupObjectbrick_UnittestBrick();
     }
 }
