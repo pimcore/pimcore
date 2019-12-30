@@ -1191,12 +1191,16 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $this->allowMultipleAssignments;
     }
 
+
     /**
      * @param bool $allowMultipleAssignments
+     *
+     * @return $this
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+        return $this;
     }
 
     /**
