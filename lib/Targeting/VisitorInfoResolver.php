@@ -79,7 +79,7 @@ class VisitorInfoResolver
     /**
      * @var bool
      */
-    private $targetConfigured;
+    private $targetingConfigured;
 
     public function __construct(
         TargetingStorageInterface $targetingStorage,
@@ -132,16 +132,16 @@ class VisitorInfoResolver
 
     public function isTargetingConfigured(): bool
     {
-        if (null !== $this->targetConfigured) {
-            return $this->targetConfigured;
+        if (null !== $this->targetingConfigured) {
+            return $this->targetingConfigured;
         }
 
         $configuredRules = $this->db->fetchColumn(
             'SELECT id FROM targeting_target_groups UNION SELECT id FROM targeting_rules LIMIT 1'
         );
 
-        $this->targetConfigured = $configuredRules && (int)$configuredRules > 0;
-        return $this->targetConfigured;
+        $this->targetingConfigured = $configuredRules && (int)$configuredRules > 0;
+        return $this->targetingConfigured;
     }
 
     private function matchTargetingRuleConditions(VisitorInfo $visitorInfo)
