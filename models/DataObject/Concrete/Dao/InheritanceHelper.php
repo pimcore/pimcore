@@ -370,7 +370,7 @@ class InheritanceHelper
 
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
-            $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+            $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             $queryCacheKey = 'tree_'.md5($query);
 
             if (self::$useRuntimeCache) {
@@ -398,16 +398,15 @@ class InheritanceHelper
 
         if (isset($parentIdGroups[$currentParentId])) {
             foreach ($parentIdGroups[$currentParentId] as $r) {
+                $id = $r['id'];
                 $o = [
-                    'id' => $r['id'],
+                    'id' => $id,
                     'values' => $r,
-                    'type'=> $r['type'],
-                    'classId' => $r['classId'],
-                    'childs' => $this->buildTree($r['id'], $fields, $parentIdGroups)
+                    'childs' => $this->buildTree($id, $fields, $parentIdGroups)
                     ];
 
-                if ($o['classId'] == $this->classId) {
-                    $this->treeIds[] = $o['id'];
+                if ($r['classId'] == $this->classId) {
+                    $this->treeIds[] = $id;
                 }
 
                 $objects[] = $o;
