@@ -86,7 +86,13 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
             $order->setOrdernumber($tempOrdernumber);
             $order->setOrderdate(new \DateTime());
-            $order->setCartId($this->createCartId($cart));
+
+            $cartId = $this->createCartId($cart);
+            if(strlen($cartId) > 190) {
+                throw new \Exception('CartId cannot be longer than 190 characters');
+            }
+
+            $order->setCartId($cartId);
         }
 
         // check if pending payment. if one, do not update order from cart
