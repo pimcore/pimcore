@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\MultipleAssignments;
@@ -15,7 +14,7 @@ use Pimcore\Tests\Util\TestHelper;
 /**
  * Class MultipleAssigmentTest
  * @package Pimcore\Tests\Model\Relations
- * @group multiple
+ * @group model.relations.multipleassignment
  */
 class MultipleAssigmentTest extends ModelTestCase
 {

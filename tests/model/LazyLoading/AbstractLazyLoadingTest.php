@@ -29,14 +29,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
     protected function setUpTestClasses()
     {
-        $name = 'RelationTest';
-        $file = 'relations/class_RelationTest_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
+        $this->tester->setupPimcoreClass_RelationTest();
 
         $name = 'LazyLoadingTest';
         $file = 'lazyloading/fieldcollection_LazyLoadingTest_export.json';
@@ -46,14 +39,15 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $file = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json';
         $fieldCollection = $this->tester->setupFieldCollection($name, $file);
 
-        $name = 'LazyLoading';
-        $file = 'lazyloading/class_LazyLoading_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
+//
+//        $name = 'LazyLoading';
+//        $file = 'lazyloading/class_LazyLoading_export.json';
+//        $class = ClassDefinition::getByName($name);
+//
+//        if (!$class) {
+//            /** @var ClassDefinition $class */
+//            $class = $this->tester->setupClass($name, $file);
+//        }
 
         $name = 'LazyLoadingTest';
         $file = 'lazyloading/objectbrick_LazyLoadingTest_export.json';
