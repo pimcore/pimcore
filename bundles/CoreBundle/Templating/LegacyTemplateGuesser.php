@@ -22,7 +22,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
     protected $kernel;
 
     /**
-     * @var $templateEngine
+     * @var DelegatingEngine
      */
     protected $templateEngine;
 

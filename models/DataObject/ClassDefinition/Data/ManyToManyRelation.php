@@ -255,6 +255,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['dest_id']);
                 } elseif ($element['type'] == 'asset') {
@@ -364,6 +365,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $elements = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
+                $e = null;
                 if ($element['type'] == 'object') {
                     $e = DataObject::getById($element['id']);
                 } elseif ($element['type'] == 'asset') {
@@ -717,7 +719,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -1061,6 +1062,37 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function isOptimizedAdminLoading(): bool
     {
         return true;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Listing      $listing
+     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
+     * @param string                  $operator SQL comparison operator, currently only "=" supported
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
+        if($data instanceof Element\ElementInterface) {
+            $data = [
+                'id' => $data->getId(),
+                'type' => Element\Service::getElementType($data)
+            ];
+        }
+
+        if(!isset($data['id'], $data['type']))
+        {
+            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+        }
+
+        if($operator === '=') {
+            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data['type'].'|'.$data['id'].',%');
+            return;
+        }
+
+        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 }
 

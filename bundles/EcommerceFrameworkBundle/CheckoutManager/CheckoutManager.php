@@ -331,6 +331,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         // delegate commit order to commit order processor
+        $order = null;
         try {
             $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         } catch (\Exception $e) {
@@ -382,7 +383,7 @@ class CheckoutManager implements CheckoutManagerInterface
         /* @var Agent $sourceOrderAgent */
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        /* @var $paymentProvider QPay */
+        /* @var QPay $paymentProvider */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
         $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 

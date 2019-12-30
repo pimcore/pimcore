@@ -523,9 +523,13 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         return $this;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param $object DataObject\Concrete
      * @param array $context additional contextual data
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
@@ -569,5 +573,27 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         $existingData = array_unique(array_merge($existingData, $additionalData));
 
         return $existingData;
+    }
+
+    /**
+     * @param $existingData
+     * @param $removeData
+     *
+     * @return mixed
+     */
+    public function removeData($existingData, $removeData)
+    {
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $existingData = array_unique(array_diff($existingData, $removeData));
+
+        return $existingData;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

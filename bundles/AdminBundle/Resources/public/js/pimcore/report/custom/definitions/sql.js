@@ -113,6 +113,7 @@ pimcore.report.custom.definition.sql = Class.create({
     getValues: function() {
         var values = this.element.getForm().getFieldValues();
         values.type = "sql";
+        delete values["sqlText"];
         return values;
     },
 
@@ -132,28 +133,28 @@ pimcore.report.custom.definition.sql = Class.create({
         if(this.sqlText) {
             var sqlText = "";
             if(values.sql) {
-                if(values.sql.indexOf("SELECT") < 0 || values.sql.indexOf("SELECT") > 5) {
+                if(values.sql.trim().indexOf("SELECT") !== 0) {
                     sqlText += "SELECT ";
                 }
                 sqlText += values.sql;
             }
 
             if(values.from) {
-                if(values.from.indexOf("FROM") < 0) {
+                if(values.from.trim().indexOf("FROM") !== 0) {
                     sqlText += " FROM ";
                 }
                 sqlText += values.from;
             }
 
             if(values.where) {
-                if(values.where.indexOf("WHERE") < 0) {
+                if(values.where.trim().indexOf("WHERE") !== 0) {
                     sqlText += " WHERE ";
                 }
                 sqlText += values.where;
             }
 
             if(values.groupby) {
-                if(values.groupby.indexOf("GROUP BY") < 0) {
+                if(values.groupby.trim().indexOf("GROUP BY") !== 0) {
                     sqlText += " GROUP BY ";
                 }
                 sqlText += values.groupby;

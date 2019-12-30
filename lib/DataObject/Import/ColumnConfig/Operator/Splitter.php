@@ -42,7 +42,7 @@ class Splitter extends AbstractOperator
         if (!$childs) {
             return;
         } else {
-            /** @var $child AbstractConfigElement */
+            /** @var AbstractConfigElement $child */
             $dataParts = explode($this->glue, $originalCellData);
 
             for ($i = 0; $i < count($childs); $i++) {

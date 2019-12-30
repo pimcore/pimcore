@@ -229,33 +229,11 @@ trait ImageThumbnailTrait
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            // get target mime type without actually generating the thumbnail (deferred)
-            $mapping = [
-                'png' => 'image/png',
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'pjpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'tiff' => 'image/tiff',
-                'svg' => 'image/svg+xml',
-            ];
+            $fileExt = $this->getFileExtension();
+            $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
 
-            $targetFormat = strtolower($this->getConfig()->getFormat());
-            $format = $targetFormat;
-            $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-
-            if ($targetFormat == 'source' || empty($targetFormat)) {
-                $format = Image\Thumbnail\Processor::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
-            } elseif ($targetFormat == 'print') {
-                $format = Image\Thumbnail\Processor::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
-                if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
-                    // return a webformat in admin -> tiff cannot be displayed in browser
-                    $format = 'png';
-                }
-            }
-
-            if (array_key_exists($format, $mapping)) {
-                $this->mimetype = $mapping[$format];
+            if (isset($mapping[$fileExt])) {
+                $this->mimetype = $mapping[$fileExt];
             } else {
                 // unknown
                 $this->mimetype = 'application/octet-stream';
@@ -263,5 +241,25 @@ trait ImageThumbnailTrait
         }
 
         return $this->mimetype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return \Pimcore\File::getFileExtension($this->getFileSystemPath(true));
+    }
+
+    protected function convertToWebPath(string $filesystemPath): string
+    {
+        $path = preg_replace([
+            '@^' . preg_quote(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '@') . '@',
+            '@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@',
+        ], '', $filesystemPath);
+
+        $path = urlencode_ignore_slash($path);
+
+        return $path;
     }
 }

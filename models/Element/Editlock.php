@@ -56,7 +56,7 @@ class Editlock extends Model\AbstractModel
     public $date;
 
     /**
-     * @var
+     * @var string
      */
     public $cpath;
 
@@ -290,7 +290,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cpath
+     * @param string $cpath
      *
      * @return $this
      */
@@ -302,7 +302,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getCpath()
     {

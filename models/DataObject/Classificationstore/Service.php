@@ -54,7 +54,7 @@ class Service
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
 
-        /** @var $dataDefinition \Pimcore\Model\DataObject\ClassDefinition\Data */
+        /** @var \Pimcore\Model\DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
         $dataDefinition->setValues($definition);

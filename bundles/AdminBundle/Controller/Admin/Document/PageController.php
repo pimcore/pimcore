@@ -52,9 +52,7 @@ class PageController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /**
-         * @var $page Document\Page
-         */
+        /** @var Document\Page $page */
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
@@ -244,26 +242,33 @@ class PageController extends DocumentControllerBase
     public function checkPrettyUrlAction(Request $request)
     {
         $docId = $request->get('id');
-        $path = trim($request->get('path'));
-        $path = rtrim($path, '/');
+        $path = (string) trim($request->get('path'));
 
         $success = true;
-        $message = null;
+
+        if ($path === '') {
+            return $this->adminJson([
+                'success' => $success,
+            ]);
+        }
+
+        $message = [];
+        $path = rtrim($path, '/');
 
         // must start with /
-        if (strpos($path, '/') !== 0) {
+        if ($path !== '' && strpos($path, '/') !== 0) {
             $success = false;
-            $message .= "\n URL must start with /.";
+            $message[] = 'URL must start with /.';
         }
 
         if (strlen($path) < 2) {
             $success = false;
-            $message .= "\n URL must be at least 2 characters long.";
+            $message[] = 'URL must be at least 2 characters long.';
         }
 
         if (!Element\Service::isValidPath($path, 'document')) {
             $success = false;
-            $message .= "\n URL is invalid.";
+            $message[] = 'URL is invalid.';
         }
 
         $list = new Document\Listing();
@@ -274,12 +279,12 @@ class PageController extends DocumentControllerBase
 
         if ($list->getTotalCount() > 0) {
             $success = false;
-            $message .= "\n URL path already exists.";
+            $message[] = 'URL path already exists.';
         }
 
         return $this->adminJson([
             'success' => $success,
-            'message' => $message
+            'message' => implode('<br>', $message),
         ]);
     }
 

@@ -56,6 +56,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function loadInternal(array $config, ContainerBuilder $container)
     {
+        // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
+        if(!$container->hasParameter('container.dumper.inline_class_loader')) {
+            $container->setParameter('container.dumper.inline_class_loader', true);
+        }
+
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
@@ -81,8 +86,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
-        if (isset($conf['general']['domain']) && !empty($conf['general']['domain'])) {
-            $container->setParameter('router.request_context.host', $conf->general->domain);
+        if (!empty($config['general']['domain'])) {
+            $container->setParameter('router.request_context.host', $config['general']['domain']);
         }
 
         $loader = new YamlFileLoader(

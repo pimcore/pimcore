@@ -303,8 +303,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * updates count of specific cart item
      *
-     * @param $itemKey
-     * @param $count
+     * @param string $itemKey
+     * @param int $count
+     *
+     * @return CartItemInterface
      */
     public function updateItemCount($itemKey, $count)
     {

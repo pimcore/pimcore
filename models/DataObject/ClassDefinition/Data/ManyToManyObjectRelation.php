@@ -71,7 +71,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $relationType = true;
 
     /**
-     * @var
+     * @var string|null
      */
     public $visibleFields;
 
@@ -241,6 +241,20 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @param $data
      * @param null $object
      * @param mixed $params
@@ -249,18 +263,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
-
-        return null;
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -682,8 +685,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->relationType = $masterDefinition->relationType;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -694,7 +698,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $classIds = $this->getClasses();
 
-        if (empty($classIds)) {
+        if (empty($classIds[0]['classes'])) {
             return;
         }
 
@@ -702,9 +706,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } elseif (is_string($classId)) {
-            $class = DataObject\ClassDefinition::getByName($classId);
         } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
             return;
         }
 
@@ -919,7 +925,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string|null $visibleFields
      *
      * @return $this
      */
@@ -934,7 +940,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getVisibleFields()
     {
@@ -955,6 +961,29 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function setOptimizedAdminLoading($optimizedAdminLoading)
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Listing      $listing
+     * @param DataObject\Concrete|int $data     object or object ID
+     * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
+        if($data instanceof DataObject\Concrete) {
+            $data = $data->getId();
+        }
+
+        if($operator === '=') {
+            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+            return;
+        }
+
+        parent::addListingFilter($listing, $data, $operator);
     }
 }
 

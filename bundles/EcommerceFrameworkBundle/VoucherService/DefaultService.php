@@ -236,9 +236,7 @@ class DefaultService implements VoucherServiceInterface
 
             foreach ($notAppliedRulesWithVoucherCondition as $ruleId => $conditions) {
                 foreach ($conditions as $condition) {
-                    /**
-                     * @var $condition VoucherToken
-                     */
+                    /** @var VoucherToken $condition */
                     if ($condition->checkVoucherCode($tokenCode)) {
                         $errorMessages[] = $condition->getErrorMessage($locale);
                         $notAppliedPricingRules[] = $validRulesAssoc[$ruleId];
@@ -250,9 +248,7 @@ class DefaultService implements VoucherServiceInterface
                 $hasRule = false;
                 foreach ($appliedRulesWithVoucherCondition as $ruleId => $conditions) {
                     foreach ($conditions as $condition) {
-                        /**
-                         * @var $condition VoucherToken
-                         */
+                        /** @var VoucherToken $condition */
                         if ($condition->checkVoucherCode($tokenCode)) {
                             $hasRule = true;
                             $appliedPricingRules[] = $validRulesAssoc[$ruleId];

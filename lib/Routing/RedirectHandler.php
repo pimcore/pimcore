@@ -50,32 +50,12 @@ class RedirectHandler implements LoggerAwareInterface
     private $redirects;
 
     /**
-     * For BC, this is currently added as extra method call. The required annotation
-     * makes sure this is called via autowiring.
-     *
-     * TODO Pimcore 6 set as constructor dependency
-     *
-     * @required
-     *
      * @param RequestHelper $requestHelper
-     */
-    public function setRequestHelper(RequestHelper $requestHelper)
-    {
-        $this->requestHelper = $requestHelper;
-    }
-
-    /**
-     * For BC, this is currently added as extra method call. The required annotation
-     * makes sure this is called via autowiring.
-     *
-     * TODO Pimcore 6 set as constructor dependency
-     *
-     * @required
-     *
      * @param SiteResolver $siteResolver
      */
-    public function setSiteResolver(SiteResolver $siteResolver)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver)
     {
+        $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
     }
 

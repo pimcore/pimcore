@@ -199,18 +199,18 @@ class Service extends Model\Element\Service
 
             foreach ($fields as $field) {
                 $fieldDef = explode('~', $field);
-                if ($fieldDef[1] == 'system') {
-                    if ($fieldDef[0] == 'preview') {
+                if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
+                    if ($fieldDef[0] === 'preview') {
                         $data[$field] = self::getPreviewThumbnail($asset, ['width' => 108, 'height' => 70, 'frame' => true]);
-                    } elseif ($fieldDef[0] == 'size') {
-                        /** @var $asset Asset */
+                    } elseif ($fieldDef[0] === 'size') {
+                        /** @var Asset $asset */
                         $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
                         $size = @filesize($filename);
                         $data[$field] = formatBytes($size);
                     }
                 } else {
                     if (isset($fieldDef[1])) {
-                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                        $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
                         $metaData = $asset->getMetadata($fieldDef[0], $language, true);
                     } else {
                         $metaData = $asset->getMetadata($field, $requestedLanguage, true);

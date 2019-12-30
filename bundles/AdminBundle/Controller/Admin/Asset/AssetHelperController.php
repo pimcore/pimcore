@@ -96,7 +96,7 @@ class AssetHelperController extends AdminController
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
 
-        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
@@ -124,6 +124,7 @@ class AssetHelperController extends AdminController
     public function gridDeleteColumnConfigAction(Request $request)
     {
         $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = null;
         try {
             $gridConfig = GridConfig::getById($gridConfigId);
         } catch (\Exception $e) {
@@ -213,12 +214,14 @@ class AssetHelperController extends AdminController
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
             }
 
+            $savedGridConfig = null;
             try {
                 $savedGridConfig = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
 
             if ($savedGridConfig) {
+                $shared = null;
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
                     if ($this->getAdminUser()->getRoles()) {
@@ -283,10 +286,10 @@ class AssetHelperController extends AdminController
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
         $settings['gridConfigId'] = (int)$gridConfigId;
-        $settings['gridConfigName'] = $gridConfigName;
-        $settings['gridConfigDescription'] = $gridConfigDescription;
-        $settings['shareGlobally'] = $sharedGlobally;
-        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+        $settings['gridConfigName'] = $gridConfigName ?? null;
+        $settings['gridConfigDescription'] = $gridConfigDescription ?? null;
+        $settings['shareGlobally'] = $sharedGlobally ?? null;
+        $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
@@ -312,7 +315,11 @@ class AssetHelperController extends AdminController
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
         $defaulMetadataFields = ['copyright', 'alt', 'title'];
-        $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+        $predefined = null;
+
+        if (isset($field['fieldConfig']['layout']['name'])) {
+            $predefined = Metadata\Predefined::getByName($field['fieldConfig']['layout']['name']);
+        }
 
         $key = $field['name'];
         if ($keyPrefix) {
@@ -322,7 +329,7 @@ class AssetHelperController extends AdminController
         $fieldDef = explode('~', $field['name']);
         $field['name'] = $fieldDef[0];
 
-        if ($fieldDef[1] == 'system') {
+        if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
             $type = 'system';
         } elseif (in_array($fieldDef[0], $defaulMetadataFields)) {
             $type = 'input';
@@ -344,14 +351,14 @@ class AssetHelperController extends AdminController
             'label' => $field['fieldConfig']['label'] ?? $key,
             'width' => $field['width'],
             'position' => $field['position'],
-            'language' => $field['fieldConfig']['language'],
-            'layout' => $field['fieldConfig']['layout'],
+            'language' => $field['fieldConfig']['language'] ?? null,
+            'layout' => $field['fieldConfig']['layout'] ?? null,
         ];
 
-        if ($type == 'select') {
+        if ($type === 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
-        } elseif ($type == 'document' || $type == 'asset' || $type == 'object') {
+        } elseif ($type === 'document' || $type === 'asset' || $type === 'object') {
             $result['layout']['fieldtype'] = 'manyToOneRelation';
             $result['layout']['subtype'] = $type;
         }
@@ -404,7 +411,7 @@ class AssetHelperController extends AdminController
         $newData = [];
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
-            if ($item->isOperator) {
+            if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
 
                 $item->key = $itemKey;
@@ -447,6 +454,7 @@ class AssetHelperController extends AdminController
             $favourite->setClassId($classId);
             $favourite->setSearchType($searchType);
             $favourite->setType($type);
+            $specializedConfigs = false;
 
             try {
                 if ($gridConfigId != 0) {
@@ -456,8 +464,6 @@ class AssetHelperController extends AdminController
 
                 $favourite->setObjectId(0);
                 $favourite->save();
-
-                $specializedConfigs = false;
             } catch (\Exception $e) {
                 $favourite->delete();
             }
@@ -481,7 +487,7 @@ class AssetHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -527,6 +533,7 @@ class AssetHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
+                $gridConfig = null;
                 if ($gridConfigId) {
                     try {
                         $gridConfig = GridConfig::getById($gridConfigId);
@@ -668,9 +675,7 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /**
-         * @var $list \Pimcore\Model\Asset\Listing
-         */
+        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -871,12 +876,12 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
+        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             //only allow unique metadata columns with subtypes
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
             if (!in_array($uniqueKey, $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $uniqueKey;
-                /** @var $item Metadata\Predefined */
                 $item->expand();
                 $metadataItems[] = [
                     'title' => $item->getName(),

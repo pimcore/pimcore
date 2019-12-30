@@ -52,18 +52,18 @@ class VersionTest extends TestCase
      */
     public function testCondense()
     {
-        /** @var $savedObject Unittest */
+        /** @var Unittest $savedObject */
 
         // create target object
         $randomText = TestHelper::generateRandomString(10000);
 
-        /** @var $targetObject Unittest */
+        /** @var Unittest $targetObject */
         $targetObject = TestHelper::createEmptyObject();
         $targetObject->setInput($randomText);
         $targetObject->save();
 
         // create source object
-        /** @var $sourceObject Unittest */
+        /** @var Unittest $sourceObject */
         $sourceObject = TestHelper::createEmptyObject();
 
         Version::setCondenseVersion(true);

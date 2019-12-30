@@ -178,7 +178,9 @@ class IntlFormatter
      */
     public function formatDateTime($dateTime, $format = self::DATETIME_MEDIUM)
     {
-        if (!$formatter = $this->dateFormatters[$format]) {
+        if (isset($this->dateFormatters[$format])) {
+            $formatter = $this->dateFormatters[$format];
+        } else {
             $formatter = $this->buildDateTimeFormatters($format);
             $this->dateFormatters[$format] = $formatter;
         }

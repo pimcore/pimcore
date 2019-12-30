@@ -91,12 +91,13 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * Track product view
      *
      * @param ProductInterface $product
+     * @param string $list
      */
-    public function trackProductImpression(ProductInterface $product)
+    public function trackProductImpression(ProductInterface $product, string $list = 'default')
     {
         $this->ensureDependencies();
 
-        $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
+        $item = $this->trackingItemBuilder->buildProductImpressionItem($product, $list);
 
         $parameters = [
             'productData' => $this->transformProductImpression($item)
@@ -124,7 +125,6 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
-
         $this->trackProductAction($product, 'add', $quantity);
     }
 
@@ -145,7 +145,6 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
-
         $this->trackProductAction($product, 'remove', $quantity);
     }
 
@@ -271,14 +270,16 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      */
     protected function transformTransaction(Transaction $transaction)
     {
-        return [
+        return array_merge([
             'id' => $transaction->getId(),                           // order ID - required
             'affiliation' => $transaction->getAffiliation() ?: '',            // affiliation or store name
             'revenue' => round($transaction->getTotal(), 2),     // total - required
             'tax' => round($transaction->getTax(), 2),       // tax
             'coupon' => $transaction->getCoupon(), // voucher code - optional
             'shipping' => round($transaction->getShipping(), 2),  // shipping
-        ];
+        ],
+            $transaction->getAdditionalAttributes()
+        );
     }
 
     protected function buildCheckoutCalls(array $items)
@@ -300,17 +301,20 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      */
     protected function transformProductAction(ProductAction $item)
     {
-        return $this->filterNullValues([
-            'id' => $item->getId(),
-            'name' => $item->getName(),
-            'category' => $item->getCategory(),
-            'brand' => $item->getBrand(),
-            'variant' => $item->getVariant(),
-            'price' => round($item->getPrice(), 2),
-            'quantity' => $item->getQuantity() ?: 1,
-            'position' => $item->getPosition(),
-            'coupon' => $item->getCoupon()
-        ]);
+        return $this->filterNullValues(
+            array_merge([
+                'id' => $item->getId(),
+                'name' => $item->getName(),
+                'category' => $item->getCategory(),
+                'brand' => $item->getBrand(),
+                'variant' => $item->getVariant(),
+                'price' => round($item->getPrice(), 2),
+                'quantity' => $item->getQuantity() ?: 1,
+                'position' => $item->getPosition(),
+                'coupon' => $item->getCoupon()
+            ],
+                $item->getAdditionalAttributes())
+        );
     }
 
     /**
@@ -322,7 +326,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      */
     protected function transformProductImpression(ProductImpression $item)
     {
-        return $this->filterNullValues([
+        $data = $this->filterNullValues(array_merge([
             'id' => $item->getId(),
             'name' => $item->getName(),
             'category' => $item->getCategory(),
@@ -331,7 +335,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
             'price' => round($item->getPrice(), 2),
             'list' => $item->getList(),
             'position' => $item->getPosition()
-        ]);
+        ], $item->getAdditionalAttributes()));
+
+        return $data;
     }
 
     /**

@@ -22,10 +22,12 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -381,6 +383,8 @@ class Document extends Element\AbstractElement
      */
     public function save()
     {
+        $isUpdate = false;
+
         try {
             // additional parameters (e.g. "versionNote" for the version note)
             $params = [];
@@ -388,7 +392,6 @@ class Document extends Element\AbstractElement
                 $params = func_get_arg(0);
             }
 
-            $isUpdate = false;
             $preEvent = new DocumentEvent($this, $params);
             if ($this->getId()) {
                 $isUpdate = true;
@@ -400,6 +403,7 @@ class Document extends Element\AbstractElement
             $params = $preEvent->getArguments();
 
             $this->correctPath();
+            $differentOldPath = null;
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -864,29 +868,30 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            $documentService = new Document\Service();
-            $parent = $this;
-            while ($parent) {
-                if ($hardlinkId = $documentService->getDocumentIdFromHardlinkInSameSite(Site::getCurrentSite(), $parent)) {
-                    $hardlink = Document::getById($hardlinkId);
-                    if (FrontendTool::isDocumentInCurrentSite($hardlink)) {
-                        $siteRootPath = Site::getCurrentSite()->getRootPath();
-                        $siteRootPath = preg_quote($siteRootPath);
-                        $hardlinkPath = preg_replace('@^' . $siteRootPath . '@', '', $hardlink->getRealFullPath());
+            $requestStack = \Pimcore::getContainer()->get('request_stack');
 
-                        $link = preg_replace('@^' . preg_quote($parent->getRealFullPath()) . '@', $hardlinkPath, $this->getRealFullPath());
-                        break;
+            $masterRequest = $requestStack->getMasterRequest();
+            if($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
+                if($masterDocument instanceof WrapperInterface) {
+                    $hardlink = $masterDocument->getHardLinkSource();
+                    $hardlinkTarget = $hardlink->getSourceDocument();
+
+                    if($hardlinkTarget) {
+                        $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
+
+                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
+                            $hardlinkPath, $this->getRealFullPath());
                     }
                 }
-                $parent = $parent->getParent();
             }
 
             if (!$link) {
                 $config = \Pimcore\Config::getSystemConfig();
-
-                // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
-                $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getRequest();
-                $scheme = $request->getScheme() . '://';
+                $request = $requestStack->getCurrentRequest();
+                $scheme = 'http://';
+                if($request) {
+                    $scheme = $request->getScheme() . '://';
+                }
 
                 /** @var Site $site */
                 if ($site = FrontendTool::getSiteForDocument($this)) {
@@ -1002,7 +1007,7 @@ class Document extends Element\AbstractElement
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
-                        $rootPath = preg_quote($rootPath);
+                        $rootPath = preg_quote($rootPath, '@');
                         $link = preg_replace('@^' . $rootPath . '@', '', $this->path);
 
                         return $link;
@@ -1359,7 +1364,6 @@ class Document extends Element\AbstractElement
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object

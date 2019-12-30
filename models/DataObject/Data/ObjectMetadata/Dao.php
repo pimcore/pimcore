@@ -128,7 +128,6 @@ class Dao extends Model\Dao\AbstractDao
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
-              INDEX `o_id` (`o_id`),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),

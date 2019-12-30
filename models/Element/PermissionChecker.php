@@ -63,7 +63,7 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var $user User */
+        /** @var User $user */
         foreach ($users as $user) {
             $userPermission = [];
             $userPermission['userId'] = $user->getId();
@@ -119,7 +119,7 @@ class PermissionChecker
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
-                            $details[] = self::createDetail($user, $columnName, result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
                             continue;
                         }
                     }

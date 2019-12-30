@@ -129,6 +129,7 @@ class Api
         // token cache
         $hash = crc32(serialize([$scope]));
         $tokenId = 'google-api.token.' . $hash;
+        $token = null;
         if ($tokenData = TmpStore::get($tokenId)) {
             $tokenInfo = json_decode($tokenData->getData(), true);
             if (($tokenInfo['created'] + $tokenInfo['expires_in']) > (time() - 900)) {

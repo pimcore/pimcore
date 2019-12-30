@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
@@ -37,7 +38,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Objectbrick';
+    public $phpdocType = Objectbrick::class;
 
     /**
      * @var array
@@ -110,11 +111,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $getter = 'get' . ucfirst($allowedBrickType);
                 $params = [
                     'objectFromVersion' => $params['objectFromVersion'],
-                    'context' => [
+                    'context'           => [
                         'containerType' => 'objectbrick',
-                        'containerKey' => $allowedBrickType],
-                        'fieldname' => $this->getName()
-
+                        'containerKey'  => $allowedBrickType,
+                    ],
+                    'fieldname'         => $this->getName(),
                 ];
 
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType);
@@ -139,7 +140,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         if ($object) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
         }
-        /** @var $item DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{'get' . ucfirst($this->getName())}();
@@ -163,24 +164,21 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if (!$fd instanceof CalculatedValue) {
                 $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $params);
                 $brickData[$fd->getName()] = $fieldData->objectData;
-            }
-
-            $brickMetaData[$fd->getName()] = $fieldData->metaData;
-            if ($fieldData->metaData['inherited'] == true) {
-                $inherited = true;
+                $brickMetaData[$fd->getName()] = $fieldData->metaData;
+                if ($fieldData->metaData['inherited'] == true) {
+                    $inherited = true;
+                }
             }
         }
 
         $calculatedChilds = [];
         self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
 
-        if ($calculatedChilds) {
-            foreach ($calculatedChilds as $fd) {
-                $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
-                $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
-                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
-                $brickData[$fd->getName()] = $fieldData;
-            }
+        foreach ($calculatedChilds as $fd) {
+            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+            $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+            $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
+            $brickData[$fd->getName()] = $fieldData;
         }
 
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
@@ -230,6 +228,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
                 $refKey = $key;
+                $refId = null;
             }
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
@@ -244,7 +243,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             }
             $data = [];
 
-            if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
+            if ($fielddefinition instanceof ManyToOneRelation) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
@@ -255,6 +254,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
+            $fieldValue = null;
             $editmodeValue = null;
             if (!empty($item)) {
                 $fieldValue = $item->$valueGetter();
@@ -897,10 +897,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         return $editmodeData;
     }
 
-    /** See parent class.
+    /**
+     * See parent class.
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -1040,8 +1044,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
-     * @param array $list
+     * @param DataObject\ClassDefinition\Data[] $container
+     * @param CalculatedValue[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
@@ -1050,10 +1054,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
                 }
             }
         }

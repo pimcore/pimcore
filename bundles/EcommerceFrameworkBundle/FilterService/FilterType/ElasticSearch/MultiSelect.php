@@ -31,7 +31,8 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         if (!empty($value)) {
             if (!is_array($value)) {
@@ -39,7 +40,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
             }
         }
 
-        if (empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$isReload) {
             if (!empty($preSelect) || $preSelect == '0') {
                 $value = explode(',', $preSelect);
             }

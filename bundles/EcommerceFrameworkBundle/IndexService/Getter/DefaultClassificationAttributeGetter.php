@@ -32,7 +32,7 @@ class DefaultClassificationAttributeGetter implements GetterInterface
             if (!method_exists($object, $attributeGetter) || !($classificationStore = $object->$attributeGetter()) instanceof Classificationstore) {
                 continue;
             }
-            /** @var $classificationStore Classificationstore */
+            /** @var Classificationstore $classificationStore */
             $val = $classificationStore->getLocalizedKeyValue($source['group_id'], $source['key_id']);
 
             if ($val !== null) {

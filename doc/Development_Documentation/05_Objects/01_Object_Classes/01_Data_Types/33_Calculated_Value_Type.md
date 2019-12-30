@@ -99,6 +99,7 @@ As said before, the richness of the context information depends on the location 
 | fieldName | the name of the attribute inside the brick |
 | index | the name of the brick |
 | keyDefinition | the calculated-value field definition |
+| position | the language ("en", "de", ...) if calculated field is localized |
 
 
 #### Fieldcollections

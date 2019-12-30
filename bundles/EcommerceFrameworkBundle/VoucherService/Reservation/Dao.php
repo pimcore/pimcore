@@ -97,6 +97,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $db = \Pimcore\Db::get();
 
         $query = 'SELECT COUNT(*) FROM ' . self::TABLE_NAME;
+        $params = [];
 
         if (isset($seriesId)) {
             $query .= ' WHERE seriesId = ?';

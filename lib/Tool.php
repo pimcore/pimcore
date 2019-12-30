@@ -477,7 +477,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return string|null
      */
     public static function getClientIp(Request $request = null)
     {
@@ -491,8 +491,10 @@ class Tool
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
+        } else {
+            return null;
         }
 
         $ips = explode(',', $ip);
@@ -536,9 +538,9 @@ class Tool
 
             foreach ($confArray['views'] as $tmp) {
                 if (isset($tmp['name'])) {
-                    $tmp['showroot'] = (bool) $tmp['showroot'];
+                    $tmp['showroot'] = !empty($tmp['showroot']);
 
-                    if ((bool) $tmp['hidden']) {
+                    if (!empty($tmp['hidden'])) {
                         continue;
                     }
 

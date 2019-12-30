@@ -124,11 +124,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($data as $blockElements) {
                 $resultElement = [];
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -173,10 +170,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
             foreach ($unserializedData as $blockElements) {
                 $items = [];
-                /** @var $blockElement DataObject\Data\BlockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
-
-                    /** @var $fd DataObject\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -192,7 +186,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $blockElementRaw['data'] = $dataFromResource;
 
                     if ($blockElementRaw['type'] == 'localizedfields') {
-                        /** @var $data DataObject\Localizedfield */
+                        /** @var DataObject\Localizedfield $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
@@ -229,7 +223,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -242,11 +236,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
                 $idx++;
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -275,7 +266,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -285,11 +276,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         foreach ($data as $rawBlockElement) {
             $resultElement = [];
 
-            $oIndex = $rawBlockElement['oIndex'];
-            $blockElement = $rawBlockElement['data'];
+            $oIndex = $rawBlockElement['oIndex'] ?? null;
+            $blockElement = $rawBlockElement['data'] ?? null;
             $blockElementDefinition = $this->getFieldDefinitions();
 
-            /** @var $fd DataObject\ClassDefinition\Data */
             foreach ($blockElementDefinition as $elementName => $fd) {
                 $elementType = $fd->getFieldtype();
                 $invisible = $fd->getInvisible();
@@ -350,10 +340,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $data = null;
 
-        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? null;
 
-        if ($context) {
-            if ($context['containerType'] == 'fieldcollection') {
+        if (isset($context['containerType'])) {
+            if ($context['containerType'] === 'fieldcollection') {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -381,7 +371,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         return null;
                     }
                 }
-            } elseif ($context['containerType'] == 'objectbrick') {
+            } elseif ($context['containerType'] === 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -389,7 +379,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
@@ -466,11 +456,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
                 $idx++;
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
+                /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var $fd DataObject\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -508,12 +495,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($value as $blockElementsData) {
                 $resultElement = [];
 
-                /**
-                 * @var  $blockElement DataObject\Data\BlockElement
-                 */
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-
-                    /** @var $fd DataObject\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -703,7 +685,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -734,10 +716,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $context additional contextual data
      *
-     * @return mixed
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFielddefinition($name, $context = [])
     {
@@ -751,7 +733,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             return $fieldDefinition;
         }
 
-        return;
+        return null;
     }
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
@@ -953,12 +935,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         $lf = $this->getFielddefinition('localizedfields');
         if ($lf && is_array($data)) {
-            /** @var $item DataObject\Data\BlockElement */
+            /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {
                 if (is_array($item)) {
                     foreach ($item as $itemElement) {
                         if ($itemElement->getType() == 'localizedfields') {
-                            /** @var $itemElementData DataObject\Localizedfield */
+                            /** @var DataObject\Localizedfield $itemElementData */
                             $itemElementData = $itemElement->getData();
                             $itemElementData->setObject($object);
 
@@ -995,11 +977,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $field = $this->getName();
         $db = Db::get();
+        $data = null;
 
         if ($container instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $data = null;
-
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
@@ -1008,7 +989,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $context = $params['context'];
             $object = $context['object'];
 
-            if ($context && $context['containerType'] == 'fieldcollection') {
+            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
             } else {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
@@ -1163,7 +1144,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     foreach ($blockDefinitions as $fd) {
                         try {
-                            $blockElement = $item[$fd->getName()];
+                            $blockElement = $item[$fd->getName()] ?? null;
                             if (!$blockElement) {
                                 if ($fd->getMandatory()) {
                                     throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
@@ -1201,7 +1182,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $blockDefinitions = $this->getFieldDefinitions();
 
         if (is_array($blockDefinitions)) {
-            /** @var Data $fd */
             foreach ($blockDefinitions as $field) {
                 if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                     $field->setLazyLoading(false);

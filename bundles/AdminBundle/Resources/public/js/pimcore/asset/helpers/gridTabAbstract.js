@@ -24,7 +24,8 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
     },
 
     openColumnConfig: function (allowPreview) {
-        var fields = this.getGridConfig().columns;
+        var gridConfig = this.getGridConfig();
+        var fields = gridConfig.columns;
 
         var fieldKeys = Object.keys(fields);
 
@@ -61,8 +62,8 @@ pimcore.asset.helpers.gridTabAbstract = Class.create({
         }
 
         var columnConfig = {
-            language: this.gridLanguage,
-            pageSize: this.gridPageSize,
+            language: gridConfig.language,
+            pageSize: gridConfig.pageSize,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.asset.helpers.gridConfigDialog(columnConfig, function (data, settings, save) {

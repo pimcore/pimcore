@@ -42,7 +42,6 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname()
         ];
 
-        /** @var $fd Model\DataObject\ClassDefinition\Data */
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 

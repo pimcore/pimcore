@@ -9,17 +9,23 @@ use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
+use Symfony\Component\Cache\Tests\Adapter\AdapterTestCase;
 
 /**
  * @group cache.core.array
  */
-class ArrayAdapterProxyTest extends ArrayAdapterTest
+class ArrayAdapterProxyTest extends AdapterTestCase
 {
     use SymfonyProxyTestTrait;
     use CacheItemPoolTestTrait {
         createCachePool as _createCachePool;
     }
+
+    protected $skippedTests = [
+        'testGetMetadata' => 'ArrayAdapter does not keep metadata.',
+        'testDeferredSaveWithoutCommit' => 'Assumes a shared cache which ArrayAdapter is not.',
+        'testSaveWithoutExpire' => 'Assumes a shared cache which ArrayAdapter is not.',
+    ];
 
     public function createCachePool($defaultLifetime = 0)
     {

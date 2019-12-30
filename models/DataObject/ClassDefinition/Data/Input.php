@@ -295,4 +295,9 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $this->columnLength = $masterDefinition->columnLength;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

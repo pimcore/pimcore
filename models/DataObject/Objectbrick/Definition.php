@@ -53,7 +53,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     public $group;
 
     /**
-     * @param $classDefinitions
+     * @param array $classDefinitions
      *
      * @return $this
      */
@@ -261,10 +261,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-
-                /**
-                 * @var $def DataObject\ClassDefinition\Data
-                 */
                 $cd .= $def->getGetterCodeObjectbrick($this);
 
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {

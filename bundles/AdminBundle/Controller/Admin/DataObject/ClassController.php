@@ -524,7 +524,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list->setCondition('classId = ' . $list->quote($classId));
         $list = $list->load();
         $result = [];
-        /** @var $item DataObject\ClassDefinition\CustomLayout */
+        /** @var DataObject\ClassDefinition\CustomLayout $item */
         foreach ($list as $item) {
             $result[] = [
                 'id' => $item->getId(),
@@ -818,14 +818,14 @@ class ClassController extends AdminController implements EventedControllerInterf
         $user = \Pimcore\Tool\Admin::getCurrentUser();
 
         $groups = [];
-        /** @var $item DataObject\Fieldcollection\Definition */
+        /** @var DataObject\Fieldcollection\Definition $item */
         foreach ($list as $item) {
             if ($allowedTypes && !in_array($item->getKey(), $allowedTypes)) {
                 continue;
             }
 
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
                         'text' => $item->getGroup(),
@@ -913,7 +913,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if ($request->query->has('allowedTypes')) {
             $filteredList = [];
             $allowedTypes = explode(',', $request->get('allowedTypes'));
-            /** @var $type DataObject\Fieldcollection\Definition */
+            /** @var DataObject\Fieldcollection\Definition $type */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
@@ -1171,6 +1171,8 @@ class ClassController extends AdminController implements EventedControllerInterf
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
+        $fieldname = null;
+        $className = null;
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1179,11 +1181,10 @@ class ClassController extends AdminController implements EventedControllerInterf
             $className = $classDefinition->getName();
         }
 
-        /** @var $item DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $item */
         foreach ($list as $item) {
             if ($request->query->has('class_id') && $request->query->has('field_name')) {
                 $keep = false;
-                /** @var $type DataObject\Objectbrick\Definition */
                 $clsDefs = $item->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
@@ -1296,7 +1297,6 @@ class ClassController extends AdminController implements EventedControllerInterf
             $className = $classDefinition->getName();
 
             foreach ($list as $type) {
-                /** @var $type DataObject\Objectbrick\Definition */
                 $clsDefs = $type->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
@@ -1373,6 +1373,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         foreach ($json as $groupName => $group) {
             foreach ($group as $groupItem) {
                 $displayName = null;
+                $icon = null;
 
                 if ($groupName == 'class') {
                     $name = $groupItem['name'];
@@ -1638,8 +1639,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $objectBrickJson->key = $key;
                 $result['objectbrick'][] = $objectBrickJson;
             } elseif ($item['type'] == 'customlayout') {
+                /** @var DataObject\ClassDefinition\CustomLayout $customLayout */
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
-                /** @var $customLayout DataObject\ClassDefinition\CustomLayout */
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
                 $customLayout->className = $class->getName();
@@ -1822,7 +1823,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $existingIds = [];
         $existingNames = [];
 
-        /** @var $item DataObject\ClassDefinition\CustomLayout */
+        /** @var DataObject\ClassDefinition\CustomLayout $item */
         foreach ($list as $item) {
             $existingIds[] = $item->getId();
             if ($item->getClassId() == $classId) {

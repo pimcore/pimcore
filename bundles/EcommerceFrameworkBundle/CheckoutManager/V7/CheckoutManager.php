@@ -86,9 +86,7 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
             throw new UnsupportedException('Payment is not activated');
         }
 
-        /**
-         * @var $orderManager OrderManagerInterface
-         */
+        /** @var OrderManagerInterface $orderManager */
         $orderManager = $this->orderManagers->getOrderManager();
 
         // create order
@@ -122,9 +120,7 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
 
         $cart = $this->getCart();
 
-        /**
-         * @var $paymentProvider PaymentInterface
-         */
+        /** @var PaymentInterface $paymentProvider */
         $paymentProvider = $this->getPayment();
 
         $orderManager = $this->orderManagers->getOrderManager();

@@ -51,8 +51,10 @@ class GroupConfig extends Model\AbstractModel
      */
     public $name;
 
-    /** The group description.
-     * @var
+    /**
+     * The group description.
+     *
+     * @var string
      */
     public $description;
 
@@ -173,6 +175,8 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
+     * @return self
      */
     public function setName($name)
     {
@@ -189,16 +193,20 @@ class GroupConfig extends Model\AbstractModel
         return $this->name;
     }
 
-    /** Returns the description.
-     * @return mixed
+    /**
+     * Returns the description.
+     *
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /** Sets the description.
-     * @param $description
+    /**
+     * Sets the description.
+     *
+     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\GroupConfig
      */

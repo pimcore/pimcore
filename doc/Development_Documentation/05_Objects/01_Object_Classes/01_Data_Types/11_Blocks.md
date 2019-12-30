@@ -61,7 +61,7 @@ Create a Block:
 
 ```php
 /** 
- * @var  $blockElement DataObject\Data\BlockElement
+ * @var DataObject\Data\BlockElement $blockElement 
  * 
  * BlockElement( name, type, data )
  */

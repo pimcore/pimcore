@@ -140,7 +140,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -251,7 +251,7 @@ class Definition extends Model\AbstractModel
      */
     public static function getByKey($key)
     {
-        /** @var $fc Definition */
+        /** @var Definition $fc */
         $fc = null;
         $cacheKey = 'fieldcollection_' . $key;
 
@@ -356,10 +356,6 @@ class Definition extends Model\AbstractModel
         $fdDefs = $this->getFieldDefinitions();
         if (is_array($fdDefs) && count($fdDefs)) {
             foreach ($fdDefs as $key => $def) {
-
-                /**
-                 * @var $def DataObject\ClassDefinition\Data
-                 */
                 $cd .= $def->getGetterCodeFieldcollection($this);
 
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {

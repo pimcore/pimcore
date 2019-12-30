@@ -255,7 +255,8 @@ pimcore.element.tag.tree = Class.create({
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 handler: function (tree, record) {
                     Ext.MessageBox.prompt(t('rename_tag'), t('enter_new_name_of_the_tag'), function (tree, record, button, value) {
-                        if (button == "ok" && value.length > 2) {
+                        value = strip_tags(trim(value));
+                        if (button == "ok" && value.length > 0) {
                             Ext.Ajax.request({
                                 url: "/admin/tags/update",
                                 method: 'PUT',
@@ -287,7 +288,8 @@ pimcore.element.tag.tree = Class.create({
     },
 
     addTagComplete: function (tree, record, button, value, object) {
-        if (button == "ok" && value.length > 2) {
+        value = strip_tags(trim(value));
+        if (button == "ok" && value.length > 0) {
             Ext.Ajax.request({
                 url: "/admin/tags/add",
                 method: 'POST',

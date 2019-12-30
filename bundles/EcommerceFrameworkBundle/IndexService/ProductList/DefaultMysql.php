@@ -379,7 +379,7 @@ class DefaultMysql implements ProductListInterface
         if (count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
             $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
-            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
+            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$priceSystemName], null, null, $this->order, $this->getOffset(), $this->getLimit());
         } elseif (count($priceSystemArrays) == 0) {
             //nothing to do
         } else {

@@ -138,7 +138,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         this.store.getProxy().extraParams = {
-            limit: itemsPerPage,
             folderId: this.element.data.id,
             "fields[]": fieldParam,
             language: this.gridLanguage,
@@ -153,10 +152,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         var gridColumns = gridHelper.getGridColumns();
-
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
-
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
@@ -254,6 +249,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             columns : gridColumns,
+            bufferedRenderer: false,
             plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
@@ -519,8 +515,8 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 handler: function (data) {
                     var selectedRows = grid.getSelectionModel().getSelection();
                     for (var i = 0; i < selectedRows.length; i++) {
-                        var data = selectedRows[i].data;
-                        pimcore.helpers.openAsset(data.id, data.get("type~system"));
+                        var data = selectedRows[i];
+                        pimcore.helpers.openAsset(data.id, data.data['type~system']);
                     }
                 }.bind(this, data)
             }));

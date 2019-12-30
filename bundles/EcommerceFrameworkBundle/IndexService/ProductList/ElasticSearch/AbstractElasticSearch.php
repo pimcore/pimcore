@@ -629,13 +629,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
         unset($params['body']['sort']);     // don't send the sort parameter, because it doesn't exist with offline sorting
         $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
         $params['body']['from'] = 0;
-        $params['body']['fields'] = ['system.priceSystemName'];
+        $params['body']['_source'] = ['system.priceSystemName'];
         $result = $this->sendRequest($params);
         $objectRaws = [];
         if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
-                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => reset($hit['fields']['system.priceSystemName'])];
+                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
             }
         }
         $priceSystemArrays = [];
@@ -1241,9 +1241,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function sendRequest(array $params)
     {
         /**
-         * @var $esClient \Elasticsearch\Client
+         * @var \Elasticsearch\Client $esClient
          */
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+        $result = [];
 
         if ($esClient instanceof \Elasticsearch\Client) {
             if ($this->doScrollRequest) {

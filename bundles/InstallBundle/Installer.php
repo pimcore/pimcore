@@ -391,13 +391,12 @@ class Installer
 
     private function markMigrationsAsDone(KernelInterface $kernel)
     {
-        /**
-         * @var $manager \Pimcore\Migrations\MigrationManager
-         */
+        /** @var \Pimcore\Migrations\MigrationManager $manager */
         $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
         $config = $manager->getConfiguration('pimcore_core');
         $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
-        $latest = end($config->getMigrations());
+        $migrations = $config->getMigrations();
+        $latest = end($migrations);
         $manager->markVersionAsMigrated($latest);
     }
 

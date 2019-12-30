@@ -96,7 +96,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
         this.store.filter(searchFilter);
     },
 
-    batchPrepare: function(columnDataIndex, grid, onlySelected, append){
+    batchPrepare: function(columnDataIndex, grid, onlySelected, append, remove){
         var columnIndex = columnDataIndex.fullColumnIndex;
         var editor = grid.getColumns()[columnIndex].getEditor();
         var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex.dataIndex);

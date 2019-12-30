@@ -48,6 +48,8 @@ abstract class Processor
      * @param $documentId
      * @param $config
      *
+     * @return mixed
+     *
      * @throws \Exception
      */
     public function preparePdfGeneration($documentId, $config)
