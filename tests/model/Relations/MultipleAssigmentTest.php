@@ -12,6 +12,11 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
+/**
+ * Class MultipleAssigmentTest
+ * @package Pimcore\Tests\Model\Relations
+ * @group multiple
+ */
 class MultipleAssigmentTest extends ModelTestCase
 {
     public function setUp()
@@ -42,23 +47,8 @@ class MultipleAssigmentTest extends ModelTestCase
 
     protected function setUpTestClasses()
     {
-        $name = 'RelationTest';
-        $file = 'relations/class_RelationTest_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
-
-        $name = 'MultipleAssignments';
-        $file = 'relations/class_MultipleAssignments_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
+        $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupPimcoreClass_MultipleAssignments();
     }
 
     public function testMultipleAssignmentsOnSingleManyToMany()

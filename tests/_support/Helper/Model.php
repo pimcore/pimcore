@@ -47,6 +47,105 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+
+    /**
+     * Set up a class used for relation tests.
+     *
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_RelationTest($name = "RelationTest", $filename = 'relations/class_RelationTest_export.json') {
+
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("input", "someAttribute"));
+            $panel->addChild($this->createDataChild("input", "someAttribute1"));
+            $panel->addChild($this->createDataChild("input", "someAttribute2"));
+            $panel->addChild($this->createDataChild("input", "someAttribute3"));
+            $panel->addChild($this->createDataChild("input", "someAttribute4"));
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName("localizedfields");
+            $lFields->addChild($this->createDataChild("input", "xsomeAttribute"));
+            $lFields->addChild($this->createDataChild("input", "xsomeAttribute1"));
+            $lFields->addChild($this->createDataChild("input", "xsomeAttribute2"));
+            $lFields->addChild($this->createDataChild("input", "xsomeAttribute3"));
+            $lFields->addChild($this->createDataChild("input", "xsomeAttribute4"));
+            $panel->addChild($lFields);
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+        return $class;
+    }
+
+    /**
+     * Set up a class used for relation tests.
+     *
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_MultipleAssignments($name = "MultipleAssignments", $filename = 'relations/class_MultipleAssignments_export.json') {
+
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("advancedManyToManyRelation", "onlyOneManyToMany")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyRelation", "multipleManyToMany")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
+                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "onlyOneManyToManyObject")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "multipleManyToManyObject")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(true)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+        return $class;
+    }
+
+
     /**
      * Set up a class which (hopefully) contains all data types
      *
