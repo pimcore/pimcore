@@ -403,7 +403,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return false;
             }
         } else {
-            $this->logger->warning(
+            $this->logger->info(
                 'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
                 [
                     'key' => $item->getKey(),
