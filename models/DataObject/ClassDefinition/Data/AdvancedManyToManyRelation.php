@@ -1227,11 +1227,15 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param bool $allowMultipleAssignments
+     * @param $allowMultipleAssignments
+     *
+     * @return $this
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+
+        return $this;
     }
 
     /**
