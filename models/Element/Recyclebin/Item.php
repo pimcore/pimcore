@@ -326,7 +326,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param ElementInterface $data
+     * @param Element\ElementInterface $data
      *
      * @return mixed
      */
