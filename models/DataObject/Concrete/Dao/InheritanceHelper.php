@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Pimcore\Db\ConnectionInterface;
-use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 
 class InheritanceHelper
@@ -390,7 +389,7 @@ class InheritanceHelper
                     $filteredResult = [];
                     foreach ($result as $row) {
                         $rowId = $row['id'];
-                        if (!isset($filteredResult[$rowId]) || $row['language'] === $language) {
+                        if ((!isset($filteredResult[$rowId]) && $language === null) || $row['language'] === $language) {
                                 $filteredResult[$rowId] = $row;
                         }
                     }
