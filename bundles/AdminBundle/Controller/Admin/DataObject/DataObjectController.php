@@ -803,7 +803,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         foreach ($classes as $class) {
             $reduced[] = [
                 'id' => $class->getId(),
-                'name' => $class->getName()
+                'name' => $class->getName(),
+                'inheritance' => $class->getAllowInherit(),
             ];
         }
 

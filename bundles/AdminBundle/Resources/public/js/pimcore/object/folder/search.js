@@ -47,7 +47,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 var data = [];
                 for (i = 0; i < this.object.data.classes.length; i++) {
                     var klass = this.object.data.classes[i];
-                    data.push([klass.id, klass.name, ts(klass.name)]);
+                    data.push([klass.id, klass.name, ts(klass.name), klass.inheritance]);
 
                 }
 
@@ -57,7 +57,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     fields: [
                         {name: 'id', type: 'string'},
                         {name: 'name', type: 'string'},
-                        {name: 'translatedText', type: 'string'}
+                        {name: 'translatedText', type: 'string'},
+                        {name: 'inheritance', type: 'bool'}
                     ]
                 });
 
@@ -86,6 +87,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
                 else {
                     this.currentClass = this.object.data.classes[0].id;
+                    this.setClassInheritance(this.object.data.classes[0].inheritance);
                 }
             }
             else {
@@ -109,15 +111,20 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         return this.layout;
     },
 
-    changeClassSelect: function (field, newValue, oldValue) {
+        changeClassSelect: function (field, newValue, oldValue) {
         var selectedClass = newValue.data.id;
         this.setClass(selectedClass);
+        this.setClassInheritance(newValue.data.inheritance);
     },
 
     setClass: function (classId) {
         this.classId = classId;
         this.settings = {};
         this.getTableDescription();
+    },
+
+    setClassInheritance: function (inheritance) {
+        this.object.data.general.allowInheritance = inheritance;
     },
 
     getTableDescription: function () {
