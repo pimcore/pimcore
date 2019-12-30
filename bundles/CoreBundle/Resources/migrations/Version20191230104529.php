@@ -18,7 +18,7 @@ class Version20191230104529 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $class = ClassDefinition::getById('EF_OSO');
+        $class = ClassDefinition::getByName('OnlineShopOrder');
         if($class) {
             /**
              * @var $cartIdField ClassDefinition\Data\Input
@@ -34,7 +34,7 @@ class Version20191230104529 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $class = ClassDefinition::getById('EF_OSO');
+        $class = ClassDefinition::getByName('OnlineShopOrder');
         if($class) {
             /**
              * @var $cartIdField ClassDefinition\Data\Input
