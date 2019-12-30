@@ -55,6 +55,13 @@ class AbstractLazyLoadingTest extends ModelTestCase
             $class = $this->tester->setupClass($name, $file);
         }
 
+        $cacheRawRelationData = getEnv('PIMCORE_CACHE_RAW_RELATION_DATA');
+        if ($cacheRawRelationData != $class->getCacheRawRelationData()) {
+            $class->setCacheRawRelationData($cacheRawRelationData);
+            $class->save();
+        }
+        codecept_debug("CACHE RAW RELATION DATA: " . ($class->getCacheRawRelationData() ? "TRUE" : "FALSE"));
+
         $name = 'LazyLoadingTest';
         $file = 'lazyloading/objectbrick_LazyLoadingTest_export.json';
         $brick = $this->tester->setupObjectBrick($name, $file);
