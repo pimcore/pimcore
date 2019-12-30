@@ -381,6 +381,7 @@
   "non_owner_description": "Non owner objects represent relations to an other object just in the same way as objects do. The difference is, that a non-owner object field is not the owner of the relation data, it is merely a view on data stored in other objects. Please choose the owner and field name where the data is originally stored.",
   "allow_variants": "Allow variants",
   "show_variants": "Show variants in tree",
+  "cache_raw_relation_data": "Cache Raw Relation Data",
   "allowed_class_field": "Allowed class\/field",
   "structuredTable": "Structured Table",
   "position": "Position",

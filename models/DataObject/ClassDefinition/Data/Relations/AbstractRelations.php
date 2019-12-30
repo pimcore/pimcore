@@ -208,18 +208,17 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function load($object, $params = [])
     {
-        $db = Db::get();
         $data = null;
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
+                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
             }
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername'=> $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
@@ -228,17 +227,14 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                     $index = $context['index'] ?? null;
                     $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
                 } else {
-                    $filter = '/' . $context['containerType'] .'~' . $fieldname . '/%';
+                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
                 }
-                $relations = $db->fetchAll(
-                    'SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
-                    [$object->getObject()->getId(), $this->getName(), $params['language'], $filter]
-                );
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params['language']]);
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
             }
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'objectbrick', 'ownername' => $object->getFieldname(), 'position' => $object->getType()]);
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a

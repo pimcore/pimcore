@@ -306,6 +306,11 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
+                    if ($object instanceof CacheRawRelationDataInterface) {
+                        // force loading of relation data
+                        $object->__getRawRelationData();
+                    }
+
                     Cache::save($object, $cacheKey);
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
