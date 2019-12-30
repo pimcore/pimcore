@@ -1169,6 +1169,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $fileinfo = $request->get('fileinfo');
         $image = Asset\Image::getById(intval($request->get('id')));
 
+        if (!$image) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
         if (!$image->isAllowed('view')) {
             throw new \Exception('not allowed to view thumbnail');
         }
