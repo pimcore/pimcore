@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
+use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
@@ -73,9 +74,9 @@ class InheritanceHelper
     protected static $useRuntimeCache = false;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $treeIds = [];
+    protected $childFound;
 
     /**
      * @var array
@@ -164,6 +165,7 @@ class InheritanceHelper
         $this->fieldIds = [];
         $this->deletionFieldIds = [];
         $this->fieldDefinitions = [];
+        $this->childFound = false;
     }
 
     /**
@@ -207,42 +209,45 @@ class InheritanceHelper
             return;
         }
 
-        $fields = implode('`,`', $this->fields);
-        if (!empty($fields)) {
-            $fields = ', `' . $fields . '`';
-        }
 
-        $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
-        $o = [
-            'id' => $result['id'],
-            'values' => $result
-        ];
-
-        $this->treeIds = [];
-        $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
-
-        if (!empty($this->fields)) {
-            foreach ($this->fields as $fieldname) {
-                foreach ($o['children'] as $c) {
-                    $this->getIdsToUpdateForValuefields($c, $fieldname);
-                }
-
-                $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
+        // only build the tree if there are fields to check
+        if (!empty($this->fields) ||!empty($this->relations)) {
+            $fields = implode('`,`', $this->fields);
+            if (!empty($fields)) {
+                $fields = ', `' . $fields . '`';
             }
-        }
 
-        if (!empty($this->relations)) {
-            foreach ($this->relations as $fieldname => $fields) {
-                foreach ($o['children'] as $c) {
-                    $this->getIdsToUpdateForRelationfields($c, $fieldname, $params);
-                }
+            $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+            $o = [
+                'id' => $result['id'],
+                'values' => $result
+            ];
 
-                if (is_array($fields)) {
-                    foreach ($fields as $f) {
-                        $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $f);
+            $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
+
+            if (!empty($this->fields)) {
+                foreach ($this->fields as $fieldname) {
+                    foreach ($o['children'] as $c) {
+                        $this->getIdsToUpdateForValuefields($c, $fieldname);
                     }
-                } else {
+
                     $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
+                }
+            }
+
+            if (!empty($this->relations)) {
+                foreach ($this->relations as $fieldname => $fields) {
+                    foreach ($o['children'] as $c) {
+                        $this->getIdsToUpdateForRelationfields($c, $fieldname, $params);
+                    }
+
+                    if (is_array($fields)) {
+                        foreach ($fields as $f) {
+                            $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $f);
+                        }
+                    } else {
+                        $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
+                    }
                 }
             }
         }
@@ -252,14 +257,24 @@ class InheritanceHelper
         // parent object has no brick, add child to parent, add brick to parent & click save
         // without this code there will not be an entry in the query table for the child object
         if ($createMissingChildrenRows) {
-            if (!empty($this->treeIds)) {
-                $idsInTable = $this->db->fetchCol('SELECT ' . $this->idField . ' FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $this->treeIds) . ')');
+            // if we have a tree (which is the case if either fields or relations is configured) then
+            // rely on the childFound flag
+            // without a tree we have to do the select anyway
+            if ($this->childFound || (empty($this->fields) && empty($this->relations))) {
+                $object = DataObject\Concrete::getById($oo_id);
+                $classId = $object->getClassId();
 
-                $diff = array_diff($this->treeIds, $idsInTable);
+                $db = Db::get();
+                $query = "SELECT b.o_id AS id "
+                    . " FROM objects b LEFT JOIN " . $this->querytable . ' a ON b.o_id = a.' . $this->idField
+                    . ' WHERE b.o_classId = ' . $classId
+                            . ' AND o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%')
+                            . ' AND ISNULL(a.ooo_id)';
+                $missingIds = $db->fetchCol($query);
 
                 // create entries for children that don't have an entry yet
                 $originalEntry = $this->db->fetchRow('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
-                foreach ($diff as $id) {
+                foreach ($missingIds as $id) {
                     $originalEntry[$this->idField] = $id;
                     $this->db->insert($this->querytable, $originalEntry);
                 }
@@ -393,7 +408,6 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                //TODO cache result + restrict languages (HAVING) to the subset needed by localized fields DAO
                 $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . \Pimcore\Db::get()->quote($object->getRealFullPath() . '/%') . ' ORDER BY LENGTH(o_path) ASC';
             } else {
                 $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
@@ -429,16 +443,16 @@ class InheritanceHelper
 
         if (isset($parentIdGroups[$currentParentId])) {
             foreach ($parentIdGroups[$currentParentId] as $r) {
+                if ($r['classId'] == $this->classId) {
+                    $this->childFound = true;
+                }
+
                 $id = $r['id'];
                 $o = [
                     'id' => $id,
                     'values' => $r,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params)
                 ];
-
-                if ($r['classId'] == $this->classId) {
-                    $this->treeIds[] = $id;
-                }
 
                 $objects[] = $o;
             }
@@ -462,7 +476,6 @@ class InheritanceHelper
         }
 
         if (isset($params['language'])) {
-            //TODO cache result + restrict languages (HAVING) to the subset needed by localized fields DAO
             $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY position, fieldname;", [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
