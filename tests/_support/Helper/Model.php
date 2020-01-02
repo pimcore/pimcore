@@ -577,6 +577,126 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Sets up a Fieldcollection for lazy loading tests
+     *
+     * @param string $name
+     * @param string $filename
+     * @return Definition|null
+     * @throws \Exception
+     */
+    public function setupFieldcollection_LazyLoadingTest($name = "LazyLoadingTest", $filename = 'lazyloading/fieldcollection_LazyLoadingTest_export.json') {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("manyToManyObjectRelation", "objects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+            );
+
+            $panel->addChild($this->createDataChild("manyToOneRelation", "relation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "relations")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "advancedObjects")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyRelation", "advancedRelations")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "meta"]
+                ]));
+
+
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+        return $definition;
+    }
+
+    /**
+     * Sets up a Fieldcollection for localized lazy loading tests
+     *
+     * @param string $name
+     * @param string $filename
+     * @return Definition|null
+     * @throws \Exception
+     */
+    public function setupFieldcollection_LazyLoadingLocalizedTest($name = "LazyLoadingLocalizedTest", $filename = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json') {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getFieldcollection($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName("localizedfields");
+
+
+
+            $lFields->addChild($this->createDataChild("manyToManyObjectRelation", "lobjects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+            );
+
+            $lFields->addChild($this->createDataChild("manyToOneRelation", "lrelation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $lFields->addChild($this->createDataChild("manyToManyRelation", "lrelations")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $lFields->addChild($this->createDataChild("advancedManyToManyObjectRelation", "ladvancedObjects")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $lFields->addChild($this->createDataChild("advancedManyToManyRelation", "ladvancedRelations")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "meta"]
+                ]));
+
+
+            $panel->addChild($lFields);
+
+            $root->addChild($rootPanel);
+            $definition = $this->createFieldcollection($name, $root, $filename);
+        }
+        return $definition;
+    }
+
+
+    /**
      * Sets up an object brick
      *
      * @param string $name

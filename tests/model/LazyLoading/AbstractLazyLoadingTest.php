@@ -30,27 +30,10 @@ class AbstractLazyLoadingTest extends ModelTestCase
     protected function setUpTestClasses()
     {
         $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupFieldcollection_LazyLoadingTest();
 
-        $name = 'LazyLoadingTest';
-        $file = 'lazyloading/fieldcollection_LazyLoadingTest_export.json';
-        $fieldCollection = $this->tester->setupFieldCollection($name, $file);
-
-        $name = 'LazyLoadingLocalizedTest';
-        $file = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json';
-        $fieldCollection = $this->tester->setupFieldCollection($name, $file);
-
-
+        $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
         $this->tester->setupPimcoreClass_LazyLoading();
-
-//
-//        $name = 'LazyLoading';
-//        $file = 'lazyloading/class_LazyLoading_export.json';
-//        $class = ClassDefinition::getByName($name);
-//
-//        if (!$class) {
-//            /** @var ClassDefinition $class */
-//            $class = $this->tester->setupClass($name, $file);
-//        }
 
         $name = 'LazyLoadingTest';
         $file = 'lazyloading/objectbrick_LazyLoadingTest_export.json';
