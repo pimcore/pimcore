@@ -499,7 +499,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * @return Tag[]
      */
     public function getElements()
     {

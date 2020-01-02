@@ -476,8 +476,9 @@ class Link extends Model\Document\Tag
     public function resolveDependencies()
     {
         $dependencies = [];
+        $isInternal = $this->data['internal'] ?? false;
 
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && $isInternal) {
             if (intval($this->data['internalId']) > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
