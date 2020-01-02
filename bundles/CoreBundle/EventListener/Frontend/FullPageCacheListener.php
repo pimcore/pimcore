@@ -198,8 +198,8 @@ class FullPageCacheListener
 
         try {
             $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->cache) {
-                $conf = $conf->cache;
+            if ($conf->full_page_cache) {
+                $conf = $conf->full_page_cache;
 
                 if (!$conf->enabled) {
                     return $this->disable();
