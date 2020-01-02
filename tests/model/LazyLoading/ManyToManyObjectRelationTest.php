@@ -117,7 +117,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $data = [
-            'blockobjectsLazyloaded' => new BlockElement('blockobjectsLazyLoaded', 'manyToManyObjectRelation', $this->loadRelations()->load()),
+            'blockobjectsLazyLoaded' => new BlockElement('blockobjectsLazyLoaded', 'manyToManyObjectRelation', $this->loadRelations()->load()),
         ];
         $object->setTestBlockLazyloaded([$data]);
         $object->save();
