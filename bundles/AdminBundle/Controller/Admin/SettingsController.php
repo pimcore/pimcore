@@ -364,11 +364,11 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['fullpagecache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['fullpagecache']['excludePatterns']);
+        if (!empty($valueArray['full_page_cache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['full_page_cache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['fullpagecache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['full_page_cache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
@@ -445,7 +445,7 @@ class SettingsController extends AdminController
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        $cacheExcludePatterns = $values['fullpagecache.excludePatterns'];
+        $cacheExcludePatterns = $values['full_page_cache.excludePatterns'];
         if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
@@ -501,11 +501,11 @@ class SettingsController extends AdminController
                     'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
-            'fullpagecache' => [
-                'enabled' => $values['fullpagecache.enabled'],
-                'lifetime' => $values['fullpagecache.lifetime'],
+            'full_page_cache' => [
+                'enabled' => $values['full_page_cache.enabled'],
+                'lifetime' => $values['full_page_cache.lifetime'],
                 'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['fullpagecache.excludeCookie']
+                'exclude_cookie' => $values['full_page_cache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']

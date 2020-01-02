@@ -32,7 +32,7 @@ class Version20191213115045 extends AbstractPimcoreMigration
 
                     $config['pimcore'] = array_merge(
                         array_slice($config['pimcore'], 0,  $offset),
-                        ["fullpagecache" => $config['pimcore']['cache']],
+                        ["full_page_cache" => $config['pimcore']['cache']],
                         array_slice($config['pimcore'], $offset)
                     );
 
@@ -57,18 +57,18 @@ class Version20191213115045 extends AbstractPimcoreMigration
             if (is_file($configFile)) {
                 $config = Config::getConfigInstance($configFile, true);
 
-                $offset = array_search("fullpagecache", array_keys($config['pimcore']));
+                $offset = array_search("full_page_cache", array_keys($config['pimcore']));
 
                 if ($offset) {
-                    $config['pimcore']['fullpagecache']['enabled'] = false;
+                    $config['pimcore']['full_page_cache']['enabled'] = false;
 
                     $config['pimcore'] = array_merge(
                         array_slice($config['pimcore'], 0,  $offset),
-                        ["cache" => $config['pimcore']['fullpagecache']],
+                        ["cache" => $config['pimcore']['full_page_cache']],
                         array_slice($config['pimcore'], $offset)
                     );
 
-                    unset($config['pimcore']['fullpagecache']);
+                    unset($config['pimcore']['full_page_cache']);
 
                     $config = Yaml::dump($config, 6);
                     File::put($configFile, $config);

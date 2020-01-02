@@ -926,7 +926,7 @@ class Configuration implements ConfigurationInterface
         $defaultOptions = ConnectionFactory::getDefaultOptions();
 
         $rootNode->children()
-            ->arrayNode('fullpagecache')
+            ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
                 ->canBeDisabled()
                 ->addDefaultsIfNotSet()

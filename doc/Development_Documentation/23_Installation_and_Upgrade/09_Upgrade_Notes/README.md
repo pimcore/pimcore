@@ -15,7 +15,7 @@
     to 
     ```yaml
     pimcore:
-      fullpagecache:
+      full_page_cache:
           ...
     ```
     in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:fullpage` is disabled by default, so you have to enable fullpage cache again in system settings.

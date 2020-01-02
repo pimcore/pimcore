@@ -54,7 +54,7 @@ class ConfigWriter
                 ]
             ],
             'services' => [],
-            'fullpagecache' => [
+            'full_page_cache' => [
                 'exclude_cookie' => ''
             ],
             'httpclient' => [

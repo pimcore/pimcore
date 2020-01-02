@@ -939,14 +939,14 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t("cache_enabled"),
                                 xtype: "checkbox",
-                                name: "fullpagecache.enabled",
-                                checked: this.getValue("fullpagecache.enabled")
+                                name: "full_page_cache.enabled",
+                                checked: this.getValue("full_page_cache.enabled")
                             },
                             {
                                 fieldLabel: t('lifetime'),
                                 xtype: "numberfield",
-                                name: 'fullpagecache.lifetime',
-                                value: this.getValue("fullpagecache.lifetime"),
+                                name: 'full_page_cache.lifetime',
+                                value: this.getValue("full_page_cache.lifetime"),
                                 width: 350,
                                 step: 100
                             },
@@ -967,11 +967,11 @@ pimcore.settings.system = Class.create({
                                         type: 'memory'
                                     },
                                     fields: ['value'],
-                                    data: this.getValue("fullpagecache.excludePatternsArray", true)
+                                    data: this.getValue("full_page_cache.excludePatternsArray", true)
                                 }),
                                 fieldLabel: t('exclude_patterns'),
-                                name: 'fullpagecache.excludePatterns',
-                                value: this.getValue("fullpagecache.excludePatterns"),
+                                name: 'full_page_cache.excludePatterns',
+                                value: this.getValue("full_page_cache.excludePatterns"),
                                 displayField: 'value',
                                 valueField: 'value',
                                 forceSelection: false,
@@ -987,8 +987,8 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: t('cache_disable_cookies'),
-                                name: 'fullpagecache.excludeCookie',
-                                value: this.getValue("fullpagecache.excludeCookie")
+                                name: 'full_page_cache.excludeCookie',
+                                value: this.getValue("full_page_cache.excludeCookie")
                             }
                         ]
                     },
