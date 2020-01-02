@@ -335,7 +335,9 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        $container->setParameter('pimcore.geoip.db_file', PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb');
+        if(!$container->hasParameter('pimcore.geoip.db_file')) {
+            $container->setParameter('pimcore.geoip.db_file', null);
+        }
 
         $loader->load('targeting.yml');
 

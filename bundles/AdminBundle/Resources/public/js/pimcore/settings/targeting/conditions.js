@@ -90,6 +90,11 @@ pimcore.settings.targeting.conditions = (function () {
         }),
 
         country: Class.create(pimcore.settings.targeting.condition.abstract, {
+
+            isAvailable : function () {
+                return pimcore.settings['maxmind_geoip_installed'];
+            },
+
             getName: function () {
                 return t("country");
             },
@@ -204,6 +209,11 @@ pimcore.settings.targeting.conditions = (function () {
         }),
 
         geopoint: Class.create(pimcore.settings.targeting.condition.abstract, {
+
+            isAvailable : function () {
+                return pimcore.settings['maxmind_geoip_installed'];
+            },
+
             getName: function () {
                 return t("geopoint");
             },
