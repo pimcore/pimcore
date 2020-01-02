@@ -33,6 +33,8 @@ class InheritanceHelper
 
     const ID_FIELD = 'oo_id';
 
+    const QUERY_ID_FIELD = 'ooo_id';
+
     /**
      * @var ConnectionInterface
      */
@@ -104,13 +106,20 @@ class InheritanceHelper
     protected $idField;
 
     /**
+     * @var null|string
+     */
+    protected $queryIdField;
+
+
+    /**
      * @param string $classId
      * @param string|null $idField
      * @param string|null $storetable
      * @param string|null $querytable
      * @param string|null $relationtable
+     * @param string|null $queryIdField
      */
-    public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null)
+    public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null, $queryIdField = null)
     {
         $this->db = \Pimcore\Db::get();
         $this->classId = $classId;
@@ -137,6 +146,12 @@ class InheritanceHelper
             $this->idField = self::ID_FIELD;
         } else {
             $this->idField = $idField;
+        }
+
+        if ($queryIdField == null) {
+            $this->queryIdField = self::QUERY_ID_FIELD;
+        } else {
+            $this->queryIdField = $queryIdField;
         }
     }
 
@@ -269,7 +284,7 @@ class InheritanceHelper
                     . " FROM objects b LEFT JOIN " . $this->querytable . ' a ON b.o_id = a.' . $this->idField
                     . ' WHERE b.o_classId = ' . $db->quote($classId)
                             . ' AND o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%')
-                            . ' AND ISNULL(a.ooo_id)';
+                            . ' AND ISNULL(a.' . $this->queryIdField . ')';
                 $missingIds = $db->fetchCol($query);
 
                 // create entries for children that don't have an entry yet
