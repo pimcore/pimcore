@@ -173,8 +173,9 @@ class Bootstrap
     {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+        $dotEnvLocalPhpFile = PIMCORE_PROJECT_ROOT .'/.env.local.php';
 
-        if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
+        if (file_exists($dotEnvLocalPhpFile) && is_array($env = include $dotEnvLocalPhpFile)) {
             foreach ($env as $k => $v) {
                 $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
             }
