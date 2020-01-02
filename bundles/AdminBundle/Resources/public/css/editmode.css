@@ -446,6 +446,7 @@ input.cke_dialog_ui_input_tel {
     padding-bottom: 3px;
     background: #000;
     border-bottom: 1px solid #ccc;
+    cursor: move;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small:last-child {
