@@ -267,7 +267,7 @@ class InheritanceHelper
                 $db = Db::get();
                 $query = "SELECT b.o_id AS id "
                     . " FROM objects b LEFT JOIN " . $this->querytable . ' a ON b.o_id = a.' . $this->idField
-                    . ' WHERE b.o_classId = ' . $classId
+                    . ' WHERE b.o_classId = ' . $db->quote($classId)
                             . ' AND o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%')
                             . ' AND ISNULL(a.ooo_id)';
                 $missingIds = $db->fetchCol($query);
