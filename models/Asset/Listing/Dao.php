@@ -88,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id', 'type']);
+        $select = $this->getQuery(['id']);
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);

@@ -752,6 +752,10 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        if(!$this->getType()) {
+            $this->setType('unknown');
+        }
+
         $this->postPersistData();
 
         // save properties

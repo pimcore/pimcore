@@ -32,7 +32,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     protected $order;
 
     /**
-     * @var string|array
+     * @var array
      */
     protected $orderKey;
 
@@ -199,7 +199,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @return array|string
+     * @return array
      */
     public function getOrderKey()
     {
