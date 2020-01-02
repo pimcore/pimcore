@@ -167,17 +167,17 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
         $result = $this->initPayment($price, $config->asArray());
 
         if ($result instanceof \stdClass) {
-            $json = json_encode($result);
-        } else {
-            json_decode($result);
-            if (json_last_error() == JSON_ERROR_NONE) {
-                $json = $result;
-            } else {
-                $json = $result;
+            if($json = json_encode($result)) {
+                return new JsonResponse($orderAgent->getOrder(), $json);
             }
         }
 
-        return new JsonResponse($orderAgent->getOrder(), $json);
+        json_decode($result);
+        if (json_last_error() == JSON_ERROR_NONE) {
+            return new JsonResponse($orderAgent->getOrder(), $result);
+        }
+
+        throw new \Exception("result of initPayment neither stdClass nor JSON");
     }
 
     /**
