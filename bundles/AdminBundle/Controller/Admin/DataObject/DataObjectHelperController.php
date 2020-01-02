@@ -2427,7 +2427,7 @@ class DataObjectHelperController extends AdminController
                 $fds = $class->getFieldDefinitions();
 
                 $additionalFieldNames = array_keys($fds);
-                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
+                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
                 $localizedFields = $class->getFieldDefinition('localizedfields');
                 if ($localizedFields) {
                     $lfNames = array_keys($localizedFields->getFieldDefinitions());

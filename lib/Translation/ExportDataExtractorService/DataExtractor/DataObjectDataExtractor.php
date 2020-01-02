@@ -314,7 +314,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                     $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
 
-                    /** @var Localizedfields $localizedFieldsDefinition */
+                    /** @var Localizedfields|null $localizedFieldsDefinition */
                     $localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields');
                     if (!$localizedFieldsDefinition) {
                         continue;

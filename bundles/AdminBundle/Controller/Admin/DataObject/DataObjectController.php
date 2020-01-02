@@ -1805,7 +1805,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param DataObject\ClassDefinition $class
      * @param string $key
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data|null
      */
     protected function getFieldDefinition($class, $key)
     {
