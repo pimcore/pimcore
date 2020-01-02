@@ -140,7 +140,7 @@ class InheritanceHelper
     }
 
     /**
-     * Enable or disable the runtime cache
+     * Enable or disable the runtime cache. Default value is off.
      *
      * @param bool $value
      */
