@@ -421,7 +421,7 @@ class InheritanceHelper
      *
      * @return mixed
      */
-    protected function getRelationsForNode($node)
+    protected function getRelationsForNode(&$node)
     {
 
         // if the relations are already set, skip here
