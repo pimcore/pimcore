@@ -212,16 +212,17 @@ class InheritanceHelper
         }
 
         $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
-        $o = new \stdClass();
-        $o->id = $result['id'];
-        $o->values = $result;
+        $o = [
+            'id' => $result['id'],
+            'values' => $result
+        ];
 
         $this->treeIds = [];
-        $o->childs = $this->buildTree($result['id'], $fields);
+        $o['children'] = $this->buildTree($result['id'], $fields);
 
         if (!empty($this->fields)) {
             foreach ($this->fields as $fieldname) {
-                foreach ($o->childs as $c) {
+                foreach ($o['children'] as $c) {
                     $this->getIdsToUpdateForValuefields($c, $fieldname);
                 }
 
@@ -231,7 +232,7 @@ class InheritanceHelper
 
         if (!empty($this->relations)) {
             foreach ($this->relations as $fieldname => $fields) {
-                foreach ($o->childs as $c) {
+                foreach ($o['children'] as $c) {
                     $this->getIdsToUpdateForRelationfields($c, $fieldname);
                 }
 
@@ -282,14 +283,15 @@ class InheritanceHelper
             $fields = ', `' . $fields . '`';
         }
 
-        $o = new \stdClass();
-        $o->id = $objectId;
-        $o->values = [];
-        $o->childs = $this->buildTree($objectId, $fields);
+        $o = [
+            'id' => $objectId,
+            'values' => [],
+            'children' => $this->buildTree($objectId, $fields)
+        ];
 
         if (!empty($this->fields)) {
             foreach ($this->fields as $fieldname) {
-                foreach ($o->childs as $c) {
+                foreach ($o['children'] as $c) {
                     $this->getIdsToCheckForDeletionForValuefields($c, $fieldname);
                 }
                 if (isset($this->deletionFieldIds[$fieldname])) {
@@ -300,7 +302,7 @@ class InheritanceHelper
 
         if (!empty($this->relations)) {
             foreach ($this->relations as $fieldname => $fields) {
-                foreach ($o->childs as $c) {
+                foreach ($o['children'] as $c) {
                     $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
                 }
                 if (isset($this->deletionFieldIds[$fieldname])) {
@@ -368,7 +370,7 @@ class InheritanceHelper
 
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
-            $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+            $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             $queryCacheKey = 'tree_'.md5($query);
 
             if (self::$useRuntimeCache) {
@@ -396,15 +398,15 @@ class InheritanceHelper
 
         if (isset($parentIdGroups[$currentParentId])) {
             foreach ($parentIdGroups[$currentParentId] as $r) {
-                $o = new \stdClass();
-                $o->id = $r['id'];
-                $o->values = $r;
-                $o->type = $r['type'];
-                $o->classId = $r['classId'];
-                $o->childs = $this->buildTree($r['id'], $fields, $parentIdGroups);
+                $id = $r['id'];
+                $o = [
+                    'id' => $id,
+                    'values' => $r,
+                    'children' => $this->buildTree($id, $fields, $parentIdGroups)
+                ];
 
-                if ($o->classId == $this->classId) {
-                    $this->treeIds[] = $o->id;
+                if ($r['classId'] == $this->classId) {
+                    $this->treeIds[] = $id;
                 }
 
                 $objects[] = $o;
@@ -423,11 +425,11 @@ class InheritanceHelper
     {
 
         // if the relations are already set, skip here
-        if (isset($node->relations)) {
+        if (isset($node['relations'])) {
             return $node;
         }
 
-        $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node->id]);
+        $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
 
         $objectRelations = [];
         if (!empty($objectRelationsResult)) {
@@ -436,9 +438,9 @@ class InheritanceHelper
                     $objectRelations[$orr['fieldname']] = $orr['fieldname'];
                 }
             }
-            $node->relations = $objectRelations;
+            $node['relations'] = $objectRelations;
         } else {
-            $node->relations = [];
+            $node['relations'] = [];
         }
 
         return $node;
@@ -450,16 +452,16 @@ class InheritanceHelper
      */
     protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname)
     {
-        $value = $currentNode->values[$fieldname];
+        $value = $currentNode['values'][$fieldname];
 
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
         }
 
-        $this->deletionFieldIds[$fieldname][] = $currentNode->id;
+        $this->deletionFieldIds[$fieldname][] = $currentNode['id'];
 
-        if (!empty($currentNode->childs)) {
-            foreach ($currentNode->childs as $c) {
+        if (!empty($currentNode['children'])) {
+            foreach ($currentNode['children'] as $c) {
                 $this->getIdsToCheckForDeletionForValuefields($c, $fieldname);
             }
         }
@@ -471,11 +473,11 @@ class InheritanceHelper
      */
     protected function getIdsToUpdateForValuefields($currentNode, $fieldname)
     {
-        $value = $currentNode->values[$fieldname];
+        $value = $currentNode['values'][$fieldname];
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
-            $this->fieldIds[$fieldname][] = $currentNode->id;
-            if (!empty($currentNode->childs)) {
-                foreach ($currentNode->childs as $c) {
+            $this->fieldIds[$fieldname][] = $currentNode['id'];
+            if (!empty($currentNode['children'])) {
+                foreach ($currentNode['children'] as $c) {
                     $this->getIdsToUpdateForValuefields($c, $fieldname);
                 }
             }
@@ -489,18 +491,18 @@ class InheritanceHelper
     protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname)
     {
         $this->getRelationsForNode($currentNode);
-        if (isset($currentNode->relations[$fieldname])) {
-            $value = $currentNode->relations[$fieldname];
+        if (isset($currentNode['relations'][$fieldname])) {
+            $value = $currentNode['relations'][$fieldname];
         } else {
             $value = null;
         }
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
         }
-        $this->deletionFieldIds[$fieldname][] = $currentNode->id;
+        $this->deletionFieldIds[$fieldname][] = $currentNode['id'];
 
-        if (!empty($currentNode->childs)) {
-            foreach ($currentNode->childs as $c) {
+        if (!empty($currentNode['children'])) {
+            foreach ($currentNode['children'] as $c) {
                 $this->getIdsToCheckForDeletionForRelationfields($c, $fieldname);
             }
         }
@@ -513,15 +515,15 @@ class InheritanceHelper
     protected function getIdsToUpdateForRelationfields($currentNode, $fieldname)
     {
         $this->getRelationsForNode($currentNode);
-        if (isset($currentNode->relations[$fieldname])) {
-            $value = $currentNode->relations[$fieldname];
+        if (isset($currentNode['relations'][$fieldname])) {
+            $value = $currentNode['relations'][$fieldname];
         } else {
             $value = null;
         }
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
-            $this->fieldIds[$fieldname][] = $currentNode->id;
-            if (!empty($currentNode->childs)) {
-                foreach ($currentNode->childs as $c) {
+            $this->fieldIds[$fieldname][] = $currentNode['id'];
+            if (!empty($currentNode['children'])) {
+                foreach ($currentNode['children'] as $c) {
                     $this->getIdsToUpdateForRelationfields($c, $fieldname);
                 }
             }
