@@ -72,6 +72,9 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $elements = [];
+        $service = new Document\Service;
+
+        $translations = $service->getTranslations($document);
 
         if ($document instanceof Document\PageSnippet) {
             $tagNames = $this->tagUsageResolver->getUsedTagnames($document);
@@ -90,10 +93,27 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                     $content = $tag->getData();
                 }
 
+                $targetContent = [];
+                foreach ($result->getTargetLanguages() as $targetLanguage) {
+                    if (isset($translations[$targetLanguage])) {
+                        $targetDocument = Document::getById($translations[$targetLanguage]);
+
+                        if($targetDocument instanceof  Document\PageSnippet) {
+                            $targetTag = $targetDocument->getElement($tag->getName());
+                            if (in_array($targetTag->getType(), ['image', 'link'])) {
+                                $targetContent[$targetLanguage] = $targetTag->getText();
+                            } else {
+                                $targetContent[$targetLanguage] = $targetTag->getData();
+                            }
+                        }
+                    }
+
+                }
+
                 if (is_string($content)) {
                     $contentCheck = trim(strip_tags($content));
                     if (!empty($contentCheck)) {
-                        $result->addAttribute(Attribute::TYPE_TAG, $tag->getName(), $content);
+                        $result->addAttribute(Attribute::TYPE_TAG, $tag->getName(), $content, false, $targetContent);
                     }
                 }
             }
