@@ -39,6 +39,9 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $file = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json';
         $fieldCollection = $this->tester->setupFieldCollection($name, $file);
 
+
+        $this->tester->setupPimcoreClass_LazyLoading();
+
 //
 //        $name = 'LazyLoading';
 //        $file = 'lazyloading/class_LazyLoading_export.json';

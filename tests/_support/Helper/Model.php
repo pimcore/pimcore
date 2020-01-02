@@ -47,6 +47,184 @@ class Model extends AbstractDefinitionHelper
         return $class;
     }
 
+    /**
+     * Set up a class used for lazy loading tests.
+     *
+     * @param string $name
+     * @param string $filename
+     * @return ClassDefinition|null
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_LazyLoading($name = "LazyLoading", $filename = 'lazyloading/class_LazyLoading_export.json') {
+
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("manyToManyObjectRelation", "objects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+                );
+
+            $panel->addChild($this->createDataChild("manyToOneRelation", "relation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "relations")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "advancedObjects")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyRelation", "advancedRelations")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName("localizedfields");
+
+            $lFields->addChild($this->createDataChild("manyToManyObjectRelation", "lobjects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+            );
+
+            $lFields->addChild($this->createDataChild("manyToOneRelation", "lrelation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $lFields->addChild($this->createDataChild("manyToManyRelation", "lrelations")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $lFields->addChild($this->createDataChild("advancedManyToManyObjectRelation", "ladvancedObjects")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $lFields->addChild($this->createDataChild("advancedManyToManyRelation", "ladvancedRelations")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+
+
+            $lFields->addChild($this->createDataChild("manyToManyObjectRelation", "lobjects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+            );
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName("testblock");
+
+            $block->addChild($this->createDataChild("manyToManyObjectRelation", "blockobjects")
+                ->setLazyLoading(false)
+                ->setClasses(["RelationTest"])
+            );
+
+            $block->addChild($this->createDataChild("manyToOneRelation", "blockrelation")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $block->addChild($this->createDataChild("manyToManyRelation", "blockrelations")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $block->addChild($this->createDataChild("advancedManyToManyObjectRelation", "blockadvancedObjects")
+                ->setLazyLoading(false)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $block->addChild($this->createDataChild("advancedManyToManyRelation", "blockadvancedRelations")
+                ->setLazyLoading(false)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+
+            $blockLazyLoaded = new ClassDefinition\Data\Block();
+            $blockLazyLoaded->setName("testblockLazyloaded");
+            $blockLazyLoaded->setLazyLoading(true);
+
+            $blockLazyLoaded->addChild($this->createDataChild("manyToManyObjectRelation", "blockobjectsLazyLoaded")
+                ->setLazyLoading(false)
+                ->setClasses(["RelationTest"])
+            );
+
+            $blockLazyLoaded->addChild($this->createDataChild("manyToOneRelation", "blockrelationLazyLoaded")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $blockLazyLoaded->addChild($this->createDataChild("manyToManyRelation", "blockrelationsLazyLoaded")
+                ->setLazyLoading(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $blockLazyLoaded->addChild($this->createDataChild("advancedManyToManyObjectRelation", "blockadvancedObjectsLazyLoaded")
+                ->setLazyLoading(false)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $blockLazyLoaded->addChild($this->createDataChild("advancedManyToManyRelation", "blockadvancedRelationsLazyLoaded")
+                ->setLazyLoading(false)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ]));
+
+
+            $panel->addChild($lFields);
+            $panel->addChild($block);
+            $panel->addChild($blockLazyLoaded);
+
+
+            $panel->addChild($this->createDataChild("fieldcollections", "fieldcollection")
+                ->setAllowedTypes(['LazyLoadingTest', 'LazyLoadingLocalizedTest']));
+
+            $panel->addChild($this->createDataChild("objectbricks", "bricks"));
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true,'LL');
+        }
+        return $class;
+    }
+
 
     /**
      * Set up a class used for relation tests.
@@ -140,7 +318,7 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $root->addChild($rootPanel);
-            $class = $this->createClass($name, $root, $filename);
+            $class = $this->createClass($name, $root, $filename, true);
         }
         return $class;
     }
@@ -346,9 +524,13 @@ class Model extends AbstractDefinitionHelper
      * @param $inheritanceAllowed
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false) {
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null) {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
+
+        if ($id !== null) {
+            $def->setId($id);
+        }
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
