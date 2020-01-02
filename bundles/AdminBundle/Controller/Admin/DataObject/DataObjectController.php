@@ -1710,6 +1710,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                             if ($brickDescriptor) {
                                 $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                                /** @var DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
                                 $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                                 $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
                             } else {
@@ -1802,10 +1803,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param string $class
+     * @param DataObject\ClassDefinition $class
      * @param string $key
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data|null
      */
     protected function getFieldDefinition($class, $key)
     {
@@ -1816,7 +1817,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $localized = $class->getFieldDefinition('localizedfields');
         if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFielddefinition($key);
+            $fieldDefinition = $localized->getFieldDefinition($key);
         }
 
         return $fieldDefinition;

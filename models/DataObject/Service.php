@@ -376,6 +376,7 @@ class Service extends Model\Element\Service
 
                     if ($brickDescriptor) {
                         $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                     } else {
@@ -390,7 +391,9 @@ class Service extends Model\Element\Service
 
                     // if the definition is not set try to get the definition from localized fields
                     if (!$def) {
-                        if ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
+                        /** @var Model\DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
+                        $locFields = $object->getClass()->getFieldDefinition('localizedfields');
+                        if ($locFields) {
                             $def = $locFields->getFieldDefinition($key, $context);
                             if ($def) {
                                 $needLocalizedPermissions = true;
@@ -678,6 +681,7 @@ class Service extends Model\Element\Service
                     $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
                     $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
                     $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                    /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
                     $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                     $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
                     $value = $localizedFields->getLocalizedValue($brickDescriptor['brickfield']);
@@ -782,7 +786,7 @@ class Service extends Model\Element\Service
                 /**
                  * @var ClassDefinition\Data\Select $definition
                  */
-                $definition = $class->getFielddefinition($definition);
+                $definition = $class->getFieldDefinition($definition);
             }
 
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {

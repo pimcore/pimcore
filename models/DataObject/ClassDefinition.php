@@ -918,7 +918,7 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $key
      * @param array $context
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -931,7 +931,7 @@ class ClassDefinition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     /**

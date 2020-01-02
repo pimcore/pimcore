@@ -213,7 +213,11 @@ class GridHelperService
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
                         if ($brickDescriptor) {
-                            $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
+                            /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
+                            $localizedFields = $brickClass->getFieldDefinition('localizedfields');
+                            if ($localizedFields) {
+                                $brickField = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                            }
                         } else {
                             $brickField = $brickClass->getFieldDefinition($brickKey);
                         }

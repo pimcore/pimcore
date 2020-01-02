@@ -126,7 +126,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -171,7 +171,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($unserializedData as $blockElements) {
                 $items = [];
                 foreach ($blockElements as $elementName => $blockElementRaw) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -238,7 +238,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -458,7 +458,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -496,7 +496,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
 
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -721,7 +721,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return DataObject\ClassDefinition\Data|null
      */
-    public function getFielddefinition($name, $context = [])
+    public function getFieldDefinition($name, $context = [])
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
@@ -798,7 +798,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {
-                $fd = $this->getFielddefinition($elementName);
+                $fd = $this->getFieldDefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -835,7 +835,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {
-                $fd = $this->getFielddefinition($elementName);
+                $fd = $this->getFieldDefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -933,7 +933,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $this->markLazyloadedFieldAsLoaded($object);
 
-        $lf = $this->getFielddefinition('localizedfields');
+        $lf = $this->getFieldDefinition('localizedfields');
         if ($lf && is_array($data)) {
             /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {

@@ -673,7 +673,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
 
-                $localizedField = $field->getFielddefinition($localizedPropertyName);
+                $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);

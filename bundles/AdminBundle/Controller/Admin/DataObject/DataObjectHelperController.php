@@ -556,6 +556,7 @@ class DataObjectHelperController extends AdminController
 
                             if ($brickDescriptor) {
                                 $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                                 $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                             } else {
@@ -2096,6 +2097,7 @@ class DataObjectHelperController extends AdminController
                     $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
 
                     if ($brickDescriptor) {
+                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                     } else {
@@ -2425,6 +2427,7 @@ class DataObjectHelperController extends AdminController
                 $fds = $class->getFieldDefinitions();
 
                 $additionalFieldNames = array_keys($fds);
+                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
                 $localizedFields = $class->getFieldDefinition('localizedfields');
                 if ($localizedFields) {
                     $lfNames = array_keys($localizedFields->getFieldDefinitions());
