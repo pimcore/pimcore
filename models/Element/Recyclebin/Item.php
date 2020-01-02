@@ -196,13 +196,8 @@ class Item extends Model\AbstractModel
         // serialize data
         Element\Service::loadAllFields($this->element);
 
-        //for full dump of relation fields in container types
-        //TODO: optimization required for serializing relations
-        $copier = new DeepCopy();
-        $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
-        $copiedData = $copier->copy($this->getElement());
-
-        $data = Serialize::serialize($copiedData);
+        $condensedData = $this->marshalData($this->getElement());
+        $data = Serialize::serialize($condensedData);
 
         $this->getDao()->save();
 
@@ -304,6 +299,7 @@ class Item extends Model\AbstractModel
             }
         };
 
+        $element = $this->unmarshalData($element);
         $restoreBinaryData($element, $this);
 
         if ($element instanceof DataObject\Concrete) {
@@ -327,6 +323,61 @@ class Item extends Model\AbstractModel
                 }
             }
         }
+    }
+
+    /**
+     * @param Element\ElementInterface $data
+     *
+     * @return mixed
+     */
+    public function marshalData($data)
+    {
+        //for full dump of relation fields in container types
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof Element\ElementInterface) {
+                        $elementType = Element\Service::getType($currentValue);
+                        $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+
+                        return $descriptor;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new Model\Version\MarshalMatcher(Element\Service::getType($this->getElement()), $this->getElement()->getId())
+        );
+        $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+        return $copier->copy($data);
+    }
+
+    /**
+     * @param $data
+     *
+     * @return mixed
+     */
+    public function unmarshalData($data)
+    {
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof Model\Version\ElementDescriptor) {
+                        $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                        return $value;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new Model\Version\UnmarshalMatcher()
+        );
+
+        return $copier->copy($data);
     }
 
     /**
