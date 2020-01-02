@@ -94,7 +94,7 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "meta"]
                 ]));
 
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
@@ -128,7 +128,7 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ["position" => 1, "key" => "meta", "type" => "text", "label" => "meta"]
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "meta"]
                 ]));
 
 
