@@ -716,5 +716,6 @@
   "send_invitation_link": "Send Invitation Link",
   "invitation_sent": "Login Invitation sent",
   "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
-  "classificationstore_group_by_key": "Group by key"
+  "classificationstore_group_by_key": "Group by key",
+  "allow_to_create_new_object":  "Allow to create a new object in relation field"
 }
