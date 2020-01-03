@@ -151,7 +151,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 $params = [
                     'context' => [
                         'object' => $this->model
-                        ]
+                    ]
                 ];
                 $value = $value->load($this->model, $params);
                 if ($value === 0 || !empty($value)) {
@@ -229,10 +229,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             if ($fd instanceof CustomResourcePersistingInterface) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
-                               'isUpdate' => $isUpdate,
-                                'context' => [
-                                    'containerType' => 'object'
-                                ]];
+                    'isUpdate' => $isUpdate,
+                    'context' => [
+                        'containerType' => 'object'
+                    ]];
                 if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
@@ -373,7 +373,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     public function saveChildData()
     {
-        $this->inheritanceHelper->doUpdate($this->model->getId());
+        $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
+            "inheritanceRelationContext" => [
+                "ownerType" => "object"
+            ]
+        ]);
         $this->inheritanceHelper->resetFieldsToCheck();
     }
 
