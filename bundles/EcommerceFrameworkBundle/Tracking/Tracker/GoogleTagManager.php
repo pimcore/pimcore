@@ -37,6 +37,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -50,7 +51,8 @@ class GoogleTagManager extends Tracker implements
     CartProductActionRemoveInterface,
     CheckoutInterface,
     CheckoutStepInterface,
-    CheckoutCompleteInterface
+    CheckoutCompleteInterface,
+    TrackingCodeAwareInterface
 {
 
     const DEFERRED_DIMENSION_IMPRESSIONS = 'impressions';

@@ -17,8 +17,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class TrackingManager implements TrackingManagerInterface
 {
@@ -48,6 +51,11 @@ class TrackingManager implements TrackingManagerInterface
     protected $enviroment = null;
 
     /**
+     * @var Session
+     */
+    protected $session;
+
+    /**
      * @param TrackerInterface[] $trackers
      * @param EnvironmentInterface $environment
      */
@@ -58,6 +66,15 @@ class TrackingManager implements TrackingManagerInterface
         }
 
         $this->enviroment = $environment;
+    }
+
+    /**
+     * @param Session $session
+     * @required
+     */
+    public function setSession(SessionInterface $session)
+    {
+        $this->session = $session;
     }
 
     /**
@@ -299,4 +316,52 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
     }
+
+    public function getTrackedCodes(): string
+    {
+        $result = '';
+        foreach ($this->getTrackers() as $tracker) {
+            if ($tracker instanceof TrackingCodeAwareInterface) {
+                if (sizeof($tracker->getTrackedCodes())) {
+                    $result .= implode(PHP_EOL, $tracker->getTrackedCodes()).PHP_EOL.PHP_EOL;
+                }
+
+            }
+        }
+
+        return $result;
+    }
+
+    public function forwardTrackedCodesAsFlashMessage(): TrackingManagerInterface
+    {
+        $trackedCodes = [];
+
+        foreach ($this->getTrackers() as $tracker) {
+            if ($tracker instanceof TrackingCodeAwareInterface) {
+                if (sizeof($tracker->getTrackedCodes())) {
+                    $trackedCodes[get_class($tracker)] = $tracker->getTrackedCodes();
+                }
+
+            }
+        }
+
+        $this->session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
+
+        return $this;
+    }
+
+    public function trackEvent(
+        string $eventCategory,
+        string $eventAction,
+        string $eventLabel = null,
+        int $eventValue = null
+    ) {
+        foreach ($this->getTrackers() as $tracker) {
+            if ($tracker instanceof TrackEventInterface) {
+                $tracker->trackEvent($eventCategory, $eventAction, $eventLabel, $eventValue);
+            }
+        }
+    }
+
+
 }
