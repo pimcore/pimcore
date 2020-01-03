@@ -247,7 +247,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insertOrUpdate($querytable, $data);
 
         if ($inheritanceEnabled) {
-            $this->inheritanceHelper->doUpdate($object->getId(), true);
+            $this->inheritanceHelper->doUpdate($object->getId(), true,
+                ['inheritanceRelationContext' => [
+                    'ownertype' => 'objectbrick'
+                ]]);
         }
         $this->inheritanceHelper->resetFieldsToCheck();
 

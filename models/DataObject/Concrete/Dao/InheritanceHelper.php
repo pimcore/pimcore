@@ -479,6 +479,28 @@ class InheritanceHelper
     }
 
     /**
+     * @param array $params
+     * @return string
+     */
+    protected function getRelationCondition($params = []) {
+        $condition = "";
+        $db = Db::get();
+        $parts = [];
+
+        if (isset($params["inheritanceRelationContext"])) {
+            foreach ($params["inheritanceRelationContext"] as $key => $value) {
+                $parts[] = $db->quoteIdentifier($key) . " = " . $db->quote($value);
+            }
+            $condition = implode(" AND ", $parts);
+        }
+        if (count($parts) > 0) {
+            $condition = $condition . " AND ";
+        }
+
+        return $condition;
+    }
+
+    /**
      * @param $node
      * @param array $params
      *
@@ -491,14 +513,16 @@ class InheritanceHelper
             return $node;
         }
 
+        $relationCondition = $this->getRelationCondition($params);
+
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE " . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . " GROUP BY position, fieldname"
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)'
                 , [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE " . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
         }
 
         $objectRelations = [];

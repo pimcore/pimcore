@@ -364,8 +364,21 @@ class Dao extends Model\Dao\AbstractDao
                 $queryTable = $this->getQueryTableName().'_'.$language;
                 $this->db->insertOrUpdate($queryTable, $data);
                 if ($inheritanceEnabled) {
+                    $context = isset($params["context"]) ? $params["context"] : [];
+                    if ($context["containerType"] === "objectbrick") {
+                        $inheritanceRelationContext = [
+                            'ownertype' => 'localizedfield',
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
+                        ];
+                    } else {
+                        $inheritanceRelationContext = [
+                            'ownertype' => 'localizedfield',
+                            'ownername' => 'localizedfield'
+                        ];
+                    }
                     $this->inheritanceHelper->doUpdate($object->getId(), true, [
-                        'language' => $language
+                        'language' => $language,
+                        'inheritanceRelationContext' => $inheritanceRelationContext
                     ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
