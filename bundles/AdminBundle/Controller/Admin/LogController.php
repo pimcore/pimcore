@@ -240,7 +240,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $filePath = PIMCORE_PROJECT_ROOT . '/' . $filePath;
+        $filePath = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . $filePath;
         $filePath = realpath($filePath);
         $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
 
