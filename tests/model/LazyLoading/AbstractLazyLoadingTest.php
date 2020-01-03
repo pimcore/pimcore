@@ -37,6 +37,8 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
         $this->tester->setupObjectbrick_LazyLoadingTest();
 
+        $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
+
         $name = 'LazyLoadingLocalizedTest';
         $file = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json';
         $brick = $this->tester->setupObjectBrick($name, $file);
