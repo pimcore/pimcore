@@ -164,9 +164,20 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
     {
-        $json = $this->initPayment($price, $config->asArray());
+        $result = $this->initPayment($price, $config->asArray());
 
-        return new JsonResponse($orderAgent->getOrder(), $json);
+        if ($result instanceof \stdClass) {
+            if($json = json_encode($result)) {
+                return new JsonResponse($orderAgent->getOrder(), $json);
+            }
+        }
+
+        json_decode($result);
+        if (json_last_error() == JSON_ERROR_NONE) {
+            return new JsonResponse($orderAgent->getOrder(), $result);
+        }
+
+        throw new \Exception("result of initPayment neither stdClass nor JSON");
     }
 
     /**
@@ -317,8 +328,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
             ->setDefault('user_action', 'PAY_NOW')
             ->setAllowedValues('user_action', ['CONTINUE', 'PAY_NOW'])
             ->setDefault('capture_strategy', self::CAPTURE_STRATEGY_AUTOMATIC)
-            ->setAllowedValues('capture_strategy', [self::CAPTURE_STRATEGY_AUTOMATIC, self::CAPTURE_STRATEGY_MANUAL])
-            ;
+            ->setAllowedValues('capture_strategy', [self::CAPTURE_STRATEGY_AUTOMATIC, self::CAPTURE_STRATEGY_MANUAL]);
 
         $notEmptyValidator = function ($value) {
             return !empty($value);
