@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Tool
 {
     /**

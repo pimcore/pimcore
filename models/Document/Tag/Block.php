@@ -347,6 +347,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     }
 
     /**
+     * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param null $document
      * @param mixed $params
@@ -355,8 +356,6 @@ class Block extends Model\Document\Tag implements BlockInterface
      * @return Model\Webservice\Data\Document\Element|void
      *
      * @throws \Exception
-     *
-     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {

@@ -20,6 +20,9 @@ namespace Pimcore\Model\Webservice\Data;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Asset extends Model\Webservice\Data
 {
     /**

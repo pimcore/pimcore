@@ -21,6 +21,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Concrete extends Model\Webservice\Data\DataObject
 {
     /**

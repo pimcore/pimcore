@@ -24,6 +24,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**

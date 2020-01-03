@@ -245,6 +245,7 @@ HTML;
     }
 
     /**
+     * @deprecated 
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params

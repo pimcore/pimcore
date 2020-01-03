@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Newsletter extends Model\Webservice\Data\Document\Snippet
 {
     /**

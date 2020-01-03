@@ -237,6 +237,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -256,6 +257,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

@@ -597,7 +597,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * Receives a standard class object from webservice import and fills the current tag's data
      *
      * @abstract
-     *
+     * @deprecated
      * @param Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param array $params,
@@ -614,6 +614,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * Returns the current tag's data for web service export
      *
+     * @deprecated
      * @param $document
      * @param mixed $params
      * @abstract
@@ -758,6 +759,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
+     * @deprecated
      * @param $data
      *
      * @return object

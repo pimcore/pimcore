@@ -24,6 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @deprecated
+ */
 class TagController extends AbstractElementController
 {
     const TAG_DOES_NOT_EXIST = -1;

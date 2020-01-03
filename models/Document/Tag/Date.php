@@ -150,6 +150,7 @@ class Date extends Model\Document\Tag
     /**
      * Receives a Webservice\Data\Document\Element from webservice import and fill the current tag's data
      *
+     * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params
@@ -171,6 +172,7 @@ class Date extends Model\Document\Tag
     /**
      * Returns the current tag's data for web service export
      *
+     * @deprecated
      * @param $document
      * @param mixed $params
      * @abstract

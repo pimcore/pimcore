@@ -277,6 +277,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -288,6 +289,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params

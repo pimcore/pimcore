@@ -488,6 +488,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -531,6 +532,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param mixed $data
      * @param null $relatedObject
      * @param mixed $params

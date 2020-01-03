@@ -258,6 +258,7 @@ class Config extends Model\AbstractModel
 
     /**
      * Returns thumbnail config for webservice export.
+     * @deprecated
      */
     public function getForWebserviceExport()
     {

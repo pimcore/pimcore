@@ -26,6 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractRestController extends AdminController
 {
     /**

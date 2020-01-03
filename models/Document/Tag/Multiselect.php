@@ -112,6 +112,7 @@ class Multiselect extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params
