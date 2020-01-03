@@ -136,7 +136,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component.updateLayout();
     },
 
-    buildMenu: function(data, blockElement) {
+    buildMenu: function(data, blockElement, position) {
         var collectionMenu = [];
 
         if (data) {
@@ -148,10 +148,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
-                    var subMenu = this.buildMenu(elementData.children, blockElement);
+                    var subMenu = this.buildMenu(elementData.children, blockElement, position);
                     menuItem.menu = subMenu;
                 } else {
-                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title);
+                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title, position);
                 }
 
                 collectionMenu.push(menuItem);
@@ -166,29 +166,61 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     getControls: function (blockElement, title) {
 
         var menuData = this.fieldcollections;
-        var collectionMenu = this.buildMenu(menuData, blockElement, true);
+        var collectionMenuBefore = this.buildMenu(menuData, blockElement, 'before');
+        var collectionMenuAfter = this.buildMenu(menuData, blockElement, 'after');
 
         var items = [];
 
-        if(collectionMenu.length == 0) {
+        if(collectionMenuBefore.length == 0) {
             items.push({
                 xtype: "tbtext",
                 text: t("no_collections_allowed")
             });
-        } else if(collectionMenu.length == 1 && !collectionMenu[0].menu) {
-            items.push({
-                disabled: this.fieldConfig.disallowAddRemove,
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                handler: collectionMenu[0].handler
-            });
+        } else if(collectionMenuBefore.length == 1 && !collectionMenuBefore[0].menu) {
+            if(blockElement) {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_up",
+                    handler: collectionMenuBefore[0].handler
+                });
+
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_down",
+                    handler: collectionMenuAfter[0].handler
+                });
+            } else {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    handler: collectionMenuAfter[0].handler
+                });
+            }
         } else  {
-            items.push({
-                disabled: this.fieldConfig.disallowAddRemove,
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                menu: collectionMenu
-            });
+            if(blockElement) {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_up",
+                    menu: collectionMenuBefore
+                });
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_down",
+                    menu: collectionMenuAfter
+                });
+            } else {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    menu: collectionMenuAfter
+                });
+            }
         }
 
         if(blockElement) {
@@ -261,7 +293,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
     },
 
-    addBlock: function (blockElement, type, title) {
+    addBlock: function (blockElement, type, title, position) {
 
         this.closeOpenEditors();
 
@@ -284,7 +316,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             index = this.detectBlockIndex(blockElement);
         }
 
-        this.addBlockElement(index + 1, {
+        if (position !== 'before') {
+            index++;
+        }
+
+        this.addBlockElement(index, {
             type: type,
             title: title
         });

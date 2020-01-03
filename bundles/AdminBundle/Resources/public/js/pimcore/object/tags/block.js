@@ -99,14 +99,22 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var items = [];
 
 
-        items.push({
-            disabled: this.fieldConfig.disallowAddRemove,
-            cls: "pimcore_block_button_plus",
-            iconCls: "pimcore_icon_plus",
-            handler: this.addBlock.bind(this,blockElement , null/*, rec.data.key */)
-        });
 
         if(blockElement) {
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus_up",
+                handler: this.addBlock.bind(this, blockElement, "before")
+            });
+
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus_down",
+                handler: this.addBlock.bind(this, blockElement, "after")
+            });
+
             items.push({
                 disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_minus",
@@ -132,6 +140,13 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
                 listeners: {
                     "click": this.moveBlockDown.bind(this, blockElement)
                 }
+            });
+        } else {
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus",
+                handler: this.addBlock.bind(this, blockElement, "after")
             });
         }
 
@@ -169,7 +184,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    addBlock: function (blockElement) {
+    addBlock: function (blockElement, position) {
 
         this.closeOpenEditors();
 
@@ -192,7 +207,11 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             index = this.detectBlockIndex(blockElement);
         }
 
-        this.addBlockElement(index + 1, {});
+        if (position !== "before") {
+            index++;
+        }
+
+        this.addBlockElement(index, {});
     },
 
     removeBlock: function (blockElement) {
