@@ -2,11 +2,13 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
