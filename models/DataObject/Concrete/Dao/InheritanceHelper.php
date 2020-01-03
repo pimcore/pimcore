@@ -423,7 +423,9 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . \Pimcore\Db::get()->quote($object->getRealFullPath() . '/%') . ' ORDER BY LENGTH(o_path) ASC';
+                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . \Pimcore\Db::get()->quote($object->getRealFullPath() . '/%')
+                    . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
+                    . ' ORDER BY LENGTH(o_path) ASC';
             } else {
                 $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE '.\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             }
@@ -484,14 +486,16 @@ class InheritanceHelper
      */
     protected function getRelationsForNode(&$node, $params = [])
     {
-
         // if the relations are already set, skip here
         if (isset($node['relations'])) {
             return $node;
         }
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY position, fieldname;", [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+                . " GROUP BY position, fieldname"
+                . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)'
+                , [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
             $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
