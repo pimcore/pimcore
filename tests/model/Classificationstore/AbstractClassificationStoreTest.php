@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Model\Datatype\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationStoreDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Test\ModelTestCase;
 
@@ -14,29 +13,20 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
      */
     protected function setUpTestClasses()
     {
-        $name = 'csstoreclass';
-        $file = 'classificationstore.json';
-        $class = ClassDefinition::getByName($name);
+        $class = ClassDefinition::getByName('csstore');
 
         if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-
-            /** @var ClassificationStoreDefinition $fd */
-            $fd = $class->getFieldDefinition('csstore');
-
             $store = Classificationstore\StoreConfig::getByName('teststore');
             if (!$store) {
                 $store = new Classificationstore\StoreConfig();
                 $store->setName('teststore');
                 $store->save();
+                $this->configureStore($store);
             }
 
-            $fd->setStoreId($store->getId());
-            $class->save();
-
-            $this->configureStore($store);
-            $class->save();
+            $class = $this->tester->setupPimcoreClass_Csstore([
+                "storeId" => $store->getId()
+            ]);
         }
 
         return $class;

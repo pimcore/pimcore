@@ -9,12 +9,6 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
-/**
- * Class ManyToManyRelationTest
- * @package Pimcore\Tests\Model\LazyLoading
- *
- * @group model.lazyloading
- */
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
     public function testClassAttributes()

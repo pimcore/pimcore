@@ -10,12 +10,6 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
-/**
- * Class AdvancedManyToManyRelationTest
- * @package Pimcore\Tests\Model\LazyLoading
- *
- * @group model.lazyloading
- */
 class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
 {
     protected function loadMetadataRelations($fieldname)
