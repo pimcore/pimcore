@@ -697,6 +697,66 @@ class Model extends AbstractDefinitionHelper
 
 
     /**
+     * Sets up an object brick used for lazy loading tests
+     *
+     * @param string $name
+     * @param string $filename
+     * @return Definition|null
+     * @throws \Exception
+     */
+    public function setupObjectbrick_LazyLoadingTest($name = "LazyLoadingTest", $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json') {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$definition = $cm->getObjectbrick($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel("root");
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName("MyLayout");
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName("Layout");
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild("manyToManyObjectRelation", "objects")
+                ->setLazyLoading(true)
+                ->setClasses(["RelationTest"])
+            );
+
+            $panel->addChild($this->createDataChild("manyToOneRelation", "relation")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("manyToManyRelation", "relations")
+                ->setLazyLoading(true)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyObjectRelation", "advancedObjects")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setAllowedClassId("RelationTest")
+                ->setClasses([])
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "metadata"]
+                ]));
+
+            $panel->addChild($this->createDataChild("advancedManyToManyRelation", "advancedRelations")
+                ->setLazyLoading(true)
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ["position" => 1, "key" => "metadata", "type" => "text", "label" => "meta"]
+                ]));
+
+
+            $root->addChild($rootPanel);
+            $definition = $this->createObjectbrick($name, $root, $filename, [
+                ['classname' => 'LazyLoading', 'fieldname' => 'bricks']
+
+            ]);
+        }
+        return $definition;
+    }
+
+
+    /**
      * Sets up an object brick
      *
      * @param string $name

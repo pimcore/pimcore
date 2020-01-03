@@ -35,9 +35,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
         $this->tester->setupPimcoreClass_LazyLoading();
 
-        $name = 'LazyLoadingTest';
-        $file = 'lazyloading/objectbrick_LazyLoadingTest_export.json';
-        $brick = $this->tester->setupObjectBrick($name, $file);
+        $this->tester->setupObjectbrick_LazyLoadingTest();
 
         $name = 'LazyLoadingLocalizedTest';
         $file = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json';
