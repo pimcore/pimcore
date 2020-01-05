@@ -69,8 +69,6 @@ class ImageThumbnail
 
     /**
      * @param bool $deferredAllowed
-     *
-     * @return string
      */
     public function generate($deferredAllowed = true)
     {
@@ -102,7 +100,8 @@ class ImageThumbnail
                         $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
-                        return '/bundles/pimcoreadmin/img/please-wait.png';
+                        $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
+                        return;
                     }
                 }
 
