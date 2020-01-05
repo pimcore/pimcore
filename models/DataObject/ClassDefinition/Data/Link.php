@@ -406,7 +406,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        if ($value instanceof \stdclass) {
+        if ($value instanceof \stdClass) {
             $value = (array) $value;
         }
 
