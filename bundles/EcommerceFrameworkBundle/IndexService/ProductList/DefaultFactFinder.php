@@ -782,9 +782,9 @@ class DefaultFactFinder implements ProductListInterface
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $response = $client->request('GET', $url);
 
-        $factFinderTimeout = $response->getHeader('X-FF-Timeout');
+        $factFinderTimeout = $response->getHeaderLine('X-FF-Timeout');
         if ($factFinderTimeout === 'true') {
-            $errorMessage = 'FactFinder Read timeout:' . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys + 1);
+            $errorMessage = 'FactFinder Read timeout:' . $url.' X-FF-RefKey: ' . $response->getHeaderLine('X-FF-RefKey').' Tried: ' . ($trys + 1);
             $this->getLogger()->err($errorMessage);
             $trys++;
             if ($trys > 2) {

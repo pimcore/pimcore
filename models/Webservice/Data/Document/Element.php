@@ -27,7 +27,7 @@ class Element extends Model\Webservice\Data
     public $type;
 
     /**
-     * @var object[]
+     * @var object
      */
     public $value;
 
