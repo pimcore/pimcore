@@ -223,7 +223,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
     }
 
     /**
-     * @param AbstractOrder $sourceOrder
+     * @param CartInterface $cart
      *
      * @return AbstractOrder
      */

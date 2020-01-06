@@ -330,7 +330,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param $object
      * @param array $params
-     * @param int $dataIndex
      *
      * @return mixed
      *

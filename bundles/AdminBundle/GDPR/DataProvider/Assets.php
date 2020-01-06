@@ -65,7 +65,7 @@ class Assets extends Elements implements DataProviderInterface
     /**
      * Exports data of given asset as json
      *
-     * @param Asset $object
+     * @param Asset $asset
      *
      * @return Response
      */

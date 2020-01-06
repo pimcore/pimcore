@@ -207,7 +207,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param AbstractOrderItem[] $items
+     * @param AbstractOrderItem[] $giftItems
      */
     public function setGiftItems($giftItems)
     {
@@ -463,7 +463,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerFirstame
+     * @param string $customerFirstname
      *
      * @return $this
      */
@@ -481,7 +481,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerLastame
+     * @param string $customerLastname
      *
      * @return $this
      */

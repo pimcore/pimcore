@@ -637,7 +637,7 @@ class AssetHelperController extends AdminController
      * @Route("/get-export-jobs", methods={"GET"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -719,12 +719,12 @@ class AssetHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param string $language
+     * @param Asset\Listing $list
+     * @param array $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, $language, $list, $fields, $addTitles = true)
     {

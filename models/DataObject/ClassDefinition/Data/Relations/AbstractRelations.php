@@ -457,7 +457,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Fieldcollection\Data\AbstractData $item
      *
      * @throws \Exception
      */
@@ -476,7 +476,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param DataObject\Objectbrick\Data\AbstractData $object
+     * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */

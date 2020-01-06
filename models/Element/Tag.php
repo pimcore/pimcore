@@ -57,7 +57,7 @@ class Tag extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
      * @return Tag|null
      */
@@ -76,8 +76,8 @@ class Tag extends Model\AbstractModel
     /**
      * returns all assigned tags for element
      *
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      *
      * @return Tag[]
      */
@@ -91,8 +91,8 @@ class Tag extends Model\AbstractModel
     /**
      * adds given tag to element
      *
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      * @param Tag $tag
      */
     public static function addTagToElement($cType, $cId, Tag $tag)
@@ -103,8 +103,8 @@ class Tag extends Model\AbstractModel
     /**
      * removes given tag from element
      *
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      * @param Tag $tag
      */
     public static function removeTagFromElement($cType, $cId, Tag $tag)
@@ -116,9 +116,9 @@ class Tag extends Model\AbstractModel
      * sets given tags to element and removes all other tags
      * to remove all tags from element, provide empty array of tags
      *
-     * @param $cType
-     * @param $cId
-     * @param Tag[] $tag
+     * @param string $cType
+     * @param int $cId
+     * @param Tag[] $tags
      */
     public static function setTagsForElement($cType, $cId, array $tags)
     {
@@ -127,10 +127,10 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @param $cType
+     * @param string $cType
      * @param array $cIds
      * @param array $tagIds
-     * @param bool|false $replace
+     * @param bool $replace
      */
     public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
     {
