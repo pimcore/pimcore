@@ -124,31 +124,31 @@ class InheritanceHelper
         $this->db = \Pimcore\Db::get();
         $this->classId = $classId;
 
-        if ($storetable == null) {
+        if ($storetable === null) {
             $this->storetable = self::STORE_TABLE . $classId;
         } else {
             $this->storetable = $storetable;
         }
 
-        if ($querytable == null) {
+        if ($querytable === null) {
             $this->querytable = self::QUERY_TABLE . $classId;
         } else {
             $this->querytable = $querytable;
         }
 
-        if ($relationtable == null) {
+        if ($relationtable === null) {
             $this->relationtable = self::RELATION_TABLE . $classId;
         } else {
             $this->relationtable = $relationtable;
         }
 
-        if ($idField == null) {
+        if ($idField === null) {
             $this->idField = self::ID_FIELD;
         } else {
             $this->idField = $idField;
         }
 
-        if ($queryIdField == null) {
+        if ($queryIdField === null) {
             $this->queryIdField = self::DEFAULT_QUERY_ID_COLUMN;
         } else {
             $this->queryIdField = $queryIdField;
@@ -201,7 +201,7 @@ class InheritanceHelper
      */
     public function addRelationToCheck($fieldname, $fieldDefinition, $queryfields = null)
     {
-        if ($queryfields == null) {
+        if ($queryfields === null) {
             $this->relations[$fieldname] = $fieldname;
         } else {
             $this->relations[$fieldname] = $queryfields;
