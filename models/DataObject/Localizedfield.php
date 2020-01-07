@@ -541,6 +541,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                 $containerDefinition = $this->getObject()->getClass();
             }
 
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
         }
