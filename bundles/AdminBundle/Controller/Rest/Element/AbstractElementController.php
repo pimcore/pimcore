@@ -136,8 +136,8 @@ abstract class AbstractElementController extends AbstractRestController
     }
 
     /**
-     * @param $class
-     * @param $data
+     * @param string $class
+     * @param array $data
      *
      * @return \Pimcore\Model\Webservice\Data
      */
@@ -149,8 +149,8 @@ abstract class AbstractElementController extends AbstractRestController
     }
 
     /**
-     * @param $wsData
-     * @param $data
+     * @param object $wsData
+     * @param array $data
      *
      * @return \Pimcore\Model\Webservice\Data
      */

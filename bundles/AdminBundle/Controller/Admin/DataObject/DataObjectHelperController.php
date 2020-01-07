@@ -76,9 +76,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $userId
-     * @param $classId
-     * @param $searchType
+     * @param int $userId
+     * @param string $classId
+     * @param string $searchType
      *
      * @return GridConfig\Listing
      */
@@ -104,23 +104,14 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $user User
-     * @param $classId
-     * @param $searchType
+     * @param User $user
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
-        $db = Db::get();
-        $configListingConditionParts = [];
-        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
-
-        if ($searchType) {
-            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-        }
-
         $configListing = [];
 
         $userIds = [$user->getId()];
@@ -191,11 +182,11 @@ class DataObjectHelperController extends AdminController
         } else {
             $gridConfig = GridConfig::getById($gridConfigId);
             $user = $this->getAdminUser();
+            $found = false;
             if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
                 $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $gridConfig->getClassId());
 
                 if ($sharedGridConfigs) {
-                    $found = false;
                     /** @var GridConfigShare $sharedConfig */
                     foreach ($sharedGridConfigs as $sharedConfig) {
                         if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
@@ -221,8 +212,8 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param ImportService $importService
-     * @param $user
-     * @param $classId
+     * @param User $user
+     * @param string $classId
      *
      * @return array
      */
@@ -658,13 +649,14 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $noSystemColumns
-     * @param $class DataObject\ClassDefinition
-     * @param $gridType
-     * @param $noBrickColumns
-     * @param $fields
-     * @param $context
-     * @param $objectId
+     * @param bool $noSystemColumns
+     * @param DataObject\ClassDefinition $class
+     * @param string $gridType
+     * @param bool $noBrickColumns
+     * @param DataObject\ClassDefinition\Data[] $fields
+     * @param array $context
+     * @param int $objectId
+     * @param array $types
      *
      * @return array
      */
@@ -740,15 +732,15 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field DataObject\ClassDefinition\Data
-     * @param $brickFields
-     * @param $availableFields
-     * @param $gridType
-     * @param $count
-     * @param $brickType
-     * @param $class
-     * @param $objectId
-     * @param null $context
+     * @param DataObject\ClassDefinition\Data $field
+     * @param DataObject\ClassDefinition\Data[] $brickFields
+     * @param array $availableFields
+     * @param string $gridType
+     * @param int $count
+     * @param string $brickType
+     * @param DataObject\ClassDefinition $class
+     * @param int $objectId
+     * @param array|null $context
      */
     protected function appendBrickFields($field, $brickFields, &$availableFields, $gridType, &$count, $brickType, $class, $objectId, $context = null)
     {
@@ -780,6 +772,11 @@ class DataObjectHelperController extends AdminController
         }
     }
 
+    /**
+     * @param array $config
+     *
+     * @return mixed
+     */
     protected function getCalculatedColumnConfig($config)
     {
         try {
@@ -951,7 +948,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfigId
+     * @param int $gridConfigId
      *
      * @return array
      */
@@ -1130,8 +1127,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $importConfig ImportConfig
-     * @param $metadata
+     * @param ImportConfig $importConfig
+     * @param array $configData
      *
      * @throws \Exception
      */
@@ -1171,8 +1168,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfig GridConfig
-     * @param $metadata
+     * @param GridConfig $gridConfig
+     * @param array $metadata
      *
      * @throws \Exception
      */
@@ -1212,11 +1209,13 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field
-     * @param $gridType
-     * @param $position
+     * @param DataObject\ClassDefinition\Data $field
+     * @param string $gridType
+     * @param string $position
      * @param bool $force
-     * @param null $keyPrefix
+     * @param string|null $keyPrefix
+     * @param DataObject\ClassDefinition|null $class
+     * @param int|null $objectId
      *
      * @return array|null
      */
@@ -1743,7 +1742,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $fileHandle
+     * @param string $fileHandle
      *
      * @return string
      */
@@ -1903,7 +1902,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field
+     * @param string $field
+     * @param array $helperDefinitions
      *
      * @return string
      */
@@ -1940,8 +1940,8 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param DataObject\Listing $list
+     * @param string[] $fields
      * @param bool $addTitles
      *
      * @return array
@@ -2007,9 +2007,10 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param $field
-     * @param $object DataObject\AbstractObject
-     * @param $requestedLanguage
+     * @param string $field
+     * @param DataObject\AbstractObject $object
+     * @param string $requestedLanguage
+     * @param array $helperDefinitions
      *
      * @return mixed
      */

@@ -283,7 +283,7 @@ abstract class AbstractRestController extends AdminController
     }
 
     /**
-     * @param $condition
+     * @param string $condition
      *
      * @throws \Exception
      */

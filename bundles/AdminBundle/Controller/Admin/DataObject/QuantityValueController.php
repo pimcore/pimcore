@@ -135,9 +135,9 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @param $comparison
+     * @param string $comparison
      *
-     * @return mixed
+     * @return string
      */
     private function getOperator($comparison)
     {

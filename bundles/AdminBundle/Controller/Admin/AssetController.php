@@ -445,8 +445,8 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param $targetPath
-     * @param $filename
+     * @param string $targetPath
+     * @param string $filename
      *
      * @return string
      */

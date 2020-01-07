@@ -155,7 +155,7 @@ class SnippetController extends DocumentControllerBase
     }
 
     /**
-     * @param $request
+     * @param Request $request
      * @param Document $snippet
      */
     protected function setValuesToDocument(Request $request, Document $snippet)

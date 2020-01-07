@@ -65,7 +65,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Check user permission
      *
-     * @param $permission
+     * @param string $permission
      *
      * @throws AccessDeniedHttpException
      */

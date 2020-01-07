@@ -41,7 +41,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     protected $phpTemplatingEngine;
 
     /**
-     * @param $excludedRoutes
+     * @param array $excludedRoutes
      * @param PhpEngine $phpTemplatingEngine
      */
     public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
