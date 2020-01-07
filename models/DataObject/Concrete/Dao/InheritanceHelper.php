@@ -226,7 +226,7 @@ class InheritanceHelper
 
 
         // only build the tree if there are fields to check
-        if (!empty($this->fields) ||!empty($this->relations)) {
+        if (!empty($this->fields) || !empty($this->relations)) {
             $fields = implode('`,`', $this->fields);
             if (!empty($fields)) {
                 $fields = ', `' . $fields . '`';
