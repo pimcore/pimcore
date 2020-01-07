@@ -214,7 +214,7 @@ class InheritanceHelper
     /**
      * @param $oo_id
      * @param bool $createMissingChildrenRows
-     * @params array $params
+     * @param array $params
      *
      * @throws \Exception
      */
@@ -391,9 +391,9 @@ class InheritanceHelper
 
 
     /**
-     * @param $result
-     * @param $language
-     * @param $column
+     * @param array $result
+     * @param string $language
+     * @param string $column
      * @return array
      */
     protected function filterResultByLanguage($result, $language, $column) {
