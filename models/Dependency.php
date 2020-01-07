@@ -74,7 +74,7 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param  Element\ELementInterface $element
+     * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element)
     {

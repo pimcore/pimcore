@@ -661,13 +661,15 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param $object
-     * @param $key
-     * @param null $brickType
-     * @param null $brickKey
-     * @param null $fieldDefinition
+     * @param Concrete $object
+     * @param string $key
+     * @param string|null $brickType
+     * @param string|null $brickKey
+     * @param ClassDefinition\Data|null $fieldDefinition
+     * @param array $context
+     * @param array|null $brickDescriptor
      *
-     * @return \stdclass, value and objectid where the value comes from
+     * @return \stdClass, value and objectid where the value comes from
      */
     private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [], $brickDescriptor = null)
     {
