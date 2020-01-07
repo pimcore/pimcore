@@ -12,7 +12,11 @@ class Version20191230103524 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `ecommerceframework_cartitem` ADD INDEX `cartId_parentItemKey` (`cartId`,`parentItemKey`);');
+        if($schema->hasTable('ecommerceframework_cartitem')) {
+            if(!$schema->getTable('ecommerceframework_cartitem')->hasIndex('cartId_parentItemKey')) {
+                $this->addSql('ALTER TABLE `ecommerceframework_cartitem` ADD INDEX `cartId_parentItemKey` (`cartId`,`parentItemKey`);');
+            }
+        }
     }
 
     /**
@@ -20,6 +24,10 @@ class Version20191230103524 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `ecommerceframework_cartitem` DROP INDEX `cartId_parentItemKey`;');
+        if($schema->hasTable('ecommerceframework_cartitem')) {
+            if($schema->getTable('ecommerceframework_cartitem')->hasIndex('cartId_parentItemKey')) {
+                $this->addSql('ALTER TABLE `ecommerceframework_cartitem` DROP INDEX `cartId_parentItemKey`;');
+            }
+        }
     }
 }
