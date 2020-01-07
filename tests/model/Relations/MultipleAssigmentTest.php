@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\MultipleAssignments;
@@ -12,6 +11,11 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
+/**
+ * Class MultipleAssigmentTest
+ * @package Pimcore\Tests\Model\Relations
+ * @group model.relations.multipleassignment
+ */
 class MultipleAssigmentTest extends ModelTestCase
 {
     public function setUp()
@@ -42,23 +46,8 @@ class MultipleAssigmentTest extends ModelTestCase
 
     protected function setUpTestClasses()
     {
-        $name = 'RelationTest';
-        $file = 'relations/class_RelationTest_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
-
-        $name = 'MultipleAssignments';
-        $file = 'relations/class_MultipleAssignments_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
+        $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupPimcoreClass_MultipleAssignments();
     }
 
     public function testMultipleAssignmentsOnSingleManyToMany()
