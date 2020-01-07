@@ -1433,6 +1433,18 @@ class Configuration implements ConfigurationInterface
                                     ->defaultNull()
                                     ->info('Will be applied when the current place is empty.')
                                 ->end()
+                                ->arrayNode('initial_markings')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                            ->then(function ($v) {
+                                                return [$v];
+                                            })
+                                        ->end()
+                                        ->requiresAtLeastOneElement()
+                                        ->prototype('scalar')
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                ->end()
                                 ->arrayNode('places')
                                     ->prototype('array')
                                         ->children()
