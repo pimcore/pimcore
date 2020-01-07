@@ -433,7 +433,7 @@ class Video extends Model\Document\Tag
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
-            $width = ($this->getWidth() - 1) . 'px';
+            $width = ((int)$this->getWidth() - 1) . 'px';
         }
 
         // only display error message in debug mode

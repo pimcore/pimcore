@@ -256,26 +256,27 @@ function urlencode_ignore_slash($var)
 }
 
 /**
- * @param  $val
+ * @param string $val
  *
- * @return int|string
+ * @return int
  */
 function return_bytes($val)
 {
     $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);
+    $bytes = (int)$val;
     switch ($last) {
         case 'g':
-            $val *= 1024;
+            $bytes *= 1024;
             // no break
         case 'm':
-            $val *= 1024;
+            $bytes *= 1024;
             // no break
         case 'k':
-            $val *= 1024;
+            $bytes *= 1024;
     }
 
-    return $val;
+    return $bytes;
 }
 
 /**

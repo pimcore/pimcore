@@ -1259,7 +1259,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         foreach ($mapping as $language => $fields) {
             foreach ($fields as $key => $value) {
                 $fd = $this->getFieldDefinition($key);
-                if ($fd & $fd->isDiffChangeAllowed($object)) {
+                if ($fd && $fd->isDiffChangeAllowed($object)) {
                     if ($value == null) {
                         unset($localData[$language][$key]);
                     } else {

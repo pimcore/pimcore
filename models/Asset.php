@@ -1702,11 +1702,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param null $name
-     * @param null $language
+     * @param string|null $name
+     * @param string|null $language
      * @param bool $strictMatch
      *
-     * @return array|null
+     * @return array|string|null
      */
     public function getMetadata($name = null, $language = null, $strictMatch = false)
     {
