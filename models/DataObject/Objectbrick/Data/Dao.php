@@ -248,7 +248,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($inheritanceEnabled) {
             $this->inheritanceHelper->doUpdate($object->getId(), true,
-                ['relationContext' => [
+                ['inheritanceRelationContext' => [
                     'ownertype' => 'objectbrick'
                 ]]);
         }
