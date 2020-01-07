@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Tool;
 
 /**
- * @method \Pimcore\Model\DataObject\Localizedfield\Dao getDao()
+ * @method Localizedfield\Dao getDao()
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
@@ -518,8 +518,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $language = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
             $this->items[$language] = [];
+            $this->markLanguageAsDirty($language);
         }
-        $this->markLanguageAsDirty($language);
 
         $contextInfo = $this->getContext();
         if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'block') {
@@ -541,9 +541,18 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                 $containerDefinition = $this->getObject()->getClass();
             }
 
-            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
+        }
+
+        // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
+        // note that preSetData will just overwrite it with the new data and mark it as loaded
+        $forceLanguageDirty = false;
+
+        if (method_exists($fieldDefinition, 'getLazyLoading') && $fieldDefinition->getLazyLoading()) {
+            if (!$this->isLazyKeyLoaded($fieldDefinition->getName())) {
+                $forceLanguageDirty = true;
+            }
         }
 
         if (method_exists($fieldDefinition, 'preSetData')) {
@@ -557,7 +566,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             );
         }
 
-        if ($markFieldAsDirty && !$fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value)) {
+        if ($markFieldAsDirty && ($forceLanguageDirty || !$fieldDefinition->isEqual($this->items[$language][$name] ?? null, $value))) {
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;
