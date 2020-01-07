@@ -20,9 +20,7 @@ class Version20191230104529 extends AbstractPimcoreMigration
     {
         $class = ClassDefinition::getByName('OnlineShopOrder');
         if($class) {
-            /**
-             * @var $cartIdField ClassDefinition\Data\Input
-             */
+            /** @var ClassDefinition\Data\Input $cartIdField */
             $cartIdField = $class->getFieldDefinition('cartId');
             $cartIdField->setColumnLength(190);
             $class->save();
@@ -36,9 +34,7 @@ class Version20191230104529 extends AbstractPimcoreMigration
     {
         $class = ClassDefinition::getByName('OnlineShopOrder');
         if($class) {
-            /**
-             * @var $cartIdField ClassDefinition\Data\Input
-             */
+            /** @var ClassDefinition\Data\Input $cartIdField */
             $cartIdField = $class->getFieldDefinition('cartId');
             $cartIdField->setColumnLength(255);
             $class->save();

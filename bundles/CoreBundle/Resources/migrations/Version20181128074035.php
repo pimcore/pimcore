@@ -141,7 +141,7 @@ class Version20181128074035 extends AbstractPimcoreMigration
     /**
      * old format helper: mail@mail.com (Name)
      *
-     * @param $data
+     * @param string $data
      *
      * @return array
      */

@@ -62,7 +62,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     /**
      * Try to load definition by name.
      *
-     * @param $name
+     * @param string $name
      *
      * @throws \Exception
      *
@@ -74,7 +74,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel
      */

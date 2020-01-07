@@ -126,7 +126,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param $lifetime
+     * @param int|null $lifetime
      *
      * @return $this
      */
