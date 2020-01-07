@@ -64,8 +64,8 @@ abstract class AbstractDefinitionHelper extends Module
     }
 
     /**
-     * @param $type
-     * @param null $name
+     * @param string $type
+     * @param string|null $name
      * @param bool $mandatory
      * @param bool $index
      * @param bool $visibleInGridView
