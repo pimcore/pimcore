@@ -33,7 +33,7 @@ class InheritanceHelper
 
     const ID_FIELD = 'oo_id';
 
-    const QUERY_ID_FIELD = 'ooo_id';
+    const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
      * @var ConnectionInterface
@@ -149,7 +149,7 @@ class InheritanceHelper
         }
 
         if ($queryIdField == null) {
-            $this->queryIdField = self::QUERY_ID_FIELD;
+            $this->queryIdField = self::DEFAULT_QUERY_ID_COLUMN;
         } else {
             $this->queryIdField = $queryIdField;
         }
