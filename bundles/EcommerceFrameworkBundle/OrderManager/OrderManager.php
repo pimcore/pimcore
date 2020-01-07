@@ -530,14 +530,13 @@ class OrderManager implements OrderManagerInterface
      *
      * @param string $customerId
      * @param PaymentInterface $paymentProvider
-     * @param null $paymentMethod
-     * @param null|int $limit
+     * @param string|null $paymentMethod
      * @param string $orderId
      *
      * @throws ProviderNotFoundException
      * @throws \Exception
      *
-     * @return false|\Pimcore\Model\DataObject\Listing\Concrete
+     * @return \Pimcore\Model\DataObject\Listing\Concrete
      */
     public function getRecurringPaymentSourceOrderList(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
     {

@@ -1785,8 +1785,6 @@ class ClassController extends AdminController implements EventedControllerInterf
     /**
      * @Route("/suggest-class-identifier")
      *
-     * @param Request $request
-     *
      * @return Response
      */
     public function suggestClassIdentifierAction()

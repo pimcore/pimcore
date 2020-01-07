@@ -36,7 +36,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param Document $document
+     * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
      *

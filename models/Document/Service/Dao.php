@@ -133,7 +133,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Document $sourceDocument
+     * @param Document $document
      * @param Document $targetDocument
      */
     public function removeTranslationLink(Document $document, Document $targetDocument)

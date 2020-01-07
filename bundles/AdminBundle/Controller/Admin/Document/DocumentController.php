@@ -491,8 +491,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document $updatedObject
-     * @param $newIndex
+     * @param Document $document
+     * @param int $newIndex
      */
     protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
     {

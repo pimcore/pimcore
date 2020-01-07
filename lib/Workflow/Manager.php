@@ -87,8 +87,9 @@ class Manager
     }
 
     /**
-     * @param string $place
-     * @param array $placeConfig
+     * @param string $workflowName
+     * @param string $action
+     * @param array $actionConfig
      *
      * @return $this
      */

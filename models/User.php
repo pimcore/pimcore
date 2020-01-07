@@ -171,7 +171,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $username
+     * @param string $username
      *
      * @return $this
      */
@@ -192,7 +192,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $firstname
+     * @param string $firstname
      *
      * @return $this
      */
@@ -213,7 +213,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $lastname
+     * @param string $lastname
      *
      * @return $this
      */
@@ -234,7 +234,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $email
+     * @param string $email
      *
      * @return $this
      */
@@ -385,7 +385,7 @@ class User extends User\UserRole
      *
      * @param string $permissionName
      *
-     * @return array
+     * @return bool
      */
     public function getPermission($permissionName)
     {
@@ -397,7 +397,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $roles
+     * @param string|array $roles
      *
      * @return $this
      */
@@ -427,7 +427,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $welcomescreen
+     * @param bool $welcomescreen
      *
      * @return $this
      */
@@ -447,7 +447,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $closeWarning
+     * @param bool $closeWarning
      *
      * @return $this
      */
@@ -467,7 +467,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $memorizeTabs
+     * @param bool $memorizeTabs
      *
      * @return $this
      */
@@ -487,7 +487,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $allowDirtyClose
+     * @param bool $allowDirtyClose
      *
      * @return $this
      */
@@ -507,7 +507,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $apiKey
+     * @param string $apiKey
      *
      * @throws \Exception
      */
@@ -532,7 +532,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
     public function setImage($path)
     {
@@ -753,7 +753,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param bool $active
+     * @param int $lastLogin
      *
      * @return $this
      */

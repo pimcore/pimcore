@@ -185,8 +185,9 @@ class HeadScript extends CacheBusterAware
     /**
      * Start capture action
      *
-     * @param  mixed $captureType
-     * @param  string $typeOrAttrs
+     * @param string $captureType
+     * @param string $type
+     * @param array $attrs
      *
      * @return void
      */
@@ -331,8 +332,7 @@ class HeadScript extends CacheBusterAware
     /**
      * Is the script provided valid?
      *
-     * @param  mixed $value
-     * @param  string $method
+     * @param mixed $value
      *
      * @return bool
      */
@@ -439,10 +439,10 @@ class HeadScript extends CacheBusterAware
     /**
      * Create script HTML
      *
-     * @param  string $type
-     * @param  array $attributes
-     * @param  string $content
-     * @param  string|int $indent
+     * @param \stdClass $item
+     * @param string $indent
+     * @param string $escapeStart
+     * @param string $escapeEnd
      *
      * @return string
      */

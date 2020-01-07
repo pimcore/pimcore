@@ -319,7 +319,8 @@ abstract class AbstractRestController extends AdminController
     }
 
     /**
-     * @param FilterEvent $event
+     * @param Request $request
+     * @param FilterEvent $eventData
      */
     public function dispatchBeforeLoadEvent(Request $request, FilterEvent $eventData)
     {

@@ -300,7 +300,7 @@ class GridHelperService
     }
 
     /**
-     * @param array $fieldsParameter
+     * @param array $fields
      *
      * @return array
      */

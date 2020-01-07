@@ -119,11 +119,13 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Transition $notifyEmail
-     * @param \Pimcore\Model\Workflow $workflow
+     * @param Transition $transition
+     * @param \Symfony\Component\Workflow\Workflow $workflow
      * @param AbstractElement $subject
      * @param string $mailType
      * @param string $mailPath
+     * @param array $notifyUsers
+     * @param array $notifyRoles
      */
     private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
     {
@@ -142,6 +144,13 @@ class NotificationSubscriber implements EventSubscriberInterface
         );
     }
 
+    /**
+     * @param Transition $transition
+     * @param \Symfony\Component\Workflow\Workflow $workflow
+     * @param AbstractElement $subject
+     * @param array $notifyUsers
+     * @param array $notifyRoles
+     */
     private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, array $notifyUsers, array $notifyRoles)
     {
         $subjectType = (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject));

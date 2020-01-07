@@ -218,7 +218,6 @@ class EditmodeListener implements EventSubscriberInterface
 
     /**
      * @param Document $document
-     * @param User $user
      * @param string $language
      *
      * @return string

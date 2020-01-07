@@ -147,8 +147,6 @@ class RecyclebinController extends AdminController implements EventedControllerI
     /**
      * @Route("/recyclebin/flush", methods={"DELETE"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
     public function flushAction()

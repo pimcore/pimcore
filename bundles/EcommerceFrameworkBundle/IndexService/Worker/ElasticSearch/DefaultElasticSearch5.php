@@ -255,7 +255,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
      *
      * @param array $indexSystemData
-     * @param int $objectid
      */
     protected function deleteMovedParentRelations($indexSystemData)
     {

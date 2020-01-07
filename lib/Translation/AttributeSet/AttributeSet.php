@@ -43,7 +43,7 @@ class AttributeSet
     /**
      * DataExtractorResult constructor.
      *
-     * @param TranslationItem $element
+     * @param TranslationItem $translationItem
      */
     public function __construct(TranslationItem $translationItem)
     {
