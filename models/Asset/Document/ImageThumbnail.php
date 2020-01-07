@@ -102,7 +102,7 @@ class ImageThumbnail
                         $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
-                        $this->filesystemPath = $errorImage;
+                        $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
                         return;
                     }
                 }
