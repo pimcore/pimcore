@@ -102,7 +102,8 @@ class ImageThumbnail
                         $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
-                        return '/bundles/pimcoreadmin/img/please-wait.png';
+                        $this->filesystemPath = $errorImage;
+                        return;
                     }
                 }
 
