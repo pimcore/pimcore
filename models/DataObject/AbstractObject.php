@@ -333,7 +333,7 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return static
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
