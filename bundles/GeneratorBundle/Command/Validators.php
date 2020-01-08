@@ -15,7 +15,7 @@ class Validators
      * If $requireVendorNamespace is true, then we require you to have a vendor
      * namespace (e.g. Acme).
      *
-     * @param $namespace
+     * @param string $namespace
      * @param bool $requireVendorNamespace
      *
      * @return string

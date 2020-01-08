@@ -19,18 +19,6 @@ namespace Pimcore\Bundle\GeneratorBundle\Model;
 
 class Bundle extends BaseBundle
 {
-    /**
-     * @param $namespace
-     * @param $name
-     * @param $targetDirectory
-     * @param $configurationFormat
-     * @param $isShared
-     */
-    public function __construct($namespace, $name, $targetDirectory, $configurationFormat, $isShared)
-    {
-        parent::__construct($namespace, $name, $targetDirectory, $configurationFormat, $isShared);
-    }
-
     public function shouldGenerateDependencyInjectionDirectory()
     {
         return true;
