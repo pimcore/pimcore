@@ -137,7 +137,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @var array
      */
-    protected $o_siblings;
+    protected $o_siblings = [];
 
     /**
      * Indicator if object has siblings or not
@@ -154,7 +154,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var array
      */
-    protected $o_children;
+    protected $o_children = [];
 
     /**
      * @var string
@@ -411,9 +411,11 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return self[]
      */
-    public function getChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if ($this->o_children === null || $this->lastGetChildrenObjectTypes != $objectTypes) {
+        $cacheKey = implode('_', $objectTypes) . (!empty($objectTypes) ?'_' : '') . (int) $unpublished;
+
+        if (!isset($this->o_children[$cacheKey]) || $this->lastGetChildrenObjectTypes != $objectTypes) {
             $this->lastGetChildrenObjectTypes = $objectTypes;
 
             $list = new Listing();
@@ -422,10 +424,11 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder('asc');
             $list->setObjectTypes($objectTypes);
-            $this->o_children = $list->load();
+            $this->o_children[$cacheKey] = $list->load();
         }
 
-        return $this->o_children;
+        return $this->o_children[$cacheKey];
+
     }
 
     /**
@@ -440,13 +443,12 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if (is_bool($this->o_hasChildren)) {
             if (($this->o_hasChildren and empty($this->o_children)) or (!$this->o_hasChildren and !empty($this->o_children))) {
-                return $this->getDao()->hasChildren($objectTypes, $unpublished);
-            } else {
-                return $this->o_hasChildren;
+                $this->o_hasChildren = $this->getDao()->hasChildren($objectTypes, $unpublished);
             }
+            return $this->o_hasChildren;
         }
 
-        return $this->getDao()->hasChildren($objectTypes, $unpublished);
+        return $this->o_hasChildren = $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
@@ -457,9 +459,11 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return array
      */
-    public function getSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if ($this->o_siblings === null || $this->lastGetSiblingObjectTypes != $objectTypes) {
+        $cacheKey = implode('_', $objectTypes) . (!empty($objectTypes) ? '_' : '') . (int) $unpublished;
+
+        if (!isset($this->o_siblings[$cacheKey]) || $this->lastGetSiblingObjectTypes != $objectTypes) {
             $list = new Listing();
             $list->setUnpublished($unpublished);
             // string conversion because parentId could be 0
@@ -468,10 +472,10 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrderKey('o_key');
             $list->setObjectTypes($objectTypes);
             $list->setOrder('asc');
-            $this->o_siblings = $list->load();
+            $this->o_siblings[$cacheKey] = $list->load();
         }
 
-        return $this->o_siblings;
+        return $this->o_siblings[$cacheKey];
     }
 
     /**
@@ -485,13 +489,12 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if (is_bool($this->o_hasSiblings)) {
             if (($this->o_hasSiblings and empty($this->o_siblings)) or (!$this->o_hasSiblings and !empty($this->o_siblings))) {
-                return $this->getDao()->hasSiblings($objectTypes);
-            } else {
-                return $this->o_hasSiblings;
+                $this->o_hasSiblings = $this->getDao()->hasSiblings($objectTypes);
             }
+            return $this->o_hasSiblings;
         }
 
-        return $this->getDao()->hasSiblings($objectTypes);
+        return $this->o_hasSiblings = $this->getDao()->hasSiblings($objectTypes);
     }
 
     /**
@@ -1110,7 +1113,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->o_children = $children;
+        //default cache key
+        $cacheKey = implode('_', [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER]) . '_0';
+
+        $this->o_children[$cacheKey] = $children;
         $this->o_hasChildren = (is_array($children) && count($children) > 0);
 
         return $this;

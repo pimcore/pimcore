@@ -140,6 +140,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function setCondition($condition, $conditionVariables = null)
     {
+        $this->setData(null);
+
         return parent::setCondition($condition, $conditionVariables);
     }
 

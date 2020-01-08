@@ -162,7 +162,7 @@ class Document extends Element\AbstractElement
      *
      * @var array
      */
-    protected $children;
+    protected $children = [];
 
     /**
      * Indicator of document has children or not.
@@ -176,7 +176,7 @@ class Document extends Element\AbstractElement
      *
      * @var array
      */
-    protected $siblings;
+    protected $siblings = [];
 
     /**
      * Indicator if document has siblings or not
@@ -653,7 +653,7 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->children = $children;
+        $this->children[0] = $children;
         if (is_array($children) and count($children) > 0) {
             $this->hasChildren = true;
         } elseif ($children === null) {
@@ -674,16 +674,16 @@ class Document extends Element\AbstractElement
      */
     public function getChildren($unpublished = false)
     {
-        if ($this->children === null) {
+        if (!isset($this->children[$unpublished])) {
             $list = new Document\Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->children = $list->load();
+            $this->children[$unpublished] = $list->load();
         }
 
-        return $this->children;
+        return $this->children[$unpublished];
     }
 
     /**
@@ -697,13 +697,12 @@ class Document extends Element\AbstractElement
     {
         if (is_bool($this->hasChildren)) {
             if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
-                return $this->getDao()->hasChildren($unpublished);
-            } else {
-                return $this->hasChildren;
+                $this->hasChildren = $this->getDao()->hasChildren($unpublished);
             }
+            return $this->hasChildren;
         }
 
-        return $this->getDao()->hasChildren($unpublished);
+        return $this->hasChildren = $this->getDao()->hasChildren($unpublished);
     }
 
     /**
@@ -715,7 +714,7 @@ class Document extends Element\AbstractElement
      */
     public function getSiblings($unpublished = false)
     {
-        if ($this->siblings === null) {
+        if (!isset($this->siblings[$unpublished])) {
             $list = new Document\Listing();
             $list->setUnpublished($unpublished);
             // string conversion because parentId could be 0
@@ -723,10 +722,10 @@ class Document extends Element\AbstractElement
             $list->addConditionParam('id != ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->siblings = $list->load();
+            $this->siblings[$unpublished] = $list->load();
         }
 
-        return $this->siblings;
+        return $this->siblings[$unpublished];
     }
 
     /**
@@ -738,13 +737,12 @@ class Document extends Element\AbstractElement
     {
         if (is_bool($this->hasSiblings)) {
             if (($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))) {
-                return $this->getDao()->hasSiblings();
-            } else {
-                return $this->hasSiblings;
+                $this->hasSiblings = $this->getDao()->hasSiblings();
             }
+            return $this->hasSiblings;
         }
 
-        return $this->getDao()->hasSiblings();
+        return $this->hasSiblings = $this->getDao()->hasSiblings();
     }
 
     /**
