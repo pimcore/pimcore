@@ -167,7 +167,7 @@ class Document extends Element\AbstractElement
     /**
      * Indicator of document has children or not.
      *
-     * @var bool
+     * @var bool[]
      */
     protected $hasChildren;
 
@@ -653,14 +653,14 @@ class Document extends Element\AbstractElement
     {
         if($children === null) {
             // unset all cached children
-            $this->hasChildren = null;
+            $this->hasChildren = [];
             $this->children = [];
         } else {
             $this->children[0] = $children;
             if (is_array($children) && count($children) > 0) {
-                $this->hasChildren = true;
+                $this->hasChildren[0] = true;
             } else {
-                $this->hasChildren = false;
+                $this->hasChildren[0] = false;
             }
         }
 
@@ -697,14 +697,14 @@ class Document extends Element\AbstractElement
      */
     public function hasChildren($unpublished = false)
     {
-        if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
-                $this->hasChildren = $this->getDao()->hasChildren($unpublished);
+        if (isset($this->hasChildren[$unpublished])) {
+            if (($this->hasChildren[$unpublished] and empty($this->children[$unpublished])) or (!$this->hasChildren[$unpublished] and !empty($this->children[$unpublished]))) {
+                $this->hasChildren[$unpublished] = $this->getDao()->hasChildren($unpublished);
             }
-            return $this->hasChildren;
+            return $this->hasChildren[$unpublished];
         }
 
-        return $this->hasChildren = $this->getDao()->hasChildren($unpublished);
+        return $this->hasChildren[$unpublished] = $this->getDao()->hasChildren($unpublished);
     }
 
     /**

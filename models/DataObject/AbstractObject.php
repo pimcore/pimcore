@@ -128,7 +128,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_properties = null;
 
     /**
-     * @var bool
+     * @var bool[]
      */
     protected $o_hasChildren;
 
@@ -441,14 +441,14 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if (is_bool($this->o_hasChildren)) {
-            if (($this->o_hasChildren and empty($this->o_children)) or (!$this->o_hasChildren and !empty($this->o_children))) {
-                $this->o_hasChildren = $this->getDao()->hasChildren($objectTypes, $unpublished);
+        if (isset($this->hasChildren[$unpublished])) {
+            if (($this->o_hasChildren[$unpublished] and empty($this->o_children[$unpublished])) or (!$this->o_hasChildren[$unpublished] and !empty($this->o_children[$unpublished]))) {
+                $this->o_hasChildren[$unpublished] = $this->getDao()->hasChildren($objectTypes, $unpublished);
             }
-            return $this->o_hasChildren;
+            return $this->o_hasChildren[$unpublished];
         }
 
-        return $this->o_hasChildren = $this->getDao()->hasChildren($objectTypes, $unpublished);
+        return $this->o_hasChildren[$unpublished] = $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
@@ -1116,13 +1116,13 @@ class AbstractObject extends Model\Element\AbstractElement
         if($children === null) {
             // unset all cached children
             $this->o_children = [];
-            $this->o_hasChildren = false;
+            $this->o_hasChildren = [];
         } else {
             //default cache key
             $cacheKey = implode('_', [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER]) . '_0';
 
             $this->o_children[$cacheKey] = $children;
-            $this->o_hasChildren = (is_array($children) && count($children) > 0);
+            $this->o_hasChildren[0] = (is_array($children) && count($children) > 0);
         }
 
         return $this;
