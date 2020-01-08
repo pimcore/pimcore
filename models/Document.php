@@ -645,21 +645,23 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param $children
+     * @param array|null $children
      *
-     * @return array
-     *
-     * @todo: replace and with &&
+     * @return self
      */
     public function setChildren($children)
     {
-        $this->children[0] = $children;
-        if (is_array($children) and count($children) > 0) {
-            $this->hasChildren = true;
-        } elseif ($children === null) {
+        if($children === null) {
+            // unset all cached children
             $this->hasChildren = null;
+            $this->children = [];
         } else {
-            $this->hasChildren = false;
+            $this->children[0] = $children;
+            if (is_array($children) && count($children) > 0) {
+                $this->hasChildren = true;
+            } else {
+                $this->hasChildren = false;
+            }
         }
 
         return $this;

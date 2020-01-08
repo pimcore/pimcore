@@ -1107,17 +1107,23 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $children
+     * @param array|null $children
      *
      * @return $this
      */
     public function setChildren($children)
     {
-        //default cache key
-        $cacheKey = implode('_', [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER]) . '_0';
+        if($children === null) {
+            // unset all cached children
+            $this->o_children = [];
+            $this->o_hasChildren = false;
+        } else {
+            //default cache key
+            $cacheKey = implode('_', [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER]) . '_0';
 
-        $this->o_children[$cacheKey] = $children;
-        $this->o_hasChildren = (is_array($children) && count($children) > 0);
+            $this->o_children[$cacheKey] = $children;
+            $this->o_hasChildren = (is_array($children) && count($children) > 0);
+        }
 
         return $this;
     }
