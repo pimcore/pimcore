@@ -26,6 +26,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractRestClient implements LoggerAwareInterface
 {
     use LoggerAwareTrait;

@@ -247,6 +247,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -262,6 +263,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 6.4.0
+- Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
 - Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`
 - The `DocumentRenderer::setEventDispatcher()` method has been removed. Pass event dispatcher to the constructor instead.
 - `RedirectHandler::setRequestHelper()` and `RedirectHandler::setSiteResolver()` methods have been removed. Pass instance of `Pimcore\Http\RequestHelper` & `Pimcore\Http\Request\Resolver\SiteResolver` to the constructor instead.

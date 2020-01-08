@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Db;
 
+/**
+ * @deprecated
+ */
 class Helper
 {
     public static function buildSqlCondition($q, $op = null, $subject = null)

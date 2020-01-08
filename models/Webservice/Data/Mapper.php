@@ -20,6 +20,9 @@ namespace Pimcore\Model\Webservice\Data;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @deprecated
+ */
 abstract class Mapper
 {
     /**

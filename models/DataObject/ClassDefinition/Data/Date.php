@@ -302,6 +302,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -313,6 +314,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

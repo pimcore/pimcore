@@ -226,6 +226,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
@@ -241,6 +242,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

@@ -25,6 +25,9 @@ use Pimcore\Model\User;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Admin;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**

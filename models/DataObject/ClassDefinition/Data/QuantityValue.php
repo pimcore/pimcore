@@ -465,6 +465,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -488,6 +489,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

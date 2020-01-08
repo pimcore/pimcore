@@ -20,6 +20,9 @@ namespace Pimcore\Event\Webservice;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @deprecated
+ */
 class FilterEvent extends Event
 {
     /** @var Request */

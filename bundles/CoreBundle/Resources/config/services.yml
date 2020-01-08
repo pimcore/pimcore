@@ -94,10 +94,12 @@ services:
         factory: ['@Pimcore\Http\ClientFactory', createClient]
 
     pimcore.rest_client:
+        deprecated: ~
         alias: Pimcore\Tool\RestClient
         public: true
 
     Pimcore\Tool\RestClient:
+        deprecated: ~
         public: true
         arguments:
             - '@pimcore.http_client'

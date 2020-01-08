@@ -411,6 +411,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -474,6 +475,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params

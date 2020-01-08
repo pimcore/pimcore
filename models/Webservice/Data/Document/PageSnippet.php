@@ -20,6 +20,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class PageSnippet extends Model\Webservice\Data\Document
 {
     /**

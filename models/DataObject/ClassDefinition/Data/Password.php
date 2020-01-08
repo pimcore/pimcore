@@ -374,6 +374,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *

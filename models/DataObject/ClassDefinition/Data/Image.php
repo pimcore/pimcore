@@ -336,6 +336,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -350,6 +351,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param array $params

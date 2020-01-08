@@ -271,6 +271,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -282,6 +283,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

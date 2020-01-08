@@ -1003,6 +1003,10 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 300},
                         items: [
                             {
+                                xtype: 'container',
+                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
+                            },
+                            {
                                 fieldLabel: t("webservice_enabled"),
                                 xtype: "checkbox",
                                 name: "webservice.enabled",

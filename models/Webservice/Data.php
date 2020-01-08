@@ -22,6 +22,9 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 abstract class Data
 {
     /**

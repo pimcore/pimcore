@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice;
 
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @deprecated
+ */
 class JsonEncoder
 {
     /**

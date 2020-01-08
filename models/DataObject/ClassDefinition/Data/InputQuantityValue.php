@@ -149,6 +149,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param array $params
