@@ -379,9 +379,17 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings($unpublished = false)
     {
-        $c = $this->db->fetchOne('SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
+        $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
+
+        if (Model\Document::doHideUnpublished() && !$unpublished) {
+            $sql .= ' AND published = 1';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }

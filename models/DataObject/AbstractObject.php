@@ -142,9 +142,9 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * Indicator if object has siblings or not
      *
-     * @var bool
+     * @var bool[]
      */
-    protected $o_hasSiblings;
+    protected $o_hasSiblings = [];
 
     /**
      * @var Model\Dependency[]
@@ -482,19 +482,20 @@ class AbstractObject extends Model\Element\AbstractElement
      * Returns true if the object has at least one sibling
      *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if (is_bool($this->o_hasSiblings)) {
-            if (($this->o_hasSiblings and empty($this->o_siblings)) or (!$this->o_hasSiblings and !empty($this->o_siblings))) {
-                $this->o_hasSiblings = $this->getDao()->hasSiblings($objectTypes);
+        if (isset($this->o_hasSiblings[$unpublished])) {
+            if (($this->o_hasSiblings[$unpublished] and empty($this->o_siblings[$unpublished])) or (!$this->o_hasSiblings[$unpublished] and !empty($this->o_siblings[$unpublished]))) {
+                $this->o_hasSiblings[$unpublished] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
             }
-            return $this->o_hasSiblings;
+            return $this->o_hasSiblings[$unpublished];
         }
 
-        return $this->o_hasSiblings = $this->getDao()->hasSiblings($objectTypes);
+        return $this->o_hasSiblings[$unpublished] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
     }
 
     /**

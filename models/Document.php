@@ -181,9 +181,9 @@ class Document extends Element\AbstractElement
     /**
      * Indicator if document has siblings or not
      *
-     * @var bool
+     * @var bool[]
      */
-    protected $hasSiblings;
+    protected $hasSiblings = [];
 
     /**
      * Check if the document is locked.
@@ -733,18 +733,20 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one sibling
      *
+     * @param bool $unpublished
+     *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings($unpublished = false)
     {
-        if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))) {
-                $this->hasSiblings = $this->getDao()->hasSiblings();
+        if (isset($this->hasSiblings[$unpublished])) {
+            if (($this->hasSiblings[$unpublished] and empty($this->siblings[$unpublished])) or (!$this->hasSiblings[$unpublished] and !empty($this->siblings[$unpublished]))) {
+                $this->hasSiblings[$unpublished] = $this->getDao()->hasSiblings($unpublished);
             }
-            return $this->hasSiblings;
+            return $this->hasSiblings[$unpublished];
         }
 
-        return $this->hasSiblings = $this->getDao()->hasSiblings();
+        return $this->hasSiblings[$unpublished] = $this->getDao()->hasSiblings($unpublished);
     }
 
     /**
