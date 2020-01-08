@@ -498,9 +498,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 }
             }
 
-            $localizedFields = $object->getLocalizedFields();
-            if (!$localizedFields) {
+            if (isset($params["context"]) && $params["context"]["containerType"] === 'fieldcollection') {
                 $localizedFields = new DataObject\Localizedfield();
+                $localizedFields->setContext($params["context"]);
+            } else {
+                $localizedFields = $object->getLocalizedFields();
+
+                if (!$localizedFields) {
+                    $localizedFields = new DataObject\Localizedfield();
+                }
             }
 
             if ($object instanceof DataObject\Concrete) {
