@@ -76,7 +76,6 @@ trait PimcoreMigrationsConfiguration
 
     protected function getMigrationConfiguration(InputInterface $input, OutputInterface $output): Configuration
     {
-        /** @var AbstractCommand $this */
         if (!$this->migrationConfiguration) {
             $factory = $this->getApplication()->getKernel()->getContainer()->get(ConfigurationFactory::class);
 

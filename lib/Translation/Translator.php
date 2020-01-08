@@ -294,15 +294,12 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
-                /** @var TranslationInterface $class */
                 $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
 
                 // no translation found create key
                 if ($class::isValidLanguage($locale)) {
 
-                    /**
-                     * @var AbstractTranslation $t
-                     */
+                    /** @var AbstractTranslation|null $t */
                     $t = $class::getByKey($id);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
@@ -312,6 +309,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             return $id;
                         }
                     } else {
+                        /** @var AbstractTranslation $t */
                         $t = new $class();
                         $t->setKey($id);
 

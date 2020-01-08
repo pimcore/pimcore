@@ -180,7 +180,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param array $context    Context to pass to serializer when using serializer component
      * @param bool $useAdminSerializer
      *
-     * @return array|\stdClass
+     * @return mixed
      */
     protected function decodeJson($json, $associative = true, array $context = [], bool $useAdminSerializer = true)
     {
