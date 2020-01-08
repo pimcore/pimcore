@@ -192,9 +192,9 @@ class Transliteration
     /**
      * @static
      *
-     * @param $ord
+     * @param int $ord
      * @param string $unknown
-     * @param null $langcode
+     * @param string|null $langcode
      *
      * @return string
      */
@@ -202,7 +202,7 @@ class Transliteration
     {
         $map = [];
 
-        if (!isset($langcode)) {
+        if (!$langcode) {
             $langcode = 'en';
         }
 

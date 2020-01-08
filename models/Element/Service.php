@@ -1055,18 +1055,17 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $versions
+     * @param Model\Version[] $versions
      *
      * @return array
      */
     public static function getSafeVersionInfo($versions)
     {
         $indexMap = [];
+        $result = [];
 
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
-            $result = [];
-            /** @var Model\Version $version */
             foreach ($versions as $version) {
                 $name = $version['user']['name'];
                 $id = $version['user']['id'];
@@ -1082,9 +1081,9 @@ class Service extends Model\AbstractModel
 
                 $result[] = $version;
             }
-
-            return $result;
         }
+
+        return $result;
     }
 
     /**
