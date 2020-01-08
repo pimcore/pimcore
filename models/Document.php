@@ -169,7 +169,7 @@ class Document extends Element\AbstractElement
      *
      * @var bool[]
      */
-    protected $hasChildren;
+    protected $hasChildren = [];
 
     /**
      * Contains a list of sibling documents

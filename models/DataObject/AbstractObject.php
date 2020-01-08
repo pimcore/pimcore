@@ -130,7 +130,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool[]
      */
-    protected $o_hasChildren;
+    protected $o_hasChildren = [];
 
     /**
      * Contains a list of sibling documents
