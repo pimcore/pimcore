@@ -177,7 +177,7 @@ class PublicServicesController extends Controller
     }
 
     /**
-     * @param $request
+     * @param Request $request
      *
      * @return Response
      */

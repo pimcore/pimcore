@@ -892,7 +892,7 @@ class Configuration implements ConfigurationInterface
      * Add a route prototype child
      *
      * @param ArrayNodeDefinition $parent
-     * @param $name
+     * @param string $name
      */
     private function addRoutesChild(ArrayNodeDefinition $parent, $name)
     {

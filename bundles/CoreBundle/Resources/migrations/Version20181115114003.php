@@ -47,9 +47,13 @@ class Version20181115114003 extends AbstractPimcoreMigration
         }
     }
 
+    /**
+     * @param DataObject\ClassDefinition\CustomLayout $customLayout
+     *
+     * @return bool|string
+     */
     public function updateCustomLayoutDefinitionToPhp($customLayout)
     {
-
         // save definition as a php file
         $definitionFile = $this->getDefinitionFile($customLayout->getId());
         if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
@@ -118,7 +122,7 @@ class Version20181115114003 extends AbstractPimcoreMigration
     }
 
     /**
-     * @param $data
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $data
      */
     public static function cleanupForExport(&$data)
     {
