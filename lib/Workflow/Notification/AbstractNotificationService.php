@@ -14,6 +14,7 @@
 
 namespace Pimcore\Workflow\Notification;
 
+use Pimcore\Db;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\User;
 
@@ -49,35 +50,42 @@ class AbstractNotificationService
     {
         $notifyUsers = [];
 
-        //get roles
-        $roleList = new User\Role\Listing();
-        $roleList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $roles)]);
+        if($roles) {
+            //get roles
+            $roleList = new User\Role\Listing();
+            $roleList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $roles)).')');
 
-        foreach ($roleList->load() as $role) {
-            $userList = new User\Listing();
-            $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
+            foreach ($roleList->load() as $role) {
+                $userList = new User\Listing();
+                $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
 
-            foreach ($userList->load() as $user) {
-                if ($includeAllUsers || $user->getEmail()) {
-                    $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
+                foreach ($userList->load() as $user) {
+                    if ($includeAllUsers || $user->getEmail()) {
+                        $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
+                    }
                 }
             }
         }
 
-        //get users
-        $userList = new User\Listing();
-        if ($includeAllUsers) {
-            $userList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $users)]);
-        } else {
-            $userList->setCondition('FIND_IN_SET(name, ?) and email is not null', [implode(',', $users)]);
-        }
 
-        foreach ($userList->load() as $user) {
-            /**
-             * @var User $user
-             */
-            if ($includeAllUsers || $user->getEmail()) {
-                $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
+        if($users) {
+            //get users
+            $userList = new User\Listing();
+            if ($includeAllUsers) {
+                $userList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).')');
+            } else {
+                $userList->setCondition(
+                    'name IN ('.implode(',', array_map([Db::get(), 'quote'], $users)).') and email is not null'
+                );
+            }
+
+            foreach ($userList->load() as $user) {
+                /**
+                 * @var User $user
+                 */
+                if ($includeAllUsers || $user->getEmail()) {
+                    $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
+                }
             }
         }
 
