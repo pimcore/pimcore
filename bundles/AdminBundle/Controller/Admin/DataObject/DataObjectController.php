@@ -557,10 +557,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param $object
-     * @param $key
-     * @param $fielddefinition
-     * @param $objectFromVersion
+     * @param DataObject\Concrete $object
+     * @param string $key
+     * @param DataObject\ClassDefinition\Data $fielddefinition
+     * @param bool $objectFromVersion
      * @param int $level
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
@@ -673,9 +673,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $layout
-     * @param $allowedView
-     * @param $allowedEdit
+     * @param Model\DataObject\ClassDefinition\Data $layout
+     * @param array $allowedView
+     * @param array $allowedEdit
      */
     protected function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
@@ -793,7 +793,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $classes
+     * @param DataObject\ClassDefinition[] $classes
      *
      * @return array
      */
@@ -1112,7 +1112,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param DataObject\AbstractObject $updatedObject
-     * @param $newIndex
+     * @param int $newIndex
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
@@ -1367,8 +1367,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param Request $request
      * @param DataObject\Concrete $object
-     * @param $originalModificationDate
-     * @param $data
+     * @param int $originalModificationDate
+     * @param array $data
      *
      * @return bool
      *
@@ -1436,9 +1436,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param Request $request
-     * @param $object
+     * @param DataObject\AbstractObject $object
      *
-     * @return mixed
+     * @return DataObject\AbstractObject
      */
     protected function assignPropertiesFromEditmode(Request $request, $object)
     {
@@ -1548,8 +1548,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @TemplatePhp()
      *
      * @param Request $request
-     * @param $from
-     * @param $to
+     * @param int $from
+     * @param int $to
      *
      * @return array
      *

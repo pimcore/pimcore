@@ -183,9 +183,9 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @param $priority
+     * @param int $priority
      *
-     * @return mixed
+     * @return string
      */
     private function getPriorityName($priority)
     {

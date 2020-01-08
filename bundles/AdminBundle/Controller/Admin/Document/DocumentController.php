@@ -1019,7 +1019,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param $element Document
+     * @param Document $element
      *
      * @return array
      */

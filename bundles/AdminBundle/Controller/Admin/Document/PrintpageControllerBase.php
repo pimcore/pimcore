@@ -327,7 +327,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array|mixed
      */
@@ -342,8 +342,8 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
-     * @param $options
+     * @param int $documentId
+     * @param array $options
      */
     private function saveProcessingOptions($documentId, $options)
     {

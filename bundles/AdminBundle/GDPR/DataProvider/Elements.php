@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 abstract class Elements implements DataProviderInterface
 {
     /**
-     * @param $query
+     * @param string $query
      *
      * @return string
      */

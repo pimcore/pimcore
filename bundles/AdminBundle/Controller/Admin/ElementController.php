@@ -737,8 +737,8 @@ class ElementController extends AdminController
     }
 
     /**
-     * @param $source
-     * @param $context
+     * @param DataObject\Concrete $source
+     * @param array $context
      *
      * @return bool|DataObject\ClassDefinition\Data|null
      *
@@ -780,9 +780,9 @@ class ElementController extends AdminController
 
     /**
      * @param DataObject\Concrete $source
-     * @param                     $context
-     * @param                     $result
-     * @param                     $targets
+     * @param array $context
+     * @param array $result
+     * @param array $targets
      *
      * @return array
      *

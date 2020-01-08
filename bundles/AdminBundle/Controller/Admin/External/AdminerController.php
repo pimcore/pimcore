@@ -233,8 +233,8 @@ namespace {
                 }
 
                 /**
-                 * @param $login
-                 * @param $password
+                 * @param string $login
+                 * @param string $password
                  *
                  * @return bool
                  */

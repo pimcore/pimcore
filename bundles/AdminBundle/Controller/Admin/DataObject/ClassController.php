@@ -435,9 +435,9 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return mixed
+     * @return string
      */
     protected function correctClassname($name)
     {
