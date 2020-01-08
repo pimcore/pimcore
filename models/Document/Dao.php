@@ -377,6 +377,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
+     * @param bool $unpublished
+     *
      * @return bool
      */
     public function hasSiblings($unpublished = false)
