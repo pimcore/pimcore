@@ -128,9 +128,4 @@ EOT
 
         return $question;
     }
-
-    protected function createGenerator()
-    {
-        return new BundleGenerator($this->getContainer()->get('filesystem'));
-    }
 }
