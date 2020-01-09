@@ -59,7 +59,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
         $currentValue = '';
         if ($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
-            $currentValue = implode($currentFilter[$filterDefinition->getField()], '-');
+            $currentValue = implode('-', $currentFilter[$filterDefinition->getField()]);
         }
 
         return $this->render($this->getTemplate($filterDefinition), [
