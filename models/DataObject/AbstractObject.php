@@ -1126,7 +1126,7 @@ class AbstractObject extends Model\Element\AbstractElement
             //default cache key
             $cacheKey = $this->getListingCacheKey();
             $this->o_children[$cacheKey] = $children;
-            $this->o_hasChildren[0] = (is_array($children) && count($children) > 0);
+            $this->o_hasChildren[$cacheKey] = (is_array($children) && count($children) > 0);
         }
 
         return $this;
