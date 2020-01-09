@@ -37,12 +37,12 @@ interface PriceSystemInterface
     /**
      * Filters and orders given product IDs based on price information
      *
-     * @param $productIds
-     * @param $fromPrice
-     * @param $toPrice
-     * @param $order
-     * @param $offset
-     * @param $limit
+     * @param array $productIds
+     * @param float $fromPrice
+     * @param float $toPrice
+     * @param string $order
+     * @param int $offset
+     * @param int $limit
      *
      * @return mixed
      */

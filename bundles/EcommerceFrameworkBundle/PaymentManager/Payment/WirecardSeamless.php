@@ -425,9 +425,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
      * This method adds additional fields to Wirecard Seamless, so that order items
      * can be transmitted and visualized in Paypal (during the payment process and in the Paypal invoice email).
      *
-     * @param $fields
+     * @param array $fields
      * @param \Pimcore\Model\DataObject\OnlineShopOrder $order
-     * @param $config
+     * @param array $config
      *
      * @return array
      */
@@ -654,7 +654,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
      * execute payment
      *
      * @param PriceInterface|null $price
-     * @param null $reference
+     * @param string|null $reference
      *
      * @throws \Exception
      *
@@ -722,7 +722,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @throws \Exception
      *
@@ -734,9 +734,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     }
 
     /**
-     * @param $reference
-     * @param $transactionId
-     * @param $paymentType
+     * @param string $reference
+     * @param string $transactionId
+     * @param string $paymentType
      *
      * @return bool|Status
      */
@@ -798,8 +798,8 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     }
 
     /**
-     * @param $url
-     * @param $params
+     * @param string $url
+     * @param array $params
      *
      * @return string[]
      */
@@ -827,7 +827,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     /**
      * Environment was kept optional for backwards compatibility, but should be passed if possible
      *
-     * @param $response
+     * @param array $response
      * @param EnvironmentInterface|null $environment
      *
      * @return CartInterface|null

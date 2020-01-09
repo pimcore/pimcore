@@ -34,7 +34,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product impression object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      * @param string $list
      *
      * @return ProductImpression
@@ -62,7 +62,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product view object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      *
      * @return ProductAction
      */
@@ -95,7 +95,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product action item
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      * @param int $quantity
      *
      * @return ProductAction

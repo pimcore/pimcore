@@ -143,7 +143,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @param $fieldName
+     * @param string $fieldName
      *
      * @return array
      */
@@ -166,8 +166,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * returns the full field name
      *
-     * @param $fieldName
-     * @param $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
      *
      * @return string
      */
@@ -194,7 +194,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * returns short field name based on full field name
      * also considers subfield names like name.analyzed etc.
      *
-     * @param $fullFieldName
+     * @param string $fullFieldName
      *
      * @return false|int|string
      */
@@ -271,7 +271,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return array $subTenantData
      */
@@ -327,9 +327,9 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * creates object mockup for given data
      *
-     * @param $objectId
-     * @param $data
-     * @param $relations
+     * @param int $objectId
+     * @param mixed $data
+     * @param array $relations
      *
      * @return mixed
      */
@@ -342,7 +342,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return IndexableInterface | array
      */

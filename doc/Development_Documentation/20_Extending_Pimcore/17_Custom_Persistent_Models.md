@@ -66,7 +66,7 @@ class Vote extends AbstractModel {
     /**
      * get score by id
      *
-     * @param $id
+     * @param int $id
      * @return null|self
      */
     public static function getById($id) {
@@ -83,7 +83,7 @@ class Vote extends AbstractModel {
     }
  
     /**
-     * @param $score
+     * @param int $score
      */
     public function setScore($score) {
         $this->score = $score;
@@ -97,7 +97,7 @@ class Vote extends AbstractModel {
     }
  
     /**
-     * @param $username
+     * @param string $username
      */
     public function setUsername($username) {
         $this->username = $username;
@@ -111,7 +111,7 @@ class Vote extends AbstractModel {
     }
  
     /**
-     * @param $id
+     * @param int $id
      */
     public function setId($id) {
         $this->id = $id;
@@ -154,7 +154,7 @@ class Dao extends AbstractDao {
     /**
      * get vote by id
      *
-     * @param null $id
+     * @param int|null $id
      * @throws \Exception
      */
     public function getById($id = null) {

@@ -289,19 +289,17 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     /**
      * only prepare data for updating index
      *
-     * @param $objectId
-     * @param null $data
-     * @param null $metadata
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
     }
 
     /**
-     * @param $subObjectId
+     * @param int $subObjectId
      * @param IndexableInterface|null $object
-     *
-     * @return mixed|void
      */
     protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
     {

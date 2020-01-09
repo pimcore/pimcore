@@ -321,7 +321,7 @@ SUBQUERY
     }
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return $this
      */

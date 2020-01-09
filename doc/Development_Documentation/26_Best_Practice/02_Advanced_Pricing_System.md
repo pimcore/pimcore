@@ -103,12 +103,12 @@ Following sample implementation does that by using a sql query:
     /**
      * Filters and orders given product IDs based on price information
      *
-     * @param $productIds  - contains all productId that apply filter criteria without limit & offset
-     * @param $fromPrice   - optional filter for 'fromPrice'
-     * @param $toPrice     - optional filter for 'toPrice'
-     * @param $order       - order for sorting (asc|desc)
-     * @param $offset
-     * @param $limit
+     * @param array $productIds  - contains all productId that apply filter criteria without limit & offset
+     * @param float $fromPrice   - optional filter for 'fromPrice'
+     * @param float $toPrice     - optional filter for 'toPrice'
+     * @param string $order       - order for sorting (asc|desc)
+     * @param int $offset
+     * @param int $limit
      * @return array
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)

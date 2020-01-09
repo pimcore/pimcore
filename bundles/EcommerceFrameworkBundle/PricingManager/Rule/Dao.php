@@ -48,7 +48,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */

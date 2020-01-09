@@ -209,7 +209,7 @@ abstract class AbstractRestController extends AdminController
      * Get ID either as parameter or from request
      *
      * @param Request $request
-     * @param null    $id
+     * @param int|null $id
      *
      * @return mixed|null
      *

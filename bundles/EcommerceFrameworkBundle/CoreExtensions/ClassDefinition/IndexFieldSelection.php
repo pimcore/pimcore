@@ -289,9 +289,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @param string $importValue
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return ObjectData\IndexFieldSelection
+     * @return ObjectData\IndexFieldSelection|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -309,7 +309,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @param \Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -343,9 +343,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @deprecated
      * @param mixed $value
-     * @param mixed $relatedObject
+     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param mixed $params
      * @param \Pimcore\Model\Webservice\IdMapperInterface|null $idMapper
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -360,8 +362,10 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         }
     }
 
-    /** True if change is allowed in edit mode.
-     * @param string $object
+    /**
+     * True if change is allowed in edit mode.
+     *
+     * @param \Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return bool

@@ -281,7 +281,7 @@ class Environment implements EnvironmentInterface
     /**
      * sets current assortment tenant which is used for indexing and product lists
      *
-     * @param $tenant string
+     * @param string $tenant
      */
     public function setCurrentAssortmentTenant($tenant)
     {
@@ -305,7 +305,7 @@ class Environment implements EnvironmentInterface
     /**
      * sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param $subTenant mixed
+     * @param mixed $subTenant
      *
      * @return mixed
      */

@@ -795,7 +795,7 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param $seed
+     * @param int $seed
      *
      * @return array
      */
@@ -1027,8 +1027,8 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param $field
-     * @param $seed
+     * @param string $field
+     * @param int $seed
      *
      * @return DataObject\Data\ObjectMetadata[]
      */
@@ -1334,7 +1334,7 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param null $condition
+     * @param string|null $condition
      *
      * @return Concrete[]
      */

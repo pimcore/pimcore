@@ -132,7 +132,7 @@ class ClassManager extends Module
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return ObjectbrickDefinition|null
      */

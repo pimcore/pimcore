@@ -97,8 +97,8 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     }
 
     /**
-     * @param null|AbstractModel|CustomLayout $customLayout
-     * @param null                            $json
+     * @param AbstractModel|CustomLayout|null $customLayout
+     * @param string|null $json
      *
      * @return bool
      */
