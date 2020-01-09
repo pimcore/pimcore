@@ -171,16 +171,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_childrenSortBy;
 
-    /**
-     * @var array
-     */
-    private $lastGetChildrenObjectTypes = [];
-
-    /**
-     * @var array
-     */
-    private $lastGetSiblingObjectTypes = [];
-
     /** @var int */
     protected $o_versionCount = 0;
 
@@ -415,9 +405,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
-        if (!isset($this->o_children[$cacheKey]) || $this->lastGetChildrenObjectTypes != $objectTypes) {
-            $this->lastGetChildrenObjectTypes = $objectTypes;
-
+        if (!isset($this->o_children[$cacheKey])) {
             $list = new Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
@@ -465,7 +453,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
-        if (!isset($this->o_siblings[$cacheKey]) || $this->lastGetSiblingObjectTypes != $objectTypes) {
+        if (!isset($this->o_siblings[$cacheKey])) {
             $list = new Listing();
             $list->setUnpublished($unpublished);
             // string conversion because parentId could be 0
