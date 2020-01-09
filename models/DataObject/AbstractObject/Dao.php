@@ -303,6 +303,8 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND o_published = 1';
         }
 
+        $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
 
         $c = $this->db->fetchOne($sql, $this->model->getId());
 
