@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\GeneratorBundle\Command;
 
 use Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Pimcore\Bundle\GeneratorBundle\Generator\BundleGenerator;
-use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -128,13 +127,6 @@ EOT
         }
 
         return $question;
-    }
-
-    protected function createBundleObject(InputInterface $input)
-    {
-        $bundle = parent::createBundleObject($input);
-
-        return $bundle;
     }
 
     protected function createGenerator()
