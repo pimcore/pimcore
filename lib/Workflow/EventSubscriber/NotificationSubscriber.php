@@ -101,7 +101,7 @@ class NotificationSubscriber implements EventSubscriberInterface
 
         $notificationSettings = $transition->getNotificationSettings();
         foreach ($notificationSettings as $notificationSetting) {
-            $condition = $notificationSetting['condition'];
+            $condition = $notificationSetting['condition'] ?? null;
 
             if (empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
