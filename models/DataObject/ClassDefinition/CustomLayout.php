@@ -67,7 +67,7 @@ class CustomLayout extends Model\AbstractModel
     public $userModification;
 
     /**
-     * @var int
+     * @var string
      */
     public $classId;
 
@@ -536,7 +536,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      */
     public function setClassId($classId)
     {
