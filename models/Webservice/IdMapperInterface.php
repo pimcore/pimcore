@@ -8,6 +8,7 @@ namespace Pimcore\Model\Webservice;
 interface IdMapperInterface
 {
     /**
+     * @deprecated
      * @param string $type
      * @param int $id
      *
@@ -16,6 +17,7 @@ interface IdMapperInterface
     public function getMappedId(string $type, int $id): int;
 
     /**
+     * @deprecated
      * @param string $sourceType
      * @param int $sourceId
      * @param string $destinationType
@@ -24,6 +26,7 @@ interface IdMapperInterface
     public function recordMappingFailure(string $sourceType, int $sourceId, string $destinationType, int $destinationId): void;
 
     /**
+     * @deprecated
      * @return bool
      */
     public function ignoreMappingFailures(): bool;
