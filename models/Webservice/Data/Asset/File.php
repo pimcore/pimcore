@@ -47,7 +47,7 @@ class File extends Model\Webservice\Data\Asset
     /**
      * @param $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {

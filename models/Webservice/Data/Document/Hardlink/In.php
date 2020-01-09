@@ -29,7 +29,7 @@ class In extends Model\Webservice\Data\Document\Link
     /**
      * @param $object Model\Document\Link
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {

@@ -133,7 +133,7 @@ class Asset extends Model\Webservice\Data
     /**
      * @param $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

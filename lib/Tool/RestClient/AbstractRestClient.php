@@ -620,7 +620,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * @param      $id
      * @param bool $decode
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|DataObject\Folder
      *
@@ -682,7 +682,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * @param      $id
      * @param bool $decode
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      *
@@ -726,7 +726,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @param        $id
      * @param bool   $decode
-     * @param null   $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      * @param bool   $light
      * @param null   $thumbnail
      * @param bool   $tolerant

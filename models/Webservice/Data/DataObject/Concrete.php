@@ -70,7 +70,7 @@ class Concrete extends Model\Webservice\Data\DataObject
     /**
      * @param $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

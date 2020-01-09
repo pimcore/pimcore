@@ -258,7 +258,7 @@ class Relations extends Model\Document\Tag implements \Iterator
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

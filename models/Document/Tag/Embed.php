@@ -157,7 +157,7 @@ class Embed extends Model\Document\Tag
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

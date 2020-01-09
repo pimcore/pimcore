@@ -237,7 +237,7 @@ abstract class Data
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */

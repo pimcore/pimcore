@@ -510,7 +510,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|DataObject\Data\ImageGallery
      *
