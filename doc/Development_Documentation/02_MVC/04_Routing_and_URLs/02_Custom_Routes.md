@@ -72,7 +72,7 @@ To use the param converter, simply type hint the argument (Symfony routing examp
     /**
      * @Route("/news/{news}")
      */
-    public function testAction(Request $request, RequestStack $requestStack, DataObject\News $news) {
+    public function testAction(DataObject\News $news) {
         return [
             'news' => $news
         ];
