@@ -656,11 +656,12 @@ class Document extends Element\AbstractElement
             $this->hasChildren = [];
             $this->children = [];
         } else {
-            $this->children[0] = $children;
+            $cacheKey = $this->getListingCacheKey();
+            $this->children[$cacheKey] = $children;
             if (is_array($children) && count($children) > 0) {
-                $this->hasChildren[0] = true;
+                $this->hasChildren[$cacheKey] = true;
             } else {
-                $this->hasChildren[0] = false;
+                $this->hasChildren[$cacheKey] = false;
             }
         }
 
@@ -676,16 +677,18 @@ class Document extends Element\AbstractElement
      */
     public function getChildren($unpublished = false)
     {
-        if (!isset($this->children[$unpublished])) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (!isset($this->children[$cacheKey])) {
             $list = new Document\Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->children[$unpublished] = $list->load();
+            $this->children[$cacheKey] = $list->load();
         }
 
-        return $this->children[$unpublished];
+        return $this->children[$cacheKey];
     }
 
     /**
@@ -697,14 +700,16 @@ class Document extends Element\AbstractElement
      */
     public function hasChildren($unpublished = false)
     {
-        if (isset($this->hasChildren[$unpublished])) {
-            if (($this->hasChildren[$unpublished] and empty($this->children[$unpublished])) or (!$this->hasChildren[$unpublished] and !empty($this->children[$unpublished]))) {
-                $this->hasChildren[$unpublished] = $this->getDao()->hasChildren($unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->hasChildren[$cacheKey])) {
+            if (($this->hasChildren[$cacheKey] and empty($this->children[$cacheKey])) or (!$this->hasChildren[$cacheKey] and !empty($this->children[$cacheKey]))) {
+                $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($unpublished);
             }
-            return $this->hasChildren[$unpublished];
+            return $this->hasChildren[$cacheKey];
         }
 
-        return $this->hasChildren[$unpublished] = $this->getDao()->hasChildren($unpublished);
+        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($unpublished);
     }
 
     /**
@@ -716,7 +721,9 @@ class Document extends Element\AbstractElement
      */
     public function getSiblings($unpublished = false)
     {
-        if (!isset($this->siblings[$unpublished])) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (!isset($this->siblings[$cacheKey])) {
             $list = new Document\Listing();
             $list->setUnpublished($unpublished);
             // string conversion because parentId could be 0
@@ -724,10 +731,10 @@ class Document extends Element\AbstractElement
             $list->addConditionParam('id != ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->siblings[$unpublished] = $list->load();
+            $this->siblings[$cacheKey] = $list->load();
         }
 
-        return $this->siblings[$unpublished];
+        return $this->siblings[$cacheKey];
     }
 
     /**
@@ -739,14 +746,16 @@ class Document extends Element\AbstractElement
      */
     public function hasSiblings($unpublished = false)
     {
-        if (isset($this->hasSiblings[$unpublished])) {
-            if (($this->hasSiblings[$unpublished] and empty($this->siblings[$unpublished])) or (!$this->hasSiblings[$unpublished] and !empty($this->siblings[$unpublished]))) {
-                $this->hasSiblings[$unpublished] = $this->getDao()->hasSiblings($unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->hasSiblings[$cacheKey])) {
+            if (($this->hasSiblings[$cacheKey] and empty($this->siblings[$cacheKey])) or (!$this->hasSiblings[$cacheKey] and !empty($this->siblings[$cacheKey]))) {
+                $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($unpublished);
             }
-            return $this->hasSiblings[$unpublished];
+            return $this->hasSiblings[$cacheKey];
         }
 
-        return $this->hasSiblings[$unpublished] = $this->getDao()->hasSiblings($unpublished);
+        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($unpublished);
     }
 
     /**
@@ -1492,5 +1501,12 @@ class Document extends Element\AbstractElement
         $this->versionCount = (int) $versionCount;
 
         return $this;
+    }
+
+    protected function getListingCacheKey(array $args) {
+        $unpublished = $args[0] ?? false;
+        $cacheKey = (string)$unpublished;
+
+        return $cacheKey;
     }
 }

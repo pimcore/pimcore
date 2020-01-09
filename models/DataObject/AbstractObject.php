@@ -413,7 +413,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        $cacheKey = implode('_', $objectTypes) . (!empty($objectTypes) ?'_' : '') . (int) $unpublished;
+        $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey]) || $this->lastGetChildrenObjectTypes != $objectTypes) {
             $this->lastGetChildrenObjectTypes = $objectTypes;
@@ -441,14 +441,16 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if (isset($this->hasChildren[$unpublished])) {
-            if (($this->o_hasChildren[$unpublished] and empty($this->o_children[$unpublished])) or (!$this->o_hasChildren[$unpublished] and !empty($this->o_children[$unpublished]))) {
-                $this->o_hasChildren[$unpublished] = $this->getDao()->hasChildren($objectTypes, $unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->o_hasChildren[$cacheKey])) {
+            if (($this->o_hasChildren[$cacheKey] and empty($this->o_children[$cacheKey])) or (!$this->o_hasChildren[$cacheKey] and !empty($this->o_children[$cacheKey]))) {
+                $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $unpublished);
             }
-            return $this->o_hasChildren[$unpublished];
+            return $this->o_hasChildren[$cacheKey];
         }
 
-        return $this->o_hasChildren[$unpublished] = $this->getDao()->hasChildren($objectTypes, $unpublished);
+        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
@@ -461,7 +463,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        $cacheKey = implode('_', $objectTypes) . (!empty($objectTypes) ? '_' : '') . (int) $unpublished;
+        $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_siblings[$cacheKey]) || $this->lastGetSiblingObjectTypes != $objectTypes) {
             $list = new Listing();
@@ -488,14 +490,16 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if (isset($this->o_hasSiblings[$unpublished])) {
-            if (($this->o_hasSiblings[$unpublished] and empty($this->o_siblings[$unpublished])) or (!$this->o_hasSiblings[$unpublished] and !empty($this->o_siblings[$unpublished]))) {
-                $this->o_hasSiblings[$unpublished] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->o_hasSiblings[$cacheKey])) {
+            if (($this->o_hasSiblings[$cacheKey] and empty($this->o_siblings[$cacheKey])) or (!$this->o_hasSiblings[$cacheKey] and !empty($this->o_siblings[$cacheKey]))) {
+                $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
             }
-            return $this->o_hasSiblings[$unpublished];
+            return $this->o_hasSiblings[$cacheKey];
         }
 
-        return $this->o_hasSiblings[$unpublished] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
+        return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
     }
 
     /**
@@ -1120,8 +1124,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         } else {
             //default cache key
-            $cacheKey = implode('_', [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER]) . '_0';
-
+            $cacheKey = $this->getListingCacheKey();
             $this->o_children[$cacheKey] = $children;
             $this->o_hasChildren[0] = (is_array($children) && count($children) > 0);
         }
@@ -1434,5 +1437,14 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_versionCount = (int) $o_versionCount;
 
         return $this;
+    }
+
+    protected function getListingCacheKey(array $args) {
+        $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
+        $unpublished = $args[1] ?? false;
+
+        $cacheKey = implode('_', $objectTypes) . (!empty($unpublished) ? '_' : '') . (string)$unpublished;
+
+        return $cacheKey;
     }
 }

@@ -150,6 +150,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setLimit($limit)
     {
+        $this->setData(null);
+
         if (intval($limit) > 0) {
             $this->limit = intval($limit);
         }
@@ -164,6 +166,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setOffset($offset)
     {
+        $this->setData(null);
+
         if (intval($offset) > 0) {
             $this->offset = intval($offset);
         }
@@ -178,6 +182,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setOrder($order)
     {
+        $this->setData(null);
+
         $this->order = [];
 
         if (is_string($order) && !empty($order)) {
@@ -214,6 +220,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setOrderKey($orderKey, $quote = true)
     {
+        $this->setData(null);
+
         $this->orderKey = [];
 
         if (is_string($orderKey) && !empty($orderKey)) {
@@ -242,6 +250,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function addConditionParam($key, $value = null, $concatenator = 'AND')
     {
+        $this->setData(null);
+
         $key = '('.$key.')';
         $ignore = true;
         if (strpos($key, '?') !== false || strpos($key, ':') !== false) {
@@ -269,6 +279,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function resetConditionParams()
     {
+        $this->setData(null);
+
         $this->conditionParams = [];
 
         return $this;
@@ -338,6 +350,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setCondition($condition, $conditionVariables = null)
     {
+        $this->setData(null);
+
         $this->condition = $condition;
 
         // statement variables
@@ -374,6 +388,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setGroupBy($groupBy, $qoute = true)
     {
+        $this->setData(null);
+
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
@@ -417,6 +433,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setConditionVariables($conditionVariables)
     {
+        $this->setData(null);
+
         $this->conditionVariables = $conditionVariables;
 
         return $this;
@@ -438,6 +456,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setConditionVariablesFromSetCondition($conditionVariables)
     {
+        $this->setData(null);
+
         $this->conditionVariablesFromSetCondition = $conditionVariables;
 
         return $this;
