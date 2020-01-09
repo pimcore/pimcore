@@ -1112,6 +1112,8 @@ class Document extends Element\AbstractElement
     {
         $this->parentId = (int) $parentId;
         $this->parent = null;
+        $this->siblings = [];
+        $this->hasSiblings = [];
 
         return $this;
     }
