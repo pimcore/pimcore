@@ -1439,7 +1439,7 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    protected function getListingCacheKey(array $args) {
+    protected function getListingCacheKey(array $args = []) {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
         $unpublished = $args[1] ?? false;
 

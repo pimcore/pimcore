@@ -1503,7 +1503,7 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    protected function getListingCacheKey(array $args) {
+    protected function getListingCacheKey(array $args = []) {
         $unpublished = $args[0] ?? false;
         $cacheKey = (string)$unpublished;
 
