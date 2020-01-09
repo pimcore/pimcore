@@ -1443,7 +1443,11 @@ class AbstractObject extends Model\Element\AbstractElement
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
         $unpublished = $args[1] ?? false;
 
-        $cacheKey = implode('_', $objectTypes) . (!empty($unpublished) ? '_' : '') . (string)$unpublished;
+        if(is_array($objectTypes)) {
+            $objectTypes = implode('_', $objectTypes);
+        }
+
+        $cacheKey =  $objectTypes . (!empty($unpublished) ? '_' : '') . (string)$unpublished;
 
         return $cacheKey;
     }
