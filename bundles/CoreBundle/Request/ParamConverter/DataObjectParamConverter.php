@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\Request\ParamConverter;
 
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,9 +46,12 @@ class DataObjectParamConverter implements ParamConverterInterface
 
         $class = $configuration->getClass();
 
+        /** @var AbstractObject|Concrete $object */
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));
+        } elseif(!$object->isPublished()) {
+            throw new NotFoundHttpException(sprintf('Data object for parameter "%s" is not published.', $param));
         }
 
         $request->attributes->set($param, $object);
