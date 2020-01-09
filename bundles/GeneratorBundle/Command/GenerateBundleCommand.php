@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\GeneratorBundle\Command;
 use Pimcore\Bundle\GeneratorBundle\Generator\BundleGenerator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class GenerateBundleCommand extends BaseGenerateBundleCommand
 {
@@ -56,15 +55,6 @@ If you want to disable any user interaction, use <comment>--no-interaction</comm
 Note that the bundle namespace must end with "Bundle".
 EOT
             );
-    }
-
-    protected function getSkeletonDirs(BundleInterface $bundle = null)
-    {
-        $dirs = parent::getSkeletonDirs($bundle);
-
-        array_unshift($dirs, __DIR__ . '/../Resources/skeleton');
-
-        return $dirs;
     }
 
     /**
