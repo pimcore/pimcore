@@ -20,13 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class MultiSelectFromMultiSelect extends SelectFromMultiSelect
 {
-    /**
-     * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     *
-     * @return array
-     */
     public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
