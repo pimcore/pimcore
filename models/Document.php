@@ -655,14 +655,10 @@ class Document extends Element\AbstractElement
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
-        } else {
+        } elseif(is_array($children)) {
             $cacheKey = $this->getListingCacheKey();
             $this->children[$cacheKey] = $children;
-            if (is_array($children) && count($children) > 0) {
-                $this->hasChildren[$cacheKey] = true;
-            } else {
-                $this->hasChildren[$cacheKey] = false;
-            }
+            $this->hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
@@ -703,9 +699,6 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasChildren[$cacheKey])) {
-            if (($this->hasChildren[$cacheKey] and empty($this->children[$cacheKey])) or (!$this->hasChildren[$cacheKey] and !empty($this->children[$cacheKey]))) {
-                $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($unpublished);
-            }
             return $this->hasChildren[$cacheKey];
         }
 
@@ -732,6 +725,7 @@ class Document extends Element\AbstractElement
             $list->setOrderKey('index');
             $list->setOrder('asc');
             $this->siblings[$cacheKey] = $list->load();
+            $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
         }
 
         return $this->siblings[$cacheKey];
@@ -749,9 +743,6 @@ class Document extends Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasSiblings[$cacheKey])) {
-            if (($this->hasSiblings[$cacheKey] and empty($this->siblings[$cacheKey])) or (!$this->hasSiblings[$cacheKey] and !empty($this->siblings[$cacheKey]))) {
-                $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($unpublished);
-            }
             return $this->hasSiblings[$cacheKey];
         }
 

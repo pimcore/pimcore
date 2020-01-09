@@ -413,6 +413,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder('asc');
             $list->setObjectTypes($objectTypes);
             $this->o_children[$cacheKey] = $list->load();
+            $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
         }
 
         return $this->o_children[$cacheKey];
@@ -432,9 +433,6 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->o_hasChildren[$cacheKey])) {
-            if (($this->o_hasChildren[$cacheKey] and empty($this->o_children[$cacheKey])) or (!$this->o_hasChildren[$cacheKey] and !empty($this->o_children[$cacheKey]))) {
-                $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $unpublished);
-            }
             return $this->o_hasChildren[$cacheKey];
         }
 
@@ -463,6 +461,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setObjectTypes($objectTypes);
             $list->setOrder('asc');
             $this->o_siblings[$cacheKey] = $list->load();
+            $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
         }
 
         return $this->o_siblings[$cacheKey];
@@ -481,9 +480,6 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->o_hasSiblings[$cacheKey])) {
-            if (($this->o_hasSiblings[$cacheKey] and empty($this->o_siblings[$cacheKey])) or (!$this->o_hasSiblings[$cacheKey] and !empty($this->o_siblings[$cacheKey]))) {
-                $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
-            }
             return $this->o_hasSiblings[$cacheKey];
         }
 
@@ -1110,11 +1106,11 @@ class AbstractObject extends Model\Element\AbstractElement
             // unset all cached children
             $this->o_children = [];
             $this->o_hasChildren = [];
-        } else {
+        } elseif(is_array($children)) {
             //default cache key
             $cacheKey = $this->getListingCacheKey();
             $this->o_children[$cacheKey] = $children;
-            $this->o_hasChildren[$cacheKey] = (is_array($children) && count($children) > 0);
+            $this->o_hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
