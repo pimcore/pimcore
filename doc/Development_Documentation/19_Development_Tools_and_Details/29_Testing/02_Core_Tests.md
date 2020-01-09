@@ -4,7 +4,7 @@ Pimcore uses [Codeception](https://codeception.com/) for testing its core featur
 
 ## Requirements
 
-1. A Pimcore installation. Read this [guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html) for instructions.
+1. A Pimcore installation. Read this [guide](../../01_Getting_Started/00_Installation.md) for instructions.
 2. A **dedicated database** used only for testing. In other words, if the Pimcore installation is not only used for testing, create a separate database!
 3. Redis cache (optional, but needed for executing cache tests)
 
