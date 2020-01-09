@@ -444,10 +444,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param mixed $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|DataObject\Fieldcollection
-     *
-     * @param $idMapper
      *
      * @throws \Exception
      */

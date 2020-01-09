@@ -341,9 +341,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
+     * @param \Pimcore\Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */

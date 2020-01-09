@@ -261,7 +261,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Model\DataObject\Data\RgbaColor|null
      *

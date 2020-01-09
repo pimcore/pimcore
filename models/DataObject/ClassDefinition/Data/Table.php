@@ -613,7 +613,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      */

@@ -71,7 +71,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     /**
      * @param $object Model\Document\PageSnippet
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

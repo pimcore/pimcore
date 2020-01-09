@@ -123,7 +123,7 @@ abstract class Data
     /**
      * @param $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

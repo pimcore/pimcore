@@ -608,7 +608,7 @@ class Image extends Model\Document\Tag
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param null $document
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Model\Webservice\Data\Document\Element|void
      *

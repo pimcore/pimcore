@@ -245,7 +245,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *

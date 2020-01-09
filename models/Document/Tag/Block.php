@@ -351,7 +351,7 @@ class Block extends Model\Document\Tag implements BlockInterface
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param null $document
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Model\Webservice\Data\Document\Element|void
      *

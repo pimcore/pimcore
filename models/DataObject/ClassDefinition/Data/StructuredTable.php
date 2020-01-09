@@ -504,7 +504,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *

@@ -664,7 +664,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *

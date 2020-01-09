@@ -600,9 +600,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @deprecated
      * @param Webservice\Data\Document\Element $wsElement
      * @param $document
-     * @param array $params,
-     * @param $idMapper
-     * @param mixed $params
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Webservice\Data\Document\Element
      */

@@ -465,7 +465,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
