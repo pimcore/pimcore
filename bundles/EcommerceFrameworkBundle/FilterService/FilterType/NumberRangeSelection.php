@@ -25,11 +25,11 @@ class NumberRangeSelection extends AbstractFilterType
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
         $ranges = $filterDefinition->getRanges();
@@ -68,7 +68,7 @@ class NumberRangeSelection extends AbstractFilterType
             $currentValue = implode('-', $currentFilter[$field]);
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,
@@ -79,7 +79,7 @@ class NumberRangeSelection extends AbstractFilterType
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     private function createLabel($data)
