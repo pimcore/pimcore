@@ -987,7 +987,8 @@ class AbstractObject extends Model\Element\AbstractElement
         }
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
-        $this->o_siblings = null;
+        $this->o_siblings = [];
+        $this->o_hasSiblings = [];
 
         return $this;
     }
@@ -1047,6 +1048,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if($this->o_childrenSortBy !== $childrenSortBy) {
             $this->o_children = [];
+            $this->o_hasChildren = [];
         }
         $this->o_childrenSortBy = $childrenSortBy;
     }
