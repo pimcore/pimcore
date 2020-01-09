@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 
-use Pimcore\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -70,8 +69,18 @@ class RoutingManipulator extends Manipulator
     public function getImportedResourceYamlKey($bundle, $prefix)
     {
         $snakeCasedBundleName = Container::underscore(substr($bundle, 0, -6));
-        $routePrefix = DoctrineCrudGenerator::getRouteNamePrefix($prefix);
+        $routePrefix = self::getRouteNamePrefix($prefix);
 
         return sprintf('%s%s%s', $snakeCasedBundleName, '' !== $routePrefix ? '_' : '', $routePrefix);
+    }
+
+    private static function getRouteNamePrefix($prefix)
+    {
+        $prefix = preg_replace('/{(.*?)}/', '', $prefix); // {foo}_bar -> _bar
+        $prefix = str_replace('/', '_', $prefix);
+        $prefix = preg_replace('/_+/', '_', $prefix);     // foo__bar -> foo_bar
+        $prefix = trim($prefix, '_');
+
+        return $prefix;
     }
 }
