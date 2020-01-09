@@ -1434,6 +1434,7 @@ class Configuration implements ConfigurationInterface
                                     ->info('Will be applied when the current place is empty.')
                                 ->end()
                                 ->arrayNode('initial_markings')
+                                    ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')
                                     ->beforeNormalization()
                                         ->ifString()
                                             ->then(function ($v) {
