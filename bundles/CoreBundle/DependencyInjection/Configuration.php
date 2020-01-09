@@ -1431,6 +1431,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->scalarNode('initial_place')
                                     ->defaultNull()
+                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
                                     ->info('Will be applied when the current place is empty.')
                                 ->end()
                                 ->arrayNode('initial_markings')
