@@ -196,3 +196,7 @@ services:
     Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
+
+    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
+        tags:
+            - { name: request.param_converter, priority: -2, converter: data_object_converter }
