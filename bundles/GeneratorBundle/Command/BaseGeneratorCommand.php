@@ -19,12 +19,6 @@ abstract class BaseGeneratorCommand extends ContainerAwareCommand
      */
     private $generator;
 
-    // only useful for unit tests
-    public function setGenerator(Generator $generator)
-    {
-        $this->generator = $generator;
-    }
-
     abstract protected function createGenerator();
 
     protected function getGenerator(BundleInterface $bundle = null)
