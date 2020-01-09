@@ -153,7 +153,7 @@ abstract class AbstractWorker implements WorkerInterface
     protected function convertArray($data)
     {
         if (is_array($data)) {
-            return WorkerInterface::MULTISELECT_DELIMITER . implode($data, WorkerInterface::MULTISELECT_DELIMITER) . WorkerInterface::MULTISELECT_DELIMITER;
+            return WorkerInterface::MULTISELECT_DELIMITER . implode(WorkerInterface::MULTISELECT_DELIMITER, $data) . WorkerInterface::MULTISELECT_DELIMITER;
         }
 
         return $data;
