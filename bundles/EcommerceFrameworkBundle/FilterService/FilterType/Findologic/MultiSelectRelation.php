@@ -32,7 +32,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
      *
      * @throws \Exception
      */
-    public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
         $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());

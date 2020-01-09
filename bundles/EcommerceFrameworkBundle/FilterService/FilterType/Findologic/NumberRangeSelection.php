@@ -35,7 +35,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      *
      * @throws \Exception
      */
-    public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $ranges = $filterDefinition->getRanges();
         $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);

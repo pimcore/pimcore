@@ -32,7 +32,7 @@ class SelectRelation extends AbstractFilterType
      *
      * @throws \Exception
      */
-    public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
 

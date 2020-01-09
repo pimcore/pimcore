@@ -118,7 +118,7 @@ abstract class AbstractFilterType
     {
         return $this->render(
             $this->getTemplate($filterDefinition),
-            $this->getFilterArray($filterDefinition, $productList, $currentFilter)
+            $this->getFilterValues($filterDefinition, $productList, $currentFilter)
         );
     }
 
@@ -134,7 +134,7 @@ abstract class AbstractFilterType
      *
      * @return array
      */
-    abstract public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
+    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.

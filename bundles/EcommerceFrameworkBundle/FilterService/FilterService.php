@@ -126,11 +126,11 @@ class FilterService
      *
      * @return array
      */
-    public function getFilterArray(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         return $this
             ->getFilterType($filterDefinition->getType())
-            ->getFilterArray($filterDefinition, $productList, $currentFilter);
+            ->getFilterValues($filterDefinition, $productList, $currentFilter);
     }
 
     /**
