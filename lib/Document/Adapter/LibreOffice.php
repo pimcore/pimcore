@@ -110,7 +110,7 @@ class LibreOffice extends Ghostscript
     /**
      * @param string|null $path
      *
-     * @return null|string|void
+     * @return null|string
      *
      * @throws \Exception
      */

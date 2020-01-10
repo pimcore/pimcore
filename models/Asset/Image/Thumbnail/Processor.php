@@ -59,7 +59,7 @@ class Processor
     protected static $hasWebpSupport = null;
 
     /**
-     * @param $format
+     * @param string $format
      * @param array $allowed
      * @param string $fallback
      *
@@ -88,7 +88,7 @@ class Processor
     /**
      * @param Asset $asset
      * @param Config $config
-     * @param null $fileSystemPath
+     * @param string|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @param bool $returnAbsolutePath
      * @param bool $generated
@@ -386,10 +386,10 @@ class Processor
     }
 
     /**
-     * @param $path
-     * @param $absolute
+     * @param string $path
+     * @param bool $absolute
      *
-     * @return mixed
+     * @return string
      */
     protected static function returnPath($path, $absolute)
     {
