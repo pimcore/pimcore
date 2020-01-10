@@ -43,41 +43,6 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
-     * When creating new children for a parent then subsequent getChildren calls on parent should also
-     * return newly created children.
-     *
-     */
-    public function testCacheChildren()
-    {
-        // create parent
-        $parent = TestHelper::createEmptyObject();
-
-        // create first child
-        $firstChild = TestHelper::createEmptyObject('child1-', false);
-        $firstChild->setParentId($parent->getId());
-        $firstChild->save();
-
-        $this->assertTrue($firstChild->getId() > 0, "Child must have a valid DB id");
-        $this->assertEquals($parent->getId() + 1, $firstChild->getId(), "Expected different child ID, " . $firstChild->getId() . " " . $parent->getId());
-
-
-        $child = $parent->getChildren();
-        $this->assertEquals(1, count($child), "Expected one child");
-
-        // create second child
-        $secondChild = TestHelper::createEmptyObject('child2-', false);
-        $secondChild->setParentId($parent->getId());
-        $secondChild->save();
-
-
-        $this->assertTrue($secondChild->getId() > 0, "Child must have a valid DB id");
-        $this->assertEquals($firstChild->getId() + 1, $secondChild->getId(), "Expected different child ID" . $firstChild->getId() . " " . $secondChild->getId());
-
-        $children = $parent->getChildren();
-        $this->assertEquals(2, count($children), "Expected two children");
-    }
-
-    /**
      * Verifies that children result should be cached based on parameters provided.
      *
      */

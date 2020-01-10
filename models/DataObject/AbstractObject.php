@@ -990,19 +990,6 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_siblings = [];
         $this->o_hasSiblings = [];
 
-        /**
-         * flush parent children if exists in the registry
-         */
-        $parentCacheKey = 'object_' . $o_parentId;
-
-        if (Runtime::isRegistered($parentCacheKey)) {
-            $parent = Runtime::get($parentCacheKey);
-            if($parent instanceof self) {
-                $parent->o_children = [];
-                $parent->o_hasChildren = [];
-            }
-        }
-
         return $this;
     }
 
