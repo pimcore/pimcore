@@ -113,7 +113,7 @@ class ClassDefinition extends Model\Webservice\Data
     public $fieldDefinitions;
 
     /**
-     * @var array
+     * @var Model\DataObject\ClassDefinition\Layout
      */
     public $layoutDefinitions;
 

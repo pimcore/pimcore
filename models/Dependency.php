@@ -99,8 +99,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
@@ -110,8 +110,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */

@@ -27,7 +27,7 @@ class In extends Model\Webservice\Data\Document\Link
     public $sourceId;
 
     /**
-     * @param $object Model\Document\Link
+     * @param Model\Document\Hardlink $object
      * @param bool $disableMappingExceptions
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      */

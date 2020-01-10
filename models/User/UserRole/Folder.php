@@ -32,7 +32,7 @@ class Folder extends Model\User\AbstractUser
     public $hasChilds;
 
     /**
-     * @param $state
+     * @param bool $state
      *
      * @return $this
      */

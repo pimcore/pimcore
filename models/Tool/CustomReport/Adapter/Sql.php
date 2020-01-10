@@ -22,13 +22,13 @@ use Pimcore\Db;
 class Sql extends AbstractAdapter
 {
     /**
-     * @param $filters
-     * @param $sort
-     * @param $dir
-     * @param $offset
-     * @param $limit
-     * @param null $fields
-     * @param null $drillDownFilters
+     * @param array|null $filters
+     * @param string|null $sort
+     * @param string|null $dir
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param array|null $fields
+     * @param array|null $drillDownFilters
      *
      * @return array
      */
@@ -60,9 +60,9 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $configuration
+     * @param \stdClass $configuration
      *
-     * @return array|mixed|null
+     * @return array
      *
      * @throws \Exception
      */
@@ -151,13 +151,13 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $filters
-     * @param $fields
+     * @param array $filters
+     * @param array $fields
      * @param bool $ignoreSelectAndGroupBy
-     * @param null $drillDownFilters
-     * @param null $selectField
+     * @param array|null $drillDownFilters
+     * @param string|null $selectField
      *
-     * @return array
+     * @return array|null
      */
     protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
     {
@@ -222,7 +222,7 @@ class Sql extends AbstractAdapter
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
         } else {
-            return;
+            return null;
         }
 
         return [
@@ -232,11 +232,11 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $filters
-     * @param $field
-     * @param $drillDownFilters
+     * @param array $filters
+     * @param string $field
+     * @param array $drillDownFilters
      *
-     * @return array|mixed
+     * @return array
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {

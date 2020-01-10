@@ -549,8 +549,8 @@ class User extends User\UserRole
     }
 
     /**
-     * @param null $width
-     * @param null $height
+     * @param int|null $width
+     * @param int|null $height
      *
      * @return string
      */
@@ -993,7 +993,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @return array|mixed|null|string
      */

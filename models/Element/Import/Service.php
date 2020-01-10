@@ -45,7 +45,7 @@ class Service
     protected $user;
 
     /**
-     * @param $user
+     * @param Model\User $user
      */
     public function __construct($user)
     {
@@ -73,12 +73,12 @@ class Service
     /**
      * @throws \Exception
      *
-     * @param  $rootElement
-     * @param  $apiKey
-     * @param  $path
-     * @param  $apiElement
-     * @param  bool $overwrite
-     * @param  $elementCounter
+     * @param Element\ElementInterface $rootElement
+     * @param string $apiKey
+     * @param string $path
+     * @param Model\Webservice\Data $apiElement
+     * @param bool $overwrite
+     * @param string $elementCounter
      *
      * @return Element\ElementInterface
      */
@@ -271,8 +271,8 @@ class Service
     }
 
     /**
-     * @param  Webservice\Data\DataObject\Concrete $apiElement
-     * @param $idMapping
+     * @param Webservice\Data\DataObject\Concrete $apiElement
+     * @param array $idMapping
      */
     public function correctObjectRelations($apiElement, $idMapping)
     {
@@ -340,7 +340,7 @@ class Service
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      * @param bool $creation
      *
      * @return $this

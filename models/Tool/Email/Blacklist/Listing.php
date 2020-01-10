@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Tool\Email\Blacklist[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $items = null;
@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $items
+     * @param Model\Tool\Email\Blacklist[]|null $items
      *
      * @return $this
      */

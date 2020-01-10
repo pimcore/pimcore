@@ -28,8 +28,8 @@ use Pimcore\Model\Webservice;
 abstract class Data
 {
     /**
-     * @param $object
-     * @param null $options
+     * @param mixed $object
+     * @param array|null $options
      *
      * @throws \Exception
      */
@@ -121,7 +121,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param mixed $object
      * @param bool $disableMappingExceptions
      * @param Webservice\IdMapperInterface|null $idMapper
      *

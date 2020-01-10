@@ -53,9 +53,10 @@ class GridConfigFavourite extends AbstractModel
     public $type;
 
     /**
-     * @param $ownerId
-     * @param $classId
-     * @param null $searchType
+     * @param int $ownerId
+     * @param string $classId
+     * @param int|null $objectId
+     * @param string|null $searchType
      *
      * @return GridConfigFavourite
      */

@@ -156,7 +156,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -168,7 +168,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
+     * @param int $cid
      *
      * @return $this
      */
@@ -180,7 +180,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $ctype
+     * @param string $ctype
      *
      * @return $this
      */
@@ -192,7 +192,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -204,7 +204,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $action
+     * @param string $action
      *
      * @return $this
      */
@@ -216,7 +216,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $version
+     * @param int $version
      *
      * @return $this
      */
@@ -236,7 +236,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $active
+     * @param bool $active
      *
      * @return $this
      */

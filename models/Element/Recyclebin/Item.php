@@ -90,7 +90,7 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
      * @return self|null
      */
@@ -107,7 +107,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param null $user
+     * @param Model\User|null $user
      *
      * @throws \Exception
      */
@@ -252,7 +252,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface|Element\ElementDumpStateInterface $element
+     * @param Element\ElementInterface $element
      */
     public function loadChildren(Element\ElementInterface $element)
     {
@@ -338,7 +338,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return string
      */
@@ -356,7 +356,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -376,7 +376,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -396,7 +396,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -416,7 +416,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $subtype
+     * @param string $subtype
      *
      * @return $this
      */
@@ -436,7 +436,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $amount
+     * @param int $amount
      *
      * @return $this
      */
@@ -456,7 +456,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -476,7 +476,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return $this
      */
@@ -488,7 +488,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $username
+     * @param string $username
      *
      * @return $this
      */

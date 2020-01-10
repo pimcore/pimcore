@@ -17,14 +17,19 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
+use Pimcore\Model\Tool\CustomReport\Config;
+
 abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
+    /** @var \stdClass */
     protected $config;
+
+    /** @var Config|null */
     protected $fullConfig;
 
     /**
-     * @param $config
-     * @param null $fullConfig
+     * @param \stdClass $config
+     * @param Config|null $fullConfig
      */
     public function __construct($config, $fullConfig = null)
     {
