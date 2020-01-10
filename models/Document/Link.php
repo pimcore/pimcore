@@ -292,7 +292,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return Document|Asset
+     * @return Document|Asset|Model\DataObject\Concrete|null
      */
     public function getObject()
     {
@@ -304,11 +304,11 @@ class Link extends Model\Document
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @param $object
+     * @param Document|Asset|Model\DataObject\Concrete $object
      *
      * @return $this
      */

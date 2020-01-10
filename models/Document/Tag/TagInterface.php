@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Model\Document\PageSnippet;
+
 interface TagInterface
 {
     /**
@@ -68,8 +70,8 @@ interface TagInterface
      * Returns the current tag's data for web service export
      *
      * @deprecated
-     * @param $document
-     * @param mixed $params
+     * @param PageSnippet|null $document
+     * @param array $params
      * @abstract
      *
      * @return array

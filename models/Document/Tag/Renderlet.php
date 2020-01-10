@@ -254,9 +254,9 @@ class Renderlet extends Model\Document\Tag
     /**
      * get correct type of object as string
      *
-     * @param null $object
+     * @param Element\ElementInterface|null $object
      *
-     * @return bool|string
+     * @return string|null
      *
      * @internal param mixed $data
      */
@@ -290,8 +290,8 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception

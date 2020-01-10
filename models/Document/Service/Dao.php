@@ -59,6 +59,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param Document $document
+     * @param string $task
      *
      * @return array
      */
@@ -100,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Document $document
      * @param Document $translation
-     * @param $language
+     * @param string|null $language
      */
     public function addTranslation(Document $document, Document $translation, $language = null)
     {

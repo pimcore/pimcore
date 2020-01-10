@@ -79,7 +79,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @deprecated Unused - will be removed in 7.0
      *
-     * @var null
+     * @var string|null
      */
     protected $controller;
 
@@ -101,13 +101,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $inherited = false;
 
     /**
-     * @param $type
-     * @param $name
-     * @param $documentId
-     * @param null $config
-     * @param null $controller
-     * @param null $view
-     * @param null $editmode
+     * @param string $type
+     * @param string $name
+     * @param int $documentId
+     * @param array|null $config
+     * @param string|null $controller
+     * @param ViewModel|null $view
+     * @param bool|null $editmode
      *
      * @return mixed
      */
@@ -404,7 +404,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @deprecated
      *
-     * @param null $controller
+     * @param string|null $controller
      *
      * @return $this
      */
@@ -418,7 +418,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @deprecated
      *
-     * @return null
+     * @return string|null
      */
     public function getController()
     {
@@ -565,7 +565,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return $this
+     * @return mixed
      */
     public function getDataForResource()
     {
@@ -575,7 +575,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
      * @return array
@@ -599,7 +599,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @abstract
      * @deprecated
      * @param Webservice\Data\Document\Element $wsElement
-     * @param $document
+     * @param Model\Document\PageSnippet $document
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -614,11 +614,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * Returns the current tag's data for web service export
      *
      * @deprecated
-     * @param $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
      * @abstract
      *
-     * @return array
+     * @return \stdClass
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
@@ -654,7 +654,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param $inherited
+     * @param bool $inherited
      *
      * @return $this
      */
@@ -759,7 +759,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @deprecated
-     * @param $data
+     * @param array|object $data
      *
      * @return object
      */

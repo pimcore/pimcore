@@ -256,8 +256,8 @@ class Relations extends Model\Document\Tag implements \Iterator
     /**
      * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
@@ -414,11 +414,10 @@ class Relations extends Model\Document\Tag implements \Iterator
      * Returns the current tag's data for web service export
      *
      * @deprecated
-     * @param $document
-     * @param mixed $params
-     * @abstract
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
      *
-     * @return array
+     * @return array|null
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
