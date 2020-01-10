@@ -401,7 +401,7 @@ class ControllerDataProvider
     /**
      * Checks if bundle/controller namespace is not excluded (all core bundles should be excluded here)
      *
-     * @param $namespace
+     * @param string $namespace
      *
      * @return bool
      */

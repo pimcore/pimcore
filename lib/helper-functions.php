@@ -27,11 +27,11 @@ function xmlToArray($file)
 }
 
 /**
- * @param $source
- * @param null $level
- * @param null $target
+ * @param string $source
+ * @param int|null $level
+ * @param string|null $target
  *
- * @return bool|null|string
+ * @return bool|string
  */
 function gzcompressfile($source, $level = null, $target = null)
 {
@@ -61,13 +61,13 @@ function gzcompressfile($source, $level = null, $target = null)
 
     if ($error) {
         return false;
-    } else {
-        return $dest;
     }
+
+    return $dest;
 }
 
 /**
- * @param $string
+ * @param string $string
  *
  * @return bool
  */
@@ -83,7 +83,7 @@ function is_json($string)
 }
 
 /**
- * @param $path
+ * @param string $path
  *
  * @return int
  */
@@ -110,8 +110,8 @@ function foldersize($path)
 }
 
 /**
- * @param $string
- * @param $values
+ * @param string $string
+ * @param string[] $values
  *
  * @return mixed
  */
@@ -130,7 +130,7 @@ function replace_pcre_backreferences($string, $values)
 }
 
 /**
- * @param  $array
+ * @param array $array
  *
  * @return array
  */
@@ -161,7 +161,7 @@ function in_arrayi(string $needle, array $haystack)
 }
 
 /**
- * @param  $node
+ * @param object $node
  *
  * @return array
  */
@@ -178,7 +178,7 @@ function object2array($node)
 }
 
 /**
- * @param  $args
+ * @param array $args
  *
  * @return false|string
  */
@@ -194,7 +194,7 @@ function array_urlencode($args)
 /**
  * same as  array_urlencode but no urlencode()
  *
- * @param  $args
+ * @param array $args
  *
  * @return false|string
  */
@@ -208,7 +208,7 @@ function array_toquerystring($args)
 }
 
 /**
- * @param $array
+ * @param array $array
  *
  * @return string
  */
@@ -280,7 +280,7 @@ function return_bytes($val)
 }
 
 /**
- * @param  $bytes
+ * @param int $bytes
  * @param int $precision
  *
  * @return string
@@ -299,7 +299,7 @@ function formatBytes($bytes, $precision = 2)
 }
 
 /**
- * @param  $str
+ * @param string $str
  *
  * @return float|int
  */
@@ -379,7 +379,7 @@ function explode_and_trim($delimiter, $string = '', $limit = '', $useArrayFilter
 }
 
 /**
- * @param $directory
+ * @param string $directory
  * @param bool $empty
  *
  * @return bool
@@ -423,11 +423,13 @@ function recursiveDelete($directory, $empty = true)
     } elseif (is_file($directory)) {
         return unlink($directory);
     }
+
+    return false;
 }
 
 /**
- * @param $source
- * @param $destination
+ * @param string $source
+ * @param string $destination
  *
  * @return bool
  */
@@ -470,29 +472,11 @@ function p_r()
 }
 
 /**
- * @param  $errno
- * @param  $errstr
- * @param  $errfile
- * @param  $errline
- * @param  $errcontext
- *
- * @return bool
- */
-function pimcore_error_handler($errno, $errstr, $errfile, $errline, $errcontext)
-{
-
-    //Log::info($errno . " | " . $errstr . " in " . $errfile . " on line: " .$errline );
-
-    // enable php internal error handling
-    return false;
-}
-
-/**
- * @param $array
+ * @param array $array
  * @param string $prefix
  * @param string $suffix
  *
- * @return mixed
+ * @return array
  */
 function wrapArrayElements($array, $prefix = "'", $suffix = "'")
 {
@@ -518,7 +502,7 @@ function isAssocArray(array $arr)
 /**
  * this is an alternative for realpath() which isn't able to handle symlinks correctly
  *
- * @param $filename
+ * @param string $filename
  *
  * @return string
  */
@@ -573,8 +557,10 @@ function closureHash(Closure $closure)
     return $hash;
 }
 
-/** Checks if the given directory is empty
- * @param $dir
+/**
+ * Checks if the given directory is empty
+ *
+ * @param string $dir
  *
  * @return bool|null
  */
@@ -594,10 +580,10 @@ function is_dir_empty($dir)
 }
 
 /**
- * @param $var
+ * @param mixed $var
  * @param string $indent
  *
- * @return mixed|string
+ * @return string
  */
 function var_export_pretty($var, $indent = '')
 {
@@ -622,7 +608,7 @@ function var_export_pretty($var, $indent = '')
 }
 
 /**
- * @param $contents
+ * @param mixed $contents
  *
  * @return string
  */

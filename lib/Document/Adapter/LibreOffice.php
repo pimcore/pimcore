@@ -70,7 +70,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      *
@@ -108,7 +108,7 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @param null $path
+     * @param string|null $path
      *
      * @return null|string|void
      *
@@ -170,10 +170,10 @@ class LibreOffice extends Ghostscript
     }
 
     /**
-     * @param null $page
-     * @param null $path
+     * @param int|null $page
+     * @param string|null $path
      *
-     * @return bool|string
+     * @return string
      *
      * @throws \Exception
      */

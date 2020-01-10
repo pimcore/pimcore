@@ -90,7 +90,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
     /**
      * Deletes all items in the pool.
      *
-     * @param string @namespace The prefix used for all identifiers managed by this pool
+     * @param string $namespace The prefix used for all identifiers managed by this pool
      *
      * @return bool True if the pool was successfully cleared, false otherwise
      */
@@ -245,7 +245,7 @@ SQL;
     /**
      * Remove all not matching tags from item
      *
-     * @param $id
+     * @param string $id
      * @param array $tags
      *
      * @return bool

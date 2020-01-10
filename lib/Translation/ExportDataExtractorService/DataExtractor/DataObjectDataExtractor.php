@@ -167,13 +167,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
     /**
      * @param Localizedfields $fd
-     * @param AttributeSet $result
-     * @param array|null $exportAttributes
-     */
-
-    /**
-     * @param Localizedfields $fd
-     * @param $definition
+     * @param Data $definition
      * @param DataObject\Concrete $object
      * @param AttributeSet $result
      * @param array|null $exportAttributes

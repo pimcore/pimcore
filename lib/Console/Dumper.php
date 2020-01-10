@@ -76,7 +76,7 @@ class Dumper
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param null|int $flags
      */
     public function dump($data, $flags = null)

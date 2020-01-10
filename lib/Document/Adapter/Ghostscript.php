@@ -81,7 +81,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      *
@@ -109,7 +109,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param null $path
+     * @param string|null $path
      *
      * @return null|string
      *
@@ -152,7 +152,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param int $page
      * @param int $resolution
      *
@@ -182,8 +182,8 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param null $page
-     * @param null $path
+     * @param int|null $page
+     * @param string|null $path
      *
      * @return bool|string
      */

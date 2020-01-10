@@ -80,7 +80,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $writer
+     * @param object $writer
      */
     public function addWriter($writer)
     {
@@ -118,7 +118,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @deprecated
      *
-     * @param \\Pimcore\Model\DataObject\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
+     * @param \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|\Pimcore\Model\Asset|int $relatedObject
      */
     public function setRelatedObject($relatedObject)
     {
@@ -329,9 +329,9 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $level
-     * @param $message
-     * @param $params
+     * @param mixed $level
+     * @param string $message
+     * @param array $params
      */
     protected function handleLog($level, $message, $params)
     {
@@ -362,11 +362,11 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $message
+     * @param string $message
      * @param \Throwable $exceptionObject
      * @param string $priority
-     * @param null $relatedObject
-     * @param null $component
+     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
+     * @param string|null $component
      */
     public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
     {
@@ -393,7 +393,7 @@ class ApplicationLogger implements LoggerInterface
      * @param string $message
      * @param \Throwable $exception
      * @param mixed $level
-     * @param null $relatedObject
+     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param array $context
      */
     public static function logExceptionObject(

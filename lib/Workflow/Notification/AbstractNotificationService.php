@@ -41,8 +41,8 @@ class AbstractNotificationService
     /**
      * Returns a list of distinct users given an user- and role array containing their respective names
      *
-     * @param $users
-     * @param $roles
+     * @param array $users
+     * @param array $roles
      *
      * @return User[][]
      */

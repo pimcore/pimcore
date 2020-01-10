@@ -43,10 +43,10 @@ class FilterEvent extends Event
     /**
      * FilterEvent constructor.
      *
-     * @param $request
-     * @param $type
-     * @param $action
-     * @param $list
+     * @param Request $request
+     * @param string $type
+     * @param string $action
+     * @param string $condition
      */
     public function __construct($request, $type, $action, $condition)
     {
@@ -65,7 +65,7 @@ class FilterEvent extends Event
     }
 
     /**
-     * @param mixed $request
+     * @param Request $request
      */
     public function setRequest($request): void
     {
@@ -73,7 +73,7 @@ class FilterEvent extends Event
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
@@ -81,7 +81,7 @@ class FilterEvent extends Event
     }
 
     /**
-     * @param mixed $type
+     * @param string $type
      */
     public function setType($type): void
     {
@@ -89,7 +89,7 @@ class FilterEvent extends Event
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAction()
     {
@@ -97,7 +97,7 @@ class FilterEvent extends Event
     }
 
     /**
-     * @param mixed $action
+     * @param string $action
      */
     public function setAction($action): void
     {
