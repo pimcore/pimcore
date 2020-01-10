@@ -144,12 +144,10 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param int $storeId
      *
      * @return self|null
-     *
-     * @internal param null $groupId
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -380,7 +378,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getEnabled()
     {
@@ -388,7 +386,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled)
     {

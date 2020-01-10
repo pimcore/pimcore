@@ -83,7 +83,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -139,7 +139,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param null $language
+     * @param string|null $language
      *
      * @return mixed
      */
@@ -150,8 +150,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
-     * @param null $language
+     * @param mixed $value
+     * @param string|null $language
      *
      * @return mixed
      */

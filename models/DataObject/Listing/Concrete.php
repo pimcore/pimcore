@@ -88,7 +88,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param $className
+     * @param string $className
      *
      * @return $this
      */
@@ -157,8 +157,8 @@ abstract class Concrete extends Model\DataObject\Listing
     private $fieldCollectionConfigs = [];
 
     /**
-     * @param $type
-     * @param null $fieldname
+     * @param string $type
+     * @param string|null $fieldname
      *
      * @throws \Exception
      */
@@ -173,7 +173,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param $fieldCollections
+     * @param array $fieldCollections
      *
      * @return $this
      *
@@ -204,7 +204,7 @@ abstract class Concrete extends Model\DataObject\Listing
     private $objectBrickConfigs = [];
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @throws \Exception
      */
@@ -221,7 +221,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param $objectbricks
+     * @param array $objectbricks
      *
      * @return $this
      *
@@ -255,5 +255,7 @@ abstract class Concrete extends Model\DataObject\Listing
         if (!empty($fieldCollections)) {
             return true;
         }
+
+        return false;
     }
 }

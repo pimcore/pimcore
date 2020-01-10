@@ -98,7 +98,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -566,8 +566,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $key
-     * @param null $params
+     * @param string $key
+     * @param mixed $params
      *
      * @return mixed
      *
@@ -614,7 +614,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      *
      * @param string $fieldName
      * @param bool $forOwner
-     * @param $remoteClassId
+     * @param string $remoteClassId
      *
      * @return array
      */
@@ -626,8 +626,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $method
-     * @param $arguments
+     * @param string $method
+     * @param array $arguments
      *
      * @return Model\Listing\AbstractListing|Concrete|null
      *
@@ -873,9 +873,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param $objectId
-     * @param $modificationDate
-     * @param $versionCount
+     * @param int $objectId
+     * @param int $modificationDate
+     * @param int $versionCount
      * @param bool $force
      *
      * @return Model\Version|void

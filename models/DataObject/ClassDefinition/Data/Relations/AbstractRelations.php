@@ -78,7 +78,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param  $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */

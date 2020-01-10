@@ -85,7 +85,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -352,9 +352,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
-     * @return mixed
+     * @return array
      */
     public function getTypeById($id)
     {
@@ -385,6 +385,9 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol('SELECT o_id from objects WHERE o_path LIKE ' . $this->db->quote($this->model->getRealFullPath() . '/%') . ' OR o_id = ' . $this->model->getId());
@@ -428,8 +431,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -468,11 +471,11 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      * @param bool $quote
      *
-     * @return mixed|null
+     * @return array|null
      */
     public function getPermissions($type, $user, $quote = true)
     {
@@ -567,7 +570,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $index
+     * @param int $index
      */
     public function saveIndex($index)
     {

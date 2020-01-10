@@ -82,7 +82,7 @@ class CustomLayout extends Model\AbstractModel
     public $default;
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|CustomLayout
      */
@@ -127,7 +127,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @param int    $classId
+     * @param string $classId
      *
      * @return null|CustomLayout
      */
@@ -165,6 +165,8 @@ class CustomLayout extends Model\AbstractModel
                     }
                 }
             }
+
+            return null;
         };
 
         return $findElement($field, $this->getLayoutDefinitions());
@@ -311,7 +313,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $classId
+     * @param string $classId
      *
      * @return int|null
      */

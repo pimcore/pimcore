@@ -55,7 +55,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     protected $class;
 
-    /** @var mixed */
+    /** @var array */
     protected $context;
 
     /** @var int */
@@ -131,7 +131,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param  $item
+     * @param mixed $item
      */
     public function addItem($item)
     {
@@ -167,7 +167,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @internal
      *
-     * @param $loadLazyFields
+     * @param bool $loadLazyFields
      *
      * @return array
      */
@@ -203,6 +203,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
     /**
      * @param Concrete $object
+     * @param bool $markAsDirty
      *
      * @return $this
      *
@@ -262,7 +263,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @throws \Exception
      *
-     * @param null $language
+     * @param string|null $language
      *
      * @return string
      */
@@ -286,7 +287,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
      * @return bool
      */
@@ -388,8 +389,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $name
-     * @param null $language
+     * @param string $name
+     * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      *
      * @return mixed
@@ -494,10 +495,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $name
-     * @param $value
-     * @param null $language
-     * @param $markFieldAsDirty
+     * @param string $name
+     * @param mixed $value
+     * @param string|null $language
+     * @param bool $markFieldAsDirty
      *
      * @return $this
      *
@@ -602,7 +603,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getContext()
     {
@@ -610,7 +611,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param mixed $context
+     * @param array $context
      */
     public function setContext($context)
     {
@@ -630,9 +631,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
-     * @return bool|mixed
+     * @return bool
      */
     public function isLanguageDirty($language)
     {
@@ -680,8 +681,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
-     * @param $dirty
+     * @param string $language
+     * @param bool $dirty
      */
     public function markLanguageAsDirty($language, $dirty = true)
     {

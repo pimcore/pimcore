@@ -178,7 +178,7 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|ClassDefinition
      *
@@ -616,9 +616,9 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param ClassDefinition|ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */
@@ -714,7 +714,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @return string
      */
@@ -1180,7 +1180,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $icon
+     * @param string $icon
      *
      * @return $this
      */
@@ -1200,7 +1200,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $propertyVisibility
+     * @param array $propertyVisibility
      *
      * @return $this
      */
@@ -1214,7 +1214,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $previewUrl
+     * @param string $previewUrl
      *
      * @return $this
      */
@@ -1250,7 +1250,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */

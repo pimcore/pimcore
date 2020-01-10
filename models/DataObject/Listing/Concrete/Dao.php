@@ -98,7 +98,7 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return int[]
      *
-     * @throws
+     * @throws \Exception
      */
     public function loadIdList()
     {
@@ -110,16 +110,14 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param $e
+     * @param \Exception $e
      *
      * @return int[]
      *
-     * @throws
      * @throws \Exception
      */
     protected function exceptionHandler($e)
     {
-
         // create view if it doesn't exist already // HACK
         $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
         $Mysqli = preg_match("/Table (.*) doesn't exist/", $e->getMessage());
@@ -140,7 +138,6 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return string
      *
-     * @throws \Exception
      * @throws \Exception
      */
     public function getLocalizedBrickLanguage()
@@ -172,7 +169,6 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return string
      *
-     * @throws \Exception
      * @throws \Exception
      */
     public function getTableName()

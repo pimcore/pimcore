@@ -335,8 +335,8 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $field
-     * @param $forOwner
-     * @param $remoteClassId
+     * @param bool $forOwner
+     * @param string $remoteClassId
      *
      * @return array
      */

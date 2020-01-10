@@ -81,7 +81,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $unpublished
+     * @param bool $unpublished
      *
      * @return $this
      */
@@ -93,7 +93,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param  $objectTypes
+     * @param array $objectTypes
      *
      * @return $this
      */
@@ -113,8 +113,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $key
-     * @param null $value
+     * @param string $key
+     * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
@@ -133,8 +133,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $condition
-     * @param null $conditionVariables
+     * @param string $condition
+     * @param array|null $conditionVariables
      *
      * @return $this
      */
@@ -144,7 +144,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $groupBy
+     * @param string $groupBy
      * @param bool $qoute
      *
      * @return $this

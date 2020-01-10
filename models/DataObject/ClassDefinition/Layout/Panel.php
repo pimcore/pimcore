@@ -50,7 +50,7 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     public $icon;
 
     /**
-     * @param $labelWidth
+     * @param int $labelWidth
      *
      * @return $this
      */
@@ -72,7 +72,7 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param $layout
+     * @param string $layout
      *
      * @return $this
      */

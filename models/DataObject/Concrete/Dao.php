@@ -81,8 +81,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     /**
      * @param string $field
-     * @param $forOwner
-     * @param $remoteClassId
+     * @param bool $forOwner
+     * @param string $remoteClassId
      *
      * @return array
      */
@@ -176,7 +176,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save changes to database, it's an good idea to use save() instead
      *
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      */
     public function update($isUpdate = null)
     {
