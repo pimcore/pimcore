@@ -681,7 +681,7 @@ class SettingsController extends AdminController
                 $parts = explode(' ', substr($line, 2));
                 $key = trim($parts[0]);
                 if ($key) {
-                    $value = trim($parts[1]);
+                    $value = trim($parts[1] ?? '');
                     $optionArray[$key] = $value;
                 }
             }

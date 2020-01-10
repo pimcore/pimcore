@@ -37,20 +37,20 @@ class PdfReactor8 extends Processor
         $reactorConfig = [
             'document' => '',
             'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
-            'author' => $config->author ? $config->author : '',
-            'title' => $config->title ? $config->title : '',
-            'addLinks' => $config->links == 'true',
-            'addBookmarks' => $config->bookmarks == 'true',
+            'author' => $config->author ?? '',
+            'title' => $config->title ?? '',
+            'addLinks' => isset($config->links) && $config->links === 'true',
+            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === 'true',
             'javaScriptMode' => $config->javaScriptMode,
-            'defaultColorSpace' => $config->colorspace,
-            'encryption' => $config->encryption,
-            'addTags' => $config->tags == 'true',
-            'logLevel' => $config->loglevel,
-            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode == 'true',
-            'addOverprint' => $config->addOverprint == 'true',
+            'defaultColorSpace' => $config->colorspace ?? \ColorSpace::CMYK,
+            'encryption' => $config->encryption ?? \Encryption::NONE,
+            'addTags' => isset($config->tags) && $config->tags === 'true',
+            'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
+            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode === 'true',
+            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === 'true',
             'httpsMode' => $web2PrintConfig->pdfreactorEnableLenientHttpsMode ? \HttpsMode::LENIENT : \HttpsMode::STRICT
         ];
-        if ($config->viewerPreference) {
+        if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
         }
         if (trim($web2PrintConfig->pdfreactorLicence)) {
@@ -116,12 +116,20 @@ class PdfReactor8 extends Processor
         }
     }
 
+    /**
+     * @param Document\PrintAbstract $document
+     * @param object $config
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $params = [];
-        $params['printermarks'] = $config->printermarks == 'true';
-        $params['screenResolutionImages'] = $config->screenResolutionImages == 'true';
-        $params['colorspace'] = $config->colorspace;
+        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === 'true';
+        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === 'true';
+        $params['colorspace'] = $config->colorspace ?? \ColorSpace::CMYK;
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
@@ -141,30 +149,22 @@ class PdfReactor8 extends Processor
 
         $reactorConfig = $event->getArguments()['reactorConfig'];
 
-        try {
-            $progress = new \stdClass();
-            $progress->finished = false;
+        $progress = new \stdClass();
+        $progress->finished = false;
 
-            $processId = $pdfreactor->convertAsync($reactorConfig);
+        $processId = $pdfreactor->convertAsync($reactorConfig);
 
-            while (!$progress->finished) {
-                $progress = $pdfreactor->getProgress($processId);
-                $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
+        while (!$progress->finished) {
+            $progress = $pdfreactor->getProgress($processId);
+            $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
 
-                Logger::info('PDF converting progress: ' . $progress->progress . '%');
-                sleep(2);
-            }
-
-            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-            $result = $pdfreactor->getDocument($processId);
-            $pdf = base64_decode($result->document);
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception('Error during REST-Request:' . $e->getMessage());
+            Logger::info('PDF converting progress: ' . $progress->progress . '%');
+            sleep(2);
         }
 
-        $document->setLastGenerateMessage('');
+        $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
+        $result = $pdfreactor->getDocument($processId);
+        $pdf = base64_decode($result->document);
 
         return $pdf;
     }

@@ -46,9 +46,9 @@ abstract class Processor
 
     /**
      * @param int $documentId
-     * @param mixed $config
+     * @param array $config
      *
-     * @return mixed
+     * @return bool
      *
      * @throws \Exception
      */
@@ -77,20 +77,21 @@ abstract class Processor
         $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' pimcore:web2print:pdf-creation ' . implode(' ', $args);
 
         Logger::info($cmd);
+        $disableBackgroundExecution = $config['disableBackgroundExecution'] ?? false;
 
-        if (!$config['disableBackgroundExecution']) {
+        if (!$disableBackgroundExecution) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log');
 
             return true;
-        } else {
-            return self::getInstance()->startPdfGeneration($jobConfig->documentId);
         }
+
+        return (bool)self::getInstance()->startPdfGeneration($jobConfig->documentId);
     }
 
     /**
      * @param int $documentId
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function startPdfGeneration($documentId)
     {
@@ -118,9 +119,11 @@ abstract class Processor
             ]));
 
             $document->setLastGenerated((time() + 1));
+            $document->setLastGenerateMessage('');
             $document->save();
         } catch (\Exception $e) {
             Logger::err($e);
+            $document->setLastGenerateMessage($e->getMessage());
             $document->save();
         }
 
@@ -251,8 +254,11 @@ abstract class Processor
     protected function processHtml($html, $params)
     {
         $placeholder = new \Pimcore\Placeholder();
-        $html = $placeholder->replacePlaceholders($html, $params, $params['document']);
-        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $params['document'], $params['hostUrl']);
+        $document = $params['document'] ?? null;
+        $hostUrl = $params['hostUrl'] ?? null;
+
+        $html = $placeholder->replacePlaceholders($html, $params, $document);
+        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $hostUrl);
 
         return $html;
     }

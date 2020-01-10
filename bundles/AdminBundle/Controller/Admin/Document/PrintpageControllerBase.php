@@ -261,13 +261,14 @@ class PrintpageControllerBase extends DocumentControllerBase
             $allParams['hostName'] = $_SERVER['HTTP_HOST'];
         }
 
-        $allParams['protocol'] = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+        $https = $_SERVER['HTTPS'] ?? 'off';
+        $allParams['protocol'] = $https === 'on' ? 'https' : 'http';
         $pdf = $document->getPdfFileName();
         if (is_file($pdf)) {
             unlink($pdf);
         }
 
-        $result = (bool)$document->generatePdf($allParams);
+        $result = $document->generatePdf($allParams);
 
         $this->saveProcessingOptions($document->getId(), $allParams);
 
@@ -319,7 +320,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'label' => $option['name'],
                 'value' => $value,
                 'type' => $option['type'],
-                'values' => $option['values']
+                'values' => $option['values'] ?? [],
             ];
         }
 

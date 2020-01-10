@@ -95,19 +95,11 @@ class WkHtmlToPdf extends Processor
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        try {
-            $this->updateStatus($document->getId(), 50, 'pdf_conversion');
+        $this->updateStatus($document->getId(), 50, 'pdf_conversion');
 
-            $pdf = $this->fromStringToStream($html);
+        $pdf = $this->fromStringToStream($html);
 
-            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception('Error during REST-Request:' . $e->getMessage());
-        }
-
-        $document->setLastGenerateMessage('');
+        $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
 
         return $pdf;
     }
@@ -227,17 +219,16 @@ class WkHtmlToPdf extends Processor
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
 
         $params = $event->getArguments();
+        $cmd = $params['cmd'] ?? null;
 
-        if ($params['cmd']) {
-            $cmd = $params['cmd'];
-        } else {
+        if (!$cmd) {
             $cmd = $params['wkhtmltopdfBin'] . ' ' . $params['options'] . ' ' . escapeshellarg($params['srcUrl']) . ' ' . escapeshellarg($params['dstFile']);
         }
 
         exec($cmd, $output, $retVal);
 
         if ($retVal != 0 && $retVal != 1) {
-            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . $output . "\ncommand was:" . $cmd);
+            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . implode("\n", $output) . "\ncommand was: " . $cmd);
         }
 
         return $dstFile;
