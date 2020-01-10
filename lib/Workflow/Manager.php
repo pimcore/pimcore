@@ -177,7 +177,7 @@ class Manager
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Workflow[]
      */
@@ -226,7 +226,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param object $subject
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject
@@ -257,7 +257,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param object $subject
      * @param string $globalAction
      * @param array $additionalData
      * @param bool $saveSubject

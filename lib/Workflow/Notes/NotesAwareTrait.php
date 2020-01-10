@@ -17,7 +17,7 @@ namespace Pimcore\Workflow\Notes;
 /**
  * @method getLabel()
  *
- * @property array options
+ * @property array $options
  */
 trait NotesAwareTrait
 {

@@ -45,8 +45,8 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
-     * @param $config
+     * @param int $documentId
+     * @param mixed $config
      *
      * @return mixed
      *
@@ -88,7 +88,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return mixed|null
      */
@@ -134,14 +134,16 @@ abstract class Processor
 
     /**
      * @param Document\PrintAbstract $document
-     * @param $config
+     * @param object $config
      *
-     * @return mixed
+     * @return string
+     *
+     * @throws \Exception
      */
     abstract protected function buildPdf(Document\PrintAbstract $document, $config);
 
     /**
-     * @param $jobConfig
+     * @param \stdClass $jobConfig
      *
      * @return bool
      */
@@ -153,7 +155,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return \stdClass
      */
@@ -165,7 +167,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return Document\Printpage
      *
@@ -182,7 +184,7 @@ abstract class Processor
     }
 
     /**
-     * @param $processId
+     * @param int $processId
      *
      * @return string
      */
@@ -197,9 +199,9 @@ abstract class Processor
     abstract public function getProcessingOptions();
 
     /**
-     * @param $documentId
-     * @param $status
-     * @param $statusUpdate
+     * @param int $documentId
+     * @param int $status
+     * @param string $statusUpdate
      */
     protected function updateStatus($documentId, $status, $statusUpdate)
     {
@@ -210,7 +212,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array
      */
@@ -226,7 +228,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @throws \Exception
      */
@@ -240,6 +242,12 @@ abstract class Processor
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
+    /**
+     * @param string $html
+     * @param array $params
+     *
+     * @return string
+     */
     protected function processHtml($html, $params)
     {
         $placeholder = new \Pimcore\Placeholder();

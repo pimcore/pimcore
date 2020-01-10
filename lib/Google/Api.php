@@ -96,7 +96,7 @@ class Api
     }
 
     /**
-     * @param null $scope
+     * @param array|null $scope
      *
      * @return bool|\Google_Client
      */
@@ -201,7 +201,7 @@ class Api
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return array
      *

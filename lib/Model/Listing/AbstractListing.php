@@ -110,7 +110,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param  $key
+     * @param string $key
      *
      * @return bool
      */
@@ -144,7 +144,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param  $limit
+     * @param int $limit
      *
      * @return $this
      */
@@ -158,7 +158,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param  $offset
+     * @param int $offset
      *
      * @return $this
      */
@@ -172,7 +172,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param  $order
+     * @param array|string $order
      *
      * @return $this
      */
@@ -234,8 +234,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $key
-     * @param null $value
+     * @param string $key
+     * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
@@ -331,8 +331,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $condition
-     * @param null $conditionVariables
+     * @param string $condition
+     * @param array|null $conditionVariables
      *
      * @return $this
      */
@@ -367,7 +367,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $groupBy
+     * @param string $groupBy
      * @param bool $qoute
      *
      * @return $this
@@ -386,7 +386,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $validOrders
+     * @param array $validOrders
      *
      * @return $this
      */
@@ -398,8 +398,8 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $value
-     * @param $type
+     * @param mixed $value
+     * @param int|null $type
      *
      * @return string
      */
@@ -411,7 +411,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $conditionVariables
+     * @param array $conditionVariables
      *
      * @return $this
      */
@@ -432,7 +432,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @param $conditionVariables
+     * @param array $conditionVariables
      *
      * @return $this
      */

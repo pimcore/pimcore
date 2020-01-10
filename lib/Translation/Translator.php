@@ -363,7 +363,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
      * @return string
      */

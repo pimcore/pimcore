@@ -36,8 +36,8 @@ final class HousekeepingTask implements TaskInterface
     }
 
     /**
-     * @param $folder
-     * @param $days
+     * @param string $folder
+     * @param int $days
      */
     protected function deleteFilesInFolderOlderThanDays($folder, $days)
     {

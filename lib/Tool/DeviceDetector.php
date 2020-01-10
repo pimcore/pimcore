@@ -57,7 +57,7 @@ class DeviceDetector
     protected $wasUsed = false;
 
     /**
-     * @param null $default
+     * @param string|null $default
      *
      * @return DeviceDetector
      */
@@ -71,7 +71,7 @@ class DeviceDetector
     }
 
     /**
-     * @param null $default
+     * @param string|null $default
      */
     public function __construct($default = null)
     {
@@ -119,7 +119,7 @@ class DeviceDetector
     }
 
     /**
-     * @param $wasUsed
+     * @param bool $wasUsed
      */
     public function setWasUsed($wasUsed)
     {

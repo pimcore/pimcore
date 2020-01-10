@@ -271,10 +271,10 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      * @internal
      *
      * @param LoggerInterface $logger
-     * @param $message
+     * @param string $message
      * @param array $context
      */
-    public static function log(LoggerInterface $logger = null, $message, $context = [])
+    public static function log(LoggerInterface $logger, $message, $context = [])
     {
         if ($logger) {
             $logger->warning($message, $context);

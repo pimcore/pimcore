@@ -84,9 +84,9 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
-     * @return mixed
+     * @return string
      */
     public function replace($value)
     {

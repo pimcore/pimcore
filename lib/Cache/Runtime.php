@@ -165,8 +165,8 @@ final class Runtime extends \ArrayObject
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
      *
-     * @param $data
-     * @param $id
+     * @param mixed $data
+     * @param string $id
      *
      * @return mixed
      */
@@ -178,7 +178,7 @@ final class Runtime extends \ArrayObject
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
      *
-     * @param $id
+     * @param string $id
      *
      * @return mixed
      */

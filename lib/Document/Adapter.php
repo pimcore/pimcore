@@ -24,7 +24,7 @@ abstract class Adapter
     protected $tmpFiles = [];
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return string
      */

@@ -31,6 +31,7 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Psr\Container\ContainerInterface;
 
@@ -97,7 +98,7 @@ class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param $config
+     * @param ConfigElementInterface[] $config
      * @param mixed|null $context
      *
      * @return ConfigElementInterface[]
@@ -152,8 +153,8 @@ class Service
     }
 
     /**
-     * @param $user
-     * @param $classId
+     * @param User $user
+     * @param string $classId
      *
      * @return array|ImportConfig\Listing
      */
@@ -191,10 +192,10 @@ class Service
     }
 
     /**
-     * @param $user
-     * @param $classId
+     * @param User $user
+     * @param string $classId
      *
-     * @return ImportConfig\Listing
+     * @return ImportConfig[]
      */
     public function getMyOwnImportConfigs($user, $classId)
     {
@@ -214,7 +215,7 @@ class Service
     }
 
     /**
-     * @param $gridConfig GridConfig
+     * @param GridConfig $gridConfig
      *
      * @return \stdClass
      */
@@ -244,8 +245,8 @@ class Service
     }
 
     /**
-     * @param $class ClassDefinition
-     * @param $exportColumn
+     * @param ClassDefinition $class
+     * @param array $exportColumn
      *
      * @return array|\stdClass
      */

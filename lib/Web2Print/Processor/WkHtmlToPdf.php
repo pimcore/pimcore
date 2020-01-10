@@ -72,7 +72,7 @@ class WkHtmlToPdf extends Processor
 
     /**
      * @param Document\PrintAbstract $document
-     * @param $config
+     * @param object $config
      *
      * @return string
      *

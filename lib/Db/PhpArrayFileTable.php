@@ -39,7 +39,7 @@ class PhpArrayFileTable
     protected $lastInsertId;
 
     /**
-     * @param $filePath
+     * @param string $filePath
      *
      * @return self
      */
@@ -65,7 +65,7 @@ class PhpArrayFileTable
     }
 
     /**
-     * @param $filePath
+     * @param string $filePath
      *
      * @throws \Exception
      */
@@ -91,7 +91,7 @@ class PhpArrayFileTable
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @param string|int $id
      *
      * @throws \Exception
@@ -135,8 +135,8 @@ class PhpArrayFileTable
     }
 
     /**
-     * @param null $filter
-     * @param null $order
+     * @param callable|null $filter
+     * @param callable|null $order
      *
      * @return array
      */

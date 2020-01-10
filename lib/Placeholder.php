@@ -45,7 +45,7 @@ class Placeholder
     protected $document;
 
     /**
-     * @param $classPrefix
+     * @param string $classPrefix
      *
      * @throws \Exception
      */
@@ -115,7 +115,7 @@ class Placeholder
     }
 
     /**
-     * @param $suffix
+     * @param string $suffix
      *
      * @throws \Exception
      */

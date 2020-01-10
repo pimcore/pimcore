@@ -65,7 +65,7 @@ class Mail extends \Swift_Message
     /**
      * html2text from mbayer is installed (http://www.mbayer.de/html2text/)
      *
-     * @var bool
+     * @var bool|null
      */
     protected static $html2textInstalled = null;
 
@@ -118,7 +118,7 @@ class Mail extends \Swift_Message
      *
      * @see MailHelper::setAbsolutePaths()
      *
-     * @var null
+     * @var string|null
      */
     protected $hostUrl = null;
 
@@ -157,7 +157,7 @@ class Mail extends \Swift_Message
     protected $lastLogEntry;
 
     /**
-     * @param $url
+     * @param string $url
      *
      * @return $this
      */
@@ -169,7 +169,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @return null
+     * @return string|null
      */
     public function getHostUrl()
     {
@@ -179,10 +179,10 @@ class Mail extends \Swift_Message
     /**
      * Mail constructor.
      *
-     * @param null $subject
-     * @param null $body
-     * @param null $contentType
-     * @param null $charset
+     * @param array|string|null $subject
+     * @param string|null $body
+     * @param string|null $contentType
+     * @param string|null $charset
      */
     public function __construct($subject = null, $body = null, $contentType = null, $charset = null)
     {
@@ -234,7 +234,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $value
+     * @param bool $value
      *
      * @return $this
      */
@@ -270,7 +270,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $value
+     * @param bool $value
      *
      * @return $this
      */
@@ -687,7 +687,7 @@ class Mail extends \Swift_Message
      *
      * @static
      *
-     * @param $emailAddress
+     * @param string $emailAddress
      *
      * @return bool
      */
@@ -789,7 +789,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $document
+     * @param Model\Document|int|string $document
      *
      * @return $this
      *
@@ -873,7 +873,7 @@ class Mail extends \Swift_Message
      * @static
      * returns  html2text binary installation status
      *
-     * @return bool || null
+     * @return bool
      */
     public static function getHtml2textInstalled()
     {
@@ -885,7 +885,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $htmlContent
+     * @param string $htmlContent
      *
      * @return string
      */
@@ -919,7 +919,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $bodyText
+     * @param string $bodyText
      *
      * @return $this
      */
@@ -931,7 +931,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @param $body
+     * @param string $body
      *
      * @return \Pimcore\Mail
      */
@@ -975,12 +975,10 @@ class Mail extends \Swift_Message
     }
 
     /**
-     *
-     *
-     * @param $data
-     * @param null $mimeType
-     * @param null $disposition
-     * @param null $filename
+     * @param string|\Swift_OutputByteStream $data
+     * @param string|null $mimeType
+     * @param string|null $filename
+     * @param string|null $disposition
      *
      * @return \Swift_Mime_Attachment
      */

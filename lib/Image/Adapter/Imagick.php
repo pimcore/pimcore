@@ -43,7 +43,7 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
-     * @param $imagePath
+     * @param string $imagePath
      * @param array $options
      *
      * @return $this|bool|self
@@ -169,11 +169,11 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $path
-     * @param null $format
-     * @param null $quality
+     * @param string $path
+     * @param string|null $format
+     * @param int|null $quality
      *
-     * @return $this|mixed
+     * @return $this
      *
      * @throws \Exception
      */
@@ -427,8 +427,8 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $width
-     * @param  $height
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -477,10 +477,10 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $x
-     * @param  $y
-     * @param  $width
-     * @param  $height
+     * @param int $x
+     * @param int $y
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -500,9 +500,9 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
-     * @param  bool $forceResize
+     * @param int $width
+     * @param int $height
+     * @param bool $forceResize
      *
      * @return $this
      */
@@ -530,7 +530,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $tolerance
+     * @param float $tolerance
      *
      * @return self
      */
@@ -550,7 +550,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $color
+     * @param string $color
      *
      * @return self
      */
@@ -570,11 +570,11 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      * @param string $color
      *
-     * @return Imagick
+     * @return \Imagick
      */
     protected function createImage($width, $height, $color = 'transparent')
     {
@@ -586,7 +586,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $angle
+     * @param int $angle
      *
      * @return $this
      */
@@ -606,8 +606,8 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      *
      * @return $this
      */
@@ -631,8 +631,8 @@ class Imagick extends Adapter
     /**
      * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
      *
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      */
     protected function internalRoundCorners($width, $height)
     {
@@ -651,7 +651,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $image
+     * @param string $image
      * @param null|string $mode
      *
      * @return $this
@@ -751,7 +751,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $image
+     * @param string $image
      * @param string $composite
      *
      * @return $this
@@ -771,7 +771,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $image
+     * @param string $image
      *
      * @return self
      */
@@ -870,7 +870,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $mode
+     * @param string $mode
      *
      * @return $this|Adapter
      */
@@ -890,7 +890,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param null $imagePath
+     * @param string|null $imagePath
      *
      * @return bool
      */
