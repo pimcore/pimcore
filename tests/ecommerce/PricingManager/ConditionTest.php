@@ -94,7 +94,7 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return AbstractCategory
      */
@@ -176,8 +176,8 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @param $id
-     * @param null $parentId
+     * @param int $id
+     * @param int|null $parentId
      *
      * @return AbstractProduct
      */

@@ -441,7 +441,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * override this method if you need to add custom data
      * which should not be stored in the store data
      *
-     * @param $data
+     * @param array|string $data
      *
      * @return mixed
      */
@@ -648,7 +648,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      *
      * return array in this case
      *
-     * @param $data
+     * @param array|string $data
      *
      * @return string
      */

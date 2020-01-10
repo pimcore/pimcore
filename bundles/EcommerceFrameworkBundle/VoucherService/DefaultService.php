@@ -309,7 +309,7 @@ class DefaultService implements VoucherServiceInterface
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return bool|TokenManager\TokenManagerInterface
      */

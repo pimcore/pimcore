@@ -43,8 +43,8 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 class OptionsProvider implements SelectOptionsProviderInterface
 {
     /**
-     * @param $context array
-     * @param $fieldDefinition Data
+     * @param array $context 
+     * @param Data $fieldDefinition 
      * @return array
      */
     public function getOptions($context, $fieldDefinition) {
@@ -62,8 +62,8 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     /**
      * Returns the value which is defined in the 'Default value' field  
-     * @param $context array
-     * @param $fieldDefinition Data
+     * @param array $context 
+     * @param Data $fieldDefinition 
      * @return mixed
      */
     public function getDefaultValue($context, $fieldDefinition) {
@@ -71,8 +71,8 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
-     * @param $context array
-     * @param $fieldDefinition Data
+     * @param array $context 
+     * @param Data $fieldDefinition 
      * @return bool
      */
     public function hasStaticOptions($context, $fieldDefinition) {

@@ -177,7 +177,8 @@ abstract class AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @param $limit
+     * @param int $limit
+     * @param int $offset
      *
      * @return $this
      */

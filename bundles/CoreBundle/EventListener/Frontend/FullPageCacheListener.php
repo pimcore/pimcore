@@ -92,7 +92,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param null $reason
+     * @param string|null $reason
      *
      * @return bool
      */

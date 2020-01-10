@@ -88,7 +88,7 @@ class Version20181115114003 extends AbstractPimcoreMigration
     }
 
     /**
-     * @param null $name
+     * @param string $layoutId
      *
      * @return string
      */

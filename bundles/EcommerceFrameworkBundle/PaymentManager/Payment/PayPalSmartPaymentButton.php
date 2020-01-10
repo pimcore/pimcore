@@ -298,7 +298,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      */

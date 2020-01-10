@@ -50,7 +50,7 @@ class IndexUpdater
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
      *
-     * @param $objectListClass
+     * @param string $objectListClass
      * @param string $condition
      * @param bool $updateIndexStructures
      * @param string $loggername
@@ -163,7 +163,7 @@ class IndexUpdater
     /**
      * Runs processUpdateIndexQueue for given tenants or for all tenants
      *
-     * @param null $tenants
+     * @param array|null $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
@@ -228,8 +228,8 @@ class IndexUpdater
     }
 
     /**
-     * @param $timeout
-     * @param $startTime
+     * @param int $timeout
+     * @param int $startTime
      *
      * @throws \Exception
      */

@@ -259,8 +259,8 @@ class PriceInfo implements PriceInfoInterface
     /**
      * loop through any other calls
      *
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      *
      * @return mixed
      */

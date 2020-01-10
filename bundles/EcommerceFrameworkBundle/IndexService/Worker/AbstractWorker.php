@@ -136,17 +136,15 @@ abstract class AbstractWorker implements WorkerInterface
     /**
      * actually deletes all sub entries from index. original object is delivered too, but keep in mind, that this might be empty.
      *
-     * @param $subObjectId
-     * @param IndexableInterface $object - might be empty (when object doesn't exist any more in pimcore
-     *
-     * @return mixed
+     * @param int $subObjectId
+     * @param IndexableInterface|null $object - might be empty (when object doesn't exist any more in pimcore
      */
     abstract protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null);
 
     /**
      * Checks if given data is array and returns converted data suitable for search backend. For mysql it is a string with special delimiter.
      *
-     * @param $data
+     * @param array|string $data
      *
      * @return string
      */

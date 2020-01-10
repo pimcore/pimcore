@@ -21,9 +21,9 @@ use Pimcore\Model\DataObject\Concrete;
 class CustomRenderer
 {
     /**
-     * @param $data string as provided in the class definition
-     * @param $object Concrete
-     * @param $params mixed
+     * @param string $data as provided in the class definition
+     * @param Concrete $object 
+     * @param mixed $params 
      * @return string
      */
     public static function renderLayoutText($data, $object, $params) {

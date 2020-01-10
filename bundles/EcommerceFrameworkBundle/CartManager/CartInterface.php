@@ -29,9 +29,7 @@ interface CartInterface
     public function getId();
 
     /**
-     * @param $id int
-     *
-     * @return void
+     * @param int $id
      */
     public function setId($id);
 
@@ -78,11 +76,11 @@ interface CartInterface
     /**
      * @param CheckoutableInterface $product
      * @param int $count
-     * @param null $itemKey
+     * @param string|null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param AbstractSetProductEntry[] $subProducts
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -95,7 +93,7 @@ interface CartInterface
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -104,8 +102,8 @@ interface CartInterface
     /**
      * updates count of specific cart item
      *
-     * @param $itemKey
-     * @param $count
+     * @param string $itemKey
+     * @param int $count
      *
      * @return mixed
      */
@@ -114,11 +112,11 @@ interface CartInterface
     /**
      * @param CheckoutableInterface $product
      * @param int $count
-     * @param null $itemKey
+     * @param string|null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param AbstractSetProductEntry[] $subProducts
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -131,7 +129,7 @@ interface CartInterface
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -196,17 +194,15 @@ interface CartInterface
      * Set custom checkout data for cart.
      * can be used for delivery information, ...
      *
-     * @param  $key string
-     * @param  $data string
-     *
-     * @return void
+     * @param string $key
+     * @param string $data
      */
     public function setCheckoutData($key, $data);
 
     /**
      * Get custom checkout data for cart with given key.
      *
-     * @param  $key string
+     * @param string $key
      *
      * @return string
      */
@@ -222,7 +218,7 @@ interface CartInterface
     /**
      * set name of cart.
      *
-     * @param $name
+     * @param string $name
      *
      * @return void
      */
@@ -286,7 +282,7 @@ interface CartInterface
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
      * @return CartInterface
      */
@@ -297,7 +293,7 @@ interface CartInterface
      *
      * @static
      *
-     * @param $userId
+     * @param int $userId
      *
      * @return CartInterface[]
      */
