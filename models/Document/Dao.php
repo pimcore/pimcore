@@ -332,15 +332,15 @@ class Dao extends Model\Element\Dao
     /**
      * Quick check if there are children.
      *
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren($includingUnpublished = null)
     {
         $sql = 'SELECT id FROM documents WHERE parentId = ?';
 
-        if (Model\Document::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 
@@ -377,15 +377,15 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasSiblings($unpublished = false)
+    public function hasSiblings($includingUnpublished = null)
     {
         $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
 
-        if (Model\Document::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 

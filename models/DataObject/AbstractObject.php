@@ -397,17 +397,17 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return self[]
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey])) {
             $list = new Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder('asc');
@@ -424,11 +424,11 @@ class AbstractObject extends Model\Element\AbstractElement
      * Quick test if there are children
      *
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -436,24 +436,24 @@ class AbstractObject extends Model\Element\AbstractElement
             return $this->o_hasChildren[$cacheKey];
         }
 
-        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $unpublished);
+        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
      *
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return array
      */
-    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_siblings[$cacheKey])) {
             $list = new Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             // string conversion because parentId could be 0
             $list->addConditionParam('o_parentId = ?', (string)$this->getParentId());
             $list->addConditionParam('o_id != ?', $this->getId());
@@ -471,11 +471,11 @@ class AbstractObject extends Model\Element\AbstractElement
      * Returns true if the object has at least one sibling
      *
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -483,7 +483,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return $this->o_hasSiblings[$cacheKey];
         }
 
-        return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $unpublished);
+        return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -1444,13 +1444,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
     protected function getListingCacheKey(array $args = []) {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
-        $unpublished = $args[1] ?? false;
+        $includingUnpublished = (bool) $args[1] ?? false;
 
         if(is_array($objectTypes)) {
             $objectTypes = implode('_', $objectTypes);
         }
 
-        $cacheKey =  $objectTypes . (!empty($unpublished) ? '_' : '') . (string)$unpublished;
+        $cacheKey =  $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
 
         return $cacheKey;
     }

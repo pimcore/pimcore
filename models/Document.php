@@ -651,7 +651,7 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        if($children === null) {
+        if(empty($children)) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
@@ -667,17 +667,17 @@ class Document extends Element\AbstractElement
     /**
      * Get a list of the children (not recursivly)
      *
-     * @param bool
+     * @param bool $includingUnpublished
      *
      * @return self[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->children[$cacheKey])) {
             $list = new Document\Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
@@ -690,11 +690,11 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      *
-     * @param $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren($includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -702,23 +702,23 @@ class Document extends Element\AbstractElement
             return $this->hasChildren[$cacheKey];
         }
 
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($unpublished);
+        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
      *
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return array
      */
-    public function getSiblings($unpublished = false)
+    public function getSiblings($includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
             $list = new Document\Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             // string conversion because parentId could be 0
             $list->addConditionParam('parentId = ?', (string)$this->getParentId());
             $list->addConditionParam('id != ?', $this->getId());
@@ -734,11 +734,11 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one sibling
      *
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasSiblings($unpublished = false)
+    public function hasSiblings($includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -746,7 +746,7 @@ class Document extends Element\AbstractElement
             return $this->hasSiblings[$cacheKey];
         }
 
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($unpublished);
+        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -1497,7 +1497,7 @@ class Document extends Element\AbstractElement
     }
 
     protected function getListingCacheKey(array $args = []) {
-        $unpublished = $args[0] ?? false;
+        $unpublished = (bool)($args[0] ?? false);
         $cacheKey = (string)$unpublished;
 
         return $cacheKey;
