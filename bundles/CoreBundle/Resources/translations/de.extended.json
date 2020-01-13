@@ -715,5 +715,7 @@
     "invitation_link_sent": "Ein temporärer Login-Link wurde an folgende E-Mail-Adresse gesendet: \"%s\" ",
     "geopolyline": "Geografische Polylinie",
     "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits",
-    "classificationstore_group_by_key": "Gruppieren nach Key"
+    "classificationstore_group_by_key": "Gruppieren nach Key",
+    "cache_raw_relation_data": "Roh-Beziehungsdaten zwischenspeichern",
+    "allow_to_create_new_object": "Ermöglicht ein neues Objekt im Beziehungsfeld zu erstellen"
 }
