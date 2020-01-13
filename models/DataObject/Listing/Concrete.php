@@ -82,6 +82,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setClassId($classId)
     {
+        $this->setData(null);
+
         $this->classId = $classId;
 
         return $this;
@@ -94,6 +96,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setClassName($className)
     {
+        $this->setData(null);
+
         $this->className = $className;
 
         return $this;
@@ -116,6 +120,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setLocale($locale)
     {
+        $this->setData(null);
+
         $this->locale = $locale;
 
         return $this;
@@ -136,6 +142,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setIgnoreLocalizedFields($ignoreLocalizedFields)
     {
+        $this->setData(null);
+
         $this->ignoreLocalizedFields = $ignoreLocalizedFields;
 
         return $this;
@@ -164,6 +172,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function addFieldCollection($type, $fieldname = null)
     {
+        $this->setData(null);
+
         if (empty($type)) {
             throw new \Exception('No fieldcollectiontype given');
         }
@@ -181,6 +191,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setFieldCollections($fieldCollections)
     {
+        $this->setData(null);
+
         foreach ($fieldCollections as $fc) {
             $this->addFieldCollection($fc['type'], $fc['fieldname']);
         }
@@ -210,6 +222,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function addObjectbrick($type)
     {
+        $this->setData(null);
+
         if (empty($type)) {
             throw new \Exception('No objectbrick given');
         }
@@ -229,6 +243,8 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function setObjectbricks($objectbricks)
     {
+        $this->setData(null);
+
         foreach ($objectbricks as $ob) {
             if (!in_array($ob, $this->objectBrickConfigs)) {
                 $this->addObjectbrick($ob);

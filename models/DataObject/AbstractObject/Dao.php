@@ -291,18 +291,20 @@ class Dao extends Model\Element\Dao
      * Quick test if there are children
      *
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $sql = 'SELECT 1 FROM objects WHERE o_parentId = ?';
 
-        if (DataObject\AbstractObject::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
         }
+
         $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
 
         $c = $this->db->fetchOne($sql, $this->model->getId());
 
@@ -313,12 +315,21 @@ class Dao extends Model\Element\Dao
      * Quick test if there are siblings
      *
      * @param array $objectTypes
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
+    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
-        $c = $this->db->fetchOne("SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+        $sql = "SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ?";
+
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+            $sql .= ' AND o_published = 1';
+        }
+
+        $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
+        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }

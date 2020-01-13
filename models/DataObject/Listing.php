@@ -87,6 +87,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function setUnpublished($unpublished)
     {
+        $this->setData(null);
+
         $this->unpublished = (bool) $unpublished;
 
         return $this;
@@ -99,6 +101,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function setObjectTypes($objectTypes)
     {
+        $this->setData(null);
+
         $this->objectTypes = $objectTypes;
 
         return $this;
@@ -151,6 +155,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function setGroupBy($groupBy, $qoute = true)
     {
+        $this->setData(null);
+
         if ($groupBy) {
             $this->groupBy = $groupBy;
 

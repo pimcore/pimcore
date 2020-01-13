@@ -5,6 +5,11 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
+/**
+ * Class ObjectTest
+ * @package Pimcore\Tests\Model\DataObject
+ * @group model.dataobject.object
+ */
 class ObjectTest extends ModelTestCase
 {
     /**
@@ -35,5 +40,68 @@ class ObjectTest extends ModelTestCase
 
         $savedObject->setParentId(0);
         $savedObject->save();
+    }
+
+    /**
+     * Verifies that children result should be cached based on parameters provided.
+     *
+     */
+    public function testCacheUnpublishedChildren()
+    {
+        // create parent
+        $parent = TestHelper::createEmptyObject();
+
+        // create first child
+        $firstChild = TestHelper::createEmptyObject('child-', false, false);
+        $firstChild->setParentId($parent->getId());
+        $firstChild->save();
+
+        //without unpublished flag
+        $child = $parent->getChildren();
+        $this->assertEquals(0, count($child), "Expected no child");
+
+        $hasChild = $parent->hasChildren();
+        $this->assertFalse($hasChild, "hasChild property should be false");
+
+        //with unpublished flag
+        $child = $parent->getChildren([], true);
+        $this->assertEquals(1, count($child), "Expected 1 child");
+
+        $hasChild = $parent->hasChildren([], true);
+        $this->assertTrue($hasChild, "hasChild property should be true");
+    }
+
+    /**
+     * Verifies that siblings result should be cached based on parameters provided.
+     *
+     */
+    public function testCacheUnpublishedSiblings()
+    {
+        // create parent
+        $parent = TestHelper::createEmptyObject();
+
+        // create first child
+        $firstChild = TestHelper::createEmptyObject('child-', false);
+        $firstChild->setParentId($parent->getId());
+        $firstChild->save();
+
+        // create first child
+        $secondChild = TestHelper::createEmptyObject('child-', false, false);
+        $secondChild->setParentId($parent->getId());
+        $secondChild->save();
+
+        //without unpublished flag
+        $sibling = $firstChild->getSiblings();
+        $this->assertEquals(0, count($sibling), "Expected no sibling");
+
+        $hasSibling = $firstChild->hasSiblings();
+        $this->assertFalse($hasSibling, "hasSiblings property should be false");
+
+        //with unpublished flag
+        $sibling = $firstChild->getSiblings([], true);
+        $this->assertEquals(1, count($sibling), "Expected 1 sibling");
+
+        $hasSibling = $firstChild->hasSiblings([], true);
+        $this->assertTrue($hasSibling, "hasSiblings property should be true");
     }
 }
