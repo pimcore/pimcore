@@ -1431,7 +1431,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     protected function getListingCacheKey(array $args = []) {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
-        $includingUnpublished = (bool) $args[1] ?? false;
+        $includingUnpublished = (bool)($args[1] ?? false);
 
         if(is_array($objectTypes)) {
             $objectTypes = implode('_', $objectTypes);
