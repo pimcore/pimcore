@@ -131,7 +131,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return Version
      */

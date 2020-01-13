@@ -21,6 +21,9 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @deprecated
+ */
 class ClassController extends AbstractRestController
 {
     /**

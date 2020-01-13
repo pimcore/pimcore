@@ -106,7 +106,7 @@ interface ElementInterface
 
     /**
      *
-     * @param $id
+     * @param int $id
      *
      * @return ElementInterface $resource
      */

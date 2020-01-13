@@ -305,8 +305,8 @@ class TrackingManager implements TrackingManagerInterface
      *
      * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart
-     * @param null $stepNumber
-     * @param null $checkoutOption
+     * @param string|null $stepNumber
+     * @param string|null $checkoutOption
      */
     public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {

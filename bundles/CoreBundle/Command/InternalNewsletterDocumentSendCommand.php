@@ -113,8 +113,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     /**
      * @param Model\Document\Newsletter $document
      * @param AddressSourceAdapterInterface $addressAdapter
-     * @param $sendingId
-     * @param $hostUrl
+     * @param string $sendingId
+     * @param string $hostUrl
      *
      * @throws Exception
      */
@@ -172,8 +172,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     /**
      * @param Model\Document\Newsletter $document
      * @param AddressSourceAdapterInterface $addressAdapter
-     * @param $sendingId
-     * @param $hostUrl
+     * @param string $sendingId
+     * @param string $hostUrl
      */
     protected function doSendMailInSingleMode(
         Model\Document\Newsletter $document,

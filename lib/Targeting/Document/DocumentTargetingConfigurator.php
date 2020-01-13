@@ -208,7 +208,7 @@ class DocumentTargetingConfigurator
      * Resolves valid target groups for a document. A target group is seen as valid
      * if it has at least one element configured for that target group.
      *
-     * @param Document|Document\TargetingDocument|TargetingDocumentInterface $document
+     * @param Document $document
      *
      * @return array
      */

@@ -31,6 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\FactoryInterface;
@@ -568,7 +569,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @param string $customerId
      * @param PaymentInterface $paymentProvider
-     * @param null $paymentMethod
+     * @param string|null $paymentMethod
      *
      * @return mixed
      */
@@ -615,7 +616,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param CartItemInterface $item
-     * @param $parent
+     * @param AbstractObject $parent
      * @param bool $isGiftItem
      *
      * @return AbstractOrderItem
@@ -733,9 +734,9 @@ class OrderManager implements OrderManagerInterface
     /**
      * Build list class name, try namespaced first and fall back to legacy naming
      *
-     * @param $className
+     * @param string $className
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */

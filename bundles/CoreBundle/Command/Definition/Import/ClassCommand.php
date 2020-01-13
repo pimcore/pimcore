@@ -48,7 +48,7 @@ class ClassCommand extends AbstractStructureImportCommand
     /**
      * Try to load definition by name
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel|null
      */
@@ -60,7 +60,7 @@ class ClassCommand extends AbstractStructureImportCommand
     /**
      * Create a new definition
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel
      */

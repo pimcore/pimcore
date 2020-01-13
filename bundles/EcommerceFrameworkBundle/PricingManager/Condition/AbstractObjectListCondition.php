@@ -21,8 +21,8 @@ abstract class AbstractObjectListCondition
     /**
      * Handle serializing of object list to list of IDs
      *
-     * @param $objectProperty
-     * @param $idProperty
+     * @param string $objectProperty
+     * @param string $idProperty
      *
      * @return array
      */
@@ -43,8 +43,8 @@ abstract class AbstractObjectListCondition
     /**
      * Handle loading of object list from serialized list of IDs
      *
-     * @param $objectProperty
-     * @param $idProperty
+     * @param string $objectProperty
+     * @param string $idProperty
      */
     protected function handleWakeup($objectProperty, $idProperty)
     {

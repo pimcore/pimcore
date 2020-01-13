@@ -92,7 +92,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param null $reason
+     * @param string|null $reason
      *
      * @return bool
      */
@@ -126,7 +126,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param $lifetime
+     * @param int|null $lifetime
      *
      * @return $this
      */

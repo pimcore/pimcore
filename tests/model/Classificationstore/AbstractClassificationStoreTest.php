@@ -33,7 +33,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
     }
 
     /**
-     * @param $store Classificationstore\StoreConfig
+     * @param Classificationstore\StoreConfig $store
      */
     protected function configureStore(Classificationstore\StoreConfig $store)
     {

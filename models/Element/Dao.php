@@ -53,7 +53,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $fullpath
+     * @param string $fullpath
      *
      * @return array
      */

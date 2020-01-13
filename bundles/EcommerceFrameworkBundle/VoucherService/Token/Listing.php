@@ -27,7 +27,7 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
-     * @var array
+     * @var Token[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     public $tokens;
@@ -38,7 +38,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @param  $key
+     * @param string $key
      *
      * @return bool
      */
@@ -52,7 +52,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @param $seriesId
+     * @param int|null $seriesId
      * @param array $filter
      *
      * @throws \Exception
@@ -227,7 +227,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @param $length
+     * @param int $length
      * @param null|string $seriesId
      *
      * @return null|string
@@ -324,7 +324,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @param $codes
+     * @param array|string $codes
      *
      * @return bool
      */
@@ -348,7 +348,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getTokens()
     {
@@ -356,7 +356,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
     }
 
     /**
-     * @param mixed $tokens
+     * @param array $tokens
      */
     public function setTokens($tokens)
     {

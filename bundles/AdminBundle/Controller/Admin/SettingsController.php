@@ -602,8 +602,8 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param $source
-     * @param $definitions
+     * @param string $source
+     * @param array $definitions
      * @param array $fallbacks
      *
      * @throws \Exception
@@ -1907,8 +1907,8 @@ class SettingsController extends AdminController
      * delete views for localized fields when languages are removed to
      * prevent mysql errors
      *
-     * @param $language
-     * @param $dbName
+     * @param string $language
+     * @param string $dbName
      */
     protected function deleteViews($language, $dbName)
     {

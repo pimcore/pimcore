@@ -26,6 +26,7 @@ use Pimcore\Event\Ecommerce\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
 use Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent;
 use Pimcore\File;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -337,7 +338,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
     /**
      * @param CartItemInterface $item
-     * @param $parent
+     * @param AbstractObject $parent
      * @param bool $isGiftItem
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem

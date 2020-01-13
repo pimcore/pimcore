@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class ClassDefinition extends Model\Webservice\Data
 {
     /**
@@ -110,7 +113,7 @@ class ClassDefinition extends Model\Webservice\Data
     public $fieldDefinitions;
 
     /**
-     * @var array
+     * @var Model\DataObject\ClassDefinition\Layout
      */
     public $layoutDefinitions;
 

@@ -472,6 +472,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -498,10 +499,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      *

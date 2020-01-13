@@ -49,7 +49,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */

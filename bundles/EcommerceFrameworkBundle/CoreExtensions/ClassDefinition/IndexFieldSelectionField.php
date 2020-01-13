@@ -60,7 +60,7 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return bool
      */

@@ -473,6 +473,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -499,10 +500,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *

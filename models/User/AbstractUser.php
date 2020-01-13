@@ -243,7 +243,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */

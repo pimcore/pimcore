@@ -40,7 +40,7 @@ class Config
     private static $environmentConfig;
 
     /**
-     * @param $name - name of configuration file. slash is allowed for subdirectories.
+     * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return mixed
      */
@@ -120,7 +120,7 @@ class Config
     /**
      * @internal
      *
-     * @param null $languange
+     * @param string|null $languange
      *
      * @return string
      */
@@ -237,7 +237,7 @@ class Config
      * @internal
      *
      * @param Config\Config $config
-     * @param null $language
+     * @param string|null $language
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
@@ -280,7 +280,7 @@ class Config
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return array|Config\Config
      */
@@ -735,7 +735,7 @@ class Config
     /**
      * @internal
      *
-     * @param $name
+     * @param string $name
      *
      * @return array
      */
@@ -923,8 +923,8 @@ class Config
     /**
      * @internal
      *
-     * @param $runtimeConfig
-     * @param $key
+     * @param array $runtimeConfig
+     * @param string $key
      *
      * @return bool
      */

@@ -35,8 +35,8 @@ class Thumbnail
     protected static $hasListenersCache = [];
 
     /**
-     * @param $asset
-     * @param null $config
+     * @param Image $asset
+     * @param string|array|Thumbnail\Config $config
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $deferred = true)
@@ -49,7 +49,7 @@ class Thumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
@@ -437,7 +437,7 @@ class Thumbnail
     /**
      * Get a thumbnail image configuration.
      *
-     * @param mixed $selector Name, array or object describing a thumbnail configuration.
+     * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
      * @return Thumbnail\Config
      */

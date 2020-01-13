@@ -295,9 +295,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     /**
      * only prepare data for updating index
      *
-     * @param $objectId
-     * @param null $data
-     * @param null $metadata
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {

@@ -25,7 +25,7 @@ interface TrackingItemBuilderInterface
     /**
      * Build a product view object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      *
      * @return ProductAction
      */
@@ -34,7 +34,7 @@ interface TrackingItemBuilderInterface
     /**
      * Build a product action item object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      *
      * @param int $quantity
      * @return ProductAction
@@ -44,7 +44,7 @@ interface TrackingItemBuilderInterface
     /**
      * Build a product impression object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      * @param string $list
      *
      * @return ProductImpression

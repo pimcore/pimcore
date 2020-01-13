@@ -160,7 +160,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
     /**
      * @param ValidationException $e
-     * @param $message
+     * @param string $message
      */
     protected function addContext(ValidationException $e, &$message)
     {

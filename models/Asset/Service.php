@@ -51,10 +51,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Asset|Asset\Folder $target
-     * @param  Asset|Asset\Folder $source
+     * @param Asset $target
+     * @param Asset $source
      *
-     * @return Asset copied asset
+     * @return Asset|null copied asset
+     *
+     * @throws \Exception
      */
     public function copyRecursive($target, $source)
     {
@@ -64,7 +66,7 @@ class Service extends Model\Element\Service
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
@@ -109,11 +111,14 @@ class Service extends Model\Element\Service
      * @param  Asset $source
      *
      * @return Asset copied asset
+     *
+     * @throws \Exception
      */
     public function copyAsChild($target, $source)
     {
         $source->getProperties();
 
+        /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
 
@@ -143,8 +148,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Asset $target
+     * @param Asset $source
      *
      * @return mixed
      *
@@ -172,9 +177,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $asset
-     * @param null $fields
-     * @param null $requestedLanguage
+     * @param Asset $asset
+     * @param array|null $fields
+     * @param string|null $requestedLanguage
      * @param array $params
      *
      * @return array
@@ -229,7 +234,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $asset
+     * @param Asset $asset
      * @param array $params
      * @param bool $onlyMethod
      *
@@ -265,8 +270,8 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $path
-     * @param null $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -313,14 +318,13 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $asset
-     * @param $rewriteConfig
+     * @param Asset $asset
+     * @param array $rewriteConfig
      *
      * @return Asset
      */
     public static function rewriteIds($asset, $rewriteConfig)
     {
-
         // rewriting properties
         $properties = $asset->getProperties();
         foreach ($properties as &$property) {
@@ -332,7 +336,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -369,7 +373,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -416,7 +420,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $item \Pimcore\Model\Asset
+     * @param Model\Asset $item
      * @param int $nr
      *
      * @return string

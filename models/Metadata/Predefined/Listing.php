@@ -24,7 +24,7 @@ namespace Pimcore\Model\Metadata\Predefined;
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {
     /**
-     * @var array|null
+     * @var \Pimcore\Model\Metadata\Predefined[]|null
      */
     protected $definitions = null;
 
@@ -41,7 +41,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     }
 
     /**
-     * @param $definitions
+     * @param \Pimcore\Model\Metadata\Predefined[]|null $definitions
      *
      * @return $this
      */
@@ -53,8 +53,8 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     }
 
     /**
-     * @param $type
-     * @param $subTypes
+     * @param string $type
+     * @param array $subTypes
      *
      * @return \Pimcore\Model\Metadata\Predefined[]
      *
@@ -91,9 +91,9 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     }
 
     /**
-     * @param $key
-     * @param $language
-     * @param null $targetSubtype
+     * @param string $key
+     * @param string $language
+     * @param string|null $targetSubtype
      *
      * @return \Pimcore\Model\Metadata\Predefined|null
      */

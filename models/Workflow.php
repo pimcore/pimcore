@@ -256,7 +256,7 @@ class Workflow extends AbstractModel
     /**
      * Returns whether or not a state name is valid within the workflow
      *
-     * @param $stateName
+     * @param string $stateName
      *
      * @return bool
      */
@@ -299,7 +299,7 @@ class Workflow extends AbstractModel
     /**
      * Returns whether or not a status name is valid within the workflow
      *
-     * @param $statusName
+     * @param string $statusName
      *
      * @return bool
      */
@@ -325,7 +325,7 @@ class Workflow extends AbstractModel
     /**
      * Returns whether or not an action is valid in this workflow
      *
-     * @param $actionName
+     * @param string $actionName
      *
      * @return bool
      */
@@ -337,7 +337,7 @@ class Workflow extends AbstractModel
     /**
      * Returns whether or not an action name is a global action
      *
-     * @param $actionName
+     * @param string $actionName
      *
      * @return bool
      */
@@ -347,7 +347,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @param $stateName
+     * @param string $stateName
      *
      * @return bool|mixed
      */
@@ -363,7 +363,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @param $statusName
+     * @param string $statusName
      *
      * @return bool|mixed
      */
@@ -395,7 +395,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @param $statusName
+     * @param string $statusName
      *
      * @return array
      */
@@ -462,8 +462,8 @@ class Workflow extends AbstractModel
      * Returns a configuration for an action
      * If a status is given then the configuration for the status will be applied too
      *
-     * @param $actionName
-     * @param $statusName
+     * @param string $actionName
+     * @param string|null $statusName
      *
      * @return array|null
      *
@@ -500,8 +500,8 @@ class Workflow extends AbstractModel
      * Returns all of the valid users for an action
      * if a status is given it will be taken into consideration.
      *
-     * @param $actionName
-     * @param $statusName
+     * @param string $actionName
+     * @param string|null $statusName
      *
      * @return array|null
      */
@@ -518,8 +518,8 @@ class Workflow extends AbstractModel
     /**
      * Returns additional fields for an action.
      *
-     * @param $actionName
-     * @param $statusName
+     * @param string $actionName
+     * @param string|null $statusName
      *
      * @return array
      */

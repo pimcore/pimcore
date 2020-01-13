@@ -65,9 +65,9 @@ class ActionRenderer
     /**
      * Create a controller reference
      *
-     * @param $bundle
-     * @param $controller
-     * @param $action
+     * @param string $bundle
+     * @param string $controller
+     * @param string $action
      * @param array $attributes
      * @param array $query
      *
@@ -111,7 +111,7 @@ class ActionRenderer
      *
      * @param Document\PageSnippet $document
      * @param array $attributes
-     * @param string|null $context
+     * @param string $context
      *
      * @return array
      */

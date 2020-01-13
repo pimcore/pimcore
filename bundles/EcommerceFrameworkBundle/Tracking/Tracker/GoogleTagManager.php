@@ -298,7 +298,7 @@ class GoogleTagManager extends Tracker implements
 
 
     /**
-     * @param $price
+     * @param int|float|string $price
      * @return mixed
      */
     private function formatPrice($price = null)

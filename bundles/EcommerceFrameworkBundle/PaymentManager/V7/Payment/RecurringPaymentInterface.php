@@ -28,7 +28,7 @@ interface RecurringPaymentInterface
 
     /**
      * @param AbstractOrder $sourceOrder
-     * @param $paymentBrick
+     * @param object $paymentBrick
      *
      * @return mixed
      */

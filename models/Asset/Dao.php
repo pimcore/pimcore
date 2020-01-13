@@ -29,7 +29,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -153,7 +153,7 @@ class Dao extends Model\Element\Dao
     /**
      * @internal
      *
-     * @param $oldPath
+     * @param string $oldPath
      *
      * @return array
      */
@@ -383,6 +383,9 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->model->getRealFullPath() . '/%') . ' OR id = ' . $this->model->getId());
@@ -414,7 +417,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @param Model\User $user
      *
      * @return bool

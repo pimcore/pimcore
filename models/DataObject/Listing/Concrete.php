@@ -28,7 +28,7 @@ use Pimcore\Model\DataObject;
 abstract class Concrete extends Model\DataObject\Listing
 {
     /**
-     * @var int
+     * @var string
      */
     protected $classId;
 
@@ -76,7 +76,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param $classId
+     * @param string $classId
      *
      * @return $this
      */

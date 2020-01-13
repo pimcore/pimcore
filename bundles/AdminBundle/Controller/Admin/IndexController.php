@@ -119,7 +119,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      *
      * @param Request $request
      * @param ConnectionInterface $db
-     * @param KernelInterface $db
+     * @param KernelInterface $kernel
      *
      * @return JsonResponse
      *

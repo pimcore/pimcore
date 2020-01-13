@@ -23,6 +23,9 @@ use Pimcore\Model\Webservice\Data\Asset\Folder\In as WebserviceAssetFolderIn;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @deprecated
+ */
 class AssetController extends AbstractElementController
 {
     /**

@@ -193,7 +193,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     /**
      * @param Request $request
-     * @param Document|Dao $document
+     * @param Document $document
      *
      * @return Document
      */
@@ -251,7 +251,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     }
 
     /**
-     * @param Document|Dao $document
+     * @param Document $document
      *
      * @return mixed|Document|Document\PageSnippet
      */

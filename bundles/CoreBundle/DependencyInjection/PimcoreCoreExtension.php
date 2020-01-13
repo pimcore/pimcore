@@ -124,8 +124,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
-        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
-        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
+        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
+        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureMigrations($container, $config['migrations']);
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
@@ -150,7 +150,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     /**
      * @param ContainerBuilder $container
-     * @param $config
+     * @param array $config
      */
     private function configureModelFactory(ContainerBuilder $container, array $config)
     {
@@ -165,6 +165,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $service->addMethodCall('addLoader', [new Reference($classMapLoaderId)]);
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
     private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
     {
         $strategyName = $config['documents']['editables']['naming_strategy'];
@@ -407,7 +411,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      * Handle pimcore.security.encoder_factories mapping
      *
      * @param ContainerBuilder $container
-     * @param $config
+     * @param array $config
      */
     private function configurePasswordEncoders(ContainerBuilder $container, array $config)
     {
@@ -548,7 +552,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      * the property via reflection
      *
      * @param ContainerBuilder $container
-     * @param $name
+     * @param string $name
      * @param array $config
      */
     private function setExtensionConfig(ContainerBuilder $container, $name, array $config = [])
@@ -568,11 +572,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      * Configure Adapter Factories
      *
      * @param ContainerBuilder $container
-     * @param $factories
-     * @param $serviceLocatorId
-     * @param $type
+     * @param array $factories
+     * @param string $serviceLocatorId
      */
-    private function configureAdapterFactories(ContainerBuilder $container, $factories, $serviceLocatorId, $type)
+    private function configureAdapterFactories(ContainerBuilder $container, $factories, $serviceLocatorId)
     {
         $serviceLocator = $container->getDefinition($serviceLocatorId);
         $arguments = [];

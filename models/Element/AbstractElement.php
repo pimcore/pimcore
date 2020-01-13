@@ -83,7 +83,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -100,7 +100,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     abstract public function setProperties($properties);
 
     /**
-     * @param  $name
+     * @param string $name
      */
     public function removeProperty($name)
     {
@@ -281,7 +281,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param null $versionNote
+     * @param string|null $versionNote
      * @param bool $saveOnlyVersion
      *
      * @return Model\Version

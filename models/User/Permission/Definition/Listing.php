@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\User\Permission\Definition[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $definitions = null;
@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $definitions
+     * @param Model\User\Permission\Definition[] $definitions
      *
      * @return $this
      */

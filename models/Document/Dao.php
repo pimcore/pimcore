@@ -29,7 +29,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -52,7 +52,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param $path
+     * @param string $path
      *
      * @throws \Exception
      */
@@ -185,7 +185,7 @@ class Dao extends Model\Element\Dao
      *
      * @internal
      *
-     * @param $oldPath
+     * @param string $oldPath
      *
      * @return array
      */
@@ -444,6 +444,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes locks from the document and its children.
+     *
+     * @return array
      */
     public function unlockPropagate()
     {
@@ -456,8 +458,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -508,9 +510,7 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param $index
-     *
-     * @throws \Exception
+     * @param int $index
      */
     public function saveIndex($index)
     {

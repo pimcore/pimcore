@@ -33,7 +33,7 @@ class Placeholder
     /**
      * Prefixes for the Placeholder Classes
      *
-     * @var string
+     * @var array
      */
     protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', '\\Pimcore\\Placeholder\\', '\\Website\\Placeholder\\', '\\AppBundle\\Placeholder\\'];
 
@@ -45,7 +45,7 @@ class Placeholder
     protected $document;
 
     /**
-     * @param $classPrefix
+     * @param string $classPrefix
      *
      * @throws \Exception
      */
@@ -59,7 +59,7 @@ class Placeholder
     }
 
     /**
-     * @param $classPrefix
+     * @param string $classPrefix
      *
      * @return bool
      *
@@ -115,7 +115,7 @@ class Placeholder
     }
 
     /**
-     * @param $suffix
+     * @param string $suffix
      *
      * @throws \Exception
      */

@@ -25,10 +25,10 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $ownerId
-     * @param $classId
-     * @param null $objectId
-     * @param null $searchType
+     * @param int $ownerId
+     * @param string $classId
+     * @param int|null $objectId
+     * @param string|null $searchType
      *
      * @throws \Exception
      */
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return int
+     * @return Model\GridConfigFavourite
      */
     public function save()
     {

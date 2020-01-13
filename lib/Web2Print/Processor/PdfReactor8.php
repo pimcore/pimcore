@@ -26,7 +26,7 @@ class PdfReactor8 extends Processor
     /**
      * returns the default web2print config
      *
-     * @param $config
+     * @param object $config
      *
      * @return array
      */

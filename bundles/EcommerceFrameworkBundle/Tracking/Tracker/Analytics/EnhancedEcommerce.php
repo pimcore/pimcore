@@ -157,8 +157,8 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @param $product
-     * @param $action
+     * @param ProductInterface $product
+     * @param string $action
      * @param int|float $quantity
      */
     protected function trackProductAction($product, $action, $quantity = 1)
@@ -199,8 +199,8 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart
-     * @param null $stepNumber
-     * @param null $checkoutOption
+     * @param string|null $stepNumber
+     * @param string|null $checkoutOption
      */
     public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {

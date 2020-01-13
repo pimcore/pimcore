@@ -259,7 +259,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param $document
+     * @param Model\Document $document
      */
     protected function minimizeProperties($document)
     {
@@ -268,9 +268,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param $document
-     * @param $propertyName
-     * @param $propertyValue
+     * @param Model\Document $document
+     * @param string $propertyName
+     * @param string $propertyValue
      *
      * @return bool
      */

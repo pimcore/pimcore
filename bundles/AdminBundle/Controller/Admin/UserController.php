@@ -61,7 +61,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $user
+     * @param User $user
      *
      * @return array
      */
@@ -190,9 +190,9 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $node
-     * @param $currentList
-     * @param $roleMode
+     * @param User $node
+     * @param array $currentList
+     * @param bool $roleMode
      *
      * @return array
      *
@@ -675,7 +675,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $role
+     * @param User\Role $role
      *
      * @return array
      */
