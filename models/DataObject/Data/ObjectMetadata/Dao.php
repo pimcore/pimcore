@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param DataObject\Concrete $object
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      * @param string $type
      *
@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $fieldname
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      *
      * @return null|DataObject\Data\ObjectMetadata

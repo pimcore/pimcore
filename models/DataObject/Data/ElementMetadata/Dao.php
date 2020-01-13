@@ -30,7 +30,7 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
      * @param string $fieldname
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      * @param string $destinationType
      *

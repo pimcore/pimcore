@@ -112,7 +112,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      * @param $object
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      */
     public function save($object, $ownertype = 'object', $ownername, $position, $index)
@@ -128,7 +128,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      * @param string $fieldname
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      * @param string $destinationType
      *

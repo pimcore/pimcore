@@ -66,7 +66,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param DataObject\Concrete $object
      *
-     * @return $this|void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -75,7 +75,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if (!$object) {
             $this->setObjectId(null);
 
-            return;
+            return $this;
         }
 
         $this->objectId = $object->getId();
@@ -118,7 +118,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      * @param $object
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      */
     public function save($object, $ownertype, $ownername, $position, $index)
@@ -132,7 +132,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      * @param string $fieldname
      * @param string $ownertype
      * @param string $ownername
-     * @param int $position
+     * @param string $position
      * @param int $index
      *
      * @return mixed
