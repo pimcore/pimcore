@@ -54,7 +54,7 @@ class Service
     }
 
     /**
-     * @param $log
+     * @param array $log
      */
     public static function saveDeleteLog($log)
     {

@@ -410,10 +410,10 @@ class Asset extends Element\AbstractElement
     /**
      * returns the asset type of a filename and mimetype
      *
-     * @param $mimeType
-     * @param $filename
+     * @param string $mimeType
+     * @param string $filename
      *
-     * @return int|string
+     * @return string
      */
     public static function getTypeFromMimeMapping($mimeType, $filename)
     {
@@ -970,7 +970,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param  $locked
+     * @param string $locked
      *
      * @return $this
      */
@@ -1305,7 +1305,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $stream
+     * @param resource|null $stream
      *
      * @return $this
      */
@@ -1423,9 +1423,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $name
-     * @param $type
-     * @param $data
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
      * @param bool $inherited
      * @param bool $inheritable
      *
@@ -1551,7 +1551,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return null
      */
@@ -1565,7 +1565,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function removeCustomSetting($key)
     {
@@ -1668,8 +1668,8 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $name
      * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
-     * @param null $data
-     * @param null $language
+     * @param mixed $data
+     * @param string|null $language
      *
      * @return self
      */
@@ -1768,7 +1768,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $scheduledTasks
+     * @param array $scheduledTasks
      *
      * @return $this
      */
