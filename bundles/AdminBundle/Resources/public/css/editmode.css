@@ -98,6 +98,11 @@ input.cke_dialog_ui_input_tel {
     position: relative;
     top: 0;
     padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.pimcore_area_buttons.fixed.top:after {
+    top: 49px;
 }
 
 .pimcore_area_buttons.right {
