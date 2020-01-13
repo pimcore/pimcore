@@ -113,7 +113,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
-     * @param $versionNote string version note
+     * @param string $versionNote
      *
      * @return null|Model\Version
      *
@@ -306,7 +306,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $module
+     * @param string $module
      *
      * @return $this
      */
@@ -370,7 +370,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -471,7 +471,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $document
+     * @param Document $document
      *
      * @return $this
      */
@@ -487,7 +487,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -573,8 +573,8 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param null $hostname
-     * @param null $scheme
+     * @param string|null $hostname
+     * @param string|null $scheme
      *
      * @return string
      *

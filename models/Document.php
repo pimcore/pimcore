@@ -140,6 +140,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Permissions for the user which requested this document in editmode*
+     *
+     * @var array
      */
     protected $userPermissions;
 
@@ -645,11 +647,9 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param $children
+     * @param self[] $children
      *
-     * @return array
-     *
-     * @todo: replace and with &&
+     * @return $this
      */
     public function setChildren($children)
     {
@@ -668,7 +668,7 @@ class Document extends Element\AbstractElement
     /**
      * Get a list of the children (not recursivly)
      *
-     * @param bool
+     * @param bool $unpublished
      *
      * @return self[]
      */
@@ -689,7 +689,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      *
-     * @param $unpublished
+     * @param bool $unpublished
      *
      * @return bool
      */
@@ -764,7 +764,7 @@ class Document extends Element\AbstractElement
     /**
      * Mark the document as locked.
      *
-     * @param  $locked
+     * @param string $locked
      *
      * @return Document
      */
@@ -923,9 +923,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
-     * @return mixed
+     * @return string
      */
     protected function prepareFrontendPath($path)
     {
@@ -1435,7 +1435,7 @@ class Document extends Element\AbstractElement
     /**
      * Add document type to the $types array. It defines additional document types available in Pimcore.
      *
-     * @param $type
+     * @param string $type
      */
     public static function addDocumentType($type)
     {
@@ -1465,7 +1465,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param mixed $userPermissions
+     * @param array $userPermissions
      */
     public function setUserPermissions($userPermissions): void
     {

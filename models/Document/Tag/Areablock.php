@@ -95,7 +95,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * @param $index
+     * @param int $index
      */
     public function renderIndex($index)
     {
@@ -576,8 +576,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     /**
      * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception

@@ -58,7 +58,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $columns
+     * @param array|string|Expression $columns
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */

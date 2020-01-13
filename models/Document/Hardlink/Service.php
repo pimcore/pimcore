@@ -113,9 +113,9 @@ class Service
 
     /**
      * @param Document\Hardlink $hardlink
-     * @param $path
+     * @param string $path
      *
-     * @return Document
+     * @return Document|null
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {
@@ -154,5 +154,7 @@ class Service
                 }
             }
         }
+
+        return null;
     }
 }

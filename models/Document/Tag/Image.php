@@ -96,7 +96,7 @@ class Image extends Model\Document\Tag
     /**
      * @see TagInterface::getData
      *
-     * @return mixed
+     * @return array
      */
     public function getData()
     {
@@ -113,6 +113,9 @@ class Image extends Model\Document\Tag
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getDataForResource()
     {
         return [
@@ -454,7 +457,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $conf
+     * @param string|array|Asset\Image\Thumbnail\Config $conf
      * @param bool $deferred
      *
      * @return Asset\Image\Thumbnail|string
@@ -477,9 +480,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $thumbConfig
-     *
-     * @return mixed
+     * @param Asset\Image\Thumbnail\Config $thumbConfig
      */
     protected function applyCustomCropping($thumbConfig)
     {
@@ -514,7 +515,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
      * @return array|mixed
@@ -606,11 +607,9 @@ class Image extends Model\Document\Tag
     /**
      * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param null $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Model\Webservice\Data\Document\Element|void
      *
      * @throws \Exception
      */
@@ -645,7 +644,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropHeight
+     * @param float $cropHeight
      *
      * @return $this
      */
@@ -665,7 +664,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropLeft
+     * @param float $cropLeft
      *
      * @return $this
      */
@@ -685,7 +684,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropPercent
+     * @param bool $cropPercent
      *
      * @return $this
      */
@@ -705,7 +704,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropTop
+     * @param float $cropTop
      *
      * @return $this
      */
@@ -725,7 +724,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropWidth
+     * @param float $cropWidth
      *
      * @return $this
      */

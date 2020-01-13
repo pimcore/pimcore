@@ -95,7 +95,7 @@ class Table extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromEditmode
      *
-     * @param mixed $data
+     * @param array $data
      *
      * @return $this
      */
@@ -117,8 +117,8 @@ class Table extends Model\Document\Tag
     /**
      * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception

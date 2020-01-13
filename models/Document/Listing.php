@@ -87,9 +87,9 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * Set the unpublished flag for the document.
      *
-     * @param $unpublished
+     * @param bool $unpublished
      *
-     * @return bool
+     * @return $this
      */
     public function setUnpublished($unpublished)
     {
