@@ -2,10 +2,8 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 
-use Pimcore\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Changes the PHP code of a YAML routing file.
@@ -68,65 +66,21 @@ class RoutingManipulator extends Manipulator
         return true;
     }
 
-    /**
-     * Checks if the routing file contains a line for the bundle.
-     *
-     * @param string $bundle
-     *
-     * @return bool
-     */
-    public function hasResourceInAnnotation($bundle)
-    {
-        if (!file_exists($this->file)) {
-            return false;
-        }
-
-        $config = Yaml::parse(file_get_contents($this->file));
-
-        $search = sprintf('@%s/Controller/', $bundle);
-
-        foreach ($config as $resource) {
-            if (array_key_exists('resource', $resource)) {
-                return $resource['resource'] === $search;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Adds an annotation controller resource.
-     *
-     * @param string $bundle
-     * @param string $controller
-     *
-     * @return bool
-     */
-    public function addAnnotationController($bundle, $controller)
-    {
-        $current = '';
-
-        if (file_exists($this->file)) {
-            $current = file_get_contents($this->file);
-        } elseif (!is_dir($dir = dirname($this->file))) {
-            mkdir($dir, 0777, true);
-        }
-
-        $code = sprintf("%s:\n", Container::underscore(substr($bundle, 0, -6)).'_'.Container::underscore($controller));
-
-        $code .= sprintf("    resource: \"@%s/Controller/%sController.php\"\n    type:     annotation\n", $bundle, $controller);
-
-        $code .= "\n";
-        $code .= $current;
-
-        return false !== file_put_contents($this->file, $code);
-    }
-
     public function getImportedResourceYamlKey($bundle, $prefix)
     {
         $snakeCasedBundleName = Container::underscore(substr($bundle, 0, -6));
-        $routePrefix = DoctrineCrudGenerator::getRouteNamePrefix($prefix);
+        $routePrefix = self::getRouteNamePrefix($prefix);
 
         return sprintf('%s%s%s', $snakeCasedBundleName, '' !== $routePrefix ? '_' : '', $routePrefix);
+    }
+
+    private static function getRouteNamePrefix($prefix)
+    {
+        $prefix = preg_replace('/{(.*?)}/', '', $prefix); // {foo}_bar -> _bar
+        $prefix = str_replace('/', '_', $prefix);
+        $prefix = preg_replace('/_+/', '_', $prefix);     // foo__bar -> foo_bar
+        $prefix = trim($prefix, '_');
+
+        return $prefix;
     }
 }
