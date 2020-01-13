@@ -224,6 +224,9 @@ pimcore:
 
                         # Css class to define the icon which will be used in the actions button in the backend.
                         iconClass:            ~
+                        # Forces an object layout after the transition was performed.
+                        # This objectLayout setting overrules all objectLayout settings within the places configs.
+                        objectLayout:            false
                         notificationSettings:
 
                             # Prototype
@@ -265,6 +268,10 @@ pimcore:
 
                     # Css class to define the icon which will be used in the actions button in the backend.
                     iconClass:            ~
+                    
+                    # Forces an object layout after the global action was performed.
+                    # This objectLayout setting overrules all objectLayout settings within the places configs.
+                    objectLayout:         false
 
                     # An expression to block the action
                     guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'

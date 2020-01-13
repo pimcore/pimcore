@@ -42,7 +42,7 @@ trait NotesAwareTrait
 
     public function getNotesCommentSetterFn(): ?string
     {
-        return $this->options['notes']['commentSetterFn'];
+        return $this->options['notes']['commentSetterFn'] ?? null;
     }
 
     public function getNotesType(): string

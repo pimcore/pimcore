@@ -1584,6 +1584,7 @@ class Configuration implements ConfigurationInterface
                                                         ->end()
                                                     ->end()
                                                     ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                                    ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the transition was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
 
                                                     ->arrayNode('notificationSettings')
                                                         ->prototype('array')
@@ -1674,6 +1675,7 @@ class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
                                             ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                            ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the global action was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
