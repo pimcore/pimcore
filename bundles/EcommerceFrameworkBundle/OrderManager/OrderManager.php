@@ -339,12 +339,10 @@ class OrderManager implements OrderManagerInterface
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
 
-            if(method_exists($modificationItem,'setPricingRuleId')){
-                if($rule = $modification->getRule()){
-                    $modificationItem->setPricingRuleId($rule->getId());
-                }else{
-                    $modificationItem->setPricingRuleId(null);
-                }
+            if($rule = $modification->getRule()){
+                $modificationItem->setPricingRuleId($rule->getId());
+            }else{
+                $modificationItem->setPricingRuleId(null);
             }
 
             $modificationItems->add($modificationItem);
