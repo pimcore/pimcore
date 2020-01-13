@@ -50,7 +50,7 @@ class UUID extends Model\AbstractModel
     protected $item;
 
     /**
-     * @param $instanceIdentifier
+     * @param string $instanceIdentifier
      *
      * @return $this
      */
@@ -62,7 +62,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getInstanceIdentifier()
     {
@@ -86,7 +86,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -98,7 +98,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getItemId()
     {
@@ -106,7 +106,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -118,7 +118,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
@@ -143,7 +143,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUuid()
     {
@@ -151,7 +151,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      */
     public function setUuid($uuid)
     {
@@ -159,7 +159,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $item
+     * @param mixed $item
      *
      * @return $this
      */
@@ -179,7 +179,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $item
+     * @param int $item
      *
      * @return UUID
      *
@@ -195,7 +195,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      *
      * @return mixed
      */
@@ -207,7 +207,7 @@ class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param $item
+     * @param mixed $item
      *
      * @return static
      *

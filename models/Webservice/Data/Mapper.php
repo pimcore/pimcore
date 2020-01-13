@@ -26,8 +26,8 @@ use Pimcore\Tool;
 abstract class Mapper
 {
     /**
-     * @param $object
-     * @param $type
+     * @param mixed $object
+     * @param string $type
      *
      * @return null|string
      *
@@ -76,12 +76,12 @@ abstract class Mapper
     }
 
     /**
-     * @param $object
-     * @param $apiclass
-     * @param $type
-     * @param null $options
+     * @param mixed $object
+     * @param string $apiclass
+     * @param string $type
+     * @param array|null $options
      *
-     * @return array|string
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -112,7 +112,7 @@ abstract class Mapper
     }
 
     /**
-     * @param $el
+     * @param object|array $el
      *
      * @return \stdClass
      */

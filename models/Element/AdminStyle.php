@@ -32,12 +32,12 @@ class AdminStyle
     protected $elementIcon;
 
     /**
-     * @var string string
+     * @var string
      */
     protected $elementIconClass;
 
     /**
-     * @var array sring
+     * @var array
      */
     protected $elementQtipConfig;
 
@@ -68,7 +68,7 @@ class AdminStyle
     }
 
     /**
-     * @param $elementCssClass
+     * @param string $elementCssClass
      *
      * @return $this
      */
@@ -88,7 +88,7 @@ class AdminStyle
     }
 
     /**
-     * @param $elementIcon
+     * @param string $elementIcon
      *
      * @return $this
      */
@@ -108,7 +108,7 @@ class AdminStyle
     }
 
     /**
-     * @param $elementIconClass
+     * @param string $elementIconClass
      *
      * @return $this
      */
@@ -136,7 +136,7 @@ class AdminStyle
     }
 
     /**
-     * @param $elementQtipConfig
+     * @param array $elementQtipConfig
      */
     public function setElementQtipConfig($elementQtipConfig)
     {

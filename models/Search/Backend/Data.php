@@ -102,7 +102,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public $properties;
 
     /**
-     * @param null $element
+     * @param Element\ElementInterface $element
      */
     public function __construct($element = null)
     {
@@ -134,7 +134,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param Data\Id $id
      *
      * @return $this
      */
@@ -174,7 +174,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -194,7 +194,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $subtype
+     * @param string $subtype
      *
      * @return $this
      */
@@ -214,7 +214,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -354,7 +354,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return $this
      */
@@ -493,9 +493,9 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
-     * @return mixed|string
+     * @return string
      */
     protected function cleanupData($data)
     {
@@ -520,7 +520,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return Data
      */

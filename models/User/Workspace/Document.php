@@ -33,7 +33,7 @@ class Document extends AbstractWorkspace
     public $unpublish = false;
 
     /**
-     * @param $save
+     * @param bool $save
      *
      * @return $this
      */
@@ -53,7 +53,7 @@ class Document extends AbstractWorkspace
     }
 
     /**
-     * @param $unpublish
+     * @param bool $unpublish
      *
      * @return $this
      */

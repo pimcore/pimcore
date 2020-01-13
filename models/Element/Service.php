@@ -113,7 +113,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param array|\Pimcore\Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
@@ -245,7 +245,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array
      *
@@ -407,8 +407,8 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $type
-     * @param $path
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -422,7 +422,7 @@ class Service extends Model\AbstractModel
             return DataObject\Service::pathExists($path);
         }
 
-        return;
+        return false;
     }
 
     /**
@@ -451,7 +451,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  ElementInterface $element $element
+     * @param ElementInterface $element
      *
      * @return string
      */
@@ -499,7 +499,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  $props
+     * @param array $props
      *
      * @return array
      */
@@ -624,7 +624,7 @@ class Service extends Model\AbstractModel
      * find all elements which the user may not list and therefore may never be shown to the user
      *
      * @param string $type asset|object|document
-     * @param $user
+     * @param Model\User $user
      *
      * @return array
      */
@@ -789,7 +789,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param array $options
      *
      * @return Asset\Folder|Document\Folder|DataObject\Folder
@@ -873,8 +873,8 @@ class Service extends Model\AbstractModel
     }
 
     /** Changes the query according to the custom view config
-     * @param $cv array
-     * @param $childsList
+     * @param array $cv
+     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childsList
      */
     public static function addTreeFilterJoins($cv, $childsList)
     {
@@ -905,9 +905,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
-     * @return mixed
+     * @return array|null
      */
     public static function getCustomViewById($id)
     {
@@ -919,13 +919,15 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * @param string $key
-     * @param null $type
+     * @param string $type
      *
-     * @return mixed|string
+     * @return string
      */
     public static function getValidKey($key, $type)
     {
@@ -995,9 +997,9 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     * @param $element
+     * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getUniqueKey($element)
     {
@@ -1012,13 +1014,15 @@ class Service extends Model\AbstractModel
         if ($element instanceof Asset) {
             return Asset\Service::getUniqueKey($element);
         }
+
+        return null;
     }
 
     /**
-     * @param $data
-     * @param $type
+     * @param array $data
+     * @param string $type
      *
-     * @return array|string
+     * @return array
      */
     public static function fixAllowedTypes($data, $type)
     {

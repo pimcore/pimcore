@@ -63,11 +63,11 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getTotalCount()
     {
-        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        $amount = (int)$this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
 
         return $amount;
     }

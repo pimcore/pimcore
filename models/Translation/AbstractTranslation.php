@@ -34,7 +34,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public $key;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $translations;
 
@@ -65,7 +65,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return $this
      */
@@ -77,7 +77,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getTranslations()
     {
@@ -85,7 +85,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $translations
+     * @param string[] $translations
      *
      * @return $this
      */
@@ -97,7 +97,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -117,7 +117,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -137,7 +137,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -158,9 +158,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param  $language
+     * @param string $language
      *
-     * @return array
+     * @return string
      */
     public function getTranslation($language)
     {
@@ -183,7 +183,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
      *
@@ -240,7 +240,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      *
      * @static
      *
-     * @param $id - translation key
+     * @param string $id - translation key
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
      * @param string $language
@@ -294,7 +294,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      *
      * @static
      *
-     * @param $file - path to the csv file
+     * @param string $file - path to the csv file
      * @param bool $replaceExistingTranslations
      * @param array $languages
      * @param array $dialect
@@ -410,7 +410,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @deprecated
-     * @param $data
+     * @param array $data
      */
     public function getFromWebserviceImport($data)
     {

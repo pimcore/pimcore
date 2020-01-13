@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class JsonEncoder
 {
     /**
-     * @param $data
+     * @param mixed $data
      * @param bool $returnData
      *
      * @return string
@@ -46,7 +46,7 @@ class JsonEncoder
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return mixed
      */

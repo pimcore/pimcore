@@ -30,8 +30,8 @@ class File extends Model\Webservice\Data\Asset
     public $data;
 
     /**
-     * @param $object
-     * @param null $options
+     * @param Model\Asset $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {
@@ -45,7 +45,7 @@ class File extends Model\Webservice\Data\Asset
     }
 
     /**
-     * @param $object
+     * @param Model\Asset $object
      * @param bool $disableMappingExceptions
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      */

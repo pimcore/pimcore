@@ -68,7 +68,7 @@ class Tool
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return array
      */

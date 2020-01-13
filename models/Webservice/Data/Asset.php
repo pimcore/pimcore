@@ -101,8 +101,8 @@ class Asset extends Model\Webservice\Data
     public $childs;
 
     /**
-     * @param Asset|Asset\Folder $object
-     * @param null $options
+     * @param Model\Asset $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {
@@ -131,7 +131,7 @@ class Asset extends Model\Webservice\Data
     }
 
     /**
-     * @param $object
+     * @param Model\Asset $object
      * @param bool $disableMappingExceptions
      * @param Webservice\IdMapperInterface|null $idMapper
      *
