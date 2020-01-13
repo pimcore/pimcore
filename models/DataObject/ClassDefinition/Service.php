@@ -330,12 +330,12 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
+     * @param array $tableDefinitions
+     * @param string $table
+     * @param string $colName
+     * @param string $type
+     * @param string $default
+     * @param string $null
      *
      * @return bool
      */

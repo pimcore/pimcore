@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\QuantityValue\Unit[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $units = null;
@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -56,7 +56,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $units
+     * @param Model\DataObject\QuantityValue\Unit[]|null $units
      *
      * @return static
      */

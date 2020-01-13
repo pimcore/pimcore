@@ -36,7 +36,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $visibleFields;
 
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -177,9 +177,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $data
-     * @param null $object
-     * @param mixed $params
+     * @param array $data
+     * @param Model\DataObject\AbstractObject|null $object
+     * @param array $params
      *
      * @return string|null
      *
@@ -215,7 +215,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */

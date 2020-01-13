@@ -28,17 +28,17 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 
     /**
      * @param DataObject\Concrete $object
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
-     * @param $type
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
+     * @param string $type
      *
      * @throws \Exception
      */
@@ -65,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      *
      * @return string
      */
@@ -76,12 +76,12 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      *
      * @return null|DataObject\Data\ObjectMetadata
      */

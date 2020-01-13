@@ -23,8 +23,8 @@ use Pimcore\Model\Element\ElementInterface;
 trait ElementWithMetadataComparisonTrait
 {
     /**
-     * @param $array1
-     * @param $array2
+     * @param array $array1
+     * @param array $array2
      *
      * @return bool
      */

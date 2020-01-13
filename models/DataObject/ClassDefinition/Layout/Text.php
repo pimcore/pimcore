@@ -57,7 +57,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param $html
+     * @param string $html
      *
      * @return $this
      */
@@ -69,7 +69,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getRenderingClass()
     {
@@ -77,7 +77,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param mixed $renderingClass
+     * @param string $renderingClass
      */
     public function setRenderingClass($renderingClass)
     {
@@ -85,7 +85,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getRenderingData()
     {
@@ -93,7 +93,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param mixed $renderingData
+     * @param string $renderingData
      */
     public function setRenderingData($renderingData)
     {
@@ -119,7 +119,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param $object Model\DataObject\Concrete
+     * @param Model\DataObject\Concrete $object
      * @param array $context additional contextual data
      *
      * @return self

@@ -197,7 +197,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param  $hideUnpublished
+     * @param bool $hideUnpublished
      */
     public static function setHideUnpublished($hideUnpublished)
     {
@@ -217,7 +217,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      *
-     * @param  $getInheritedValues
+     * @param bool $getInheritedValues
      */
     public static function setGetInheritedValues($getInheritedValues)
     {
@@ -763,8 +763,8 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param $isUpdate
-     * @param $params
+     * @param bool|null $isUpdate
+     * @param array $params
      *
      * @throws \Exception
      */
@@ -1177,9 +1177,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param $name
-     * @param $type
-     * @param $data
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
      * @param bool $inherited
      * @param bool $inheritable
      *
@@ -1297,8 +1297,8 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param $method
-     * @param $args
+     * @param string $method
+     * @param array $args
      *
      * @return mixed
      *
@@ -1338,7 +1338,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param string $fieldName
-     * @param null $language
+     * @param string|null $language
      *
      * @throws \Exception
      *
@@ -1355,8 +1355,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param string $fieldName
-     * @param $value
-     * @param null $language
+     * @param mixed $value
+     * @param string|null $language
      *
      * @throws \Exception
      *

@@ -184,8 +184,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param $fieldname
-     * @param $fieldDefinition
+     * @param string $fieldname
+     * @param DataObject\ClassDefinition\Data $fieldDefinition
      */
     public function addFieldToCheck($fieldname, $fieldDefinition)
     {
@@ -195,9 +195,9 @@ class InheritanceHelper
     }
 
     /**
-     * @param $fieldname
-     * @param $fieldDefinition
-     * @param null $queryfields
+     * @param string $fieldname
+     * @param DataObject\ClassDefinition\Data $fieldDefinition
+     * @param array|null $queryfields
      */
     public function addRelationToCheck($fieldname, $fieldDefinition, $queryfields = null)
     {
@@ -212,7 +212,7 @@ class InheritanceHelper
     }
 
     /**
-     * @param $oo_id
+     * @param int $oo_id
      * @param bool $createMissingChildrenRows
      * @param array $params
      *
@@ -296,10 +296,11 @@ class InheritanceHelper
         }
     }
 
-    /** Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
+    /**
+     * Currently solely used for object bricks. If a brick is removed, this info must be propagated to all
      * child elements.
      *
-     * @param $objectId
+     * @param int $objectId
      * @param array $params
      */
     public function doDelete($objectId, $params = [])
@@ -408,9 +409,9 @@ class InheritanceHelper
     }
 
     /**
-     * @param $currentParentId
+     * @param int $currentParentId
      * @param string $fields
-     * @param null $parentIdGroups
+     * @param array|null $parentIdGroups
      * @param array $params
      *
      * @return array
@@ -499,7 +500,7 @@ class InheritanceHelper
     }
 
     /**
-     * @param $node
+     * @param array $node
      * @param array $params
      *
      * @return mixed
@@ -539,8 +540,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param $currentNode
-     * @param $fieldname
+     * @param array $currentNode
+     * @param string $fieldname
      * @param array $params
      */
     protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname, $params = [])
@@ -561,8 +562,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param $currentNode
-     * @param $fieldname
+     * @param array $currentNode
+     * @param string $fieldname
      */
     protected function getIdsToUpdateForValuefields($currentNode, $fieldname)
     {
@@ -578,8 +579,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param $currentNode
-     * @param $fieldname
+     * @param array $currentNode
+     * @param string $fieldname
      */
     protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname)
     {
@@ -602,8 +603,8 @@ class InheritanceHelper
     }
 
     /**
-     * @param $currentNode
-     * @param $fieldname
+     * @param array $currentNode
+     * @param string $fieldname
      * @param array $params
      */
     protected function getIdsToUpdateForRelationfields($currentNode, $fieldname, $params = [])
@@ -625,9 +626,9 @@ class InheritanceHelper
     }
 
     /**
-     * @param $oo_id
-     * @param $ids
-     * @param $fieldname
+     * @param int $oo_id
+     * @param array $ids
+     * @param string $fieldname
      *
      * @throws \Exception
      */
@@ -640,9 +641,9 @@ class InheritanceHelper
     }
 
     /**
-     * @param $oo_id
-     * @param $ids
-     * @param $fieldname
+     * @param int $oo_id
+     * @param array $ids
+     * @param string $fieldname
      */
     protected function updateQueryTableOnDelete($oo_id, $ids, $fieldname)
     {

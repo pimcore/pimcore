@@ -243,7 +243,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @throws \Exception
      *
@@ -462,9 +462,9 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param Definition|DataObject\ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */

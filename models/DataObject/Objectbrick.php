@@ -97,7 +97,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param $items
+     * @param array $items
      *
      * @return $this
      */
@@ -118,7 +118,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -349,7 +349,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -358,10 +358,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->{'set'.ucfirst($fieldName)}($value);
     }
 
-    /** @internal
-     * @param $brick
-     * @param $brickField
-     * @param $field
+    /**
+     * @internal
+     * @param string $brick
+     * @param string $brickField
+     * @param string $field
      *
      * @throws \Exception
      */

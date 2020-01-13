@@ -230,8 +230,8 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @param $groupId
-     * @param $keyId
+     * @param int $groupId
+     * @param int $keyId
      *
      * @return KeyGroupRelation|null
      */

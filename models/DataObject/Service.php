@@ -266,7 +266,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return bool
      */
@@ -278,9 +278,10 @@ class Service extends Model\Element\Service
     /**
      * Language only user for classification store !!!
      *
-     * @param  AbstractObject $object
-     * @param null $fields
-     * @param null $requestedLanguage
+     * @param AbstractObject $object
+     * @param array|null $fields
+     * @param string|null $requestedLanguage
+     * @param array $params
      *
      * @return array
      */
@@ -472,8 +473,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $helperDefinitions
-     * @param $key
+     * @param array $helperDefinitions
+     * @param string $key
      *
      * @return bool
      */
@@ -488,9 +489,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $helperDefinitions
-     * @param $key
-     * @param $context array
+     * @param array $helperDefinitions
+     * @param string $key
+     * @param array $context
      *
      * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
      */
@@ -521,10 +522,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object
-     * @param $definition
+     * @param AbstractObject $object
+     * @param array $helperDefinitions
+     * @param string $key
+     * @param array $context
      *
-     * @return null
+     * @return \stdClass|null
      */
     public static function calculateCellValue($object, $helperDefinitions, $key, $context = [])
     {
@@ -565,9 +568,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object
-     * @param $user
-     * @param $type
+     * @param AbstractObject $object
+     * @param Model\User $user
+     * @param string $type
      *
      * @return array|null
      */
@@ -602,8 +605,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $classId
-     * @param $permissionSet
+     * @param string $classId
+     * @param array $permissionSet
      *
      * @return array|null
      */
@@ -640,7 +643,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param ClassDefinition $class
-     * @param $bricktype
+     * @param string $bricktype
      *
      * @return int|null|string
      */
@@ -765,7 +768,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $object
+     * @param Concrete|string $object
      * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $definition
      *
      * @return array
@@ -806,8 +809,8 @@ class Service extends Model\Element\Service
     /**
      * alias of getOptionsForMultiSelectField
      *
-     * @param $object
-     * @param $fieldname
+     * @param Concrete|string $object
+     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $fieldname
      *
      * @return array
      */
@@ -819,8 +822,8 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $path
-     * @param null $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -861,8 +864,8 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $object
-     * @param $rewriteConfig
+     * @param AbstractObject $object
+     * @param array $rewriteConfig
      *
      * @return AbstractObject
      */
@@ -949,12 +952,12 @@ class Service extends Model\Element\Service
     /**
      * Returns the fields of a datatype container (e.g. block or localized fields)
      *
-     * @param $layout
-     * @param $targetClass
-     * @param $targetList
-     * @param $insideDataType
+     * @param ClassDefinition\Data $layout
+     * @param string $targetClass
+     * @param ClassDefinition\Data[] $targetList
+     * @param bool $insideDataType
      *
-     * @return mixed
+     * @return ClassDefinition\Data[]
      */
     public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
     {
@@ -991,7 +994,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $layout
+     * @param ClassDefinition\Data $layout
      */
     public static function createSuperLayout(&$layout)
     {
@@ -1017,8 +1020,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $masterDefinition
-     * @param $layout
+     * @param ClassDefinition\Data[] $masterDefinition
+     * @param ClassDefinition\Data $layout
      *
      * @return bool
      */
@@ -1076,10 +1079,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $classId
-     * @param $objectId
+     * @param string $classId
+     * @param int $objectId
      *
-     * @return mixed|null
+     * @return array|null
      */
     public static function getCustomGridFieldDefinitions($classId, $objectId)
     {
@@ -1179,9 +1182,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $definition
+     * @param array $definition
      *
-     * @return mixed
+     * @return array
      */
     public static function cloneDefinition($definition)
     {
@@ -1192,9 +1195,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $mergedFieldDefinition
-     * @param $customFieldDefinitions
-     * @param $key
+     * @param array $mergedFieldDefinition
+     * @param array $customFieldDefinitions
+     * @param string $key
      */
     private static function mergeFieldDefinition(&$mergedFieldDefinition, &$customFieldDefinitions, $key)
     {
@@ -1222,8 +1225,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $layout
-     * @param $fieldDefinitions
+     * @param ClassDefinition\Data $layout
+     * @param ClassDefinition\Data[] $fieldDefinitions
      *
      * @return bool
      */
@@ -1299,10 +1302,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $item
+     * @param AbstractObject $item
      * @param int $nr
      *
-     * @return mixed|string
+     * @return string
      *
      * @throws \Exception
      */
@@ -1338,10 +1341,11 @@ class Service extends Model\Element\Service
         return $key;
     }
 
-    /** Enriches the layout definition before it is returned to the admin interface.
-     * @param $layout
-     * @param $object Concrete
-     * @param $context array
+    /**
+     * Enriches the layout definition before it is returned to the admin interface.
+     *
+     * @param Model\DataObject\ClassDefinition\Data $layout
+     * @param Concrete $object
      * @param array $context additional contextual data
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
@@ -1381,9 +1385,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $layout
-     * @param $allowedView
-     * @param $allowedEdit
+     * @param Model\DataObject\ClassDefinition\Data $layout
+     * @param array $allowedView
+     * @param array $allowedEdit
      */
     public static function enrichLayoutPermissions(&$layout, $allowedView, $allowedEdit)
     {
@@ -1436,14 +1440,14 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      * @param array $params
-     * @param $data Model\DataObject\Data\CalculatedValue
+     * @param Model\DataObject\Data\CalculatedValue $data
      *
      * @return string|null
      */
     public static function getCalculatedFieldValueForEditMode($object, $params = [], $data)
     {
         if (!$data) {
-            return;
+            return null;
         }
 
         $fieldname = $data->getFieldname();
@@ -1487,8 +1491,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object
-     * @param $data Model\DataObject\Data\CalculatedValue
+     * @param Concrete $object
+     * @param Model\DataObject\Data\CalculatedValue $data
      *
      * @return mixed|null
      */
@@ -1546,7 +1550,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $objectId
+     * @param int $objectId
      *
      * @return mixed|AbstractObject
      */
@@ -1567,7 +1571,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $objectId
+     * @param int $objectId
      */
     public static function removeObjectFromSession($objectId)
     {
@@ -1578,8 +1582,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $container
-     * @param $fd
+     * @param Concrete $container
+     * @param ClassDefinition\Data $fd
      */
     public static function doResetDirtyMap($container, $fd)
     {
