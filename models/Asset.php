@@ -647,7 +647,7 @@ class Asset extends Element\AbstractElement
 
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof Asset and $duplicate->getId() != $this->getId()) {
+            if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
             }
         }
@@ -761,7 +761,7 @@ class Asset extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
+        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
@@ -933,7 +933,7 @@ class Asset extends Element\AbstractElement
     public function hasSiblings()
     {
         if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))) {
+            if (($this->hasSiblings && empty($this->siblings)) || (!$this->hasSiblings && !empty($this->siblings))) {
                 return $this->getDao()->hasSiblings();
             } else {
                 return $this->hasSiblings;

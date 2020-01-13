@@ -541,7 +541,7 @@ class Document extends Element\AbstractElement
 
         if (Document\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof Document and $duplicate->getId() != $this->getId()) {
+            if ($duplicate instanceof Document && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
             }
         }
@@ -569,7 +569,7 @@ class Document extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
+        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
