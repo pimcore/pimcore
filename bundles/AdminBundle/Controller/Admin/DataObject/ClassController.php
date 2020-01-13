@@ -1200,7 +1200,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
 
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
                         'text' => $item->getGroup(),
