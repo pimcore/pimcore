@@ -483,7 +483,17 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             if ($field->type != $fd->getFieldType()) {
                                 throw new \Exception('Type mismatch for fieldcollection field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, [], $idMapper);
+
+                            $params = [
+                                'context' => [
+                                    'object' => $object,
+                                    'containerType' => 'fieldcollection',
+                                    'containerKey' => $fieldcollection,
+                                    'fieldname' => $fd->getName(),
+                                    'index' => $count
+                                ]];
+
+                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
                             break;
                         }
                     }
