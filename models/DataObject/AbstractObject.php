@@ -258,7 +258,7 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return static
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {
