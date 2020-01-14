@@ -262,7 +262,7 @@ class Document extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter
+     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter|null
      */
     public static function getById($id, $force = false)
     {
