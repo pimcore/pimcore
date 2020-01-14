@@ -69,8 +69,8 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
     }
 
     /**
-     * @param $object
-     * @param $params
+     * @param ProductInterface $object
+     * @param array $params
      * @return string
      */
     protected function doGenerate($object, $params): string

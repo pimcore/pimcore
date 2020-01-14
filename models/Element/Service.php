@@ -1298,8 +1298,8 @@ class Service extends Model\AbstractModel
 
 
     /**
-     * @param $type
-     * @param $elementId
+     * @param string $type
+     * @param int $elementId
      * @param string $postfix
      */
     public static function removeElementFromSession($type, $elementId, $postfix = '')
