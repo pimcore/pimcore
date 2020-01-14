@@ -38,7 +38,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $phpdocType = Objectbrick::class;
+    public $phpdocType = '\\' . Objectbrick::class;
 
     /**
      * @var array
