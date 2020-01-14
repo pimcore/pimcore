@@ -37,9 +37,6 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
-
-    use Element\SessionTrait;
-
     /**
      * @var array
      */
@@ -1600,8 +1597,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Keep it for BC reasons
-     *
+     * @deprecated
      * @param int $objectId
      * @return AbstractObject|null
      */
@@ -1609,4 +1605,12 @@ class Service extends Model\Element\Service
         return self::getElementFromSession('object', $objectId);
     }
 
+    /**
+     * @deprecated
+     * @param int $objectId
+     */
+    public static function removeObjectFromSession($objectId)
+    {
+        self::removeElementFromSession('object', $objectId);
+    }
 }

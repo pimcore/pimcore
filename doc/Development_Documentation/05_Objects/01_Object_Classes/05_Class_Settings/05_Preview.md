@@ -35,5 +35,5 @@ The above configuration (`/shop/product~p%o_id`)  will result in the URL `/shop/
 You can get the editing data (not the saved one) by calling
 
 ```php
-$object = Service::getObjectFromSession($objectId);
+$object = Service::getElementFromSession('object', $objectId);
 ```  

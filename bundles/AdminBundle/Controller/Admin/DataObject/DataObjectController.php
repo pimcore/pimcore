@@ -2043,7 +2043,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $id = $request->get('id');
 
-        if ($object = DataObject\Service::getObjectFromSession($id)) {
+        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
             $url = $object->getClass()->getPreviewUrl();
             if ($url) {
                 // replace named variables

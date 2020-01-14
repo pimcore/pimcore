@@ -38,9 +38,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Service extends Model\Element\Service
 {
-
-    use Element\SessionTrait;
-
     /**
      * @var Model\User|null
      */
