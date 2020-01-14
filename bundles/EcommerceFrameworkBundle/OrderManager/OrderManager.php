@@ -345,6 +345,13 @@ class OrderManager implements OrderManagerInterface
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
+
+            if($rule = $modification->getRule()){
+                $modificationItem->setPricingRuleId($rule->getId());
+            }else{
+                $modificationItem->setPricingRuleId(null);
+            }
+
             $modificationItems->add($modificationItem);
         }
 
