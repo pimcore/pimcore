@@ -186,6 +186,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     ]);
 
                     this.store = config.store;
+                    this.defaultUnit = config.defaultUnit;
                 },
                 createMenu: function () {
                     var me = this;
@@ -200,6 +201,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                         forceSelection: true,
                         hideEmptyLabel: false,
                         store: this.store,
+                        value: this.defaultUnit,
                         valueField: 'id',
                         displayField: 'abbreviation',
                         margin: 0,
@@ -208,10 +210,22 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                                 var me = this;
 
                                 me.onValueChange(field, {
-                                    RETURN: 1, getKey: function () {
+                                    RETURN: 1,
+                                    getKey: function () {
                                         return null;
                                     }
                                 });
+
+                                var value = {};
+                                if(me.filter) {
+                                    for(var i in me.filter) {
+                                        if (this.filter[i].getValue() !== null) {
+                                            value[i] = me.filter[i].getValue()[0][0];
+                                        }
+                                    }
+                                }
+
+                                me.setValue(value);
                             }.bind(this)
                         }
                     };
@@ -226,10 +240,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     var me = this;
                     var unitId = me.fields.unit.getValue();
 
-                    if (unitId) {
-                        for (var i in value) {
-                            value[i] = [[value[i], unitId]];
-                        }
+                    for (var i in value) {
+                        value[i] = [[value[i], unitId]];
                     }
 
                     me.callParent([value]);
@@ -258,7 +270,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         return {
             type: 'quantityValue',
             dataIndex: field.key,
-            store: store
+            store: store,
+            defaultUnit: field.layout.defaultUnit
         };
     },
 
