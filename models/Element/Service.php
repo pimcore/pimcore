@@ -1235,7 +1235,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string type
+     * @param string $type
      * @param int $elementId
      * @param null|string $postfix
      *
