@@ -22,6 +22,8 @@ As icons SVG graphics are recommended. If you use pixel graphics, maximum size i
 
 ## Custom Icons and Style in Object-Tree
 
+TODO update 
+
 It is possible to define custom icons and styles for objects in the object tree. 
 In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObject` by [extending the Pimcore 
  default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
@@ -73,7 +75,7 @@ class AdminStyle extends \Pimcore\Model\Element\AdminStyle {
 ![Class Icons](../../../img/classes-icons2.png)
 
 
-### Custom Tooltips (ExtJS 6 only)
+### Custom Tooltips
 
 It is possible to define custom tooltips which are shown while hovering over the object tree.
 ![Class Icons](../../../img/classes-icons3.png)
