@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\DeepCopy;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Cache;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -337,17 +338,23 @@ class Item extends Model\AbstractModel
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
-                    if ($currentValue instanceof Element\ElementInterface) {
-                        $elementType = Element\Service::getType($currentValue);
-                        $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
-
-                        return $descriptor;
-                    }
-
-                    return $currentValue;
+                    $elementType = Element\Service::getType($currentValue);
+                    $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+                    return $descriptor;
                 }
             ),
-            new Model\Version\MarshalMatcher(Element\Service::getType($this->getElement()), $this->getElement()->getId())
+            new class($this->element) extends TypeMatcher {
+                /**
+                 * @param mixed $element
+                 *
+                 * @return boolean
+                 */
+                public function matches($element)
+                {
+                    //compress only elements with full_dump_state = false
+                    return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
+                }
+            }
         );
         $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
 
