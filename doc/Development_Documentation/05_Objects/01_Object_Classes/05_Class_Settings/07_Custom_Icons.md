@@ -17,12 +17,10 @@ immediately which objects are of the type "football".
 Icons that come along with Pimcore by default can be found in `<YOUR-DOMAN>/admin/misc/icon-list` (backend session needed).
 
 #### Icon Sizes
-As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 
+As icons SVG graphics are recommended. If you use pixel graphics, the maximum size is 18x20 pixels. 
 
 
 ## Custom Icons and Style in Object-Tree
-
-TODO update 
 
 It is possible to define custom icons and styles for objects in the object tree. 
 In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObject` by [extending the Pimcore 
