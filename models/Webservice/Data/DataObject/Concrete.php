@@ -115,5 +115,8 @@ class Concrete extends Model\Webservice\Data\DataObject
                 }
             }
         }
+
+        // potentially there is no parent with this parentId -> as the setter methods above call Concrete::getValueFromParent() which calls Concrete::getParent() which calls Concrete::setParent(AbstractObject::getById($this->parentId)). As AbstractObject::getById($this->parentId) is null in this case, Concrete::setParent() sets $this->parentId to 0
+        $object->setParentId($this->parentId);
     }
 }
