@@ -79,6 +79,9 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $container->setParameter('pimcore.mime.extensions', $config['mime']['extensions']);
 
+        $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
+        $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
