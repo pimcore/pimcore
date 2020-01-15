@@ -96,38 +96,37 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $request = $event->getRequest();
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return;
-        }
-
-        $document = $this->documentResolver->getDocument($request);
-        if (!$document instanceof Document\PageSnippet && !Staticroute::getCurrentRoute()) {
-            return;
-        }
-
-        $adminRequest =
-            $this->requestHelper->isFrontendRequestByAdmin($request) ||
-            $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
-
-        $user = null;
-        if ($adminRequest) {
-            $user = $this->userLoader->getUser();
-        }
-
-        if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
-            $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
-                $document->getFullPath()
-            ]);
-
-            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
-        }
-
         if ($event->isMasterRequest()) {
+            $request = $event->getRequest();
+            if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+                return;
+            }
+
+            $document = $this->documentResolver->getDocument($request);
+            if (!$document && !Staticroute::getCurrentRoute()) {
+                return;
+            }
+
+            $adminRequest =
+                $this->requestHelper->isFrontendRequestByAdmin($request) ||
+                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
+
+            $user = null;
+            if ($adminRequest) {
+                $user = $this->userLoader->getUser();
+            }
+
+            if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
+                $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
+                    $document->getFullPath()
+                ]);
+
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
+            }
+
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
                 $document = $this->handleAdminUserDocumentParams($request, $document);
-
                 $this->handleObjectParams($request);
             }
 
