@@ -9,10 +9,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\DefinitionModifier;
 use Pimcore\Model\DataObject\Fieldcollection;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-class Version20190806160450 extends AbstractPimcoreMigration
+class Version20200113120101 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
     {
