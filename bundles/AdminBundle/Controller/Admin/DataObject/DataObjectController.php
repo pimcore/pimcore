@@ -535,7 +535,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
-            DataObject\Service::removeObjectFromSession($object->getId());
+            DataObject\Service::removeElementFromSession('object', $object->getId());
 
             return $this->adminJson($data);
         }
@@ -1328,11 +1328,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'treeData' => $treeData
             ]);
         } elseif ($request->get('task') == 'session') {
-            Tool\Session::useSession(function (AttributeBagInterface $session) use ($object) {
-                $key = 'object_' . $object->getId();
-                $session->set($key, $object);
-            }, 'pimcore_objects');
-
+            DataObject\Service::saveElementToSession($object);
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {
@@ -2046,45 +2042,38 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function previewAction(Request $request)
     {
         $id = $request->get('id');
-        $key = 'object_' . $id;
 
-        $session = Tool\Session::getReadOnly('pimcore_objects');
-        if ($session->has($key)) {
-            /**
-             * @var DataObject\Concrete $object
-             */
-            $object = $session->get($key);
+        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
+            $url = $object->getClass()->getPreviewUrl();
+            if ($url) {
+                // replace named variables
+                $vars = $object->getObjectVars();
+                foreach ($vars as $key => $value) {
+                    if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                        $url = str_replace('%' . $key, urlencode($value), $url);
+                    } else {
+                        if (strpos($url, '%' . $key) !== false) {
+                            return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+                        }
+                    }
+                }
+            } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
+            }
+
+            if (!$url) {
+                return new Response("Preview not available, it seems that there's a problem with this object.");
+            }
+
+            // replace all remainaing % signs
+            $url = str_replace('%', '%25', $url);
+
+            $urlParts = parse_url($url);
+
+            return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
         } else {
             return new Response("Preview not available, it seems that there's a problem with this object.");
         }
-
-        $url = $object->getClass()->getPreviewUrl();
-        if ($url) {
-            // replace named variables
-            $vars = $object->getObjectVars();
-            foreach ($vars as $key => $value) {
-                if (!empty($value) && (is_string($value) || is_numeric($value))) {
-                    $url = str_replace('%' . $key, urlencode($value), $url);
-                } else {
-                    if (strpos($url, '%' . $key) !== false) {
-                        return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
-                    }
-                }
-            }
-        } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-            $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
-        }
-
-        if (!$url) {
-            return new Response("Preview not available, it seems that there's a problem with this object.");
-        }
-
-        // replace all remainaing % signs
-        $url = str_replace('%', '%25', $url);
-
-        $urlParts = parse_url($url);
-
-        return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
     }
 
     /**

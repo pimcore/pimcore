@@ -128,13 +128,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             if (!$class) {
                 continue;
             }
+            $groupName = null;
+
             if ($class->getGroup()) {
                 $type = 'manual';
                 $groupName = $class->getGroup();
             } else {
                 $type = 'auto';
-                preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches);
-                $groupName = $matches[0];
+                if (preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches)) {
+                    $groupName = $matches[0];
+                }
 
                 if (!$groupName) {
                     // this is eg. the case when class name uses only capital letters

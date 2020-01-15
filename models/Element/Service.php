@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Doctrine\Common\Collections\Collection;
@@ -28,9 +29,13 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool;
+use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -1227,5 +1232,79 @@ class Service extends Model\AbstractModel
         }
 
         return $e;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return string
+     */
+    public static function getSessionKey($type, $elementId, $postfix = '') {
+        $sessionId = Session::getSessionId();
+        $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
+        return $tmpStoreKey;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return AbstractObject|Document|Asset|null
+     */
+    public static function getElementFromSession($type, $elementId, $postfix = '')
+    {
+        $element = null;
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+
+        $tmpStore = TmpStore::get($tmpStoreKey);
+        if ($tmpStore) {
+            $data = $tmpStore->getData();
+            if ($data) {
+                $element = Serialize::unserialize($data);
+                return $element;
+            }
+        }
+
+        return $element;
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param string $postfix
+     * @param bool $clone save a copy
+     */
+    public static function saveElementToSession($element, $postfix = '', $clone = true)
+    {
+        if ($clone) {
+            $copier = new DeepCopy();
+            $element = $copier->copy($element);
+        }
+
+        $elementType = Service::getElementType($element);
+        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
+        $tag = $elementType . '-session' . $postfix;
+
+        if ($element instanceof ElementDumpStateInterface) {
+            self::loadAllFields($element);
+            $element->setInDumpState(true);
+        }
+        $serializedData = Serialize::serialize($element);
+
+        TmpStore::set($tmpStoreKey, $serializedData, $tag);
+    }
+
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param string $postfix
+     */
+    public static function removeElementFromSession($type, $elementId, $postfix = '')
+    {
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        TmpStore::delete($tmpStoreKey);
     }
 }

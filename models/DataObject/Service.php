@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
@@ -27,6 +28,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
+use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -1549,37 +1551,6 @@ class Service extends Model\Element\Service
         return self::$systemFields;
     }
 
-    /**
-     * @param int $objectId
-     *
-     * @return mixed|AbstractObject
-     */
-    public static function getObjectFromSession($objectId)
-    {
-        $object = Session::useSession(static function (AttributeBagInterface $session) use ($objectId) {
-            $key = 'object_' . $objectId;
-            $result = $session->get($key);
-
-            return $result;
-        }, 'pimcore_objects');
-
-        if (!$object) {
-            $object = AbstractObject::getById($objectId);
-        }
-
-        return $object;
-    }
-
-    /**
-     * @param int $objectId
-     */
-    public static function removeObjectFromSession($objectId)
-    {
-        Session::useSession(static function (AttributeBagInterface $session) use ($objectId) {
-            $key = 'object_' . $objectId;
-            $session->remove($key);
-        }, 'pimcore_objects');
-    }
 
     /**
      * @param Concrete $container
@@ -1623,5 +1594,23 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             self::doResetDirtyMap($object, $object->getClass());
         }
+    }
+
+    /**
+     * @deprecated
+     * @param int $objectId
+     * @return AbstractObject|null
+     */
+    public static function getObjectFromSession($objectId) {
+        return self::getElementFromSession('object', $objectId);
+    }
+
+    /**
+     * @deprecated
+     * @param int $objectId
+     */
+    public static function removeObjectFromSession($objectId)
+    {
+        self::removeElementFromSession('object', $objectId);
     }
 }
