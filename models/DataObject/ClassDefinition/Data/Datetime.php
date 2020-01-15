@@ -25,6 +25,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -74,6 +76,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'datetime') {
@@ -82,6 +86,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+        return null;
     }
 
     /**
@@ -312,7 +317,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        //return new Date($this->defaultValue);
+            //return new Date($this->defaultValue);
         } else {
             return 0;
         }
@@ -427,7 +432,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             if ($this->getColumnType() == 'datetime') {
                 $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = '. $db->quote($value);
+                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
 
                 return $condition;
             } else {
@@ -445,5 +450,20 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue()
+    {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+            return $date;
+
+        }
+        return null;
+
     }
 }
