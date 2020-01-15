@@ -20,35 +20,55 @@ use Pimcore\Maintenance\TaskInterface;
 final class HousekeepingTask implements TaskInterface
 {
     /**
+     * @var int
+     */
+    protected $tmpFileTime;
+
+    /**
+     * @var int
+     */
+    protected $profilerTime;
+
+    /**
+     * @param int $tmpFileTime
+     * @param int $profilerTime
+     */
+    public function __construct(int $tmpFileTime, int $profilerTime)
+    {
+        $this->tmpFileTime = $tmpFileTime;
+        $this->profilerTime = $profilerTime;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function execute()
     {
-        $this->deleteFilesInFolderOlderThanDays(PIMCORE_TEMPORARY_DIRECTORY, 90);
+        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_TEMPORARY_DIRECTORY, $this->tmpFileTime);
 
         $environments = Config::getEnvironmentConfig()->getProfilerHousekeepingEnvironments();
 
         foreach ($environments as $environment) {
             $profilerDir = sprintf('%s/cache/%s/profiler', PIMCORE_PRIVATE_VAR, $environment);
 
-            $this->deleteFilesInFolderOlderThanDays($profilerDir, 4);
+            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
         }
     }
 
     /**
      * @param string $folder
-     * @param int $days
+     * @param int $seconds
      */
-    protected function deleteFilesInFolderOlderThanDays($folder, $days)
+    protected function deleteFilesInFolderOlderThanSeconds($folder, $seconds)
     {
         if (!is_dir($folder)) {
             return;
         }
 
         $directory = new \RecursiveDirectoryIterator($folder);
-        $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($days) {
+        $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($seconds) {
             if ($current->isFile()) {
-                if ($current->getATime() && $current->getATime() < (time() - ($days * 86400))) {
+                if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
                     return true;
                 }
             } else {

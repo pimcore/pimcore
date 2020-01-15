@@ -151,6 +151,7 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         $this->addGeneralNode($rootNode);
+        $this->addMaintenanceNode($rootNode);
         $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
@@ -175,6 +176,30 @@ class Configuration implements ConfigurationInterface
         $this->addApplicationLogNode($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Add maintenance config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addMaintenanceNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('maintenance')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('housekeeping')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('cleanup_tmp_files_atime_older_than')
+                        ->defaultValue(7776000) // 90 days
+                    ->end()
+                    ->integerNode('cleanup_profiler_files_atime_older_than')
+                        ->defaultValue(1800)
+                    ->end()
+        ;
     }
 
     /**
