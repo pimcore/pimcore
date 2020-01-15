@@ -1,7 +1,8 @@
 # Object Preview
 
-**DEPRECATED FEATURE**  
-**Please use [link generators](./15_Link_Generator.md) instead, which are more powerful and flexibel and 
+> **DEPRECATED FEATURE**  
+>
+> **Please use [link generators](./15_Link_Generator.md) instead, which are more powerful and flexibel and 
 offer the same functionality. The preview tab is automatically displayed when a link generator is defined 
 on the data object class.**
 
@@ -26,7 +27,13 @@ URL is opened in the tab. Only if you configure a preview URL in the class confi
 
 ![Object Preview](../../../img/classes-preview1.png)
 
-The above configuration (`/news/%name_%o_id`)  will result in the URL `/news/my+news+title_867655` 
+The above configuration (`/shop/product~p%o_id`)  will result in the URL `/shop/product~p247` 
 (or whatever the object id is).
 
 ![Object Preview](../../../img/classes-preview2.png)
+
+You can get the editing data (not the saved one) by calling
+
+```php
+$object = Service::getElementFromSession('object', $objectId);
+```  

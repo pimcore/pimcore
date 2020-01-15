@@ -115,9 +115,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             // save to session
             $key = 'document_' . $request->get('id');
 
-            Session::useSession(function (AttributeBagInterface $session) use ($key, $page) {
-                $session->set($key, $page);
-            }, 'pimcore_documents');
+            Document\Service::saveElementToSession($page);
 
             if ($request->get('task') == 'unpublish') {
                 $page->setPublished(false);
