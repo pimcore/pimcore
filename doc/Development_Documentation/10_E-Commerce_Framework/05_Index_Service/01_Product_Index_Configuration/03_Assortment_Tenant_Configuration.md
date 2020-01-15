@@ -49,7 +49,7 @@ provides following methods to set the current Assortment Tenant when working wit
     /**
      * sets current assortment tenant which is used for indexing and product lists
      *
-     * @param $tenant string
+     * @param string $tenant
      * @return mixed
      */
     public function setCurrentAssortmentTenant($tenant);
@@ -64,7 +64,7 @@ provides following methods to set the current Assortment Tenant when working wit
     /**
      * sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param $subTenant string
+     * @param string $subTenant
      * @return mixed
      */
     public function setCurrentAssortmentSubTenant($subTenant);
@@ -135,7 +135,7 @@ In order to populate the additional mapping data, also following methods have to
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return mixed $subTenantData
      */
@@ -165,7 +165,7 @@ In order to populate the additional mapping data, the following method has to be
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return array $subTenantData
      */

@@ -92,7 +92,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param null $reason
+     * @param string|null $reason
      *
      * @return bool
      */
@@ -126,7 +126,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param $lifetime
+     * @param int|null $lifetime
      *
      * @return $this
      */
@@ -198,8 +198,8 @@ class FullPageCacheListener
 
         try {
             $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->cache) {
-                $conf = $conf->cache;
+            if ($conf->full_page_cache) {
+                $conf = $conf->full_page_cache;
 
                 if (!$conf->enabled) {
                     return $this->disable();

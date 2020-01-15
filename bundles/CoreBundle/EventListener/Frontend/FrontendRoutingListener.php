@@ -145,7 +145,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
      * Initialize Site
      *
      * @param Request $request
-     * @param $path
+     * @param string $path
      *
      * @return string
      */

@@ -609,10 +609,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** converts data to be imported via webservices
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      */

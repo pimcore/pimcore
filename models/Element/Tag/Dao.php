@@ -26,7 +26,7 @@ use Pimcore\Model\Element\Tag;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool|null
+     * @return bool
      *
      * @throws \Exception
      *
@@ -114,8 +114,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      *
      * @return Model\Element\Tag[]
      */
@@ -137,8 +137,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      */
     public function addTagToElement($cType, $cId)
     {
@@ -146,9 +146,9 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $tagId
-     * @param $cType
-     * @param $cId
+     * @param int $tagId
+     * @param string $cType
+     * @param int $cId
      */
     protected function doAddTagToElement($tagId, $cType, $cId)
     {
@@ -161,8 +161,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      */
     public function removeTagFromElement($cType, $cId)
     {
@@ -174,8 +174,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $cType
-     * @param $cId
+     * @param string $cType
+     * @param int $cId
      * @param array $tags
      *
      * @throws \Exception
@@ -198,10 +198,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $cType
+     * @param string $cType
      * @param array $cIds
      * @param array $tagIds
-     * @param $replace
+     * @param bool $replace
      */
     public function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace)
     {

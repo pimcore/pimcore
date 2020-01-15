@@ -29,7 +29,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return bool
      */

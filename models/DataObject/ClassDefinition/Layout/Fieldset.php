@@ -35,7 +35,7 @@ class Fieldset extends Model\DataObject\ClassDefinition\Layout
     public $labelWidth = 100;
 
     /**
-     * @param $labelWidth
+     * @param int $labelWidth
      *
      * @return $this
      */

@@ -918,5 +918,11 @@
     "share_via_notifications": "Über Benachrichtigungen teilen",
     "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Metadaten können nicht gespeichert werden!</b><br />Versuchen Sie die Metadaten in Asset zu bearbeiten.",
     "email_log_forward": "E-Mail weiterleiten",
-    "sum": "Addieren"
+    "sum": "Addieren",
+    "area_brick_assign_info_message": "Bitte ordnen Sie dem gewünschten Block per Drag & Drop einen Baustein zu",
+    "batch_remove_all": "Batch remove from all",
+    "batch_remove_selected": "Batch remove from selected",
+    "batch_remove_from": "Daten von allen entfernen",
+    "batch_remove_selected_from": "Daten von ausgewählten entfernen",
+    "force_picture_html_tag": "Erzwinge &lt;picture&gt; HTML tag"
 }

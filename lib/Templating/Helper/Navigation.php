@@ -117,8 +117,8 @@ class Navigation extends Helper
      *
      * @param Container $container
      * @param string $rendererName
-     * @param string|null $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
-     * @param array $rendererArguments      Option arguments to pass to the render method after the container
+     * @param string $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
+     * @param array<int, mixed> $rendererArguments      Option arguments to pass to the render method after the container
      *
      * @return string
      */

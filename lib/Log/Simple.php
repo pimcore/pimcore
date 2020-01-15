@@ -19,8 +19,8 @@ use Pimcore\File;
 class Simple
 {
     /**
-     * @param $name
-     * @param $message
+     * @param string $name
+     * @param string $message
      */
     public static function log($name, $message)
     {

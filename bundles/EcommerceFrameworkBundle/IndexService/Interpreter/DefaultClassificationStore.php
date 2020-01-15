@@ -19,8 +19,8 @@ use Pimcore\Model\DataObject\Classificationstore;
 class DefaultClassificationStore implements InterpreterInterface
 {
     /**
-     * @param $value
-     * @param null $config
+     * @param Classificationstore|null $value
+     * @param array|null $config
      *
      * @return array|void
      *

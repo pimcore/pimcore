@@ -834,6 +834,13 @@ pimcore.object.classes.klass = Class.create({
                     name: "encryption",
                     style: 'margin: 0',
                     checked: this.data.encryption
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("cache_raw_relation_data"),
+                    name: "cacheRawRelationData",
+                    style: 'margin: 0',
+                    checked: this.data.cacheRawRelationData
                 }, {
                     xtype: 'container',
                     html: t('encrypt_data_description'),

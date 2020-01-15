@@ -48,7 +48,7 @@ class DataObject extends AbstractWorkspace
     public $layouts = null;
 
     /**
-     * @param $save
+     * @param bool $save
      *
      * @return $this
      */
@@ -68,7 +68,7 @@ class DataObject extends AbstractWorkspace
     }
 
     /**
-     * @param $unpublish
+     * @param bool $unpublish
      *
      * @return $this
      */

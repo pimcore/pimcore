@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ElementControllerBase extends AdminController
 {
     /**
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return array
      */

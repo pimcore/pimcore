@@ -12,13 +12,6 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class BaseBundleGenerator extends Generator
 {
-    private $filesystem;
-
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
     public function generateBundle(Bundle $bundle)
     {
         $dir = $bundle->getTargetDirectory();

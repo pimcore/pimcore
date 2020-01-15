@@ -21,10 +21,14 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Admin;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**
@@ -42,7 +46,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|string
      *
@@ -67,7 +71,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|string
      *
@@ -92,7 +96,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|string
      *
@@ -117,7 +121,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|string
      *
@@ -142,7 +146,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return array|string
      *
@@ -196,12 +200,12 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
      *
      * @return array
      *
@@ -265,7 +269,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return bool
      *
@@ -290,7 +294,7 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return bool
      *
@@ -314,7 +318,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
      *
      * @return bool
      *
@@ -335,7 +339,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
      *
      * @return bool
      *
@@ -356,7 +360,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
      *
      * @return bool
      *
@@ -377,7 +381,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
      *
      * @return bool
      *
@@ -398,7 +402,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
      *
      * @return bool
      *
@@ -419,7 +423,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
      *
      * @return bool
      *
@@ -440,7 +444,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
      *
      * @return bool
      *
@@ -461,7 +465,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
      *
      * @return bool
      *
@@ -503,7 +507,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
      *
      * @return bool
      *
@@ -797,7 +801,7 @@ class Service
 
     /**
      * @param int $id
-     * @param null $options
+     * @param array|null $options
      *
      * @return array|string
      *
@@ -821,12 +825,12 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
      *
      * @return array
      *
@@ -971,13 +975,13 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
-     * @param null $objectClass
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     * @param string|null $objectClass
      *
      * @return array
      *
@@ -1107,8 +1111,8 @@ class Service
     }
 
     /**
-     * @param $wsDocument
-     * @param $element
+     * @param Webservice\Data\Document $wsDocument
+     * @param AbstractElement $element
      *
      * @return mixed
      *
@@ -1131,9 +1135,9 @@ class Service
     }
 
     /**
-     * @param $element
-     * @param $key
-     * @param $path
+     * @param AbstractElement $element
+     * @param string $key
+     * @param string $path
      *
      * @return string
      */
@@ -1159,7 +1163,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document $wsDocument
      *
      * @return bool
      *
@@ -1186,7 +1190,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject $wsDocument
      *
      * @return bool
      *
@@ -1217,7 +1221,7 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset $wsDocument
      *
      * @return bool
      *
@@ -1243,7 +1247,7 @@ class Service
     }
 
     /**
-     * @param $element
+     * @param AbstractElement $element
      * @param bool $creation
      *
      * @return $this
@@ -1317,8 +1321,8 @@ class Service
     }
 
     /**
-     * @param $type
-     * @param $params
+     * @param string $type
+     * @param array $params
      *
      * @return array
      *

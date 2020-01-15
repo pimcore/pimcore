@@ -43,7 +43,7 @@ class AttributeSet
     /**
      * DataExtractorResult constructor.
      *
-     * @param TranslationItem $element
+     * @param TranslationItem $translationItem
      */
     public function __construct(TranslationItem $translationItem)
     {
@@ -138,12 +138,13 @@ class AttributeSet
      * @param string $name
      * @param string $content
      * @param bool $isReadonly
+     * @param string[] $targetContent
      *
      * @return AttributeSet
      */
-    public function addAttribute(string $type, string $name, string $content, bool $isReadonly = false): AttributeSet
+    public function addAttribute(string $type, string $name, string $content, bool $isReadonly = false, array $targetContent = []): AttributeSet
     {
-        $this->attributes[] = new Attribute($type, $name, $content, $isReadonly);
+        $this->attributes[] = new Attribute($type, $name, $content, $isReadonly, $targetContent);
 
         return $this;
     }

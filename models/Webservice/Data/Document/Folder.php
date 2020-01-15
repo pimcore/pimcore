@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Folder extends Model\Webservice\Data\Document
 {
 }

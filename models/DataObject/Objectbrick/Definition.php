@@ -75,7 +75,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @param $key
+     * @param string $key
      *
      * @return self|null
      */
@@ -288,7 +288,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $definitions
+     * @param array $definitions
      *
      * @return array
      */
@@ -302,8 +302,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $result;
     }
 
-    /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
-     * @param $oldObject
+    /**
+     * Returns a list of classes which need to be "rebuild" because they are affected of changes.
+     *
+     * @param self $oldObject
      *
      * @return array
      */
@@ -329,7 +331,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $serializedFilename
+     * @param string $serializedFilename
      */
     private function cleanupOldFiles($serializedFilename)
     {
@@ -432,8 +434,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @throws \Exception
-     *
-     * @todo: creates a PHP-Dock with "@return void" (line 351)
      */
     private function createContainerClasses()
     {
@@ -557,8 +557,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -568,8 +568,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -579,7 +579,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
+     * @param string $classname
      *
      * @return string
      */

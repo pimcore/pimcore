@@ -46,7 +46,7 @@ class IncludeRenderer
     /**
      * Renders a document include
      *
-     * @param $include
+     * @param mixed $include
      * @param array $params
      * @param bool $editmode
      * @param bool $cacheEnabled
@@ -150,7 +150,7 @@ class IncludeRenderer
 
     /**
      * @param PageSnippet $include
-     * @param $params
+     * @param array $params
      *
      * @return string
      */
@@ -167,7 +167,7 @@ class IncludeRenderer
      * if there's no first level HTML container => add one (wrapper)
      *
      * @param PageSnippet $include
-     * @param $content
+     * @param string $content
      *
      * @return string
      */

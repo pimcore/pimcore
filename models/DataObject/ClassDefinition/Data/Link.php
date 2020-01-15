@@ -371,6 +371,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -395,10 +396,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -406,7 +408,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        if ($value instanceof \stdclass) {
+        if ($value instanceof \stdClass) {
             $value = (array) $value;
         }
 

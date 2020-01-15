@@ -27,11 +27,11 @@ use Pimcore\Model\Element\ElementInterface;
 class DefaultValue extends AbstractValue
 {
     /**
-     * @param $object
-     * @param $key
-     * @param null $brickType
-     * @param null $brickKey
-     * @param null $fieldDefinition
+     * @param AbstractObject $object
+     * @param string $key
+     * @param string|null $brickType
+     * @param string|null $brickKey
+     * @param Data|null $fieldDefinition
      *
      * @return \stdClass
      *
@@ -93,7 +93,7 @@ class DefaultValue extends AbstractValue
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      *
      * @return \stdClass
      */

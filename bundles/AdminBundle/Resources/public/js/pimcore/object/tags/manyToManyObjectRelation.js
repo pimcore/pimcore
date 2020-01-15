@@ -265,23 +265,25 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
         var items = [];
 
-        if (collectionMenu.length == 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                handler: collectionMenu[0].handler
-            });
-        } else if (collectionMenu.length > 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                menu: collectionMenu
-            });
-        } else {
-            items.push({
-                xtype: "tbtext",
-                text: t("no_collections_allowed")
-            });
+        if (this.fieldConfig.allowToCreateNewObject) {
+            if (collectionMenu.length == 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    handler: collectionMenu[0].handler
+                });
+            } else if (collectionMenu.length > 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    menu: collectionMenu
+                });
+            } else {
+                items.push({
+                    xtype: "tbtext",
+                    text: t("no_collections_allowed")
+                });
+            }
         }
 
 

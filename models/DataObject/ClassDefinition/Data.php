@@ -219,6 +219,7 @@ abstract class Data
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -232,10 +233,11 @@ abstract class Data
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
@@ -1024,10 +1026,10 @@ abstract class Data
         $code = '/**' . "\n";
         $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
 
-        $dataParamDoc = 'mixed $'.$key;
+        $dataParamDoc = 'mixed $data';
         $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
         if(preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
-            $dataParamDoc = $dataParam[1].' $'.$key.' '.$dataParam[2];
+            $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
         }
 
         $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
@@ -1039,8 +1041,9 @@ abstract class Data
         $code .= '* @param '.$operatorParamDoc."\n";
         $code .= '* @return static'."\n";
         $code .= '*/' . "\n";
-        $code .= 'public function filterBy' . ucfirst($key) .' ($'.$key.', $operator = \'=\') {'."\n";
-        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $' . $key . ', $operator);' . "\n";
+
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\') {'."\n";
+        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
         $code .= "\treturn " . '$this' . ";\n";
         $code .= "}\n\n";
 

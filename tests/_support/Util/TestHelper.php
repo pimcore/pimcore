@@ -363,9 +363,9 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
-     * @param bool   $publish
-     * @param null   $type
+     * @param bool $save
+     * @param bool $publish
+     * @param string|null $type
      *
      * @return Concrete|Unittest
      */

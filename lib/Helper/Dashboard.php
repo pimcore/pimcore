@@ -129,8 +129,8 @@ class Dashboard
     }
 
     /**
-     * @param $key
-     * @param null $configuration
+     * @param string $key
+     * @param array|null $configuration
      */
     public function saveDashboard($key, $configuration = null)
     {
@@ -145,7 +145,7 @@ class Dashboard
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function deleteDashboard($key)
     {

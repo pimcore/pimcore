@@ -118,6 +118,11 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
+     * @var bool
+     */
+    public $cacheRawRelationData = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions = [];
@@ -173,7 +178,7 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|ClassDefinition
      *
@@ -391,11 +396,22 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+
+        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        if ($this->getCacheRawRelationData()) {
+            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+        }
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
         $cd .= "\n\n";
+
+        if ($this->getCacheRawRelationData()) {
+            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
+            $cd .= "\n\n";
+        }
 
         if ($this->getUseTraits()) {
             $cd .= 'use '.$this->getUseTraits().";\n";
@@ -600,9 +616,9 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param ClassDefinition|ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */
@@ -698,7 +714,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @return string
      */
@@ -902,7 +918,7 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $key
      * @param array $context
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -915,7 +931,7 @@ class ClassDefinition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -1164,7 +1180,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $icon
+     * @param string $icon
      *
      * @return $this
      */
@@ -1184,7 +1200,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $propertyVisibility
+     * @param array $propertyVisibility
      *
      * @return $this
      */
@@ -1198,7 +1214,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $previewUrl
+     * @param string $previewUrl
      *
      * @return $this
      */
@@ -1234,7 +1250,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -1310,4 +1326,24 @@ class ClassDefinition extends Model\AbstractModel
 
         return $generator;
     }
+
+    /**
+     * @return bool
+     */
+    public function getCacheRawRelationData(): bool
+    {
+        return $this->cacheRawRelationData;
+    }
+
+    /**
+     * @param bool $cacheRawRelationData
+     * @return $this
+     */
+    public function setCacheRawRelationData($cacheRawRelationData)
+    {
+        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
+        return $this;
+    }
+
+
 }

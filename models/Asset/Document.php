@@ -59,9 +59,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param null $path
-     *
-     * @return |null
+     * @param string|null $path
      */
     public function processPageCount($path = null)
     {
@@ -73,7 +71,7 @@ class Document extends Model\Asset
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
-            return null;
+            return;
         }
 
         try {
@@ -100,7 +98,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param $thumbnailName
+     * @param string $thumbnailName
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
@@ -125,9 +123,9 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param null $page
+     * @param int|null $page
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getText($page = null)
     {

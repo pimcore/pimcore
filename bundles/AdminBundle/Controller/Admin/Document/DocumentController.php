@@ -491,8 +491,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document $updatedObject
-     * @param $newIndex
+     * @param Document $document
+     * @param int $newIndex
      */
     protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
     {
@@ -637,12 +637,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $version = Version::getById($request->get('id'));
         $document = $version->loadData();
-
-        Session::useSession(function (AttributeBagInterface $session) use ($document) {
-            $key = 'document_' . $document->getId();
-            $session->set($key, $document);
-        }, 'pimcore_documents');
-
+        Document\Service::saveElementToSession($document);
         return new Response();
     }
 
@@ -1019,7 +1014,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param $element Document
+     * @param Document $element
      *
      * @return array
      */

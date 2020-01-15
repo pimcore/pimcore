@@ -23,9 +23,9 @@ class PathFormatterResolver extends ClassResolver
     public static $formatterCache = [];
 
     /**
-     * @param $formatterClass
+     * @param string $formatterClass
      *
-     * @return PathFormatterInterface
+     * @return PathFormatterInterface|null
      */
     public static function resolvePathFormatter($formatterClass): ?PathFormatterInterface
     {

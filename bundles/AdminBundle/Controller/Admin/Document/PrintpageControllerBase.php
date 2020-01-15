@@ -115,9 +115,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             // save to session
             $key = 'document_' . $request->get('id');
 
-            Session::useSession(function (AttributeBagInterface $session) use ($key, $page) {
-                $session->set($key, $page);
-            }, 'pimcore_documents');
+            Document\Service::saveElementToSession($page);
 
             if ($request->get('task') == 'unpublish') {
                 $page->setPublished(false);
@@ -327,7 +325,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array|mixed
      */
@@ -342,8 +340,8 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
-     * @param $options
+     * @param int $documentId
+     * @param array $options
      */
     private function saveProcessingOptions($documentId, $options)
     {

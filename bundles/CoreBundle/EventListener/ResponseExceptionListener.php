@@ -25,6 +25,7 @@ use Pimcore\Model\Site;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -116,23 +117,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $errorPath = $site->getErrorDocument();
         }
 
-        // HTTP Error Log
-        $uri = $event->getRequest()->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
-        if ($exists) {
-            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
-        } else {
-            $this->db->insert('http_error_log', [
-                'uri' => $uri,
-                'code' => (int) $statusCode,
-                'parametersGet' => serialize($_GET),
-                'parametersPost' => serialize($_POST),
-                'cookies' => serialize($_COOKIE),
-                'serverVars' => serialize($_SERVER),
-                'date' => time(),
-                'count' => 1
-            ]);
-        }
+        $this->logToHttpErrorLog($event->getRequest(), $statusCode);
 
         // Error page rendering
         if (empty($errorPath)) {
@@ -158,5 +143,24 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));
+    }
+
+    protected function logToHttpErrorLog(Request $request, $statusCode) {
+        $uri = $request->getUri();
+        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
+        if ($exists) {
+            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
+        } else {
+            $this->db->insert('http_error_log', [
+                'uri' => $uri,
+                'code' => (int) $statusCode,
+                'parametersGet' => serialize($_GET),
+                'parametersPost' => serialize($_POST),
+                'cookies' => serialize($_COOKIE),
+                'serverVars' => serialize($_SERVER),
+                'date' => time(),
+                'count' => 1
+            ]);
+        }
     }
 }

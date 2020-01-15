@@ -83,7 +83,7 @@ class AssetMetadataGetter extends AbstractOperator
     }
 
     /**
-     * @param $value
+     * @param Hotspotimage|Asset $value
      *
      * @return mixed
      */

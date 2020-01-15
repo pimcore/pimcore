@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable);
+        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable, null, "o_id");
 
         DataObject\AbstractObject::setGetInheritedValues(false);
 
@@ -247,7 +247,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insertOrUpdate($querytable, $data);
 
         if ($inheritanceEnabled) {
-            $this->inheritanceHelper->doUpdate($object->getId(), true);
+            $this->inheritanceHelper->doUpdate($object->getId(), true,
+                ['inheritanceRelationContext' => [
+                    'ownertype' => 'objectbrick'
+                ]]);
         }
         $this->inheritanceHelper->resetFieldsToCheck();
 
@@ -332,8 +335,8 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $field
-     * @param $forOwner
-     * @param $remoteClassId
+     * @param bool $forOwner
+     * @param string $remoteClassId
      *
      * @return array
      */

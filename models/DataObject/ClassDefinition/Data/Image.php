@@ -336,6 +336,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -350,10 +351,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      *

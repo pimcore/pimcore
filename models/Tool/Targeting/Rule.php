@@ -71,7 +71,7 @@ class Rule extends Model\AbstractModel
     public $actions = [];
 
     /**
-     * @param $target
+     * @param mixed $target
      *
      * @return bool
      */
@@ -117,7 +117,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Rule
      */
@@ -134,7 +134,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -154,7 +154,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -174,7 +174,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -218,7 +218,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $conditions
+     * @param array $conditions
      *
      * @return $this
      */

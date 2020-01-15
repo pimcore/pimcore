@@ -47,7 +47,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 var data = [];
                 for (i = 0; i < this.object.data.classes.length; i++) {
                     var klass = this.object.data.classes[i];
-                    data.push([klass.id, klass.name, ts(klass.name)]);
+                    data.push([klass.id, klass.name, ts(klass.name), klass.inheritance]);
 
                 }
 
@@ -57,7 +57,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     fields: [
                         {name: 'id', type: 'string'},
                         {name: 'name', type: 'string'},
-                        {name: 'translatedText', type: 'string'}
+                        {name: 'translatedText', type: 'string'},
+                        {name: 'inheritance', type: 'bool'}
                     ]
                 });
 
@@ -86,6 +87,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
                 else {
                     this.currentClass = this.object.data.classes[0].id;
+                    this.setClassInheritance(this.object.data.classes[0].inheritance);
                 }
             }
             else {
@@ -112,12 +114,17 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     changeClassSelect: function (field, newValue, oldValue) {
         var selectedClass = newValue.data.id;
         this.setClass(selectedClass);
+        this.setClassInheritance(newValue.data.inheritance);
     },
 
     setClass: function (classId) {
         this.classId = classId;
         this.settings = {};
         this.getTableDescription();
+    },
+
+    setClassInheritance: function (inheritance) {
+        this.object.data.general.allowInheritance = inheritance;
     },
 
     getTableDescription: function () {
@@ -191,8 +198,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             }
         );
-
-        var plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
@@ -345,6 +350,30 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         this.buildColumnConfigMenu();
+
+        var needGridFilter = false;
+
+        // gridfilter plugin does not load the store if there are no filter columns.
+        // so if there are no filter columns, then don't add the plugin
+        // however, in this case we have to load the store manually
+        if (gridColumns) {
+            for (let i = 0; i < gridColumns.length; i++) {
+                let col = gridColumns[i];
+                if (col.filter) {
+                    needGridFilter = true;
+                    break;
+                }
+            }
+        }
+
+        var plugins = [this.cellEditing];
+        if (needGridFilter) {
+            plugins.push('pimcore.gridfilters');
+        }
+
+        if (!needGridFilter) {
+            this.store.load();
+        }
 
         // grid
         this.grid = Ext.create('Ext.grid.Panel', {

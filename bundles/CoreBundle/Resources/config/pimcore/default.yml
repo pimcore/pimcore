@@ -220,7 +220,6 @@ pimcore:
         session:
             attribute_bags:
                 - pimcore_admin
-                - pimcore_documents
                 - pimcore_objects
                 - pimcore_copy
                 - pimcore_gridconfig

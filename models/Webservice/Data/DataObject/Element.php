@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\DataObject;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Element extends Model\Webservice\Data
 {
     /**

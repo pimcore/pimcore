@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Version[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $versions = null;
@@ -46,7 +46,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $versions
+     * @param Model\Version[]|null $versions
      *
      * @return $this
      */

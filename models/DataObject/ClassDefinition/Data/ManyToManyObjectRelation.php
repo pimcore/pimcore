@@ -78,6 +78,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @var bool
      */
+    public $allowToCreateNewObject = true;
+
+    /**
+     * @var bool
+     */
     public $optimizedAdminLoading = false;
 
     /**
@@ -467,6 +472,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -493,10 +499,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      *
@@ -724,7 +731,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
+                /** @var Localizedfields|null $localizedfields */
+                $localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
+                if ($localizedfields) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
@@ -749,7 +758,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\MultiSelect) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
                     if ($fd->getOptionsProviderClass()) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }
@@ -945,6 +954,22 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVisibleFields()
     {
         return $this->visibleFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowToCreateNewObject(): bool
+    {
+        return $this->allowToCreateNewObject;
+    }
+
+    /**
+     * @param bool $allowToCreateNewObject
+     */
+    public function setAllowToCreateNewObject($allowToCreateNewObject)
+    {
+        $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
     }
 
     /**

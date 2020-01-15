@@ -128,13 +128,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             if (!$class) {
                 continue;
             }
+            $groupName = null;
+
             if ($class->getGroup()) {
                 $type = 'manual';
                 $groupName = $class->getGroup();
             } else {
                 $type = 'auto';
-                preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches);
-                $groupName = $matches[0];
+                if (preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches)) {
+                    $groupName = $matches[0];
+                }
 
                 if (!$groupName) {
                     // this is eg. the case when class name uses only capital letters
@@ -435,9 +438,9 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return mixed
+     * @return string
      */
     protected function correctClassname($name)
     {
@@ -1200,7 +1203,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
 
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (!isset($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getKey(),
                         'text' => $item->getGroup(),
@@ -1784,8 +1787,6 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/suggest-class-identifier")
-     *
-     * @param Request $request
      *
      * @return Response
      */

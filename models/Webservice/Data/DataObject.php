@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class DataObject extends Model\Webservice\Data
 {
     /**
@@ -79,8 +82,8 @@ class DataObject extends Model\Webservice\Data
     public $childs;
 
     /**
-     * @param $object
-     * @param null $options
+     * @param Model\DataObject\AbstractObject $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {

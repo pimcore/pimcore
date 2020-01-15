@@ -24,7 +24,7 @@ use Pimcore\Model\Search\Backend\Data;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Data[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $entries = null;
@@ -38,7 +38,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param $entries
+     * @param Data[]|null $entries
      *
      * @return $this
      */

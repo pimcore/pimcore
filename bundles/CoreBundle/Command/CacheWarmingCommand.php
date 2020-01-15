@@ -146,8 +146,8 @@ class CacheWarmingCommand extends AbstractCommand
     }
 
     /**
-     * @param $type
-     * @param $types
+     * @param string $type
+     * @param array $types
      */
     protected function writeWarmingMessage($type, $types)
     {
@@ -165,9 +165,9 @@ class CacheWarmingCommand extends AbstractCommand
     /**
      * A,B,C -> A, B or C (with an optional template for each item)
      *
-     * @param $list
+     * @param array $list
      * @param string $glue
-     * @param null $template
+     * @param string|null $template
      *
      * @return string
      */
@@ -192,9 +192,9 @@ class CacheWarmingCommand extends AbstractCommand
      * Get one of types, document, asset or object types, handle "all" value
      * and list input validation.
      *
-     * @param $option
-     * @param $property
-     * @param $singular
+     * @param string $option
+     * @param string $property
+     * @param string $singular
      * @param bool $fallback
      *
      * @return mixed

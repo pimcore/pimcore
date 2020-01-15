@@ -125,7 +125,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     public $sharedRoleNames;
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Config
      */
@@ -168,8 +168,8 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param $configuration
-     * @param null $fullConfig
+     * @param \stdClass $configuration
+     * @param Config|null $fullConfig
      *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
@@ -327,7 +327,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return string[]
+     * @return \stdClass|null
      */
     public function getDataSourceConfig()
     {

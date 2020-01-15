@@ -42,7 +42,7 @@ class Factory extends ImplementationLoader implements FactoryInterface
      * @param string $name
      * @param array $params
      *
-     * @return AbstractModel|AbstractListing
+     * @return AbstractModel
      */
     public function build(string $name, array $params = []): AbstractModel
     {

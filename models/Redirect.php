@@ -308,7 +308,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $expiry
+     * @param int|string $expiry
      *
      * @return $this
      */
@@ -344,7 +344,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $regex
+     * @param bool $regex
      *
      * @return $this
      */
@@ -368,7 +368,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $active
+     * @param bool $active
      *
      * @return $this
      */
@@ -384,7 +384,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $sourceSite
+     * @param int $sourceSite
      *
      * @return $this
      */
@@ -408,7 +408,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $targetSite
+     * @param int $targetSite
      *
      * @return $this
      */
@@ -432,7 +432,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $passThroughParameters
+     * @param bool $passThroughParameters
      *
      * @return Redirect
      */
@@ -456,7 +456,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -476,7 +476,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

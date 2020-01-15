@@ -121,7 +121,7 @@ class QuantityValueController extends AdminController
                 }
             } elseif ($request->get('xaction') == 'create') {
                 $data = json_decode($request->get('data'), true);
-                if ($data['baseunit'] === -1) {
+                if (isset($data['baseunit']) && $data['baseunit'] === -1) {
                     $data['baseunit'] = null;
                 }
                 unset($data['id']);
@@ -135,9 +135,9 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @param $comparison
+     * @param string $comparison
      *
-     * @return mixed
+     * @return string
      */
     private function getOperator($comparison)
     {

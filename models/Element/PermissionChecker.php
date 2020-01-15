@@ -210,9 +210,9 @@ class PermissionChecker
     }
 
     /**
-     * @param $user User\
-     * @param $element
-     * @param $details
+     * @param User $user
+     * @param ElementInterface $element
+     * @param array $details
      */
     protected static function getLanguagePermissions($user, $element, &$details)
     {

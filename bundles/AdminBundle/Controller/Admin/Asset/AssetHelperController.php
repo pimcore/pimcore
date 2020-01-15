@@ -44,11 +44,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetHelperController extends AdminController
 {
     /**
-     * @param $userId
-     * @param $classId
-     * @param $searchType
+     * @param int $userId
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -72,22 +72,15 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $user User
-     * @param $classId
-     * @param $searchType
+     * @param User $user
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
         $db = Db::get();
-        $configListingConditionParts = [];
-        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
-
-        if ($searchType) {
-            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-        }
 
         $configListing = [];
 
@@ -306,11 +299,11 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $field
-     * @param $language
-     * @param null $keyPrefix
+     * @param array $field
+     * @param string $language
+     * @param string|null $keyPrefix
      *
-     * @return array|null
+     * @return array
      */
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
@@ -367,10 +360,10 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $noSystemColumns
-     * @param $fields
-     * @param $context
-     * @param $types
+     * @param bool $noSystemColumns
+     * @param array $fields
+     * @param array $context
+     * @param array $types
      *
      * @return array
      */
@@ -390,9 +383,6 @@ class AssetHelperController extends AdminController
                     $count++;
                 }
             }
-        }
-
-        if (is_array($fields)) { //TODO required?
         }
 
         return $availableFields;
@@ -475,7 +465,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfigId
+     * @param int $gridConfigId
      *
      * @return array
      */
@@ -593,8 +583,8 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfig GridConfig
-     * @param $metadata
+     * @param GridConfig $gridConfig
+     * @param array $metadata
      *
      * @throws \Exception
      */
@@ -637,7 +627,7 @@ class AssetHelperController extends AdminController
      * @Route("/get-export-jobs", methods={"GET"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -719,12 +709,12 @@ class AssetHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param string $language
+     * @param Asset\Listing $list
+     * @param array $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, $language, $list, $fields, $addTitles = true)
     {
@@ -791,7 +781,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $fileHandle
+     * @param string $fileHandle
      *
      * @return string
      */

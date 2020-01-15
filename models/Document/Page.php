@@ -148,7 +148,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @param $metaData
+     * @param array $metaData
      *
      * @return $this
      */
@@ -191,7 +191,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @param $prettyUrl
+     * @param string $prettyUrl
      *
      * @return $this
      */

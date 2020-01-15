@@ -311,7 +311,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $data
+     * @param ElementInterface $data
      *
      * @return mixed
      */
@@ -380,7 +380,7 @@ class Version extends AbstractModel
     /**
      * Object
      *
-     * @param $renewReferences
+     * @param bool $renewReferences
      *
      * @return mixed
      */
@@ -534,7 +534,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $cid
+     * @param int $cid
      *
      * @return $this
      */

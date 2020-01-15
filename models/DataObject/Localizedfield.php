@@ -55,7 +55,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     protected $class;
 
-    /** @var mixed */
+    /** @var array */
     protected $context;
 
     /** @var int */
@@ -131,7 +131,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param  $item
+     * @param mixed $item
      */
     public function addItem($item)
     {
@@ -167,7 +167,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @internal
      *
-     * @param $loadLazyFields
+     * @param bool $loadLazyFields
      *
      * @return array
      */
@@ -203,6 +203,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
     /**
      * @param Concrete $object
+     * @param bool $markAsDirty
      *
      * @return $this
      *
@@ -262,7 +263,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @throws \Exception
      *
-     * @param null $language
+     * @param string|null $language
      *
      * @return string
      */
@@ -286,7 +287,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
      * @return bool
      */
@@ -318,9 +319,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $object = $this->getObject();
             $container = $object->getClass();
         }
-        $fieldDefinition = $container->getFieldDefinition('localizedfields')->getFieldDefinition($name);
 
-        return $fieldDefinition;
+        /** @var Model\DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
+        $localizedFields = $container->getFieldDefinition('localizedfields');
+
+        if ($localizedFields) {
+            return $localizedFields->getFieldDefinition($name);
+        }
+
+        return null;
     }
 
     /**
@@ -336,19 +343,22 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
             $container = $fcDef->getFieldDefinition('localizedfields');
         } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
             $containerKey = $context['containerKey'];
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
             $container = $brickDef->getFieldDefinition('localizedfields');
         } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['fieldname'];
             $object = $this->getObject();
-            /**
-             * @var Model\DataObject\ClassDefinition\Data\Block $container
-             */
-            $container = $object->getClass()->getFieldDefinition($containerKey)->getFieldDefinition('localizedfields');
+            /** @var Model\DataObject\ClassDefinition\Data\Block $block */
+            $block = $object->getClass()->getFieldDefinition($containerKey);
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
+            $container = $block->getFieldDefinition('localizedfields');
         } else {
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
 
@@ -379,8 +389,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $name
-     * @param null $language
+     * @param string $name
+     * @param string|null $language
      * @param bool $ignoreFallbackLanguage
      *
      * @return mixed
@@ -485,10 +495,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $name
-     * @param $value
-     * @param null $language
-     * @param $markFieldAsDirty
+     * @param string $name
+     * @param mixed $value
+     * @param string|null $language
+     * @param bool $markFieldAsDirty
      *
      * @return $this
      *
@@ -516,9 +526,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'block') {
             $classId = $contextInfo['classId'];
             $containerDefinition = ClassDefinition::getById($classId);
+            /** @var Model\DataObject\ClassDefinition\Data\Block $blockDefinition */
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
-            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
             $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
             if (isset($contextInfo['containerType']) && $contextInfo['containerType'] === 'fieldcollection') {
@@ -531,6 +542,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                 $containerDefinition = $this->getObject()->getClass();
             }
 
+            /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, ['object' => $this->getObject()]);
         }
@@ -591,7 +603,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getContext()
     {
@@ -599,7 +611,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param mixed $context
+     * @param array $context
      */
     public function setContext($context)
     {
@@ -619,9 +631,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
-     * @return bool|mixed
+     * @return bool
      */
     public function isLanguageDirty($language)
     {
@@ -669,8 +681,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @param $language
-     * @param $dirty
+     * @param string $language
+     * @param bool $dirty
      */
     public function markLanguageAsDirty($language, $dirty = true)
     {

@@ -590,6 +590,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -622,10 +623,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -1227,11 +1229,15 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param bool $allowMultipleAssignments
+     * @param $allowMultipleAssignments
+     *
+     * @return $this
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+
+        return $this;
     }
 
     /**
