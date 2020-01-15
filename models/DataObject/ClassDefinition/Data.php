@@ -1041,8 +1041,9 @@ abstract class Data
         $code .= '* @param '.$operatorParamDoc."\n";
         $code .= '* @return static'."\n";
         $code .= '*/' . "\n";
-        $code .= 'public function filterBy' . ucfirst($key) .' ($'.$key.', $operator = \'=\') {'."\n";
-        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $' . $key . ', $operator);' . "\n";
+
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\') {'."\n";
+        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
         $code .= "\treturn " . '$this' . ";\n";
         $code .= "}\n\n";
 
