@@ -401,7 +401,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getHostname(Request $request = null)
     {
@@ -506,7 +506,7 @@ class Tool
     /**
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getAnonymizedClientIp(Request $request = null)
     {
