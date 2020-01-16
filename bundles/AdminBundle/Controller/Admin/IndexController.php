@@ -246,6 +246,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'devmode' => \Pimcore::inDevMode(),
             'disableMinifyJs' => \Pimcore::disableMinifyJs(),
             'environment' => $kernel->getEnvironment(),
+            'cached_environments' => Tool::getCachedSymfonyEnvironments(),
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
         ]);
 
