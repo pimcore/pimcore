@@ -20,6 +20,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -254,7 +255,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        $tmpObject['qtipCfg'] = $child->getElementAdminStyle()->getElementQtipConfig();
+        $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
+        $tmpObject['qtipCfg'] = $adminStyle->getElementQtipConfig();
 
         if ($child->getType() != 'folder') {
             $tmpObject['published'] = $child->isPublished();
@@ -267,20 +269,23 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $tmpObject['allowVariants'] = $child->getClass()->getAllowVariants();
         }
 
-        if ($child->getElementAdminStyle()->getElementIcon()) {
-            $tmpObject['icon'] = $child->getElementAdminStyle()->getElementIcon();
+        if ($adminStyle->getElementIcon() !== false) {
+            $tmpObject['icon'] = $adminStyle->getElementIcon();
         }
 
-        if ($child->getElementAdminStyle()->getElementIconClass()) {
-            $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
+        if ($adminStyle->getElementIconClass() !== false) {
+            $tmpObject['iconCls'] = $adminStyle->getElementIconClass();
         }
 
         if ($tmpObject['type'] == 'variant' && !$tmpObject['icon'] && !$tmpObject['iconCls']) {
             $tmpObject['iconCls'] = 'pimcore_icon_variant';
         }
 
-        if ($child->getElementAdminStyle()->getElementCssClass()) {
-            $tmpObject['cls'] .= $child->getElementAdminStyle()->getElementCssClass() . ' ';
+        if ($adminStyle->getElementCssClass() !== false) {
+            if (!isset($tmpObject['cls'])) {
+                $tmpObject['cls'] = '';
+            }
+            $tmpObject['cls'] .= $adminStyle->getElementCssClass() . ' ';
         }
 
         $tmpObject['expanded'] = !$hasChildren;
@@ -452,11 +457,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
-            if ($object->getElementAdminStyle()->getElementIcon()) {
-                $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
+            $adminStyle = Element\Service::getElementAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR);
+
+            if ($adminStyle->getElementIcon() !== false) {
+                $objectData['general']['icon'] = $adminStyle->getElementIcon();
             }
-            if ($object->getElementAdminStyle()->getElementIconClass()) {
-                $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
+            if ($adminStyle->getElementIconClass() !== false) {
+                $objectData['general']['iconCls'] = $adminStyle->getElementIconClass();
             }
 
             $currentLayoutId = $request->get('layoutId', null);
@@ -1492,7 +1499,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             try {
                 $object->save();
                 $treeData = [];
-                $treeData['qtipCfg'] = $object->getElementAdminStyle()->getElementQtipConfig();
+                $adminStyle = Element\Service::getElementAdminStyle($object, ElementAdminStyleEvent::CONTEXT_TREE);
+                $treeData['qtipCfg'] = $adminStyle->getElementQtipConfig();
 
                 return $this->adminJson(
                     [

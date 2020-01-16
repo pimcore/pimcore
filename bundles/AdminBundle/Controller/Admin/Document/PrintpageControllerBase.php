@@ -16,16 +16,15 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
-use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PrintpageControllerBase extends DocumentControllerBase
@@ -82,6 +81,8 @@ class PrintpageControllerBase extends DocumentControllerBase
             'interfaces' => array_values(class_implements($page))
         ];
 
+        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page
@@ -137,12 +138,15 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 $page->save();
 
+                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $page->getModificationDate(),
                         'versionCount' => $page->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } elseif ($page->isAllowed('save')) {
                 $this->setValuesToDocument($request, $page);
@@ -318,7 +322,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'label' => $option['name'],
                 'value' => $value,
                 'type' => $option['type'],
-                'values' => $option['values'] ?? [],
+                'values' => isset($option['values']) ? $option['values'] : null
             ];
         }
 

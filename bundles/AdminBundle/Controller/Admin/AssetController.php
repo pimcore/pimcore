@@ -19,6 +19,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
@@ -147,6 +148,18 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
+
+        $adminStyle = Element\Service::getElementAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR);
+        $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
+        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass(): null;
+
+        if ($adminStyle->getElementCssClass() !== false) {
+            if (!isset($data['cls'])) {
+                $data['cls'] = '';
+            }
+            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
+        }
+
 
         $data['php'] = [
             'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
@@ -638,7 +651,6 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$asset->hasChildren();
             $tmpAsset['loaded'] = !$asset->hasChildren();
-            $tmpAsset['iconCls'] = 'pimcore_icon_folder';
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
 
             $folderThumbs = [];
@@ -662,18 +674,19 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
             $tmpAsset['expanded'] = false;
-
-            $tmpAsset['iconCls'] = 'pimcore_icon_asset_default';
-
-            $fileExt = File::getFileExtension($asset->getFilename());
-            if ($fileExt) {
-                $tmpAsset['iconCls'] .= ' pimcore_icon_' . File::getFileExtension($asset->getFilename());
-            }
         }
 
-        $tmpAsset['qtipCfg'] = [
-            'title' => 'ID: ' . $asset->getId()
-        ];
+        $adminStyle = Element\Service::getElementAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE);
+
+        $tmpAsset['qtipCfg'] = $adminStyle->getElementQtipConfig();
+
+        if ($adminStyle->getElementIcon() !== false) {
+            $tmpAsset['icon'] = $adminStyle->getElementIcon();
+        }
+
+        if ($adminStyle->getElementIconClass() !== false) {
+            $tmpAsset['iconCls'] = $adminStyle->getElementIconClass();
+        }
 
         if ($asset->getType() == 'image') {
             try {
@@ -957,12 +970,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
+                $treeData = $this->getTreeNodeConfig($asset);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $asset->getModificationDate(),
                         'versionCount' => $asset->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } else {
                 throw $this->createAccessDeniedHttpException();
@@ -990,7 +1006,8 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
-                return $this->adminJson(['success' => true]);
+                $treeData = $this->getTreeNodeConfig($asset);
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }

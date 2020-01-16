@@ -24,6 +24,13 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + this.id;
 
+        var iconClass;
+        if (this.data.iconCls) {
+            iconClass = this.data.iconCls;
+        } else if (this.data.icon) {
+            iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
+        }
+
         this.tab = new Ext.Panel({
             id: tabId,
             title: tabTitle,
@@ -34,7 +41,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.getLayoutToolbar(),
                 this.getTabPanel()
             ],
-            iconCls: "pimcore_icon_" + this.data.type,
+            iconCls: iconClass,
             document: this
         });
 

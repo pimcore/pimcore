@@ -391,4 +391,18 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT = 'pimcore.admin.resolve.element';
+
+    /**
+     * Fired before the an element is opened
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementController
+     * Arguments:
+     *     none
+     *
+     * @Event("Pimcore\Event\Admin\ElementAdminStyleEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_ELEMENT_ADMIN_STYLE = 'pimcore.admin.resolve.elementAdminStyle';
+
 }

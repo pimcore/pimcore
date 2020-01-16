@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -81,6 +82,8 @@ class SnippetController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($snippet))
         ];
 
+        $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $snippet
@@ -132,12 +135,15 @@ class SnippetController extends DocumentControllerBase
                 $snippet->save();
                 $this->saveToSession($snippet);
 
+                $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $snippet->getModificationDate(),
                         'versionCount' => $snippet->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } elseif ($snippet->isAllowed('save')) {
                 $this->setValuesToDocument($request, $snippet);

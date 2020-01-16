@@ -89,6 +89,8 @@ class NewsletterController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($email))
         ];
 
+        $this->addAdminStyle($email, Pimcore\Event\Admin\ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email
@@ -135,12 +137,15 @@ class NewsletterController extends DocumentControllerBase
                 $page->save();
                 $this->saveToSession($page);
 
+                $this->addAdminStyle($page, Pimcore\Event\Admin\ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $page->getModificationDate(),
                         'versionCount' => $page->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } elseif ($page->isAllowed('save')) {
                 $this->setValuesToDocument($request, $page);

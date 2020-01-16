@@ -119,6 +119,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                 this.createScreenshot();
                             }
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
+                            pimcore.helpers.updateTreeElementStyle('document', this.id, rdata.treeData);
                         }
                     } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
