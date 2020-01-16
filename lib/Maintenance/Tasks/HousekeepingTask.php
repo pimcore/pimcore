@@ -49,7 +49,7 @@ final class HousekeepingTask implements TaskInterface
         $environments = Config::getEnvironmentConfig()->getProfilerHousekeepingEnvironments();
 
         foreach ($environments as $environment) {
-            $profilerDir = sprintf('%s/cache/%s/profiler', PIMCORE_PRIVATE_VAR, $environment);
+            $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 
             $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
         }
