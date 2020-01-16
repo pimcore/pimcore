@@ -709,7 +709,7 @@ class Tool
             unset($dirs[$key]);
         }
         $dirs = array_map('basename', $dirs);
-        return $dirs;
+        return array_values($dirs);
     }
 
     /**
