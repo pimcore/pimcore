@@ -700,6 +700,19 @@ class Tool
     }
 
     /**
+     * @return array
+     */
+    public static function getCachedSymfonyEnvironments():array
+    {
+        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
+        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
+            unset($dirs[$key]);
+        }
+        $dirs = array_map('basename', $dirs);
+        return $dirs;
+    }
+
+    /**
      * @param string $message
      */
     public static function exitWithError($message)
