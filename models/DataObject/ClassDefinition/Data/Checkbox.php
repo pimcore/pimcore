@@ -229,6 +229,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
@@ -335,6 +336,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isEmpty($data)
     {
         return $data === null;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 
     /**
