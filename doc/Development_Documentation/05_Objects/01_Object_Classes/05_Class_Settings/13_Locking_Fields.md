@@ -3,7 +3,7 @@ Sometimes it's useful that a field cannot be modified/deleted in the class edito
 created by a plugin.
 
 Pimcore offers the possibility to lock a field programmatically, you can call the method `setLocked()` on every 
-`Pimcore\Model\DataObject\Class\Data` object.
+`Pimcore\Model\DataObject\ClassDefinition\Data` object.
 
 ### Example
 
