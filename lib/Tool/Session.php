@@ -44,7 +44,7 @@ class Session
     }
 
     /**
-     * @param $func
+     * @param callable $func
      * @param string $namespace
      *
      * @return mixed

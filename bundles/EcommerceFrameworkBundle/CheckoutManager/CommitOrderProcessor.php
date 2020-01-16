@@ -90,7 +90,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     protected $lastPaymentStatus = null;
 
     /**
-     * @param $paymentResponseParams
+     * @param array|StatusInterface $paymentResponseParams
      * @param PaymentInterface $paymentProvider
      *
      * @return Status|StatusInterface

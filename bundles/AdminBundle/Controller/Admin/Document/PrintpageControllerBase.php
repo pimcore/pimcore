@@ -115,9 +115,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             // save to session
             $key = 'document_' . $request->get('id');
 
-            Session::useSession(function (AttributeBagInterface $session) use ($key, $page) {
-                $session->set($key, $page);
-            }, 'pimcore_documents');
+            Document\Service::saveElementToSession($page);
 
             if ($request->get('task') == 'unpublish') {
                 $page->setPublished(false);
@@ -261,13 +259,14 @@ class PrintpageControllerBase extends DocumentControllerBase
             $allParams['hostName'] = $_SERVER['HTTP_HOST'];
         }
 
-        $allParams['protocol'] = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+        $https = $_SERVER['HTTPS'] ?? 'off';
+        $allParams['protocol'] = $https === 'on' ? 'https' : 'http';
         $pdf = $document->getPdfFileName();
         if (is_file($pdf)) {
             unlink($pdf);
         }
 
-        $result = (bool)$document->generatePdf($allParams);
+        $result = $document->generatePdf($allParams);
 
         $this->saveProcessingOptions($document->getId(), $allParams);
 
@@ -319,7 +318,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'label' => $option['name'],
                 'value' => $value,
                 'type' => $option['type'],
-                'values' => $option['values']
+                'values' => $option['values'] ?? [],
             ];
         }
 
@@ -327,7 +326,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array|mixed
      */
@@ -342,8 +341,8 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
-     * @param $options
+     * @param int $documentId
+     * @param array $options
      */
     private function saveProcessingOptions($documentId, $options)
     {

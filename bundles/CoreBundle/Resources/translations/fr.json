@@ -918,5 +918,11 @@
     "share_via_notifications": "Partager via des notifications",
     "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Impossible de sauvegarder les métadonnées !</ b><br />Essayez de modifier les métadonnées dans Asset.",
     "email_log_forward": "E-mail transféré",
-    "sum": "Sum"
+    "sum": "Somme",
+    "area_brick_assign_info_message": "Veuillez utiliser le glisser-déposer pour attribuer une brique au bloc souhaité",
+    "batch_remove_all": "Retirer de tous par lot",
+    "batch_remove_selected": "Retirer de ceux sélectionnés par lot",
+    "batch_remove_from": "Retirer les données de tous",
+    "batch_remove_selected_from": "Retirer les données de ceux sélectionnés",
+    "force_picture_html_tag": "Forcer la balise HTML &lt;picture&gt;"
 }

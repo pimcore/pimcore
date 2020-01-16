@@ -98,7 +98,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -566,8 +566,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $key
-     * @param null $params
+     * @param string $key
+     * @param mixed $params
      *
      * @return mixed
      *
@@ -614,7 +614,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      *
      * @param string $fieldName
      * @param bool $forOwner
-     * @param $remoteClassId
+     * @param string $remoteClassId
      *
      * @return array
      */
@@ -626,8 +626,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $method
-     * @param $arguments
+     * @param string $method
+     * @param array $arguments
      *
      * @return Model\Listing\AbstractListing|Concrete|null
      *
@@ -673,7 +673,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
 
-                $localizedField = $field->getFielddefinition($localizedPropertyName);
+                $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
@@ -873,9 +873,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param $objectId
-     * @param $modificationDate
-     * @param $versionCount
+     * @param int $objectId
+     * @param int $modificationDate
+     * @param int $versionCount
      * @param bool $force
      *
      * @return Model\Version|void
@@ -893,4 +893,62 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         return;
     }
+
+    /**
+     * @param array $descriptor
+     * @return array
+     */
+    public function retrieveRelationData($descriptor) {
+
+        if ($this instanceof CacheRawRelationDataInterface) {
+            $unfilteredData = $this->__getRawRelationData();
+
+            $likes = [];
+            foreach ($descriptor as $column => $expectedValue) {
+                if (is_string($expectedValue)) {
+                    $trimmed = rtrim($expectedValue, '%');
+                    if (strlen($trimmed) < strlen($expectedValue)) {
+                        $likes[$column] = $trimmed;
+                    }
+                }
+            }
+
+            $filterFn = static function($row) use ($descriptor, $likes) {
+                foreach ($descriptor as $column => $expectedValue) {
+                    $actualValue = $row[$column];
+                    if (isset($likes[$column])) {
+                        $expectedValue = $likes[$column];
+                        if (strpos($actualValue, $expectedValue) !== 0) {
+                            return false;
+                        }
+                    } else if ($actualValue != $expectedValue) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+
+            $filteredData = array_filter($unfilteredData, $filterFn);
+
+            return $filteredData;
+        } else {
+            $db = Db::get();
+            $conditionParts = ['src_id = ' . $this->getId()];
+            foreach ($descriptor as $key => $value) {
+                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
+                if ($lastChar === "%") {
+                    $conditionParts[] = $key . " LIKE " . $db->quote($value);
+                } else {
+                    $conditionParts[] = $key . " = " . $db->quote($value);
+                }
+            }
+
+            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ' , $conditionParts);
+            $result = $db->fetchAll($query);
+            return $result;
+        }
+    }
+
+
+
 }

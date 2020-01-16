@@ -255,6 +255,7 @@ class Link extends Model\Document\Tag
 
     /**
      * @param bool $realPath
+     * @param bool $editmode
      */
     protected function updatePathFromInternal($realPath = false, $editmode = false)
     {
@@ -476,8 +477,9 @@ class Link extends Model\Document\Tag
     public function resolveDependencies()
     {
         $dependencies = [];
+        $isInternal = $this->data['internal'] ?? false;
 
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && $isInternal) {
             if (intval($this->data['internalId']) > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
@@ -505,10 +507,11 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -575,11 +578,11 @@ class Link extends Model\Document\Tag
     /**
      * Returns the current tag's data for web service export
      *
-     * @param $document
-     * @param mixed $params
-     * @abstract
+     * @deprecated
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
      *
-     * @return array
+     * @return \stdClass
      */
     public function getForWebserviceExport($document = null, $params = [])
     {

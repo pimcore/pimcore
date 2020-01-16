@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var Model\Element\WorkflowState[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $workflowStates = null;
@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $workflowStates
+     * @param Model\Element\WorkflowState[]|null $workflowStates
      *
      * @return $this
      */

@@ -632,6 +632,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
      * @param string $object
      * @param mixed $params
      *
@@ -659,10 +660,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *

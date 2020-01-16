@@ -145,6 +145,7 @@ class GridHelperService
         if ($filterJson) {
             $db = \Pimcore\Db::get();
             $filters = json_decode($filterJson, true);
+
             foreach ($filters as $filter) {
                 $operator = '=';
 
@@ -153,14 +154,6 @@ class GridHelperService
 
                 if ($filter['type'] == 'string') {
                     $operator = 'LIKE';
-                } elseif ($filter['type'] == 'numeric') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
                 } elseif ($filter['type'] == 'date') {
                     if ($filterOperator == 'lt') {
                         $operator = '<';
@@ -175,6 +168,14 @@ class GridHelperService
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int)$filter['value'];
+                } else {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
                 }
 
                 $field = $class->getFieldDefinition($filterField);
@@ -213,7 +214,11 @@ class GridHelperService
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
                         if ($brickDescriptor) {
-                            $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
+                            /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
+                            $localizedFields = $brickClass->getFieldDefinition('localizedfields');
+                            if ($localizedFields) {
+                                $brickField = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                            }
                         } else {
                             $brickField = $brickClass->getFieldDefinition($brickKey);
                         }
@@ -296,7 +301,7 @@ class GridHelperService
     }
 
     /**
-     * @param array $fieldsParameter
+     * @param array $fields
      *
      * @return array
      */

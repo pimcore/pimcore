@@ -175,7 +175,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
             ?>
             <?php foreach ($definition->getAllowedTypes() as $asAllowedType) { ?>
                 <?php

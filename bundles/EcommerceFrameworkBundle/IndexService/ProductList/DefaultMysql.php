@@ -173,7 +173,7 @@ class DefaultMysql implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param $condition
+     * @param string $condition
      * @param string $fieldname
      */
     public function addQueryCondition($condition, $fieldname = '')
@@ -185,9 +185,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * Reset query condition for fieldname
      *
-     * @param $fieldname
-     *
-     * @return mixed
+     * @param string $fieldname
      */
     public function resetQueryCondition($fieldname)
     {
@@ -243,7 +241,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
+     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
     public function setOrderKey($orderKey)
     {
@@ -424,7 +422,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * loads element by id
      *
-     * @param $elementId
+     * @param int $elementId
      *
      * @return array|\Pimcore\Model\DataObject\AbstractObject
      */
@@ -485,7 +483,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
      *
-     * @param      $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -499,7 +497,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -521,7 +519,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @param      $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -711,8 +709,8 @@ class DefaultMysql implements ProductListInterface
      * returns order by statement for simularity calculations based on given fields and object ids
      * returns cosine simularity calculation
      *
-     * @param $fields
-     * @param $objectId
+     * @param array $fields
+     * @param int $objectId
      *
      * @return string
      */
@@ -724,8 +722,8 @@ class DefaultMysql implements ProductListInterface
     /**
      * returns where statement for fulltext search index
      *
-     * @param $fields
-     * @param $searchstring
+     * @param array $fields
+     * @param string $searchstring
      *
      * @return string
      */

@@ -139,7 +139,7 @@ class Log extends Model\AbstractModel
     public $subject;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -151,7 +151,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $requestUri
+     * @param string $requestUri
      *
      * @return $this
      */
@@ -183,7 +183,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -195,7 +195,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $subject
+     * @param string $subject
      *
      * @return $this
      */
@@ -251,7 +251,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return $this
      */
@@ -265,7 +265,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the dynamic parameter
      *
-     * @return string
+     * @return array
      */
     public function getParams()
     {
@@ -417,7 +417,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $to
+     * @param string $to
      *
      * @return $this
      */
@@ -439,7 +439,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $cc
+     * @param string $cc
      *
      * @return $this
      */
@@ -461,7 +461,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $bcc
+     * @param string $bcc
      *
      * @return $this
      */
@@ -483,7 +483,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $from
+     * @param string $from
      *
      * @return $this
      */
@@ -505,7 +505,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $replyTo
+     * @param string $replyTo
      *
      * @return $this
      */
@@ -527,7 +527,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $html
+     * @param string $html
      *
      * @return $this
      */
@@ -549,7 +549,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return $this
      */

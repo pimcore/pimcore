@@ -36,7 +36,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $visibleFields;
 
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -177,9 +177,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $data
-     * @param null $object
-     * @param mixed $params
+     * @param array $data
+     * @param Model\DataObject\AbstractObject|null $object
+     * @param array $params
      *
      * @return string|null
      *
@@ -215,7 +215,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -505,6 +505,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
+     * @deprecated
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -537,10 +538,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      *
@@ -1020,7 +1022,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? false) {
+                /** @var Localizedfields|null $localizedfields */
+                $localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
+                if ($localizedfields) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
@@ -1045,7 +1049,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\MultiSelect) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
                     if ($fd->getOptionsProviderClass()) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }

@@ -19,7 +19,7 @@ use Carbon\Carbon;
 class QueryParams
 {
     /**
-     * @param $params
+     * @param array $params
      *
      * @return array  [orderKey => null|string, order => null|string]
      */
@@ -57,7 +57,7 @@ class QueryParams
     }
 
     /**
-     * @param $param
+     * @param string $param
      *
      * @return int
      */
@@ -71,7 +71,7 @@ class QueryParams
     /**
      * Creates a condition string from the passed ExtJs filter definitions
      *
-     * @param $filterString
+     * @param string $filterString
      * @param array $matchExact
      * @param bool $returnString
      * @param array $callbacks

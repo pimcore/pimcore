@@ -19,14 +19,14 @@ interface ExecutorInterface
     /**
      * Execute the Maintenance Task
      *
-     * @param array|null $validJobs
-     * @param array|null $excludedJobs
-     * @param bool       $force
+     * @param array $validJobs
+     * @param array $excludedJobs
+     * @param bool $force
      */
     public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false);
 
     /**
-     * @param               $name
+     * @param string $name
      * @param TaskInterface $task
      */
     public function registerTask($name, TaskInterface $task);

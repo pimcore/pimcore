@@ -75,7 +75,7 @@ class Config extends Model\AbstractModel
     public $format = 'SOURCE';
 
     /**
-     * @var mixed
+     * @var int
      */
     public $quality = 85;
 
@@ -125,9 +125,9 @@ class Config extends Model\AbstractModel
     public $forcePictureTag = false;
 
     /**
-     * @param $config
+     * @param string|array|self $config
      *
-     * @return self|bool
+     * @return self|null
      */
     public static function getByAutoDetect($config)
     {
@@ -156,7 +156,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Config
      */
@@ -258,6 +258,7 @@ class Config extends Model\AbstractModel
 
     /**
      * Returns thumbnail config for webservice export.
+     * @deprecated
      */
     public function getForWebserviceExport()
     {
@@ -279,9 +280,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -304,10 +305,10 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $position
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param int $position
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -335,7 +336,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -438,7 +439,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $quality
+     * @param int $quality
      *
      * @return self
      */
@@ -452,7 +453,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getQuality()
     {
@@ -518,7 +519,7 @@ class Config extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -553,7 +554,7 @@ class Config extends Model\AbstractModel
      * @deprecated
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -636,7 +637,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $asset
+     * @param Model\Asset\Image $asset
      *
      * @return array
      */
@@ -725,6 +726,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @deprecated
+     *
      * @param string $colorspace
      */
     public function setColorspace($colorspace)
@@ -733,7 +736,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @deprecated
      */
     public function getColorspace()
     {

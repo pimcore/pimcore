@@ -49,7 +49,7 @@ class PackageInfo
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     private function readInstalledPackages(): array
     {

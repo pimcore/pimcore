@@ -48,7 +48,8 @@ class Statistic extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $seriesId
+     * @param int $seriesId
+     * @param int|null $usagePeriod
      *
      * @throws \Exception
      *
@@ -78,7 +79,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

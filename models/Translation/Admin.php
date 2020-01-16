@@ -33,10 +33,10 @@ class Admin extends AbstractTranslation
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
-     * @param null $language
+     * @param string|null $language
      *
      * @return string
      *

@@ -327,10 +327,7 @@ class HeadMeta extends AbstractHelper
     /**
      * Build meta HTML string
      *
-     * @param  string $type
-     * @param  string $typeValue
-     * @param  string $content
-     * @param  array $modifiers
+     * @param \stdClass $item
      *
      * @return string
      */

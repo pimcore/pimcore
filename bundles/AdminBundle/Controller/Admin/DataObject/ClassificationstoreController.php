@@ -1283,7 +1283,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @param $config
+     * @param Classificationstore\KeyConfig $config
      *
      * @return array
      */

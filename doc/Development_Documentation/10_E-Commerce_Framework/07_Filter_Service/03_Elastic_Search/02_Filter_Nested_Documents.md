@@ -118,7 +118,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param IProductList $productList
-     * @param $currentFilter
+     * @param array $currentFilter
      * @return string
      * @throws \Exception
      */

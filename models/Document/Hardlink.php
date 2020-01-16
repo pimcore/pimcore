@@ -107,7 +107,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $childrenFromSource
+     * @param bool $childrenFromSource
      *
      * @return Hardlink
      */
@@ -127,7 +127,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $sourceId
+     * @param int $sourceId
      *
      * @return $this
      */
@@ -147,7 +147,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $propertiesFromSource
+     * @param bool $propertiesFromSource
      *
      * @return $this
      */

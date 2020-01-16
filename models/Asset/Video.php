@@ -91,7 +91,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @param string $config
+     * @param string|Video\Thumbnail\Config $config
      *
      * @return Video\Thumbnail\Config|null
      */
@@ -111,10 +111,10 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param $thumbnailName
+     * @param string|Video\Thumbnail\Config $thumbnailName
      * @param array $onlyFormats
      *
-     * @return string
+     * @return array|null
      */
     public function getThumbnail($thumbnailName, $onlyFormats = [])
     {
@@ -152,13 +152,11 @@ class Video extends Model\Asset
     }
 
     /**
-     * @param $thumbnailName
-     * @param null $timeOffset
-     * @param null $imageAsset
+     * @param string|array|Image\Thumbnail\Config $thumbnailName
+     * @param int|null $timeOffset
+     * @param Image|null $imageAsset
      *
      * @return Video\ImageThumbnail
-     *
-     * @throws \Exception
      */
     public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null)
     {
@@ -174,7 +172,7 @@ class Video extends Model\Asset
     /**
      * @param string|null $filePath
      *
-     * @return string|null
+     * @return int|null
      *
      * @throws \Exception
      */
@@ -212,7 +210,7 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getDuration()
     {

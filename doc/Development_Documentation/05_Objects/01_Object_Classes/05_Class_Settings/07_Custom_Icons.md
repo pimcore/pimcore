@@ -17,7 +17,7 @@ immediately which objects are of the type "football".
 Icons that come along with Pimcore by default can be found in `<YOUR-DOMAN>/admin/misc/icon-list` (backend session needed).
 
 #### Icon Sizes
-As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 
+As icons SVG graphics are recommended. If you use pixel graphics, the maximum size is 18x20 pixels. 
 
 
 ## Custom Icons and Style in Object-Tree
@@ -73,7 +73,7 @@ class AdminStyle extends \Pimcore\Model\Element\AdminStyle {
 ![Class Icons](../../../img/classes-icons2.png)
 
 
-### Custom Tooltips (ExtJS 6 only)
+### Custom Tooltips
 
 It is possible to define custom tooltips which are shown while hovering over the object tree.
 ![Class Icons](../../../img/classes-icons3.png)

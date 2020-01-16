@@ -67,7 +67,7 @@ class Tool
     /**
      * @static
      *
-     * @param  $path
+     * @param string $path
      *
      * @return bool
      */
@@ -138,7 +138,7 @@ class Tool
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
      * @return array
      */
@@ -220,8 +220,8 @@ class Tool
     }
 
     /**
-     * @param $language
-     * @param $absolutePath
+     * @param string $language
+     * @param bool $absolutePath
      *
      * @return string
      */
@@ -553,9 +553,9 @@ class Tool
     }
 
     /**
-     * @param null $recipients
-     * @param null $subject
-     * @param null $charset
+     * @param array|string|null $recipients
+     * @param string|null $subject
+     * @param string|null $charset
      *
      * @return Mail
      *
@@ -586,7 +586,7 @@ class Tool
     /**
      * @static
      *
-     * @param $url
+     * @param string $url
      * @param array $paramsGet
      * @param array $paramsPost
      * @param array $options
@@ -636,7 +636,7 @@ class Tool
     /**
      * @static
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -648,7 +648,7 @@ class Tool
     /**
      * @static
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -658,8 +658,8 @@ class Tool
     }
 
     /**
-     * @param $class
-     * @param $type
+     * @param string $class
+     * @param string $type
      *
      * @return bool
      */
@@ -700,7 +700,7 @@ class Tool
     }
 
     /**
-     * @param $message
+     * @param string $message
      */
     public static function exitWithError($message)
     {

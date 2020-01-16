@@ -86,7 +86,7 @@ class Admin
     /**
      * @static
      *
-     * @param  $scriptContent
+     * @param string $scriptContent
      *
      * @return mixed
      */
@@ -107,7 +107,7 @@ class Admin
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @return \stdClass
      */
@@ -155,7 +155,7 @@ class Admin
     }
 
     /**
-     * @param null $sessionId
+     * @param string|null $sessionId
      *
      * @throws \Exception
      */

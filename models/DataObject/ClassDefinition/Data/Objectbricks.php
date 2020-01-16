@@ -38,7 +38,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $phpdocType = Objectbrick::class;
+    public $phpdocType = '\\' . Objectbrick::class;
 
     /**
      * @var array
@@ -488,6 +488,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -531,10 +532,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param mixed $data
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      *

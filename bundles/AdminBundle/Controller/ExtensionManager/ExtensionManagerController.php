@@ -354,7 +354,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @param $bundleName
+     * @param string $bundleName
      *
      * @return PimcoreBundleInterface
      */

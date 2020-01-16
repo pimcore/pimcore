@@ -111,7 +111,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return $this
      */
@@ -132,7 +132,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $internalType
+     * @param string $internalType
      *
      * @return $this
      */
@@ -153,7 +153,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $internal
+     * @param string $internal
      *
      * @return $this
      */
@@ -174,7 +174,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $direct
+     * @param string $direct
      *
      * @return $this
      */
@@ -195,7 +195,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $linktype
+     * @param string $linktype
      *
      * @return $this
      */
@@ -216,7 +216,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $target
+     * @param string $target
      *
      * @return $this
      */
@@ -237,7 +237,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $parameters
+     * @param string $parameters
      *
      * @return $this
      */
@@ -258,7 +258,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $anchor
+     * @param string $anchor
      *
      * @return $this
      */
@@ -279,7 +279,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $title
+     * @param string $title
      *
      * @return $this
      */
@@ -300,7 +300,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $accesskey
+     * @param string $accesskey
      *
      * @return $this
      */
@@ -321,7 +321,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $rel
+     * @param string $rel
      *
      * @return $this
      */
@@ -342,7 +342,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $tabindex
+     * @param string $tabindex
      *
      * @return $this
      */
@@ -389,7 +389,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -499,7 +499,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $object
+     * @param ElementInterface $object
      *
      * @return $this
      */

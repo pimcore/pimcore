@@ -141,7 +141,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {
             foreach ($data as $key => &$value) {
-                $fieldDefinition = $this->getFielddefinition($key);
+                $fieldDefinition = $this->getFieldDefinition($key);
                 if ($fieldDefinition instanceof CalculatedValue) {
                     $childData = new DataObject\Data\CalculatedValue($fieldDefinition->getName());
                     $ownerType = $params['context']['containerType'] ?? 'localizedfield';
@@ -303,7 +303,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
-                    $fd = $this->getFielddefinition($name);
+                    $fd = $this->getFieldDefinition($name);
                     $params['language'] = $language;
                     $localizedFields->setLocalizedValue(
                         $name,
@@ -411,6 +411,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -474,10 +475,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
      * @param mixed $value
      * @param null $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|null|DataObject\Localizedfield
      *
@@ -496,9 +498,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 }
             }
 
-            $localizedFields = $object->getLocalizedFields();
-            if (!$localizedFields) {
+            if (isset($params["context"]) && $params["context"]["containerType"] === 'fieldcollection') {
                 $localizedFields = new DataObject\Localizedfield();
+                $localizedFields->setContext($params["context"]);
+            } else {
+                $localizedFields = $object->getLocalizedFields();
+
+                if (!$localizedFields) {
+                    $localizedFields = new DataObject\Localizedfield();
+                }
             }
 
             if ($object instanceof DataObject\Concrete) {
@@ -539,7 +547,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                         ).' ]'
                     );
                 }
-                $fd = $this->getFielddefinition($field->name);
+                $fd = $this->getFieldDefinition($field->name);
                 if (!$fd instanceof DataObject\ClassDefinition\Data) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         continue;
@@ -557,7 +565,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
                 $localizedFields->setLocalizedValue(
                     $field->name,
-                    $this->getFielddefinition($field->name)->getFromWebserviceImport(
+                    $this->getFieldDefinition($field->name)->getFromWebserviceImport(
                         $field->value,
                         $object,
                         $params,
@@ -843,7 +851,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      *
      * @return DataObject\ClassDefinition\Data|null
      */
-    public function getFielddefinition($name, $context = [])
+    public function getFieldDefinition($name, $context = [])
     {
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
@@ -1258,8 +1266,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         foreach ($mapping as $language => $fields) {
             foreach ($fields as $key => $value) {
-                $fd = $this->getFielddefinition($key);
-                if ($fd & $fd->isDiffChangeAllowed($object)) {
+                $fd = $this->getFieldDefinition($key);
+                if ($fd && $fd->isDiffChangeAllowed($object)) {
                     if ($value == null) {
                         unset($localData[$language][$key]);
                     } else {
@@ -1417,7 +1425,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 foreach ($items as $language => $languageData) {
                     $languageResult = [];
                     foreach ($languageData as $elementName => $elementData) {
-                        $fd = $this->getFielddefinition($elementName);
+                        $fd = $this->getFieldDefinition($elementName);
                         if (!$fd) {
                             // class definition seems to have changed
                             Logger::warn('class definition seems to have changed, element name: '.$elementName);
@@ -1455,7 +1463,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             foreach ($value as $language => $languageData) {
                 $languageResult = [];
                 foreach ($languageData as $elementName => $elementData) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: '.$elementName);

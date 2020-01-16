@@ -1,4 +1,4 @@
-# Testing
+# Application Testing
 
 Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
 

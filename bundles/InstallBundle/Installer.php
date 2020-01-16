@@ -617,6 +617,9 @@ class Installer
         return $errors;
     }
 
+    /**
+     * @return array
+     */
     protected function getDataFiles()
     {
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
@@ -651,7 +654,7 @@ class Installer
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @throws \Exception
      */

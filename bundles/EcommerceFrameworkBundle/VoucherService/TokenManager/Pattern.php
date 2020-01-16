@@ -381,7 +381,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * Builds an insert query for an array of tokens.
      *
-     * @param $insertTokens
+     * @param array $insertTokens
      *
      * @return string
      */
@@ -502,7 +502,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * Creates an array with the indices of days of the given usage period.
      *
      * @param array $data
-     * @param $usagePeriod
+     * @param int $usagePeriod
      */
     protected function prepareUsageStatisticData(&$data, $usagePeriod)
     {
@@ -519,7 +519,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * Prepares the view and returns the according template for rendering.
      *
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params
      *
      * @return string
@@ -626,7 +626,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * Checks whether an index for the given name parameter exists in
      * the character pool member array.
      *
-     * @param $poolName
+     * @param string $poolName
      *
      * @return bool
      */

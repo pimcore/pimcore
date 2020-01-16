@@ -29,7 +29,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Element\Tag[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $tags = null;
@@ -40,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $tags
+     * @param Model\Element\Tag[]|null $tags
      *
      * @return $this
      */

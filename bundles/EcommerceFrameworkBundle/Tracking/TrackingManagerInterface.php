@@ -23,8 +23,23 @@ interface TrackingManagerInterface extends
     CartProductActionRemoveInterface,
     CheckoutInterface,
     CheckoutStepInterface,
-    CheckoutCompleteInterface
+    CheckoutCompleteInterface,
+    TrackEventInterface
 {
+    /**
+     * Returns the current javascript tracking codes for all trackers
+     *
+     * @return string
+     */
+    public function getTrackedCodes(): string;
+
+
+    /**
+     * Forwards all tracked tracking codes to the next request via FlashMesssageBag
+     *
+     * @return self
+     */
+    public function forwardTrackedCodesAsFlashMessage(): self;
 }
 
 class_alias(TrackingManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager');

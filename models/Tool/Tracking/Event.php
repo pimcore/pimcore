@@ -55,7 +55,7 @@ class Event extends Model\AbstractModel
     public $data;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return Event|null
      */
@@ -72,12 +72,12 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $category
-     * @param $action
-     * @param $label
-     * @param $day
-     * @param $month
-     * @param $year
+     * @param string $category
+     * @param string $action
+     * @param string $label
+     * @param int $day
+     * @param int $month
+     * @param int $year
      *
      * @return Event
      */
@@ -97,7 +97,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $action
+     * @param string $action
      *
      * @return $this
      */
@@ -117,7 +117,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $category
+     * @param string $category
      *
      * @return $this
      */
@@ -137,7 +137,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -157,7 +157,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $label
+     * @param string $label
      *
      * @return $this
      */
@@ -177,7 +177,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      *
      * @return $this
      */
@@ -197,7 +197,7 @@ class Event extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return $this
      */

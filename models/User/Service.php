@@ -24,7 +24,7 @@ class Service
      *
      * @static
      *
-     * @param $type
+     * @param string $type
      *
      * @return string
      */

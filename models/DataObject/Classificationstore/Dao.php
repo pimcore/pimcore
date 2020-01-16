@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 

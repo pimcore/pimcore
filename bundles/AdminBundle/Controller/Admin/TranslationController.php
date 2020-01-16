@@ -474,7 +474,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @param $translations
+     * @param array $translations
      *
      * @return array
      */
@@ -493,10 +493,10 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @param $joins
-     * @param $list
-     * @param $tableName
-     * @param $filters
+     * @param array $joins
+     * @param Translation\AbstractTranslation $list
+     * @param string $tableName
+     * @param array $filters
      */
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
@@ -543,7 +543,7 @@ class TranslationController extends AdminController
 
     /**
      * @param Request $request
-     * @param $tableName
+     * @param string $tableName
      * @param bool $languageMode
      *
      * @return array|null|string
@@ -1066,8 +1066,10 @@ class TranslationController extends AdminController
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
-                    if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
-                        $definitions = $fd->getFielddefinitions();
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $fd */
+                    $fd = $element->getClass()->getFieldDefinition('localizedfields');
+                    if ($fd) {
+                        $definitions = $fd->getFieldDefinitions();
 
                         $locale = str_replace('-', '_', $source);
                         if (!Tool::isValidLanguage($locale)) {

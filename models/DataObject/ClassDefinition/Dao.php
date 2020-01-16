@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
     protected $tableDefinitions = null;
 
     /**
-     * @param mixed $id
+     * @param string $id
      *
      * @return string|null
      */
@@ -286,7 +286,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @param $newName
+     * @param string $newName
      */
     public function updateClassNameInObjects($newName)
     {

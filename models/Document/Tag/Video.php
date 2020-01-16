@@ -30,7 +30,7 @@ class Video extends Model\Document\Tag
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
-     * @var mixed
+     * @var int|string
      */
     public $id;
 
@@ -59,7 +59,7 @@ class Video extends Model\Document\Tag
     public $description = '';
 
     /**
-     * @param $title
+     * @param string $title
      *
      * @return $this
      */
@@ -84,7 +84,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -142,6 +142,9 @@ class Video extends Model\Document\Tag
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getDataForResource()
     {
         return [
@@ -433,7 +436,7 @@ class Video extends Model\Document\Tag
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
-            $width = ($this->getWidth() - 1) . 'px';
+            $width = ((int)$this->getWidth() - 1) . 'px';
         }
 
         // only display error message in debug mode
@@ -741,7 +744,7 @@ class Video extends Model\Document\Tag
 
     /**
      * @param array $urls
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -854,7 +857,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -912,10 +915,11 @@ class Video extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -948,13 +952,15 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset
+     * @return Asset|null
      */
     public function getVideoAsset()
     {
         if ($this->getVideoType() == 'asset') {
             return Asset::getById($this->id);
         }
+
+        return null;
     }
 
     /**
@@ -966,7 +972,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return string
      */
@@ -984,7 +990,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return array
      */
@@ -998,7 +1004,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param mixed $id
+     * @param int|string $id
      *
      * @return Video
      */
@@ -1010,11 +1016,11 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
     public function getId()
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**

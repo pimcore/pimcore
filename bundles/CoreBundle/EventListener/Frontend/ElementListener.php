@@ -20,13 +20,11 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Asset\Dao;
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -98,38 +96,37 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $request = $event->getRequest();
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return;
-        }
-
-        $document = $this->documentResolver->getDocument($request);
-        if (!$document instanceof Document\PageSnippet && !Staticroute::getCurrentRoute()) {
-            return;
-        }
-
-        $adminRequest =
-            $this->requestHelper->isFrontendRequestByAdmin($request) ||
-            $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
-
-        $user = null;
-        if ($adminRequest) {
-            $user = $this->userLoader->getUser();
-        }
-
-        if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
-            $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
-                $document->getFullPath()
-            ]);
-
-            throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
-        }
-
         if ($event->isMasterRequest()) {
+            $request = $event->getRequest();
+            if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+                return;
+            }
+
+            $document = $this->documentResolver->getDocument($request);
+            if (!$document && !Staticroute::getCurrentRoute()) {
+                return;
+            }
+
+            $adminRequest =
+                $this->requestHelper->isFrontendRequestByAdmin($request) ||
+                $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
+
+            $user = null;
+            if ($adminRequest) {
+                $user = $this->userLoader->getUser();
+            }
+
+            if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
+                $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
+                    $document->getFullPath()
+                ]);
+
+                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
+            }
+
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
                 $document = $this->handleAdminUserDocumentParams($request, $document);
-
                 $this->handleObjectParams($request);
             }
 
@@ -193,7 +190,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     /**
      * @param Request $request
-     * @param Document|Dao $document
+     * @param Document $document
      *
      * @return Document
      */
@@ -212,16 +209,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // why was it an object?
             // $docKey = "document_" . $this->getParam("document")->getId();
 
-            $docKey = 'document_' . $document->getId();
-            $docSession = Session::getReadOnly('pimcore_documents');
-
-            if ($docSession->has($docKey)) {
+            if ($document = Document\Service::getElementFromSession('document', $document->getId())) {
+                // if there is a document in the session use it
                 $this->logger->debug('Loading preview document {document} from session', [
                     'document' => $document->getFullPath()
                 ]);
-
-                // if there is a document in the session use it
-                $document = $docSession->get($docKey);
             }
         }
 
@@ -251,23 +243,19 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     }
 
     /**
-     * @param Document|Dao $document
+     * @param Document $document
      *
      * @return mixed|Document|Document\PageSnippet
      */
     protected function handleEditmode(Document $document)
     {
         // check if there is the document in the session
-        $docKey = 'document_' . $document->getId();
-        $docSession = Session::getReadOnly('pimcore_documents');
-
-        if ($docSession->has($docKey)) {
+        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
+            // if there is a document in the session use it
             $this->logger->debug('Loading editmode document {document} from session', [
                 'document' => $document->getFullPath()
             ]);
-
-            // if there is a document in the session use it
-            $document = $docSession->get($docKey);
+            $document = $documentFromSession;
         } else {
             $this->logger->debug('Loading editmode document {document} from latest version', [
                 'document' => $document->getFullPath()
@@ -293,13 +281,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected function handleObjectParams(Request $request)
     {
         // object preview
-        if ($request->get('pimcore_object_preview')) {
-            $key = 'object_' . $request->get('pimcore_object_preview');
-
-            $session = Session::getReadOnly('pimcore_objects');
-            if ($session->has($key)) {
-                /** @var Concrete $object */
-                $object = $session->get($key);
+        if ($objectId = $request->get('pimcore_object_preview')) {
+            if ($object = Service::getElementFromSession('object', $objectId)) {
 
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
                     'object' => $object->getFullPath(),

@@ -140,6 +140,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Permissions for the user which requested this document in editmode*
+     *
+     * @var array
      */
     protected $userPermissions;
 
@@ -162,28 +164,28 @@ class Document extends Element\AbstractElement
      *
      * @var array
      */
-    protected $children;
+    protected $children = [];
 
     /**
      * Indicator of document has children or not.
      *
-     * @var bool
+     * @var bool[]
      */
-    protected $hasChildren;
+    protected $hasChildren = [];
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    protected $siblings;
+    protected $siblings = [];
 
     /**
      * Indicator if document has siblings or not
      *
-     * @var bool
+     * @var bool[]
      */
-    protected $hasSiblings;
+    protected $hasSiblings = [];
 
     /**
      * Check if the document is locked.
@@ -260,7 +262,7 @@ class Document extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter
+     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter|null
      */
     public static function getById($id, $force = false)
     {
@@ -539,7 +541,7 @@ class Document extends Element\AbstractElement
 
         if (Document\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof Document and $duplicate->getId() != $this->getId()) {
+            if ($duplicate instanceof Document && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
             }
         }
@@ -567,7 +569,7 @@ class Document extends Element\AbstractElement
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
+        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
@@ -645,21 +647,20 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param $children
+     * @param self[] $children
      *
-     * @return array
-     *
-     * @todo: replace and with &&
+     * @return $this
      */
     public function setChildren($children)
     {
-        $this->children = $children;
-        if (is_array($children) and count($children) > 0) {
-            $this->hasChildren = true;
-        } elseif ($children === null) {
-            $this->hasChildren = null;
-        } else {
-            $this->hasChildren = false;
+        if(empty($children)) {
+            // unset all cached children
+            $this->hasChildren = [];
+            $this->children = [];
+        } elseif(is_array($children)) {
+            $cacheKey = $this->getListingCacheKey();
+            $this->children[$cacheKey] = $children;
+            $this->hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
@@ -668,83 +669,86 @@ class Document extends Element\AbstractElement
     /**
      * Get a list of the children (not recursivly)
      *
-     * @param bool
+     * @param bool $includingUnpublished
      *
      * @return self[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (!isset($this->children[$cacheKey])) {
             $list = new Document\Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->children = $list->load();
+            $this->children[$cacheKey] = $list->load();
         }
 
-        return $this->children;
+        return $this->children[$cacheKey];
     }
 
     /**
      * Returns true if the document has at least one child
      *
-     * @param $unpublished
+     * @param bool $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren($includingUnpublished = null)
     {
-        if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
-                return $this->getDao()->hasChildren($unpublished);
-            } else {
-                return $this->hasChildren;
-            }
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->hasChildren[$cacheKey])) {
+            return $this->hasChildren[$cacheKey];
         }
 
-        return $this->getDao()->hasChildren($unpublished);
+        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
      *
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return array
      */
-    public function getSiblings($unpublished = false)
+    public function getSiblings($includingUnpublished = false)
     {
-        if ($this->siblings === null) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (!isset($this->siblings[$cacheKey])) {
             $list = new Document\Listing();
-            $list->setUnpublished($unpublished);
+            $list->setUnpublished($includingUnpublished);
             // string conversion because parentId could be 0
             $list->addConditionParam('parentId = ?', (string)$this->getParentId());
             $list->addConditionParam('id != ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->siblings = $list->load();
+            $this->siblings[$cacheKey] = $list->load();
+            $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
         }
 
-        return $this->siblings;
+        return $this->siblings[$cacheKey];
     }
 
     /**
      * Returns true if the document has at least one sibling
      *
+     * @param bool|null $includingUnpublished
+     *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings($includingUnpublished = null)
     {
-        if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))) {
-                return $this->getDao()->hasSiblings();
-            } else {
-                return $this->hasSiblings;
-            }
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+
+        if (isset($this->hasSiblings[$cacheKey])) {
+            return $this->hasSiblings[$cacheKey];
         }
 
-        return $this->getDao()->hasSiblings();
+        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -764,7 +768,7 @@ class Document extends Element\AbstractElement
     /**
      * Mark the document as locked.
      *
-     * @param  $locked
+     * @param string $locked
      *
      * @return Document
      */
@@ -923,9 +927,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
-     * @return mixed
+     * @return string
      */
     protected function prepareFrontendPath($path)
     {
@@ -1110,6 +1114,8 @@ class Document extends Element\AbstractElement
     {
         $this->parentId = (int) $parentId;
         $this->parent = null;
+        $this->siblings = [];
+        $this->hasSiblings = [];
 
         return $this;
     }
@@ -1435,7 +1441,7 @@ class Document extends Element\AbstractElement
     /**
      * Add document type to the $types array. It defines additional document types available in Pimcore.
      *
-     * @param $type
+     * @param string $type
      */
     public static function addDocumentType($type)
     {
@@ -1465,7 +1471,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param mixed $userPermissions
+     * @param array $userPermissions
      */
     public function setUserPermissions($userPermissions): void
     {
@@ -1490,5 +1496,12 @@ class Document extends Element\AbstractElement
         $this->versionCount = (int) $versionCount;
 
         return $this;
+    }
+
+    protected function getListingCacheKey(array $args = []) {
+        $unpublished = (bool)($args[0] ?? false);
+        $cacheKey = (string)$unpublished;
+
+        return $cacheKey;
     }
 }

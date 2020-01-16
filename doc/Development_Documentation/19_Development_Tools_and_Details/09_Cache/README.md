@@ -28,7 +28,6 @@ The `PimcoreCoreBundle` defines a default cache configuration which you can over
 
 pimcore:
     cache:
-        enabled:              true
         pool_service_id:      null
         default_lifetime:     2419200
         pools:

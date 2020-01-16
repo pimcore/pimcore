@@ -80,12 +80,12 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param $id
-     * @param $data
-     * @param null $tag
-     * @param null $lifetime
+     * @param string $id
+     * @param mixed $data
+     * @param string|null $tag
+     * @param int|null $lifetime
      *
-     * @return mixed
+     * @return bool
      */
     public static function add($id, $data, $tag = null, $lifetime = null)
     {
@@ -103,12 +103,12 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param $id
-     * @param $data
-     * @param null $tag
-     * @param null $lifetime
+     * @param string $id
+     * @param mixed $data
+     * @param string|null $tag
+     * @param int|null $lifetime
      *
-     * @return mixed
+     * @return bool
      */
     public static function set($id, $data, $tag = null, $lifetime = null)
     {
@@ -122,7 +122,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return mixed
      */
@@ -134,7 +134,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|TmpStore
      */
@@ -153,7 +153,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param $tag
+     * @param string $tag
      *
      * @return array
      */
@@ -206,7 +206,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $data
+     * @param mixed $data
      */
     public function setData($data)
     {
@@ -262,7 +262,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param null $lifetime
+     * @param int|null $lifetime
      *
      * @return mixed
      */

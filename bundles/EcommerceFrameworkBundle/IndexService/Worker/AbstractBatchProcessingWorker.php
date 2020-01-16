@@ -44,9 +44,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     abstract protected function getStoreTableName();
 
     /**
-     * @param $objectId
-     * @param null $data
-     * @param null $metadata
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
     abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
 
@@ -86,7 +86,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * deletes element from store table
      *
-     * @param $objectId
+     * @param int $objectId
      */
     protected function deleteFromStoreTable($objectId)
     {
@@ -97,7 +97,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      * prepare data for index creation and store is in store table
      *
      * @param IndexableInterface $object
-     * @param $subObjectId
+     * @param int $subObjectId
      *
      * @return array
      */
@@ -340,8 +340,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * Inserts the data do the store table
      *
-     * @param $data
-     * @param $subObjectId
+     * @param array $data
+     * @param int $subObjectId
      */
     protected function insertDataToIndex($data, $subObjectId)
     {

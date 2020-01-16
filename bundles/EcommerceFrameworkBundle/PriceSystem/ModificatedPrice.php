@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class ModificatedPrice extends Price implements ModificatedPriceInterface
@@ -27,11 +28,34 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
      */
     protected $description;
 
+    /**
+     * @var null|RuleInterface
+     */
+    protected $rule;
+
     public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false, string $description = null)
     {
         parent::__construct($amount, $currency, $minPrice);
 
         $this->description = $description;
+    }
+
+    /**
+     * @return RuleInterface|null
+     */
+    public function getRule()
+    {
+        return $this->rule;
+    }
+
+    /**
+     * @param RuleInterface|null $rule
+     * @return $this
+     */
+    public function setRule($rule)
+    {
+        $this->rule = $rule;
+        return $this;
     }
 
     /**

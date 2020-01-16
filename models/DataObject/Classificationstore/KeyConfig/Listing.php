@@ -27,7 +27,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\Classificationstore\KeyConfig[]|null
      * @deprecated use getter/setter methods or $this->data
      */
     protected $list = null;
@@ -49,7 +49,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array
+     * @param Model\DataObject\Classificationstore\KeyConfig[]|null $theList
      *
      * @return $this
      */

@@ -23,7 +23,7 @@ use Pimcore\Model\Asset\Image;
 trait ImageThumbnailTrait
 {
     /**
-     * @var \Pimcore\Model\Asset\Video
+     * @var Asset
      */
     protected $asset;
 
@@ -33,7 +33,7 @@ trait ImageThumbnailTrait
     protected $config;
 
     /**
-     * @var mixed|string
+     * @var string
      */
     protected $filesystemPath;
 
@@ -251,6 +251,11 @@ trait ImageThumbnailTrait
         return \Pimcore\File::getFileExtension($this->getFileSystemPath(true));
     }
 
+    /**
+     * @param string $filesystemPath
+     *
+     * @return string
+     */
     protected function convertToWebPath(string $filesystemPath): string
     {
         $path = preg_replace([

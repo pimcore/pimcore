@@ -68,11 +68,7 @@ class Placeholder extends AbstractHelper
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param  string $content
-     * @param  string $keyValue
-     * @param  string $keyType
-     * @param  array $modifiers
-     * @param  string $placement
+     * @param string $containerName
      *
      * @return Container
      */

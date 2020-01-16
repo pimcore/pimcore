@@ -25,7 +25,7 @@ class Reservation extends AbstractModel
     public $cart_id;
 
     /**
-     * @param $code
+     * @param string $code
      * @param CartInterface $cart
      *
      * @return bool|Reservation

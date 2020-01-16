@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Doctrine\Common\Collections\Collection;
@@ -28,9 +29,13 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool;
+use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -113,7 +118,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param array|\Pimcore\Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
@@ -245,7 +250,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array
      *
@@ -407,8 +412,8 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $type
-     * @param $path
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -422,7 +427,7 @@ class Service extends Model\AbstractModel
             return DataObject\Service::pathExists($path);
         }
 
-        return;
+        return false;
     }
 
     /**
@@ -451,7 +456,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  ElementInterface $element $element
+     * @param ElementInterface $element
      *
      * @return string
      */
@@ -499,7 +504,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  $props
+     * @param array $props
      *
      * @return array
      */
@@ -624,7 +629,7 @@ class Service extends Model\AbstractModel
      * find all elements which the user may not list and therefore may never be shown to the user
      *
      * @param string $type asset|object|document
-     * @param $user
+     * @param Model\User $user
      *
      * @return array
      */
@@ -789,7 +794,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param array $options
      *
      * @return Asset\Folder|Document\Folder|DataObject\Folder
@@ -873,8 +878,8 @@ class Service extends Model\AbstractModel
     }
 
     /** Changes the query according to the custom view config
-     * @param $cv array
-     * @param $childsList
+     * @param array $cv
+     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childsList
      */
     public static function addTreeFilterJoins($cv, $childsList)
     {
@@ -905,9 +910,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
-     * @return mixed
+     * @return array|null
      */
     public static function getCustomViewById($id)
     {
@@ -919,13 +924,15 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * @param string $key
-     * @param null $type
+     * @param string $type
      *
-     * @return mixed|string
+     * @return string
      */
     public static function getValidKey($key, $type)
     {
@@ -995,9 +1002,9 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     * @param $element
+     * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getUniqueKey($element)
     {
@@ -1012,13 +1019,15 @@ class Service extends Model\AbstractModel
         if ($element instanceof Asset) {
             return Asset\Service::getUniqueKey($element);
         }
+
+        return null;
     }
 
     /**
-     * @param $data
-     * @param $type
+     * @param array $data
+     * @param string $type
      *
-     * @return array|string
+     * @return array
      */
     public static function fixAllowedTypes($data, $type)
     {
@@ -1055,21 +1064,24 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $versions
+     * @param Model\Version[] $versions
      *
      * @return array
      */
     public static function getSafeVersionInfo($versions)
     {
         $indexMap = [];
+        $result = [];
 
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
-            $result = [];
-            /** @var Model\Version $version */
             foreach ($versions as $version) {
-                $name = $version['user']['name'];
-                $id = $version['user']['id'];
+                $name = null;
+                $id = null;
+                if(isset($version['user'])) {
+                    $name = $version['user']['name'];
+                    $id = $version['user']['id'];
+                }
                 unset($version['user']);
                 $version['user']['name'] = $name;
                 $version['user']['id'] = $id;
@@ -1082,9 +1094,9 @@ class Service extends Model\AbstractModel
 
                 $result[] = $version;
             }
-
-            return $result;
         }
+
+        return $result;
     }
 
     /**
@@ -1220,5 +1232,79 @@ class Service extends Model\AbstractModel
         }
 
         return $e;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return string
+     */
+    public static function getSessionKey($type, $elementId, $postfix = '') {
+        $sessionId = Session::getSessionId();
+        $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
+        return $tmpStoreKey;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return AbstractObject|Document|Asset|null
+     */
+    public static function getElementFromSession($type, $elementId, $postfix = '')
+    {
+        $element = null;
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+
+        $tmpStore = TmpStore::get($tmpStoreKey);
+        if ($tmpStore) {
+            $data = $tmpStore->getData();
+            if ($data) {
+                $element = Serialize::unserialize($data);
+                return $element;
+            }
+        }
+
+        return $element;
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param string $postfix
+     * @param bool $clone save a copy
+     */
+    public static function saveElementToSession($element, $postfix = '', $clone = true)
+    {
+        if ($clone) {
+            $copier = new DeepCopy();
+            $element = $copier->copy($element);
+        }
+
+        $elementType = Service::getElementType($element);
+        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
+        $tag = $elementType . '-session' . $postfix;
+
+        if ($element instanceof ElementDumpStateInterface) {
+            self::loadAllFields($element);
+            $element->setInDumpState(true);
+        }
+        $serializedData = Serialize::serialize($element);
+
+        TmpStore::set($tmpStoreKey, $serializedData, $tag);
+    }
+
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param string $postfix
+     */
+    public static function removeElementFromSession($type, $elementId, $postfix = '')
+    {
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        TmpStore::delete($tmpStoreKey);
     }
 }

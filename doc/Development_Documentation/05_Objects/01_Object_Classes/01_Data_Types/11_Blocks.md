@@ -79,14 +79,9 @@ Create a Block:
 
 Create a Block with localized fields:
 ```php
-/** 
- * @var  $localizedfield DataObject\Localizedfield
- * 
- * Localizedfield( items )
- */
- $object = DataObject::getById(4);
- 
- $data = [
+$object = DataObject::getById(4);
+
+$data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
     "input2" => new BlockElement('input2', 'input', 'NewValue2'),
     "myhref" => new BlockElement('myhref', 'manyToManyRelation', [$object]),
@@ -97,10 +92,10 @@ Create a Block with localized fields:
         "en" => [
             "localizedInput" => "My English text"
         ]
-    ]));
-    ];
- 
- 
+    ]))
+];
+
+$object->setMyBlockField([$data]); 
 ```
 
 

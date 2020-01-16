@@ -715,5 +715,7 @@
     "invitation_link_sent": "Un lien de connexion temporaire a été envoyé à l'adresse électronique: \"%s\" ",
     "geopolyline": "Polyligne géographique",
     "classificationstore_error_group_exists_msg": "Un groupe avec ce nom existe déjà",
-    "classificationstore_group_by_key": "Grouper par clé"
+    "classificationstore_group_by_key": "Grouper par clé",
+    "cache_raw_relation_data": "Mettre en cache les données de relation brutes",
+    "allow_to_create_new_object": "Allow to create a new object in relation field"
 }

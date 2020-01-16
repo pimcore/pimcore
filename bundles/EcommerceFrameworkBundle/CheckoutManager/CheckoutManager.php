@@ -109,8 +109,8 @@ class CheckoutManager implements CheckoutManagerInterface
      * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param array $checkoutSteps
+     * @param EventDispatcherInterface $eventDispatcher
      * @param PaymentInterface|null $paymentProvider
-     * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(
         CartInterface $cart,

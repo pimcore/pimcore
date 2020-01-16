@@ -535,7 +535,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
-            DataObject\Service::removeObjectFromSession($object->getId());
+            DataObject\Service::removeElementFromSession('object', $object->getId());
 
             return $this->adminJson($data);
         }
@@ -557,10 +557,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param $object
-     * @param $key
-     * @param $fielddefinition
-     * @param $objectFromVersion
+     * @param DataObject\Concrete $object
+     * @param string $key
+     * @param DataObject\ClassDefinition\Data $fielddefinition
+     * @param bool $objectFromVersion
      * @param int $level
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
@@ -673,9 +673,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $layout
-     * @param $allowedView
-     * @param $allowedEdit
+     * @param Model\DataObject\ClassDefinition\Data $layout
+     * @param array $allowedView
+     * @param array $allowedEdit
      */
     protected function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
@@ -793,7 +793,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $classes
+     * @param DataObject\ClassDefinition[] $classes
      *
      * @return array
      */
@@ -1112,7 +1112,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param DataObject\AbstractObject $updatedObject
-     * @param $newIndex
+     * @param int $newIndex
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
@@ -1328,11 +1328,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'treeData' => $treeData
             ]);
         } elseif ($request->get('task') == 'session') {
-            Tool\Session::useSession(function (AttributeBagInterface $session) use ($object) {
-                $key = 'object_' . $object->getId();
-                $session->set($key, $object);
-            }, 'pimcore_objects');
-
+            DataObject\Service::saveElementToSession($object);
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {
@@ -1367,8 +1363,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param Request $request
      * @param DataObject\Concrete $object
-     * @param $originalModificationDate
-     * @param $data
+     * @param int $originalModificationDate
+     * @param array $data
      *
      * @return bool
      *
@@ -1436,9 +1432,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param Request $request
-     * @param $object
+     * @param DataObject\AbstractObject $object
      *
-     * @return mixed
+     * @return DataObject\AbstractObject
      */
     protected function assignPropertiesFromEditmode(Request $request, $object)
     {
@@ -1548,8 +1544,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @TemplatePhp()
      *
      * @param Request $request
-     * @param $from
-     * @param $to
+     * @param int $from
+     * @param int $to
      *
      * @return array
      *
@@ -1710,6 +1706,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                             if ($brickDescriptor) {
                                 $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                                /** @var DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
                                 $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                                 $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
                             } else {
@@ -1802,10 +1799,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param string $class
+     * @param DataObject\ClassDefinition $class
      * @param string $key
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data|null
      */
     protected function getFieldDefinition($class, $key)
     {
@@ -1816,7 +1813,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $localized = $class->getFieldDefinition('localizedfields');
         if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFielddefinition($key);
+            $fieldDefinition = $localized->getFieldDefinition($key);
         }
 
         return $fieldDefinition;
@@ -2045,45 +2042,38 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function previewAction(Request $request)
     {
         $id = $request->get('id');
-        $key = 'object_' . $id;
 
-        $session = Tool\Session::getReadOnly('pimcore_objects');
-        if ($session->has($key)) {
-            /**
-             * @var DataObject\Concrete $object
-             */
-            $object = $session->get($key);
+        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
+            $url = $object->getClass()->getPreviewUrl();
+            if ($url) {
+                // replace named variables
+                $vars = $object->getObjectVars();
+                foreach ($vars as $key => $value) {
+                    if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                        $url = str_replace('%' . $key, urlencode($value), $url);
+                    } else {
+                        if (strpos($url, '%' . $key) !== false) {
+                            return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+                        }
+                    }
+                }
+            } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
+            }
+
+            if (!$url) {
+                return new Response("Preview not available, it seems that there's a problem with this object.");
+            }
+
+            // replace all remainaing % signs
+            $url = str_replace('%', '%25', $url);
+
+            $urlParts = parse_url($url);
+
+            return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
         } else {
             return new Response("Preview not available, it seems that there's a problem with this object.");
         }
-
-        $url = $object->getClass()->getPreviewUrl();
-        if ($url) {
-            // replace named variables
-            $vars = $object->getObjectVars();
-            foreach ($vars as $key => $value) {
-                if (!empty($value) && (is_string($value) || is_numeric($value))) {
-                    $url = str_replace('%' . $key, urlencode($value), $url);
-                } else {
-                    if (strpos($url, '%' . $key) !== false) {
-                        return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
-                    }
-                }
-            }
-        } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-            $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
-        }
-
-        if (!$url) {
-            return new Response("Preview not available, it seems that there's a problem with this object.");
-        }
-
-        // replace all remainaing % signs
-        $url = str_replace('%', '%25', $url);
-
-        $urlParts = parse_url($url);
-
-        return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
     }
 
     /**
