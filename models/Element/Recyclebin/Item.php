@@ -209,7 +209,7 @@ class Item extends Model\AbstractModel
         File::put($this->getStoreageFile(), $data);
 
         $saveBinaryData = function ($element, $rec, $scope) {
-            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
+            // assets are kind of special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 if ($element->getType() != 'folder') {
                     $handle = fopen($scope->getStorageFileBinary($element), 'w', false, File::getContext());
@@ -271,12 +271,14 @@ class Item extends Model\AbstractModel
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
+                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
+            } elseif ($element instanceof Document) {
+                $children = $element->getChildren(true);
             } else {
-                $childs = $element->getChildren();
+                $children = $element->getChildren();
             }
 
-            foreach ($childs as $child) {
+            foreach ($children as $child) {
                 $this->loadChildren($child);
             }
         }
@@ -311,7 +313,7 @@ class Item extends Model\AbstractModel
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
-                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
+                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
             } elseif ($element instanceof Document) {
                 $children = $element->getChildren(true);
             } else {
