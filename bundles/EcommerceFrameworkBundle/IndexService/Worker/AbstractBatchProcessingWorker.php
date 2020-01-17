@@ -235,6 +235,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         }
                     } catch (\Throwable $e) {
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
+                        $event->setSubObjectId($subObjectId);
                         $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 
                         if ($event->doSkipAttribute()) {
@@ -272,6 +273,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 if ($jsonLastError !== JSON_ERROR_NONE) {
                     $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
                     $event = new PreprocessErrorEvent($e);
+                    $event->setSubObjectId($subObjectId);
                     $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
                     if ($event->doThrowException()) {
                         throw $e;
