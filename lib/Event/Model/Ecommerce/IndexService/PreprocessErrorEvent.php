@@ -38,8 +38,9 @@ class PreprocessErrorEvent extends Event
      *
      * @param \Throwable $exception
      * @param bool $throwException
+     * @param int $subObjectId
      */
-    public function __construct(\Throwable $exception, bool $throwException = true, $subObjectId = 0)
+    public function __construct(\Throwable $exception, bool $throwException = true, int $subObjectId = 0)
     {
         $this->exception = $exception;
         $this->throwException = $throwException;
