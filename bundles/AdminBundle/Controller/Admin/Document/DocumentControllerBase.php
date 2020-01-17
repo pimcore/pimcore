@@ -31,6 +31,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
+
+    use Model\Element\AdminStyleTrait;
+
     /**
      * @param Request $request
      * @param Model\Document $document
@@ -330,22 +333,4 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
 
-    /**
-     * @param Model\Document $document
-     * @param null|int $context
-     * @param array $data
-     * @throws \Exception
-     */
-    protected function addAdminStyle(Model\Document $document, $context = null, &$data = []) {
-        $adminStyle = Model\Element\Service::getElementAdminStyle($document, $context);
-        $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
-        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;
-        if ($adminStyle->getElementCssClass() !== false) {
-            if (!isset($data['cls'])) {
-                $data['cls'] = '';
-            }
-            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
-        }
-        $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
-    }
 }

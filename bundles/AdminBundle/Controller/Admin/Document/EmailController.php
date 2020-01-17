@@ -130,7 +130,7 @@ class EmailController extends DocumentControllerBase
                         'versionDate' => $page->getModificationDate(),
                         'versionCount' => $page->getVersionCount()
                     ],
-                    'treeDate' => $treeData
+                    'treeData' => $treeData
                 ]);
             } elseif ($page->isAllowed('save')) {
                 $this->setValuesToDocument($request, $page);

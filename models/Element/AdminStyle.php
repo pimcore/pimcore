@@ -33,12 +33,12 @@ class AdminStyle
     protected $elementIcon;
 
     /**
-     * @var string string
+     * @var string
      */
     protected $elementIconClass;
 
     /**
-     * @var array sring
+     * @var array
      */
     protected $elementQtipConfig;
 

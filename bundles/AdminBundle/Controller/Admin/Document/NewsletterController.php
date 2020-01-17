@@ -18,6 +18,7 @@ use Exception;
 use Pimcore;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed;
@@ -89,7 +90,7 @@ class NewsletterController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($email))
         ];
 
-        $this->addAdminStyle($email, Pimcore\Event\Admin\ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+        $this->addAdminStyle($email, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -137,7 +138,7 @@ class NewsletterController extends DocumentControllerBase
                 $page->save();
                 $this->saveToSession($page);
 
-                $this->addAdminStyle($page, Pimcore\Event\Admin\ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
 
                 return $this->adminJson([
                     'success' => true,

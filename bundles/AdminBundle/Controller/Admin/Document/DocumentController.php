@@ -23,6 +23,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AdminStyleTrait;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
@@ -45,6 +46,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends ElementControllerBase implements EventedControllerInterface
 {
+    use AdminStyleTrait;
+
     /**
      * @var Document\Service
      */
@@ -1567,25 +1570,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $this->checkActionPermission($event, 'documents', ['docTypesGetAction']);
 
         $this->_documentService = new Document\Service($this->getAdminUser());
-    }
-
-    /**
-     * @param Model\Document $document
-     * @param null|int $context
-     * @param array $data
-     * @throws \Exception
-     */
-    protected function addAdminStyle(Document $document, $context = null, &$data) {
-        $adminStyle = Service::getElementAdminStyle($document, $context);
-        $data['icon'] = $adminStyle->getElementIcon();
-        $data['iconCls'] = $adminStyle->getElementIconClass();
-        if ($adminStyle->getElementCssClass() !== false) {
-            if (!isset($data['cls'])) {
-                $data['cls'] = '';
-            }
-            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
-        }
-        $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
     }
 
     /**

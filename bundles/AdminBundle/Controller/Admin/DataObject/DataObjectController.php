@@ -46,6 +46,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
+    use Element\AdminStyleTrait;
     use ElementEditLockHelperTrait;
 
     /**
@@ -256,7 +257,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
         $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
-        $tmpObject['qtipCfg'] = $adminStyle->getElementQtipConfig();
 
         if ($child->getType() != 'folder') {
             $tmpObject['published'] = $child->isPublished();
@@ -269,17 +269,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $tmpObject['allowVariants'] = $child->getClass()->getAllowVariants();
         }
 
-        if ($adminStyle->getElementIcon() !== false) {
-            $tmpObject['icon'] = $adminStyle->getElementIcon();
-        }
-
-        if ($adminStyle->getElementIconClass() !== false) {
-            $tmpObject['iconCls'] = $adminStyle->getElementIconClass();
-        }
-
-        if ($tmpObject['type'] == 'variant' && !$tmpObject['icon'] && !$tmpObject['iconCls']) {
-            $tmpObject['iconCls'] = 'pimcore_icon_variant';
-        }
+        $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
         if ($adminStyle->getElementCssClass() !== false) {
             if (!isset($tmpObject['cls'])) {
@@ -457,14 +447,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
-            $adminStyle = Element\Service::getElementAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR);
-
-            if ($adminStyle->getElementIcon() !== false) {
-                $objectData['general']['icon'] = $adminStyle->getElementIcon();
-            }
-            if ($adminStyle->getElementIconClass() !== false) {
-                $objectData['general']['iconCls'] = $adminStyle->getElementIconClass();
-            }
+            $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
             $currentLayoutId = $request->get('layoutId', null);
 
@@ -1498,9 +1481,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $object->setUserModification($this->getAdminUser()->getId());
             try {
                 $object->save();
-                $treeData = [];
-                $adminStyle = Element\Service::getElementAdminStyle($object, ElementAdminStyleEvent::CONTEXT_TREE);
-                $treeData['qtipCfg'] = $adminStyle->getElementQtipConfig();
+
+                $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
 
                 return $this->adminJson(
                     [

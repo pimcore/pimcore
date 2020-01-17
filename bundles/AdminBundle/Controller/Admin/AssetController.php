@@ -45,6 +45,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
+    use Element\AdminStyleTrait;
     use ElementEditLockHelperTrait;
 
     /**
@@ -149,17 +150,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
 
-        $adminStyle = Element\Service::getElementAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR);
-        $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
-        $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass(): null;
-
-        if ($adminStyle->getElementCssClass() !== false) {
-            if (!isset($data['cls'])) {
-                $data['cls'] = '';
-            }
-            $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
-        }
-
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $data['php'] = [
             'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
@@ -676,17 +667,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['expanded'] = false;
         }
 
-        $adminStyle = Element\Service::getElementAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE);
-
-        $tmpAsset['qtipCfg'] = $adminStyle->getElementQtipConfig();
-
-        if ($adminStyle->getElementIcon() !== false) {
-            $tmpAsset['icon'] = $adminStyle->getElementIcon();
-        }
-
-        if ($adminStyle->getElementIconClass() !== false) {
-            $tmpAsset['iconCls'] = $adminStyle->getElementIconClass();
-        }
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
         if ($asset->getType() == 'image') {
             try {
