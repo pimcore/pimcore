@@ -83,6 +83,6 @@ class PreprocessErrorEvent extends Event
      */
     public function setSubObjectId(int $subObjectId): void
     {
-        $this->subObjectId = $objectId;
+        $this->subObjectId = $subObjectId;
     }
 }
