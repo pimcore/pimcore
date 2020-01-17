@@ -1312,7 +1312,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @param ElementInterface $element
-     * @param null|int $context see ElementAdminStyleEvent vor values
+     * @param null|int $context see ElementAdminStyleEvent for values
      * @return AdminStyle
      */
     public static function getElementAdminStyle(ElementInterface $element, $context) {

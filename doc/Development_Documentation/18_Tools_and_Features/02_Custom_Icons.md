@@ -17,7 +17,7 @@ be changed.
  
 The basic idea is to provide one's own implementation of `Pimcore\Model\Element\AdminStyle`.
  
-This can be achieved by attaching to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L396-L407) event. 
+This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L396-L407) event. 
 
 Example:
 
