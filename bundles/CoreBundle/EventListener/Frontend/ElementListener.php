@@ -210,12 +210,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // $docKey = "document_" . $this->getParam("document")->getId();
 
             if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
-                $document = $documentFromSession;
-
                 // if there is a document in the session use it
                 $this->logger->debug('Loading preview document {document} from session', [
                     'document' => $document->getFullPath()
                 ]);
+                $document = $documentFromSession;
             }
         }
 
