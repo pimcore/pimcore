@@ -97,7 +97,7 @@ class RecyclebinTest extends ModelTestCase
         $recycledContent = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), "Expected recycled parent object ID");
-        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT]), "Expected recycled child object");
+        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT], true), "Expected recycled child object");
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();
@@ -113,7 +113,7 @@ class RecyclebinTest extends ModelTestCase
      * Verifies that an object data is restored properly
      *
      */
-    public function testRecycleData()
+    public function testObjectDataRecycleAndRestore()
     {
         // create target object
         $inputText = TestHelper::generateRandomString();
