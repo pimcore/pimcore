@@ -56,7 +56,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
      */
     public function getCredentials(Request $request)
     {
-        if ($apiKey = $request->headers->get('apikey')) {
+        if ($apiKey = $request->headers->get('x_api-key')) {
             // check for API key header
             return [
                 'apiKey' => $apiKey
