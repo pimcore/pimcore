@@ -5,14 +5,9 @@
 Many-To-One, Many-To-Many and Many-To-Many Objects are pure relation data types, which means they represent a relation to an other Pimcore 
 element (document, asset, object). The Many-To-One and Many-To-Many data types can store relations to any other Pimcore element. 
 In the object field definition there is the possibility to configure which types and subtypes of elements are allowed.
-The configuration screen for restrictions is shown below. 
 
 The Many-To-Many Object field allows relations to one or more data objects, but no other elements. Therefore the restriction settings for 
 objects are limited to object classes.
-
-
-![Relation Configuration](../../../img/classes-datatypes-relation1.png)
-
 
 The width and height of the input widget can be configured in the 
 object class settings. For a Many-To-One relation only the width can be configured, since it is represented by a single drop area. 
