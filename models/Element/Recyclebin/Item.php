@@ -26,8 +26,12 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -358,6 +362,20 @@ class Item extends Model\AbstractModel
                 }
             }
         );
+        //filter for marshaling custom data-types which implements CustomMarshalInterface
+        if ($data instanceof Concrete) {
+            $copier->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomMarshalInterface) {
+                            return $fieldDefinition->marshalRecycleData($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ), new PimcoreClassDefinitionMatcher(Data\CustomMarshalInterface::class)
+            );
+        }
         $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
 
         return $copier->copy($data);
@@ -385,6 +403,21 @@ class Item extends Model\AbstractModel
             ),
             new Model\Version\UnmarshalMatcher()
         );
+
+        if ($data instanceof Concrete) {
+            //filter for unmarshaling custom data-types which implements CustomMarshalInterface
+            $copier->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomMarshalInterface) {
+                            return $fieldDefinition->unmarshalRecycleData($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ), new PimcoreClassDefinitionMatcher(Data\CustomMarshalInterface::class)
+            );
+        }
 
         return $copier->copy($data);
     }

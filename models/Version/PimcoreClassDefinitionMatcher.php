@@ -18,14 +18,32 @@
 namespace Pimcore\Model\Version;
 
 use DeepCopy\Matcher\Matcher;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
 class PimcoreClassDefinitionMatcher implements Matcher
 {
+    /** @var string $matchType */
+    private $matchType;
+
+
+    /**
+     * PimcoreClassDefinitionMatcher constructor.
+     * @param string $matchType
+     */
+    public function __construct($matchType)
+    {
+        $this->matchType = $matchType;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     *
+     * @return bool
+     */
     public function matches($object, $property)
     {
         return $object instanceof Concrete &&
-            $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data\CustomVersionMarshalInterface;
+            $object->getClass()->getFieldDefinition($property) instanceof $this->matchType;
     }
 }
