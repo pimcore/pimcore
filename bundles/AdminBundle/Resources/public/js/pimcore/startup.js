@@ -291,8 +291,9 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return t(rec.get("name"));
-                }
+                    return ts(rec.data.name);
+                },
+                depends : ['name']
             },
             'module',
             'controller',
