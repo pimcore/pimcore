@@ -2032,7 +2032,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // replace named variables
                 $vars = $object->getObjectVars();
                 foreach ($vars as $key => $value) {
-                    if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                    if (!empty($value) && \is_scalar($value)) {
                         $url = str_replace('%' . $key, urlencode($value), $url);
                     } else {
                         if (strpos($url, '%' . $key) !== false) {
@@ -2040,6 +2040,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
                 }
+                $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
             }
