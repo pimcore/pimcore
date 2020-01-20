@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface CustomMarshalInterface
+interface CustomRecyclingMarshalInterface
 {
     /**
      * @param $object

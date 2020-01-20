@@ -362,18 +362,18 @@ class Item extends Model\AbstractModel
                 }
             }
         );
-        //filter for marshaling custom data-types which implements CustomMarshalInterface
+        //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
             $copier->addFilter(
                 new PimcoreClassDefinitionReplaceFilter(
                     function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
-                        if ($fieldDefinition instanceof Data\CustomMarshalInterface) {
+                        if ($fieldDefinition instanceof Data\CustomRecyclingMarshalInterface) {
                             return $fieldDefinition->marshalRecycleData($object, $currentValue);
                         }
 
                         return $currentValue;
                     }
-                ), new PimcoreClassDefinitionMatcher(Data\CustomMarshalInterface::class)
+                ), new PimcoreClassDefinitionMatcher(Data\CustomRecyclingMarshalInterface::class)
             );
         }
         $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
@@ -405,17 +405,17 @@ class Item extends Model\AbstractModel
         );
 
         if ($data instanceof Concrete) {
-            //filter for unmarshaling custom data-types which implements CustomMarshalInterface
+            //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
             $copier->addFilter(
                 new PimcoreClassDefinitionReplaceFilter(
                     function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
-                        if ($fieldDefinition instanceof Data\CustomMarshalInterface) {
+                        if ($fieldDefinition instanceof Data\CustomRecyclingMarshalInterface) {
                             return $fieldDefinition->unmarshalRecycleData($object, $currentValue);
                         }
 
                         return $currentValue;
                     }
-                ), new PimcoreClassDefinitionMatcher(Data\CustomMarshalInterface::class)
+                ), new PimcoreClassDefinitionMatcher(Data\CustomRecyclingMarshalInterface::class)
             );
         }
 
