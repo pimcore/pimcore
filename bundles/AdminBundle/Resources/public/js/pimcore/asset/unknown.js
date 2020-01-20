@@ -72,12 +72,7 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
             items.push(this.workflows.getLayout());
         }
 
-        var iconClass;
-        if (this.data.iconCls) {
-            iconClass = this.data.iconCls;
-        } else if (this.data.icon) {
-            iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
-        }
+        var iconClass = this.getIconClass();
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
