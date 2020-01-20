@@ -1076,24 +1076,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $tmpDocument = array_merge($tmpDocument, $tmp);
         }
 
-        $adminStyle = Service::getElementAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE);
-
-        $tmpDocument['qtipCfg'] = $adminStyle->getElementQtipConfig();
-
-        if ($adminStyle->getElementIcon() !== false) {
-            $tmpDocument['icon'] = $adminStyle->getElementIcon();
-        }
-
-        if ($adminStyle->getElementIconClass() !== false) {
-            $tmpDocument['iconCls'] = $adminStyle->getElementIconClass();
-        }
-
-        if ($adminStyle->getElementCssClass() !== false) {
-            if (!isset($tmpDocument['cls'])) {
-                $tmpDocument['cls'] = '';
-            }
-            $tmpDocument['cls'] .= $adminStyle->getElementCssClass() . ' ';
-        }
+        $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
         if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
