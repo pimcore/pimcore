@@ -734,13 +734,14 @@ class Service extends Model\AbstractModel
      * @static
      *
      * @param string $path
+     * @param string $elementType object / asset / document
      *
      * @return string
      */
-    public static function correctPath($path)
+    public static function correctPath($path, $elementType = null)
     {
         // remove trailing slash
-        if ($path != '/') {
+        if ($path !== '/') {
             $path = rtrim($path, '/ ');
         }
 
@@ -750,6 +751,12 @@ class Service extends Model\AbstractModel
         if (strpos($path, '%') !== false) {
             $path = rawurldecode($path);
         }
+
+        $pathParts = explode('/', $path);
+        $pathParts = array_map(static function($pathPart) use ($elementType) {
+            return self::getValidKey($pathPart, $elementType);
+        }, $pathParts);
+        $path = implode('/', $pathParts);
 
         return $path;
     }
