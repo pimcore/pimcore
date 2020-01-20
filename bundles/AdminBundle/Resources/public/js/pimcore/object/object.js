@@ -170,14 +170,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     addTab: function () {
 
-        // icon class
-        var iconClass = this.data.general.o_type == "variant" ? "pimcore_icon_variant" : " pimcore_icon_object";
         if (this.data.general["iconCls"]) {
             iconClass = this.data.general["iconCls"];
         } else if (this.data.general["icon"]) {
             iconClass = pimcore.helpers.getClassForIcon(this.data.general["icon"]);
         }
-
 
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + this.id;
@@ -776,7 +773,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
 
-                                pimcore.helpers.updateObjectStyle(this.id, rdata.treeData);
+                                pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
                                 pimcore.plugin.broker.fireEvent("postSaveObject", this);
 
                                 // for internal use ID.

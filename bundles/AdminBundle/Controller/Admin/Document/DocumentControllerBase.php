@@ -31,6 +31,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
+
+    use Model\Element\AdminStyleTrait;
+
     /**
      * @param Request $request
      * @param Model\Document $document
@@ -329,4 +332,5 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      * @param Model\Document $page
      */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
+
 }

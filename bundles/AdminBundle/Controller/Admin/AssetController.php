@@ -19,6 +19,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
@@ -44,6 +45,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
+    use Element\AdminStyleTrait;
     use ElementEditLockHelperTrait;
 
     /**
@@ -147,6 +149,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
+
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $data['php'] = [
             'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
@@ -638,7 +642,6 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$asset->hasChildren();
             $tmpAsset['loaded'] = !$asset->hasChildren();
-            $tmpAsset['iconCls'] = 'pimcore_icon_folder';
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
 
             $folderThumbs = [];
@@ -662,18 +665,9 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
             $tmpAsset['expanded'] = false;
-
-            $tmpAsset['iconCls'] = 'pimcore_icon_asset_default';
-
-            $fileExt = File::getFileExtension($asset->getFilename());
-            if ($fileExt) {
-                $tmpAsset['iconCls'] .= ' pimcore_icon_' . File::getFileExtension($asset->getFilename());
-            }
         }
 
-        $tmpAsset['qtipCfg'] = [
-            'title' => 'ID: ' . $asset->getId()
-        ];
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
         if ($asset->getType() == 'image') {
             try {
@@ -957,12 +951,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
+                $treeData = $this->getTreeNodeConfig($asset);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $asset->getModificationDate(),
                         'versionCount' => $asset->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } else {
                 throw $this->createAccessDeniedHttpException();
@@ -990,7 +987,8 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
-                return $this->adminJson(['success' => true]);
+                $treeData = $this->getTreeNodeConfig($asset);
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }

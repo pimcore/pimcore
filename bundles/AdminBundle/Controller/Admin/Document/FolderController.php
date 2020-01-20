@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -68,6 +69,8 @@ class FolderController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($folder))
         ];
 
+        $this->addAdminStyle($folder,  ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $folder
@@ -102,7 +105,9 @@ class FolderController extends DocumentControllerBase
                 $this->setValuesToDocument($request, $folder);
                 $folder->save();
 
-                return $this->adminJson(['success' => true]);
+                $this->addAdminStyle($folder,  ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } else {
                 throw $this->createAccessDeniedHttpException();
             }

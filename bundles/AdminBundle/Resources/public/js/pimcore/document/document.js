@@ -23,7 +23,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             params: {id: this.id},
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
-            failure: function() {
+            failure: function () {
                 pimcore.helpers.forgetOpenTab("document_" + this.id + "_" + this.type);
                 pimcore.helpers.closeDocument(this.id);
             }.bind(this)
@@ -55,12 +55,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 });
 
                 this.startChangeDetector();
-            }
-            else {
+            } else {
                 pimcore.helpers.closeDocument(this.id);
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
             pimcore.helpers.closeDocument(this.id);
         }
@@ -81,9 +79,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         tabPanel.setActiveItem(tabId);
     },
 
-    save : function (task, only, callback) {
+    save: function (task, only, callback) {
 
-        if(this.tab.disabled || this.tab.isMasked()) {
+        if (this.tab.disabled || this.tab.isMasked()) {
             return;
         }
 
@@ -92,8 +90,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         if (saveData) {
             // check for version notification
-            if(this.newerVersionNotification) {
-                if(task == "publish" || task == "unpublish") {
+            if (this.newerVersionNotification) {
+                if (task == "publish" || task == "unpublish") {
                     this.newerVersionNotification.hide();
                 } else {
                     this.newerVersionNotification.show();
@@ -108,17 +106,18 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
-                    try{
+                    try {
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && rdata.success) {
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
                             Ext.apply(this.data, rdata.data);
 
-                            if(typeof this["createScreenshot"] == "function") {
+                            if (typeof this["createScreenshot"] == "function") {
                                 this.createScreenshot();
                             }
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
+                            pimcore.helpers.updateTreeElementStyle('document', this.id, rdata.treeData);
                         }
                     } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
@@ -134,7 +133,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                     this.tab.unmask();
 
-                    if(typeof callback == "function") {
+                    if (typeof callback == "function") {
                         callback();
                     }
                 }.bind(this),
@@ -146,28 +145,28 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             this.tab.unmask();
         }
     },
-    
-    
-    isAllowed : function (key) {
+
+
+    isAllowed: function (key) {
         return this.data.userPermissions[key];
     },
 
     remove: function () {
         var options = {
-            "elementType" : "document",
+            "elementType": "document",
             "id": this.id
         };
         pimcore.elementservice.deleteElement(options);
     },
 
-    saveClose: function(only){
+    saveClose: function (only) {
         this.save(null, only, function () {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.remove(this.tab);
         });
     },
 
-    publishClose: function(){
+    publishClose: function () {
         this.publish(null, function () {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.remove(this.tab);
@@ -180,7 +179,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         // toogle buttons
         this.toolbarButtons.unpublish.show();
 
-        if(this.toolbarButtons.save) {
+        if (this.toolbarButtons.save) {
             this.toolbarButtons.save.hide();
         }
 
@@ -199,7 +198,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         // toogle buttons
         this.toolbarButtons.unpublish.hide();
 
-        if(this.toolbarButtons.save) {
+        if (this.toolbarButtons.save) {
             this.toolbarButtons.save.show();
         }
 
@@ -221,7 +220,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     reload: function () {
 
-        this.tab.on("close", function() {
+        this.tab.on("close", function () {
             var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             window.setTimeout(function (id, type) {
                 pimcore.helpers.openDocument(id, type, {tabIndex: currentTabIndex});
@@ -252,7 +251,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
-                    if(data["success"]) {
+                    if (data["success"]) {
                         win.getComponent("language").setValue(pimcore.available_languages[data["language"]] + " [" + data["language"] + "]");
                         win.getComponent("language").show();
                         win.getComponent("info").hide();
@@ -280,19 +279,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         new Ext.dd.DropZone(el.getEl(), {
                             reference: this,
                             ddGroup: "element",
-                            getTargetFromEvent: function(e) {
+                            getTargetFromEvent: function (e) {
                                 return this.getEl();
                             }.bind(el),
 
-                            onNodeOver : function(target, dd, e, data) {
+                            onNodeOver: function (target, dd, e, data) {
                                 if (data.records.length === 1 && data.records[0].data.elementType === "document") {
                                     return Ext.dd.DropZone.prototype.dropAllowed;
                                 }
                             },
 
-                            onNodeDrop : function (target, dd, e, data) {
+                            onNodeDrop: function (target, dd, e, data) {
 
-                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                                     return false;
                                 }
 
@@ -308,14 +307,14 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     "change": checkLanguage,
                     "keyup": checkLanguage
                 }
-            },{
+            }, {
                 xtype: "displayfield",
                 name: "language",
                 itemId: "language",
                 value: "",
                 hidden: true,
                 fieldLabel: t("language")
-            },{
+            }, {
                 xtype: "displayfield",
                 name: "language",
                 itemId: "info",
@@ -332,7 +331,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    if(!win.getComponent("translation").getValue() || !win.getComponent("language").getValue()) {
+                    if (!win.getComponent("translation").getValue() || !win.getComponent("language").getValue()) {
                         Ext.MessageBox.alert(t("error"), t("target_document_invalid"));
                         return false;
                     }
@@ -367,8 +366,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var languagestore = [];
         var websiteLanguages = pimcore.settings.websiteLanguages;
         var selectContent = "";
-        for (var i=0; i<websiteLanguages.length; i++) {
-            if(this.data.properties["language"]["data"] != websiteLanguages[i]) {
+        for (var i = 0; i < websiteLanguages.length; i++) {
+            if (this.data.properties["language"]["data"] != websiteLanguages[i]) {
                 selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
                 languagestore.push([websiteLanguages[i], selectContent]);
             }
@@ -398,7 +397,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             },
                             success: function (response) {
                                 var data = Ext.decode(response.responseText);
-                                if(data["success"]) {
+                                if (data["success"]) {
                                     pageForm.getComponent("parent").setValue(data["targetPath"]);
                                 }
                                 pageForm.getComponent("parent").enable();
@@ -418,19 +417,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         new Ext.dd.DropZone(el.getEl(), {
                             reference: this,
                             ddGroup: "element",
-                            getTargetFromEvent: function(e) {
+                            getTargetFromEvent: function (e) {
                                 return this.getEl();
                             }.bind(el),
 
-                            onNodeOver : function(target, dd, e, data) {
+                            onNodeOver: function (target, dd, e, data) {
                                 if (data.records.length === 1 && data.records[0].data.elementType === "document") {
                                     return Ext.dd.DropZone.prototype.dropAllowed;
                                 }
                             },
 
-                            onNodeDrop : function (target, dd, e, data) {
+                            onNodeDrop: function (target, dd, e, data) {
 
-                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                                     return false;
                                 }
 
@@ -444,7 +443,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         });
                     }
                 }
-            },{
+            }, {
                 xtype: "textfield",
                 width: "100%",
                 fieldLabel: t('key'),
@@ -456,13 +455,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         pageForm.getComponent("name").setValue(el.getValue());
                     }
                 }
-            },{
+            }, {
                 xtype: "textfield",
                 itemId: "name",
                 fieldLabel: t('navigation'),
                 name: 'name',
                 width: "100%"
-            },{
+            }, {
                 xtype: "textfield",
                 itemId: "title",
                 fieldLabel: t('title'),
@@ -497,12 +496,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         },
                         success: function (response) {
                             var res = Ext.decode(response.responseText);
-                            if(res.success) {
-                                if(params["key"].length >= 1) {
+                            if (res.success) {
+                                if (params["key"].length >= 1) {
                                     params["parentId"] = res["id"];
                                     params["type"] = this.getType();
                                     params["translationsBaseDocument"] = this.id;
-                                    if(inheritance) {
+                                    if (inheritance) {
                                         params["inheritanceSource"] = this.id;
                                     }
 
@@ -536,7 +535,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         var translationsMenu = [];
         var unlinkTranslationsMenu = [];
-        if(this.data["translations"]) {
+        if (this.data["translations"]) {
             var me = this;
             Ext.iterate(this.data["translations"], function (language, documentId, myself) {
                 translationsMenu.push({
@@ -548,7 +547,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 });
             });
 
-            if(Object.keys(me.data["translations"]).length) {
+            if (Object.keys(me.data["translations"]).length) {
                 //add menu for All Translations
                 translationsMenu.push({
                     text: t("all_translations"),
@@ -562,7 +561,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
         }
 
-        if(this.data["unlinkTranslations"]) {
+        if (this.data["unlinkTranslations"]) {
             var me = this;
             Ext.iterate(this.data["unlinkTranslations"], function (language, documentId, myself) {
                 unlinkTranslationsMenu.push({
@@ -591,14 +590,14 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             scale: "medium",
             menu: [{
                 text: t("new_document"),
-                hidden: !in_array(this.getType(), ["page","snippet","email","printpage","printcontainer"]),
+                hidden: !in_array(this.getType(), ["page", "snippet", "email", "printpage", "printcontainer"]),
                 iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                 menu: [{
                     text: t("using_inheritance"),
-                    hidden: !in_array(this.getType(), ["page","snippet","printpage","printcontainer"]),
+                    hidden: !in_array(this.getType(), ["page", "snippet", "printpage", "printcontainer"]),
                     handler: this.createTranslation.bind(this, true),
                     iconCls: "pimcore_icon_clone"
-                },{
+                }, {
                     text: "&gt; " + t("blank"),
                     handler: this.createTranslation.bind(this, false),
                     iconCls: "pimcore_icon_file_plain"

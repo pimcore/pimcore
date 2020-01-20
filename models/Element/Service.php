@@ -23,6 +23,8 @@ use DeepCopy\Matcher\PropertyNameMatcher;
 use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -1306,5 +1308,25 @@ class Service extends Model\AbstractModel
     {
         $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
         TmpStore::delete($tmpStoreKey);
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param null|int $context see ElementAdminStyleEvent for values
+     * @return AdminStyle
+     */
+    public static function getElementAdminStyle(ElementInterface $element, $context) {
+        // for BC reasons, will be removed with 7.0
+        if ($element instanceof AbstractObject && method_exists($element, "getElementAdminStyle")) {
+            $adminStyle = $element->getElementAdminStyle();
+        } else {
+            $adminStyle = new AdminStyle($element);
+        }
+
+        $event = new ElementAdminStyleEvent($element, $adminStyle, $context);
+
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE, $event);
+        $adminStyle = $event->getAdminStyle();
+        return $adminStyle;
     }
 }

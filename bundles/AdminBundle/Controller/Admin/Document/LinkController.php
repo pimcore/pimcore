@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
@@ -77,6 +78,8 @@ class LinkController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($link))
         ];
 
+        $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
@@ -124,12 +127,15 @@ class LinkController extends DocumentControllerBase
             ) {
                 $link->save();
 
+                $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $link->getModificationDate(),
                         'versionCount' => $link->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } else {
                 throw $this->createAccessDeniedHttpException();

@@ -191,10 +191,10 @@ pimcore.helpers.closeObject = function (id) {
     }
 };
 
-pimcore.helpers.updateObjectStyle = function (id, treeData) {
+pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
     if (treeData) {
 
-        var key = "object_" + id;
+        var key = type + "_" + id;
         if (pimcore.globalmanager.exists(key)) {
             var editMask = pimcore.globalmanager.get(key);
             if (editMask.tab) {
@@ -208,7 +208,7 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
             }
         }
 
-        var treeNames = pimcore.elementservice.getElementTreeNames("object");
+        var treeNames = pimcore.elementservice.getElementTreeNames(type);
 
         for (var index = 0; index < treeNames.length; index++) {
             var treeName = treeNames[index];
@@ -226,6 +226,10 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
 
                 if (typeof treeData.iconCls !== "undefined") {
                     record.set("iconCls", treeData.iconCls);
+                }
+
+                if (typeof treeData.qtipCfg !== "undefined") {
+                    record.set("qtipCfg", treeData.qtipCfg);
                 }
             }
         }
