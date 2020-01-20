@@ -72,8 +72,6 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
             items.push(this.workflows.getLayout());
         }
 
-        var iconClass = this.getIconClass();
-
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
@@ -81,8 +79,7 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
             enableTabScroll:true,
             border: false,
             items: items,
-            activeTab: 0,
-            iconCls: iconClass
+            activeTab: 0
         });
 
         return this.tabbar;
