@@ -70,8 +70,6 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + this.id;
 
-        var iconClass = this.getIconClass();
-
         this.tab = new Ext.Panel({
             id: tabId,
             title: tabTitle,
@@ -81,7 +79,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 this.getLayoutToolbar(),
                 this.getTabPanel()
             ],
-            iconCls: iconClass,
+            iconCls: this.getIconClass(),
             document: this
         });
 

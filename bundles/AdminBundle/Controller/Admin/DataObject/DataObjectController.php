@@ -271,13 +271,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
-        if ($adminStyle->getElementCssClass() !== false) {
-            if (!isset($tmpObject['cls'])) {
-                $tmpObject['cls'] = '';
-            }
-            $tmpObject['cls'] .= $adminStyle->getElementCssClass() . ' ';
-        }
-
         $tmpObject['expanded'] = !$hasChildren;
         $tmpObject['permissions'] = $child->getUserPermissions();
 
