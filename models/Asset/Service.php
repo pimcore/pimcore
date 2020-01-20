@@ -277,7 +277,7 @@ class Service extends Model\Element\Service
      */
     public static function pathExists($path, $type = null)
     {
-        $path = Element\Service::correctPath($path);
+        $path = Element\Service::correctPath($path, 'asset');
 
         try {
             $asset = new Asset();

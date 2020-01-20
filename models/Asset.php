@@ -224,7 +224,7 @@ class Asset extends Element\AbstractElement
      */
     public static function getByPath($path, $force = false)
     {
-        $path = Element\Service::correctPath($path);
+        $path = Element\Service::correctPath($path, 'asset');
 
         try {
             $asset = new Asset();
