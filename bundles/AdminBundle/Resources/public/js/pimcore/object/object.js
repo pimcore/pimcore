@@ -170,14 +170,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     addTab: function () {
 
-        // icon class
-        var iconClass = this.data.general.o_type == "variant" ? "pimcore_icon_variant" : " pimcore_icon_object";
         if (this.data.general["iconCls"]) {
             iconClass = this.data.general["iconCls"];
         } else if (this.data.general["icon"]) {
             iconClass = pimcore.helpers.getClassForIcon(this.data.general["icon"]);
         }
-
 
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + this.id;

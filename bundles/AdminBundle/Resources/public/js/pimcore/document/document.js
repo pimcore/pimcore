@@ -634,14 +634,5 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.key = rdata.key;
             }.bind(this)
         });
-    },
-
-    getIconClass: function () {
-        var iconClass;
-        if (this.data.iconCls) {
-            iconClass = this.data.iconCls;
-        } else if (this.data.icon) {
-            iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
-        }
     }
 });
