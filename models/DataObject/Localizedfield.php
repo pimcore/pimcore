@@ -549,9 +549,11 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
+        $isLazyLoadedField = method_exists($fieldDefinition, 'getLazyLoading') && $fieldDefinition->getLazyLoading();
+        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
 
-        if (method_exists($fieldDefinition, 'getLazyLoading') && $fieldDefinition->getLazyLoading()) {
-            if (!$this->isLazyKeyLoaded($fieldDefinition->getName())) {
+        if ($isLazyLoadedField) {
+            if (!$this->isLazyKeyLoaded($lazyKey)) {
                 $forceLanguageDirty = true;
             }
         }
@@ -571,8 +573,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;
-        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        $this->markLazyKeyAsLoaded($lazyKey);
+
+        if($isLazyLoadedField) {
+            $this->markLazyKeyAsLoaded($lazyKey);
+        }
 
         return $this;
     }
