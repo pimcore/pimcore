@@ -23,6 +23,10 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 trait DefaultValueTrait
 {
+    /**
+     * @return mixed
+     */
+    protected abstract function doGetDefaultValue();
 
     /**
      * @param mixed $data
