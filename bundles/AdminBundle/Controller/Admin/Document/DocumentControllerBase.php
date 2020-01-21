@@ -24,14 +24,12 @@ use Pimcore\Model\Schedule;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-
     use Model\Element\AdminStyleTrait;
 
     /**
@@ -218,11 +216,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             // outdated and unused data elements in this document (eg. entries of area-blocks)
 
             if ($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())
-                            && $documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave' )) {
+                            && $documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave')) {
                 Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
             }
         }
-
 
         return $sessionDocument;
     }
@@ -237,6 +234,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     public function removeFromSessionAction(Request $request)
     {
         Model\Document\Service::removeElementFromSession('document', $request->get('id'));
+
         return $this->adminJson(['success' => true]);
     }
 
@@ -332,5 +330,4 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      * @param Model\Document $page
      */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
-
 }

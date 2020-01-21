@@ -1312,6 +1312,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
+
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {

@@ -410,6 +410,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @deprecated
+     *
      * @param array $data
      */
     public function getFromWebserviceImport($data)
@@ -422,6 +423,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @deprecated
+     *
      * @return array
      */
     public function getForWebserviceExport()

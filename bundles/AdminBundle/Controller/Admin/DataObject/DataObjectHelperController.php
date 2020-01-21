@@ -924,7 +924,6 @@ class DataObjectHelperController extends AdminController
                 $favourite->setObjectId($objectId);
                 $favourite->save();
 
-
                 if ($global) {
                     $favourite->setObjectId(0);
                     $favourite->save();

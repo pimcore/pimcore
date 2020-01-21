@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\Version[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $versions = null;
 
     public function __construct()
     {
-        $this->versions =& $this->data;
+        $this->versions = & $this->data;
     }
 
     /**

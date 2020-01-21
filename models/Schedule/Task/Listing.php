@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\Schedule\Task[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $tasks = null;
 
     public function __construct()
     {
-        $this->tasks =& $this->data;
+        $this->tasks = & $this->data;
     }
 
     /**

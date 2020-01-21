@@ -26,17 +26,17 @@ trait DefaultValueTrait
     /**
      * @return mixed
      */
-    protected abstract function doGetDefaultValue();
+    abstract protected function doGetDefaultValue();
 
     /**
      * @param mixed $data
      * @param Concrete $object
      * @param array $params
+     *
      * @return mixed modified data
      */
     protected function handleDefaultValue($data, $object = null, $params = [])
     {
-
         $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
 
         /**
@@ -81,6 +81,7 @@ trait DefaultValueTrait
             }
             $data = $this->doGetDefaultValue();
         }
+
         return $data;
     }
 }

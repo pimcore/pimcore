@@ -164,7 +164,7 @@ class Config extends Model\AbstractModel
     {
         $cacheKey = self::getCacheKey($name);
 
-        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
             return self::getPreviewConfig();
         }
 
@@ -195,6 +195,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return string
      */
     protected static function getCacheKey(string $name): string
@@ -204,20 +205,22 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public static function exists(string $name): bool
     {
         $cacheKey = self::getCacheKey($name);
-        if(\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             return true;
         }
 
-        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
             return true;
         }
 
         $thumbnail = new self();
+
         return $thumbnail->getDao()->exists($name);
     }
 
@@ -258,6 +261,7 @@ class Config extends Model\AbstractModel
 
     /**
      * Returns thumbnail config for webservice export.
+     *
      * @deprecated
      */
     public function getForWebserviceExport()

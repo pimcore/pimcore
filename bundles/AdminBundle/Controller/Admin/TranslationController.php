@@ -724,7 +724,7 @@ class TranslationController extends AdminController
                         if ($element['relations']) {
                             $childDependencies = $child->getDependencies()->getRequires();
                             foreach ($childDependencies as $cd) {
-                                if ($cd['type'] == "object" || $cd['type'] == "document") {
+                                if ($cd['type'] == 'object' || $cd['type'] == 'document') {
                                     $elements[$cd['type'] . '_' . $cd['id']] = $cd;
                                 }
                             }
@@ -739,7 +739,7 @@ class TranslationController extends AdminController
 
                     $dependencies = $el->getDependencies()->getRequires();
                     foreach ($dependencies as $dependency) {
-                        if ($dependency['type'] == "object" || $dependency['type'] == "document") {
+                        if ($dependency['type'] == 'object' || $dependency['type'] == 'document') {
                             $elements[$dependency['type'] . '_' . $dependency['id']] = $dependency;
                         }
                     }

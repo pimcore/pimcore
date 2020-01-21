@@ -175,7 +175,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->getDao()->isLocked();
     }
 
-
     /**
      * @return string
      */
@@ -211,8 +210,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
 
-        if(!$currentUser) {
-            if(php_sapi_name() === 'cli') {
+        if (!$currentUser) {
+            if (php_sapi_name() === 'cli') {
                 return true;
             }
 

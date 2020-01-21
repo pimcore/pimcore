@@ -23,9 +23,11 @@ trait AdminStyleTrait
      * @param ElementInterface $element
      * @param null|int $context
      * @param array $data
+     *
      * @throws \Exception
      */
-    protected function addAdminStyle(ElementInterface $element, $context = null, &$data = []) {
+    protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
+    {
         $adminStyle = Service::getElementAdminStyle($element, $context);
         $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;

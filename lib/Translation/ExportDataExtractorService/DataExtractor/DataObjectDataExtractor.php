@@ -151,7 +151,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                 $targetContent = [];
                 foreach ($result->getTargetLanguages() as $targetLanguage) {
-                    if(Tool::isValidLanguage($targetLanguage)) {
+                    if (Tool::isValidLanguage($targetLanguage)) {
                         $targetContent[$targetLanguage] = $object->{'get' . ucfirst($definition->getName())}($targetLanguage);
                     }
                 }
@@ -274,7 +274,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                                             $targetContent = [];
                                             foreach ($result->getTargetLanguages() as $targetLanguage) {
-                                                if(Tool::isValidLanguage($targetLanguage)) {
+                                                if (Tool::isValidLanguage($targetLanguage)) {
                                                     $targetContent[$targetLanguage] = $blockItemData->getLocalizedValue(
                                                         $blockLocalizedFieldDefinition->getName(),
                                                         $targetLanguage
@@ -351,14 +351,14 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                     foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
                         //relations are loaded from dependencies
-                        if($fd instanceof Data\Relations\AbstractRelations) {
+                        if ($fd instanceof Data\Relations\AbstractRelations) {
                             continue;
                         }
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         $targetContent = [];
                         foreach ($result->getTargetLanguages() as $targetLanguage) {
-                            if(Tool::isValidLanguage($targetLanguage)) {
+                            if (Tool::isValidLanguage($targetLanguage)) {
                                 $targetContent[$targetLanguage] = $localizedFields->getLocalizedValue($fd->getName(), $targetLanguage);
                             }
                         }
@@ -436,14 +436,14 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                     foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
                         //relations are loaded from dependencies
-                        if($fd instanceof Data\Relations\AbstractRelations) {
+                        if ($fd instanceof Data\Relations\AbstractRelations) {
                             continue;
                         }
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
 
                         $targetContent = [];
                         foreach ($result->getTargetLanguages() as $targetLanguage) {
-                            if(Tool::isValidLanguage($targetLanguage)) {
+                            if (Tool::isValidLanguage($targetLanguage)) {
                                 $targetContent[$targetLanguage] = $localizedFields->getLocalizedValue($fd->getName(), $targetLanguage);
                             }
                         }

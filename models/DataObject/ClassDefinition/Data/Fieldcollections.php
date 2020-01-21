@@ -398,6 +398,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -441,6 +442,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param mixed $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

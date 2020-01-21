@@ -24,7 +24,6 @@ use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AdminStyleTrait;
-use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -645,6 +644,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $version = Version::getById($request->get('id'));
         $document = $version->loadData();
         Document\Service::saveElementToSession($document);
+
         return new Response();
     }
 
@@ -677,6 +677,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
         return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 

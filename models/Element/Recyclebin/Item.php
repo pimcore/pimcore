@@ -346,6 +346,7 @@ class Item extends Model\AbstractModel
                 function ($currentValue) {
                     $elementType = Element\Service::getType($currentValue);
                     $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+
                     return $descriptor;
                 }
             ),
@@ -353,7 +354,7 @@ class Item extends Model\AbstractModel
                 /**
                  * @param mixed $element
                  *
-                 * @return boolean
+                 * @return bool
                  */
                 public function matches($element)
                 {

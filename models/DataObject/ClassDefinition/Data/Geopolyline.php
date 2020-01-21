@@ -225,6 +225,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -242,6 +243,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

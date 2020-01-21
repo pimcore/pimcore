@@ -98,7 +98,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                     if (isset($translations[$targetLanguage])) {
                         $targetDocument = Document::getById($translations[$targetLanguage]);
 
-                        if($targetDocument instanceof  Document\PageSnippet) {
+                        if ($targetDocument instanceof  Document\PageSnippet) {
                             $targetTag = $targetDocument->getElement($tag->getName());
                             if (in_array($targetTag->getType(), ['image', 'link'])) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
@@ -107,7 +107,6 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                             }
                         }
                     }
-
                 }
 
                 if (is_string($content)) {

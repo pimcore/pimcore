@@ -32,7 +32,7 @@ class Version20200113120101 extends AbstractPimcoreMigration
             if ($definition) {
                 $fields = [];
 
-                if(!$definition->getFieldDefinition('pricingRuleId')){
+                if (!$definition->getFieldDefinition('pricingRuleId')) {
                     $fieldDefinition = new ClassDefinition\Data\Numeric();
                     $fieldDefinition->setName('pricingRuleId');
                     $fieldDefinition->setTitle('Applied pricing rule ID');

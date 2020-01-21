@@ -86,6 +86,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
         return null;
     }
 
@@ -277,6 +278,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -289,6 +291,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -317,7 +320,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-            //return new Date($this->defaultValue);
+        //return new Date($this->defaultValue);
         } else {
             return 0;
         }
@@ -460,10 +463,10 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         if ($this->getDefaultValue()) {
             $date = new \Carbon\Carbon();
             $date->setTimestamp($this->getDefaultValue());
+
             return $date;
-
         }
-        return null;
 
+        return null;
     }
 }

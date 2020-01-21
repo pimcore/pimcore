@@ -205,6 +205,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public function getDataForResource($data, $object = null, $params = [])
     {
         $data = $this->handleDefaultValue($data, $object, $params);
+
         return $data;
     }
 
@@ -519,6 +520,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
             return '`'.$name.'` LIKE '."'$value'".' ';
         }
+
         return null;
     }
 
@@ -530,7 +532,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @return null|string
      */
-    protected function doGetDefaultValue() {
+    protected function doGetDefaultValue()
+    {
         return $this->getDefaultValue() ?? null;
     }
 }

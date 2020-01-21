@@ -96,6 +96,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataForResource($data, $object = null, $params = [])
     {
         $data = $this->handleDefaultValue($data, $object, $params);
+
         return is_null($data) ? null : (int)$data;
     }
 
@@ -230,6 +231,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
@@ -246,6 +248,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -346,7 +349,8 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @return null|int
      */
-    protected function doGetDefaultValue() {
+    protected function doGetDefaultValue()
+    {
         return $this->getDefaultValue() ?? null;
     }
 }

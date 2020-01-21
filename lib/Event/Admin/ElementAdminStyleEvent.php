@@ -23,7 +23,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ElementAdminStyleEvent extends Event
 {
-
     /**
      * Style needed for tree
      */
@@ -51,6 +50,7 @@ class ElementAdminStyleEvent extends Event
 
     /**
      * ElementAdminStyleEvent constructor.
+     *
      * @param ElementInterface $element
      * @param AdminStyle $adminStyle
      * @param null|int $context
@@ -96,6 +96,7 @@ class ElementAdminStyleEvent extends Event
 
     /**
      * Returns the context. CONTEXT_TREE or CONTEXT_EDITOR.
+     *
      * @return null|int
      */
     public function getContext()
@@ -110,6 +111,4 @@ class ElementAdminStyleEvent extends Event
     {
         $this->context = $context;
     }
-
-
 }

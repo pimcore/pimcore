@@ -1080,7 +1080,7 @@ class Service extends Model\AbstractModel
             foreach ($versions as $version) {
                 $name = null;
                 $id = null;
-                if(isset($version['user'])) {
+                if (isset($version['user'])) {
                     $name = $version['user']['name'];
                     $id = $version['user']['id'];
                 }
@@ -1243,9 +1243,11 @@ class Service extends Model\AbstractModel
      *
      * @return string
      */
-    public static function getSessionKey($type, $elementId, $postfix = '') {
+    public static function getSessionKey($type, $elementId, $postfix = '')
+    {
         $sessionId = Session::getSessionId();
         $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
+
         return $tmpStoreKey;
     }
 
@@ -1266,6 +1268,7 @@ class Service extends Model\AbstractModel
             $data = $tmpStore->getData();
             if ($data) {
                 $element = Serialize::unserialize($data);
+
                 return $element;
             }
         }
@@ -1298,7 +1301,6 @@ class Service extends Model\AbstractModel
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
     }
 
-
     /**
      * @param string $type
      * @param int $elementId
@@ -1313,11 +1315,13 @@ class Service extends Model\AbstractModel
     /**
      * @param ElementInterface $element
      * @param null|int $context see ElementAdminStyleEvent for values
+     *
      * @return AdminStyle
      */
-    public static function getElementAdminStyle(ElementInterface $element, $context) {
+    public static function getElementAdminStyle(ElementInterface $element, $context)
+    {
         // for BC reasons, will be removed with 7.0
-        if ($element instanceof AbstractObject && method_exists($element, "getElementAdminStyle")) {
+        if ($element instanceof AbstractObject && method_exists($element, 'getElementAdminStyle')) {
             $adminStyle = $element->getElementAdminStyle();
         } else {
             $adminStyle = new AdminStyle($element);
@@ -1327,6 +1331,7 @@ class Service extends Model\AbstractModel
 
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE, $event);
         $adminStyle = $event->getAdminStyle();
+
         return $adminStyle;
     }
 }

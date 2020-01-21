@@ -265,6 +265,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -279,6 +280,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

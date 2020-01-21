@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable, null, "o_id");
+        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable, null, 'o_id');
 
         DataObject\AbstractObject::setGetInheritedValues(false);
 
@@ -120,8 +120,7 @@ class Dao extends Model\Dao\AbstractDao
 
             // only relevant if inheritance is enabled
             if ($this->model->getObject()->getClass()->getAllowInherit()) {
-
-                if (isset($params["isUpdate"]) && $params["isUpdate"] === false) {
+                if (isset($params['isUpdate']) && $params['isUpdate'] === false) {
                     // either this is a fresh object, then we don't need the check
                     $isBrickUpdate = false;
                 } else {
@@ -130,7 +129,6 @@ class Dao extends Model\Dao\AbstractDao
                     $isBrickUpdate = $existsResult ? true : false;
                 }
             }
-
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {

@@ -61,7 +61,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             return [
                 'apiKey' => $apiKey
             ];
-        } else if ($apiKey = $request->get('apikey')) {
+        } elseif ($apiKey = $request->get('apikey')) {
             // check for API key parameter
             return [
                 'apiKey' => $apiKey

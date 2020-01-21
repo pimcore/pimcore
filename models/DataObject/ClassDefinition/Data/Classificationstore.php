@@ -441,6 +441,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @deprecated
+     *
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -582,6 +583,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

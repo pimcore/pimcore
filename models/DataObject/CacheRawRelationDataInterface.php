@@ -19,9 +19,8 @@ namespace Pimcore\Model\DataObject;
 
 interface CacheRawRelationDataInterface
 {
-
     /**
      * @return array
      */
-    public function __getRawRelationData() : array;
+    public function __getRawRelationData(): array;
 }

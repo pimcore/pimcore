@@ -10,6 +10,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class RecyclebinTest
+ *
  * @package Pimcore\Tests\Model\Element
  * @group model.element.recyclebin
  */
@@ -27,7 +28,7 @@ class RecyclebinTest extends ModelTestCase
 
     protected function createDummyUser()
     {
-        if(!$user = User::getByName('test-user')) {
+        if (!$user = User::getByName('test-user')) {
             $user = new User();
             $user->setAdmin(1);
             $user
@@ -57,7 +58,7 @@ class RecyclebinTest extends ModelTestCase
         $this->assertFileExists($recycledItems->current()->getStoreageFile());
 
         $recycledStorage = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
-        $this->assertEquals($objectId, $recycledStorage->getId(), "Recycled Object not found.");
+        $this->assertEquals($objectId, $recycledStorage->getId(), 'Recycled Object not found.');
 
         //restore asserts
         $recycledItems->current()->restore();
@@ -91,13 +92,13 @@ class RecyclebinTest extends ModelTestCase
         $recycledItems = new Item\Listing();
         $recycledItems->setCondition('path = ?', $parentPath);
 
-        $this->assertEquals(2, $recycledItems->current()->getAmount(), "Expected 2 recycled item");
+        $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
         //recycle bin item storage file
         $recycledContent = unserialize(file_get_contents($recycledItems->current()->getStoreageFile()));
 
-        $this->assertEquals($parentId, $recycledContent->getId(), "Expected recycled parent object ID");
-        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT], true), "Expected recycled child object");
+        $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
+        $this->assertCount(1, $recycledContent->getChildren([AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT, AbstractObject::OBJECT_TYPE_OBJECT], true), 'Expected recycled child object');
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();

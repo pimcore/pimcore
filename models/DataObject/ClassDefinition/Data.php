@@ -220,6 +220,7 @@ abstract class Data
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -234,6 +235,7 @@ abstract class Data
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -1028,12 +1030,12 @@ abstract class Data
 
         $dataParamDoc = 'mixed $data';
         $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
-        if(preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        if (preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
             $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
         }
 
         $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
-        if(preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+        if (preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
             $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
         }
 
@@ -1463,11 +1465,12 @@ abstract class Data
 
     /**
      * @param DataObject\Listing            $listing
-     * @param string|int|float|double|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      */
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
-        if(strpos($operator, '?') === false) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if (strpos($operator, '?') === false) {
             $operator .= ' ?';
         }
 

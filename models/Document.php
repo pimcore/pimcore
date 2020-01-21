@@ -653,11 +653,11 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        if(empty($children)) {
+        if (empty($children)) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
-        } elseif(is_array($children)) {
+        } elseif (is_array($children)) {
             $cacheKey = $this->getListingCacheKey();
             $this->children[$cacheKey] = $children;
             $this->hasChildren[$cacheKey] = (bool) count($children);
@@ -875,12 +875,12 @@ class Document extends Element\AbstractElement
             $requestStack = \Pimcore::getContainer()->get('request_stack');
 
             $masterRequest = $requestStack->getMasterRequest();
-            if($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
-                if($masterDocument instanceof WrapperInterface) {
+            if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
+                if ($masterDocument instanceof WrapperInterface) {
                     $hardlink = $masterDocument->getHardLinkSource();
                     $hardlinkTarget = $hardlink->getSourceDocument();
 
-                    if($hardlinkTarget) {
+                    if ($hardlinkTarget) {
                         $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
 
                         $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
@@ -893,7 +893,7 @@ class Document extends Element\AbstractElement
                 $config = \Pimcore\Config::getSystemConfig();
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
-                if($request) {
+                if ($request) {
                     $scheme = $request->getScheme() . '://';
                 }
 
@@ -1498,7 +1498,8 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    protected function getListingCacheKey(array $args = []) {
+    protected function getListingCacheKey(array $args = [])
+    {
         $unpublished = (bool)($args[0] ?? false);
         $cacheKey = (string)$unpublished;
 

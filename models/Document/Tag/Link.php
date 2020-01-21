@@ -508,6 +508,7 @@ class Link extends Model\Document\Tag
 
     /**
      * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param Model\Document\PageSnippet $document
      * @param array $params
@@ -579,6 +580,7 @@ class Link extends Model\Document\Tag
      * Returns the current tag's data for web service export
      *
      * @deprecated
+     *
      * @param Model\Document\PageSnippet|null $document
      * @param array $params
      *

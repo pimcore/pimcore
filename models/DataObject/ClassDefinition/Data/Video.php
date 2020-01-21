@@ -445,6 +445,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -462,6 +463,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params

@@ -67,7 +67,7 @@ class AdminStyle
                     'text' => 'Type: ' . $element->getClass()->getName()
                 ];
             }
-        } else if ($element instanceof Model\Asset) {
+        } elseif ($element instanceof Model\Asset) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId()
             ];
@@ -82,7 +82,7 @@ class AdminStyle
                     $this->elementIconClass = ' pimcore_icon_' . File::getFileExtension($element->getFilename());
                 }
             }
-        } else if ($element instanceof Model\Document) {
+        } elseif ($element instanceof Model\Document) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
                 'text' => 'Type: ' . $element->getType()
@@ -95,7 +95,7 @@ class AdminStyle
                 $site = Model\Site::getByRootId($element->getId());
 
                 if ($site instanceof Model\Site) {
-                    $translator = \Pimcore::getContainer()->get("pimcore.translator");
+                    $translator = \Pimcore::getContainer()->get('pimcore.translator');
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', 'admin') . ': ' . $site->getId();
                 }
 

@@ -78,7 +78,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        $data =  $this->handleDefaultValue($data, $object, $params);
+        $data = $this->handleDefaultValue($data, $object, $params);
 
         if ($data) {
             $result = $data->getTimestamp();
@@ -88,6 +88,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+
         return null;
     }
 
@@ -309,6 +310,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -321,6 +323,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -455,13 +458,15 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @return Carbon|null
      */
-    protected function doGetDefaultValue() {
+    protected function doGetDefaultValue()
+    {
         if ($this->getDefaultValue()) {
             $date = new \Carbon\Carbon();
             $date->setTimestamp($this->getDefaultValue());
-            return $date;
 
+            return $date;
         }
+
         return null;
     }
 }

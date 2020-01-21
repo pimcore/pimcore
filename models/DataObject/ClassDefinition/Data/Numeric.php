@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
@@ -159,6 +158,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
         }
+
         return null;
     }
 
@@ -365,7 +365,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return sprintf('DECIMAL(%d, %d)', $precision, $scale);
     }
 
-
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -377,7 +376,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-
         $data = $this->handleDefaultValue($data, $object, $params);
 
         if (is_numeric($data)) {
@@ -604,7 +602,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @return null|int
      */
-    protected function doGetDefaultValue() {
+    protected function doGetDefaultValue()
+    {
         return $this->getDefaultValue() ?? null;
     }
 }

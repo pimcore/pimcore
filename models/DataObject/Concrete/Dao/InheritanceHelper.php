@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
-use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
@@ -109,7 +108,6 @@ class InheritanceHelper
      * @var null|string
      */
     protected $queryIdField;
-
 
     /**
      * @param string $classId
@@ -224,7 +222,6 @@ class InheritanceHelper
             return;
         }
 
-
         // only build the tree if there are fields to check
         if (!empty($this->fields) || !empty($this->relations)) {
             $fields = implode('`,`', $this->fields);
@@ -279,8 +276,8 @@ class InheritanceHelper
                 $object = DataObject\Concrete::getById($oo_id);
                 $classId = $object->getClassId();
 
-                $query = "SELECT b.o_id AS id "
-                    . " FROM objects b LEFT JOIN " . $this->querytable . ' a ON b.o_id = a.' . $this->idField
+                $query = 'SELECT b.o_id AS id '
+                    . ' FROM objects b LEFT JOIN ' . $this->querytable . ' a ON b.o_id = a.' . $this->idField
                     . ' WHERE b.o_classId = ' . $this->db->quote($classId)
                     . ' AND o_path LIKE '. $this->db->quote($object->getRealFullPath().'/%')
                     . ' AND ISNULL(a.' . $this->queryIdField . ')';
@@ -389,14 +386,15 @@ class InheritanceHelper
         }
     }
 
-
     /**
      * @param array $result
      * @param string $language
      * @param string $column
+     *
      * @return array
      */
-    protected function filterResultByLanguage($result, $language, $column) {
+    protected function filterResultByLanguage($result, $language, $column)
+    {
         $filteredResult = [];
         foreach ($result as $row) {
             $rowId = $row['id'];
@@ -404,8 +402,8 @@ class InheritanceHelper
                 $filteredResult[$rowId] = $row;
             }
         }
-        return $filteredResult;
 
+        return $filteredResult;
     }
 
     /**
@@ -480,20 +478,22 @@ class InheritanceHelper
 
     /**
      * @param array $params
+     *
      * @return string
      */
-    protected function getRelationCondition($params = []) {
-        $condition = "";
+    protected function getRelationCondition($params = [])
+    {
+        $condition = '';
         $parts = [];
 
-        if (isset($params["inheritanceRelationContext"])) {
-            foreach ($params["inheritanceRelationContext"] as $key => $value) {
-                $parts[] = $this->db->quoteIdentifier($key) . " = " . $this->db->quote($value);
+        if (isset($params['inheritanceRelationContext'])) {
+            foreach ($params['inheritanceRelationContext'] as $key => $value) {
+                $parts[] = $this->db->quoteIdentifier($key) . ' = ' . $this->db->quote($value);
             }
-            $condition = implode(" AND ", $parts);
+            $condition = implode(' AND ', $parts);
         }
         if (count($parts) > 0) {
-            $condition = $condition . " AND ";
+            $condition = $condition . ' AND ';
         }
 
         return $condition;
@@ -515,13 +515,12 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . " WHERE " . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
-                . " GROUP BY position, fieldname"
-                . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)'
-                , [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+                . ' GROUP BY position, fieldname'
+                . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE " . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
         }
 
         $objectRelations = [];

@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\DataObject\Classificationstore\StoreConfig[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $list = null;
 
     public function __construct()
     {
-        $this->list =& $this->data;
+        $this->list = & $this->data;
     }
 
     /**

@@ -118,8 +118,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $imageInfo = [];
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
-            if($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = $asset->getFullPath() . "?_dc=" . time();
+            if ($asset->isAnimated()) {
+                $imageInfo['previewUrl'] = $asset->getFullPath() . '?_dc=' . time();
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -988,6 +988,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->save();
 
                 $treeData = $this->getTreeNodeConfig($asset);
+
                 return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);

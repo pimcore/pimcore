@@ -28,6 +28,7 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\DataObject\Classificationstore\KeyGroupRelation[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $list = null;
@@ -37,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
 
     public function __construct()
     {
-        $this->list =& $this->data;
+        $this->list = & $this->data;
     }
 
     /**

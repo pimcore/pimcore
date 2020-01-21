@@ -412,6 +412,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -476,6 +477,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param mixed $params
@@ -498,9 +500,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 }
             }
 
-            if (isset($params["context"]) && $params["context"]["containerType"] === 'fieldcollection') {
+            if (isset($params['context']) && $params['context']['containerType'] === 'fieldcollection') {
                 $localizedFields = new DataObject\Localizedfield();
-                $localizedFields->setContext($params["context"]);
+                $localizedFields->setContext($params['context']);
             } else {
                 $localizedFields = $object->getLocalizedFields();
 

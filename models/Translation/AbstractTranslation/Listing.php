@@ -31,13 +31,14 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $translations = null;
 
     public function __construct()
     {
-        $this->translations =& $this->data;
+        $this->translations = & $this->data;
     }
 
     /**

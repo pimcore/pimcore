@@ -19,7 +19,6 @@ namespace Pimcore\Model;
 
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
-use Pimcore\Model\Listing\AbstractListing;
 
 class Factory extends ImplementationLoader implements FactoryInterface
 {

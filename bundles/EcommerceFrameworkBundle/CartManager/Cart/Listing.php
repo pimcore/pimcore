@@ -26,6 +26,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     public $carts;
@@ -34,7 +35,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     {
         $this->getDao()->setCartClass(Factory::getInstance()->getCartManager()->getCartClassName());
 
-        $this->carts =& $this->data;
+        $this->carts = & $this->data;
     }
 
     /**
