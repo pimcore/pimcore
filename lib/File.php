@@ -32,10 +32,7 @@ class File
     protected static $context = null;
 
     /**
-     * @static
-     *
      * @param string $name
-     *
      * @return string
      */
     public static function getFileExtension($name)
@@ -52,7 +49,6 @@ class File
 
     /**
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
-     * @static
      *
      * @param string $tmpFilename
      * @param string|null $language
@@ -74,10 +70,7 @@ class File
     }
 
     /**
-     * @static
-     *
      * @param string $filename
-     *
      * @return bool
      */
     public static function isIncludeable($filename)
