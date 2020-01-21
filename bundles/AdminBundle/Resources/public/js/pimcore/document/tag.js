@@ -131,9 +131,14 @@ pimcore.document.tag = Class.create({
     },
 
     validateValue: function(value, el, parent, mark) {
-        var textLength = trim(strip_tags(value)).length;
+        let valueLength = 1;
+        if (typeof value === "string") {
+            valueLength = trim(strip_tags(value)).length;
+        } else if (value == null) {
+            valueLength = 0;
+        }
 
-        if (textLength < 1) {
+        if (valueLength < 1) {
             parent.requiredError = true;
             if (mark) {
                 el.addCls('editable-error');
