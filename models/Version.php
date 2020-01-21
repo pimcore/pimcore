@@ -297,7 +297,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
@@ -344,7 +344,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
