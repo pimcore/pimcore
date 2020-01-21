@@ -409,6 +409,15 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: function(component, record) {
+                    var subtype = record.get('subtype');
+                    if (record.get('type') == "object" && record.get('subtype') != "folder") {
+                        subtype = "object";
+                    }
+                    pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);
+                }
             }
         });
 

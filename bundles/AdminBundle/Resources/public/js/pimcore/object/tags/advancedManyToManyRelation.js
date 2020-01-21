@@ -389,7 +389,16 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ]
+            ],
+            listeners: {
+                rowdblclick: function(component, record) {
+                    var subtype = record.get('subtype');
+                    if (record.get('type') == "object" && record.get('subtype') != "folder") {
+                        subtype = "object";
+                    }
+                    pimcore.helpers.openObject(record.get('id'), record.get('type'), subtype);
+                }
+            }
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu.bind(this));
