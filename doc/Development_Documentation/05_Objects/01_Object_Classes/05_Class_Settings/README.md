@@ -4,13 +4,13 @@ On class level, there are multiple additional settings and features available wh
 backend or via code by a developer. 
 
 #### These features include: 
-* [Data Inheritance and Parent Class](./01_Inheritance.md)
-* [Object Variants](./03_Variants.md)
-* [Object Preview](./05_Preview.md)
-* [Custom Icons for objects](./07_Custom_Icons.md)
-* [Custom Layouts](./09_Custom_Layouts.md)
-* [Custom Views](./11_Custom_Views.md)
-* [Locking Fields](./13_Locking_Fields.md)
-* [Path Formatter](./14_Path_Formatter.md)
-* [Link Generator](./15_Link_Generator.md)
-* [Cache Raw Relation Data](./16_Cache_Raw_Relation_Data.md)
+* [Data Inheritance and Parent Class](./25_Inheritance.md)
+* [Object Variants](./70_Variants.md)
+* [Object Preview](./55_Preview.md)
+* [Custom Icons for objects](./10_Custom_Icons.md)
+* [Custom Layouts](./15_Custom_Layouts.md)
+* [Custom Views](./20_Custom_Views.md)
+* [Locking Fields](./35_Locking_Fields.md)
+* [Path Formatter](./50_Path_Formatter.md)
+* [Link Generator](./30_Link_Generator.md)
+* [Cache Raw Relation Data](./05_Cache_Raw_Relation_Data.md)
