@@ -449,5 +449,60 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     getRequiredEditables : function () {
         return this.edit.getValues("validate");
+    },
+
+    publish: function($super, only) {
+        /* It is needed to have extra validateRequiredEditables check here
+         * so as to stop propagating Admin UI changes in case of required content = true */
+        if (this.validateRequiredEditables()) {
+            return false;
+        }
+
+        $super(only);
+    },
+
+    save : function ($super, task, only) {
+        if(task !== "publish") {
+            this.validateRequiredEditables(true);
+        }
+        $super(task, only);
+    },
+
+    validateRequiredEditables: function (dismissalert) {
+        //validate required editables against missing values
+        try {
+            //No validation in case of changing system settings
+            var settingsForm = Ext.getCmp("pimcore_document_settings_" + this.id);
+            if(settingsForm.dirty) {
+                return;
+            }
+
+            var requiredEditables = this.getRequiredEditables();
+            if(Ext.isObject(requiredEditables)) {
+                var requiredEditables = Object.keys(requiredEditables);
+                if (requiredEditables.length > 0) {
+                    if (!dismissalert) {
+                        Ext.MessageBox.show({
+                            title: t("error"),
+                            width: 500,
+                            msg: t("complete_required_fields")
+                                + '<br /><br /><textarea style="width:100%; min-height:100px; resize:none" readonly="readonly">'
+                                + requiredEditables.join(", ") + "</textarea>",
+                            buttons: Ext.Msg.OK
+                        });
+                    }
+
+                    this.data.contentRequired = true;
+
+                    return true;
+                }
+            }
+
+            if(this.data.contentRequired == true) {
+                this.data.contentRequired = false;
+            }
+        } catch(e) {
+        }
+
     }
 });

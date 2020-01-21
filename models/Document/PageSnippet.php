@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Config;
+use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
@@ -71,6 +72,11 @@ abstract class PageSnippet extends Model\Document
     protected $contentMasterDocumentId;
 
     /**
+     * @var null|int
+     */
+    protected $contentRequired = null;
+
+    /**
      * @var array
      */
     protected $inheritedElements = [];
@@ -102,6 +108,12 @@ abstract class PageSnippet extends Model\Document
         // load data which must be requested
         $this->getProperties();
         $this->getElements();
+
+
+        $this->checkContentRequired();
+        if($this->isContentRequired() && $this->getPublished()) {
+            throw new \Exception('Prevented Publishing document - missing values for required editables');
+        }
 
         // update this
         parent::update($params);
@@ -606,5 +618,42 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $url;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function isContentRequired()
+    {
+        return $this->contentRequired;
+    }
+
+    /**
+     * @param int|null $contentRequired
+     */
+    public function setContentRequired($contentRequired)
+    {
+        $this->contentRequired = $contentRequired;
+    }
+
+    /**
+     * Validates if there is a missing value for required editable
+     */
+    public function checkContentRequired() {
+        $allowedTypes = ['input', 'wysiwyg'];
+        if ($this->isContentRequired() == null) {
+            /** @var TagUsageResolver $tagUsageResolver */
+            $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
+            $tagNames = $tagUsageResolver->getUsedTagnames($this);
+            foreach ($tagNames as $tagName) {
+                $tag = $this->getElement($tagName);
+                if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
+                    $documentOptions = $tag->getOptions();
+                    if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                        $this->setContentRequired(true);
+                    }
+                }
+            }
+        }
     }
 }

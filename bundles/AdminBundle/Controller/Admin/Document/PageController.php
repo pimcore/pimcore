@@ -132,6 +132,10 @@ class PageController extends DocumentControllerBase
                 $page->setPublished(true);
             }
 
+            if ($request->get('contentRequired') !== null) {
+                $page->setContentRequired($request->get('contentRequired'));
+            }
+
             $settings = [];
             if ($request->get('settings')) {
                 $settings = $this->decodeJson($request->get('settings'));
