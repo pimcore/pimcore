@@ -202,6 +202,15 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: function(component, record) {
+                    var subtype = record.get('subtype');
+                    if (record.get('type') == "object" && record.get('subtype') != "folder") {
+                        subtype = "object";
+                    }
+                    pimcore.helpers.openObject(record.get('id'), record.get('type'), subtype);
+                }
             }
         });
 
