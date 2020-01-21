@@ -96,7 +96,7 @@ class AdminStyle
 
                 if ($site instanceof Model\Site) {
                     $translator = \Pimcore::getContainer()->get('pimcore.translator');
-                    $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', 'admin') . ': ' . $site->getId();
+                    $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
                 $this->elementIconClass = 'pimcore_icon_page';
