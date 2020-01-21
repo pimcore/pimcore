@@ -14,7 +14,7 @@ use \Pimcore\Model\DataObject;
 
 // Create a new object
 $newObject = new DataObject\Myclassname(); 
-$newObject->setKey(\Pimcore\File::getValidFilename('New Name'));
+$newObject->setKey(\Pimcore\Model\Element\Service::getValidKey('New Name', 'object'));
 $newObject->setParentId(123);
 $newObject->setName("New Name");
 $newObject->setDescription("Some Text");
