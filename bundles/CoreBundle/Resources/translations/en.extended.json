@@ -392,7 +392,7 @@
   "file_explorer_saved_file_error": "Cannot save file",
   "reserved_field_names_error": "Please do not use the following reserved field names: ",
   "use_current_date": "Use current date",
-  "default_value_warning": "Default values are not stored in the database table definition, nor are they set in empty Object instances. They are only available in the pimcore GUI",
+  "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
   "instance_identifier": "Instance identifier",
   "instance_identifier_info": "The instance identifier has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)",
   "restrict_selection_to": "Restrict Selection To",

@@ -272,6 +272,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var context = this.getContext();
         context["subContainerType"] = "block";
         context["subContainerKey"] = fieldConfig.name;
+        context["applyDefaults"] = true;
         var items = this.getRecursiveLayout(fieldConfig, undefined, context, undefined, undefined, undefined, true);
 
         items = items.items;

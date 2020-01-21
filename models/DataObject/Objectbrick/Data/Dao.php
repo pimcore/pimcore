@@ -43,7 +43,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(DataObject\Concrete $object, $params = [])
     {
-
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
         $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
 
@@ -116,15 +115,34 @@ class Dao extends Model\Dao\AbstractDao
                         ]
                     ]));
             }
+
+            $isBrickUpdate = true;          // used to indicate whether we want to consider the default value
+
+            // only relevant if inheritance is enabled
+            if ($this->model->getObject()->getClass()->getAllowInherit()) {
+
+                if (isset($params["isUpdate"]) && $params["isUpdate"] === false) {
+                    // either this is a fresh object, then we don't need the check
+                    $isBrickUpdate = false;
+                } else {
+                    // or brick has been added
+                    $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
+                    $isBrickUpdate = $existsResult ? true : false;
+                }
+            }
+
+
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'isUpdate' => $isBrickUpdate
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'owner' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'isUpdate' => $isBrickUpdate
                     ]);
                     $data[$key] = $insertData;
                 }

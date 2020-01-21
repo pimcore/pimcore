@@ -17,30 +17,34 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     type: "quantityValue",
 
     initialize: function (data, fieldConfig) {
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
+
+    applyDefaultValue: function() {
         this.defaultValue = null;
         this.defaultUnit = null;
         this.autoConvert = false;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert)) {
-            data = {
-                value: fieldConfig.defaultValue,
-                unit: fieldConfig.defaultUnit,
-                autoConvert: fieldConfig.autoConvert
+        if ((typeof this.data === "undefined" || this.data === null) && (this.fieldConfig.defaultValue || this.fieldConfig.defaultUnit || this.fieldConfig.autoConvert)) {
+            this.data = {
+                value: this.fieldConfig.defaultValue,
+                unit: this.fieldConfig.defaultUnit,
+                autoConvert: this.fieldConfig.autoConvert
             };
-            this.defaultValue = data.value;
-            this.defaultUnit = data.unit;
-            this.autoConvert = data.autoConvert;
+            this.defaultValue = this.data.value;
+            this.defaultUnit = this.data.unit;
+            this.autoConvert = this.data.autoConvert;
         }
+    },
 
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
+    finishSetup: function() {
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: 'data',
             fields: ['id', 'abbreviation']
         });
 
-        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), this.fieldConfig.validUnits);
     },
 
     setData: function(data) {
