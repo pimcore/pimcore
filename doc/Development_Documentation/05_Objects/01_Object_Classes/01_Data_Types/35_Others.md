@@ -87,9 +87,7 @@ var_dump($color->getCssRgba(true, true));
 $color->setRgba(0, 0, 255, 64);
 ```
 
-## Encrypted Field (Experimental)
-
-> This is an experimental feature and subject to change without notice
+## Encrypted Field
 
 Offers data encryption for certain data types.
 
