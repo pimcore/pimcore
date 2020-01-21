@@ -65,11 +65,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + this.id;
 
-        var iconClass = "pimcore_icon_asset_default pimcore_icon_" + this.data.fileExtension;
-        if (this.data.type == "folder") {
-            iconClass = "pimcore_icon_folder";
-        }
-
         this.tab = new Ext.Panel({
             id: tabId,
             title: htmlspecialchars(tabTitle),
@@ -77,7 +72,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],
             asset: this,
-            iconCls: iconClass
+            iconCls: this.getIconClass()
         });
 
         this.tab.on("activate", function () {
@@ -356,6 +351,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         Ext.apply(this.data, rdata.data);
 
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
+                        pimcore.helpers.updateTreeElementStyle('asset', this.id, rdata.treeData);
+
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");

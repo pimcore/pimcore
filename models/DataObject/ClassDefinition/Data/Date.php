@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\Carbon;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -23,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use DataObject\Traits\DefaultValueTrait;
+
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -75,6 +78,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data =  $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'date') {
@@ -83,6 +88,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+        return null;
     }
 
     /**
@@ -444,5 +450,18 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue() {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+            return $date;
+
+        }
+        return null;
     }
 }

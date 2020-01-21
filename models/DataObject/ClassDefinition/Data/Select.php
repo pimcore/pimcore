@@ -26,6 +26,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -102,7 +104,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $columnLength
+     * @param null|int $columnLength
      *
      * @return $this
      */
@@ -202,6 +204,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
         return $data;
     }
 
@@ -424,7 +427,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      *
      * @return self
@@ -516,10 +519,18 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
             return '`'.$name.'` LIKE '."'$value'".' ';
         }
+        return null;
     }
 
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function doGetDefaultValue() {
+        return $this->getDefaultValue() ?? null;
     }
 }

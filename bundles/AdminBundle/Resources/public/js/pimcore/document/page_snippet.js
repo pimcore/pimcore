@@ -34,7 +34,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.getLayoutToolbar(),
                 this.getTabPanel()
             ],
-            iconCls: "pimcore_icon_" + this.data.type,
+            iconCls: this.getIconClass(),
             document: this
         });
 

@@ -18,10 +18,13 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AdminStyleTrait;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -43,6 +46,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends ElementControllerBase implements EventedControllerInterface
 {
+    use AdminStyleTrait;
+
     /**
      * @var Document\Service
      */
@@ -69,6 +74,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
             'interfaces' => array_values(class_implements($document))
         ];
+
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -669,7 +676,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->adminJson(['success' => true]);
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+        return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 
     /**
@@ -1047,7 +1055,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         ];
 
         // add icon
-        $tmpDocument['iconCls'] = 'pimcore_icon_' . $childDocument->getType();
         $tmpDocument['expandable'] = $childDocument->hasChildren();
         $tmpDocument['loaded'] = !$childDocument->hasChildren();
 
@@ -1055,34 +1062,21 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-            $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
-                $tmpDocument['iconCls'] = 'pimcore_icon_site';
                 unset($site->rootDocument);
                 $tmpDocument['site'] = $site;
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-
-            if (!$childDocument->hasChildren() && $childDocument->getType() == 'folder') {
-                $tmpDocument['iconCls'] = 'pimcore_icon_folder';
-            }
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);
         }
 
-        $tmpDocument['qtipCfg'] = [
-            'title' => 'ID: ' . $childDocument->getId(),
-            'text' => 'Type: ' . $childDocument->getType()
-        ];
-
-        if ($site instanceof Site) {
-            $tmpDocument['qtipCfg']['text'] .= '<br>' . $this->trans('site_id') . ': ' . $site->getId();
-        }
+        $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
         if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {

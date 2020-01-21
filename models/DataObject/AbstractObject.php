@@ -1210,6 +1210,8 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @deprecated since 6.4.1, use AdminEvents.RESOLVE_ELEMENT_ADMIN_STYLE event instead
+     *
      * @return Model\Element\AdminStyle
      */
     public function getElementAdminStyle()

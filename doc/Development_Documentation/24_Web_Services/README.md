@@ -11,8 +11,11 @@ Once the web service API is enabled, there is an API key displayed in *Settings*
 Please be aware that the API Key changes when the user changes his/her password.
 
 The webservices also support session authentication, this means that it's not necessary to 
-add the `apikey` to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
-  
+add the `X-API-Key` HTTP header or the `apikey` parameter to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
+
+> **Important: API Key**  
+> The recommended way of passing API Key for webservice is through HTTP header `X-API-Key` however you can still use query parameter method mentioned in the examples (which is logged as INFO level information in `var/logs`). [please see #4240](https://github.com/pimcore/pimcore/issues/4240)
+    
   
 > **Important: Import/export topics**  
 > The webservice API is not always the preferred way for importing/syncing data out of or into Pimcore. Often it's much more efficient to use the PHP API in custom scripts (CLI) or in a custom service endpoint. 

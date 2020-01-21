@@ -41,10 +41,13 @@ class DocumentImporter extends AbstractElementImporter
             }
         }
 
-        if ($attribute->getType() === Attribute::TYPE_SETTINGS && $element instanceof Document\Page) {
+        if ($element instanceof Document\Page && ($attribute->getType() === Attribute::TYPE_SETTINGS || $attribute->getType() === Attribute::TYPE_ELEMENT_KEY)) {
             $setter = 'set' . ucfirst($attribute->getName());
             if (method_exists($element, $setter)) {
-                $element->$setter($attribute->getContent());
+                $content = $attribute->getContent();
+                $content = $attribute->getType() === Attribute::TYPE_ELEMENT_KEY ? Element\Service::getValidKey($content, "document") : $content;
+
+                $element->$setter($content);
             }
         }
     }

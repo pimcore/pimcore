@@ -401,7 +401,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getHostname(Request $request = null)
     {
@@ -506,7 +506,7 @@ class Tool
     /**
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getAnonymizedClientIp(Request $request = null)
     {
@@ -697,6 +697,19 @@ class Tool
         }
 
         return $exists;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getCachedSymfonyEnvironments():array
+    {
+        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
+        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
+            unset($dirs[$key]);
+        }
+        $dirs = array_map('basename', $dirs);
+        return array_values($dirs);
     }
 
     /**

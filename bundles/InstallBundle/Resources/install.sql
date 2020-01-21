@@ -957,7 +957,8 @@ CREATE TABLE `notifications` (
   `creationDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `modificationDate` TIMESTAMP NULL,
   `linkedElementType` ENUM('document', 'asset', 'object') NULL,
-  `linkedElement` INT(11) NULL
+  `linkedElement` INT(11) NULL,
+  INDEX `recipient` (`recipient`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;

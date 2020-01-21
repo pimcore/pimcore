@@ -11,7 +11,7 @@
   "unsupported_feature": "Unsupported feature! Please check system requirements!",
   "upload_new_version": "Upload new version",
   "screen_size_to_small": "Your screen is too small to display the desired preview.",
-  "too_many_children_for_recyclebin": "This element contains too many children to be moved to the recycle bin.",
+  "too_many_children_for_recyclebin": "This element contains too many children to be moved to the recycle bin so it will be deleted permantely",
   "default": "Default",
   "data": "Data",
   "metadata": "Metadata",

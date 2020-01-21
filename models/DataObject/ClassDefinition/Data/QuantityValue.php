@@ -29,6 +29,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -139,6 +141,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if ($this->defaultValue !== null) {
             return (float) $this->defaultValue;
         }
+        return null;
     }
 
     /**
@@ -226,6 +229,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
@@ -630,6 +636,17 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
         }
+    }
+
+    /**
+     * @return Model\DataObject\Data\QuantityValue|null
+     */
+    protected function doGetDefaultValue() {
+        if ($this->getDefaultValue() || $this->getDefaultUnit()) {
+            return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
+
+        }
+        return null;
     }
 
     /**

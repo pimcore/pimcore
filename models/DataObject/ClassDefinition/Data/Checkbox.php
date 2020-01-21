@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use DataObject\Traits\DefaultValueTrait;
+
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -93,6 +95,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
         return is_null($data) ? null : (int)$data;
     }
 
@@ -338,5 +341,12 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return null|int
+     */
+    protected function doGetDefaultValue() {
+        return $this->getDefaultValue() ?? null;
     }
 }

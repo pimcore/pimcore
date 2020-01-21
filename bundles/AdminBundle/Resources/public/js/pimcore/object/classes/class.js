@@ -836,15 +836,16 @@ pimcore.object.classes.klass = Class.create({
                     checked: this.data.encryption
                 },
                 {
+                    xtype: 'container',
+                    html: t('encrypt_data_description'),
+                    style: 'margin-bottom:10px'
+                },
+                {
                     xtype: "checkbox",
                     fieldLabel: t("cache_raw_relation_data"),
                     name: "cacheRawRelationData",
                     style: 'margin: 0',
                     checked: this.data.cacheRawRelationData
-                }, {
-                    xtype: 'container',
-                    html: t('encrypt_data_description'),
-                    style: 'margin-bottom:10px'
                 },
                 {
                     xtype: "displayfield",

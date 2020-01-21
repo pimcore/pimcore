@@ -2,7 +2,7 @@
 
 > **DEPRECATED FEATURE**  
 >
-> **Please use [link generators](./15_Link_Generator.md) instead, which are more powerful and flexibel and 
+> **Please use [link generators](./30_Link_Generator.md) instead, which are more powerful and flexibel and 
 offer the same functionality. The preview tab is automatically displayed when a link generator is defined 
 on the data object class.**
 
@@ -19,6 +19,8 @@ example `o_id`, `o_key`, ...
 
 Placeholders have the same syntax as you already know from the custom routes, just put a `%` in front of the property 
 name. 
+
+If you want to use the current user's language you can use `%_locale` as placeholder.
 
 When opening the preview tab in an object, the placeholders are replaced with the current values of the object and the 
 URL is opened in the tab. Only if you configure a preview URL in the class configuration, the preview tab is shown!
