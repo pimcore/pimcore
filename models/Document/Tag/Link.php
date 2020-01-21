@@ -115,14 +115,7 @@ class Link extends Model\Document\Tag
 
             if (isset($this->options['noText']) && $this->options['noText'] == true) {
                 $noText = true;
-            }
-
-            // add attributes to link
-            $attribs = [];
-            foreach ($this->options as $key => $value) {
-                if (is_string($value) || is_numeric($value)) {
-                    $attribs[] = $key.'="'.$value.'"';
-                }
+                unset($this->options['noText']);
             }
 
             // add attributes to link
@@ -165,9 +158,13 @@ class Link extends Model\Document\Tag
 
             $availableAttribs = array_merge($defaultAttributes, $this->data, $this->options);
 
+            // add attributes to link
+            $attribs = [];
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
-                    if (!empty($value)) {
+                    if (!empty($this->data[$key]) && !empty($this->options[$key])) {
+                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
+                    } else if (!empty($value)) {
                         $attribs[] = $key.'="'.$value.'"';
                     }
                 }
