@@ -51,6 +51,7 @@ class File
     }
 
     /**
+     * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      * @static
      *
      * @param string $tmpFilename
