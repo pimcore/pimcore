@@ -398,7 +398,7 @@ class Thumbnail
 
             $htmlImgTag = $html;
 
-            if (isset($isAutoFormat)) {
+            if ($isAutoFormat) {
                 Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
             }
         }
