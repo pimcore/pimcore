@@ -39,6 +39,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+    const OBJECT_REVERSE_SORT = false;
 
     /**
      * @var bool
@@ -180,6 +181,11 @@ class AbstractObject extends Model\Element\AbstractElement
      * @var array
      */
     private $lastGetSiblingObjectTypes = [];
+
+    /**
+     * @var bool
+     */
+    protected $o_reverseSort;
 
     /** @var int */
     protected $o_versionCount = 0;
@@ -1435,5 +1441,26 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_versionCount = (int) $o_versionCount;
 
         return $this;
+    }
+
+
+    /**
+     * @param bool $o_reverseSort
+     *
+     * @return AbstractObject
+     */
+    public function setReverseSort(bool $o_reverseSort): Element\ElementInterface
+    {
+        $this->o_reverseSort = $o_reverseSort;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getReverseSort(): bool
+    {
+        return $this->o_reverseSort ?? self::OBJECT_REVERSE_SORT;
     }
 }

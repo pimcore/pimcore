@@ -693,6 +693,7 @@
     "targeting_toolbar": "Targeting Toolbar",
     "sort_children_by": "Sort Children By",
     "by_key": "Key (A to Z)",
+    "by_key_reverse": "Key (Z to A)",
     "by_index": "Index (Manual)",
     "successful_object_change_children_sort_to_index": "Changed object children sorting to Index",
     "successful_object_change_children_sort_to_key": "Changed object children sorting to Key",

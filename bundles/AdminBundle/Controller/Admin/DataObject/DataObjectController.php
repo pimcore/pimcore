@@ -150,11 +150,21 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
+
+            $sort = 'ASC';
+            if($object->getReverseSort()) {
+                $sort = 'DESC';
+            }
+
             if ($object->getChildrenSortBy() === 'index') {
-                $childsList->setOrderKey('objects.o_index ASC', false);
+                $childsList->setOrderKey(sprintf('objects.o_index %s', $sort), false);
             } else {
                 $childsList->setOrderKey(
-                    sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
+                    sprintf(
+                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
+                        $object->getChildrenSortBy(),
+                        $sort
+                    ),
                     false
                 );
             }
@@ -967,6 +977,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
+            $object->setReverseSort(filter_var($request->get('reverseSort'), FILTER_VALIDATE_BOOLEAN));
             $object->save();
 
             return $this->json(['success' => true]);
