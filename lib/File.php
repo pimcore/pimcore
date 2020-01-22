@@ -33,6 +33,7 @@ class File
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public static function getFileExtension($name)
@@ -71,6 +72,7 @@ class File
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
     public static function isIncludeable($filename)
