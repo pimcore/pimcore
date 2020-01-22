@@ -249,21 +249,6 @@ function is_numeric(mixed_var) {
 }
 
 
-function ucfirst(str) {
-    // Makes a string's first character uppercase  
-    // 
-    // version: 905.3122
-    // discuss at: http://phpjs.org/functions/ucfirst
-    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +   bugfixed by: Onno Marsman
-    // +   improved by: Brett Zamir (http://brett-zamir.me)
-    // *     example 1: ucfirst('kevin van zonneveld');
-    // *     returns 1: 'Kevin van zonneveld'
-    str += '';
-    var f = str.charAt(0).toUpperCase();
-    return f + str.substr(1);
-};
-
 
 function in_array(needle, haystack, argStrict) {
     // Checks if the given value exists in the array  
@@ -1093,63 +1078,6 @@ function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
 
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
-};
-
-
-function array_merge () {
-    // http://kevin.vanzonneveld.net
-    // +   original by: Brett Zamir (http://brett-zamir.me)
-    // +   bugfixed by: Nate
-    // +   input by: josh
-    // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // *     example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-    // *     example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-    // *     example 1: array_merge(arr1, arr2)
-    // *     returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-    // *     example 2: arr1 = []
-    // *     example 2: arr2 = {1: "data"}
-    // *     example 2: array_merge(arr1, arr2)
-    // *     returns 2: {0: "data"}
-    var args = Array.prototype.slice.call(arguments),
-        retObj = {},
-        k, j = 0,
-        i = 0,
-        retArr = true;
-
-    for (i = 0; i < args.length; i++) {
-        if (!(args[i] instanceof Array)) {
-            retArr = false;
-            break;
-        }
-    }
-
-    if (retArr) {
-        retArr = [];
-        for (i = 0; i < args.length; i++) {
-            retArr = retArr.concat(args[i]);
-        }
-        return retArr;
-    }
-    var ct = 0;
-
-    for (i = 0, ct = 0; i < args.length; i++) {
-        if (args[i] instanceof Array) {
-            for (j = 0; j < args[i].length; j++) {
-                retObj[ct++] = args[i][j];
-            }
-        } else {
-            for (k in args[i]) {
-                if (args[i].hasOwnProperty(k)) {
-                    if (parseInt(k, 10) + '' === k) {
-                        retObj[ct++] = args[i][k];
-                    } else {
-                        retObj[k] = args[i][k];
-                    }
-                }
-            }
-        }
-    }
-    return retObj;
 };
 
 
