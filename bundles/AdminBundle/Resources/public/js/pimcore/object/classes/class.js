@@ -310,7 +310,7 @@ pimcore.object.classes.klass = Class.create({
                         if (!in_array(group, groupNames)) {
                             groupNames.push(group);
                         }
-                        groups[group] = new Array();
+                        groups[group] = [];
                     }
                     var handler;
                     if (editMode) {
