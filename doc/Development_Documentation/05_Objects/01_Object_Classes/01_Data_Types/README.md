@@ -90,6 +90,7 @@ The entire list of data types is indicated below:
 | [image](./45_Image_Types.md)                                                           | drop area & preview for a Pimcore image asset                                                          |
 | [externalimage](./45_Image_Types.md)                                                   | relation to an image that is not stored in Pimcore                                                     |
 | [imageadvanced](./45_Image_Types.md#image-advanced-supporting-hotspotsmarkerscropping) | drop area & preview for a Pimcore image asset with additional features for markers, hotspots, cropping |
+| [imagegallery](./45_Image_Types.md)                                                    | collection of `Image Advanced` images                                                                  |          
 | [video](./98_Video_Type.md)                                                            | drop area & preview for a Pimcore video asset                                                          |
 | [checkbox](./65_Others.md#checkbox)                                                    | checkbox                                                                                               |
 | [link](./65_Others.md#link)                                                            | link selector with link target                                                                         |
