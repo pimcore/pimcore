@@ -855,6 +855,7 @@ pimcore.object.tree = Class.create({
                     text: t('initializing')
                 });
 
+                var minimizedWindowListener;
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout: 'fit',
@@ -863,11 +864,40 @@ pimcore.object.tree = Class.create({
                     closable: false,
                     plain: true,
                     modal: true,
+                    minimizable: true,
+                    listeners: {
+                        minimize: function() {
+                            this.toggleCollapse();
+                            if(this.getCollapsed()) {
+                                this.alignTo(Ext.getBody(), 'br-br');
+                                this.zIndexManager.mask.hide();
+                                this.modal = false;
+                                this.setTitle(t("paste")+': '+record.pasteProgressBar.getText());
+
+                                minimizedWindowListener = record.pasteProgressBar.on({
+                                    destroyable: true,
+                                    update: function(progressBar, value, text) {
+                                        this.setTitle(t("paste")+': '+text);
+                                    }.bind(this)
+                                });
+                            } else {
+                                this.center();
+                                this.zIndexManager.mask.show();
+                                this.modal = true;
+                                this.setTitle(t("paste"));
+
+                                minimizedWindowListener.destroy();
+                                minimizedWindowListener = null;
+                            }
+                        },
+                        close: function() {
+                            if(minimizedWindowListener) {
+                                minimizedWindowListener.destroy();
+                            }
+                        }
+                    },
                     items: [record.pasteProgressBar]
                 });
-
-                record.pasteWindow.show();
-
 
                 var pj = new pimcore.tool.paralleljobs({
                     success: function () {
@@ -894,9 +924,12 @@ pimcore.object.tree = Class.create({
                             rdata.message, rdata.stack, rdata.code);
 
                         pimcore.elementservice.refreshNodeAllTrees("object", record.parentNode.id);
+
                     }.bind(this),
                     jobs: res.pastejobs
                 });
+
+                record.pasteWindow.show();
             } else {
                 throw "There are no pasting jobs";
             }

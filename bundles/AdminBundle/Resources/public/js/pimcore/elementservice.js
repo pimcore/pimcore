@@ -141,6 +141,8 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 text: t('initializing')
             });
 
+            var me = this;
+            var minimizedWindowListener;
             this.deleteWindow = new Ext.Window({
                 title: t("delete"),
                 layout:'fit',
@@ -149,6 +151,38 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 closable:false,
                 plain: true,
                 modal: true,
+                minimizable: true,
+                listeners: {
+                    minimize: function() {
+                        this.toggleCollapse();
+                        if(this.getCollapsed()) {
+                            this.alignTo(Ext.getBody(), 'br-br');
+                            this.zIndexManager.mask.hide();
+                            this.modal = false;
+                            this.setTitle(t("delete")+': '+me.deleteProgressBar.getText());
+
+                            minimizedWindowListener = me.deleteProgressBar.on({
+                                destroyable: true,
+                                update: function(progressBar, value, text) {
+                                    this.setTitle(t("delete")+': '+text);
+                                }.bind(this)
+                            });
+                        } else {
+                            this.center();
+                            this.zIndexManager.mask.show();
+                            this.modal = true;
+                            this.setTitle(t("delete"));
+
+                            minimizedWindowListener.destroy();
+                            minimizedWindowListener = null;
+                        }
+                    },
+                    close: function() {
+                        if(minimizedWindowListener) {
+                            minimizedWindowListener.destroy();
+                        }
+                    }
+                },
                 items: [this.deleteProgressBar]
             });
 
