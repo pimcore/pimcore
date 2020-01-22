@@ -457,13 +457,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             },
             bodyCssClass: "pimcore_object_tag_objects",
             listeners: {
-                rowdblclick: function(component, record) {
-                    var subtype = record.get('subtype');
-                    if (record.get('type') == "object" && record.get('subtype') != "folder") {
-                        subtype = "object";
-                    }
-                    pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);
-                }
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 
