@@ -35,7 +35,9 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             ->addOption('create-or-update-index-structure', null, InputOption::VALUE_NONE, 'Use to create or update the index structure')
             ->addOption('update-index', null, InputOption::VALUE_NONE, 'Use to rebuild the index data')
             ->addOption('object-list-class', null, InputOption::VALUE_REQUIRED, 'The object list class to use', '\\Pimcore\\Model\\DataObject\\Product\\Listing')
-            ->addOption('list-condition', null, InputOption::VALUE_OPTIONAL, 'An optional condition for object list', '');
+            ->addOption('list-condition', null, InputOption::VALUE_OPTIONAL, 'An optional condition for object list', '')
+            ->addOption('tenant', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Tenant to perform action on (defaults to all)')
+        ;
     }
 
     /**
@@ -47,6 +49,16 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         $createOrUpdateIndexStructure = $input->getOption('create-or-update-index-structure');
         $objectListClass = $input->getOption('object-list-class');
         $listCondition = $input->getOption('list-condition');
+        $tenants = count($input->getOption('tenant')) ? $input->getOption('tenant') : null;
+
+        //set active tenant workers.
+        if (!empty($tenants)) {
+            $tenantWorkerList = [];
+            foreach ($tenants as $tenantName) {
+                $tenantWorkerList[] = Factory::getInstance()->getIndexService()->getTenantWorker($tenantName);
+            }
+            Factory::getInstance()->getIndexService()->setTenantWorkers($tenantWorkerList);
+        }
 
         if ($createOrUpdateIndexStructure && $updateIndex) {
             // create/update structure and update index

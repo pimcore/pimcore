@@ -86,18 +86,32 @@ class Site extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getById($id)
     {
-        try {
-            $site = new self();
-            $site->getDao()->getById(intval($id));
+        $cacheKey = 'site_id_'. $id;
 
-            return $site;
-        } catch (\Exception $e) {
-            return null;
+        if (Runtime::isRegistered($cacheKey)) {
+            $site = Runtime::get($cacheKey);
+        } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
+            try {
+                $site = new self();
+                $site->getDao()->getById(intval($id));
+            } catch (\Exception $e) {
+                $site = 'failed';
+            }
+
+            \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
         }
+
+        if ($site === 'failed' || !$site) {
+            $site = null;
+        }
+
+        Runtime::set($cacheKey, $site);
+
+        return $site;
     }
 
     /**
@@ -118,13 +132,13 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
      * @return Site|null
      */
     public static function getByDomain($domain)
     {
-        // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
+        // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
 
         if (Runtime::isRegistered($cacheKey)) {
@@ -140,7 +154,7 @@ class Site extends AbstractModel
             \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
         }
 
-        if ($site == 'failed' || !$site) {
+        if ($site === 'failed' || !$site) {
             $site = null;
         }
 
@@ -150,12 +164,14 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $mixed
+     * @param mixed $mixed
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getBy($mixed)
     {
+        $site = null;
+
         if (is_numeric($mixed)) {
             $site = self::getById($mixed);
         } elseif (is_string($mixed)) {
@@ -307,7 +323,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -390,7 +406,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -410,7 +426,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

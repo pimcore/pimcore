@@ -32,7 +32,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * ImageGallery constructor.
      *
-     * @param $items
+     * @param Hotspotimage[] $items
      */
     public function __construct($items)
     {

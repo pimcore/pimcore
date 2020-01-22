@@ -19,6 +19,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -358,6 +359,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     draggroup: 'element'
                 },
                 markDirty: false,
+                enableTextSelection: true,
                 listeners: {
                     afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data, true);
@@ -394,7 +396,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ]
+            ],
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
+            }
         });
 
         if (!readOnly) {
@@ -563,29 +568,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
     },
 
-    getGridColumnConfig: function(field) {
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+    getGridColumnConfig: function (field) {
+        return {
+            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
-                this.applyPermissionStyle(key, value, metaData, record);
-
-                if(record.data.inheritedFields[key]
-                    && record.data.inheritedFields[key].inherited == true) {
-                    metaData.tdCls += " grid_value_inherited";
-                }
-
-
-                if (value) {
-                    var result = [];
-                    var i;
-                    for (i = 0; i < value.length && i < 10; i++) {
-                        var item = value[i];
-                        result.push(item["fullpath"]);
-                    }
-                    return result.join("<br />");
-                }
-                return value;
-            }.bind(this, field.key)};
+            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "fullpath")
+        };
     },
 
 
@@ -595,5 +583,5 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.tags.objectsMetadata = pimcore.object.tags.advancedManyToManyObjectRelation;

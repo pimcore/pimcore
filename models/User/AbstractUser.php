@@ -243,7 +243,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -252,5 +252,10 @@ class AbstractUser extends Model\AbstractModel
         $this->type = $type;
 
         return $this;
+    }
+
+    public function update()
+    {
+        $this->getDao()->update();
     }
 }

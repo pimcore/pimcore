@@ -16,7 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Event\CoreCacheEvents;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -58,7 +57,7 @@ class Cache
                 ->get('event_dispatcher')
                 ->dispatch(CoreCacheEvents::INIT, new Event());
 
-            if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+            if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
                 self::getHandler()->disable();
             }
         }
@@ -96,7 +95,7 @@ class Cache
     /**
      * Remove an item from the cache
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */

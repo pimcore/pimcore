@@ -17,33 +17,34 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     type: "quantityValue",
 
     initialize: function (data, fieldConfig) {
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
+
+    applyDefaultValue: function() {
         this.defaultValue = null;
         this.defaultUnit = null;
         this.autoConvert = false;
-        this.unitTooltip = false;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert || fieldConfig.unitTooltip)) {
-            data = {
-                value: fieldConfig.defaultValue,
-                unit: fieldConfig.defaultUnit,
-                autoConvert: fieldConfig.autoConvert,
-                unitTooltip: fieldConfig.unitTooltip
+        if ((typeof this.data === "undefined" || this.data === null) && (this.fieldConfig.defaultValue || this.fieldConfig.defaultUnit || this.fieldConfig.autoConvert)) {
+            this.data = {
+                value: this.fieldConfig.defaultValue,
+                unit: this.fieldConfig.defaultUnit,
+                autoConvert: this.fieldConfig.autoConvert
             };
-            this.defaultValue = data.value;
-            this.defaultUnit = data.unit;
-            this.autoConvert = data.autoConvert;
-            this.unitTooltip = data.unitTooltip;
+            this.defaultValue = this.data.value;
+            this.defaultUnit = this.data.unit;
+            this.autoConvert = this.data.autoConvert;
         }
+    },
 
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
+    finishSetup: function() {
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: 'data',
             fields: ['id', 'abbreviation']
         });
 
-        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), this.fieldConfig.validUnits);
     },
 
     setData: function(data) {
@@ -103,7 +104,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             queryMode: 'local',
             listeners: {
                 change: function( combo, newValue, oldValue) {
-                    if(this.fieldConfig.autoConvert) {
+                    if(this.fieldConfig.autoConvert && oldValue && newValue) {
                         Ext.Ajax.request({
                             url: "/admin/quantity-value/convert",
                             params: {
@@ -131,8 +132,54 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         this.unitField = new Ext.form.ComboBox(options);
 
+        var compatibleUnitsButton = new Ext.Form.Button({
+            listeners: {
+                click: function() {
+                    Ext.create('Ext.tip.ToolTip', {
+                        target: this.component.getEl(),
+                        showDelay: 0,
+                        dismissDelay: 0,
+                        listeners: {
+                            beforeshow: function (tip) {
+                                var html = tooltip;
+                                if (!html && (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value)) {
+                                    return false;
+                                }
 
-        var fieldContainerConfig = {
+                                Ext.Ajax.request({
+                                    url: "/admin/quantity-value/convert-all",
+                                    params: {
+                                        value: this.inputField.value,
+                                        unit: this.unitField.value,
+                                    },
+                                    async: false,
+                                    success: function (response) {
+                                        response = Ext.decode(response.responseText);
+                                        if (response && response.success && response.values.length > 0) {
+                                            if(html) {
+                                                html += '<hr>';
+                                            }
+                                            html += '<dl><dt>'+Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =</dt>';
+                                            for (var i = 0; i < response.values.length; i++) {
+                                                html += '<dd>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</dd>';
+                                            }
+                                            html += '</dl>';
+                                            tip.setHtml(html);
+                                        }
+                                    }
+                                });
+
+                                if (!tip.html) {
+                                    return false;
+                                }
+                            }.bind(this)
+                        }
+                    });
+                }
+            }
+        });
+
+        this.component = new Ext.form.FieldContainer({
             layout: 'hbox',
             margin: '0 0 10 0',
             fieldLabel: this.fieldConfig.title,
@@ -140,62 +187,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             combineErrors: false,
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
-            isDirty: function () {
+            isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty()
-            }.bind(this),
-            listeners: {}
-        };
-
-        if(this.fieldConfig.unitTooltip) {
-            var tooltip = this.fieldConfig.tooltip;
-            fieldContainerConfig.listeners.render = function () {
-                Ext.create('Ext.tip.ToolTip', {
-                    target: this.component.getEl(),
-                    showDelay: 200,
-                    trackMouse:true,
-                    dismissDelay: 0,
-                    listeners: {
-                        beforeshow: function (tip) {
-                            var html = tooltip;
-                            if (!html && (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value)) {
-                                return false;
-                            }
-
-                            Ext.Ajax.request({
-                                url: "/admin/quantity-value/convert-all",
-                                params: {
-                                    value: this.inputField.value,
-                                    unit: this.unitField.value,
-                                },
-                                async: false,
-                                success: function (response) {
-                                    response = Ext.decode(response.responseText);
-                                    if (response && response.success && response.values.length > 0) {
-                                        if(html) {
-                                            html += '<hr>';
-                                        }
-                                        html += '<dl><dt>'+Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =</dt>';
-                                        for (var i = 0; i < response.values.length; i++) {
-                                            html += '<dd>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</dd>';
-                                        }
-                                        html += '</dl>';
-                                        tip.setHtml(html);
-                                    }
-                                }
-                            });
-
-                            if (!tip.html) {
-                                return false;
-                            }
-                        }.bind(this)
-                    }
-                });
-            }.bind(this);
-
-            this.fieldConfig.tooltip = '';
-        }
-
-        this.component = new Ext.form.FieldContainer(fieldContainerConfig);
+            }.bind(this)
+        });
 
         return this.component;
     },
@@ -229,6 +224,107 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         };
     },
 
+    getGridColumnFilter: function (field) {
+        if(typeof Ext.grid.filters.filter.QuantityValue === 'undefined') {
+            Ext.define('Ext.grid.filters.filter.QuantityValue', {
+                extend: 'Ext.grid.filters.filter.Number',
+                alias: 'grid.filter.quantityValue',
+                type: 'quantityValue',
+                constructor: function(config) {
+                    var me = this;
+                    me.callParent([
+                        config
+                    ]);
+
+                    this.store = config.store;
+                    this.defaultUnit = config.defaultUnit;
+                },
+                createMenu: function () {
+                    var me = this;
+                    me.callParent();
+
+                    var cfg = {
+                        xtype: 'combo',
+                        name: 'unit',
+                        labelClsExtra: Ext.baseCSSPrefix + 'grid-filters-icon pimcore_nav_icon_quantityValue',
+                        queryMode: 'local',
+                        editable: false,
+                        forceSelection: true,
+                        hideEmptyLabel: false,
+                        store: this.store,
+                        value: this.defaultUnit,
+                        valueField: 'id',
+                        displayField: 'abbreviation',
+                        margin: 0,
+                        listeners: {
+                            change: function (field) {
+                                var me = this;
+
+                                me.onValueChange(field, {
+                                    RETURN: 1,
+                                    getKey: function () {
+                                        return null;
+                                    }
+                                });
+
+                                var value = {};
+                                if(me.filter) {
+                                    for(var i in me.filter) {
+                                        if (this.filter[i].getValue() !== null) {
+                                            value[i] = me.filter[i].getValue()[0][0];
+                                        }
+                                    }
+                                }
+
+                                me.setValue(value);
+                            }.bind(this)
+                        }
+                    };
+                    if (me.getItemDefaults()) {
+                        cfg = Ext.merge({}, me.getItemDefaults(), cfg);
+                    }
+
+                    me.menu.insert(0, '-');
+                    me.fields.unit = me.menu.insert(0, cfg);
+                },
+                setValue: function (value) {
+                    var me = this;
+                    var unitId = me.fields.unit.getValue();
+
+                    for (var i in value) {
+                        value[i] = [[value[i], unitId]];
+                    }
+
+                    me.callParent([value]);
+                },
+                showMenu: function (menuItem) {
+                    this.callParent([menuItem]);
+
+                    for (var i in this.filter) {
+                        if (this.filter[i].getValue() !== null) {
+                            this.fields[i].setValue(this.filter[i].getValue()[0][0]);
+                        }
+                    }
+                }
+            });
+        }
+
+        var store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'data',
+            fields: ['id', 'abbreviation']
+        });
+        pimcore.helpers.quantityValue.initUnitStore(function(data) {
+            store.loadData(data.data);
+        }, field.layout.validUnits);
+
+        return {
+            type: 'quantityValue',
+            dataIndex: field.key,
+            store: store,
+            defaultUnit: field.layout.defaultUnit
+        };
+    },
 
     getLayoutShow: function () {
         this.getLayoutEdit();
@@ -255,13 +351,5 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        if (this.unitField.getValue() && this.inputField.getValue()) {
-            return false;
-        }
-        return true;
     }
-
 });

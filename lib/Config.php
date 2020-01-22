@@ -16,9 +16,10 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
 class Config
@@ -39,7 +40,7 @@ class Config
     private static $environmentConfig;
 
     /**
-     * @param $name - name of configuration file. slash is allowed for subdirectories.
+     * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return mixed
      */
@@ -119,7 +120,7 @@ class Config
     /**
      * @internal
      *
-     * @param null $languange
+     * @param string|null $languange
      *
      * @return string
      */
@@ -174,32 +175,25 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var $item WebsiteSetting */
+                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
-                    $key = $item->getName();
                     $itemSiteId = $item->getSiteId();
 
-                    if ($itemSiteId != 0 && $itemSiteId != $siteId) {
+                    if ($itemSiteId !== 0 && $itemSiteId !== $siteId) {
                         continue;
                     }
 
                     $itemLanguage = $item->getLanguage();
 
-                    if ($itemLanguage && $language != $itemLanguage) {
+                    if ($itemLanguage && $language !== $itemLanguage) {
                         continue;
                     }
 
-                    if (isset($settingsArray[$key])) {
-                        if (!$itemLanguage) {
-                            continue;
-                        }
-                    }
+                    $key = $item->getName();
 
-                    if ($settingsArray[$key] && !$itemLanguage) {
+                    if (!$itemLanguage && isset($settingsArray[$key])) {
                         continue;
                     }
-
-                    $s = null;
 
                     switch ($item->getType()) {
                         case 'document':
@@ -213,7 +207,9 @@ class Config
                         case 'text':
                             $s = (string) $item->getData();
                             break;
-
+                        default:
+                            $s = null;
+                            break;
                     }
 
                     if ($s instanceof Model\Element\ElementInterface) {
@@ -241,7 +237,7 @@ class Config
      * @internal
      *
      * @param Config\Config $config
-     * @param null $language
+     * @param string|null $language
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
@@ -267,8 +263,24 @@ class Config
         return $config;
     }
 
+    private static function getArrayValue($keys, $array)
+    {
+        $len = count($keys);
+        $pointer = $array;
+        for ($i = 0; $i < $len; $i++) {
+            $key = $keys[$i];
+            if (array_key_exists($key, $pointer)) {
+                $pointer = $pointer[$key];
+            } else {
+                return null;
+            }
+        }
+
+        return $pointer;
+    }
+
     /**
-     * @param $config
+     * @param array $config
      *
      * @return array|Config\Config
      */
@@ -280,132 +292,132 @@ class Config
             //legacy system configuration mapping
             $systemConfig = new \Pimcore\Config\Config([
                 'general' => [
-                    'timezone' => $config['general']['timezone'],
-                    'path_variable' => $config['general']['path_variable'],
-                    'domain' => $config['general']['domain'],
-                    'redirect_to_maindomain' => $config['general']['redirect_to_maindomain'],
-                    'language' => $config['general']['language'],
-                    'validLanguages' => $config['general']['valid_languages'],
-                    'fallbackLanguages' => $config['general']['fallback_languages'],
-                    'defaultLanguage' => $config['general']['default_language'],
-                    'loginscreencustomimage' => $config['branding']['login_screen_custom_image'],
-                    'disableusagestatistics' => $config['general']['disable_usage_statistics'],
-                    'debug_admin_translations' => $config['general']['debug_admin_translations'],
-                    'instanceIdentifier' => $config['general']['instance_identifier'],
-                    'show_cookie_notice' => $config['general']['show_cookie_notice']
+                    'timezone' => self::getArrayValue(['general', 'timezone'], $config),
+                    'path_variable' => self::getArrayValue(['general', 'path_variable'], $config),
+                    'domain' => self::getArrayValue(['general', 'domain'], $config),
+                    'redirect_to_maindomain' => self::getArrayValue(['general', 'redirect_to_maindomain'], $config),
+                    'language' => self::getArrayValue(['general', 'language'], $config),
+                    'validLanguages' => self::getArrayValue(['general', 'valid_languages'], $config),
+                    'fallbackLanguages' => self::getArrayValue(['general', 'fallback_languages'], $config),
+                    'defaultLanguage' => self::getArrayValue(['general', 'default_language'], $config),
+                    'loginscreencustomimage' => self::getArrayValue(['branding', 'login_screen_custom_image'], $config),
+                    'disableusagestatistics' => self::getArrayValue(['general', 'disable_usage_statistics'], $config),
+                    'debug_admin_translations' => self::getArrayValue(['general', 'debug_admin_translations'], $config),
+                    'instanceIdentifier' => self::getArrayValue(['general', 'instance_identifier'], $config),
+                    'show_cookie_notice' => self::getArrayValue(['general', 'show_cookie_notice'], $config)
                 ],
                 'documents' => [
                     'versions' => [
-                        'days' => $config['documents']['versions']['days'],
-                        'steps' => $config['documents']['versions']['steps']
+                        'days' => self::getArrayValue(['documents', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['documents', 'versions', 'steps'], $config)
                     ],
-                    'error_pages' => $config['documents']['error_pages'],
-                    'createredirectwhenmoved' => $config['documents']['create_redirect_when_moved'],
-                    'allowtrailingslash' => $config['documents']['allow_trailing_slash'],
-                    'generatepreview' => $config['documents']['generate_preview']
+                    'error_pages' => self::getArrayValue(['documents', 'error_pages'], $config),
+                    'createredirectwhenmoved' => self::getArrayValue(['documents', 'create_redirect_when_moved'], $config),
+                    'allowtrailingslash' => self::getArrayValue(['documents', 'allow_trailing_slash'], $config),
+                    'generatepreview' => self::getArrayValue(['documents', 'generate_preview'], $config)
                 ],
                 'objects' => [
                     'versions' => [
-                        'days' => $config['objects']['versions']['days'],
-                        'steps' => $config['objects']['versions']['steps']
+                        'days' => self::getArrayValue(['objects', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['objects', 'versions', 'steps'], $config)
                     ]
                 ],
                 'assets' => [
                     'versions' => [
-                        'days' => $config['assets']['versions']['days'],
-                        'steps' => $config['assets']['versions']['steps']
+                        'days' => self::getArrayValue(['assets', 'versions', 'days'], $config),
+                        'steps' => self::getArrayValue(['assets', 'versions', 'steps'], $config)
                     ],
-                    'icc_rgb_profile' => $config['assets']['icc_rgb_profile'],
-                    'icc_cmyk_profile' => $config['assets']['icc_cmyk_profile'],
-                    'hide_edit_image' => $config['assets']['hide_edit_image'],
-                    'disable_tree_preview' => $config['assets']['disable_tree_preview']
+                    'icc_rgb_profile' => self::getArrayValue(['assets', 'icc_rgb_profile'], $config),
+                    'icc_cmyk_profile' => self::getArrayValue(['assets', 'icc_cmyk_profile'], $config),
+                    'hide_edit_image' => self::getArrayValue(['assets', 'hide_edit_image'], $config),
+                    'disable_tree_preview' => self::getArrayValue(['assets', 'disable_tree_preview'], $config)
                 ],
                 'services' => [
                     'google' => [
-                        'client_id' => $config['services']['google']['client_id'],
-                        'email' => $config['services']['google']['email'],
-                        'simpleapikey' => $config['services']['google']['simple_api_key'],
-                        'browserapikey' => $config['services']['google']['browser_api_key']
+                        'client_id' => self::getArrayValue(['services', 'google', 'client_id'], $config),
+                        'email' => self::getArrayValue(['services', 'google', 'email'], $config),
+                        'simpleapikey' => self::getArrayValue(['services', 'google', 'simple_api_key'], $config),
+                        'browserapikey' => self::getArrayValue(['services', 'google', 'browser_api_key'], $config)
                     ]
                 ],
-                'cache' => [
-                    'enabled' => $config['cache']['enabled'],
-                    'lifetime' => $config['cache']['lifetime'],
-                    'excludePatterns' => $config['cache']['exclude_patterns'],
-                    'excludeCookie' => $config['cache']['exclude_cookie']
+                'full_page_cache' => [
+                    'enabled' => self::getArrayValue(['full_page_cache', 'enabled'], $config),
+                    'lifetime' => self::getArrayValue(['full_page_cache', 'lifetime'], $config),
+                    'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
+                    'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config)
                 ],
                 'webservice' => [
-                    'enabled' => $config['webservice']['enabled']
+                    'enabled' => self::getArrayValue(['webservice', 'enabled'], $config)
                 ],
                 'httpclient' => [
-                    'adapter' => $config['httpclient']['adapter'],
-                    'proxy_host' => $config['httpclient']['proxy_host'],
-                    'proxy_port' => $config['httpclient']['proxy_port'],
-                    'proxy_user' => $config['httpclient']['proxy_user'],
-                    'proxy_pass' => $config['httpclient']['proxy_pass']
+                    'adapter' => self::getArrayValue(['httpclient', 'adapter'], $config),
+                    'proxy_host' => self::getArrayValue(['httpclient', 'proxy_host'], $config),
+                    'proxy_port' => self::getArrayValue(['httpclient', 'proxy_port'], $config),
+                    'proxy_user' => self::getArrayValue(['httpclient', 'proxy_user'], $config),
+                    'proxy_pass' => self::getArrayValue(['httpclient', 'proxy_pass'], $config)
                 ],
                 'email' => [
                     'sender' => [
-                        'name' => $config['email']['sender']['name'],
-                        'email' => $config['email']['sender']['email']
+                        'name' => self::getArrayValue(['email', 'sender', 'name'], $config),
+                        'email' => self::getArrayValue(['email', 'sender', 'email'], $config)
                     ],
                     'return' => [
-                        'name' => $config['email']['return']['name'],
-                        'email' => $config['email']['return']['email']
+                        'name' => self::getArrayValue(['email', 'return', 'name'], $config),
+                        'email' => self::getArrayValue(['email', 'return', 'email'], $config)
                     ],
-                    'method' => $config['email']['method'],
+                    'method' => self::getArrayValue(['email', 'method'], $config),
                     'smtp' => [
-                        'host' => $config['email']['smtp']['host'],
-                        'port' => $config['email']['smtp']['port'],
-                        'ssl' => $config['email']['smtp']['encryption'],
+                        'host' => self::getArrayValue(['email', 'smtp', 'host'], $config),
+                        'port' => self::getArrayValue(['email', 'smtp', 'port'], $config),
+                        'ssl' => self::getArrayValue(['email', 'smtp', 'encryption'], $config),
                         'name' => 'smtp',
                         'auth' => [
-                            'method' => $config['email']['smtp']['auth_mode'],
-                            'username' => $config['email']['smtp']['username'],
-                            'password' => $config['email']['smtp']['password']
+                            'method' => self::getArrayValue(['email', 'smtp', 'auth_mode'], $config),
+                            'username' => self::getArrayValue(['email', 'smtp', 'username'], $config),
+                            'password' => self::getArrayValue(['email', 'smtp', 'password'], $config)
                         ],
                     ],
                     'debug' => [
-                        'emailaddresses' => $config['email']['debug']['email_addresses']
+                        'emailaddresses' => self::getArrayValue(['email', 'debug', 'email_addresses'], $config)
                     ]
                 ],
                 'newsletter' => [
                     'sender' => [
-                        'name' => $config['newsletter']['sender']['name'],
-                        'email' => $config['newsletter']['sender']['email']
+                        'name' => self::getArrayValue(['newsletter', 'sender', 'name'], $config),
+                        'email' => self::getArrayValue(['newsletter', 'sender', 'email'], $config)
                     ],
                     'return' => [
-                        'name' => $config['newsletter']['return']['name'],
-                        'email' => $config['newsletter']['return']['name']
+                        'name' => self::getArrayValue(['newsletter', 'return', 'name'], $config),
+                        'email' => self::getArrayValue(['newsletter', 'return', 'name'], $config)
                     ],
-                    'method' => $config['newsletter']['method'],
+                    'method' => self::getArrayValue(['newsletter', 'method'], $config),
                     'smtp' => [
-                        'host' => $config['newsletter']['smtp']['host'],
-                        'port' => $config['newsletter']['smtp']['port'],
-                        'ssl' => $config['newsletter']['smtp']['encryption'],
+                        'host' => self::getArrayValue(['newsletter', 'smtp', 'host'], $config),
+                        'port' => self::getArrayValue(['newsletter', 'smtp', 'port'], $config),
+                        'ssl' => self::getArrayValue(['newsletter', 'smtp', 'encryption'], $config),
                         'name' => 'smtp',
                         'auth' => [
-                            'method' => $config['newsletter']['smtp']['auth_mode'],
-                            'username' => $config['newsletter']['smtp']['username'],
-                            'password' => $config['newsletter']['smtp']['password']
+                            'method' => self::getArrayValue(['newsletter', 'smtp', 'auth_mode'], $config),
+                            'username' => self::getArrayValue(['newsletter', 'smtp', 'username'], $config),
+                            'password' => self::getArrayValue(['newsletter', 'smtp', 'password'], $config)
                         ],
                     ],
-                    'debug' => $config['newsletter']['debug']['email_addresses'],
-                    'usespecific' => $config['newsletter']['use_specific']
+                    'debug' => self::getArrayValue(['newsletter', 'debug', 'email_addresses'], $config),
+                    'usespecific' => self::getArrayValue(['newsletter', 'use_specific'], $config)
                 ],
                 'branding' => [
-                    'login_screen_invert_colors' => $config['branding']['login_screen_invert_colors'],
-                    'color_login_screen' => $config['branding']['color_login_screen'],
-                    'color_admin_interface' => $config['branding']['color_admin_interface']
+                    'login_screen_invert_colors' => self::getArrayValue(['branding', 'login_screen_invert_colors'], $config),
+                    'color_login_screen' => self::getArrayValue(['branding', 'color_login_screen'], $config),
+                    'color_admin_interface' => self::getArrayValue(['branding', 'color_admin_interface'], $config)
                 ],
                 'applicationlog' => [
                     'mail_notification' => [
-                        'send_log_summary' => $config['applicationlog']['mail_notification']['send_log_summary'],
-                        'filter_priority' => $config['applicationlog']['mail_notification']['filter_priority'],
-                        'mail_receiver' => $config['applicationlog']['mail_notification']['mail_receiver']
+                        'send_log_summary' => self::getArrayValue(['applicationlog', 'mail_notification', 'send_log_summary'], $config),
+                        'filter_priority' => self::getArrayValue(['applicationlog', 'mail_notification', 'filter_priority'], $config),
+                        'mail_receiver' => self::getArrayValue(['applicationlog', 'mail_notification', 'mail_receiver'], $config)
                     ],
-                    'archive_treshold' => $config['applicationlog']['archive_treshold'],
-                    'archive_alternative_database' => $config['applicationlog']['archive_alternative_database']
+                    'archive_treshold' => self::getArrayValue(['applicationlog', 'archive_treshold'], $config),
+                    'archive_alternative_database' => self::getArrayValue(['applicationlog', 'archive_alternative_database'], $config)
                 ]
             ]);
         }
@@ -575,8 +587,8 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_perspectives')) {
             $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
         } else {
+            $file = self::locateConfigFile('perspectives.php');
             try {
-                $file = self::locateConfigFile('perspectives.php');
                 $config = static::getConfigInstance($file);
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
@@ -697,7 +709,7 @@ class Config
         $config = self::getPerspectivesConfig()->toArray();
         $result = [];
 
-        if ($config[$currentConfigName]) {
+        if (isset($config[$currentConfigName])) {
             $result = $config[$currentConfigName];
         } else {
             $availablePerspectives = self::getAvailablePerspectives($currentUser);
@@ -723,7 +735,7 @@ class Config
     /**
      * @internal
      *
-     * @param $name
+     * @param string $name
      *
      * @return array
      */
@@ -754,7 +766,7 @@ class Config
                     continue;
                 }
 
-                if ($tmpData['hidden']) {
+                if (!empty($tmpData['hidden'])) {
                     continue;
                 }
 
@@ -765,7 +777,7 @@ class Config
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -774,7 +786,7 @@ class Config
         }
 
         foreach ($tmpResult as $resultItem) {
-            if ($resultItem['hidden']) {
+            if (!empty($resultItem['hidden'])) {
                 continue;
             }
 
@@ -784,7 +796,7 @@ class Config
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
                     continue;
                 }
-                $customViewCfg = $cfConfigMapping[$customViewId];
+                $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
                 if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
@@ -883,7 +895,8 @@ class Config
 
             $currentConfigName = $user->getActivePerspective();
             if ($config && !in_array($currentConfigName, array_keys($config))) {
-                $currentConfigName = reset(array_keys($config));
+                $configNames = array_keys($config);
+                $currentConfigName = reset($configNames);
             }
         } else {
             $config = self::getPerspectivesConfig()->toArray();
@@ -910,8 +923,8 @@ class Config
     /**
      * @internal
      *
-     * @param $runtimeConfig
-     * @param $key
+     * @param array $runtimeConfig
+     * @param string $key
      *
      * @return bool
      */
@@ -933,7 +946,7 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-                if ($menuItem['hidden']) {
+                if (isset($menuItem['hidden']) && $menuItem['hidden']) {
                     return false;
                 }
 
@@ -960,24 +973,16 @@ class Config
         if (null === static::$environment || $reset) {
             $environment = false;
 
+            if (php_sapi_name() === 'cli') {
+                $input = new ArgvInput();
+                $environment = $input->getParameterOption(['--env', '-e'], null, true);
+            }
+
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                $environment = getenv('PIMCORE_ENVIRONMENT')
-                    ?: (getenv('REDIRECT_PIMCORE_ENVIRONMENT'))
-                        ?: false;
-            }
-
-            if (!$environment) {
-                $environment = getenv('SYMFONY_ENV')
-                    ?: (getenv('REDIRECT_SYMFONY_ENV'))
-                        ?: false;
-            }
-
-            if (!$environment && php_sapi_name() === 'cli') {
-                // check CLI option: [-e|--env ENV]
-                foreach ($_SERVER['argv'] as $argument) {
-                    if (preg_match("@\-\-env=(.*)@", $argument, $matches)) {
-                        $environment = $matches[1];
+                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                    $environment = self::resolveEnvVarValue($envVarName);
+                    if ($environment) {
                         break;
                     }
                 }
@@ -987,13 +992,7 @@ class Config
                 if (null !== $default) {
                     $environment = $default;
                 } else {
-                    $environmentConfig = static::getEnvironmentConfig();
-
-                    if (\Pimcore::inDebugMode(DebugMode::SYMFONY_ENVIRONMENT)) {
-                        $environment = $environmentConfig->getDefaultDebugModeEnvironment();
-                    } else {
-                        $environment = $environmentConfig->getDefaultEnvironment();
-                    }
+                    $environment = static::getEnvironmentConfig()->getDefaultEnvironment();
                 }
             }
 
@@ -1004,6 +1003,8 @@ class Config
     }
 
     /**
+     * @internal
+     *
      * @param string $environment
      */
     public static function setEnvironment($environment)
@@ -1082,5 +1083,86 @@ class Config
         }
 
         throw new \Exception($file . ' is invalid');
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $varName
+     * @param mixed $default
+     *
+     * @return string|null
+     */
+    public static function resolveEnvVarValue(string $varName, $default = null): ?string
+    {
+        $value = $_SERVER[$varName] ?? $_ENV[$varName] ?? $_SERVER['REDIRECT_' . $varName]
+            ?? $_ENV['REDIRECT_' . $varName] ?? $default;
+
+        return $value;
+    }
+
+    /**
+     * @internal
+     */
+    public static function initDebugDevMode()
+    {
+        if (defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
+            $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
+        } else {
+            // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
+            // path from the environment variables (if customized) or we use the default structure
+            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
+            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
+        }
+
+        $debug = false;
+        $devMode = false;
+
+        $debugModeFile = $configDir . '/debug-mode.php';
+        if (file_exists($debugModeFile)) {
+            $confTemp = include $debugModeFile;
+            if (is_array($confTemp)) {
+                $conf = $confTemp;
+
+                // init debug mode
+                if (isset($conf['active'])) {
+                    $debug = $conf['active'];
+                    // enable debug mode only for a comma-separated list of IP addresses/ranges
+                    if ($debug && $conf['ip']) {
+                        $debug = false;
+                        $clientIp = Tool::getClientIp();
+                        if (null !== $clientIp) {
+                            $debugIpAddresses = explode_and_trim(',', $conf['ip']);
+                            if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
+                                $debug = true;
+                            }
+                        }
+                    }
+                }
+
+                // init dev mode
+                if ($debug && isset($conf['devmode'])) {
+                    $devMode = $conf['devmode'];
+                }
+            }
+        }
+
+        if (\Pimcore::getDebugMode() === null) {
+            \Pimcore::setDebugMode($debug);
+
+            /**
+             * @deprecated
+             */
+            define('PIMCORE_DEBUG', $debug);
+        }
+
+        if (\Pimcore::getDevMode() === null) {
+            \Pimcore::setDevMode($devMode);
+
+            /**
+             * @deprecated
+             */
+            define('PIMCORE_DEVMODE', $devMode);
+        }
     }
 }

@@ -50,6 +50,11 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     public $currentIndex;
 
     /**
+     * @var bool
+     */
+    protected $blockStarted;
+
+    /**
      * @see Document\Tag\TagInterface::getType
      *
      * @return string
@@ -90,7 +95,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * @param $index
+     * @param int $index
      */
     public function renderIndex($index)
     {
@@ -187,7 +192,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
         }
 
-        if ($options['globalParams']) {
+        if (isset($options['globalParams'])) {
             $params = array_merge($options['globalParams'], (array)$params);
         }
 
@@ -569,24 +574,22 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
-     *
-     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))
-            and ($data->currentIndex == null or is_numeric($data->currentIndex))) {
+        $data = $this->sanitizeWebserviceData($wsElement->value);
+        if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
+            && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
             $indices = $data->indices;
-            if ($indices instanceof \stdclass) {
-                $indices = (array) $indices;
-            }
+            $indices = json_decode(json_encode($indices), true);
 
             $this->indices = $indices;
             $this->current = $data->current;
@@ -603,7 +606,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     public function getElement(string $name)
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();

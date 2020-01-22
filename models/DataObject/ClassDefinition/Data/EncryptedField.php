@@ -316,6 +316,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -336,10 +338,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Model\DataObject\Data\RgbaColor|null
      *
@@ -607,6 +611,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * @param $object
      * @param array $context
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {

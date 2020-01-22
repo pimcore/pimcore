@@ -20,9 +20,23 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class NotificationService
 {
+    /** @var UserService */
+    private $userService;
+
+    /**
+     * NotificationService constructor.
+     *
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * @param int $userId
      * @param int $fromUser
@@ -46,10 +60,6 @@ class NotificationService
 
         if (!$recipient instanceof User) {
             throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
-        }
-
-        if ($element && !$element instanceof ElementInterface) {
-            throw new \UnexpectedValueException(sprint('No element found with the ID %d', $elementId));
         }
 
         $notification = new Notification();
@@ -87,7 +97,6 @@ class NotificationService
 
         $filter = [
             'id != ?' => $fromUser,
-            'permissions LIKE ?' => '%notifications%',
             'active = ?' => 1,
             'roles LIKE ?' => '%' . $groupId . '%'
         ];
@@ -102,6 +111,7 @@ class NotificationService
         $listing->load();
 
         $users = $listing->getUsers() ?? [];
+        $users = $this->userService->filterUsersWithPermission($users);
 
         foreach ($users as $user) {
             $this->sendToUser($user->getId(), $fromUser, $title, $message, $element);
@@ -137,6 +147,10 @@ class NotificationService
         $this->beginTransaction();
         $notification = $this->find($id);
 
+        if ($notification->getRecipient()->getId() != $recipientId) {
+            throw new AccessDeniedHttpException();
+        }
+
         if ($recipientId && $recipientId == $notification->getRecipient()->getId()) {
             $notification->setRead(true);
             $notification->save();
@@ -164,8 +178,9 @@ class NotificationService
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $offset = (int) $options['offset'] ?? 0;
-        $limit = (int) $options['limit'] ?? 0;
+        $options += ['offset' => 0, 'limit' => 0];
+        $offset = (int) $options['offset'];
+        $limit = (int) $options['limit'];
 
         $this->beginTransaction();
 
@@ -181,18 +196,20 @@ class NotificationService
 
     /**
      * @param int $user
-     * @param int $interval
+     * @param int $lastUpdate
      *
      * @return array
+     *
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function findLastUnread(int $user, int $interval): array
+    public function findLastUnread(int $user, int $lastUpdate): array
     {
         $listing = new Listing();
         $listing->setCondition(
             'recipient = ? AND `read` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', time() - $interval)
+                date('Y-m-d H:i:s', $lastUpdate)
             ]
         );
         $listing->setOrderKey('creationDate');
@@ -235,11 +252,6 @@ class NotificationService
         }
 
         $sender = $notification->getSender();
-        $from = false;
-
-        if (is_int($sender)) {
-            $sender = \Pimcore\Model\User::getById($senderId);
-        }
 
         if ($sender instanceof User\AbstractUser) {
             $from = trim(sprintf('%s %s', $sender->getFirstname(), $sender->getLastname()));

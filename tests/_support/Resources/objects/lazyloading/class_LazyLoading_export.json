@@ -1,6 +1,6 @@
 {
     "id": "50",
-    "description": null,
+    "description": "class for lazy loading tests",
     "parentClass": null,
     "listingParentClass": null,
     "useTraits": null,
@@ -8,6 +8,7 @@
     "allowInherit": true,
     "allowVariants": false,
     "showVariants": false,
+    "cacheRawRelationData": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
         "labelWidth": 100,

@@ -25,7 +25,7 @@ interface DirtyIndicatorInterface
     public function hasDirtyFields();
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -34,7 +34,7 @@ interface DirtyIndicatorInterface
     /**
      * marks the given field as dirty
      *
-     * @param $field
+     * @param string $field
      * @param bool $dirty
      *
      * @return mixed

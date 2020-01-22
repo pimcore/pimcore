@@ -39,8 +39,8 @@ class Version20190527121800 extends AbstractPimcoreMigration
     public function migrateSystemConfiguration()
     {
         try {
-            $originalConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.php';
-            $newConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
+            $originalConfigFile = \Pimcore\Config::locateConfigFile('system.php');
+            $newConfigFile = str_replace('system.php', 'system.yml', $originalConfigFile);
 
             if (is_file($originalConfigFile)) {
                 //write new system.yml file in /var/config
@@ -69,7 +69,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     }
 
     /**
-     * @param $config
+     * @param array $config
      */
     public static function standardizeSystemConfigKeys(&$config)
     {
@@ -108,7 +108,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     /**
      * Migrate 'Appearance & Branding' configuration from 'pimcore' node to 'pimcore_admin' node in system.yml
      *
-     * @param $systemConfigFile
+     * @param string $systemConfigFile
      *
      * @return bool
      */
@@ -144,7 +144,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     /**
      * Migrate email & newletter smtp configuration from 'pimcore' node to 'swiftmailer' node in system.yml
      *
-     * @param $systemConfigFile
+     * @param string $systemConfigFile
      *
      * @return bool
      */

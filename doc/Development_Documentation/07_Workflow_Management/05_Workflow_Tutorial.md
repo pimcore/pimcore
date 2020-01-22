@@ -145,7 +145,7 @@ Let's add few new rows in the configuration file
             color: '#d9ef36'
             permissions:
                 - objectLayout: 6            
-        content_preapared:
+        content_prepared:
             label: 'Content Prepared'
             title: 'Content ready to publish'
             color: '#28a013'
@@ -171,7 +171,7 @@ Let's add few new rows in the configuration file
                     commentRequired: false
         content_ready:
             from: validate_stock_and_price
-            to: content_preapared
+            to: content_prepared
             options:
                 label: 'Content is ready to publish'
 (...)
@@ -194,7 +194,7 @@ This can be done because we have workflow type `state_machine` activated, here o
 (...)
     transitions:
         reject_product:
-            from: [new, content_preapared]
+            from: [new, content_prepared]
             to: rejected
             options:
                 label: 'Reject the product'
@@ -202,7 +202,7 @@ This can be done because we have workflow type `state_machine` activated, here o
                     commentEnabled: true
                     commentRequired: true
         start_processing:
-            from: [new, content_preapared]
+            from: [new, content_prepared]
             to: update_content
             options:
                 label: 'Start processing the product'
@@ -231,7 +231,7 @@ And, the transition with a *"timeWorked"* field.
     transitions:
         (...)
         publish:
-            from: content_preapared
+            from: content_prepared
             to: accepted
             guard: "is_fully_authenticated() and has_role('ROLE_PIMCORE_SUPERUSER')"
             options:

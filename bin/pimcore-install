@@ -14,13 +14,13 @@
  */
 
 use Pimcore\Config;
+use Pimcore\Bootstrap;
 use Pimcore\Bundle\InstallBundle\InstallerKernel;
 use Pimcore\Version;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 @ini_set('display_errors', 'On');
 
 $maxExecutionTime = 0;
@@ -41,18 +41,10 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
     exit(1);
 }
 
-if (!defined('PIMCORE_PROJECT_ROOT')) {
-    define(
-        'PIMCORE_PROJECT_ROOT',
-        getenv('PIMCORE_PROJECT_ROOT')
-            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-            ?: realpath($projectRoot)
-    );
-}
+Bootstrap::setProjectRoot();
+Bootstrap::defineConstants();
 
-\Pimcore\Bootstrap::defineConstants();
-
-Debug::enable();
+Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);

@@ -73,8 +73,8 @@ class Service
     }
 
     /**
-     * @param $class DataObject\ClassDefinition
-     * @param $json
+     * @param DataObject\ClassDefinition $class
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -89,7 +89,7 @@ class Service
 
         $importData = json_decode($json, true);
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             // set layout-definition
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             if ($layout === false) {
@@ -105,11 +105,11 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
+        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'cacheRawRelationData', 'showVariants', 'parentClass',
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 
@@ -119,14 +119,14 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
      *
      * @return string
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
-        unset($fieldCollection->key);
-        unset($fieldCollection->fieldDefinitions);
+        $fieldCollection->setKey(null);
+        $fieldCollection->setFieldDefinitions(null);
 
         $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
 
@@ -134,8 +134,8 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
-     * @param $json
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -149,21 +149,26 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        $fieldCollection->setParentClass($importData['parentClass']);
+        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
+            }
+        }
+
         $fieldCollection->save();
 
         return true;
     }
 
     /**
-     * @param $objectBrick
+     * @param DataObject\Objectbrick\Definition $objectBrick
      *
      * @return string
      */
     public static function generateObjectBrickJson($objectBrick)
     {
-        unset($objectBrick->key);
-        unset($objectBrick->fieldDefinitions);
+        $objectBrick->setKey(null);
+        $objectBrick->setFieldDefinitions(null);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -187,8 +192,8 @@ class Service
     }
 
     /**
-     * @param $objectBrick
-     * @param $json
+     * @param DataObject\Objectbrick\Definition $objectBrick
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -216,7 +221,7 @@ class Service
             }
         }
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             $objectBrick->setLayoutDefinitions($layout);
         }
@@ -235,10 +240,11 @@ class Service
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @param bool $throwException
+     * @param bool $insideLocalizedField
      *
-     * @return bool
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -254,23 +260,23 @@ class Service
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows childs
-
                     $item->setValues($array, ['childs']);
+                    $childs = $array['childs'] ?? [];
 
-                    if (is_array($array) && is_array($array['childs']) && isset($array['childs']['datatype']) && $array['childs']['datatype']) {
-                        $childO = self::generateLayoutTreeFromArray($array['childs'], $throwException, $insideLocalizedField);
+                    if (!empty($childs['datatype'])) {
+                        $childO = self::generateLayoutTreeFromArray($childs, $throwException, $insideLocalizedField);
                         $item->addChild($childO);
-                    } elseif (is_array($array['childs']) && count($array['childs']) > 0) {
-                        foreach ($array['childs'] as $child) {
+                    } elseif (is_array($childs) && count($childs) > 0) {
+                        foreach ($childs as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);
                             } else {
                                 if ($throwException) {
                                     throw new \Exception('Could not add child ' . var_export($child, true));
-                                } else {
-                                    Logger::err('Could not add child ' . var_export($child, true));
                                 }
+
+                                Logger::err('Could not add child ' . var_export($child, true));
 
                                 return false;
                             }
@@ -295,8 +301,8 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $tableNames
+     * @param array $tableDefinitions
+     * @param array $tableNames
      */
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
     {
@@ -313,7 +319,7 @@ class Service
         foreach ($tmp as $tableName => $columns) {
             foreach ($columns as $column) {
                 $column['Type'] = strtolower($column['Type']);
-                if (strtolower($column['Null']) == 'yes') {
+                if (strtolower($column['Null']) === 'yes') {
                     $column['Null'] = 'null';
                 }
                 //                $fieldName = strtolower($column["Field"]);
@@ -324,18 +330,18 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
+     * @param array $tableDefinitions
+     * @param string $table
+     * @param string $colName
+     * @param string $type
+     * @param string $default
+     * @param string $null
      *
      * @return bool
      */
     public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
     {
-        $tableDefinition = $tableDefinitions[$table];
+        $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
             if ($colDefinition) {

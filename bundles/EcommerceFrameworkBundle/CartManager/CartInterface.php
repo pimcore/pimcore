@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenInformation;
 
 /**
  * Interface for cart implementations of online shop framework
@@ -28,9 +29,7 @@ interface CartInterface
     public function getId();
 
     /**
-     * @param $id int
-     *
-     * @return void
+     * @param int $id
      */
     public function setId($id);
 
@@ -49,6 +48,9 @@ interface CartInterface
      * default implementation checks if order object exists and if order state is PAYMENT_PENDING
      *
      * @return bool
+     *
+     * @deprecated use checkout implementation V7 instead
+     *
      */
     public function isCartReadOnly();
 
@@ -74,11 +76,11 @@ interface CartInterface
     /**
      * @param CheckoutableInterface $product
      * @param int $count
-     * @param null $itemKey
+     * @param string|null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param AbstractSetProductEntry[] $subProducts
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -91,7 +93,7 @@ interface CartInterface
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -100,8 +102,8 @@ interface CartInterface
     /**
      * updates count of specific cart item
      *
-     * @param $itemKey
-     * @param $count
+     * @param string $itemKey
+     * @param int $count
      *
      * @return mixed
      */
@@ -110,11 +112,11 @@ interface CartInterface
     /**
      * @param CheckoutableInterface $product
      * @param int $count
-     * @param null $itemKey
+     * @param string|null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param AbstractSetProductEntry[] $subProducts
-     * @param string $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -127,7 +129,7 @@ interface CartInterface
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return string $itemKey
      */
@@ -192,17 +194,15 @@ interface CartInterface
      * Set custom checkout data for cart.
      * can be used for delivery information, ...
      *
-     * @param  $key string
-     * @param  $data string
-     *
-     * @return void
+     * @param string $key
+     * @param string $data
      */
     public function setCheckoutData($key, $data);
 
     /**
      * Get custom checkout data for cart with given key.
      *
-     * @param  $key string
+     * @param string $key
      *
      * @return string
      */
@@ -218,7 +218,7 @@ interface CartInterface
     /**
      * set name of cart.
      *
-     * @param $name
+     * @param string $name
      *
      * @return void
      */
@@ -282,7 +282,7 @@ interface CartInterface
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
      * @return CartInterface
      */
@@ -293,7 +293,7 @@ interface CartInterface
      *
      * @static
      *
-     * @param $userId
+     * @param int $userId
      *
      * @return CartInterface[]
      */
@@ -319,6 +319,13 @@ interface CartInterface
      * @return string[]
      */
     public function getVoucherTokenCodes();
+
+    /**
+     * Returns detail information of added voucher codes and if they are considered by pricing rules
+     *
+     * @return PricingManagerTokenInformation[]
+     */
+    public function getPricingManagerTokenInformationDetails(): array;
 
     /**
      * @return bool

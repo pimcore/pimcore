@@ -22,10 +22,10 @@
   ],
   "support": {
     "issues": "https://github.com/pimcore/pimcore/issues",
-    "wiki": "https://pimcore.com/docs/5.0.x/index.html",
+    "wiki": "https://pimcore.com/docs/latest/",
     "source": "https://github.com/pimcore/pimcore",
-    "forum": "https://groups.google.com/forum/#!forum/pimcore",
-    "docs": "https://pimcore.com/docs/5.0.x/index.html"
+    "forum": "https://talk.pimcore.org/",
+    "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
     "php": ">=7.2",
@@ -41,6 +41,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^2.4.0",
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "^1.10.0",
@@ -58,6 +59,7 @@
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.0",
     "guzzlehttp/guzzle": "^6.3",
+    "http-interop/http-factory-guzzle": "^1.0.0",
     "hybridauth/hybridauth": "^2.12",
     "lcobucci/jwt": "^3.2",
     "league/csv": "^9.1",
@@ -65,7 +67,6 @@
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^1.9.3",
     "myclabs/deep-copy": "^1.3",
-    "myclabs/php-enum": "^1.5",
     "neitanod/forceutf8": "^2.0.2",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
     "ocramius/package-versions": "^1.2",
@@ -75,12 +76,13 @@
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
-    "sensio/framework-extra-bundle": "^5.2",
+    "sensio/framework-extra-bundle": "^5.4",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
+    "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
-    "symfony/symfony": "^3.4.17 || ^4.0",
+    "symfony/symfony": "^3.4.26 || ^4.1.12",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.4",
@@ -89,18 +91,22 @@
     "vrana/jush": "~2.0.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
-    "scheb/two-factor-bundle": "^3.8"
+    "scheb/two-factor-bundle": "^3.26",
+    "phpoffice/phpspreadsheet": "^1.9"
+  },
+  "conflict": {
+    "monolog/monolog": ">=2"
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
-    "codeception/codeception": "~2.4.5"
+    "codeception/codeception": "~2.4.5",
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-symfony": "^0.12"
   },
   "suggest": {
     "ext-curl": "*",
     "ext-imagick": "*",
-    "ext-redis": "*",
-    "klarna/checkout": "1.2.0",
-    "elasticsearch/elasticsearch": "2.0.0"
+    "ext-redis": "*"
   },
   "autoload": {
     "files": [
@@ -128,9 +134,31 @@
       "app/AppKernel.php"
     ]
   },
+  "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
+    ]
+  },
   "extra": {
+    "symfony-app-dir": "app",
+    "symfony-bin-dir": "bin",
+    "symfony-var-dir": "var",
+    "symfony-web-dir": "web",
+    "symfony-tests-dir": "tests",
+    "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "6.0-dev"
+      "dev-master": "6.4-dev"
     }
   },
   "bin": ["bin/pimcore-install"]

@@ -49,9 +49,10 @@ pimcore.object.helpers.grid = Class.create({
         this.baseParams['fields[]'] = fieldParam;
     },
 
-    getStore: function(noBatchColumns, batchAppendColumns) {
+    getStore: function(noBatchColumns, batchAppendColumns, batchRemoveColumns) {
 
         batchAppendColumns = batchAppendColumns || [];
+        batchRemoveColumns = batchRemoveColumns || [];
         // the store
         var readerFields = [];
         readerFields.push({name: "id"});
@@ -70,6 +71,7 @@ pimcore.object.helpers.grid = Class.create({
 
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
+        this.batchRemoveColumns = [];
 
         for (var i = 0; i < this.fields.length; i++) {
             if (!in_array(this.fields[i].key, ["creationDate", "modificationDate"])) {
@@ -103,6 +105,9 @@ pimcore.object.helpers.grid = Class.create({
                 if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchAppend) {
                     batchAppendColumns.push(key);
                 }
+                if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchRemove) {
+                    batchRemoveColumns.push(key);
+                }
 
                 readerFields.push(readerFieldConfig);
             }
@@ -131,7 +136,7 @@ pimcore.object.helpers.grid = Class.create({
             batchActions: false,
             actionMethods: {
                 create : 'POST',
-                read   : 'POST',
+                read   : 'GET',
                 update : 'POST',
                 destroy: 'POST'
             },
@@ -265,7 +270,7 @@ pimcore.object.helpers.grid = Class.create({
 
 
                     operatorColumnConfig.getEditor = function() {
-                        return new pimcore.object.helpers.gridCellEditor({
+                        return new pimcore.element.helpers.gridCellEditor({
                             fieldInfo: {
                                 layout: {
                                     noteditable: true
@@ -384,6 +389,63 @@ pimcore.object.helpers.grid = Class.create({
             }
 
         }
-    }
+    },
 
+    advancedRelationGridRenderer: function (field, pathProperty, value, metaData, record) {
+        var key = field.key;
+        this.applyPermissionStyle(key, value, metaData, record);
+
+        if(record.data.inheritedFields[key]
+            && record.data.inheritedFields[key].inherited == true) {
+            metaData.tdCls += " grid_value_inherited";
+        }
+
+
+        if (value && value.length) {
+            var result;
+
+            var columnKeys = field.layout.columnKeys ? field.layout.columnKeys : [];
+            if (columnKeys && columnKeys.length) {
+                result = '<table border="0" cellpadding="0"  cellspacing="0" style="border-collapse: collapse;">';
+                var i;
+
+                result += '<tr><td>&nbsp;</td>';
+                for (let i = 0; i < columnKeys.length; i++) {
+                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + ts(columnKeys[i]) + '</td>';
+                }
+                result += '</tr>';
+
+
+                for (let i = 0; i < value.length && i < 10; i++) {
+                    result += '<tr>';
+
+                    result += '<td style="padding: 0 5px 0 5px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0;">';
+                    let item = value[i];
+                    result += item[pathProperty];
+                    result += '</td>';
+
+                    for (let col = 0; col < columnKeys.length; col++) {
+                        let colName = columnKeys[col];
+                        result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">';
+                        let displayValue = item[colName] ? item[colName] : "&nbsp";
+                        result += displayValue;
+                        result += '</td>';
+                    }
+
+                    result += '</tr>';
+                }
+
+                result += '</table>';
+            } else {
+                result = [];
+                for (let i = 0; i < value.length && i < 10; i++) {
+                    var item = value[i];
+                    result.push(item[pathProperty]);
+                }
+                return result.join("<br />");
+            }
+            return result;
+        }
+        return value;
+    }
 });

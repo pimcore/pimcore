@@ -97,6 +97,8 @@ interface CheckoutManagerInterface
      * @return AbstractPaymentInformation
      *
      * @throws UnsupportedException
+     *
+     * @deprecated use V7/startOrderPaymentWithPaymentProvider instead
      */
     public function startOrderPayment();
 
@@ -135,7 +137,7 @@ interface CheckoutManagerInterface
      *
      * Delegates to commit order processor
      *
-     * @param $paymentResponseParams
+     * @param array|StatusInterface $paymentResponseParams
      *
      * @return AbstractOrder
      */

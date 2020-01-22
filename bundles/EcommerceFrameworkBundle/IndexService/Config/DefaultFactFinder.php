@@ -81,7 +81,7 @@ class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterf
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null                                              $subObjectId
+     * @param int|null $subObjectId
      *
      * @return mixed $subTenantData
      */
@@ -130,9 +130,9 @@ class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterf
     /**
      * creates object mockup for given data
      *
-     * @param $objectId
-     * @param $data
-     * @param $relations
+     * @param int $objectId
+     * @param mixed $data
+     * @param array $relations
      *
      * @return mixed
      */

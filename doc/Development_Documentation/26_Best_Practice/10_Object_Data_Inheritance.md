@@ -1,6 +1,6 @@
 # Object Data Inheritance in Action
 
-[Object Data Inheritance](../05_Objects/01_Object_Classes/05_Class_Settings/01_Inheritance.md) is a powerful feature to minimize the data maintenance effort for editors.
+[Object Data Inheritance](../05_Objects/01_Object_Classes/05_Class_Settings/25_Inheritance.md) is a powerful feature to minimize the data maintenance effort for editors.
 
 In our [e-commerce demo](https://github.com/pimcore/demo-ecommerce) we use data inheritance for fashion products with different colors and sizes - meaning
 we have a generic article with all the generic information (like names, descriptions, material, gender assignment, specific
@@ -31,7 +31,7 @@ With the [Custom Icons](../05_Objects/01_Object_Classes/05_Class_Settings/07_Cus
 icons can be modified for virtual products, like in this example grey icons for virtual products, colored icons for real
 products.
 
-With [Custom Layouts](../05_Objects/01_Object_Classes/05_Class_Settings/09_Custom_Layouts.md) and 
+With [Custom Layouts](../05_Objects/01_Object_Classes/05_Class_Settings/15_Custom_Layouts.md) and 
 the tips of [Showing Custom Layouts based on Object Data](/04_Showing_Custom_Layouts_based_on_Object_Data.md) it is even  
 possible to deliver a different object editor mask for virtual products with additional explanation texts and showing
 only attributes that should be modified on the current level by the editor.

@@ -23,6 +23,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**
@@ -64,9 +67,9 @@ class Service
 
     /**
      * @param DataObject\AbstractObject|Document|Asset $element
-     * @param $apiElementKeys
-     * @param $recursive
-     * @param $includeRelations
+     * @param array $apiElementKeys
+     * @param bool $recursive
+     * @param bool $includeRelations
      *
      * @return array
      */

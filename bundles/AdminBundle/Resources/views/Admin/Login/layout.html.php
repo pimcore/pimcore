@@ -1,5 +1,5 @@
 <?php
-/** @var $view \Pimcore\Templating\PhpEngine */
+/** @var \Pimcore\Templating\PhpEngine $view */
 
 $config = $this->config;
 
@@ -15,10 +15,9 @@ $config = $this->config;
     <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
 
     <link rel="stylesheet" href="/bundles/pimcoreadmin/css/login.css" type="text/css"/>
-    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-        <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+        <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= time(); ?>"/>
     <?php endforeach; ?>
 </head>
 <body class="pimcore_version_6 <?= $config->branding->login_screen_invert_colors ? 'inverted' : '' ?>">
@@ -34,7 +33,7 @@ $config = $this->config;
 
     <style type="text/css">
         #background {
-            background-image: url(<?= $backgroundImageUrl ?>);
+            background-image: url("<?= $backgroundImageUrl ?>");
         }
     </style>
 
@@ -45,6 +44,10 @@ $config = $this->config;
         <style type="text/css">
             #content button {
                 background: <?= $customColor ?>;
+            }
+
+            #content a {
+                color: <?= $customColor ?>;
             }
         </style>
     <?php } ?>
@@ -80,8 +83,6 @@ $config = $this->config;
     KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
 </div>
 
-
-<script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->output('below_footer') ?>

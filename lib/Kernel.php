@@ -94,7 +94,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(function (ContainerBuilder $container) use ($loader) {
+        $loader->load(function (ContainerBuilder $container) {
             $this->registerExtensionConfigFileResources($container);
         });
 
@@ -155,9 +155,6 @@ abstract class Kernel extends SymfonyKernel
 
         // handle system requirements
         $this->setSystemRequirements();
-
-        // force load config
-        \Pimcore::initConfiguration();
 
         // initialize extension manager config
         $this->extensionConfig = new Extension\Config();
@@ -357,8 +354,6 @@ abstract class Kernel extends SymfonyKernel
         if (php_sapi_name() === 'cli') {
             $maxExecutionTime = 0;
         }
-
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
         //@ini_set("memory_limit", "1024M");
         @ini_set('max_execution_time', $maxExecutionTime);

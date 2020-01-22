@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -52,7 +53,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     protected $data = [];
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      * @param array $columns
      * @param null $element
      *
@@ -77,8 +78,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      *
      * @return mixed|void
      *
@@ -110,9 +111,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @param $object
      * @param string $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      */
     public function save($object, $ownertype = 'object', $ownername, $position, $index)
     {
@@ -123,15 +124,15 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
-     * @param $destinationType
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
+     * @param string $destinationType
      *
-     * @return mixed
+     * @return DataObject\Data\ElementMetadata|null
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
     {
@@ -139,7 +140,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -170,7 +171,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         if (!$element) {
             $this->setElementTypeAndId(null, null);
 
-            return;
+            return $this;
         }
 
         $elementType = Model\Element\Service::getType($element);
@@ -188,7 +189,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         if ($this->getElementType() && $this->getElementId()) {
             $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
             if (!$element) {
-                throw new \Exception('element ' . $this->getElementType() . ' ' . $this->getElementId() . ' does not exist anymore');
+                Logger::info('element ' . $this->getElementType() . ' ' . $this->getElementId() . ' does not exist anymore');
             }
 
             return $element;
@@ -212,7 +213,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -250,7 +251,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function __toString()
     {

@@ -33,7 +33,7 @@ class Placeholder
     /**
      * Prefixes for the Placeholder Classes
      *
-     * @var string
+     * @var array
      */
     protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', '\\Pimcore\\Placeholder\\', '\\Website\\Placeholder\\', '\\AppBundle\\Placeholder\\'];
 
@@ -45,7 +45,7 @@ class Placeholder
     protected $document;
 
     /**
-     * @param $classPrefix
+     * @param string $classPrefix
      *
      * @throws \Exception
      */
@@ -59,7 +59,7 @@ class Placeholder
     }
 
     /**
-     * @param $classPrefix
+     * @param string $classPrefix
      *
      * @return bool
      *
@@ -115,7 +115,7 @@ class Placeholder
     }
 
     /**
-     * @param $suffix
+     * @param string $suffix
      *
      * @throws \Exception
      */
@@ -160,7 +160,7 @@ class Placeholder
                         } elseif (!is_array($configArray)) {
                             throw new \Exception('The JSON string in the PlaceholderConfig should be an array.');
                         }
-                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null, ['ignoreconstants' => true]);
+                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;
@@ -195,6 +195,7 @@ class Placeholder
      */
     public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)
     {
+        $contentString = null;
         if (is_string($mixed)) {
             $contentString = $mixed;
         } elseif ($mixed instanceof Model\Document) {
@@ -257,9 +258,6 @@ class Placeholder
                     $placeholderObject->setLocale();
 
                     $replaceWith = $placeholderObject->getReplacement();
-                    if (!isset($replaceWith)) {
-                        $replaceWith = $placeholderObject->getEmptyValue();
-                    }
                     $stringReplaced = str_replace($placeholderObject->getPlaceholderString(), $replaceWith, $stringReplaced);
                 } else {
                     Logger::warn('Ignoring Placeholder "' . $placeholder['placeholderClass'] . '" -> Class not Found or not an instance of Pimcore_Placeholder_Abstract!');

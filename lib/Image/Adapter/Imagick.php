@@ -14,6 +14,7 @@
 
 namespace Pimcore\Image\Adapter;
 
+use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
@@ -42,7 +43,7 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
-     * @param $imagePath
+     * @param string $imagePath
      * @param array $options
      *
      * @return $this|bool|self
@@ -159,7 +160,7 @@ class Imagick extends Adapter
      */
     public function getContentOptimizedFormat()
     {
-        $format = 'jpeg';
+        $format = 'pjpeg';
         if ($this->hasAlphaChannel()) {
             $format = 'png32';
         }
@@ -168,11 +169,11 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $path
-     * @param null $format
-     * @param null $quality
+     * @param string $path
+     * @param string|null $format
+     * @param int|null $quality
      *
-     * @return $this|mixed
+     * @return $this
      *
      * @throws \Exception
      */
@@ -426,8 +427,8 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $width
-     * @param  $height
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -476,10 +477,10 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $x
-     * @param  $y
-     * @param  $width
-     * @param  $height
+     * @param int $x
+     * @param int $y
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -499,9 +500,9 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
-     * @param  bool $forceResize
+     * @param int $width
+     * @param int $height
+     * @param bool $forceResize
      *
      * @return $this
      */
@@ -529,7 +530,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $tolerance
+     * @param float $tolerance
      *
      * @return self
      */
@@ -549,7 +550,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $color
+     * @param string $color
      *
      * @return self
      */
@@ -569,11 +570,11 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      * @param string $color
      *
-     * @return Imagick
+     * @return \Imagick
      */
     protected function createImage($width, $height, $color = 'transparent')
     {
@@ -585,7 +586,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $angle
+     * @param int $angle
      *
      * @return $this
      */
@@ -605,8 +606,8 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      *
      * @return $this
      */
@@ -614,7 +615,11 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        $this->resource->roundCorners($width, $height);
+        if (method_exists($this->resource, 'roundCorners')) {
+            $this->resource->roundCorners($width, $height);
+        } else {
+            $this->internalRoundCorners($width, $height);
+        }
 
         $this->postModify();
 
@@ -624,7 +629,29 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $image
+     * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
+     *
+     * @param int $width
+     * @param int $height
+     */
+    protected function internalRoundCorners($width, $height)
+    {
+        $imageWidth = $this->resource->getImageWidth();
+        $imageHeight = $this->resource->getImageHeight();
+
+        $rectangle = new \ImagickDraw();
+        $rectangle->setFillColor(new \ImagickPixel('black'));
+        $rectangle->roundRectangle(0, 0, $imageWidth - 1, $imageHeight - 1, $width, $height);
+
+        $mask = new \Imagick();
+        $mask->newImage($imageWidth, $imageHeight, new \ImagickPixel('transparent'), 'png');
+        $mask->drawImage($rectangle);
+
+        $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
+    }
+
+    /**
+     * @param string $image
      * @param null|string $mode
      *
      * @return $this
@@ -724,7 +751,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $image
+     * @param string $image
      * @param string $composite
      *
      * @return $this
@@ -744,7 +771,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param  $image
+     * @param string $image
      *
      * @return self
      */
@@ -843,7 +870,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $mode
+     * @param string $mode
      *
      * @return $this|Adapter
      */
@@ -863,7 +890,7 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param null $imagePath
+     * @param string|null $imagePath
      *
      * @return bool
      */
@@ -968,27 +995,53 @@ class Imagick extends Adapter
         return parent::getVectorRasterDimensions();
     }
 
-    protected $supportedFormatsCache = [];
+    protected static $supportedFormatsCache = [];
 
     /**
      * @inheritdoc
      */
-    public function supportsFormat(string $format)
+    public function supportsFormat(string $format, bool $force = false)
     {
-        if (!isset($this->supportedFormatsCache[$format])) {
-            try {
-                // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;
-                $image = new \Imagick();
-                $image->newImage(100, 100, new \ImagickPixel('red'));
-                $image->writeImage($format . ':' . $tmpFile);
-                $this->supportedFormatsCache[$format] = true;
-                unlink($tmpFile);
-            } catch (\Exception $e) {
-                $this->supportedFormatsCache[$format] = false;
+        if ($force) {
+            return $this->checkFormatSupport($format);
+        }
+
+        if (!isset(self::$supportedFormatsCache[$format])) {
+
+            // since determining if an image format is supported is quite expensive we use two-tiered caching
+            // in-process caching (static variable) and the shared cache
+            $cacheKey = 'imagick_format_' . $format;
+            if (($cachedValue = Cache::load($cacheKey)) !== false) {
+                self::$supportedFormatsCache[$format] = (bool) $cachedValue;
+            } else {
+                self::$supportedFormatsCache[$format] = $this->checkFormatSupport($format);
+
+                // we cache the status as an int, so that we know if the status was cached or not, with bool that wouldn't be possible, since load() returns false if item doesn't exists
+                Cache::save((int) self::$supportedFormatsCache[$format], $cacheKey, [], null, 999, true);
             }
         }
 
-        return $this->supportedFormatsCache[$format];
+        return self::$supportedFormatsCache[$format];
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return bool
+     */
+    protected function checkFormatSupport(string $format): bool
+    {
+        try {
+            // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
+            $image = new \Imagick();
+            $image->newImage(1, 1, new \ImagickPixel('red'));
+            $image->writeImage($format . ':' . $tmpFile);
+            unlink($tmpFile);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

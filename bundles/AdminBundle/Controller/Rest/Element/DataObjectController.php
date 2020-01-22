@@ -28,6 +28,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
+ * @deprecated
+ *
  * end point for object related data.
  *
  * - get object by id

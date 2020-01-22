@@ -45,7 +45,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     protected $crop;
 
     /**
-     * @param null $image
+     * @param Asset\Image|int|null $image
      * @param array $hotspots
      * @param array $marker
      * @param array $crop
@@ -79,7 +79,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $hotspots
+     * @param array[] $hotspots
      *
      * @return $this
      */
@@ -92,7 +92,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getHotspots()
     {
@@ -100,7 +100,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $marker
+     * @param array[] $marker
      *
      * @return $this
      */
@@ -113,7 +113,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getMarker()
     {
@@ -121,7 +121,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param \array[] $crop
+     * @param array[] $crop
      */
     public function setCrop($crop)
     {
@@ -130,7 +130,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return \array[]
+     * @return array[]
      */
     public function getCrop()
     {
@@ -138,7 +138,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $image
+     * @param Asset\Image $image
      *
      * @return $this
      */
@@ -151,7 +151,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset|Asset\Image
+     * @return Asset\Image
      */
     public function getImage()
     {
@@ -159,7 +159,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param null $thumbnailName
+     * @param string|array|Asset\Image\Thumbnail\Config $thumbnailName
      * @param bool $deferred
      *
      * @return Asset\Image\Thumbnail|string
@@ -181,6 +181,19 @@ class Hotspotimage implements OwnerAwareFieldInterface
         }
 
         if ($crop) {
+            if ($thumbConfig->hasMedias()) {
+                $medias = $thumbConfig->getMedias() ?: [];
+
+                foreach ($medias as $mediaName => $mediaConfig) {
+                    $thumbConfig->addItemAt(0, 'cropPercent', [
+                        'width' => $crop['cropWidth'],
+                        'height' => $crop['cropHeight'],
+                        'y' => $crop['cropTop'],
+                        'x' => $crop['cropLeft']
+                    ], $mediaName);
+                }
+            }
+
             $thumbConfig->addItemAt(0, 'cropPercent', [
                 'width' => $crop['cropWidth'],
                 'height' => $crop['cropHeight'],

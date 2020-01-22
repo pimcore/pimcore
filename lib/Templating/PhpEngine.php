@@ -80,6 +80,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method Cache cache($name, $lifetime = null, $force = false)
  * @method DeviceDetector device($default = null)
  * @method array getAllParams()
+ * @method array breachAttackRandomContent()
  * @method mixed getParam($key, $default = null)
  * @method Glossary glossary()
  * @method Container placeholder($placeholderName)
@@ -181,7 +182,7 @@ class PhpEngine extends BasePhpEngine
     /**
      * Renders template with current parameters
      *
-     * @param $name
+     * @param string $name
      * @param array $parameters
      *
      * @return string
@@ -212,8 +213,8 @@ class PhpEngine extends BasePhpEngine
     /**
      * Get a view model parameter
      *
-     * @param $name
-     * @param null $default
+     * @param string $name
+     * @param mixed|null $default
      *
      * @return mixed|null
      */

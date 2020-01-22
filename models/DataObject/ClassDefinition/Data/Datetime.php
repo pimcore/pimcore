@@ -25,6 +25,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -66,7 +68,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -74,6 +76,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'datetime') {
@@ -82,6 +86,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -91,7 +97,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -112,7 +118,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -126,7 +132,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -142,16 +148,12 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param $timestamp
      *
-     * @return \DateTime|\Pimcore\Date
+     * @return \Carbon\Carbon()
      */
     protected function getDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $date = new \Pimcore\Date($timestamp);
-        } else {
-            $date = new \Carbon\Carbon();
-            $date->setTimestamp($timestamp);
-        }
+        $date = new \Carbon\Carbon();
+        $date->setTimestamp($timestamp);
 
         return $date;
     }
@@ -163,7 +165,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \DateTime
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -191,7 +193,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *
@@ -209,7 +211,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Data::getVersionPreview
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -217,11 +219,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
+
+        return '';
     }
 
     /**
@@ -237,9 +239,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d H:i');
         }
 
@@ -277,6 +277,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -288,10 +290,12 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -431,7 +435,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             if ($this->getColumnType() == 'datetime') {
                 $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = '. $db->quote($value);
+                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
 
                 return $condition;
             } else {
@@ -444,5 +448,25 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return parent::getFilterConditionExt($value, $operator, $params);
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue()
+    {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+
+            return $date;
+        }
+
+        return null;
     }
 }

@@ -140,6 +140,12 @@ pimcore.element.abstract = Class.create({
     },
 
     checkForChanges: function () {
+
+        // do not run when tab is not active
+        if(document.hidden) {
+            return;
+        }
+
         // tab was closed before first cycle
         // stop change detector again
         if(this.tab.destroyed) {
@@ -195,5 +201,37 @@ pimcore.element.abstract = Class.create({
         } else {
             this.tabPanel.add(this.tab);
         }
+    },
+
+    getMetaInfoMenuItems: function() {
+        var metainfo = this.getMetaInfo();
+
+        return [
+            {
+                text: t("metainfo_copy_id"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.id)
+            },
+            {
+                text: t("metainfo_copy_fullpath"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.path)
+            },
+            {
+                text: t("metainfo_copy_deeplink"),
+                iconCls: "pimcore_icon_copy",
+                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.deeplink)
+            }
+        ];
+    },
+
+    getIconClass: function () {
+        var iconClass;
+        if (this.data.iconCls) {
+            iconClass = this.data.iconCls;
+        } else if (this.data.icon) {
+            iconClass = pimcore.helpers.getClassForIcon(this.data.icon);
+        }
+        return iconClass;
     }
 });

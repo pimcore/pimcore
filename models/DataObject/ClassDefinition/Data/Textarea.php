@@ -161,6 +161,8 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param bool $excludeFromSearchIndex
+     *
+     * @return self
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -300,5 +302,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

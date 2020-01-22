@@ -38,6 +38,8 @@ interface EnvironmentConfigInterface
     /**
      * Default environment to use if no environment is explicitely defined and Pimcore is in debug mode
      *
+     * @deprecated
+     *
      * @return string
      */
     public function getDefaultDebugModeEnvironment(): string;

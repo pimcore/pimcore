@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.plugin.broker");
 pimcore.plugin.broker = {
 
-    plugins: new Array(),
+    plugins: [],
 
     initialize: function() {
 

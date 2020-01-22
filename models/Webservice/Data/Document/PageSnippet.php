@@ -20,6 +20,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class PageSnippet extends Model\Webservice\Data\Document
 {
     /**
@@ -43,8 +46,8 @@ class PageSnippet extends Model\Webservice\Data\Document
     public $elements;
 
     /**
-     * @param $object
-     * @param null $options
+     * @param Model\Document\PageSnippet $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {
@@ -66,9 +69,9 @@ class PageSnippet extends Model\Webservice\Data\Document
     }
 
     /**
-     * @param $object Model\Document\PageSnippet
+     * @param Model\Document\PageSnippet $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

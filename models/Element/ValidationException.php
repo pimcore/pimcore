@@ -25,7 +25,7 @@ class ValidationException extends \Exception
     protected $contextStack = [];
 
     /** @var array */
-    protected $subItems;
+    protected $subItems = [];
 
     /**
      * @return array
@@ -40,11 +40,14 @@ class ValidationException extends \Exception
      */
     public function setSubItems($subItems)
     {
+        if (!\is_array($subItems)) {
+            @trigger_error('Calling '.__METHOD__.' with a '.\gettype($subItems).' as argument is deprecated', E_USER_DEPRECATED);
+        }
         $this->subItems = $subItems;
     }
 
     /**
-     * @param $context
+     * @param string $context
      */
     public function addContext($context)
     {

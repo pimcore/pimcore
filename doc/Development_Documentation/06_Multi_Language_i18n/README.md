@@ -26,14 +26,14 @@ Following settings can be defined here:
 * Fallback language for each language: if defined, Pimcore returns values from fallback language if primary language has 
  no values set. 
 
-
+> *Note: Removing language from the Localization & Internationalization (i18n/l10n) list will not delete its respective data. Please use console command `pimcore:locale:delete-unused-tables` for cleanup.*
 ### Localized Content Areas
 The activated languages have influence to following modules of content within Pimcore: 
 
 * [Document - Localization (system property for language)](./02_Localize_your_Documents.md)
-* [Shared Translations (Zend_Translate)](./04_Shared_Translations.md)
-* [Localized Fields for Objects (object localization)](../05_Objects/01_Object_Classes/01_Data_Types/23_Localized_Fields.md)
-* [Structured Data Fields - Classification Store](../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md)
+* [Shared Translations (Symfony Translations Component)](./04_Shared_Translations.md)
+* [Localized Fields for Objects (object localization)](../05_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md)
+* [Structured Data Fields - Classification Store](../05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md)
 
 
 ## Pimcore Backend UI Localization 

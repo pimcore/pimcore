@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
@@ -25,6 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @deprecated
+ *
  * end point for document related data.
  * - get document by id
  *      GET http://[YOUR-DOMAIN]/webservice/rest/document/id/1281?apikey=[API-KEY]
@@ -455,7 +456,7 @@ class DocumentController extends AbstractElementController
     protected function checkWebserviceMethod($method, $type)
     {
         if (!method_exists($this->service, $method)) {
-            if (\Pimcore::inDebugMode(DebugMode::REST_ERRORS)) {
+            if (\Pimcore::inDebugMode()) {
                 throw new ResponseException(
                     $this->createErrorResponse(sprintf('Method %s does not exist', $method))
                 );

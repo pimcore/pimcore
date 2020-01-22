@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
@@ -37,7 +38,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Objectbrick';
+    public $phpdocType = '\\' . Objectbrick::class;
 
     /**
      * @var array
@@ -112,9 +113,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     'objectFromVersion' => $params['objectFromVersion'],
                     'context' => [
                         'containerType' => 'objectbrick',
-                        'containerKey' => $allowedBrickType],
-                        'fieldname' => $this->getName()
-
+                        'containerKey' => $allowedBrickType,
+                    ],
+                    'fieldname' => $this->getName(),
                 ];
 
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType);
@@ -135,8 +136,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
-        /** @var $item DataObject\Objectbrick\Definition */
+        $object = $data->getObject();
+        if ($object) {
+            $parent = DataObject\Service::hasInheritableParentObject($object);
+        }
+        /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{'get' . ucfirst($this->getName())}();
@@ -160,24 +164,21 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if (!$fd instanceof CalculatedValue) {
                 $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $params);
                 $brickData[$fd->getName()] = $fieldData->objectData;
-            }
-
-            $brickMetaData[$fd->getName()] = $fieldData->metaData;
-            if ($fieldData->metaData['inherited'] == true) {
-                $inherited = true;
+                $brickMetaData[$fd->getName()] = $fieldData->metaData;
+                if ($fieldData->metaData['inherited'] == true) {
+                    $inherited = true;
+                }
             }
         }
 
         $calculatedChilds = [];
         self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
 
-        if ($calculatedChilds) {
-            foreach ($calculatedChilds as $fd) {
-                $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
-                $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
-                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
-                $brickData[$fd->getName()] = $fieldData;
-            }
+        foreach ($calculatedChilds as $fd) {
+            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+            $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+            $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
+            $brickData[$fd->getName()] = $fieldData;
         }
 
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
@@ -209,13 +210,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
     {
         $result = new \stdClass();
-        $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+        if ($baseObject) {
+            $parent = DataObject\Service::hasInheritableParentObject($baseObject);
+        }
         $valueGetter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$params['objectFromVersion'] && method_exists($fielddefinition, 'getLazyLoading')
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\Block) {
 
@@ -225,6 +228,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
                 $refKey = $key;
+                $refId = null;
             }
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
@@ -239,21 +243,18 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             }
             $data = [];
 
-            if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
+            if ($fielddefinition instanceof ManyToOneRelation) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
-                    if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    } else {
-                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
-                    }
+                    $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' => $rel['subtype'], 'published' => ($rel['published'] ? true : false)];
                 }
             }
             $result->objectData = $data;
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
+            $fieldValue = null;
             $editmodeValue = null;
             if (!empty($item)) {
                 $fieldValue = $item->$valueGetter();
@@ -270,7 +271,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 }
             }
             $result->objectData = $editmodeValue;
-            $result->metaData['objectid'] = $baseObject->getId();
+            $result->metaData['objectid'] = $baseObject ? $baseObject->getId() : null;
             $result->metaData['inherited'] = $level != 0;
         }
 
@@ -487,6 +488,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -530,10 +533,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $data
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      *
@@ -735,39 +740,41 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if ($data instanceof DataObject\Objectbrick) {
                 $validationExceptions = [];
 
-                $items = $data->getItems();
-                foreach ($items as $item) {
-                    if ($item->getDoDelete()) {
-                        continue;
-                    }
+                $allowedTypes = $this->getAllowedTypes();
+                foreach ($allowedTypes as $allowedType) {
+                    $getter = 'get' . ucfirst($allowedType);
+                    /** @var DataObject\Objectbrick\Data\AbstractData $item */
+                    $item = $data->$getter();
 
-                    if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                        continue;
-                    }
+                    if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
+                        if ($item->getDoDelete()) {
+                            continue;
+                        }
 
-                    if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                        continue;
-                    }
+                        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                            continue;
+                        }
 
-                    //needed when new brick is added but not saved yet - then validity check fails.
-                    if (!$item->getFieldname()) {
-                        $item->setFieldname($data->getFieldname());
-                    }
+                        //needed when new brick is added but not saved yet - then validity check fails.
+                        if (!$item->getFieldname()) {
+                            $item->setFieldname($data->getFieldname());
+                        }
 
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        try {
-                            $key = $fd->getName();
-                            $getter = 'get' . ucfirst($key);
-                            $fd->checkValidity($item->$getter());
-                        } catch (Model\Element\ValidationException $ve) {
-                            $ve->addContext($this->getName());
-                            $validationExceptions[] = $ve;
+                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            try {
+                                $key = $fd->getName();
+                                $getter = 'get' . ucfirst($key);
+                                $fd->checkValidity($item->$getter());
+                            } catch (Model\Element\ValidationException $ve) {
+                                $ve->addContext($this->getName());
+                                $validationExceptions[] = $ve;
+                            }
                         }
                     }
                 }
 
                 if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }
@@ -894,12 +901,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         return $editmodeData;
     }
 
-    /** See parent class.
+    /**
+     * See parent class.
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore\Date
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -1039,8 +1048,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
-     * @param array $list
+     * @param DataObject\ClassDefinition\Data[] $container
+     * @param CalculatedValue[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
@@ -1049,10 +1058,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
                 }
             }
         }

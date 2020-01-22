@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Shipping implements IShipping
+class Shipping implements ShippingInterface
 {
     /**
      * @var Decimal
@@ -88,7 +88,7 @@ class Shipping implements IShipping
     /**
      * @param Decimal $charge
      *
-     * @return ICartPriceModificator
+     * @return CartPriceModificatorInterface
      */
     public function setCharge(Decimal $charge)
     {

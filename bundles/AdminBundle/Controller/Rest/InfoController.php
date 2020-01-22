@@ -20,6 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @deprecated
+ *
  * Contains actions to gather information about the API. The /user endpoint
  * is used in tests.
  */

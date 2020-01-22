@@ -175,25 +175,42 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionData = [];
                 $collectionKey = $collectionRaw['type'];
 
-                $oIndex = $collectionRaw['oIndex'];
+                $oIndex = isset($collectionRaw['oIndex']) ? $collectionRaw['oIndex'] : null;
 
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                    $invisible = $fd->getInvisible();
+                    if ($invisible && !is_null($oIndex)) {
+                        $containerGetter = 'get' . ucfirst($fieldname);
+                        $container = $object->$containerGetter();
+                        if ($container) {
+                            $items = $container->getItems();
+                            $invisibleData = null;
+                            if ($items && count($items) > $oIndex) {
+                                $item = $items[$oIndex];
+                                $getter = 'get' . ucfirst($fd->getName());
+                                $invisibleData = $item->$getter();
+                            }
+
+                            $collectionData[$fd->getName()] = $invisibleData;
+                        }
+                    } elseif (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                        $collectionParams = [
+                            'context' => [
+                                'containerType' => 'fieldcollection',
+                                'containerKey' => $collectionKey,
+                                'fieldname' => $fieldname,
+                                'index' => $count,
+                                'oIndex' => $oIndex
+                            ]
+                        ];
+
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
                             $collectionRaw['data'][$fd->getName()],
                             $object,
-                            [
-                                'context' => [
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $collectionKey,
-                                    'fieldname' => $fieldname,
-                                    'index' => $count,
-                                    'oIndex' => $oIndex
-                                ]
-                            ]
+                            $collectionParams
                         );
                     }
                 }
@@ -380,6 +397,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -422,13 +441,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|DataObject\Fieldcollection
-     *
-     * @param $idMapper
      *
      * @throws \Exception
      */
@@ -465,7 +485,17 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             if ($field->type != $fd->getFieldType()) {
                                 throw new \Exception('Type mismatch for fieldcollection field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, [], $idMapper);
+
+                            $params = [
+                                'context' => [
+                                    'object' => $object,
+                                    'containerType' => 'fieldcollection',
+                                    'containerKey' => $fieldcollection,
+                                    'fieldname' => $fd->getName(),
+                                    'index' => $count
+                                ]];
+
+                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
                             break;
                         }
                     }
@@ -935,13 +965,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $container
-     * @param array $list
+     * @param DataObject\ClassDefinition\Data[] $container
+     * @param DataObject\ClassDefinition\Data[] $list
      */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var $childDef DataObject\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

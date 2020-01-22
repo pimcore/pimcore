@@ -108,7 +108,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $setter = 'set' . ucfirst($type);
 
                 if ($brick instanceof DataObject\DirtyIndicatorInterface) {
-                    $brick->markFieldDirty($key, false);
+                    $brick->markFieldDirty('_self', false);
                 }
 
                 $this->model->$setter($brick);
@@ -122,9 +122,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
     /**
      * @param DataObject\Concrete $object
-     * @param $saveMode true if called from save method
-     *
-     * @return whether an insert should be done or not
+     * @param bool $saveMode true if called from save method
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {

@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -118,6 +117,9 @@ class Renderlet extends Model\Document\Tag
         }
 
         if (!$this->options['controller'] && !$this->options['action']) {
+            if (is_null($this->options)) {
+                $this->options = [];
+            }
             $this->options += Tool::getRoutingDefaults();
         }
 
@@ -169,7 +171,7 @@ class Renderlet extends Model\Document\Tag
 
                 return $content;
             } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+                if (\Pimcore::inDebugMode()) {
                     return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
                 }
                 Logger::error($e);
@@ -252,9 +254,9 @@ class Renderlet extends Model\Document\Tag
     /**
      * get correct type of object as string
      *
-     * @param null $object
+     * @param Element\ElementInterface|null $object
      *
-     * @return bool|string
+     * @return string|null
      *
      * @internal param mixed $data
      */
@@ -288,28 +290,30 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id !== null) {
             $this->type = $data->type;
             $this->subtype = $data->subtype;
-            if (is_numeric($this->id)) {
+            if (is_numeric($data->id)) {
+                $id = $data->id;
                 if ($idMapper) {
-                    $id = $idMapper->getMappedId($this->type, $this->id);
+                    $id = $idMapper->getMappedId($data->type, $data->id);
                 }
+                $this->id = $id;
 
                 if ($this->type == 'asset') {
                     $this->o = Asset::getById($id);
                     if (!$this->o instanceof Asset) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced asset with id [ '.$this->id.' ] is unknown');
                         }
@@ -318,7 +322,7 @@ class Renderlet extends Model\Document\Tag
                     $this->o = Document::getById($id);
                     if (!$this->o instanceof Document) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced document with id [ '.$this->id.' ] is unknown');
                         }
@@ -327,7 +331,7 @@ class Renderlet extends Model\Document\Tag
                     $this->o = DataObject::getById($id);
                     if (!$this->o instanceof DataObject\AbstractObject) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced object with id [ '.$this->id.' ] is unknown');
                         }

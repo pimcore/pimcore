@@ -24,13 +24,14 @@ use Pimcore\Model\Schedule;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
+    use Model\Element\AdminStyleTrait;
+
     /**
      * @param Request $request
      * @param Model\Document $document
@@ -61,6 +62,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                         $property->setCtype('document');
                         $property->setDataFromEditmode($value);
                         $property->setInheritable($propertyData['inheritable']);
+
+                        if ($propertyName == 'language') {
+                            $property->setInherited($this->getPropertyInheritance($document, $propertyName, $value));
+                        }
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
@@ -134,7 +139,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
             foreach ($data as $name => $value) {
-                $data = $value['data'];
+                $data = $value['data'] ?? null;
                 $type = $value['type'];
                 $document->setRawElement($name, $type, $data);
             }
@@ -166,22 +171,17 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     public function saveToSessionAction(Request $request)
     {
         if ($request->get('id')) {
-            $key = 'document_' . $request->get('id');
-
-            $session = Session::get('pimcore_documents');
-
-            if (!$document = $session->get($key)) {
+            $documentId = $request->get('id');
+            if (!$document = Model\Document\Service::getElementFromSession('document', $documentId)) {
                 $document = Model\Document::getById($request->get('id'));
                 $document = $this->getLatestVersion($document);
             }
 
-            // set _fulldump otherwise the properties will be removed because of the session-serialize
-            $document->_fulldump = true;
+            // set dump state to true otherwise the properties will be removed because of the session-serialize
+            $document->setInDumpState(true);
             $this->setValuesToDocument($request, $document);
 
-            $session->set($key, $document);
-
-            Session::writeClose();
+            Model\Document\Service::saveElementToSession($document);
         }
 
         return $this->adminJson(['success' => true]);
@@ -194,13 +194,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     protected function saveToSession($doc, $useForSave = false)
     {
         // save to session
-        Session::useSession(function (AttributeBagInterface $session) use ($doc, $useForSave) {
-            $session->set('document_' . $doc->getId(), $doc);
+        Model\Document\Service::saveElementToSession($doc);
 
-            if ($useForSave) {
-                $session->set('document_' . $doc->getId() . '_useForSave', true);
-            }
-        }, 'pimcore_documents');
+        if ($useForSave) {
+            Model\Document\Service::saveElementToSession($doc, '_useForSave');
+        }
     }
 
     /**
@@ -216,21 +214,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             // check if there's a document in session which should be used as data-source
             // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
             // outdated and unused data elements in this document (eg. entries of area-blocks)
-            $sessionDocument = Session::useSession(function (AttributeBagInterface $session) use ($doc) {
-                $documentKey = 'document_' . $doc->getId();
-                $useForSaveKey = 'document_' . $doc->getId() . '_useForSave';
 
-                if ($session->has($documentKey) && $session->has($useForSaveKey)) {
-                    if ($session->get($useForSaveKey)) {
-                        // only use the page from the session once
-                        $session->remove($useForSaveKey);
-
-                        return $session->get($documentKey);
-                    }
-                }
-
-                return null;
-            }, 'pimcore_documents');
+            if ($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())
+                            && $documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave')) {
+                Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
+            }
         }
 
         return $sessionDocument;
@@ -245,22 +233,34 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      */
     public function removeFromSessionAction(Request $request)
     {
-        $key = 'document_' . $request->get('id');
-
-        Session::useSession(function (AttributeBagInterface $session) use ($key) {
-            $session->remove($key);
-        }, 'pimcore_documents');
+        Model\Document\Service::removeElementFromSession('document', $request->get('id'));
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
-     * @param $document
+     * @param Model\Document $document
      */
     protected function minimizeProperties($document)
     {
         $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
+    }
+
+    /**
+     * @param Model\Document $document
+     * @param string $propertyName
+     * @param string $propertyValue
+     *
+     * @return bool
+     */
+    protected function getPropertyInheritance(Model\Document $document, $propertyName, $propertyValue)
+    {
+        if ($document->getParent()) {
+            return $propertyValue == $document->getParent()->getProperty($propertyName);
+        }
+
+        return false;
     }
 
     /**

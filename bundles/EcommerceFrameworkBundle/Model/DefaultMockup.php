@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 
 class DefaultMockup implements ProductInterface
@@ -45,7 +44,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -55,7 +54,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @param mixed $params
+     * @param array $params
      *
      * @return $this
      */
@@ -117,22 +116,24 @@ class DefaultMockup implements ProductInterface
 
     public function __call($method, $args)
     {
+        $attributeName = $method;
         if (substr($method, 0, 3) == 'get') {
             $attributeName = lcfirst(substr($method, 3));
-            if (is_array($this->params) && array_key_exists($attributeName, $this->params)) {
-                return $this->params[$attributeName];
-            }
+        }
 
-            if (is_array($this->relations) && array_key_exists($attributeName, $this->relations)) {
-                $relation = $this->getRelationAttribute($attributeName);
-                if ($relation) {
-                    return $relation;
-                }
+        if (is_array($this->params) && array_key_exists($attributeName, $this->params)) {
+            return $this->params[$attributeName];
+        }
+
+        if (is_array($this->relations) && array_key_exists($attributeName, $this->relations)) {
+            $relation = $this->getRelationAttribute($attributeName);
+            if ($relation) {
+                return $relation;
             }
         }
         $msg = "Method $method not in Mockup implemented, delegating to object with id {$this->id}.";
 
-        if (\Pimcore::inDebugMode(DebugMode::LOG)) {
+        if (\Pimcore::inDebugMode()) {
             Logger::warn($msg);
         } else {
             Logger::info($msg);
@@ -140,10 +141,17 @@ class DefaultMockup implements ProductInterface
 
         $object = $this->getOriginalObject();
         if ($object) {
-            return call_user_func_array([$object, $method], $args);
-        } else {
-            throw new \Exception("Object with {$this->id} not found.");
+            if (method_exists($object, $method)) {
+                return call_user_func_array([$object, $method], $args);
+            }
+
+            $method = 'get' . ucfirst($method);
+            if (method_exists($object, $method)) {
+                return call_user_func_array([$object, $method], $args);
+            }
         }
+
+        throw new \Exception("Object with {$this->id} not found.");
     }
 
     public function getOriginalObject()

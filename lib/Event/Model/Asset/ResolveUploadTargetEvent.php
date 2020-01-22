@@ -14,12 +14,10 @@
 
 namespace Pimcore\Event\Model\Asset;
 
-use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\Event;
 
-class ResolveUploadTargetEvent extends Event implements ElementEventInterface
+class ResolveUploadTargetEvent extends Event
 {
     use ArgumentsAwareTrait;
 
@@ -34,7 +32,7 @@ class ResolveUploadTargetEvent extends Event implements ElementEventInterface
     protected $context;
 
     /**
-     * @var
+     * @var int
      */
     protected $parentId;
 
@@ -98,13 +96,5 @@ class ResolveUploadTargetEvent extends Event implements ElementEventInterface
     public function setParentId($parentId): void
     {
         $this->parentId = $parentId;
-    }
-
-    /**
-     * @return Asset
-     */
-    public function getElement()
-    {
-        return $this->getAsset();
     }
 }

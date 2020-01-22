@@ -21,6 +21,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
+use Pimcore\Model\Tool\Lock;
 use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
@@ -49,32 +50,12 @@ class RedirectHandler implements LoggerAwareInterface
     private $redirects;
 
     /**
-     * For BC, this is currently added as extra method call. The required annotation
-     * makes sure this is called via autowiring.
-     *
-     * TODO Pimcore 6 set as constructor dependency
-     *
-     * @required
-     *
      * @param RequestHelper $requestHelper
-     */
-    public function setRequestHelper(RequestHelper $requestHelper)
-    {
-        $this->requestHelper = $requestHelper;
-    }
-
-    /**
-     * For BC, this is currently added as extra method call. The required annotation
-     * makes sure this is called via autowiring.
-     *
-     * TODO Pimcore 6 set as constructor dependency
-     *
-     * @required
-     *
      * @param SiteResolver $siteResolver
      */
-    public function setSiteResolver(SiteResolver $siteResolver)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver)
     {
+        $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
     }
 
@@ -217,15 +198,27 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $cacheKey = 'system_route_redirect';
-        if (!($this->redirects = Cache::load($cacheKey))) {
-            $list = new Redirect\Listing();
-            $list->setCondition('active = 1');
-            $list->setOrder('DESC');
-            $list->setOrderKey('priority');
+        if (($this->redirects = Cache::load($cacheKey)) === false) {
+            // acquire lock to avoid concurrent redirect cache warm-up
+            Lock::acquire($cacheKey);
 
-            $this->redirects = $list->load();
+            //check again if redirects are cached to avoid re-warming cache
+            if (($this->redirects = Cache::load($cacheKey)) === false) {
+                try {
+                    $list = new Redirect\Listing();
+                    $list->setCondition('active = 1');
+                    $list->setOrder('DESC');
+                    $list->setOrderKey('priority');
 
-            Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998);
+                    $this->redirects = $list->load();
+
+                    Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998, true);
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to load redirects');
+                }
+            }
+
+            Lock::release($cacheKey);
         }
 
         if (!is_array($this->redirects)) {

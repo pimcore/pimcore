@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * @var array|null
+     * @var \Pimcore\Model\Staticroute[]|null
      */
     protected $routes = null;
 
@@ -42,7 +42,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @param array $routes
+     * @param \Pimcore\Model\Staticroute[]|null $routes
      *
      * @return $this
      */

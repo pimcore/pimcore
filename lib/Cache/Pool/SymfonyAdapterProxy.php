@@ -93,13 +93,13 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     /**
      * Deletes all items in the pool.
      *
-     * @param string The prefix used for all identifiers managed by this pool
+     * @param string $namespace The prefix used for all identifiers managed by this pool
      *
      * @return bool True if the pool was successfully cleared, false otherwise
      */
     protected function doClear($namespace)
     {
-        return $this->adapter->clear();
+        return $this->adapter->clear($namespace);
     }
 
     /**

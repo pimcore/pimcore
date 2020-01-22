@@ -20,7 +20,6 @@ use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -93,7 +92,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param null $reason
+     * @param string|null $reason
      *
      * @return bool
      */
@@ -127,7 +126,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param $lifetime
+     * @param int|null $lifetime
      *
      * @return $this
      */
@@ -199,14 +198,14 @@ class FullPageCacheListener
 
         try {
             $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->cache) {
-                $conf = $conf->cache;
+            if ($conf->full_page_cache) {
+                $conf = $conf->full_page_cache;
 
                 if (!$conf->enabled) {
                     return $this->disable();
                 }
 
-                if (\Pimcore::inDebugMode(DebugMode::DISABLE_FULL_PAGE_CACHE)) {
+                if (\Pimcore::inDebugMode()) {
                     return $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
                 }
 
@@ -294,9 +293,7 @@ class FullPageCacheListener
         }
 
         if ($cacheItem) {
-            /**
-             * @var $response Response
-             */
+            /** @var Response $response */
             $response = $cacheItem;
             $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
             $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));

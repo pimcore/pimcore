@@ -65,11 +65,11 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save()
     {
-        if ($this->model->getId()) {
-            $this->model->update();
-        } else {
+        if (!$this->model->getId()) {
             $this->create();
         }
+
+        $this->update();
     }
 
     public function delete()
@@ -79,36 +79,29 @@ class Dao extends Model\Dao\AbstractDao
 
     public function update()
     {
-        try {
-            $type = $this->model->getObjectVars();
-            $data = [];
+        $type = $this->model->getObjectVars();
+        $data = [];
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('targeting_target_groups'))) {
-                    if (is_array($value) || is_object($value)) {
-                        $value = Serialize::serialize($value);
-                    }
-
-                    if (is_bool($value)) {
-                        $value = (int)$value;
-                    }
-
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('targeting_target_groups'))) {
+                if (is_array($value) || is_object($value)) {
+                    $value = Serialize::serialize($value);
                 }
-            }
 
-            $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
+                if (is_bool($value)) {
+                    $value = (int)$value;
+                }
+
+                $data[$key] = $value;
+            }
         }
+
+        $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
     }
 
     public function create()
     {
         $this->db->insert('targeting_target_groups', []);
-
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 }

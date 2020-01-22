@@ -32,9 +32,9 @@ class IndexFieldSelection
     public $preSelect;
 
     /**
-     * @param $field
-     * @param $preSelect
-     * @param $tenant
+     * @param string $tenant
+     * @param string $field
+     * @param string|string[] $preSelect
      */
     public function __construct($tenant, $field, $preSelect)
     {
@@ -60,7 +60,7 @@ class IndexFieldSelection
     }
 
     /**
-     * @param string|\string[] $preSelect
+     * @param string|string[] $preSelect
      */
     public function setPreSelect($preSelect)
     {
@@ -68,7 +68,7 @@ class IndexFieldSelection
     }
 
     /**
-     * @return string|\string[]
+     * @return string|string[]
      */
     public function getPreSelect()
     {

@@ -49,7 +49,7 @@ class SearchController extends AdminController
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $requestedLanguage = $allParams['language'];
+        $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);
@@ -65,13 +65,9 @@ class SearchController extends AdminController
 
         $query = $this->filterQueryParam($allParams['query']);
 
-        $types = explode(',', $allParams['type']);
-        $subtypes = explode(',', $allParams['subtype']);
-        $classnames = explode(',', $allParams['class']);
-
-        if ($allParams['type'] == 'object' && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = ['object', 'variant', 'folder'];
-        }
+        $types = explode(',', $allParams['type'] ?? '');
+        $subtypes = explode(',', $allParams['subtype'] ?? '');
+        $classnames = explode(',', $allParams['class'] ?? '');
 
         $offset = intval($allParams['start']);
         $limit = intval($allParams['limit']);
@@ -105,7 +101,7 @@ class SearchController extends AdminController
         //For objects - handling of bricks
         $fields = [];
         $bricks = [];
-        if ($allParams['fields']) {
+        if (!empty($allParams['fields'])) {
             $fields = $allParams['fields'];
 
             foreach ($fields as $f) {
@@ -122,7 +118,7 @@ class SearchController extends AdminController
         }
 
         // filtering for objects
-        if ($allParams['filter'] && $allParams['class']) {
+        if (!empty($allParams['filter']) && !empty($allParams['class'])) {
             $class = DataObject\ClassDefinition::getByName($allParams['class']);
 
             // add Localized Fields filtering
@@ -174,6 +170,7 @@ class SearchController extends AdminController
         }
 
         if (is_array($types) and !empty($types[0])) {
+            $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
             }
@@ -184,6 +181,7 @@ class SearchController extends AdminController
         }
 
         if (is_array($subtypes) and !empty($subtypes[0])) {
+            $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
             }
@@ -194,6 +192,7 @@ class SearchController extends AdminController
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
+            $conditionClassnameParts = [];
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);
             }
@@ -201,8 +200,8 @@ class SearchController extends AdminController
         }
 
         //filtering for tags
-        $tagIds = $allParams['tagIds'];
-        if ($tagIds) {
+        if (!empty($allParams['tagIds'])) {
+            $tagIds = $allParams['tagIds'];
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
                     if ($allParams['considerChildTags'] == 'true') {
@@ -289,6 +288,7 @@ class SearchController extends AdminController
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed('list')) {
+                $data = null;
                 if ($element instanceof DataObject\AbstractObject) {
                     $data = DataObject\Service::gridObjectData($element, $fields);
                 } elseif ($element instanceof Document) {
@@ -297,7 +297,9 @@ class SearchController extends AdminController
                     $data = Asset\Service::gridAssetData($element);
                 }
 
-                $elements[] = $data;
+                if ($data) {
+                    $elements[] = $data;
+                }
             } else {
                 //TODO: any message that view is blocked?
                 //$data = Element\Service::gridElementData($element);
@@ -496,7 +498,7 @@ class SearchController extends AdminController
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return string
      */
@@ -504,6 +506,7 @@ class SearchController extends AdminController
     {
         $parts = explode('/', trim($path, '/'));
         $count = count($parts) - 1;
+        $shortPath = '';
 
         for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));

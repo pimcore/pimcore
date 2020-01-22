@@ -92,7 +92,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.name,
                 fieldLabel: t("name"),
                 width: 450,
-                disabled: true
+                readOnly: true
             },
                 {
                     xtype: "textarea",
@@ -134,6 +134,11 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("high_resolution_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "forcePictureTag",
+                        boxLabel: t("force_picture_html_tag"),
+                        checked: this.data.forcePictureTag
                     }, {
                         xtype: "checkbox",
                         name: "preserveColor",
@@ -886,7 +891,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -947,7 +952,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -1032,7 +1037,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450
@@ -1075,7 +1080,7 @@ pimcore.settings.thumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
-                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                fieldLabel: t("path") + " <br />(rel. to project-root)",
                 name: "path",
                 value: data.path,
                 width: 450

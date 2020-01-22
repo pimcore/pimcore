@@ -99,14 +99,22 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var items = [];
 
 
-        items.push({
-            disabled: this.fieldConfig.disallowAddRemove,
-            cls: "pimcore_block_button_plus",
-            iconCls: "pimcore_icon_plus",
-            handler: this.addBlock.bind(this,blockElement , null/*, rec.data.key */)
-        });
 
         if(blockElement) {
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus_up",
+                handler: this.addBlock.bind(this, blockElement, "before")
+            });
+
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus_down",
+                handler: this.addBlock.bind(this, blockElement, "after")
+            });
+
             items.push({
                 disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_minus",
@@ -132,6 +140,13 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
                 listeners: {
                     "click": this.moveBlockDown.bind(this, blockElement)
                 }
+            });
+        } else {
+            items.push({
+                disabled: this.fieldConfig.disallowAddRemove,
+                cls: "pimcore_block_button_plus",
+                iconCls: "pimcore_icon_plus",
+                handler: this.addBlock.bind(this, blockElement, "after")
             });
         }
 
@@ -169,7 +184,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    addBlock: function (blockElement) {
+    addBlock: function (blockElement, position) {
 
         this.closeOpenEditors();
 
@@ -192,7 +207,11 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             index = this.detectBlockIndex(blockElement);
         }
 
-        this.addBlockElement(index + 1, {});
+        if (position !== "before") {
+            index++;
+        }
+
+        this.addBlockElement(index, {});
     },
 
     removeBlock: function (blockElement) {
@@ -250,7 +269,11 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         // var items = this.getRecursiveLayout(this.layoutDefinitions[type]).items;
         var fieldConfig = this.fieldConfig;
 
-        var items = this.getRecursiveLayout(fieldConfig, undefined, undefined, undefined, undefined, undefined, true);
+        var context = this.getContext();
+        context["subContainerType"] = "block";
+        context["subContainerKey"] = fieldConfig.name;
+        context["applyDefaults"] = true;
+        var items = this.getRecursiveLayout(fieldConfig, undefined, context, undefined, undefined, undefined, true);
 
         items = items.items;
 
@@ -308,6 +331,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
+        this.component.disable();
 
         return this.component;
     },
@@ -392,35 +416,6 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
-    },
-
-    isInvalidMandatory: function () {
-        var element;
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-
-        for(var s=0; s<this.component.items.items.length; s++) {
-            if(this.currentElements[this.component.items.items[s].key]) {
-                element = this.currentElements[this.component.items.items[s].key];
-
-                for (var u=0; u<element.fields.length; u++) {
-                    if(element.fields[u].isMandatory()) {
-                        if(element.fields[u].isInvalidMandatory()) {
-                            invalidMandatoryFields.push(element.fields[u].getTitle() + " ("
-                                + element.fields[u].getName() + ")");
-                            isInvalid = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
-            return invalidMandatoryFields;
-        }
-
-        return isInvalid;
     }
 });
 

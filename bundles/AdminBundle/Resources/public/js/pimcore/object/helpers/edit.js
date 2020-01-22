@@ -297,11 +297,26 @@ pimcore.object.helpers.edit = {
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
+                let applyDefaults = false;
+                if (context && context['applyDefaults']) {
+                    applyDefaults = true;
+                }
                 field.setObject(this.object);
                 field.updateContext(context);
+
                 field.setName(l.name);
                 field.setTitle(l.titleOriginal);
+
+                if (applyDefaults && typeof field["applyDefaultValue"] !== "undefined") {
+                    field.applyDefaultValue();
+                }
                 field.setInitialData(data);
+
+
+                if (typeof field["finishSetup"] !== "undefined") {
+                    field.finishSetup();
+                }
+
 
                 if (typeof l.labelWidth != "undefined") {
                     field.labelWidth = l.labelWidth;
@@ -393,7 +408,8 @@ pimcore.object.helpers.edit = {
                                         target: el,
                                         html: nl2br(ts(field.tooltip)),
                                         trackMouse:true,
-                                        showDelay: 200
+                                        showDelay: 200,
+                                        dismissDelay: 0
                                     });
                                 } catch (e6) {
                                     console.log(e6);

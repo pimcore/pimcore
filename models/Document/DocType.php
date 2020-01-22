@@ -20,7 +20,9 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Document\DocType\Dao getDao()
+ * @method DocType\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class DocType extends Model\AbstractModel
 {
@@ -286,7 +288,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param $module
+     * @param string $module
      *
      * @return $this
      */
@@ -306,7 +308,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -326,7 +328,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

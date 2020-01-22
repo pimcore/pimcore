@@ -46,7 +46,7 @@ class FieldCollectionGetter extends AbstractOperator
 
         $getter = 'get' . ucfirst($this->attr);
 
-        /** @var $fc Fieldcollection */
+        /** @var Fieldcollection $fc */
         $fc = $element->$getter();
 
         if ($fc) {

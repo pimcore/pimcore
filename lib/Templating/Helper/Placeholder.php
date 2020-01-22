@@ -39,7 +39,6 @@ namespace Pimcore\Templating\Helper;
 
 use Pimcore\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Templating\Helper\Placeholder\Container;
-use Pimcore\Templating\Helper\Placeholder\ContainerService;
 
 /**
  * Helper for passing data between otherwise segregated Views. It's called
@@ -57,11 +56,6 @@ class Placeholder extends AbstractHelper
     protected $_regKey = 'Placeholder';
 
     /**
-     * @var ContainerService
-     */
-    protected $containerService;
-
-    /**
      * @var Container[]
      */
     protected $containers = [];
@@ -72,25 +66,9 @@ class Placeholder extends AbstractHelper
     }
 
     /**
-     * AbstractHelper constructor.
-     *
-     * @param ContainerService $containerService
-     *
-     * @internal param Container $container
-     */
-    public function __construct(ContainerService $containerService)
-    {
-        $this->containerService = $containerService;
-    }
-
-    /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param  string $content
-     * @param  string $keyValue
-     * @param  string $keyType
-     * @param  array $modifiers
-     * @param  string $placement
+     * @param string $containerName
      *
      * @return Container
      */

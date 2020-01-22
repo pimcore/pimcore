@@ -108,14 +108,13 @@ class AbstractSetProduct extends AbstractProduct
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      *
-     * @return stdClass
+     * @return PriceInfoInterface
      *
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPriceInfo($products, $quantityScale = 1)
     {
         return $this->getOSPriceInfo($quantityScale, $products);
-        //return $this->getPriceSystemImplementation()->getPriceInfo($this, $products);
     }
 
     /**
@@ -123,8 +122,8 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @throws UnsupportedException
      *
-     * @param null $quantityScale
-     * @param null $products
+     * @param int $quantityScale
+     * @param array|null $products
      *
      * @return PriceInterface
      */
@@ -143,7 +142,7 @@ class AbstractSetProduct extends AbstractProduct
      * @throws UnsupportedException
      *
      * @param int $quantityScale
-     * @param null $products
+     * @param array|null $products
      *
      * @return PriceInfoInterface|AbstractPriceInfo
      */
@@ -158,7 +157,7 @@ class AbstractSetProduct extends AbstractProduct
 
     /**
      * @param int $quantity
-     * @param $products AbstractSetProductEntry[]
+     * @param AbstractSetProductEntry[] $products
      *
      * @return AvailabilityInterface
      */

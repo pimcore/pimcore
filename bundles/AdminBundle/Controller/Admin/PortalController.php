@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
@@ -50,7 +50,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
     /**
      * @param Request $request
-     * @param $config
+     * @param array $config
      */
     protected function saveConfiguration(Request $request, $config)
     {
@@ -194,6 +194,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
         $colCount = 0;
+        $toMove = null;
 
         foreach ($config['positions'] as $col) {
             foreach ($col as $row) {

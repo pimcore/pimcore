@@ -27,7 +27,9 @@ use Pimcore\Model\Document;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
@@ -56,7 +58,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $columns
+     * @param array|string|Expression $columns
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */

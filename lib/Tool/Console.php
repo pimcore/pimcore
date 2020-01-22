@@ -56,7 +56,7 @@ class Console
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param bool $throwException
      *
      * @return bool|mixed|string
@@ -202,7 +202,7 @@ class Console
     }
 
     /**
-     * @param $process
+     * @param string $process
      *
      * @return bool
      */
@@ -250,8 +250,8 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
+     * @param string $script
+     * @param string $arguments
      *
      * @return string
      */
@@ -273,10 +273,10 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
-     * @param $outputFile
-     * @param $timeout
+     * @param string $script
+     * @param string $arguments
+     * @param string|null $outputFile
+     * @param int|null $timeout
      *
      * @return string
      */
@@ -289,9 +289,9 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
-     * @param $outputFile
+     * @param string $script
+     * @param string $arguments
+     * @param string|null $outputFile
      *
      * @return string
      */
@@ -304,9 +304,9 @@ class Console
     }
 
     /**
-     * @param $cmd
-     * @param null $outputFile
-     * @param null $timeout
+     * @param string $cmd
+     * @param string|null $outputFile
+     * @param int|null $timeout
      *
      * @return string
      */
@@ -403,9 +403,9 @@ class Console
          * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
          */
         if (strpos(php_sapi_name(), 'apache') !== false) {
-            foreach (['PIMCORE_ENVIRONMENT', 'REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey) {
-                if ($envValue = getenv($envKey)) {
-                    putenv($envKey . '='.$envValue);
+            foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
+                    putenv($envVarName . '='.$envValue);
                 }
             }
         }
@@ -469,7 +469,7 @@ class Console
     }
 
     /**
-     * @param $options
+     * @param array $options
      * @param string $concatenator
      * @param string $arrayConcatenator
      *

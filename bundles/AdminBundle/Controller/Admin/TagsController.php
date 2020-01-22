@@ -135,8 +135,8 @@ class TagsController extends AdminController
 
     /**
      * @param Tag $tag
-     * @param $showSelection
-     * @param $assignedTagIds
+     * @param bool $showSelection
+     * @param array $assignedTagIds
      * @param bool $loadChildren
      *
      * @return array

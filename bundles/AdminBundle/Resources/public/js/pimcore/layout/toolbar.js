@@ -32,7 +32,7 @@ pimcore.layout.toolbar = Class.create({
                     for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
                         var perspective = pimcore.settings.availablePerspectives[i];
                         var itemCfg = {
-                            text: perspective.name,
+                            text: t(perspective.name),
                             disabled: perspective.active,
                             handler: this.openPerspective.bind(this, perspective.name)
                         };
@@ -624,7 +624,6 @@ pimcore.layout.toolbar = Class.create({
                                         return;
                                     }
 
-                                    console.log(data);
                                     if (data && data.configured && data.url) {
                                         resolve(data.url);
                                     }
@@ -654,7 +653,7 @@ pimcore.layout.toolbar = Class.create({
                                     pimcore.helpers.openGenericIframeWindow(
                                         "piwik_iframe_integration",
                                         url,
-                                        "pimcore_nav_icon_matomo",
+                                        "pimcore_icon_matomo",
                                         "Matomo / Piwik"
                                     );
                                 },
@@ -912,7 +911,7 @@ pimcore.layout.toolbar = Class.create({
                         cacheSubItems.push({
                             text: t("all_caches") + ' (Symfony + Data)',
                             iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'env[]': ['dev','prod']})
+                            handler: this.clearCache.bind(this, {'env[]': pimcore.settings['cached_environments']})
                         });
                     }
 
@@ -925,22 +924,22 @@ pimcore.layout.toolbar = Class.create({
                     }
 
                     if (perspectiveCfg.inToolbar("settings.cache.clearSymfony")) {
-                        cacheSubItems.push({
-                            text: 'Symfony ' + t('environment') + ": prod",
-                            iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': 'prod'})
-                        });
 
-                        cacheSubItems.push({
-                            text: 'Symfony ' + t('environment') + ": " + pimcore.settings['environment'],
-                            iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['environment']})
-                        });
+                        pimcore.settings['cached_environments'].forEach(function(environment) {
+                            cacheSubItems.push({
+                                text: 'Symfony ' + t('environment') + ": " + environment,
+                                iconCls: "pimcore_nav_icon_clear_cache",
+                                handler: this.clearCache.bind(this, {
+                                    'only_symfony_cache': true,
+                                    'env[]': environment
+                                })
+                            });
+                        }.bind(this));
 
                         cacheSubItems.push({
                             text: 'Symfony ' + t('environment') + ": " + t('all'),
                             iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': ['dev','prod']})
+                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['cached_environments']})
                         });
                     }
 

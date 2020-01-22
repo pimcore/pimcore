@@ -22,8 +22,10 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
  */
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
+    use ElementDumpStateTrait;
+
     /**
      * @var int
      */
@@ -81,7 +83,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -93,7 +95,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param  $name
+     * @param Model\Property[] $properties
+     */
+    abstract public function setProperties($properties);
+
+    /**
+     * @param string $name
      */
     public function removeProperty($name)
     {
@@ -138,15 +145,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function resolveDependencies()
     {
-        $dependencies = [];
+        $dependencies = [[]];
 
         // check for properties
         if (method_exists($this, 'getProperties')) {
             $properties = $this->getProperties();
             foreach ($properties as $property) {
-                $dependencies = array_merge($dependencies, $property->resolveDependencies());
+                $dependencies[] = $property->resolveDependencies();
             }
         }
+
+        $dependencies = array_merge(...$dependencies);
 
         return $dependencies;
     }
@@ -165,6 +174,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         // check for inherited
         return $this->getDao()->isLocked();
     }
+
+    /**
+     * @return string
+     */
+    abstract public function getLocked();
 
     /**
      * @return array
@@ -195,6 +209,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function isAllowed($type)
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+
+        if (!$currentUser) {
+            if (php_sapi_name() === 'cli') {
+                return true;
+            }
+
+            return false;
+        }
+
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
@@ -257,7 +280,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param null $versionNote
+     * @param string|null $versionNote
      * @param bool $saveOnlyVersion
      *
      * @return Model\Version

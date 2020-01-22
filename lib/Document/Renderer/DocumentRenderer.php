@@ -20,6 +20,7 @@ namespace Pimcore\Document\Renderer;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
@@ -61,31 +62,36 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     private $eventDispatcher;
 
+    /**
+     * @var LocaleService
+     */
+    private $localeService;
+
+    /**
+     * @param RequestHelper $requestHelper
+     * @param ActionRenderer $actionRenderer
+     * @param FragmentRendererInterface $fragmentRenderer
+     * @param DocumentRouteHandler $documentRouteHandler
+     * @param DocumentTargetingConfigurator $targetingConfigurator
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param LocaleService $localeService
+     */
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
-        DocumentTargetingConfigurator $targetingConfigurator
+        DocumentTargetingConfigurator $targetingConfigurator,
+        EventDispatcherInterface $eventDispatcher,
+        LocaleService $localeService
     ) {
         $this->requestHelper = $requestHelper;
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
         $this->targetingConfigurator = $targetingConfigurator;
-    }
-
-    /**
-     * TODO Pimcore 6 set event dispatcher as constructor parameter
-     *
-     * @internal
-     * @required
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
-    {
         $this->eventDispatcher = $eventDispatcher;
+        $this->localeService = $localeService;
     }
 
     /**
@@ -129,8 +135,17 @@ class DocumentRenderer implements DocumentRendererInterface
             $request = new Request();
         }
 
+        $documentLocale = $document->getProperty('language');
+        $tempLocale = $this->localeService->getLocale();
+        if ($documentLocale) {
+            $this->localeService->setLocale($documentLocale);
+            $request->setLocale($documentLocale);
+        }
+
         $uri = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
         $response = $this->fragmentRenderer->render($uri, $request, $options);
+
+        $this->localeService->setLocale($tempLocale);
 
         $this->eventDispatcher->dispatch(
             DocumentEvents::RENDERER_POST_RENDER,

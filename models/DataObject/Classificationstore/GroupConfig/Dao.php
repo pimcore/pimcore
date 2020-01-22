@@ -51,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @throws \Exception
      */
@@ -80,6 +80,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function hasChildren()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->id);
         } catch (\Exception $e) {
@@ -89,19 +91,15 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
-     *
-     * @return bool
-     *
-     * @todo update and create don't return anything
+     * @throws \Exception
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->model->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     /**
@@ -117,39 +115,28 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
+        $ts = time();
+        $this->model->setModificationDate($ts);
 
-            $data = [];
-            $type = $this->model->getObjectVars();
+        $data = [];
+        $type = $this->model->getObjectVars();
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_GROUPS))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    if (is_array($value) || is_object($value)) {
-                        $value = \Pimcore\Tool\Serialize::serialize($value);
-                    }
-
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_GROUPS))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
                 }
+                if (is_array($value) || is_object($value)) {
+                    $value = \Pimcore\Tool\Serialize::serialize($value);
+                }
+
+                $data[$key] = $value;
             }
-
-            $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
-
-            return $this->model;
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
     public function create()
     {
         $ts = time();
@@ -159,7 +146,5 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
         $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
     }
 }

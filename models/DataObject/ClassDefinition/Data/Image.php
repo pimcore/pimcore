@@ -336,6 +336,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -350,10 +352,12 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      *
@@ -363,6 +367,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $id = $value;
 
+        $fromMapper = false;
         if ($idMapper && !empty($value)) {
             $id = $idMapper->getMappedId('asset', $value);
             $fromMapper = true;
@@ -507,5 +512,10 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if (intval($id) > 0) {
             return Asset\Image::getById($id);
         }
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

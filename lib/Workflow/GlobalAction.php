@@ -70,6 +70,14 @@ class GlobalAction implements NotesAwareInterface
     }
 
     /**
+     * @return string|int|false
+     */
+    public function getObjectLayout()
+    {
+        return $this->options['objectLayout'] ?: false;
+    }
+
+    /**
      * @return array
      */
     public function getTos(): array

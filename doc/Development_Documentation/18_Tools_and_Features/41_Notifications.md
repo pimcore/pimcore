@@ -6,6 +6,10 @@ When there's new notification for user, it shows as window with possibility to c
 
 ![Notifications](../img/notifications_example.png)
 
+User can use `Share via Notifications` button in order to open a new notification window and pre-fill the attachment field with desired element.
+
+![Notifications](../img/share_via_notifications_example.png)
+
 ## Working with Notifications via API
 
 ### Overview 

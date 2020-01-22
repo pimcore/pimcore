@@ -879,9 +879,9 @@ LUA;
     }
 
     /**
-     * @param $item
-     * @param $index
-     * @param $prefix
+     * @param string $item
+     * @param int $index
+     * @param string $prefix
      */
     protected function preprocess(&$item, $index, $prefix)
     {
@@ -889,7 +889,7 @@ LUA;
     }
 
     /**
-     * @param $ids
+     * @param array $ids
      *
      * @return array
      */
@@ -901,7 +901,7 @@ LUA;
     }
 
     /**
-     * @param $tags
+     * @param array $tags
      *
      * @return array
      */

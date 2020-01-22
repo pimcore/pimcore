@@ -93,8 +93,9 @@ class ThumbnailsVideoCommand extends AbstractCommand
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
+            $videos = $list->load();
 
-            foreach ($list as $video) {
+            foreach ($videos as $video) {
                 foreach ($thumbnails as $thumbnail) {
                     if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
                         $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));
@@ -114,8 +115,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
     }
 
     /**
-     * @param $videoId
-     * @param $thumbnail
+     * @param int $videoId
+     * @param string $thumbnail
      */
     protected function waitTillFinished($videoId, $thumbnail)
     {

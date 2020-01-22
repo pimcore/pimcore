@@ -23,11 +23,11 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
-     * @param $query
+     * @param string $query
      * @param int $offset
      * @param int $perPage
      * @param array $config
-     * @param null $facet
+     * @param string|null $facet
      *
      * @return Cse
      */
@@ -107,7 +107,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @var array
+     * @var Item[]
      */
     public $results = [];
 
@@ -161,6 +161,8 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
      */
     public function readGoogleResponse(\Google_Service_Customsearch_Search $googleResponse)
     {
+        $items = [];
+
         $this->setRaw($googleResponse);
 
         // set search results
@@ -227,7 +229,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $offset
+     * @param int $offset
      *
      * @return $this
      */
@@ -247,7 +249,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $raw
+     * @param array $raw
      *
      * @return $this
      */
@@ -267,7 +269,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $total
+     * @param int $total
      *
      * @return $this
      */
@@ -287,7 +289,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $perPage
+     * @param int $perPage
      *
      * @return $this
      */
@@ -307,7 +309,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return $this
      */
@@ -327,7 +329,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $query
+     * @param string $query
      *
      * @return $this
      */
@@ -347,7 +349,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $results
+     * @param Item[] $results
      *
      * @return $this
      */
@@ -361,7 +363,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     /**
      * @param bool $retry
      *
-     * @return array
+     * @return Item[]
      */
     public function getResults($retry = true)
     {
@@ -373,7 +375,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
     }
 
     /**
-     * @param $facets
+     * @param array $facets
      *
      * @return $this
      */

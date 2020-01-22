@@ -16,7 +16,7 @@ namespace Pimcore\Workflow\Place;
 
 use Pimcore\Workflow\Manager;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StatusInfo
 {
@@ -81,10 +81,10 @@ class StatusInfo
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      * @param bool $visibleInHeaderOnly
      *
-     * @return PlaceConfig
+     * @return PlaceConfig[]
      */
     private function getAllPlaces($subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
     {

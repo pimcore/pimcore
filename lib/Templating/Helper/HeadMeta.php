@@ -201,7 +201,9 @@ class HeadMeta extends AbstractHelper
             $item = $this->createData($type, $args[0], $args[1], $args[2]);
 
             if ('offsetSet' == $action) {
-                return $this->offsetSet($index, $item);
+                $this->offsetSet($index, $item);
+
+                return $this;
             }
 
             $this->$action($item);
@@ -258,7 +260,7 @@ class HeadMeta extends AbstractHelper
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetName() or offsetSetHttpEquiv()');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -319,16 +321,13 @@ class HeadMeta extends AbstractHelper
             }
         }
 
-        return $this->append($value);
+        $this->append($value);
     }
 
     /**
      * Build meta HTML string
      *
-     * @param  string $type
-     * @param  string $typeValue
-     * @param  string $content
-     * @param  array $modifiers
+     * @param \stdClass $item
      *
      * @return string
      */
@@ -341,11 +340,6 @@ class HeadMeta extends AbstractHelper
 
         $modifiersString = '';
         foreach ($item->modifiers as $key => $value) {
-            if (!is_null($this->view) && $this->view->doctype()->isHtml5()
-                && $key == 'scheme') {
-                throw new Exception('Invalid modifier '
-                    . '"scheme" provided; not supported by HTML5');
-            }
             if (!in_array($key, $this->_modifierKeys)) {
                 continue;
             }

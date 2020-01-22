@@ -17,17 +17,27 @@
 
 namespace Pimcore\Model\Element;
 
+use DeepCopy\DeepCopy;
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyNameMatcher;
+use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool;
+use Pimcore\Tool\Serialize;
+use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -38,26 +48,27 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  $element
+     * @param ElementInterface $element
      *
      * @return string
      */
     public static function getIdPath($element)
     {
         $path = '';
+        $parentElement = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-            $nid = $element->getParentId();
-            $ne = self::getElementById($elementType, $nid);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
         }
 
-        if ($ne) {
-            $path = self::getIdPath($ne);
+        if ($parentElement) {
+            $path = self::getIdPath($parentElement);
         }
 
         if ($element) {
-            $path = $path . '/' . $element->getId();
+            $path .= '/' . $element->getId();
         }
 
         return $path;
@@ -66,7 +77,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return string
      *
@@ -75,20 +86,21 @@ class Service extends Model\AbstractModel
     public static function getTypePath($element)
     {
         $path = '';
+        $parentElement = null;
 
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-            $nid = $element->getParentId();
-            $ne = self::getElementById($elementType, $nid);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
         }
 
-        if ($ne) {
-            $path = self::getTypePath($ne);
+        if ($parentElement) {
+            $path = self::getTypePath($parentElement);
         }
 
         if ($element) {
             $type = $element->getType();
-            if ($type != 'folder') {
+            if ($type !== 'folder') {
                 if ($element instanceof Document) {
                     $type = 'document';
                 } elseif ($element instanceof DataObject\AbstractObject) {
@@ -99,7 +111,7 @@ class Service extends Model\AbstractModel
                     throw new \Exception('unknown type');
                 }
             }
-            $path = $path . '/' . $type;
+            $path .= '/' . $type;
         }
 
         return $path;
@@ -108,7 +120,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param array|\Pimcore\Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
@@ -240,7 +252,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array
      *
@@ -330,10 +342,12 @@ class Service extends Model\AbstractModel
      * @param  string $type
      * @param  string $path
      *
-     * @return ElementInterface
+     * @return ElementInterface|null
      */
     public static function getElementByPath($type, $path)
     {
+        $element = null;
+
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {
@@ -400,8 +414,8 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $type
-     * @param $path
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -415,7 +429,7 @@ class Service extends Model\AbstractModel
             return DataObject\Service::pathExists($path);
         }
 
-        return;
+        return false;
     }
 
     /**
@@ -423,18 +437,19 @@ class Service extends Model\AbstractModel
      *
      * @param  string $type
      * @param  int $id
+     * @param  bool $force
      *
      * @return ElementInterface
      */
-    public static function getElementById($type, $id)
+    public static function getElementById($type, $id, $force = false)
     {
         $element = null;
-        if ($type == 'asset') {
-            $element = Asset::getById($id);
-        } elseif ($type == 'object') {
-            $element = DataObject::getById($id);
-        } elseif ($type == 'document') {
-            $element = Document::getById($id);
+        if ($type === 'asset') {
+            $element = Asset::getById($id, $force);
+        } elseif ($type === 'object') {
+            $element = DataObject::getById($id, $force);
+        } elseif ($type === 'document') {
+            $element = Document::getById($id, $force);
         }
 
         return $element;
@@ -443,22 +458,35 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param  ElementInterface $element $element
+     * @param ElementInterface $element
      *
      * @return string
      */
     public static function getElementType($element)
     {
-        $type = null;
         if ($element instanceof DataObject\AbstractObject) {
-            $type = 'object';
-        } elseif ($element instanceof Document) {
-            $type = 'document';
-        } elseif ($element instanceof Asset) {
-            $type = 'asset';
+            return 'object';
         }
 
-        return $type;
+        if ($element instanceof Document) {
+            return 'document';
+        }
+
+        if ($element instanceof Asset) {
+            return 'asset';
+        }
+
+        return null;
+    }
+
+    /**
+     * @param ElementInterface $element
+     *
+     * @return string
+     */
+    public static function getElementHash(ElementInterface $element): string
+    {
+        return self::getElementType($element) . '-' . $element->getId();
     }
 
     /**
@@ -476,23 +504,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Schedules element with this id for sanity check to be cleaned of broken relations
-     *
      * @static
      *
-     * @param  ElementInterface $element
-     */
-    public static function scheduleForSanityCheck($element)
-    {
-        $type = self::getElementType($element);
-        $sanityCheck = new Sanitycheck($element->getId(), $type);
-        $sanityCheck->save();
-    }
-
-    /**
-     * @static
-     *
-     * @param  $props
+     * @param array $props
      *
      * @return array
      */
@@ -562,6 +576,7 @@ class Service extends Model\AbstractModel
                  */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
+                    break;
                 }
             }
             if (!$found) {
@@ -616,7 +631,7 @@ class Service extends Model\AbstractModel
      * find all elements which the user may not list and therefore may never be shown to the user
      *
      * @param string $type asset|object|document
-     * @param $user
+     * @param Model\User $user
      *
      * @return array
      */
@@ -781,7 +796,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param array $options
      *
      * @return Asset\Folder|Document\Folder|DataObject\Folder
@@ -865,19 +880,19 @@ class Service extends Model\AbstractModel
     }
 
     /** Changes the query according to the custom view config
-     * @param $cv array
-     * @param $childsList
+     * @param array $cv
+     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childsList
      */
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv, $childsList) {
-                $where = $cv['where'];
+            $childsList->onCreateQuery(static function (QueryBuilder $select) use ($cv) {
+                $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->where($where);
                 }
 
-                $customViewJoins = $cv['joins'];
+                $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
                     foreach ($customViewJoins as $joinConfig) {
                         $type = $joinConfig['type'];
@@ -889,7 +904,7 @@ class Service extends Model\AbstractModel
                     }
                 }
 
-                if ($cv['having']) {
+                if (!empty($cv['having'])) {
                     $select->having($cv['having']);
                 }
             });
@@ -897,9 +912,9 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
-     * @return mixed
+     * @return array|null
      */
     public static function getCustomViewById($id)
     {
@@ -911,13 +926,15 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * @param string $key
-     * @param null $type
+     * @param string $type
      *
-     * @return mixed|string
+     * @return string
      */
     public static function getValidKey($key, $type)
     {
@@ -927,18 +944,19 @@ class Service extends Model\AbstractModel
         ]);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
+        $key = trim($key);
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 
-        if ($type == 'document') {
+        if ($type === 'object') {
+            $key = preg_replace('/[<>]/', '-', $key);
+        } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
-        }
-
-        if ($type == 'asset') {
+        } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
@@ -946,8 +964,7 @@ class Service extends Model\AbstractModel
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
-            $key = trim($key);
-            $key = ltrim($key, '.');
+            $key = ltrim($key, '. ');
         }
 
         $key = mb_substr($key, 0, 255);
@@ -987,26 +1004,32 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     * @param $element
+     * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getUniqueKey($element)
     {
         if ($element instanceof DataObject\AbstractObject) {
             return DataObject\Service::getUniqueKey($element);
-        } elseif ($element instanceof Document) {
+        }
+
+        if ($element instanceof Document) {
             return Document\Service::getUniqueKey($element);
-        } elseif ($element instanceof Asset) {
+        }
+
+        if ($element instanceof Asset) {
             return Asset\Service::getUniqueKey($element);
         }
+
+        return null;
     }
 
     /**
-     * @param $data
-     * @param $type
+     * @param array $data
+     * @param string $type
      *
-     * @return array|string
+     * @return array
      */
     public static function fixAllowedTypes($data, $type)
     {
@@ -1043,21 +1066,24 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $versions
+     * @param Model\Version[] $versions
      *
      * @return array
      */
     public static function getSafeVersionInfo($versions)
     {
         $indexMap = [];
+        $result = [];
 
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
-            $result = [];
-            /** @var $version Model\Version */
             foreach ($versions as $version) {
-                $name = $version['user']['name'];
-                $id = $version['user']['id'];
+                $name = null;
+                $id = null;
+                if (isset($version['user'])) {
+                    $name = $version['user']['name'];
+                    $id = $version['user']['id'];
+                }
                 unset($version['user']);
                 $version['user']['name'] = $name;
                 $version['user']['id'] = $id;
@@ -1070,9 +1096,9 @@ class Service extends Model\AbstractModel
 
                 $result[] = $version;
             }
-
-            return $result;
         }
+
+        return $result;
     }
 
     /**
@@ -1114,18 +1140,16 @@ class Service extends Model\AbstractModel
                 $reflectionProperty->setAccessible(true);
                 $myValue = $reflectionProperty->getValue($object);
 
-                if ($myValue instanceof ElementInterface) {
-                    return true;
-                }
-
-                return false;
+                return $myValue instanceof ElementInterface;
             }
         });
 
-        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
-        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
-        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('writeResource'));
-        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));
+        $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('writeResource'));
+        $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher(
+            Collection::class
+        ));
 
         if ($element instanceof DataObject\Concrete) {
             DataObject\Service::loadAllObjectFields($element);
@@ -1210,5 +1234,104 @@ class Service extends Model\AbstractModel
         }
 
         return $e;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return string
+     */
+    public static function getSessionKey($type, $elementId, $postfix = '')
+    {
+        $sessionId = Session::getSessionId();
+        $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
+
+        return $tmpStoreKey;
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param null|string $postfix
+     *
+     * @return AbstractObject|Document|Asset|null
+     */
+    public static function getElementFromSession($type, $elementId, $postfix = '')
+    {
+        $element = null;
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+
+        $tmpStore = TmpStore::get($tmpStoreKey);
+        if ($tmpStore) {
+            $data = $tmpStore->getData();
+            if ($data) {
+                $element = Serialize::unserialize($data);
+
+                return $element;
+            }
+        }
+
+        return $element;
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param string $postfix
+     * @param bool $clone save a copy
+     */
+    public static function saveElementToSession($element, $postfix = '', $clone = true)
+    {
+        if ($clone) {
+            $copier = new DeepCopy();
+            $element = $copier->copy($element);
+        }
+
+        $elementType = Service::getElementType($element);
+        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
+        $tag = $elementType . '-session' . $postfix;
+
+        if ($element instanceof ElementDumpStateInterface) {
+            self::loadAllFields($element);
+            $element->setInDumpState(true);
+        }
+        $serializedData = Serialize::serialize($element);
+
+        TmpStore::set($tmpStoreKey, $serializedData, $tag);
+    }
+
+    /**
+     * @param string $type
+     * @param int $elementId
+     * @param string $postfix
+     */
+    public static function removeElementFromSession($type, $elementId, $postfix = '')
+    {
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        TmpStore::delete($tmpStoreKey);
+    }
+
+    /**
+     * @param ElementInterface $element
+     * @param null|int $context see ElementAdminStyleEvent for values
+     *
+     * @return AdminStyle
+     */
+    public static function getElementAdminStyle(ElementInterface $element, $context)
+    {
+        // for BC reasons, will be removed with 7.0
+        if ($element instanceof AbstractObject && method_exists($element, 'getElementAdminStyle')) {
+            $adminStyle = $element->getElementAdminStyle();
+        } else {
+            $adminStyle = new AdminStyle($element);
+        }
+
+        $event = new ElementAdminStyleEvent($element, $adminStyle, $context);
+
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE, $event);
+        $adminStyle = $event->getAdminStyle();
+
+        return $adminStyle;
     }
 }

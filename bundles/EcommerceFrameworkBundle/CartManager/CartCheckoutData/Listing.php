@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
 /**
  * @method CartCheckoutData[] load()
+ * @method CartCheckoutData current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao getDao()
  */
@@ -25,11 +26,20 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     public $cartCheckoutDataItems;
 
+    public function __construct()
+    {
+        $this->cartCheckoutDataItems = & $this->data;
+    }
+
     /**
-     * @var array
+     * @param string $key
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -45,20 +55,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getCartCheckoutDataItems()
     {
-        if (empty($this->cartCheckoutDataItems)) {
-            $this->load();
-        }
-
-        return $this->cartCheckoutDataItems;
+        return $this->getData();
     }
 
     /**
      * @param array $cartCheckoutDataItems
      *
-     * @return void
+     * @return self
      */
     public function setCartCheckoutDataItems($cartCheckoutDataItems)
     {
-        $this->cartCheckoutDataItems = $cartCheckoutDataItems;
+        return $this->setData($cartCheckoutDataItems);
     }
 }

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -52,7 +53,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     public $group;
 
     /**
-     * @param $classDefinitions
+     * @param array $classDefinitions
      *
      * @return $this
      */
@@ -74,7 +75,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @param $key
+     * @param string $key
      *
      * @return self|null
      */
@@ -157,6 +158,15 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
+        }
+
+        if (!preg_match('/[a-zA-Z]+[a-zA-Z0-9]+/', $this->getKey())) {
+            throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
+        }
+
+        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
+            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+                $this->getParentClass()));
         }
 
         $this->checkTablenames();
@@ -251,10 +261,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-
-                /**
-                 * @var $def DataObject\ClassDefinition\Data
-                 */
                 $cd .= $def->getGetterCodeObjectbrick($this);
 
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -282,7 +288,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $definitions
+     * @param array $definitions
      *
      * @return array
      */
@@ -296,8 +302,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $result;
     }
 
-    /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
-     * @param $oldObject
+    /**
+     * Returns a list of classes which need to be "rebuild" because they are affected of changes.
+     *
+     * @param self $oldObject
      *
      * @return array
      */
@@ -323,7 +331,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $serializedFilename
+     * @param string $serializedFilename
      */
     private function cleanupOldFiles($serializedFilename)
     {
@@ -426,8 +434,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @throws \Exception
-     *
-     * @todo: creates a PHP-Dock with "@return void" (line 351)
      */
     private function createContainerClasses()
     {
@@ -458,6 +464,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 if (array_diff($new, $old) || array_diff($old, $new)) {
                     $class->save();
                 } else {
+                    // still, the brick fields definitions could have changed.
+                    Cache::clearTag('class_'.$class->getId());
                     Logger::debug('Objectbrick ' . $this->getKey() . ', no change for class ' . $class->getName());
                 }
             }
@@ -549,8 +557,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -560,8 +568,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -571,7 +579,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
+     * @param string $classname
      *
      * @return string
      */

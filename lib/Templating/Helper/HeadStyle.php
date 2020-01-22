@@ -204,8 +204,7 @@ class HeadStyle extends AbstractHelper
     /**
      * Determine if a value is a valid style tag
      *
-     * @param  mixed $value
-     * @param  string $method
+     * @param mixed $value
      *
      * @return bool
      */
@@ -288,8 +287,8 @@ class HeadStyle extends AbstractHelper
     /**
      * Start capture action
      *
-     * @param  mixed $captureType
-     * @param  string $typeOrAttrs
+     * @param string $type
+     * @param string|null $attrs
      *
      * @return void
      */
@@ -379,7 +378,7 @@ class HeadStyle extends AbstractHelper
             $escapeEnd = null;
         }
 
-        $html = '<style type="text/css"' . $attrString . '>' . PHP_EOL
+        $html = '<style' . $attrString . '>' . PHP_EOL
             . $escapeStart . $indent . $item->content . PHP_EOL . $escapeEnd
             . '</style>';
 

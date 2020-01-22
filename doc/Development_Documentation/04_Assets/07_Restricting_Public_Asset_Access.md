@@ -146,7 +146,7 @@ class MyAssetController extends FrontendController
             return new BinaryFileResponse($asset->getFileSystemPath());
         } elseif(preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
-            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . $pathInfo;
+            $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
 
             if(is_file($filePath)){
                 return new BinaryFileResponse($filePath);

@@ -27,7 +27,9 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
@@ -221,7 +223,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $callback Callable
+     * @param callable $callback
      */
     public function onCreateQuery(callable $callback)
     {

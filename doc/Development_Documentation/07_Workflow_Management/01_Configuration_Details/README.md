@@ -59,8 +59,12 @@ pimcore:
                 # Define a custom service to handle the logic. Take a look at the Symfony docs for more details.
                 service:              ~
 
-            # Will be applied when the current place is empty.
+            # Will get way over initial_place and adds the possibility to add multiple initial places.
+            initial_markings:     []
+
+            # DEPRECATED: Will be applied when the current place is empty.
             initial_place:        null
+
             places:
 
                 # Example:
@@ -224,6 +228,9 @@ pimcore:
 
                         # Css class to define the icon which will be used in the actions button in the backend.
                         iconClass:            ~
+                        # Forces an object layout after the transition was performed.
+                        # This objectLayout setting overrules all objectLayout settings within the places configs.
+                        objectLayout:            false
                         notificationSettings:
 
                             # Prototype
@@ -237,6 +244,13 @@ pimcore:
 
                                 # Send a email notification to a list of user roles (role names) when the transition get's applied
                                 notifyRoles:          []
+
+                                # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
+                                channelType:
+
+                                    # Default:
+                                    - mail
+
 
                                 # Type of mail source.
                                 mailType:             template # One of "template"; "pimcore_document"
@@ -258,6 +272,10 @@ pimcore:
 
                     # Css class to define the icon which will be used in the actions button in the backend.
                     iconClass:            ~
+                    
+                    # Forces an object layout after the global action was performed.
+                    # This objectLayout setting overrules all objectLayout settings within the places configs.
+                    objectLayout:         false
 
                     # An expression to block the action
                     guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'

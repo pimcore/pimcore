@@ -162,7 +162,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $info = password_get_info($data);
 
             // is already a hashed string
-            if ($info['algo'] !== 0) {
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;
             }
         } else {
@@ -175,12 +175,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $hashed = $this->calculateHash($data);
 
         /** set the hashed password back to the object, to be sure that is not plain-text after the first save
-         this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406 */
+         this is especially to avoid plaintext passwords in the search-index see: PIMCORE-1406 */
 
-        // a model should be switched if the context parameter is used,
+        // a model should be switched if the owner parameter is used,
         // for example: field collections would use \Pimcore\Model\DataObject\Fieldcollection\Data\Dao
-        $passwordModel = array_key_exists('context', $params)
-            ? $params['context']
+        $passwordModel = array_key_exists('owner', $params)
+            ? $params['owner']
             : ($object ?: null);
 
         if (null !== $passwordModel) {
@@ -374,6 +374,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -401,7 +403,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore_Date
+     * @return null|string
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -444,6 +446,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
-        $this->saltlcoation = $masterDefinition->saltlcoation;
+        $this->saltlocation = $masterDefinition->saltlocation;
     }
 }

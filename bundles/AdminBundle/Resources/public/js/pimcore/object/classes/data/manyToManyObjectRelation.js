@@ -207,6 +207,12 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
+                boxLabel: t("allow_to_create_new_object"),
+                name: "allowToCreateNewObject",
+                value: this.datax.allowToCreateNewObject
+            });
+            this.specificPanel.add({
+                xtype: "checkbox",
                 boxLabel: t("enable_admin_async_load"),
                 name: "optimizedAdminLoading",
                 value: this.datax.optimizedAdminLoading
@@ -235,12 +241,14 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                     relationType: source.datax.relationType,
                     remoteOwner: source.datax.remoteOwner,
                     lazyLoading: source.datax.lazyLoading,
-                    classes: source.datax.classes
+                    classes: source.datax.classes,
+                    visibleFields: source.datax.visibleFields,
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading
                 });
         }
     }
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;

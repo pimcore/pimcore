@@ -935,6 +935,7 @@ class QueryBuilder
         if (empty($name)) {
             $correlationName = $tableName = '';
         } elseif (is_array($name)) {
+            $correlationName = $tableName = '';
             // Must be array($correlationName => $tableName) or array($ident, ...)
             foreach ($name as $_correlationName => $_tableName) {
                 if (is_string($_correlationName)) {
@@ -1079,10 +1080,9 @@ class QueryBuilder
     /**
      * Adds to the internal table-to-column mapping array.
      *
-     * @param  string $tbl The table/join the columns come from.
-     * @param  array|string $cols The list of columns; preferably as
-     * an array, but possibly as a string containing one column.
-     * @param  bool|string True if it should be prepended, a correlation name if it should be inserted
+     * @param string $correlationName The table/join the columns come from.
+     * @param array|string $cols The list of columns; preferably as an array, but possibly as a string containing one column.
+     * @param bool|string|null $afterCorrelationName True if it should be prepended, a correlation name if it should be inserted
      *
      * @return void
      */

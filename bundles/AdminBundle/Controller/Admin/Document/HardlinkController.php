@@ -14,8 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -28,6 +29,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class HardlinkController extends DocumentControllerBase
 {
+    use ElementEditLockHelperTrait;
+
     /**
      * @Route("/get-data-by-id", methods={"GET"})
      *
@@ -37,15 +40,16 @@ class HardlinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
         $link = Document\Hardlink::getById($request->get('id'));
+
+        // check for lock
+        if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
+            if (Element\Editlock::isLocked($request->get('id'), 'document')) {
+                return $this->getEditLockResponse($request->get('id'), 'document');
+            }
+            Element\Editlock::lock($request->get('id'), 'document');
+        }
+
         $link = clone $link;
 
         $link->idPath = Element\Service::getIdPath($link);
@@ -70,6 +74,8 @@ class HardlinkController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($link))
         ];
 
+        $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
@@ -82,7 +88,7 @@ class HardlinkController extends DocumentControllerBase
             return $this->adminJson($data);
         }
 
-        return $this->adminJson(false);
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
@@ -96,39 +102,40 @@ class HardlinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        try {
-            if ($request->get('id')) {
-                $link = Document\Hardlink::getById($request->get('id'));
-                $this->setValuesToDocument($request, $link);
+        if ($request->get('id')) {
+            $link = Document\Hardlink::getById($request->get('id'));
+            $this->setValuesToDocument($request, $link);
 
-                $link->setModificationDate(time());
-                $link->setUserModification($this->getAdminUser()->getId());
+            $link->setModificationDate(time());
+            $link->setUserModification($this->getAdminUser()->getId());
 
-                if ($request->get('task') == 'unpublish') {
-                    $link->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $link->setPublished(true);
-                }
-
-                // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
-                    $link->save();
-
-                    return $this->adminJson(['success' => true,
-                                             'data' => ['versionDate' => $link->getModificationDate(),
-                                                        'versionCount' => $link->getVersionCount()]]);
-                }
+            if ($request->get('task') == 'unpublish') {
+                $link->setPublished(false);
             }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+            if ($request->get('task') == 'publish') {
+                $link->setPublished(true);
             }
-            throw $e;
+
+            // only save when publish or unpublish
+            if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
+                $link->save();
+
+                $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+                return $this->adminJson([
+                    'success' => true,
+                     'data' => [
+                         'versionDate' => $link->getModificationDate(),
+                         'versionCount' => $link->getVersionCount()
+                     ],
+                    'treeData' => $treeData
+                ]);
+            } else {
+                throw $this->createAccessDeniedHttpException();
+            }
         }
 
-        return $this->adminJson(false);
+        throw $this->createNotFoundException();
     }
 
     /**

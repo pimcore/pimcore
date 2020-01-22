@@ -56,13 +56,13 @@ class Editlock extends Model\AbstractModel
     public $date;
 
     /**
-     * @var
+     * @var string
      */
     public $cpath;
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool
      */
@@ -83,8 +83,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return null|Editlock
      */
@@ -101,7 +101,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $sessionId
+     * @param string $sessionId
      *
      * @return bool|null
      */
@@ -118,8 +118,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool|Editlock
      */
@@ -143,8 +143,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool
      */
@@ -212,12 +212,7 @@ class Editlock extends Model\AbstractModel
      */
     public function setUserId($userId)
     {
-        if ($userId) {
-            if ($user = Model\User::getById($userId)) {
-                $this->userId = (int) $userId;
-                $this->setUser($user);
-            }
-        }
+        $this->userId = (int) $userId;
 
         return $this;
     }
@@ -263,23 +258,15 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return Model\User
+     * @return Model\User|null
      */
     public function getUser()
     {
-        return $this->user;
-    }
+        if ($user = Model\User::getById($this->getUserId())) {
+            return $user;
+        }
 
-    /**
-     * @param Model\User $user
-     *
-     * @return $this
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-
-        return $this;
+        return null;
     }
 
     /**
@@ -303,7 +290,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cpath
+     * @param string $cpath
      *
      * @return $this
      */
@@ -315,7 +302,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getCpath()
     {

@@ -20,7 +20,9 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Property\Predefined\Dao getDao()
+ * @method Predefined\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Predefined extends Model\AbstractModel
 {
@@ -316,6 +318,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $creationDate
+     *
+     * @return self
      */
     public function setCreationDate($creationDate)
     {
@@ -334,6 +338,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $modificationDate
+     *
+     * @return self
      */
     public function setModificationDate($modificationDate)
     {

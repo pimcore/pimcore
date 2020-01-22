@@ -15,7 +15,7 @@ which needs to implement `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManag
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order 
 confirmation mails, ...) is located. 
 
-The default implementation `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` provides 
+The default implementation `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor` provides 
 basic functionality like creating a Pimcore order object and sending an order confirmation mail.
 
 Order creation itself is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface`.
@@ -25,9 +25,9 @@ Order creation itself is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBun
 
 In simple use cases a project specific implementation needs 
 
-* ...to extend `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` 
+* ...to extend `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` 
   to add additional custom fields to the order object and 
-* ...to extend `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` and overwrite the method 
+* ...to extend `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor` and overwrite the method 
   `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
 
 See following examples for details. 
@@ -40,7 +40,7 @@ A simple implementation of `AppBundle\Ecommerce\Order\OrderManager` could look l
 
 ```php
 <?php
-class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager {
+class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager {
 
     /**
      * @param CartInterface $cart

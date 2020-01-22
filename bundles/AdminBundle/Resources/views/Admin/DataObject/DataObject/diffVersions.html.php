@@ -95,8 +95,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             <?php } ?>
         <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
 
-            /** @var $storedata DataObject\Classificationstore */
+            /** @var DataObject\Classificationstore $storedata1 */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
+            /** @var DataObject\Classificationstore $storedata2 */
             $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
 
             $existingGroups = array();
@@ -136,15 +137,15 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 if  (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
                     continue;
                 }
-                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                /** @var DataObject\Classificationstore\GroupConfig $groupDefinition */
                 $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
                 if (!$groupDefinition) {
                     continue;
                 }
 
-                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
                     $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
@@ -174,7 +175,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Objectbricks) {
             ?>
             <?php foreach ($definition->getAllowedTypes() as $asAllowedType) { ?>
                 <?php
@@ -205,7 +206,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                                     if ($bricks1) {
                                         $brick1Value = $bricks1->{"get" . $asAllowedType}();
                                         if ($brick1Value) {
-                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            /** @var DataObject\Localizedfield $localizedBrickValues */
                                             $localizedBrickValues = $brick1Value->getLocalizedFields();
                                             $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                             $v1 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
@@ -215,7 +216,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                                     if ($bricks2) {
                                         $brick2Value = $bricks2->{"get" . $asAllowedType}();
                                         if ($brick2Value) {
-                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            /** @var DataObject\Localizedfield $localizedBrickValues */
                                             $localizedBrickValues = $brick2Value->getLocalizedFields();
                                             $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                             $v2 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
@@ -270,6 +271,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             $fields1 = $this->object1->{"get" . ucfirst($fieldName)}();
             $fields2 = $this->object2->{"get" . ucfirst($fieldName)}();
+            $fieldDefinitions1 = null;
+            $fieldItems1 = null;
+            $fieldDefinitions2 = null;
+            $fieldItems2 = null;
 
             if ($fields1) {
                 $fieldDefinitions1 = $fields1->getItemDefinitions();
@@ -291,12 +296,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         unset($fieldItems2[$fkey1]);
                     }
                     foreach ($fieldKeys1 as $fkey => $fieldKey1) {
-                        $v1 = null;
                         $v2 = null;
-                        if($fieldItem1 instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\NumFields) {
-                            $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
-                        }
-
                         $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
 
                         if(!empty($ffkey2) && isset($fieldKeys2[$fkey])) {

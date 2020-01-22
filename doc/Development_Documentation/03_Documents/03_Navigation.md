@@ -94,6 +94,59 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 </div>
 
+### Meta Navigation - Multilevel
+
+<div class="code-section">
+
+```php
+<div class="my-menu">
+    <?php
+    // you can use array to apply different ulClass on depth levels 
+    echo $this->navigation()->menu()->renderMenu($mainNavigation, [
+        'maxDepth' => 2,
+        'ulClass'  => [
+            0 => 'nav navbar-nav', //ulClass for first level
+            1 => 'nav navbar-nav-second',
+            2 => 'nav navbar-nav-third'
+        ]
+    ]);
+    ?>
+    
+    <?php
+    // alternatively, you can use 'default' key to apply class on all depth levels
+    $this->navigation()->render($mainNavigation, 'menu', 'renderMenu', [
+        'maxDepth' => 2,
+        'ulClass'  => [
+            'default' => 'nav navbar-nav', //ulClass for all levels
+        ]
+    ]); ?>
+
+</div>
+```
+
+```twig
+<div class="my-menu">
+    {# you can use array for ulClass to provide depth level classes #}
+    {{ pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
+        maxDepth: 2,
+        ulClass: {
+            0: 'nav navbar-nav',
+            1: 'nav navbar-nav-second',
+            2: 'nav navbar-nav-third'
+        }
+    }) }}
+    
+    {# alternatively, you can use 'default' key to apply class on all depth levels #}
+    {{ pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
+            maxDepth: 2,
+            ulClass: {
+                'default': 'nav navbar-nav'
+            }
+        }) }}
+</div>
+```
+</div>
+
 ### Breadcrumbs
 
 ```php
@@ -271,7 +324,7 @@ $menuRenderer = $this->navigation()->menu();
     <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
         <ul class="nav navbar-nav">
         <?php foreach ($mainNavigation as $page) { ?>
-            <?php /* @var $page \Pimcore\Navigation\Page\Document */ ?>
+            <?php /* @var \Pimcore\Navigation\Page\Document $page */ ?>
             <?php // here need to manually check for ACL conditions ?>
             <?php if (!$page->isVisible() || !$menuRenderer->accept($page)) { continue; } ?>
             <?php $hasChildren = $page->hasPages(); ?>
@@ -310,7 +363,7 @@ In the following example we're adding news items (objects) to the navigation usi
 ```php
 <?php
 $navigation = $this->navigation()->buildNavigation($this->document, $navStartNode, null, function($page, $document) {
-    /** @var $document \Pimcore\Model\Document */
+    /** @var \Pimcore\Model\Document $document */
     /** @var \Pimcore\Navigation\Page\Document $page */
     if($document->getProperty("templateType") == "news") {
         $list = new \Pimcore\Model\DataObject\News\Listing;

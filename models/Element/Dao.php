@@ -25,7 +25,7 @@ use Pimcore\Model;
 abstract class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @return array
+     * @return int[]
      *
      * @throws \Exception
      */
@@ -53,7 +53,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $fullpath
+     * @param string $fullpath
      *
      * @return array
      */

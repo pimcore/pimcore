@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Hardlink extends Model\Webservice\Data\Document
 {
     /**
@@ -41,5 +44,5 @@ class Hardlink extends Model\Webservice\Data\Document
     /**
      * @var bool
      */
-    public $childsFromSource;
+    public $childrenFromSource;
 }

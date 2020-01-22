@@ -26,6 +26,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -89,6 +91,11 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $phpdocType = 'string';
 
     /**
+     * @var bool
+     */
+    public $dynamicOptions = false;
+
+    /**
      * @return int
      */
     public function getColumnLength()
@@ -97,7 +104,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $columnLength
+     * @param null|int $columnLength
      *
      * @return $this
      */
@@ -197,6 +204,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         return $data;
     }
 
@@ -416,9 +425,13 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
@@ -437,7 +450,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
                 $context['purpose'] = 'layout';
             }
 
+            $inheritanceEnabled = DataObject::getGetInheritedValues();
+            DataObject::setGetInheritedValues(true);
             $options = $optionsProvider->{'getOptions'}($context, $this);
+            DataObject::setGetInheritedValues($inheritanceEnabled);
             $this->setOptions($options);
 
             $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
@@ -485,5 +501,39 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         } else {
             return $data;
         }
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        if ($operator === '=') {
+            $value = is_array($value) ? current($value) : $value;
+            $name = $params['name'] ?: $this->name;
+
+            return '`'.$name.'` LIKE '."'$value'".' ';
+        }
+
+        return null;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function doGetDefaultValue()
+    {
+        return $this->getDefaultValue() ?? null;
     }
 }

@@ -15,7 +15,7 @@ or the provided Pimcore console commands can be used.
 > into the index automatically. 
 
 
-![productindex-simple](../../img/productindex-simple.png)
+![productindex-simple](../../../img/productindex-simple.png)
 
 ### Console Commands for Simple Mysql Architecture
 
@@ -54,7 +54,7 @@ updated object are added to the so called preparation queue (see later). As a co
 should not be necessary any more.
 - Used for optimized mysql, elastic search, ...
 
-![productindex-optimized](../../img/productindex-optimized.png)
+![productindex-optimized](../../../img/productindex-optimized.png)
 
 
 ### Console Commands for Optimized Architecture
@@ -89,8 +89,8 @@ php bin/console ecommerce:indexservice:bootstrap --update-index
   the store table is out of sync. Reset the preparation queue for instance when your product model 
   returns updated data for a field.
 ```bash
-php bin/console ecommerce:reset-queue preparation
-php bin/console ecommerce:reset-queue update-index
+php bin/console ecommerce:indexservice:reset-queue preparation
+php bin/console ecommerce:indexservice:reset-queue update-index
 ```
 
 - If you need to create or update the index structures you can still use:

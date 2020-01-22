@@ -21,7 +21,9 @@ use Pimcore\Event\FrontendEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * @method \Pimcore\Model\Staticroute\Dao getDao()
+ * @method Staticroute\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Staticroute extends AbstractModel
 {
@@ -115,7 +117,7 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @param $route
+     * @param Staticroute $route
      */
     public static function setCurrentRoute($route)
     {
@@ -162,7 +164,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $name
-     * @param null $siteId
+     * @param int|null $siteId
      *
      * @return Staticroute
      */
@@ -693,7 +695,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -713,7 +715,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

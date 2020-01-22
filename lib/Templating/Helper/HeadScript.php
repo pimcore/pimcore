@@ -185,8 +185,9 @@ class HeadScript extends CacheBusterAware
     /**
      * Start capture action
      *
-     * @param  mixed $captureType
-     * @param  string $typeOrAttrs
+     * @param string $captureType
+     * @param string $type
+     * @param array $attrs
      *
      * @return void
      */
@@ -261,6 +262,7 @@ class HeadScript extends CacheBusterAware
             $mode = strtolower($matches['mode']);
             $type = 'text/javascript';
             $attrs = [];
+            $index = null;
 
             if ('offsetSet' == $action) {
                 $index = array_shift($args);
@@ -330,8 +332,7 @@ class HeadScript extends CacheBusterAware
     /**
      * Is the script provided valid?
      *
-     * @param  mixed $value
-     * @param  string $method
+     * @param mixed $value
      *
      * @return bool
      */
@@ -438,10 +439,10 @@ class HeadScript extends CacheBusterAware
     /**
      * Create script HTML
      *
-     * @param  string $type
-     * @param  array $attributes
-     * @param  string $content
-     * @param  string|int $indent
+     * @param \stdClass $item
+     * @param string $indent
+     * @param string $escapeStart
+     * @param string $escapeEnd
      *
      * @return string
      */
@@ -517,11 +518,7 @@ class HeadScript extends CacheBusterAware
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        if ($this->view) {
-            $useCdata = $this->view->doctype()->isXhtml() ? true : false;
-        } else {
-            $useCdata = $this->useCdata ? true : false;
-        }
+        $useCdata = $this->useCdata ? true : false;
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
         $escapeEnd = ($useCdata) ? '//]]>' : '//-->';
 

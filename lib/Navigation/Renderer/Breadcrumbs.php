@@ -210,7 +210,7 @@ class Breadcrumbs extends AbstractRenderer
      * @param Container $container
      * @param string|null $partial
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
@@ -254,10 +254,10 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Alias of renderTemplate() for ZF1 backward compatibility
      *
-     * @param Container|null $container
+     * @param Container $container
      * @param string|null $partial
      *
-     * @return mixed
+     * @return string
      */
     public function renderPartial(Container $container, string $partial = null)
     {

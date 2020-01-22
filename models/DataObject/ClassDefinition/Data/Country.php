@@ -90,4 +90,9 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     {
         return $this->restrictTo;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

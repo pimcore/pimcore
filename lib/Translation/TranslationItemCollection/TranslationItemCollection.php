@@ -27,7 +27,7 @@ class TranslationItemCollection
     /**
      * @param string $type
      * @param string $id
-     * @param object $element
+     * @param ElementInterface $element
      *
      * @return TranslationItemCollection
      */

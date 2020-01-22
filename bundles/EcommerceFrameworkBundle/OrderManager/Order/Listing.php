@@ -39,6 +39,11 @@ class Listing extends AbstractOrderList implements OrderListInterface
     protected $useSubItems = false;
 
     /**
+     * @var null|string[]
+     */
+    protected $availableFilterValues = null;
+
+    /**
      * @param string $type
      *
      * @return OrderListInterface
@@ -316,7 +321,7 @@ SUBQUERY
     }
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return $this
      */

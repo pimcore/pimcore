@@ -39,7 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Service extends Model\Element\Service
 {
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
     /**
@@ -53,7 +53,7 @@ class Service extends Model\Element\Service
     protected $nearestPathCache;
 
     /**
-     * @param null $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -84,19 +84,7 @@ class Service extends Model\Element\Service
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
-
-        // set locale based on document
-        $localeService = $container->get('pimcore.locale');
-        $documentLocale = $document->getProperty('language');
-        $tempLocale = $localeService->getLocale();
-        if ($documentLocale) {
-            $localeService->setLocale($documentLocale);
-        }
-
         $content = $renderer->render($document, $attributes, $query, $options);
-
-        // restore original locale
-        $localeService->setLocale($tempLocale);
 
         return $content;
     }
@@ -104,9 +92,11 @@ class Service extends Model\Element\Service
     /**
      * Save document and all child documents
      *
-     * @param     $document
+     * @param Document $document
      * @param int $collectGarbageAfterIteration
      * @param int $saved
+     *
+     * @throws \Exception
      */
     public static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
     {
@@ -136,7 +126,9 @@ class Service extends Model\Element\Service
      * @param  Document $target
      * @param  Document $source
      *
-     * @return Document copied document
+     * @return Document|null copied document
+     *
+     * @throws \Exception
      */
     public function copyRecursive($target, $source)
     {
@@ -146,7 +138,7 @@ class Service extends Model\Element\Service
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         if (method_exists($source, 'getElements')) {
@@ -160,8 +152,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -174,7 +166,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChildren() as $child) {
+        foreach ($source->getChildren(true) as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -214,8 +206,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -256,8 +248,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Document $target
+     * @param Document $source
      *
      * @return mixed
      *
@@ -289,7 +281,7 @@ class Service extends Model\Element\Service
             $target->setLinktype($source->getLinktype());
         }
 
-        $target->setUserModification($this->_user->getId());
+        $target->setUserModification($this->_user ? $this->_user->getId() : 0);
         $target->setProperties($source->getProperties());
         $target->save();
 
@@ -320,7 +312,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $doc
+     * @param Document $doc
      *
      * @return mixed
      */
@@ -342,8 +334,8 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $path
-     * @param $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -366,7 +358,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return bool
      */
@@ -386,8 +378,8 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $document
-     * @param $rewriteConfig
+     * @param Document $document
+     * @param array $rewriteConfig
      * @param array $params
      *
      * @return Document
@@ -449,13 +441,15 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
-     * @return Document
+     * @return Document|null
      */
     public static function getByUrl($url)
     {
         $urlParts = parse_url($url);
+        $document = null;
+
         if ($urlParts['path']) {
             $document = Document::getByPath($urlParts['path']);
 
@@ -473,15 +467,15 @@ class Service extends Model\Element\Service
                 }
             }
         }
-        //TODO: $document is not definied here, shouldn't be null returned here?
+
         return $document;
     }
 
     /**
-     * @param $item
+     * @param Document $item
      * @param int $nr
      *
-     * @return mixed|string
+     * @return string
      *
      * @throws \Exception
      */
@@ -593,7 +587,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param Request $request
      * @param string $hostUrl
      *

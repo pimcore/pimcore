@@ -28,8 +28,20 @@ services:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
+            - '@templating.engine.delegating'
+
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik:
         arguments:
             - '@Pimcore\Analytics\Piwik\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
+
+
+    #
+    # GOOGLE TAG MANAGER
+    #
+
+    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
