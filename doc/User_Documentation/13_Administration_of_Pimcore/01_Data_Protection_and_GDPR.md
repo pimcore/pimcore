@@ -86,4 +86,4 @@ in the Development Documentation for more details.
 
 ## Data Type to store Consent
 Pimcore provides a special data type for its data objects to store consents given by a user. 
-See [Consent](../../Development_Documentation/05_Objects/01_Object_Classes/01_Data_Types/39_Consent.md) for details. 
+See [Consent](../../Development_Documentation/05_Objects/01_Object_Classes/01_Data_Types/20_Consent.md) for details. 
