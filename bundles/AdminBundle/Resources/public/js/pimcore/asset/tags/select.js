@@ -126,7 +126,7 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
 
                 var key = ts(options[i]);
                 if(key.indexOf('<') >= 0) {
-                    key = replace_html_event_attributes(strip_tags(key, "div,span,b,strong,em,i,small,sup,sub2"));
+                    key = replace_html_event_attributes(strip_tags(key, "div,span,b,strong,em,i,small,sup,sub"));
                 }
 
                 filteredStoreData.push({'value': key, 'key': key});
