@@ -319,6 +319,7 @@ class Thumbnail
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
             $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+            $webpSupportBackup = null;
 
             if ($isAutoFormat) {
                 $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
@@ -397,7 +398,7 @@ class Thumbnail
 
             $htmlImgTag = $html;
 
-            if (isset($webpSupportBackup)) {
+            if (isset($isAutoFormat)) {
                 Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
             }
         }
