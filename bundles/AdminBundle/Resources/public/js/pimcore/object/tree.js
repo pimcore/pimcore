@@ -899,6 +899,8 @@ pimcore.object.tree = Class.create({
                     items: [record.pasteProgressBar]
                 });
 
+                record.pasteWindow.show();
+
                 var pj = new pimcore.tool.paralleljobs({
                     success: function () {
 
@@ -928,8 +930,6 @@ pimcore.object.tree = Class.create({
                     }.bind(this),
                     jobs: res.pastejobs
                 });
-
-                record.pasteWindow.show();
             } else {
                 throw "There are no pasting jobs";
             }
