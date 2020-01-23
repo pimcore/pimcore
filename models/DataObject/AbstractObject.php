@@ -39,7 +39,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
-    const OBJECT_REVERSE_SORT = false;
+    const OBJECT_REVERSE_SORT_DEFAULT = false;
 
     /**
      * @var bool
@@ -1449,7 +1449,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return AbstractObject
      */
-    public function setReverseSort(bool $o_reverseSort): Element\ElementInterface
+    public function setReverseSort(?bool $o_reverseSort): Element\ElementInterface
     {
         $this->o_reverseSort = $o_reverseSort;
 
@@ -1461,6 +1461,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function getReverseSort(): bool
     {
-        return $this->o_reverseSort ?? self::OBJECT_REVERSE_SORT;
+        return $this->o_reverseSort ?? self::OBJECT_REVERSE_SORT_DEFAULT;
     }
 }
