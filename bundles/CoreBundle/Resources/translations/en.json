@@ -924,7 +924,6 @@
   "paste_clipboard": "Paste Clipboard",
   "paste_here": "Paste your clipboard data here",
   "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Cannot save Metadata!</b><br />Please try to edit the metadata in Asset.",
-  "email_log_forward": "Forward email"
-  "set_to_null": "Empty (set to null)",
-  "unit_tooltip": "Alternative units tooltip"
+  "email_log_forward": "Forward email",
+  "unit_tooltip": "Unit conversion"
 }
