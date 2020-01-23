@@ -89,7 +89,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     value: this.inputField.value,
                     unit: this.unitField.value,
                 },
-                async: false,
                 success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response && response.success && response.values.length > 0) {
