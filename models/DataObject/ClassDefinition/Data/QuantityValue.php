@@ -75,12 +75,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $autoConvert;
 
     /**
-     *
-     * @var bool
-     */
-    public $unitTooltip;
-
-    /**
      * Type for the column to query
      *
      * @var int
@@ -212,7 +206,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @return bool
      */
-    public function getAutoConvert(): bool
+    public function isAutoConvert(): bool
     {
         return $this->autoConvert;
     }
@@ -223,22 +217,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function setAutoConvert($autoConvert)
     {
         $this->autoConvert = (bool)$autoConvert;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUnitTooltip(): bool
-    {
-        return $this->unitTooltip;
-    }
-
-    /**
-     * @param bool $unitTooltip
-     */
-    public function setUnitTooltip($unitTooltip)
-    {
-        $this->unitTooltip = (bool)$unitTooltip;
     }
 
     /**
