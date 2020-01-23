@@ -22,17 +22,12 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        var renderer = function (key, value, metaData, record) {
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
-        }.bind(this, field.key);
-
         return {
             text: field.label,
             editable: false,
             width: this.getColumnWidth(field, 80),
             sortable: false,
             dataIndex: field.key,
-            renderer: renderer,
             filter: this.getGridColumnFilter(field),
             getEditor: this.getGridColumnEditor.bind(this, field),
             renderer: this.getRenderer(field)
