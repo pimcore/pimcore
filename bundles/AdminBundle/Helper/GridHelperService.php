@@ -80,7 +80,9 @@ class GridHelperService
                 $keyParts = explode('~', $filterField);
 
                 $slugFd = null;
+                $field = null;
                 $slugKey = null;
+                $mappedKey = null;
 
                 if (substr($filterField, 0, 1) == '~') {
                     $type = $keyParts[1];
@@ -137,7 +139,7 @@ class GridHelperService
                     }
                 }
 
-                if ($slugFd) {
+                if ($field && $slugFd) {
                     $slugCondition = $field->getFilterConditionExt(
                         $filter['value'],
                         $operator,
@@ -212,6 +214,7 @@ class GridHelperService
 
                 $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
+                $brickKey = null;
                 $brickType = null;
                 $brickDescriptor = null;
                 if (!$field) {
@@ -425,14 +428,13 @@ class GridHelperService
      *
      * @param DataObject\Listing\Concrete $list
      * @param array $slugJoins
-     * @param ClassDefinition $class
      * @param array $featureAndSlugFilters
      */
-    public function addSlugJoins(DataObject\Listing\Concrete $list, array $slugJoins, ClassDefinition $class, array $featureAndSlugFilters)
+    public function addSlugJoins(DataObject\Listing\Concrete $list, array $slugJoins, array $featureAndSlugFilters)
     {
         if ($slugJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $class, $featureAndSlugFilters, $me) {
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -633,7 +635,7 @@ class GridHelperService
         }
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureAndSlugFilters);
-        $this->addSlugJoins($list, $slugJoins, $class, $featureAndSlugFilters);
+        $this->addSlugJoins($list, $slugJoins, $featureAndSlugFilters);
 
         $list->setLocale($requestedLanguage);
 
