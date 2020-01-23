@@ -693,6 +693,7 @@
     "targeting_toolbar": "ターゲティングツールバー",
     "sort_children_by": "sort_children_by",
     "by_key": "by_key",
+    "by_key_reverse": "by_key_reverse",
     "by_index": "by_index",
     "successful_object_change_children_sort_to_index": "successful_object_change_children_sort_to_index",
     "successful_object_change_children_sort_to_key": "successful_object_change_children_sort_to_key",

@@ -693,6 +693,7 @@
     "targeting_toolbar": "定位工具栏",
     "sort_children_by": "将子级排序为",
     "by_key": "键（按字母顺序）",
+    "by_key_reverse": "Key (Z to A)",
     "by_index": "索引（手动排序）",
     "successful_object_change_children_sort_to_index": "将对象子级以索引排序",
     "successful_object_change_children_sort_to_key": "将对象子级以键排序",
