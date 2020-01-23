@@ -88,7 +88,7 @@ function RealTypeOf(v) {
     return "object";
   }
   return typeof(v);
-};
+}
 
 
 
@@ -165,12 +165,12 @@ function FormatJSON(oData, sIndent) {
 
     // return
     return sHTML;
-};
+}
 
 
 function in_arrayi(needle, haystack) {
     return in_array(needle.toLocaleLowerCase(), array_map(strtolower, haystack));
-};
+}
 
 
 function strtolower (str) {
@@ -180,7 +180,7 @@ function strtolower (str) {
     // *     example 1: strtolower('Kevin van Zonneveld');
     // *     returns 1: 'kevin van zonneveld'
     return (str + '').toLowerCase();
-};
+}
 
 
 function array_map (callback) {
@@ -284,7 +284,7 @@ function in_array(needle, haystack, argStrict) {
     }
 
     return false;
-};
+}
 
 
 function uniqid(prefix, more_entropy) {
@@ -333,7 +333,7 @@ function uniqid(prefix, more_entropy) {
     }
 
     return retId;
-};
+}
 
 
 function empty (mixed_var) {
@@ -371,7 +371,7 @@ function empty (mixed_var) {
     }
 
     return false;
-};
+}
 
 function str_replace(search, replace, subject, count) {
     // Replaces all occurrences of search in haystack with replace  
@@ -422,7 +422,7 @@ function str_replace(search, replace, subject, count) {
         }
     }
     return sa ? s : s[0];
-};
+}
 
 
 function trim(str, charlist) {
@@ -474,7 +474,7 @@ function trim(str, charlist) {
     }
 
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
-};
+}
 
 
 function base64_encode(data) {
@@ -532,7 +532,7 @@ function base64_encode(data) {
     }
 
     return enc;
-};
+}
 
 function base64_decode(data) {
     // Decodes string using MIME base64 algorithm  
@@ -591,7 +591,7 @@ function base64_decode(data) {
     dec = this.utf8_decode(dec);
 
     return dec;
-};
+}
 
 
 function utf8_decode(str_data) {
@@ -631,7 +631,7 @@ function utf8_decode(str_data) {
     }
 
     return tmp_arr.join('');
-};
+}
 
 
 function ucfirst(str) {
@@ -647,7 +647,7 @@ function ucfirst(str) {
     str += '';
     var f = str.charAt(0).toUpperCase();
     return f + str.substr(1);
-};
+}
 
 
 function array_search(needle, haystack, argStrict) {
@@ -671,7 +671,7 @@ function array_search(needle, haystack, argStrict) {
     }
 
     return false;
-};
+}
 
 
 function mergeObject(p, c) {
@@ -685,14 +685,14 @@ function mergeObject(p, c) {
     }
 
     return c;
-};
+}
 
 
 function replace_html_event_attributes(value) {
     return value.replace(/ on[^=]+=/, function (attributeName) {
         return ' data-' + trim(attributeName);
     });
-};
+}
 
 function strip_tags(str, allowed_tags) {
     // http://kevin.vanzonneveld.net
@@ -784,7 +784,7 @@ function strip_tags(str, allowed_tags) {
     }
 
     return str;
-};
+}
 
 
 function md5(str) {
@@ -973,7 +973,7 @@ function md5(str) {
 
     var temp = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
     return temp.toLowerCase();
-};
+}
 
 function utf8_encode(string) {
     // Encodes an ISO-8859-1 string to UTF-8  
@@ -1019,7 +1019,7 @@ function utf8_encode(string) {
     }
 
     return utftext;
-};
+}
 
 
 function intval(mixed_var, base) {
@@ -1054,7 +1054,7 @@ function intval(mixed_var, base) {
     } else {
         return 0;
     }
-};
+}
 
 
 function nl2br (str, is_xhtml) {
@@ -1078,7 +1078,7 @@ function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
 
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
-};
+}
 
 
 function preg_quote (str, delimiter) {
@@ -1095,7 +1095,7 @@ function preg_quote (str, delimiter) {
     // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
     // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
-};
+}
 
 
 function urlencode (str) {
@@ -1129,7 +1129,7 @@ function urlencode (str) {
     // PHP behavior, you would need to add ".replace(/~/g, '%7E');" to the following.
     return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').
     replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
-};
+}
 
 
 function htmlentities (string, quote_style, charset, double_encode) {
@@ -1176,7 +1176,7 @@ function htmlentities (string, quote_style, charset, double_encode) {
     }
 
     return string;
-};
+}
 
 
 function get_html_translation_table (table, quote_style) {
@@ -1340,7 +1340,7 @@ function get_html_translation_table (table, quote_style) {
     }
 
     return hash_map;
-};
+}
 
 
 function parse_url (str, component) {
@@ -1393,7 +1393,7 @@ function parse_url (str, component) {
     }
     delete uri.source;
     return uri;
-};
+}
 
 function round (value, precision, mode) {
     // http://kevin.vanzonneveld.net
@@ -1446,7 +1446,7 @@ function round (value, precision, mode) {
     }
 
     return (isHalf ? value : Math.round(value)) / m;
-};
+}
 
 
 function implode (glue, pieces) {
@@ -1474,7 +1474,7 @@ function implode (glue, pieces) {
         }
         return retVal;
     }    return pieces;
-};
+}
 
 /**
  * inserts a text into an input/textarea where the cursor is set
@@ -1512,7 +1512,7 @@ function insertTextToFormElementAtCursor(txtarea, text) {
         txtarea.focus();
     }
     txtarea.scrollTop = scrollPos;
-};
+}
 
 /**
  * inserts a text into an html element with contenteditable where the cursor is set
@@ -1540,7 +1540,7 @@ function insertTextToContenteditableAtCursor (text, win, doc) {
     } else if (doc.selection && doc.selection.createRange) {
         doc.selection.createRange().text = text;
     }
-};
+}
 
 stringToFunction = function(str) {
     if (typeof str !== "string") {
