@@ -164,7 +164,7 @@ class Link extends Model\Document\Tag
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
                     if (!empty($this->data[$key]) && !empty($this->options[$key])) {
                         $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
-                    } else if (!empty($value)) {
+                    } elseif (!empty($value)) {
                         $attribs[] = $key.'="'.$value.'"';
                     }
                 }

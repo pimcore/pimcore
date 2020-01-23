@@ -249,7 +249,7 @@ class QuantityValueController extends AdminController
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
         /** @var Unit $targetUnit */
-        foreach($units as $targetUnit) {
+        foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
 
