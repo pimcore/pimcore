@@ -115,8 +115,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
     }
 
     /**
-     * @param $videoId
-     * @param $thumbnail
+     * @param int $videoId
+     * @param string $thumbnail
      */
     protected function waitTillFinished($videoId, $thumbnail)
     {

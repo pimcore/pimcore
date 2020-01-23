@@ -61,7 +61,7 @@ class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param $config
+     * @param array $config
      * @param mixed|null $context
      *
      * @return ConfigElementInterface[]

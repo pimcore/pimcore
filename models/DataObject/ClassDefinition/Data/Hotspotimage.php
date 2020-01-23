@@ -502,6 +502,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -528,10 +530,12 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|DataObject\Data\Hotspotimage
      *
@@ -555,7 +559,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
         $hotspotImage = $this->getDataFromResource($value);
 
-        /** @var $hotspotImage DataObject\Data\Hotspotimage */
+        /** @var DataObject\Data\Hotspotimage $hotspotImage */
         if (!$hotspotImage) {
             return null;
         }

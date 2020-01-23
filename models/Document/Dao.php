@@ -29,7 +29,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -42,7 +42,7 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
         }
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Document with the ID ' . $id . " doesn't exists");
@@ -52,7 +52,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param $path
+     * @param string $path
      *
      * @throws \Exception
      */
@@ -185,7 +185,7 @@ class Dao extends Model\Element\Dao
      *
      * @internal
      *
-     * @param $oldPath
+     * @param string $oldPath
      *
      * @return array
      */
@@ -332,15 +332,15 @@ class Dao extends Model\Element\Dao
     /**
      * Quick check if there are children.
      *
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren($includingUnpublished = null)
     {
         $sql = 'SELECT id FROM documents WHERE parentId = ?';
 
-        if (Model\Document::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 
@@ -377,11 +377,21 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
+     * @param bool|null $includingUnpublished
+     *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings($includingUnpublished = null)
     {
-        $c = $this->db->fetchOne('SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
+        $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
+
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+            $sql .= ' AND published = 1';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }
@@ -434,6 +444,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes locks from the document and its children.
+     *
+     * @return array
      */
     public function unlockPropagate()
     {
@@ -446,8 +458,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -498,9 +510,7 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param $index
-     *
-     * @throws \Exception
+     * @param int $index
      */
     public function saveIndex($index)
     {

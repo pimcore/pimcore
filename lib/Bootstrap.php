@@ -90,7 +90,6 @@ class Bootstrap
         // Error reporting is enabled in CLI
         @ini_set('display_errors', 'On');
         @ini_set('display_startup_errors', 'On');
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         if (!$pimcoreConsole) {
@@ -119,13 +118,16 @@ class Bootstrap
 
     public static function bootstrap()
     {
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-
-        /** @var $loader \Composer\Autoload\ClassLoader */
-        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        /** @var \Composer\Autoload\ClassLoader $loader */
+        if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
+            // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
+            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+        } elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../vendor/autoload.php';
-        } else {
+        } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        } else {
+            throw new \Exception('Unable to locate autoloader! Pimcore project root not found or invalid, please set/check env variable PIMCORE_PROJECT_ROOT.');
         }
 
         Config::initDebugDevMode();
@@ -171,8 +173,9 @@ class Bootstrap
     {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+        $dotEnvLocalPhpFile = PIMCORE_PROJECT_ROOT .'/.env.local.php';
 
-        if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
+        if (file_exists($dotEnvLocalPhpFile) && is_array($env = include $dotEnvLocalPhpFile)) {
             foreach ($env as $k => $v) {
                 $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
             }
@@ -329,7 +332,7 @@ class Bootstrap
         }
 
         if ($debug) {
-            Debug::enable();
+            Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
             @ini_set('display_errors', 'On');
         }
 

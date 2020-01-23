@@ -82,7 +82,7 @@
   "children": "Children",
   "elements_to_export": "Elements to Export",
   "xliff_export_documents": "If you want to translate eg. the whole \/en tree to a different language, first create a copy of \/en, eg. \/de then export \/de for translation. When importing the translated XLIFF the English contents in \/de will be overwritten by the German translation in the XLIFF file.",
-  "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten.",
+  "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten. Use Relations checkbox to include Objects & Documents from Dependencies e.g. Relation fields, Properties etc.",
   "xliff_export_notice": "Here you can select the documents and objects you want to export for external translation.",
   "important_notice": "Important Notice",
   "xliff_import_notice": "Select a translated XLIFF file which was previously exported by pimcore and then translated by a localization service provider (LSP) or by a CAT application. Please aware that the import will overwrite the elements which were selected by the import (read also export).",
@@ -381,6 +381,7 @@
   "non_owner_description": "Non owner objects represent relations to an other object just in the same way as objects do. The difference is, that a non-owner object field is not the owner of the relation data, it is merely a view on data stored in other objects. Please choose the owner and field name where the data is originally stored.",
   "allow_variants": "Allow variants",
   "show_variants": "Show variants in tree",
+  "cache_raw_relation_data": "Cache Raw Relation Data",
   "allowed_class_field": "Allowed class\/field",
   "structuredTable": "Structured Table",
   "position": "Position",
@@ -391,7 +392,7 @@
   "file_explorer_saved_file_error": "Cannot save file",
   "reserved_field_names_error": "Please do not use the following reserved field names: ",
   "use_current_date": "Use current date",
-  "default_value_warning": "Default values are not stored in the database table definition, nor are they set in empty Object instances. They are only available in the pimcore GUI",
+  "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
   "instance_identifier": "Instance identifier",
   "instance_identifier_info": "The instance identifier has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)",
   "restrict_selection_to": "Restrict Selection To",
@@ -714,5 +715,7 @@
   "table_column_configuration": "Column Configuration",
   "send_invitation_link": "Send Invitation Link",
   "invitation_sent": "Login Invitation sent",
-  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" "
+  "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
+  "classificationstore_group_by_key": "Group by key",
+  "allow_to_create_new_object":  "Allow to create a new object in relation field"
 }

@@ -18,7 +18,7 @@
 namespace Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Dependency\Dao getDao()
+ * @method Dependency\Dao getDao()
  */
 class Dependency extends AbstractModel
 {
@@ -74,7 +74,7 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param  Element\ELementInterface $element
+     * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element)
     {
@@ -99,8 +99,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
@@ -110,8 +110,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
@@ -187,7 +187,7 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if ((is_array($this->getRequires()) && $this->getRequiresTotalCount() > 0) || $this->getRequiredByTotalCount() > 0) {
+        if (is_array($this->getRequiredBy()) && $this->getRequiredByTotalCount() > 0) {
             return true;
         }
 

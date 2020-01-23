@@ -251,7 +251,7 @@ Ext.onReady(function () {
                 }
             } else {
                 var message = t("error_general");
-                if(jsonData['message']) {
+                if(jsonData && jsonData['message']) {
                     message = jsonData['message'] + "<br><br>" + t("error_general");
                 }
 
@@ -291,8 +291,9 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return t(rec.get("name"));
-                }
+                    return ts(rec.data.name);
+                },
+                depends : ['name']
             },
             'module',
             'controller',
@@ -339,9 +340,9 @@ Ext.onReady(function () {
     }
 
     //translation admin keys
-    pimcore.globalmanager.add("translations_admin_missing", new Array());
-    pimcore.globalmanager.add("translations_admin_added", new Array());
-    pimcore.globalmanager.add("translations_admin_translated_values", new Array());
+    pimcore.globalmanager.add("translations_admin_missing", []);
+    pimcore.globalmanager.add("translations_admin_added", []);
+    pimcore.globalmanager.add("translations_admin_translated_values", []);
 
 
     var objectClassFields = [
@@ -482,71 +483,80 @@ Ext.onReady(function () {
             }
         });
 
-        // use jQuery instead of ExtJS to bypass default error handling
-        jQuery.ajax({
-            method: "POST",
-            url: "https://liveupdate.pimcore.org/update-check",
-            data: {
-                id: pimcore.settings.instanceId,
-                revision: pimcore.settings.build,
-                version: pimcore.settings.version,
-                debug: pimcore.settings.debug,
-                devmode: pimcore.settings.devmode,
-                environment: pimcore.settings.environment,
-                language: pimcore.settings.language,
-                main_domain: pimcore.settings.main_domain,
-                domains: domains,
-                timezone: pimcore.settings.timezone,
-                websiteLanguages: pimcore.settings.websiteLanguages.join(',')
-            }
-        }).done(function(data) {
-            if (data['latestVersion']) {
-                if(pimcore.currentuser.admin) {
+        // use vanilla javascript instead of ExtJS to bypass default error handling
+        var request = new XMLHttpRequest();
+        request.open('POST', "https://liveupdate.pimcore.org/update-check", false);
 
-                    pimcore.notification.helper.incrementCount();
+        request.onload = function() {
+            if (this.status >= 200 && this.status < 400) {
+                var data = Ext.decode(this.response);
+                if (data.latestVersion) {
+                    if (pimcore.currentuser.admin) {
 
-                    var toolbar = pimcore.globalmanager.get("layout_toolbar");
-                    toolbar.notificationMenu.add({
-                        text: t("update_available"),
-                        iconCls: "pimcore_icon_reload",
-                        handler: function () {
-                            var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
-                            html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
-                            html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
-                            html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
-                            html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
-                            html += '</div>';
+                        pimcore.notification.helper.incrementCount();
 
-                            var win = new Ext.Window({
-                                title: "New Version Available!",
-                                width:500,
-                                height: 220,
-                                bodyStyle: "padding: 10px;",
-                                modal: true,
-                                html: html
-                            });
-                            win.show();
+                        var toolbar = pimcore.globalmanager.get("layout_toolbar");
+                        toolbar.notificationMenu.add({
+                            text: t("update_available"),
+                            iconCls: "pimcore_icon_reload",
+                            handler: function () {
+                                var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
+                                html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
+                                html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
+                                html += '<br><b style="color: darkgreen;">New Version: ' + data.latestVersion + '</b>';
+                                html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
+                                html += '</div>';
+
+                                var win = new Ext.Window({
+                                    title: "New Version Available!",
+                                    width: 500,
+                                    height: 220,
+                                    bodyStyle: "padding: 10px;",
+                                    modal: true,
+                                    html: html
+                                });
+                                win.show();
+                            }
+                        });
+                    }
+                }
+
+                if (data.pushStatistics) {
+                    var request = new XMLHttpRequest();
+                    request.open('GET', "/admin/index/statistics", false);
+
+                    request.onload = function () {
+                        if (this.status >= 200 && this.status < 400) {
+                            var res = Ext.decode(this.response);
+
+                            var request = new XMLHttpRequest();
+                            request.open('POST', "https://liveupdate.pimcore.org/statistics", false);
+
+                            var data = new FormData();
+                            data.append('data', encodeURIComponent(JSON.stringify(res)));
+
+                            request.send(data);
                         }
-                    });
+                    };
+                    request.send(data);
                 }
             }
+        };
 
-            if (data['pushStatistics']) {
-                jQuery.ajax({
-                    method: "GET",
-                    dataType: 'text',
-                    url: "/admin/index/statistics",
-                }).done(function (data) {
-                    jQuery.ajax({
-                        method: "POST",
-                        url: "https://liveupdate.pimcore.org/statistics",
-                        data: {
-                            data: data
-                        }
-                    });
-                });
-            }
-        });
+        var data = new FormData();
+        data.append('id', pimcore.settings.instanceId);
+        data.append('revision', pimcore.settings.build);
+        data.append('version', pimcore.settings.version);
+        data.append('debug', pimcore.settings.debug);
+        data.append('devmode', pimcore.settings.devmode);
+        data.append('environment', pimcore.settings.environment);
+        data.append("language", pimcore.settings.language);
+        data.append("main_domain", pimcore.settings.main_domain);
+        data.append("domains", domains);
+        data.append("timezone", pimcore.settings.timezone);
+        data.append("websiteLanguages", pimcore.settings.websiteLanguages.join(','));
+
+        request.send(data);
 
     }, 5000);
 
@@ -699,7 +709,7 @@ Ext.onReady(function () {
             document: [],
             asset: [],
             object: []
-        }
+        };
 
         for (var i = 0; i < elementTree.length; i++) {
 
@@ -751,7 +761,6 @@ Ext.onReady(function () {
                         if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
-                            var treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
                             var treeCls = window.pimcore[treetype].customviews.tree;
 
                             tree = new treeCls({
@@ -769,7 +778,6 @@ Ext.onReady(function () {
                             pimcore.globalmanager.add("layout_" + treetype + "_tree_" + treeConfig.id, tree);
 
                             treepanel.setHidden(false);
-                            locateTree = treepanel;
                         }
                     }
                     break;
@@ -781,11 +789,9 @@ Ext.onReady(function () {
                     key: locateKey,
                     side: side,
                     tree: tree
-                }
-                );
-
+                });
             }
-            
+
         }
         pimcore.globalmanager.add("tree_locate_configs", locateConfigs);
 

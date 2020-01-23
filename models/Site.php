@@ -132,7 +132,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
      * @return Site|null
      */
@@ -164,12 +164,14 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $mixed
+     * @param mixed $mixed
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getBy($mixed)
     {
+        $site = null;
+
         if (is_numeric($mixed)) {
             $site = self::getById($mixed);
         } elseif (is_string($mixed)) {
@@ -321,7 +323,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -404,7 +406,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -424,7 +426,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

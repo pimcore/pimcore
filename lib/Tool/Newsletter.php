@@ -179,9 +179,9 @@ class Newsletter
     }
 
     /**
-     * @param $email
+     * @param string $email
      *
-     * @return mixed
+     * @return string
      */
     protected static function obfuscateEmail($email)
     {
@@ -193,8 +193,8 @@ class Newsletter
     /**
      * @param Model\Document\Newsletter $newsletter
      * @param DataObject\Concrete $object
-     * @param null $emailAddress
-     * @param null $hostUrl
+     * @param string|null $emailAddress
+     * @param string|null $hostUrl
      *
      * @throws Exception
      *
@@ -272,7 +272,7 @@ class Newsletter
     }
 
     /**
-     * @param null $classId
+     * @param string|null $classId
      *
      * @throws Exception
      */
@@ -323,9 +323,9 @@ class Newsletter
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
-     * @return mixed
+     * @return DataObject\Concrete
      *
      * @throws Exception
      */
@@ -388,8 +388,8 @@ class Newsletter
     }
 
     /**
-     * @param $object
-     * @param $mailDocument
+     * @param DataObject\Concrete $object
+     * @param Document $mailDocument
      * @param array $params
      *
      * @throws Exception
@@ -415,7 +415,7 @@ class Newsletter
     }
 
     /**
-     * @param $token
+     * @param string $token
      *
      * @return DataObject\Concrete|null
      */
@@ -528,8 +528,8 @@ class Newsletter
     }
 
     /**
-     * @param $object
-     * @param $title
+     * @param DataObject\Concrete $object
+     * @param string $title
      */
     public function addNoteOnObject($object, $title): void
     {

@@ -127,7 +127,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Load JSON data from file
      *
-     * @param $path
+     * @param string $path
      *
      * @return mixed
      */
@@ -149,7 +149,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Ask for confirmation before overwriting
      *
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -188,7 +188,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Try to load definition by name
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel|null
      */
@@ -197,7 +197,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * Create a new definition
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel
      */

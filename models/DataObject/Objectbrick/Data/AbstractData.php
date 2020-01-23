@@ -75,7 +75,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -87,7 +87,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getType()
     {
@@ -95,7 +95,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return mixed
+     * @return DataObject\Objectbrick\Definition
      */
     public function getDefinition()
     {
@@ -105,7 +105,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $doDelete
+     * @param bool $doDelete
      *
      * @return $this
      */
@@ -160,7 +160,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      *
@@ -237,7 +237,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -281,7 +281,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys', 'object', $this->getDumpStateProperty()];
+        $blockedVars = ['loadedLazyKeys', 'object'];
         $finalVars = [];
 
         if (!$this->isInDumpState()) {

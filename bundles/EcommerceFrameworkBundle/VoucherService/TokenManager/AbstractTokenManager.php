@@ -102,7 +102,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     /**
      * Once per cart setting
      *
-     * @param $code
+     * @param string $code
      * @param CartInterface $cart
      *
      * @throws VoucherServiceException
@@ -150,7 +150,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     /**
      * Export tokens to CSV
      *
-     * @param $params
+     * @param array $params
      *
      * @return mixed
      * @implements IExportableTokenManager
@@ -197,7 +197,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     /**
      * Export tokens to plain text list
      *
-     * @param $params
+     * @param array $params
      *
      * @return mixed
      * @implements IExportableTokenManager
@@ -264,7 +264,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     abstract public function releaseToken($code, CartInterface $cart);
 
     /**
-     * @param null $filter
+     * @param array|null $filter
      *
      * @return array|bool
      */
@@ -302,7 +302,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     abstract public function cleanUpReservations($duration = 0);
 
     /**
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params
      *
      * @return string The path of the template to display

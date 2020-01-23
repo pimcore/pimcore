@@ -69,7 +69,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     }
 
     /**
-     * @param $config
+     * @param array $config
      */
     public static function standardizeSystemConfigKeys(&$config)
     {
@@ -108,7 +108,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     /**
      * Migrate 'Appearance & Branding' configuration from 'pimcore' node to 'pimcore_admin' node in system.yml
      *
-     * @param $systemConfigFile
+     * @param string $systemConfigFile
      *
      * @return bool
      */
@@ -144,7 +144,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     /**
      * Migrate email & newletter smtp configuration from 'pimcore' node to 'swiftmailer' node in system.yml
      *
-     * @param $systemConfigFile
+     * @param string $systemConfigFile
      *
      * @return bool
      */

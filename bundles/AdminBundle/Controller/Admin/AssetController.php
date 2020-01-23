@@ -14,10 +14,12 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
@@ -43,6 +45,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
+    use Element\AdminStyleTrait;
     use ElementEditLockHelperTrait;
 
     /**
@@ -114,6 +117,11 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
+            $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
+            if ($asset->isAnimated()) {
+                $imageInfo['previewUrl'] = $asset->getFullPath() . '?_dc=' . time();
+            }
+
             if ($asset->getWidth() && $asset->getHeight()) {
                 $imageInfo['dimensions'] = [];
                 $imageInfo['dimensions']['width'] = $asset->getWidth();
@@ -130,17 +138,19 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset->setStream(null);
-        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
         $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $asset->getObjectVars();
+        $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
+
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $data['php'] = [
             'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
@@ -341,6 +351,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/upload-base64' . uniqid() . '.tmp';
             $data = preg_replace('@^data:[^,]+;base64,@', '', $request->get('data'));
             File::put($sourcePath, base64_decode($data));
+        } else {
+            throw new \Exception('The filename of the asset is empty');
         }
 
         $parentId = $request->get('parentId');
@@ -360,6 +372,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $maxRetries = 5;
+            $newParent = null;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
@@ -374,7 +387,9 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
             }
-            $parentId = $newParent->getId();
+            if ($newParent) {
+                $parentId = $newParent->getId();
+            }
         } elseif (!$request->get('parentId') && $parentPath) {
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
@@ -405,6 +420,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
+        $asset = null;
 
         if ($parentAsset->isAllowed('create')) {
             if (is_file($sourcePath) && filesize($sourcePath) < 1) {
@@ -433,8 +449,8 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param $targetPath
-     * @param $filename
+     * @param string $targetPath
+     * @param string $filename
      *
      * @return string
      */
@@ -567,9 +583,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $deletedItems = [];
             foreach ($list as $asset) {
-                /**
-                 * @var $asset Asset
-                 */
+                /** @var Asset $asset */
                 $deletedItems[$asset->getId()] = $asset->getRealFullPath();
                 if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
@@ -597,15 +611,12 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param $element
+     * @param Asset $element
      *
      * @return array
      */
     protected function getTreeNodeConfig($element)
     {
-        /**
-         * @var $asset Asset
-         */
         $asset = $element;
 
         $tmpAsset = [
@@ -631,7 +642,6 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = false;
             $tmpAsset['expanded'] = !$asset->hasChildren();
             $tmpAsset['loaded'] = !$asset->hasChildren();
-            $tmpAsset['iconCls'] = 'pimcore_icon_folder';
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
 
             $folderThumbs = [];
@@ -655,18 +665,9 @@ class AssetController extends ElementControllerBase implements EventedController
             $tmpAsset['leaf'] = true;
             $tmpAsset['expandable'] = false;
             $tmpAsset['expanded'] = false;
-
-            $tmpAsset['iconCls'] = 'pimcore_icon_asset_default';
-
-            $fileExt = File::getFileExtension($asset->getFilename());
-            if ($fileExt) {
-                $tmpAsset['iconCls'] .= ' pimcore_icon_' . File::getFileExtension($asset->getFilename());
-            }
         }
 
-        $tmpAsset['qtipCfg'] = [
-            'title' => 'ID: ' . $asset->getId()
-        ];
+        $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_TREE, $tmpAsset);
 
         if ($asset->getType() == 'image') {
             try {
@@ -950,12 +951,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
+                $treeData = $this->getTreeNodeConfig($asset);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $asset->getModificationDate(),
                         'versionCount' => $asset->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } else {
                 throw $this->createAccessDeniedHttpException();
@@ -983,7 +987,9 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
-                return $this->adminJson(['success' => true]);
+                $treeData = $this->getTreeNodeConfig($asset);
+
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -1162,6 +1168,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $fileinfo = $request->get('fileinfo');
         $image = Asset\Image::getById(intval($request->get('id')));
 
+        if (!$image) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
         if (!$image->isAllowed('view')) {
             throw new \Exception('not allowed to view thumbnail');
         }
@@ -1238,6 +1248,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $video = Asset::getById(intval($request->get('id')));
         } elseif ($request->get('path')) {
             $video = Asset::getByPath($request->get('path'));
+        } else {
+            throw new \Exception('could not load video asset');
         }
 
         if (!$video->isAllowed('view')) {
@@ -1367,13 +1379,18 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Asset $asset
+     *
+     * @return string|null
      */
     protected function getDocumentPreviewPdf(Asset $asset)
     {
         $pdfFsPath = null;
+
         if ($asset->getMimetype() == 'application/pdf') {
             $pdfFsPath = $asset->getFileSystemPath();
-        } elseif (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+        }
+
+        if (!$pdfFsPath && $asset->getPageCount() && \Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
             try {
                 $document = \Pimcore\Document::getInstance();
                 $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
@@ -1564,14 +1581,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = '';
-            if ($asset instanceof Asset\Image) {
-                $thumbnailMethod = 'getThumbnail';
-            } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-                $thumbnailMethod = 'getImageThumbnail';
-            }
+            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
 
             if (!empty($thumbnailMethod)) {
                 $filenameDisplay = $asset->getFilename();
@@ -1586,7 +1596,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
                         'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
+                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true&grid=true',
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];
                 }
@@ -1879,7 +1889,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory
-                            $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
+                            $zip->addFromString(preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
                         }
                     }
                 }
@@ -2211,137 +2221,98 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/grid-proxy", methods={"GET"})
+     * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
+        $language = $request->get('language') != 'default' ? $request->get('language') : null;
+
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         if (isset($allParams['data']) && $allParams['data']) {
-            //TODO probably not needed
+            $this->checkCsrfToken($request);
+            if ($allParams['xaction'] == 'update') {
+                try {
+                    $data = $this->decodeJson($allParams['data']);
+
+                    // save
+                    $asset = Asset::getById($data['id']);
+
+                    if (!$asset->isAllowed('publish')) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this asset.");
+                    }
+
+                    $metadata = $asset->getMetadata();
+                    $dirty = false;
+
+                    unset($data['id']);
+                    foreach ($data as $key => $value) {
+                        $fieldDef = explode('~', $key);
+                        $key = $fieldDef[0];
+                        if (isset($fieldDef[1])) {
+                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                        }
+
+                        foreach ($metadata as $idx => &$em) {
+                            if ($em['name'] == $key && $em['language'] == $language) {
+                                $em['data'] = $value;
+                                $dirty = true;
+                                break;
+                            }
+                        }
+
+                        if (!$dirty) {
+                            $defaulMetadata = ['title', 'alt', 'copyright'];
+                            if (in_array($key, $defaulMetadata)) {
+                                $metadata[] = [
+                                    'name' => $key,
+                                    'language' => $language,
+                                    'type' => 'input',
+                                    'data' => $value
+                                ];
+                                $dirty = true;
+                            } else {
+                                $predefined = Model\Metadata\Predefined::getByName($key);
+                                if ($predefined && (empty($predefined->getTargetSubtype())
+                                        || $predefined->getTargetSubtype() == $asset->getType())) {
+                                    $metadata[] = [
+                                        'name' => $key,
+                                        'language' => $language,
+                                        'type' => $predefined->getType(),
+                                        'data' => $value
+                                    ];
+                                    $dirty = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($dirty) {
+                        $metadata = Asset\Service::minimizeMetadata($metadata);
+                        $asset->setMetadata($metadata);
+                        $asset->save();
+
+                        return $this->adminJson(['success' => true]);
+                    }
+
+                    return $this->adminJson(['success' => false, 'message' => 'something went wrong.']);
+                } catch (\Exception $e) {
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                }
+            }
         } else {
-            $db = \Pimcore\Db::get();
-            // get list of objects
-            $folder = Asset::getById($allParams['folderId']);
-
-            $start = 0;
-            $limit = 20;
-            $orderKey = 'id';
-            $order = 'ASC';
-
-            if ($allParams['limit']) {
-                $limit = $allParams['limit'];
-            }
-            if ($allParams['start']) {
-                $start = $allParams['start'];
-            }
-
-            $orderKeyQuote = true;
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
-            if ($sortingSettings['orderKey']) {
-                $orderKey = $sortingSettings['orderKey'];
-                if ($orderKey == 'fullpath') {
-                    $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
-                    $orderKeyQuote = false;
-                } elseif ($orderKey == 'filename') {
-                    $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
-                    $orderKeyQuote = false;
-                }
-
-                $order = $sortingSettings['order'];
-            }
-
-            $list = new Asset\Listing();
-
-            $conditionFilters = [];
-            if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
-                $conditionFilters[] = 'parentId = ' . $folder->getId();
-            } else {
-                $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
-            }
-
-            if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
-                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
-            }
-
-            $conditionFilters[] = "type != 'folder'";
-            $filterJson = $allParams['filter'] ?? null;
-            if ($filterJson) {
-                $filters = $this->decodeJson($filterJson);
-                foreach ($filters as $filter) {
-                    $operator = '=';
-
-                    $filterField = $filter['property'];
-                    $filterOperator = $filter['operator'];
-                    $filterType = $filter['type'];
-
-                    if ($filterType == 'string') {
-                        $operator = 'LIKE';
-                    } elseif ($filterType == 'numeric') {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
-                        }
-                    } elseif ($filterType == 'date') {
-                        if ($filterOperator == 'lt') {
-                            $operator = '<';
-                        } elseif ($filterOperator == 'gt') {
-                            $operator = '>';
-                        } elseif ($filterOperator == 'eq') {
-                            $operator = '=';
-                        }
-                        $filter['value'] = strtotime($filter['value']);
-                    } elseif ($filterType == 'list') {
-                        $operator = '=';
-                    } elseif ($filterType == 'boolean') {
-                        $operator = '=';
-                        $filter['value'] = (int) $filter['value'];
-                    }
-                    // system field
-                    $value = $filter['value'];
-                    if ($operator == 'LIKE') {
-                        $value = '%' . $value . '%';
-                    }
-
-                    $field = '`' . $filterField . '` ';
-                    if ($filterField == 'fullpath') {
-                        $field = 'CONCAT(path,filename)';
-                    }
-
-                    $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);
-                }
-            }
-
-            if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
-            }
-
-            $condition = implode(' AND ', $conditionFilters);
-            $list->setCondition($condition);
-            $list->setLimit($limit);
-            $list->setOffset($start);
-            $list->setOrder($order);
-            $list->setOrderKey($orderKey, $orderKeyQuote);
+            $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
@@ -2353,24 +2324,12 @@ class AssetController extends ElementControllerBase implements EventedController
             $list->load();
 
             $assets = [];
-            foreach ($list->getAssets() as $asset) {
-
-                /** @var $asset Asset */
-                $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
-                $size = @filesize($filename);
+            foreach ($list->getAssets() as $index => $asset) {
 
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getid(),
-                        'type' => $asset->getType(),
-                        'fullpath' => $asset->getRealFullPath(),
-                        'filename' => $asset->getKey(),
-                        'creationDate' => $asset->getCreationDate(),
-                        'modificationDate' => $asset->getModificationDate(),
-                        'size' => formatBytes($size),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
-                    ];
+                    $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language']);
+                    $assets[] = $a;
                 }
             }
 
@@ -2403,6 +2362,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $page = $request->get('page');
+        $text = null;
         if ($asset instanceof Asset\Document) {
             $text = $asset->getText($page);
         }

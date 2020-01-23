@@ -92,7 +92,7 @@ class RedirectsController extends AdminController
                 // save route
                 $redirect = new Redirect();
 
-                if ($data['target']) {
+                if (!empty($data['target'])) {
                     if ($doc = Document::getByPath($data['target'])) {
                         $data['target'] = $doc->getId();
                     }

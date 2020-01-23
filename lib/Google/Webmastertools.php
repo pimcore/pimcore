@@ -39,7 +39,7 @@ class Webmastertools
     }
 
     /**
-     * @param null $site
+     * @param Site|null $site
      *
      * @return bool
      */

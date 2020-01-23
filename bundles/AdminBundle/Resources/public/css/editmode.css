@@ -40,6 +40,20 @@
     font-family: "courier new", courier !important;
 }
 
+input.cke_dialog_ui_input_tel {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 2px inset;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(174, 179, 185) rgb(201, 204, 207) rgb(201, 204, 207);
+    border-image: initial;
+    padding: 4px 6px;
+    outline: 0px;
+    border-radius: 3px;
+}
+
 /* pimcore editables */
 
 .pimcore_tag_image {
@@ -84,6 +98,11 @@
     position: relative;
     top: 0;
     padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.pimcore_area_buttons.fixed.top:after {
+    top: 49px;
 }
 
 .pimcore_area_buttons.right {
@@ -432,6 +451,7 @@
     padding-bottom: 3px;
     background: #000;
     border-bottom: 1px solid #ccc;
+    cursor: move;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small:last-child {

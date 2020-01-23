@@ -156,7 +156,7 @@ class Area extends Model\Document\Tag
      */
     public function getElement(string $name)
     {
-        $document = Model\Document\Page::getById($this->getDocumentId());
+        $document = $this->getDocument();
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
 
         $parentBlockNames = $this->getParentBlockNames();

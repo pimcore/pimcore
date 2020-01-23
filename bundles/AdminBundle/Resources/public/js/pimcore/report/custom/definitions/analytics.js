@@ -18,7 +18,7 @@ pimcore.report.custom.definition.analytics = Class.create({
     sourceDefinitionData: null,
 
     initialize: function (sourceDefinitionData, key, deleteControl, columnSettingsCallback) {
-        sourceDefinitionData = sourceDefinitionData ? sourceDefinitionData : {filters: '', sort: '', startDate: '', relativeStartDate: '', relativeEndDate: '', endDate: '', relativeStartDate: '', dimension: '', metric: '', segment: '', profileId: ''};
+        sourceDefinitionData = sourceDefinitionData ? sourceDefinitionData : {filters: '', sort: '', startDate: '', relativeStartDate: '', relativeEndDate: '', endDate: '', dimension: '', metric: '', segment: '', profileId: ''};
 
         if (sourceDefinitionData.startDate) {
             var startDate = new Date();

@@ -33,13 +33,6 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         $rawValues = $productList->getGroupByValues(self::FIELDNAME, true);
         $values = [];
 
-        $availableRelations = [];
-        if ($filterDefinition->getAvailableCategories()) {
-            foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                $availableRelations[$rel->getId()] = true;
-            }
-        }
-
         foreach ($rawValues as $v) {
             $values[$v['label']] = ['value' => $v['label'], 'count' => $v['count']];
         }
@@ -57,11 +50,12 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        $value = $params[$filterDefinition->getField()];
+        $value = $params[$filterDefinition->getField()] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$isReload) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

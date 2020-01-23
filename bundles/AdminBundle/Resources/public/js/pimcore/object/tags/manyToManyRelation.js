@@ -19,6 +19,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
     dataObjectFolderAllowed: false,
 
     initialize: function (data, fieldConfig) {
@@ -26,7 +27,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
         this.fieldConfig = fieldConfig;
 
-        this.fieldConfig.classes =  this.fieldConfig.classes.filter(x => {
+        this.fieldConfig.classes =  this.fieldConfig.classes.filter(function (x) {
             if(x.classes == 'folder') {
                 this.dataObjectFolderAllowed = true;
                 return false;
@@ -408,6 +409,9 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 
@@ -590,18 +594,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     removeElement: function (index, item) {
         this.getStore().removeAt(index);
         item.parentMenu.destroy();
-    },
-
-
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
     },
 
     getValue: function () {

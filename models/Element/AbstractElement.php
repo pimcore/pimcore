@@ -83,7 +83,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -95,7 +95,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param  $name
+     * @param Model\Property[] $properties
+     */
+    abstract public function setProperties($properties);
+
+    /**
+     * @param string $name
      */
     public function removeProperty($name)
     {
@@ -171,6 +176,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * @return string
+     */
+    abstract public function getLocked();
+
+    /**
      * @return array
      */
     public function getUserPermissions()
@@ -199,6 +209,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function isAllowed($type)
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+
+        if (!$currentUser) {
+            if (php_sapi_name() === 'cli') {
+                return true;
+            }
+
+            return false;
+        }
+
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
@@ -261,7 +280,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param null $versionNote
+     * @param string|null $versionNote
      * @param bool $saveOnlyVersion
      *
      * @return Model\Version

@@ -88,9 +88,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
-            /**
-             * @var $images Asset\Image[]
-             */
+            /** @var Asset\Image[] $images */
             $images = $list->load();
             foreach ($images as $image) {
                 $progressBar->advance();

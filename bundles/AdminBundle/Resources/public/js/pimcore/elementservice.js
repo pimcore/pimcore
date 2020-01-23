@@ -307,7 +307,7 @@ pimcore.elementservice.getAffectedNodes = function(elementType, id) {
 
 
 pimcore.elementservice.applyNewKey = function(affectedNodes, elementType, id, value) {
-
+    value = Ext.util.Format.htmlEncode(value);
     for (var index = 0; index < affectedNodes.length; index++) {
         var record = affectedNodes[index];
         record.set("text", value);

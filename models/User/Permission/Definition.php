@@ -36,7 +36,7 @@ class Definition extends Model\AbstractModel
     public $category;
 
     /**
-     * @param array
+     * @param array $data
      */
     public function __construct($data = [])
     {
@@ -54,7 +54,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return $this
      */
@@ -86,7 +86,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $permission
+     * @param string $permission
      *
      * @return mixed
      *
@@ -108,7 +108,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $permission
+     * @param string $permission
      *
      * @return mixed|static
      *

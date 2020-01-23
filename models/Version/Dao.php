@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -51,6 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $version = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('versions'))) {
@@ -121,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $elementTypes
+     * @param array $elementTypes
      * @param array $ignoreIds
      *
      * @return array

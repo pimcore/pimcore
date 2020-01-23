@@ -59,7 +59,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
         $currentValue = '';
         if ($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
-            $currentValue = implode($currentFilter[$filterDefinition->getField()], '-');
+            $currentValue = implode('-', $currentFilter[$filterDefinition->getField()]);
         }
 
         return $this->render($this->getTemplate($filterDefinition), [
@@ -78,7 +78,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $filterDefinition->getField();
-        $rawValue = $params[$field];
+        $rawValue = $params[$field] ?? null;
 
         if (!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING) {
             $values = explode('-', $rawValue);

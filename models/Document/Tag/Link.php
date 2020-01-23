@@ -115,14 +115,7 @@ class Link extends Model\Document\Tag
 
             if (isset($this->options['noText']) && $this->options['noText'] == true) {
                 $noText = true;
-            }
-
-            // add attributes to link
-            $attribs = [];
-            foreach ($this->options as $key => $value) {
-                if (is_string($value) || is_numeric($value)) {
-                    $attribs[] = $key.'="'.$value.'"';
-                }
+                unset($this->options['noText']);
             }
 
             // add attributes to link
@@ -165,9 +158,13 @@ class Link extends Model\Document\Tag
 
             $availableAttribs = array_merge($defaultAttributes, $this->data, $this->options);
 
+            // add attributes to link
+            $attribs = [];
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
-                    if (!empty($value)) {
+                    if (!empty($this->data[$key]) && !empty($this->options[$key])) {
+                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
+                    } elseif (!empty($value)) {
                         $attribs[] = $key.'="'.$value.'"';
                     }
                 }
@@ -191,7 +188,7 @@ class Link extends Model\Document\Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {
@@ -255,6 +252,7 @@ class Link extends Model\Document\Tag
 
     /**
      * @param bool $realPath
+     * @param bool $editmode
      */
     protected function updatePathFromInternal($realPath = false, $editmode = false)
     {
@@ -288,7 +286,7 @@ class Link extends Model\Document\Tag
                                 $this->data['path'] = $linkGenerator->generate(
                                     $object,
                                     [
-                                        'document' => Document::getById($this->getDocumentId()),
+                                        'document' => $this->getDocument(),
                                         'context' => $this,
                                     ]
                                 );
@@ -421,6 +419,8 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
+            $target = null;
+
             if ($data['linktype'] == 'internal' && $data['internalType']) {
                 $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {
@@ -474,8 +474,9 @@ class Link extends Model\Document\Tag
     public function resolveDependencies()
     {
         $dependencies = [];
+        $isInternal = $this->data['internal'] ?? false;
 
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && $isInternal) {
             if (intval($this->data['internalId']) > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
@@ -503,10 +504,12 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -573,11 +576,12 @@ class Link extends Model\Document\Tag
     /**
      * Returns the current tag's data for web service export
      *
-     * @param $document
-     * @param mixed $params
-     * @abstract
+     * @deprecated
      *
-     * @return array
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
+     *
+     * @return \stdClass
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
@@ -588,13 +592,13 @@ class Link extends Model\Document\Tag
                     $referencedDocument = Document::getById($this->data['internalId']);
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     $referencedAsset = Asset::getById($this->data['internalId']);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 }
             }

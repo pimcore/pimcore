@@ -48,7 +48,7 @@ trait ResponseAwareTrait
     {
         $this->response = $response;
 
-        /** @var $this Event */
+        /** @var Event $this */
         $this->stopPropagation();
     }
 

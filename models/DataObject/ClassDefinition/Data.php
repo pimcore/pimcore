@@ -104,8 +104,10 @@ abstract class Data
      */
     public $visibleSearch = true;
 
-    /** If set to true then null values will not be exported.
-     * @var
+    /**
+     * If set to true then null values will not be exported.
+     *
+     * @var bool
      */
     protected static $dropNullValues;
 
@@ -217,6 +219,8 @@ abstract class Data
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -230,10 +234,12 @@ abstract class Data
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
@@ -1011,6 +1017,42 @@ abstract class Data
     }
 
     /**
+     * Creates filter method code for listing classes
+     *
+     * @return string
+     */
+    public function getFilterCode()
+    {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
+
+        $dataParamDoc = 'mixed $data';
+        $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
+        if (preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
+        }
+
+        $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
+        if (preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
+        }
+
+        $code .= '* @param '.$dataParamDoc."\n";
+        $code .= '* @param '.$operatorParamDoc."\n";
+        $code .= '* @return static'."\n";
+        $code .= '*/' . "\n";
+
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\') {'."\n";
+        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
+        $code .= "\treturn " . '$this' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
      * @param $number
      *
      * @return int|null
@@ -1130,7 +1172,7 @@ abstract class Data
     }
 
     /**
-     * @param  $dropNullValues
+     * @param bool $dropNullValues
      */
     public static function setDropNullValues($dropNullValues)
     {
@@ -1138,7 +1180,7 @@ abstract class Data
     }
 
     /**
-     * @return
+     * @return bool
      */
     public static function getDropNullValues()
     {
@@ -1169,18 +1211,18 @@ abstract class Data
             return $params['injectedData'];
         }
 
-        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
+        $context = $params['context'] ?? null;
 
-        if ($context) {
-            if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'block') {
+        if (isset($context['containerType'])) {
+            if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
                 if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield) {
                     $fieldname = $context['fieldname'];
-                    $index = $context['index'];
+                    $index = $context['index'] ?? null;
 
                     if ($object instanceof DataObject\Concrete) {
                         $containerGetter = 'get' . ucfirst($fieldname);
                         $container = $object->$containerGetter();
-                        if (!$container && $context['containerType'] == 'block') {
+                        if (!$container && $context['containerType'] === 'block') {
                             // no data, so check if inheritance is enabled + there is parent value
                             if ($object->getClass()->getAllowInherit()) {
                                 try {
@@ -1192,11 +1234,11 @@ abstract class Data
                         }
 
                         if ($container) {
-                            $originalIndex = $context['oIndex'];
+                            $originalIndex = $context['oIndex'] ?? null;
 
                             // field collection or block items
-                            if (!is_null($originalIndex)) {
-                                if ($context['containerType'] == 'block') {
+                            if ($originalIndex !== null) {
+                                if ($context['containerType'] === 'block') {
                                     $items = $container;
                                 } else {
                                     $items = $container->getItems();
@@ -1205,7 +1247,7 @@ abstract class Data
                                 if ($items && count($items) > $originalIndex) {
                                     $item = $items[$originalIndex];
 
-                                    if ($context['containerType'] == 'block') {
+                                    if ($context['containerType'] === 'block') {
                                         $data = $item[$this->getName()];
                                         if ($data instanceof DataObject\Data\BlockElement) {
                                             $data = $data->getData();
@@ -1237,8 +1279,7 @@ abstract class Data
                         return $data;
                     }
                 }
-            }
-            if ($context['containerType'] == 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
+            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
                 $fieldname = $context['fieldname'];
 
                 if ($object instanceof DataObject\Concrete) {
@@ -1246,11 +1287,11 @@ abstract class Data
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
                         if ($brickData) {
-                            /** @var $localizedFields DataObject\Localizedfield */
+                            /** @var DataObject\Localizedfield $data */
                             $data = $brickData->getLocalizedFields();
                             // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
 
@@ -1264,7 +1305,7 @@ abstract class Data
 
                     return $data;
                 }
-            } elseif ($context['containerType'] == 'classificationstore') {
+            } elseif ($context['containerType'] === 'classificationstore') {
                 $fieldname = $context['fieldname'];
                 $getter = 'get' . ucfirst($fieldname);
                 if (method_exists($object, $getter)) {
@@ -1272,7 +1313,7 @@ abstract class Data
                     $keyId = $context['keyId'];
                     $language = $context['language'];
 
-                    /** @var $classificationStoreData DataObject\Classificationstore */
+                    /** @var DataObject\Classificationstore $classificationStoreData */
                     $classificationStoreData = $object->$getter();
                     $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
 
@@ -1368,6 +1409,17 @@ abstract class Data
     }
 
     /**
+     * @param $existingData
+     * @param $removeData
+     *
+     * @return mixed
+     */
+    public function removeData($existingData, $removeData)
+    {
+        return $existingData;
+    }
+
+    /**
      * Returns if datatype supports data inheritance
      *
      * @return bool
@@ -1404,5 +1456,24 @@ abstract class Data
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
             $object->markLazyKeyAsLoaded($this->getName());
         }
+    }
+
+    public function isFilterable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param DataObject\Listing            $listing
+     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if (strpos($operator, '?') === false) {
+            $operator .= ' ?';
+        }
+
+        $listing->addConditionParam('`'.$this->getName().'` '.$operator, $data);
     }
 }

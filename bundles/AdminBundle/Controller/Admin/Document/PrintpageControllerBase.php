@@ -16,16 +16,15 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
-use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PrintpageControllerBase extends DocumentControllerBase
@@ -82,6 +81,8 @@ class PrintpageControllerBase extends DocumentControllerBase
             'interfaces' => array_values(class_implements($page))
         ];
 
+        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page
@@ -115,9 +116,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             // save to session
             $key = 'document_' . $request->get('id');
 
-            Session::useSession(function (AttributeBagInterface $session) use ($key, $page) {
-                $session->set($key, $page);
-            }, 'pimcore_documents');
+            Document\Service::saveElementToSession($page);
 
             if ($request->get('task') == 'unpublish') {
                 $page->setPublished(false);
@@ -139,12 +138,15 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 $page->save();
 
+                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
                 return $this->adminJson([
                     'success' => true,
                     'data' => [
                         'versionDate' => $page->getModificationDate(),
                         'versionCount' => $page->getVersionCount()
-                    ]
+                    ],
+                    'treeData' => $treeData
                 ]);
             } elseif ($page->isAllowed('save')) {
                 $this->setValuesToDocument($request, $page);
@@ -181,9 +183,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function activeGenerateProcessAction(Request $request)
     {
-        /**
-         * @var $document Document\Printpage
-         */
+        /** @var Document\Printpage $document */
         $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
@@ -250,12 +250,12 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function startPdfGenerationAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
-        if (empty($document)) {
-            throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
-        }
+        $allParams = json_decode($request->getContent(), true);
 
-        $allParams = array_merge($request->request->all(), $request->query->all());
+        $document = Document\PrintAbstract::getById($allParams['id']);
+        if (empty($document)) {
+            throw new \Exception('Document with id ' . $allParams['id'] . ' not found.');
+        }
 
         if (\Pimcore\Config::getSystemConfig()->general->domain) {
             $allParams['hostName'] = \Pimcore\Config::getSystemConfig()->general->domain;
@@ -263,13 +263,14 @@ class PrintpageControllerBase extends DocumentControllerBase
             $allParams['hostName'] = $_SERVER['HTTP_HOST'];
         }
 
-        $allParams['protocol'] = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+        $https = $_SERVER['HTTPS'] ?? 'off';
+        $allParams['protocol'] = $https === 'on' ? 'https' : 'http';
         $pdf = $document->getPdfFileName();
         if (is_file($pdf)) {
             unlink($pdf);
         }
 
-        $result = (bool)$document->generatePdf($allParams);
+        $result = $document->generatePdf($allParams);
 
         $this->saveProcessingOptions($document->getId(), $allParams);
 
@@ -321,7 +322,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'label' => $option['name'],
                 'value' => $value,
                 'type' => $option['type'],
-                'values' => $option['values']
+                'values' => isset($option['values']) ? $option['values'] : null
             ];
         }
 
@@ -329,7 +330,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array|mixed
      */
@@ -344,8 +345,8 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @param $documentId
-     * @param $options
+     * @param int $documentId
+     * @param array $options
      */
     private function saveProcessingOptions($documentId, $options)
     {

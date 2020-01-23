@@ -126,7 +126,8 @@ pimcore.object.versions = Class.create({
                     mode: 'MULTI'
                 }),
                 viewConfig: {
-                    xtype: 'patchedgridview'
+                    xtype: 'patchedgridview',
+                    enableTextSelection: true
                 }
             });
 
@@ -288,7 +289,7 @@ pimcore.object.versions = Class.create({
                 if (rdata.success) {
                     this.object.reload();
 
-                    pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
+                    pimcore.helpers.updateTreeElementStyle('object', this.object.id, rdata.treeData);
                 } else {
                     Ext.MessageBox.alert(t("error"), rdata.message);
                 }

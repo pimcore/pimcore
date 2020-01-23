@@ -54,7 +54,7 @@ class CacheQueueItem
     protected $force = false;
 
     /**
-     * @param $key
+     * @param string $key
      * @param mixed $data
      * @param array $tags
      * @param int|\DateInterval|null $lifetime

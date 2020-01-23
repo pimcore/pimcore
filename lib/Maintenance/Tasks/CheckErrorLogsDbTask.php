@@ -15,21 +15,21 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Config;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 
 final class CheckErrorLogsDbTask implements TaskInterface
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $db;
 
     /**
-     * @param Connection   $db
+     * @param ConnectionInterface   $db
      */
-    public function __construct(Connection $db)
+    public function __construct(ConnectionInterface $db)
     {
         $this->db = $db;
     }

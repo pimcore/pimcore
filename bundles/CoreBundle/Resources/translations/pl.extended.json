@@ -54,7 +54,7 @@
     "children": "Dzieci",
     "elements_to_export": "Elementy do eksportu",
     "xliff_export_documents": "If you want to translate eg. the whole /en tree to a different language, first create a copy of /en, eg. /de then export /de for translation. When importing the translated XLIFF the English contents in /de will be overwritten by the German translation in the XLIFF file.",
-    "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten.",
+    "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten. Use Relations checkbox to include Objects & Documents from Dependencies e.g. Relation fields, Properties etc.",
     "xliff_export_notice": "Tutaj można wybrać dokumenty i przedmioty, które chcesz wyeksportować do tłumaczeń zewnętrznych",
     "important_notice": "Ważna uwaga",
     "xliff_import_notice": "Select a translated XLIFF file which was previously exported by pimcore and then translated by a localization service provider (LSP) or by a CAT application. Please aware that the import will overwrite the elements which were selected by the import (read also export).",
@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Nie można zapisać pliku",
     "reserved_field_names_error": "Proszę nie używać następujących zarezerwowanych nazw pól:",
     "use_current_date": "Użyj aktualnej daty",
-    "default_value_warning": "Domyślne wartości nie są przechowywane w definicjach tabel bazy danych, ani nie są ustawione w pustych instancjach Objektu. Są dostępne wyłącznie w interfejsie graaficznym Pimcore'a",
     "instance_identifier": "Identyfikator instancji",
     "instance_identifier_info": "Identyfikator instancji musi być unikalny pomiędzy wieloma instancjami Pimcore. Generowanie UUID zostanie włączone automatycznie jeśli Identyfikator zostanie podany (nie zmieniaj później identyfikatora - wcześniejsze UUID staną się niepoprawne)",
     "restrict_selection_to": "Ogranicz wybór do",
@@ -714,5 +713,9 @@
     "invitation_sent": "Login Invitation sent",
     "invitation_link_sent": "A temporary login link has been sent to email address: \"%s\" ",
     "geopolyline": "Geographic Polyline",
-    "classificationstore_error_group_exists_msg": "Group with this name already exists"
+    "classificationstore_error_group_exists_msg": "Group with this name already exists",
+    "classificationstore_group_by_key": "Group by key",
+    "cache_raw_relation_data": "Cache Raw Relation Data",
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

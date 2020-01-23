@@ -107,7 +107,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $childrenFromSource
+     * @param bool $childrenFromSource
      *
      * @return Hardlink
      */
@@ -127,7 +127,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $sourceId
+     * @param int $sourceId
      *
      * @return $this
      */
@@ -147,7 +147,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $propertiesFromSource
+     * @param bool $propertiesFromSource
      *
      * @return $this
      */
@@ -215,7 +215,7 @@ class Hardlink extends Document
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath()) . '@', $this->getRealFullPath(), $c->getRealPath()));
+                    $c->setPath(preg_replace('@^' . preg_quote($this->getSourceDocument()->getRealFullPath(), '@') . '@', $this->getRealFullPath(), $c->getRealPath()));
                 }
             }
 

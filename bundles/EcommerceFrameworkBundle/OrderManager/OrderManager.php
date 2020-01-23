@@ -31,6 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\FactoryInterface;
@@ -131,7 +132,7 @@ class OrderManager implements OrderManagerInterface
      * Sets the model factory. For BC, this is currently added as extra method call. The required annotation
      * makes sure this is called via autowiring.
      *
-     * TODO Pimcore 6 set modelFactory as constructor dependency
+     * TODO Pimcore 7 set modelFactory as constructor dependency
      *
      * @required
      *
@@ -316,7 +317,13 @@ class OrderManager implements OrderManagerInterface
 
             $order->setOrdernumber($tempOrdernumber);
             $order->setOrderdate(new \DateTime());
-            $order->setCartId($this->createCartId($cart));
+
+            $cartId = $this->createCartId($cart);
+            if (strlen($cartId) > 190) {
+                throw new \Exception('CartId cannot be longer than 190 characters');
+            }
+
+            $order->setCartId($cartId);
         }
 
         // check if pending payment. if one, do not update order from cart
@@ -338,6 +345,13 @@ class OrderManager implements OrderManagerInterface
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
+
+            if ($rule = $modification->getRule()) {
+                $modificationItem->setPricingRuleId($rule->getId());
+            } else {
+                $modificationItem->setPricingRuleId(null);
+            }
+
             $modificationItems->add($modificationItem);
         }
 
@@ -524,14 +538,13 @@ class OrderManager implements OrderManagerInterface
      *
      * @param string $customerId
      * @param PaymentInterface $paymentProvider
-     * @param null $paymentMethod
-     * @param null|int $limit
+     * @param string|null $paymentMethod
      * @param string $orderId
      *
      * @throws ProviderNotFoundException
      * @throws \Exception
      *
-     * @return false|\Pimcore\Model\DataObject\Listing\Concrete
+     * @return \Pimcore\Model\DataObject\Listing\Concrete
      */
     public function getRecurringPaymentSourceOrderList(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
     {
@@ -563,7 +576,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @param string $customerId
      * @param PaymentInterface $paymentProvider
-     * @param null $paymentMethod
+     * @param string|null $paymentMethod
      *
      * @return mixed
      */
@@ -610,7 +623,7 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param CartItemInterface $item
-     * @param $parent
+     * @param AbstractObject $parent
      * @param bool $isGiftItem
      *
      * @return AbstractOrderItem
@@ -728,9 +741,9 @@ class OrderManager implements OrderManagerInterface
     /**
      * Build list class name, try namespaced first and fall back to legacy naming
      *
-     * @param $className
+     * @param string $className
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */

@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property MysqlConfigInterface $tenantConfig
@@ -37,9 +38,9 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
      */
     protected $mySqlHelper;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }

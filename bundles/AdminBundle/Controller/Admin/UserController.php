@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -22,7 +23,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -61,7 +61,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $user
+     * @param User $user
      *
      * @return array
      */
@@ -190,9 +190,9 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $node
-     * @param $currentList
-     * @param $roleMode
+     * @param User $node
+     * @param array $currentList
+     * @param bool $roleMode
      *
      * @return array
      *
@@ -259,7 +259,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                         $userRoleRelationListing->setCondition('FIND_IN_SET(' . $user->getId() . ',roles)');
                         $userRoleRelationListing = $userRoleRelationListing->load();
                         if ($userRoleRelationListing) {
-                            /** @var $relatedUser User */
+                            /** @var User $relatedUser */
                             foreach ($userRoleRelationListing as $relatedUser) {
                                 $userRoles = $relatedUser->getRoles();
                                 if (is_array($userRoles)) {
@@ -405,9 +405,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             return $this->adminJson(['success' => false]);
         }
 
-        /**
-         * @var $user User
-         */
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -430,9 +428,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         // object <=> user dependencies
         $userObjects = DataObject\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = [];
+        $hasHidden = false;
 
         foreach ($userObjects as $o) {
-            $hasHidden = false;
             if ($o->isAllowed('list')) {
                 $userObjectData[] = [
                     'path' => $o->getRealFullPath(),
@@ -677,7 +675,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $role
+     * @param User\Role $role
      *
      * @return array
      */
@@ -796,6 +794,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/renew-2fa-qr-secret", methods={"GET"})
      *
      * @param Request $request
+     *
+     * @return BinaryFileResponse
      */
     public function renew2FaSecretAction(Request $request)
     {
@@ -834,6 +834,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/disable-2fa", methods={"DELETE"})
      *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function disable2FaSecretAction(Request $request)
     {
@@ -856,11 +858,13 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/reset-2fa-secret", methods={"PUT"})
      *
      * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function reset2FaSecretAction(Request $request)
     {
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = User::getById(intval($request->get('id')));
         $success = true;
@@ -936,11 +940,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
+        $token = Tool\Authentication::generateToken($user->getName());
         $link = $this->generateUrl('pimcore_admin_login_check', [
-            'username' => $user->getName(),
             'token' => $token,
-            'reset' => 'true'
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->adminJson([
@@ -1017,6 +1019,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/user/get-users-for-sharing", methods={"GET"})
      */
     public function getUsersForSharingAction(Request $request)
@@ -1028,6 +1033,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/user/get-roles-for-sharing", methods={"GET"}))
      */
     public function getRolesForSharingAction(Request $request)
@@ -1039,6 +1047,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/user/get-users", methods={"GET"})
      */
     public function getUsersAction(Request $request)
@@ -1073,6 +1084,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/user/get-roles", methods={"GET"})
      */
     public function getRolesAction(Request $request)
@@ -1084,7 +1098,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var $role User\Role */
+        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
@@ -1099,6 +1113,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/user/get-default-key-bindings", methods={"GET"})
      */
     public function getDefaultKeyBindingsAction(Request $request)
@@ -1113,7 +1130,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @param Request $request
      *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      *
      * @throws \Exception
      */
@@ -1143,10 +1160,8 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $user->save();
                 }
 
-                $token = Tool\Authentication::generateToken($username, $user->getPassword());
-
+                $token = Tool\Authentication::generateToken($user->getName());
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);

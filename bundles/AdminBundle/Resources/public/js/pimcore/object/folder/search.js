@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
+    gridType: 'object',
 
     title: t('search_edit'),
     icon: "pimcore_material_icon_search pimcore_material_icon",
@@ -27,6 +28,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.searchType = searchType;
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
+        this.batchRemoveColumns = [];
     },
 
     getLayout: function () {
@@ -45,7 +47,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 var data = [];
                 for (i = 0; i < this.object.data.classes.length; i++) {
                     var klass = this.object.data.classes[i];
-                    data.push([klass.id, klass.name, ts(klass.name)]);
+                    data.push([klass.id, klass.name, ts(klass.name), klass.inheritance]);
 
                 }
 
@@ -55,7 +57,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     fields: [
                         {name: 'id', type: 'string'},
                         {name: 'name', type: 'string'},
-                        {name: 'translatedText', type: 'string'}
+                        {name: 'translatedText', type: 'string'},
+                        {name: 'inheritance', type: 'bool'}
                     ]
                 });
 
@@ -84,6 +87,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
                 else {
                     this.currentClass = this.object.data.classes[0].id;
+                    this.setClassInheritance(this.object.data.classes[0].inheritance);
                 }
             }
             else {
@@ -110,12 +114,17 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     changeClassSelect: function (field, newValue, oldValue) {
         var selectedClass = newValue.data.id;
         this.setClass(selectedClass);
+        this.setClassInheritance(newValue.data.inheritance);
     },
 
     setClass: function (classId) {
         this.classId = classId;
         this.settings = {};
         this.getTableDescription();
+    },
+
+    setClassInheritance: function (inheritance) {
+        this.object.data.general.allowInheritance = inheritance;
     },
 
     getTableDescription: function () {
@@ -190,8 +199,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
         );
 
-        var plugins = [this.cellEditing, 'pimcore.gridfilters'];
-
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
@@ -219,7 +226,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             existingFilters = this.store.getFilters();
         }
 
-        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         if (this.sortinfo) {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }
@@ -230,9 +237,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
 
         var gridColumns = gridHelper.getGridColumns();
-
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
 
         this.searchQuery = function(field) {
             this.store.getProxy().setExtraParam("query", field.getValue());
@@ -314,15 +318,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
         });
 
-        this.searchAndMoveButton = new Ext.Button({
-            text: t("search_and_move"),
-            iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
-            handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
-                function () {
-                    this.store.reload();
-                }.bind(this), "object")
-        });
-
         var exportButtons = this.getExportButtons();
         var firstButton = exportButtons.pop();
 
@@ -355,6 +350,30 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         this.buildColumnConfigMenu();
+
+        var needGridFilter = false;
+
+        // gridfilter plugin does not load the store if there are no filter columns.
+        // so if there are no filter columns, then don't add the plugin
+        // however, in this case we have to load the store manually
+        if (gridColumns) {
+            for (let i = 0; i < gridColumns.length; i++) {
+                let col = gridColumns[i];
+                if (col.filter) {
+                    needGridFilter = true;
+                    break;
+                }
+            }
+        }
+
+        var plugins = [this.cellEditing];
+        if (needGridFilter) {
+            plugins.push('pimcore.gridfilters');
+        }
+
+        if (!needGridFilter) {
+            this.store.load();
+        }
 
         // grid
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -390,7 +409,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 this.clearFilterButton, "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.sqlEditor, this.sqlButton, "-",
-                this.searchAndMoveButton, "-",
                 this.exportButton, "-",
                 this.columnConfigButton,
                 this.saveColumnConfigButton
@@ -450,7 +468,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getExportButtons: function () {
         var buttons = [];
-        pimcore.globalmanager.get("pimcore.gridexport").forEach(function (exportType) {
+        pimcore.globalmanager.get("pimcore.object.gridexport").forEach(function (exportType) {
             buttons.push({
                 text: t(exportType.text),
                 iconCls: exportType.icon || "pimcore_icon_export",
@@ -568,4 +586,4 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 });
 
-pimcore.object.search.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.object.search.addMethods(pimcore.element.helpers.gridColumnConfig);

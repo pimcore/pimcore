@@ -21,8 +21,8 @@ use Pimcore\Model\User;
 class Service
 {
     /**
-     * @param $fc - The field configuration from the Workflow
-     * @param $value - The value
+     * @param array $fc - The field configuration from the Workflow
+     * @param mixed $value - The value
      *
      * @return array
      */
@@ -68,8 +68,8 @@ class Service
     }
 
     /**
-     * @param $data
-     * @param $pimcoreTagName
+     * @param mixed $data
+     * @param string $pimcoreTagName
      *
      * @return mixed|null
      */
@@ -99,7 +99,7 @@ class Service
      * @param string $title
      * @param string $description
      * @param array $noteData
-     * @param null $user
+     * @param User|null $user
      *
      * @return Element\Note $note
      */

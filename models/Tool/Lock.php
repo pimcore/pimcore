@@ -93,7 +93,7 @@ class Lock extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param int $expire
      *
      * @return mixed
@@ -106,7 +106,7 @@ class Lock extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return Lock
      */

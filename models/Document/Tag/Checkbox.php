@@ -94,7 +94,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function isEmpty()
     {
-        return $this->value;
+        return !$this->value;
     }
 
     /**
@@ -102,14 +102,16 @@ class Checkbox extends Model\Document\Tag
      */
     public function isChecked()
     {
-        return $this->isEmpty();
+        return $this->value;
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      *

@@ -207,7 +207,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param AbstractOrderItem[] $items
+     * @param AbstractOrderItem[] $giftItems
      */
     public function setGiftItems($giftItems)
     {
@@ -275,7 +275,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getCartId()
     {
@@ -283,7 +283,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $cartId
+     * @param int $cartId
      *
      * @return void
      */
@@ -463,7 +463,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerFirstame
+     * @param string $customerFirstname
      *
      * @return $this
      */
@@ -481,7 +481,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerLastame
+     * @param string $customerLastname
      *
      * @return $this
      */
@@ -491,7 +491,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryEMail()
     {
@@ -509,7 +509,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryCountry()
     {
@@ -527,7 +527,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryCity()
     {
@@ -545,7 +545,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryZip()
     {
@@ -563,7 +563,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryStreet()
     {
@@ -581,7 +581,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDeliveryCompany()
     {

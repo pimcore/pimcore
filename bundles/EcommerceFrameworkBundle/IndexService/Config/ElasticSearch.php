@@ -143,7 +143,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @param $fieldName
+     * @param string $fieldName
+     *
      * @return array
      */
     protected function extractPossibleFirstSubFieldnameParts($fieldName)
@@ -165,8 +166,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * returns the full field name
      *
-     * @param $fieldName
-     * @param $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
      *
      * @return string
      */
@@ -193,7 +194,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * returns short field name based on full field name
      * also considers subfield names like name.analyzed etc.
      *
-     * @param $fullFieldName
+     * @param string $fullFieldName
      *
      * @return false|int|string
      */
@@ -201,21 +202,21 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     {
         //check for direct match of field name
         $fieldName = array_search($fullFieldName, $this->fieldMapping);
-        if($fieldName) {
+        if ($fieldName) {
             return $fieldName;
         }
 
         //search for part match in order to consider sub field names like name.analyzed
         $fieldNamePart = $fullFieldName;
-        while(!empty($fieldNamePart)) {
+        while (!empty($fieldNamePart)) {
 
             // cut off part after last .
-            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, "."));
+            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, '.'));
 
             // search for mapping with field name part
             $fieldName = array_search($fieldNamePart, $this->fieldMapping);
 
-            if($fieldName) {
+            if ($fieldName) {
                 // append cut off part again to returned field name
                 return $fieldName . str_replace($fieldNamePart, '', $fullFieldName);
             }
@@ -270,7 +271,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return array $subTenantData
      */
@@ -326,9 +327,9 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * creates object mockup for given data
      *
-     * @param $objectId
-     * @param $data
-     * @param $relations
+     * @param int $objectId
+     * @param mixed $data
+     * @param array $relations
      *
      * @return mixed
      */
@@ -341,7 +342,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return IndexableInterface | array
      */

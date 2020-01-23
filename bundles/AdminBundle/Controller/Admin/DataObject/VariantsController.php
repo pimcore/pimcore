@@ -128,7 +128,7 @@ class VariantsController extends AdminController
 
                 //specify a few special params
                 $allParams['folderId'] = $parentObject->getId();
-                $allParams['only_direct_children'] == 'true';
+                $allParams['only_direct_children'] = 'true';
                 $allParams['classId'] = $parentObject->getClassId();
 
                 $list = $gridHelperService->prepareListingForGrid($allParams, $request->getLocale(), $this->getAdminUser());

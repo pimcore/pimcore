@@ -45,6 +45,9 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     /**
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
+     *
+     * @return JsonResponse
+     *
      * @Route("/search-users", methods={"GET"})
      */
     public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)

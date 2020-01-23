@@ -218,6 +218,8 @@ class Snippet extends Model\Document\Tag
      */
     public function isEmpty()
     {
+        $this->load();
+
         if ($this->snippet instanceof Document\Snippet) {
             return false;
         }
@@ -245,10 +247,12 @@ class Snippet extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -290,7 +294,9 @@ class Snippet extends Model\Document\Tag
      */
     public function load()
     {
-        $this->snippet = Document::getById($this->id);
+        if (!$this->snippet && $this->id) {
+            $this->snippet = Document::getById($this->id);
+        }
     }
 
     /**
@@ -319,7 +325,10 @@ class Snippet extends Model\Document\Tag
      */
     public function setSnippet($snippet)
     {
-        $this->snippet = $snippet;
+        if ($snippet instanceof Document\Snippet) {
+            $this->id = $snippet->getId();
+            $this->snippet = $snippet;
+        }
     }
 
     /**
@@ -327,6 +336,8 @@ class Snippet extends Model\Document\Tag
      */
     public function getSnippet()
     {
+        $this->load();
+
         return $this->snippet;
     }
 }

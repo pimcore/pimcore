@@ -98,7 +98,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -185,8 +185,24 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($validationExceptions) {
             $message = 'Validation failed: ';
             $errors = [];
+            /** @var \Exception $e */
             foreach ($validationExceptions as $e) {
-                $errors[] = $e->getMessage();
+                $msg = $e->getMessage();
+
+                if ($e instanceof Model\Element\ValidationException) {
+                    $subItems = $e->getSubItems();
+                    if (is_array($subItems)) {
+                        $msg .= ' (';
+                        $subItemParts = [];
+                        /** @var \Exception $subItem */
+                        foreach ($subItems as $subItem) {
+                            $subItemParts[] = $subItem->getMessage();
+                        }
+                        $msg .= implode(',', $subItems);
+                        $msg .= ' (';
+                    }
+                }
+                $errors[] = $msg;
             }
             $message .= implode(' / ', $errors);
             $aggregatedExceptions = new Model\Element\ValidationException($message);
@@ -413,6 +429,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param ClassDefinition $o_class
+     *
+     * @return self
      */
     public function setClass($o_class)
     {
@@ -503,6 +521,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param bool $omitMandatoryCheck
+     *
+     * @return self
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
@@ -535,6 +555,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param array $scheduledTasks
+     *
+     * @return self
      */
     public function setScheduledTasks($scheduledTasks)
     {
@@ -544,8 +566,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $key
-     * @param null $params
+     * @param string $key
+     * @param mixed $params
      *
      * @return mixed
      *
@@ -592,7 +614,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      *
      * @param string $fieldName
      * @param bool $forOwner
-     * @param $remoteClassId
+     * @param string $remoteClassId
      *
      * @return array
      */
@@ -604,48 +626,62 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param $method
-     * @param $arguments
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return Model\Listing\AbstractListing|Concrete|null
      *
      * @throws \Exception
      */
     public static function __callStatic($method, $arguments)
     {
-
         // check for custom static getters like DataObject::getByMyfield()
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
-        $tmpObj = new static();
+        $classDefinition = ClassDefinition::getById(self::classId());
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
-        foreach ($tmpObj->getClass()->getFieldDefinitions() as $fd) {
+        foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
-        $propertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+        $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
 
-        if (property_exists($tmpObj, $propertyName)) {
-            // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'manyToManyRelation', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
+        if (!$classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $localizedField = $classDefinition->getFieldDefinition('localizedfields');
+            if ($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                $fieldnames = [];
+                foreach ($localizedField->getFieldDefinitions() as $fd) {
+                    $fieldnames[] = $fd->getName();
+                }
+                $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
+                $localizedFieldDefinition = $localizedField->getFieldDefinition($realPropertyName);
+                if ($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
+                    $realPropertyName = 'localizedfields';
+                    \array_unshift($arguments, $localizedFieldDefinition->getName());
+                }
+            }
+        }
 
-            $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
-            if (!in_array($field->getFieldType(), $allowedDataTypes, true)) {
-                throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+        if ($classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
+            $field = $classDefinition->getFieldDefinition($realPropertyName);
+            if (!$field->isFilterable()) {
+                throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 5, 0);
 
-                list($localizedPropertyName, $value, $locale, $limit, $offset) = $arguments;
+                [$localizedPropertyName, $value, $locale, $limit, $offset] = $arguments;
 
-                $localizedField = $field->getFielddefinition($localizedPropertyName);
+                $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\DataObject\ClassDefinition\Data) {
                     Logger::error('Class: DataObject\\Concrete => call to undefined static method ' . $method);
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
-                if (!in_array($localizedField->getFieldType(), $allowedDataTypes)) {
-                    throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+                if (!$localizedField->isFilterable()) {
+                    throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
@@ -658,9 +694,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $arguments = array_pad($arguments, 3, 0);
-                list($value, $limit, $offset) = $arguments;
+                [$value, $limit, $offset] = $arguments;
 
-                $defaultCondition = $propertyName . ' = ' . Db::get()->quote($value) . ' ';
+                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition
                 ];
@@ -837,9 +873,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param $objectId
-     * @param $modificationDate
-     * @param $versionCount
+     * @param int $objectId
+     * @param int $modificationDate
+     * @param int $versionCount
      * @param bool $force
      *
      * @return Model\Version|void
@@ -856,5 +892,63 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         }
 
         return;
+    }
+
+    /**
+     * @param array $descriptor
+     *
+     * @return array
+     */
+    public function retrieveRelationData($descriptor)
+    {
+        if ($this instanceof CacheRawRelationDataInterface) {
+            $unfilteredData = $this->__getRawRelationData();
+
+            $likes = [];
+            foreach ($descriptor as $column => $expectedValue) {
+                if (is_string($expectedValue)) {
+                    $trimmed = rtrim($expectedValue, '%');
+                    if (strlen($trimmed) < strlen($expectedValue)) {
+                        $likes[$column] = $trimmed;
+                    }
+                }
+            }
+
+            $filterFn = static function ($row) use ($descriptor, $likes) {
+                foreach ($descriptor as $column => $expectedValue) {
+                    $actualValue = $row[$column];
+                    if (isset($likes[$column])) {
+                        $expectedValue = $likes[$column];
+                        if (strpos($actualValue, $expectedValue) !== 0) {
+                            return false;
+                        }
+                    } elseif ($actualValue != $expectedValue) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
+            $filteredData = array_filter($unfilteredData, $filterFn);
+
+            return $filteredData;
+        } else {
+            $db = Db::get();
+            $conditionParts = ['src_id = ' . $this->getId()];
+            foreach ($descriptor as $key => $value) {
+                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
+                if ($lastChar === '%') {
+                    $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
+                } else {
+                    $conditionParts[] = $key . ' = ' . $db->quote($value);
+                }
+            }
+
+            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ', $conditionParts);
+            $result = $db->fetchAll($query);
+
+            return $result;
+        }
     }
 }

@@ -15,9 +15,7 @@ public function initPaymentAction(Request $request, Factory $factory) {
     
     // ... do some stuff, and get $cart
  
-    /**
-     * @var $checkoutManager CheckoutManagerInterface
-     */
+    /** @var CheckoutManagerInterface $checkoutManager */
     $checkoutManager = $factory->getCheckoutManager($cart);
  
     //optional - init payment and get Pimcore internal payment ID (e.g. if needed for config of payment provider)

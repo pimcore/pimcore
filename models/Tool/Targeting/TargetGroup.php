@@ -50,7 +50,7 @@ class TargetGroup extends Model\AbstractModel
     public $active = true;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return null|TargetGroup
      */
@@ -67,7 +67,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return TargetGroup|null
      */
@@ -84,7 +84,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return bool
      */
@@ -100,7 +100,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -120,7 +120,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -140,7 +140,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */

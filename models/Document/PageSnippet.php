@@ -113,7 +113,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
-     * @param $versionNote string version note
+     * @param string $versionNote
      *
      * @return null|Model\Version
      *
@@ -306,7 +306,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $module
+     * @param string $module
      *
      * @return $this
      */
@@ -341,10 +341,11 @@ abstract class PageSnippet extends Model\Document
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
+                $this->elements = $this->elements ?? [];
                 $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
-                $this->elements[$name]->setDocumentId($this->getId());
+                $this->elements[$name]->setDocument($this);
             }
         } catch (\Exception $e) {
             Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
@@ -369,7 +370,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -470,7 +471,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param $document
+     * @param Document $document
      *
      * @return $this
      */
@@ -486,7 +487,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -498,7 +499,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return array
+     * @return Tag[]
      */
     public function getElements()
     {
@@ -572,8 +573,8 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param null $hostname
-     * @param null $scheme
+     * @param string|null $hostname
+     * @param string|null $scheme
      *
      * @return string
      *

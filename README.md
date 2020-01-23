@@ -31,7 +31,7 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
-No matter if your're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
+No matter if you're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
 UI design (web documents by a template and structured data with a intuitive graphical editor), Pimcore knows 
 how to persist the data efficiently and optimized for fast access.
 
@@ -70,14 +70,14 @@ _Password_: `demo`
 ## Getting Started
 _**Only 3 commands to start!**_ 😎
 ```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton:dev-master ./my-project
+COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton ./my-project
 cd ./my-project
 ./vendor/bin/pimcore-install
 ```
 
 This will install an empty skeleton application, 
-but we're also offering 3 different demo packages for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html)
+but we're also offering a demo package for your convenience - of course also with 3 commands 💪
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  

@@ -51,7 +51,7 @@ pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.imp
                 label: source.data.text,
                 type: this.type,
                 class: this.class,
-                attribute: source.data.key,
+                attribute: source.data.name,
                 dataType: source.data.dataType
             }
         });

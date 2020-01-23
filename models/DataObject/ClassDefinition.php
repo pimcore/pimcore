@@ -118,6 +118,11 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
+     * @var bool
+     */
+    public $cacheRawRelationData = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions = [];
@@ -173,7 +178,7 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|ClassDefinition
      *
@@ -253,7 +258,7 @@ class ClassDefinition extends Model\AbstractModel
     public function rename($name)
     {
         $this->deletePhpClasses();
-        $this->updateClassNameInObjects($name);
+        $this->getDao()->updateClassNameInObjects($name);
 
         $this->setName($name);
         $this->save();
@@ -362,28 +367,50 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner())) {
-                    if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst(
+                            $def->getName()
+                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst(
-                                $def->getName()
-                            ).' ($field, $value, $locale = null, $limit = 0) '."\n";
-                    } else {
-                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                            ).' getBy'.ucfirst(
+                                $localizedFieldDefinition->getName()
+                            ).' ($value, $locale = null, $limit = 0) '."\n";
                     }
+                } elseif ($def->isFilterable()) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
                 }
             }
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        if ($this->getCacheRawRelationData()) {
+            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+        }
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
         $cd .= "\n\n";
+
+        if ($this->getCacheRawRelationData()) {
+            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
+            $cd .= "\n\n";
+        }
 
         if ($this->getUseTraits()) {
             $cd .= 'use '.$this->getUseTraits().";\n";
@@ -474,6 +501,20 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
+
+        $cd .= "\n\n";
+
+        if (\is_array($this->getFieldDefinitions())) {
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
+                        $cd .= $localizedFieldDefinition->getFilterCode();
+                    }
+                } elseif ($def->isFilterable()) {
+                    $cd .= $def->getFilterCode();
+                }
+            }
+        }
 
         $cd .= "\n\n";
         $cd .= "}\n";
@@ -574,9 +615,9 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param ClassDefinition|ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */
@@ -632,7 +673,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var $brickDefinition DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 
@@ -672,7 +713,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @return string
      */
@@ -873,9 +914,10 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
+     * @param array $context
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -888,7 +930,7 @@ class ClassDefinition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -1137,7 +1179,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $icon
+     * @param string $icon
      *
      * @return $this
      */
@@ -1157,7 +1199,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $propertyVisibility
+     * @param array $propertyVisibility
      *
      * @return $this
      */
@@ -1171,7 +1213,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $previewUrl
+     * @param string $previewUrl
      *
      * @return $this
      */
@@ -1207,7 +1249,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -1282,5 +1324,25 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCacheRawRelationData(): bool
+    {
+        return $this->cacheRawRelationData;
+    }
+
+    /**
+     * @param bool $cacheRawRelationData
+     *
+     * @return $this
+     */
+    public function setCacheRawRelationData($cacheRawRelationData)
+    {
+        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
+
+        return $this;
     }
 }

@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.variantsTab");
 pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath"],
     objecttype: "variant",
+    gridType: 'object',
 
     fieldObject: {},
     initialize: function (object) {
@@ -22,6 +23,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         this.searchType = "folder";
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
+        this.batchRemoveColumns = [];
     },
 
     getLayout: function () {
@@ -104,7 +106,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridHelper.enableEditor = true;
         gridHelper.baseParams.objectId = this.element.id;
 
-        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         this.store.setPageSize(itemsPerPage);
 
         var gridColumns = gridHelper.getGridColumns();
@@ -145,9 +147,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                 }
             ]
         });
-
-
-        this.gridfilters = gridHelper.getGridFilters();
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
@@ -222,7 +221,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             trackMouseOver: true,
             viewConfig: {
                 forceFit: false,
-                xtype: 'patchedgridview'
+                xtype: 'patchedgridview',
+                enableTextSelection: true
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
@@ -396,4 +396,4 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
 });
 
-pimcore.object.variantsTab.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.object.variantsTab.addMethods(pimcore.element.helpers.gridColumnConfig);
