@@ -440,7 +440,8 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface) {
+                    // Url slug handles removed stuff in its save method
+                    if ($fd instanceof CustomResourcePersistingInterface && !$fd instanceof DataObject\ClassDefinition\Data\UrlSlug) {
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {

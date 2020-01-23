@@ -191,7 +191,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if ($fd instanceof CustomResourcePersistingInterface) {
+                    if ($fd instanceof CustomResourcePersistingInterface && !$fd instanceof DataObject\ClassDefinition\Data\UrlSlug) {
                         $fd->delete(
                             $object,
                             [

@@ -962,3 +962,24 @@ CREATE TABLE `notifications` (
 )
 DEFAULT CHARSET=utf8mb4;
 ;
+
+DROP TABLE IF EXISTS `object_url_slugs`;
+CREATE TABLE `object_url_slugs` (
+      `objectId` INT(11) NOT NULL DEFAULT '0',
+      `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
+      `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+      `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+      `ownername` VARCHAR(70) NOT NULL DEFAULT '',
+      `position` VARCHAR(70) NOT NULL DEFAULT '0',
+      `slug` VARCHAR(767) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
+      `siteId` INT(11) NOT NULL DEFAULT '0',
+      PRIMARY KEY (`slug`, `siteId`),
+      INDEX `index` (`index`),
+      INDEX `objectId` (`objectId`),
+      INDEX `fieldname` (`fieldname`),
+      INDEX `position` (`position`),
+      INDEX `ownertype` (`ownertype`),
+      INDEX `ownername` (`ownername`),
+      INDEX `slug` (`slug`),
+      INDEX `siteId` (`siteId`)
+) DEFAULT CHARSET=utf8mb4;

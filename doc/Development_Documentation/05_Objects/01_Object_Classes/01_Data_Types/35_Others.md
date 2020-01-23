@@ -2,7 +2,7 @@
 
 ## Checkbox
 
-![Link Field](../../../img/classes-datatypes-checkbox.png)
+![Checkbox](../../../img/classes-datatypes-checkbox.png)
 
 A checkbox field can be configured to be checked by default when a new object is created. This can be achieved by 
 checking `Default value` in the object field settings. In the UI a checkbox is displayed as a simple checkbox. 
@@ -24,7 +24,7 @@ The boolean select takes care of this problem by introducing a third state. The 
 null for empty.
 For the admin UI you can specify the display values according to your needs. Default values are `yes`, `no` and `empty`.
 
-![Link Field](../../../img/boolean_select.png)
+![Boolean Select](../../../img/boolean_select.png)
 
 ## Link 
 
@@ -116,4 +116,27 @@ You can switch this off by calling
 
 ```php
 Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(false)
+```
+
+## URL Slug
+
+A slug is the part of a URL which identifies a particular page on a website in an easy 
+to read form. In other words, it’s the part of the URL that explains the page’s content.
+For example, the URL is https://demo.pimcore.fun/slug, and the slug simply is ‘/slug’.
+
+Slugs are stored in a dedicated table called `object_url_slugs`.
+
+![URL Slug](../../../img/classes-datatypes-urlslug.png)
+
+> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md).
+
+#### How to retrieve the controller/action
+
+```php
+/** @var DataObject\Data\UrlSlug $slug */
+
+// returns slug for the given path
+$slug = DataObject\Data\UrlSlug::resolveSlug("/de/my-something");
+// returns the action as defined in the field definition (see screenshot)
+$action = $slug->getAction();
 ```
