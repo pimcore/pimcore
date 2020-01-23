@@ -1013,9 +1013,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $values = $this->decodeJson($request->get('values'));
 
         if ($object->isAllowed('settings')) {
-            if ($values['key'] && $object->isAllowed('rename')) {
+            if (isset($values['key']) && $values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
-            } elseif ($values['key'] != $object->getKey()) {
+            } elseif (!isset($values['key']) || $values['key'] != $object->getKey()) {
                 Logger::debug('prevented renaming object because of missing permissions ');
             }
 
