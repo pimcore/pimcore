@@ -232,7 +232,6 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
                 }.bind(this),
                 failure: function(transport) {
                     this.batchProgressWin.close();
-                    var response = Ext.decode(transport.responseText);
                     pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });

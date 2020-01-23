@@ -714,7 +714,6 @@ Ext.onReady(function () {
             var treeConfig = elementTree[i];
             var type = treeConfig["type"];
             var side = treeConfig["position"] ? treeConfig["position"] : "left";
-            var expanded = treeConfig["expanded"];
             var treepanel = null;
             var tree = null;
             var treetype = null;

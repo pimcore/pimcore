@@ -422,8 +422,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     realOverModel = realOverModel.parentNode;
                                 }
 
-                                var sourceType = this.getNodeTypeAndClass(sourceNode);
-                                var targetType = this.getNodeTypeAndClass(realOverModel);
                                 var allowed = true;
 
 
@@ -492,9 +490,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
-
-            var items = [];
-
             this.brickKeys = [];
             this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
                 this.config.classid, this.config.objectId);

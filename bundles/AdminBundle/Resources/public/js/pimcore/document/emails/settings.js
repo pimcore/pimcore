@@ -87,10 +87,6 @@ pimcore.document.emails.settings = Class.create(pimcore.document.settings_abstra
             throw "settings not available";
         }
 
-        var fields = ["controller","action","template"];
-        var form = this.getLayout().getForm();
-        var element = null;
-
         // get values
         var settings = this.getLayout().getForm().getFieldValues();
 

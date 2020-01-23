@@ -199,8 +199,6 @@ pimcore.report.piwik.settings = Class.create({
     },
 
     getConfiguration: function (key, name, id) {
-        var that = this;
-
         return {
             xtype: "fieldset",
             defaults: {

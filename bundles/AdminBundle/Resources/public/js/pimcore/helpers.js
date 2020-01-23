@@ -101,7 +101,6 @@ pimcore.helpers.openAsset = function (id, type, options) {
 pimcore.helpers.closeAsset = function (id) {
 
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {
@@ -137,7 +136,6 @@ pimcore.helpers.openDocument = function (id, type, options) {
 
 pimcore.helpers.closeDocument = function (id) {
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {
@@ -177,7 +175,6 @@ pimcore.helpers.openObject = function (id, type, options) {
 
 pimcore.helpers.closeObject = function (id) {
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {

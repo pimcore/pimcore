@@ -118,8 +118,6 @@ pimcore.object.classificationstore.storeTree = Class.create({
 
     openStore: function(storeConfig) {
         try {
-            var panel;
-
             if (storeConfig.id != this.activeStoreId) {
                 this.editContainer.removeAll();
                 //this.editPanel = null;
@@ -192,7 +190,6 @@ pimcore.object.classificationstore.storeTree = Class.create({
                     data: Ext.encode(newData)
                 },
                 success: function (response) {
-                    var data = Ext.decode(response.responseText);
                     this.treeStore.reload();
                 }.bind(this)
             }

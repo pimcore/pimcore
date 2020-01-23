@@ -985,7 +985,6 @@ pimcore.object.tree = Class.create({
             success: function (tree, record, task, response) {
                 try {
                     var rdata = Ext.decode(response.responseText);
-                    var id = record.data.id;
 
                     if (rdata && rdata.success) {
                         var options = {

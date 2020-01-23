@@ -760,8 +760,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     save: function () {
-        var id = this.layoutChangeCombo.getValue();
-
         this.saveCurrentNode();
         var regresult = this.data["name"].match(/[a-zA-Z _][a-zA-Z0-9 _]+/);
 

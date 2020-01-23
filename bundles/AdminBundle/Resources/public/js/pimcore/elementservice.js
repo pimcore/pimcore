@@ -86,8 +86,6 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 
-        var deleteMethod = "delete" + ucfirst(options.elementType) + "FromServer";
-
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,

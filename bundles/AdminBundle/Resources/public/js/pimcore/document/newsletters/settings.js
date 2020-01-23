@@ -105,10 +105,6 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
             throw "settings not available";
         }
 
-        var fields = ["controller","action","template"];
-        var form = this.getLayout().getForm();
-        var element = null;
-
         // get values
         var settings = this.getLayout().getForm().getFieldValues();
 
