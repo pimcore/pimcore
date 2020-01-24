@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
+pimcore.registerNS("pimcore.element.helpers.gridTabAbstract");
 pimcore.element.helpers.gridTabAbstract = Class.create({
 
     getTagsPanel: function() {
