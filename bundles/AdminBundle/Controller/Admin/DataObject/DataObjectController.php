@@ -199,8 +199,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
 
-        $objects = $event->getArgument('objects');
-        $objects = $this->sortChildrenNaturally($objects, $object->getChildrenSortBy(), $object->getReverseSort());
+        $objects = $this->sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getReverseSort());
 
         if ($limit) {
             return $this->adminJson([
@@ -231,11 +230,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         );
 
-        if($reverse) {
-            $objects = array_reverse($objects);
-        }
-
-        return $objects;
+        return $reverse ? array_reverse($objects) : $objects;
     }
 
     /**
