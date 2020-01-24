@@ -517,7 +517,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -530,7 +530,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

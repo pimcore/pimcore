@@ -376,7 +376,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null
@@ -799,7 +799,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -823,7 +823,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -1070,7 +1070,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $region
+     * @param string|null $region
      *
      * @return $this
      */
@@ -1284,7 +1284,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

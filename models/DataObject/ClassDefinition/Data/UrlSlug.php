@@ -534,9 +534,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  string $value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return string
      *

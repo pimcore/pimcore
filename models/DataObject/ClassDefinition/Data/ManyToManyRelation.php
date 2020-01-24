@@ -547,7 +547,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -813,7 +813,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -872,7 +872,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {

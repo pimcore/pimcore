@@ -175,6 +175,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function enable()
     {
         $this->enabled = true;
+        return $this;
     }
 
     /**
@@ -183,6 +184,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function disable()
     {
         $this->enabled = false;
+        return $this;
     }
 
     /**

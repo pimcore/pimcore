@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model;
 
 /**
+ * @method \Pimcore\Model\DataObject\Fieldcollection\Dao delete()
  * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface

@@ -102,7 +102,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -276,7 +276,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -346,7 +346,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Select $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -502,8 +502,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string

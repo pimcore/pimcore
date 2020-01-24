@@ -22,6 +22,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Search\Backend\Data\Dao;
 
 class Data extends \Pimcore\Model\AbstractModel
 {
@@ -527,14 +528,18 @@ class Data extends \Pimcore\Model\AbstractModel
     public static function getForElement($element)
     {
         $data = new self();
-        $data->getDao()->getForElement($element);
+        /** @var Dao $dao */
+        $dao = $data->getDao();
+        $dao->getForElement($element);
 
         return $data;
     }
 
     public function delete()
     {
-        $this->getDao()->delete();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        $dao->delete();
     }
 
     /**
@@ -548,7 +553,9 @@ class Data extends \Pimcore\Model\AbstractModel
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
-                    $this->getDao()->save();
+                    /** @var Dao $dao */
+                    $dao = $this->getDao();
+                    $dao->save();
                     // successfully completed, so we cancel the loop here -> no restart required
                     break;
                 } catch (\Exception $e) {

@@ -284,6 +284,7 @@ class Asset extends Element\AbstractElement
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
+                /** @var Asset $asset */
                 $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
@@ -362,6 +363,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        /** @var Asset $asset */
         $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
         $asset->setValues($data);

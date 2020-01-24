@@ -112,7 +112,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -177,13 +177,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
+        return null;
     }
 
     /**
@@ -234,7 +235,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -242,6 +243,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         // nothing to do
+        return null;
     }
 
     /**
@@ -287,7 +289,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -407,13 +409,13 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     * Creates getter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
-    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getGetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition)
     {
         $key = $this->getName();
 
@@ -441,7 +443,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */

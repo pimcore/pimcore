@@ -227,10 +227,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * fills object field data values from CSV Import String
      *
-     * @abstract
-     *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data

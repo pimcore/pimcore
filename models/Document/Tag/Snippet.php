@@ -100,7 +100,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string
+     * @return string|null
      */
     public function frontend()
     {

@@ -193,8 +193,8 @@ abstract class Data
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -205,7 +205,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -429,7 +429,7 @@ abstract class Data
     }
 
     /**
-     * @param $style
+     * @param string|null $style
      *
      * @return $this
      */
@@ -450,7 +450,7 @@ abstract class Data
     }
 
     /**
-     * @param $locked
+     * @param int|bool|null $locked
      *
      * @return $this
      */
@@ -471,7 +471,7 @@ abstract class Data
     }
 
     /**
-     * @param $tooltip
+     * @param string|null $tooltip
      *
      * @return $this
      */
@@ -500,7 +500,7 @@ abstract class Data
     }
 
     /**
-     * @param $invisible
+     * @param bool|int|null $invisible
      *
      * @return $this
      */
@@ -520,7 +520,7 @@ abstract class Data
     }
 
     /**
-     * @param $visibleGridView
+     * @param bool|int|null $visibleGridView
      *
      * @return $this
      */
@@ -540,7 +540,7 @@ abstract class Data
     }
 
     /**
-     * @param $visibleSearch
+     * @param bool|int|null $visibleSearch
      *
      * @return $this
      */
@@ -577,9 +577,9 @@ abstract class Data
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  mixed $value
+     * @param  string $operator
+     * @param  mixed $params
      *
      * @return string
      *
@@ -598,8 +598,8 @@ abstract class Data
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|array $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -651,7 +651,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -698,7 +698,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -1051,7 +1051,7 @@ abstract class Data
     }
 
     /**
-     * @param $number
+     * @param int|string|null $number
      *
      * @return int|null
      */
@@ -1097,7 +1097,7 @@ abstract class Data
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -1396,8 +1396,8 @@ abstract class Data
     }
 
     /**
-     * @param $existingData
-     * @param $additionalData
+     * @param array|null $existingData
+     * @param array $additionalData
      *
      * @return mixed
      */

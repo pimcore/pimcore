@@ -304,16 +304,17 @@ class UrlSlug implements OwnerAwareFieldInterface
                     $objectFieldname = $objectFieldname[0];
 
                     if ($type == 'objectbrick') {
-                        /** @var Objectbricks $objectFieldDef */
                         if ($objectFieldDef = $object->getClass()->getFieldDefinition($objectFieldname)) {
+                            /** @var Objectbricks $objectFieldDef */
 
+                            /** @var Objectbricks $allowedBricks */
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
                                     /** @var Definition $brickDef */
                                     $brickDef = Definition::getByKey($allowedBrick);
-                                    /** @var Localizedfields $lfDef */
                                     if ($lfDef = $brickDef->getFieldDefinition('localizedfields')) {
+                                        /** @var Localizedfields $lfDef */
                                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                                         break;
                                     }
@@ -340,8 +341,8 @@ class UrlSlug implements OwnerAwareFieldInterface
                         }
                     }
                 } else {
-                    /** @var Localizedfields $lfDef */
                     if ($lfDef = $object->getClass()->getFieldDefinition('localizedfields')) {
+                        /** @var Localizedfields $lfDef */
                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                     }
                 }

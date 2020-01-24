@@ -134,7 +134,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      */
     public function delete($object)
     {
