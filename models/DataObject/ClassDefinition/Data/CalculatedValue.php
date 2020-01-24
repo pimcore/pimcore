@@ -417,7 +417,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return string
      */
-    public function getGetterCodeFieldcollection(DataObject\Fieldcollection\Definition $fieldcollectionDefinition)
+    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
 
