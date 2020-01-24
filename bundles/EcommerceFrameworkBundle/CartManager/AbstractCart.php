@@ -290,6 +290,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                 }
             }
             $item->setSubItems($subItems);
+        } else {
+            $item->setSubItems([]);
         }
 
         $this->items[$itemKey] = $item;
@@ -398,6 +400,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                 }
             }
             $item->setSubItems($subItems);
+        } else {
+            $item->setSubItems([]);
         }
 
         $this->giftItems[$itemKey] = $item;
