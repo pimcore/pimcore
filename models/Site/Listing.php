@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\Site[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $sites = null;
 
     public function __construct()
     {
-        $this->sites =& $this->data;
+        $this->sites = & $this->data;
     }
 
     /**

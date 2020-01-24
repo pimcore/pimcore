@@ -26,6 +26,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var RuleInterface[]
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $rules;
@@ -37,7 +38,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     public function __construct()
     {
-        $this->rules =& $this->data;
+        $this->rules = & $this->data;
     }
 
     /**

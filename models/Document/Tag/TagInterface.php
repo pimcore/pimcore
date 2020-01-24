@@ -70,6 +70,7 @@ interface TagInterface
      * Returns the current tag's data for web service export
      *
      * @deprecated
+     *
      * @param PageSnippet|null $document
      * @param array $params
      * @abstract

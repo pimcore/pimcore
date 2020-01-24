@@ -507,6 +507,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -540,6 +541,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param DataObject\Concrete|null $object
      * @param mixed $params
@@ -1196,7 +1198,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $this->allowMultipleAssignments;
     }
 
-
     /**
      * @param bool $allowMultipleAssignments
      *
@@ -1205,6 +1206,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+
         return $this;
     }
 
@@ -1220,6 +1222,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $id = $element->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return $this->phpdocType;
     }
 }
 

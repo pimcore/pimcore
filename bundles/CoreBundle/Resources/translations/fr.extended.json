@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Impossible de sauvegarder le fichier",
     "reserved_field_names_error": "Svp n'utilisez pas les noms réservés suivants :",
     "use_current_date": "Utiliser la date du jour",
-    "default_value_warning": "Les valeurs par défaut ne sont pas stockés dans la définition de la table de base de données, ils ne sont pas présent dans les instances vides de l'Object. Ils ne sont disponibles que dans l'interface graphique pimcore",
     "instance_identifier": "Identifiant de l'instance",
     "instance_identifier_info": "L'identifiant de l'instance doit être unique dans plusieurs instances de pimcore. La génération UUID sera automatiquement activé si un identificateur d'instance est fourni (ne pas modifier l'identifiant de l'instance après - cela va provoquer des UUIDs invalides)",
     "restrict_selection_to": "Restreindre la sélection à",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Un groupe avec ce nom existe déjà",
     "classificationstore_group_by_key": "Grouper par clé",
     "cache_raw_relation_data": "Mettre en cache les données de relation brutes",
-    "allow_to_create_new_object": "Allow to create a new object in relation field"
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

@@ -4,8 +4,7 @@
 
 ![Link Field](../../../img/classes-datatypes-checkbox.png)
 
-A checkbox field can be configured to be checked by default when a new object is created. This can be achieved by 
-checking `Default value` in the object field settings. In the UI a checkbox is displayed as a simple checkbox. 
+A checkbox field can be configured to be checked by default when a new object is created. 
 
 It is stored in a TINYINT column in the database with the value 0 or 1. 
 
@@ -59,7 +58,7 @@ $object = DataObject::getById(234);
 ```
 #### Link Generators
 
-Please also see the section about [Link Generators](../05_Class_Settings/15_Link_Generator.md)
+Please also see the section about [Link Generators](../05_Class_Settings/30_Link_Generator.md)
 
 ## RGBA Color
 
@@ -88,9 +87,7 @@ var_dump($color->getCssRgba(true, true));
 $color->setRgba(0, 0, 255, 64);
 ```
 
-## Encrypted Field (Experimental)
-
-> This is an experimental feature and subject to change without notice
+## Encrypted Field
 
 Offers data encryption for certain data types.
 
@@ -109,7 +106,7 @@ Key generation:
 
 ![Generate Key](../../../img/generate_defuse_key.png)
 
-### Strict Mode
+#### Strict Mode
 
 In strict mode (which is the default) an exception is thrown if existing data cannot be decrypted (e.g. because of a key change).
 You can switch this off by calling

@@ -372,6 +372,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -397,6 +398,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params

@@ -175,7 +175,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $collectionData = [];
                 $collectionKey = $collectionRaw['type'];
 
-                $oIndex = $collectionRaw['oIndex'];
+                $oIndex = isset($collectionRaw['oIndex']) ? $collectionRaw['oIndex'] : null;
 
                 $collectionDef = DataObject\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
@@ -399,6 +399,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -442,6 +443,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param mixed $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

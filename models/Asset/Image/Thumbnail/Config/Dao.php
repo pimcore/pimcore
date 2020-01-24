@@ -53,6 +53,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function exists(string $name): bool

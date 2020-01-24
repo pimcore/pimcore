@@ -28,13 +28,14 @@ class Listing extends AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $notifications = null;
 
     public function __construct()
     {
-        $this->notifications =& $this->data;
+        $this->notifications = & $this->data;
     }
 
     /**

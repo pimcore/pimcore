@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\ElementInterface;
 
 /**
  * Takes an object (e.g. a product, an order) and transforms it into a

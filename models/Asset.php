@@ -754,7 +754,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if(!$this->getType()) {
+        if (!$this->getType()) {
             $this->setType('unknown');
         }
 

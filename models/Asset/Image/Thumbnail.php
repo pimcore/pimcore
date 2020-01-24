@@ -64,7 +64,7 @@ class Thumbnail
 
         $path = $this->convertToWebPath($fsPath);
 
-        if($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
+        if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
             $event = new GenericEvent($this, [
                 'filesystemPath' => $fsPath,
                 'frontendPath' => $path
@@ -78,11 +78,12 @@ class Thumbnail
 
     /**
      * @param string $eventName
+     *
      * @return bool
      */
     protected function hasListeners(string $eventName): bool
     {
-        if(!isset(self::$hasListenersCache[$eventName])) {
+        if (!isset(self::$hasListenersCache[$eventName])) {
             self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
         }
 
@@ -132,7 +133,7 @@ class Thumbnail
             }
         }
 
-        if($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
+        if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated
@@ -318,8 +319,9 @@ class Thumbnail
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
             $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+            $webpSupportBackup = null;
 
-            if($isAutoFormat) {
+            if ($isAutoFormat) {
                 $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
                 // ensure the default image is not WebP
                 $this->filesystemPath = null;
@@ -364,7 +366,7 @@ class Thumbnail
                 $sourceTagAttributes['type'] = $thumb->getMimeType();
 
                 $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
-                if($isAutoFormat) {
+                if ($isAutoFormat) {
                     $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
                     $html .= "\t" . $sourceHtmlWebP . "\n";
                 }
@@ -396,7 +398,7 @@ class Thumbnail
 
             $htmlImgTag = $html;
 
-            if(isset($webpSupportBackup)) {
+            if ($isAutoFormat) {
                 Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
             }
         }

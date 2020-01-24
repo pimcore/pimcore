@@ -202,6 +202,9 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 

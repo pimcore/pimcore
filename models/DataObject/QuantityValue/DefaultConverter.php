@@ -19,11 +19,11 @@ class DefaultConverter implements QuantityValueConverterInterface
             $fromBaseUnit = $fromUnit;
         }
 
-        if($fromUnit->getFactor() === null) {
+        if ($fromUnit->getFactor() === null) {
             $fromUnit->setFactor(1);
         }
 
-        if($fromUnit->getConversionOffset() === null) {
+        if ($fromUnit->getConversionOffset() === null) {
             $fromUnit->setConversionOffset(0);
         }
 
@@ -33,11 +33,11 @@ class DefaultConverter implements QuantityValueConverterInterface
             $toBaseUnit = $toUnit;
         }
 
-        if($toUnit->getFactor() === null) {
+        if ($toUnit->getFactor() === null) {
             $toUnit->setFactor(1);
         }
 
-        if($toUnit->getConversionOffset() === null) {
+        if ($toUnit->getConversionOffset() === null) {
             $toUnit->setConversionOffset(0);
         }
 

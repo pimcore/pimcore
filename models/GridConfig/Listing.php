@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\GridConfig[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $gridConfigs = null;
 
     public function __construct()
     {
-        $this->gridConfigs =& $this->data;
+        $this->gridConfigs = & $this->data;
     }
 
     /**

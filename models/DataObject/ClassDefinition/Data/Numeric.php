@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
@@ -149,13 +151,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
         }
+
+        return null;
     }
 
     /**
@@ -372,6 +376,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if (is_numeric($data)) {
             return $data;
         }
@@ -408,6 +414,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
+        //TODO same fallback as above
+
         return $this->getDataForResource($data, $object, $params);
     }
 
@@ -589,5 +597,13 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return null|int
+     */
+    protected function doGetDefaultValue()
+    {
+        return $this->getDefaultValue() ?? null;
     }
 }

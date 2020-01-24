@@ -732,7 +732,7 @@ pimcore.helpers.closeAllUnmodified = function () {
             }
         });
     }
-    ;
+
 
     pimcore.helpers.closeAllElements(unmodifiedElements);
 };

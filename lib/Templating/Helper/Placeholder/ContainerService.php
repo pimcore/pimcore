@@ -37,13 +37,11 @@
 
 namespace Pimcore\Templating\Helper\Placeholder;
 
-
 /**
  * Registry for placeholder containers
  */
 class ContainerService
 {
-
     /**
      * @var int
      */

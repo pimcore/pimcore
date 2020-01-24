@@ -187,7 +187,7 @@ class Dao extends Model\DataObject\Listing\Dao
                             $language = (string)$this->model->getLocale();
                         }
                         if (!$language && DataObject\Localizedfield::isStrictMode()) {
-                            throw new \Exception("could not resolve locale: " . $this->model->getLocale());
+                            throw new \Exception('could not resolve locale: ' . $this->model->getLocale());
                         }
                     }
 

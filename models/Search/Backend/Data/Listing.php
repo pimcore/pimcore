@@ -25,6 +25,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var Data[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $entries = null;
@@ -53,6 +54,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     public function __construct()
     {
         $this->initDao(__CLASS__);
-        $this->entries =& $this->data;
+        $this->entries = & $this->data;
     }
 }

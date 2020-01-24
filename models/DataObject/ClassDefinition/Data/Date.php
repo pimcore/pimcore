@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use DataObject\Traits\DefaultValueTrait;
+
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -76,6 +78,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'date') {
@@ -84,6 +88,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -305,6 +311,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -317,6 +324,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -446,5 +454,20 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue()
+    {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+
+            return $date;
+        }
+
+        return null;
     }
 }

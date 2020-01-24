@@ -27,17 +27,19 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $layoutDefinitions = null;
 
     public function __construct()
     {
-        $this->layoutDefinitions =& $this->data;
+        $this->layoutDefinitions = & $this->data;
     }
 
     /**
      * @param array $layoutDefinitions
+     *
      * @return self
      */
     public function setLayoutDefinitions($layoutDefinitions)

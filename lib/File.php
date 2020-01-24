@@ -32,8 +32,6 @@ class File
     protected static $context = null;
 
     /**
-     * @static
-     *
      * @param string $name
      *
      * @return string
@@ -51,7 +49,7 @@ class File
     }
 
     /**
-     * @static
+     * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
      * @param string $tmpFilename
      * @param string|null $language
@@ -73,8 +71,6 @@ class File
     }
 
     /**
-     * @static
-     *
      * @param string $filename
      *
      * @return bool

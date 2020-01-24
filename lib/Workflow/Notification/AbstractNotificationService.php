@@ -50,7 +50,7 @@ class AbstractNotificationService
     {
         $notifyUsers = [];
 
-        if($roles) {
+        if ($roles) {
             //get roles
             $roleList = new User\Role\Listing();
             $roleList->setCondition('name IN ('.implode(',', array_map([Db::get(), 'quote'], $roles)).')');
@@ -67,8 +67,7 @@ class AbstractNotificationService
             }
         }
 
-
-        if($users) {
+        if ($users) {
             //get users
             $userList = new User\Listing();
             if ($includeAllUsers) {

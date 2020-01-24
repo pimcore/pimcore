@@ -478,7 +478,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     {
         if ($this->data === null) {
             $dao = $this->getDao();
-            if(\method_exists($dao, 'load')) {
+            if (\method_exists($dao, 'load')) {
                 $this->getDao()->load();
             } else {
                 @trigger_error(
@@ -509,6 +509,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function current()
     {
         $this->getData();
+
         return current($this->data);
     }
 
@@ -518,6 +519,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function key()
     {
         $this->getData();
+
         return key($this->data);
     }
 
@@ -527,6 +529,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function next()
     {
         $this->getData();
+
         return next($this->data);
     }
 
@@ -536,6 +539,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function valid()
     {
         $this->getData();
+
         return $this->current() !== false;
     }
 

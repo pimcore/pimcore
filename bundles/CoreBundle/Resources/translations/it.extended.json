@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Non posso salvare il file",
     "reserved_field_names_error": "Non usare le seguenti parole chiave nei campi:",
     "use_current_date": "Usa la data corrente",
-    "default_value_warning": "I valori di default non sono memorizzati nella definizione tabella del db e neanche sono settati in istanze di oggetti vuoti. I valori di default sono disponibili solo nella GUI di pimcore",
     "instance_identifier": "Istanza ID",
     "instance_identifier_info": "L'identificatore di istanza deve essere universalmente univoco attraverso multiple istanze Pimcore. La generazione UUID sarà automaticamente abilitata se viene fornito un identificatore di istanza (non cambiare il valore successivamente - causerebbe identificatori non validi)",
     "restrict_selection_to": "Limita selezione a",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
     "cache_raw_relation_data": "Cache Raw Relation Data",
-    "allow_to_create_new_object": "Allow to create a new object in relation field"
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

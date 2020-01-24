@@ -89,7 +89,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setOrderdate(new \DateTime());
 
             $cartId = $this->createCartId($cart);
-            if(strlen($cartId) > 190) {
+            if (strlen($cartId) > 190) {
                 throw new \Exception('CartId cannot be longer than 190 characters');
             }
 

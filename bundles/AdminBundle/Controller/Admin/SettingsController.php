@@ -960,7 +960,7 @@ class SettingsController extends AdminController
         }
 
         usort($langs, function ($a, $b) {
-            return strcmp($a["display"], $b["display"]);
+            return strcmp($a['display'], $b['display']);
         });
 
         return $this->adminJson($langs);

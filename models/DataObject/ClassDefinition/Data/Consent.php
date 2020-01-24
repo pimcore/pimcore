@@ -339,6 +339,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
@@ -355,6 +356,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

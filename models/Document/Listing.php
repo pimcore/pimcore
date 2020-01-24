@@ -42,6 +42,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $documents = null;
@@ -53,7 +54,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     public function __construct()
     {
-        $this->documents =& $this->data;
+        $this->documents = & $this->data;
     }
 
     /**

@@ -45,7 +45,7 @@ class DocumentImporter extends AbstractElementImporter
             $setter = 'set' . ucfirst($attribute->getName());
             if (method_exists($element, $setter)) {
                 $content = $attribute->getContent();
-                $content = $attribute->getType() === Attribute::TYPE_ELEMENT_KEY ? Element\Service::getValidKey($content, "document") : $content;
+                $content = $attribute->getType() === Attribute::TYPE_ELEMENT_KEY ? Element\Service::getValidKey($content, 'document') : $content;
 
                 $element->$setter($content);
             }

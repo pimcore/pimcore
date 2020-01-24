@@ -194,6 +194,13 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
         }
 
         this.batchWin.close();
-    }
+    },
 
+    gridRowDblClickHandler: function(component, record) {
+        var subtype = record.get('subtype');
+        if (record.get('type') === "object" && record.get('subtype') !== "folder") {
+            subtype = "object";
+        }
+        pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);
+    }
 });

@@ -473,6 +473,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -500,6 +501,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param mixed $params
@@ -694,6 +696,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
@@ -998,13 +1001,15 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Concrete|int $data     object or object ID
      * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      */
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
-        if($data instanceof DataObject\Concrete) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if ($data instanceof DataObject\Concrete) {
             $data = $data->getId();
         }
 
-        if($operator === '=') {
+        if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+
             return;
         }
 

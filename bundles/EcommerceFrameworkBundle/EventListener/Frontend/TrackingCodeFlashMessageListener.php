@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend;
 
-
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
@@ -56,7 +55,6 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-
         $request = $event->getRequest();
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
@@ -70,7 +68,6 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
         if (is_array($trackedCodes) && sizeof($trackedCodes)) {
-
             foreach ($this->trackingManger->getTrackers() as $tracker) {
                 if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
                     foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {
@@ -80,5 +77,4 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
             }
         }
     }
-
 }

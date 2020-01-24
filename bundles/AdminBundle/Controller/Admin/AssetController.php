@@ -118,8 +118,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $imageInfo = [];
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
-            if($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = $asset->getFullPath() . "?_dc=" . time();
+            if ($asset->isAnimated()) {
+                $imageInfo['previewUrl'] = $asset->getFullPath() . '?_dc=' . time();
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -138,12 +138,12 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset->setStream(null);
-        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
         $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $asset->getObjectVars();
+        $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
@@ -988,6 +988,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset->save();
 
                 $treeData = $this->getTreeNodeConfig($asset);
+
                 return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -1888,7 +1889,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory
-                            $zip->addFile($a->getFileSystemPath(), preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()));
+                            $zip->addFromString(preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
                         }
                     }
                 }

@@ -111,11 +111,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $getter = 'get' . ucfirst($allowedBrickType);
                 $params = [
                     'objectFromVersion' => $params['objectFromVersion'],
-                    'context'           => [
+                    'context' => [
                         'containerType' => 'objectbrick',
-                        'containerKey'  => $allowedBrickType,
+                        'containerKey' => $allowedBrickType,
                     ],
-                    'fieldname'         => $this->getName(),
+                    'fieldname' => $this->getName(),
                 ];
 
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType);
@@ -489,6 +489,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -533,6 +534,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @deprecated
+     *
      * @param mixed $data
      * @param null $relatedObject
      * @param mixed $params

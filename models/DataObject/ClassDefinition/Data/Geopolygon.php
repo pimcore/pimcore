@@ -242,6 +242,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null|DataObject\Concrete $object
      * @param mixed $params

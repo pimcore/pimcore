@@ -340,9 +340,9 @@ Ext.onReady(function () {
     }
 
     //translation admin keys
-    pimcore.globalmanager.add("translations_admin_missing", new Array());
-    pimcore.globalmanager.add("translations_admin_added", new Array());
-    pimcore.globalmanager.add("translations_admin_translated_values", new Array());
+    pimcore.globalmanager.add("translations_admin_missing", []);
+    pimcore.globalmanager.add("translations_admin_added", []);
+    pimcore.globalmanager.add("translations_admin_translated_values", []);
 
 
     var objectClassFields = [

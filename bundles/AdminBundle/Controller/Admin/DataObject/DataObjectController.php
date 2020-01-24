@@ -1013,9 +1013,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $values = $this->decodeJson($request->get('values'));
 
         if ($object->isAllowed('settings')) {
-            if ($values['key'] && $object->isAllowed('rename')) {
+            if (isset($values['key']) && $values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
-            } elseif ($values['key'] != $object->getKey()) {
+            } elseif (!isset($values['key']) || $values['key'] != $object->getKey()) {
                 Logger::debug('prevented renaming object because of missing permissions ');
             }
 
@@ -1312,6 +1312,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
+
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {
@@ -1735,7 +1736,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!$data['published']) {
+                    if (!isset($data['published']) || !$data['published']) {
                         $object->setOmitMandatoryCheck(true);
                     }
 

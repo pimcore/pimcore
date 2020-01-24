@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $importconfigs = null;
 
     public function __construct()
     {
-        $this->importconfigs =& $this->data;
+        $this->importconfigs = & $this->data;
     }
 
     /**

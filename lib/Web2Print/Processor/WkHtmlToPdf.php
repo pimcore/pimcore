@@ -17,7 +17,6 @@ namespace Pimcore\Web2Print\Processor;
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
