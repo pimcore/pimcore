@@ -1451,7 +1451,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $o_reverseSort
+     * @param bool | null $o_reverseSort
      *
      * @return AbstractObject
      */
