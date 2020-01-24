@@ -212,7 +212,7 @@ class GoogleTagManager extends Tracker implements
         return $this->filterNullValues(
             array_merge([
                 'name' => $item->getName(),
-                'id' => $item->getId(),
+                'id' => (string)$item->getId(),
                 'price' => $this->formatPrice($item->getPrice()),
                 'brand' => $item->getBrand(),
                 'category' => $item->getCategory(),
@@ -236,7 +236,7 @@ class GoogleTagManager extends Tracker implements
     {
         $data = $this->filterNullValues(
             array_merge([
-                'id' => $item->getId(),
+                'id' => (string) $item->getId(),
                 'name' => $item->getName(),
                 'category' => $item->getCategory(),
                 'brand' => $item->getBrand(),

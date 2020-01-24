@@ -93,7 +93,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     }
                     return "";
                 }.bind(this, colConfig["name"]);
-            };
+            }
 
 
             if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
