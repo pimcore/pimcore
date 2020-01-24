@@ -104,7 +104,7 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects[] = $objects;
         }
-        if($userObjects) {
+        if ($userObjects) {
             $userObjects = \array_merge(...$userObjects);
         }
 
