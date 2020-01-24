@@ -154,19 +154,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
 
-            $sort = 'ASC';
-            if($object->getReverseSort()) {
-                $sort = 'DESC';
-            }
-
             if ($object->getChildrenSortBy() === 'index') {
-                $childsList->setOrderKey(sprintf('objects.o_index %s', $sort), false);
+                $childsList->setOrderKey('objects.o_index ASC', false);
             } else {
                 $childsList->setOrderKey(
                     sprintf(
-                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
-                        $object->getChildrenSortBy(),
-                        $sort
+                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC',
+                        $object->getChildrenSortBy()
                     ),
                     false
                 );
@@ -204,7 +198,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'objects' => $objects,
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+
         $objects = $event->getArgument('objects');
+        $objects = $this->sortChildrenNaturally($objects, $object->getChildrenSortBy(), $object->getReverseSort());
 
         if ($limit) {
             return $this->adminJson([
@@ -222,6 +218,26 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         return $this->adminJson($objects);
     }
 
+    private function sortChildrenNaturally(array $objects, string $sortBy, bool $reverse): array
+    {
+        if('index' === $sortBy) {
+            $sortBy = 'idx';
+        }
+
+        usort(
+            $objects,
+            function ($a, $b) use ($sortBy) {
+                return strnatcasecmp($a[$sortBy], $b[$sortBy]);
+            }
+        );
+
+        if($reverse) {
+            $objects = array_reverse($objects);
+        }
+
+        return $objects;
+    }
+
     /**
      * @param DataObject\AbstractObject $element
      *
@@ -234,6 +250,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject = [
             'id' => $child->getId(),
             'idx' => intval($child->getIndex()),
+            'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
             'text' => htmlspecialchars($child->getKey()),
             'type' => $child->getType(),
