@@ -71,6 +71,8 @@ pimcore.object.tags.abstract = Class.create({
                 }
             }
         }
+
+
     },
 
     getGridColumnConfig:function (field) {

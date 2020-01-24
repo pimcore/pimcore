@@ -22,7 +22,6 @@ use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
-use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -1613,25 +1612,5 @@ class Service extends Model\Element\Service
     public static function removeObjectFromSession($objectId)
     {
         self::removeElementFromSession('object', $objectId);
-    }
-
-    /**
-     * @internal
-     *
-     * @param array $descriptor
-     * @return array
-     */
-    public static function buildConditionPartsFromDescriptor($descriptor) {
-        $db = Db::get();
-        $conditionParts = [];
-        foreach ($descriptor as $key => $value) {
-            $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-            if ($lastChar === "%") {
-                $conditionParts[] = $key . " LIKE " . $db->quote($value);
-            } else {
-                $conditionParts[] = $key . " = " . $db->quote($value);
-            }
-        }
-        return $conditionParts;
     }
 }

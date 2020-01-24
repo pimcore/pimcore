@@ -646,7 +646,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
-        $this->enrichDataRow($object, $params, $classId, $relation);
+        $this->enrichRelation($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
         $context = $params['context'] ?? null;

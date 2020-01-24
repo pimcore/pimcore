@@ -79,7 +79,7 @@ pimcore.object.classes.data.data = Class.create({
             }
         });
 
-        this.indexCheckbox = new Ext.form.field.Checkbox({
+        var indexCheckbox = new Ext.form.field.Checkbox({
             fieldLabel: t("index"),
             name: "index",
             itemId: "index",
@@ -88,7 +88,7 @@ pimcore.object.classes.data.data = Class.create({
             hidden: true
         });
 
-        this.uniqueCheckbox = new Ext.form.field.Checkbox({
+        var uniqueCheckbox = new Ext.form.field.Checkbox({
             fieldLabel: t("unique"),
             name: "unique",
             itemId: "unique",
@@ -161,8 +161,8 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("tooltip",this.availableSettingsFields)
             },
             this.mandatoryCheckbox,
-            this.indexCheckbox,
-            this.uniqueCheckbox,
+            indexCheckbox,
+            uniqueCheckbox,
             {
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
@@ -200,9 +200,9 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
             });
 
-            this.indexCheckbox.setHidden(false);
+            indexCheckbox.setHidden(false);
             if (in_array("unique",this.availableSettingsFields)) {
-                this.uniqueCheckbox.setHidden(false);
+                uniqueCheckbox.setHidden(false);
             }
         }
 

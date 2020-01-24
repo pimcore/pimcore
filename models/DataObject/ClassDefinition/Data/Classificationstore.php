@@ -310,7 +310,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $correctedMapping = [];
 
         foreach ($groupCollectionMapping as $groupId => $collectionId) {
-            if (isset($activeGroups[$groupId]) && $activeGroups[$groupId]) {
+            if ($activeGroups[$groupId]) {
                 $correctedMapping[$groupId] = $collectionId;
             }
         }
