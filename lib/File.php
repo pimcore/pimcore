@@ -49,6 +49,24 @@ class File
     }
 
     /**
+     * @static
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public static function getRawFileExtension($name)
+    {
+        $parts = explode('.', $name);
+
+        if (count($parts) > 1) {
+            return $parts[count($parts) - 1];
+        }
+
+        return '';
+    }
+
+    /**
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
      * @param string $tmpFilename
