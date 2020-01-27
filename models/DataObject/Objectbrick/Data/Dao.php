@@ -134,13 +134,23 @@ class Dao extends Model\Dao\AbstractDao
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'isUpdate' => $isBrickUpdate
+                        'isUpdate' => $isBrickUpdate,
+                        'context' => [
+                            'containerType' => 'objectbrick',
+                            'containerKey' => $this->model->getType(),
+                            'fieldname' => $this->model->getFieldname()
+                        ]
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                        'isUpdate' => $isBrickUpdate
+                        'isUpdate' => $isBrickUpdate,
+                        'context' => [
+                            'containerType' => 'objectbrick',
+                            'containerKey' => $this->model->getType(),
+                            'fieldname' => $this->model->getFieldname()
+                        ]
                     ]);
                     $data[$key] = $insertData;
                 }

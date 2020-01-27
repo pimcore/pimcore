@@ -600,9 +600,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
+     * @param DataObject\Concrete $object
+     * @param array $context
      * @return null|int
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
     }

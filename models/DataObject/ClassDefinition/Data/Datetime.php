@@ -456,9 +456,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @param DataObject\Concrete $object
+     * @param array $context
      * @return Carbon|null
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
         if ($this->getDefaultValue()) {
             $date = new \Carbon\Carbon();

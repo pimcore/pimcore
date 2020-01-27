@@ -17,12 +17,6 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     type: "select",
 
     initialize: function (data, fieldConfig) {
-        this.defaultValue = null;
-        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
-            data = fieldConfig.defaultValue;
-            this.defaultValue = data;
-        }
-
         this.data = data;
         this.fieldConfig = fieldConfig;
     },
@@ -360,6 +354,15 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
+    },
+
+    applyDefaultValue: function() {
+
+        this.defaultValue = null;
+        if ((typeof this.data === "undefined" || data === null) && this.fieldConfig.defaultValue) {
+            this.data = this.fieldConfig.defaultValue;
+            this.defaultValue = this.data;
+        }
     }
 
 });
