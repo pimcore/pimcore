@@ -17,6 +17,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
 
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+
 trait AdminStyleTrait
 {
     /**
