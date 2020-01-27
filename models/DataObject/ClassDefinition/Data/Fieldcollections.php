@@ -794,10 +794,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
-        $result = parent::getDiffDataFromEditmode($data, $object, $params);
-        Logger::debug('bla');
-
-        return $result;
+        return parent::getDiffDataFromEditmode($data, $object, $params);
     }
 
     /**
