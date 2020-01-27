@@ -342,7 +342,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param array $config
      *
-     * @return Model\Listing\AbstractListing
+     * @return DataObject\Listing
      *
      * @throws \Exception
      */
@@ -355,11 +355,11 @@ class AbstractObject extends Model\Element\AbstractElement
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
         }
 
-        if (!empty($config['class'])) {
-            $className = ltrim($config['class'], '\\');
-        }
-
         if (is_array($config)) {
+            if (!empty($config['class'])) {
+                $className = ltrim($config['class'], '\\');
+            }
+
             if ($className) {
                 $listClass = $className . '\\Listing';
                 $list = self::getModelFactory()->build($listClass);
