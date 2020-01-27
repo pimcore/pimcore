@@ -109,8 +109,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {
@@ -122,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
+     * Save changes to database, it's a good idea to use save() instead
      */
     public function update()
     {
@@ -150,11 +148,13 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Deletes object from database
+     * Deletes site from database
      */
     public function delete()
     {
         $this->db->delete('sites', ['id' => $this->model->getId()]);
+        //clean slug table
+        Model\DataObject\Data\UrlSlug::handleSiteDeleted($this->model->getId());
 
         $this->model->clearDependentCache();
     }

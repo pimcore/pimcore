@@ -40,6 +40,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $objectId;
 
     /**
+     * @var int
+     */
+    protected $classId;
+
+    /**
      * @var string|null
      */
     protected $slug;
@@ -237,12 +242,33 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
+     * @return int
+     */
+    public function getClassId()
+    {
+        return $this->classId;
+    }
+
+    /**
+     * @param int $classId
+     * @return $this
+     */
+    public function setClassId($classId)
+    {
+        $this->classId = $classId;
+        return $this;
+    }
+
+
+
+    /**
      * @param array $rawItem
      * @return UrlSlug
      */
     public static function createFromDataRow($rawItem) : UrlSlug {
         $slug = new self($rawItem['slug'], $rawItem['siteId']);
         $slug->setObjectId($rawItem['objectId']);
+        $slug->setClassId($rawItem['classId']);
         $slug->setFieldname($rawItem['fieldname']);
         $slug->setIndex($rawItem['index']);
         $slug->setOwnertype($rawItem['ownertype']);
@@ -252,6 +278,8 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
+     * @internal
+     *
      * @param string $path
      * @param int $siteId
      * @return UrlSlug|null
@@ -277,6 +305,8 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
+     * @internal
+     *
      * @return string
      * @throws \Exception
      */
@@ -377,8 +407,30 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $fd->getAction();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function delete() {
         $db = Db::get();
-        $count = $db->delete('object_url_slugs', ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
+        $db->delete('object_url_slugs', ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
+    }
+
+
+    /**
+     * @param int $siteId
+     * @throws \Exception
+     */
+    public static function handleSiteDeleted(int $siteId) {
+        $db = Db::get();
+        $db->delete('object_url_slugs', ['siteId' => $siteId]);
+    }
+
+    /**
+     * @param int $classId
+     * @throws \Exception
+     */
+    public static function handleClassDeleted(int $classId) {
+        $db = Db::get();
+        $db->delete('object_url_slugs', ['classId' => $classId]);
     }
 }

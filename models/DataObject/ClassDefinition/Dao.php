@@ -281,6 +281,9 @@ class Dao extends Model\Dao\AbstractDao
             $brickTable = current($table);
             $this->db->query('DROP TABLE `'.$brickTable.'`');
         }
+
+        // clean slug table
+        DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
     }
 
     /**

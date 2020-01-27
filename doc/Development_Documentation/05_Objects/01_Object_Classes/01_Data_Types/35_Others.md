@@ -129,14 +129,3 @@ Slugs are stored in a dedicated table called `object_url_slugs`.
 ![URL Slug](../../../img/classes-datatypes-urlslug.png)
 
 > Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md).
-
-#### How to retrieve the controller/action
-
-```php
-/** @var DataObject\Data\UrlSlug $slug */
-
-// returns slug for the given path
-$slug = DataObject\Data\UrlSlug::resolveSlug("/de/my-something");
-// returns the action as defined in the field definition (see screenshot)
-$action = $slug->getAction();
-```

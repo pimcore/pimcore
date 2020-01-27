@@ -273,6 +273,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
                 if ($slugItem instanceof Model\DataObject\Data\UrlSlug) {
                     $return[] = [
                         'objectId' => $object->getId(),
+                        'classId' => $object->getClassId(),
                         'fieldname' => $this->getName(),
                         'slug' => $slugItem->getSlug(),
                         'siteId' => $slugItem->getSiteId() ?? 0
