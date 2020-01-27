@@ -472,7 +472,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
-                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
+                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
+                                json_decode($data['update_error'], true)
+                                 );
                 }
 
                 $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote($response['index']['_id']));
