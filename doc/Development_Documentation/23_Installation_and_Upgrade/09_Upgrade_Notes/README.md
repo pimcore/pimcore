@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+##6.4.3
+- It is now possible to configure `php:memory_limit` for `web2print:pdf-creation` command with following configuration:
+```yaml
+pimcore:
+  documents: 
+    web_to_print: 
+      pdf_creation_php_memory_limit: '2048M'
+```
+
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
 - Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`
