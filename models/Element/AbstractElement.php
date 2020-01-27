@@ -203,14 +203,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
      * @param string $type
+     * @param null|Model\User\AbstractUser $user
      *
      * @return bool
      */
-    public function isAllowed($type)
+    public function isAllowed($type, ?Model\User\AbstractUser $user = null)
     {
-        $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+        if(null === $user) {
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+        }
 
-        if (!$currentUser) {
+        if (!$user) {
             if (php_sapi_name() === 'cli') {
                 return true;
             }
@@ -219,11 +222,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         //everything is allowed for admin
-        if ($currentUser->isAdmin()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return $this->getDao()->isAllowed($type, $currentUser);
+        return $this->getDao()->isAllowed($type, $user);
     }
 
     public function unlockPropagate()

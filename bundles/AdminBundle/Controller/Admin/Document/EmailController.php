@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -30,6 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EmailController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @Route("/get-data-by-id", methods={"GET"})
@@ -156,6 +158,6 @@ class EmailController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
-        $this->addSchedulerToDocument($request, $page);
+        $this->applySchedulerDataToElement($request, $page);
     }
 }

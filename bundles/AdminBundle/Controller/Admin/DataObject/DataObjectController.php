@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -49,6 +50,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var DataObject\Service
@@ -1261,23 +1263,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $object = $this->assignPropertiesFromEditmode($request, $object);
+        $this->applySchedulerDataToElement($request, $object);
 
-        // scheduled tasks
-        if ($request->get('scheduler')) {
-            $tasks = [];
-            $tasksData = $this->decodeJson($request->get('scheduler'));
-
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                    $task = new Model\Schedule\Task($taskData);
-                    $tasks[] = $task;
-                }
-            }
-
-            $object->setScheduledTasks($tasks);
-        }
 
         if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);

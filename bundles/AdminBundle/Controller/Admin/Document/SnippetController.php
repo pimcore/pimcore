@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -30,6 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SnippetController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @Route("/get-data-by-id", methods={"GET"})
@@ -168,7 +170,7 @@ class SnippetController extends DocumentControllerBase
     {
         $this->addSettingsToDocument($request, $snippet);
         $this->addDataToDocument($request, $snippet);
-        $this->addSchedulerToDocument($request, $snippet);
+        $this->applySchedulerDataToElement($request, $snippet);
         $this->addPropertiesToDocument($request, $snippet);
     }
 }
