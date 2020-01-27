@@ -641,9 +641,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @param DataObject\Concrete $object
+     * @param array $context
      * @return Model\DataObject\Data\QuantityValue|null
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
         if ($this->getDefaultValue() || $this->getDefaultUnit()) {
             return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
