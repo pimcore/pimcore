@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Element;
+namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
 
 trait AdminStyleTrait
 {
