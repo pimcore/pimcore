@@ -1,5 +1,8 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.8.10
+- Ecommerce: max length of `cartId` is now `190` characters instead of `255`
+
 ## Version 5.8.0
 - Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
  more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
