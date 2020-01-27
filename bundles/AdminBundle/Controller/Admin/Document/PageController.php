@@ -338,6 +338,6 @@ class PageController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
-        $this->addSchedulerToDocument($request, $page);
+        $this->applySchedulerDataToElement($request, $page);
     }
 }

@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -48,6 +49,7 @@ class AssetController extends ElementControllerBase implements EventedController
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var Asset\Service
@@ -911,22 +913,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
 
-                // scheduled tasks
-                if ($request->get('scheduler')) {
-                    $tasks = [];
-                    $tasksData = $this->decodeJson($request->get('scheduler'));
-
-                    if (!empty($tasksData)) {
-                        foreach ($tasksData as $taskData) {
-                            $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                            $task = new Model\Schedule\Task($taskData);
-                            $tasks[] = $task;
-                        }
-                    }
-
-                    $asset->setScheduledTasks($tasks);
-                }
+                $this->applySchedulerDataToElement($request, $asset);
 
                 if ($request->get('data')) {
                     $asset->setData($request->get('data'));

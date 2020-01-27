@@ -446,6 +446,7 @@ CREATE TABLE `schedule_tasks` (
   `action` enum('publish','unpublish','delete','publish-version') DEFAULT NULL,
   `version` bigint(20) unsigned DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '0',
+  `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
