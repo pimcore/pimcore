@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
-use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -33,7 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class LinkController extends DocumentControllerBase
 {
     use ElementEditLockHelperTrait;
-    use ApplySchedulerDataTrait;
 
     /**
      * @Route("/get-data-by-id", methods={"GET"})

@@ -26,10 +26,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
     use AdminStyleTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @param Request $request
