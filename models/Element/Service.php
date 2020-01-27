@@ -400,7 +400,7 @@ class Service extends Model\AbstractModel
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
-                $sourceKey = str_replace('.' . $fileExtension, '_copy.' . $fileExtension, $sourceKey);
+                $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
             } else {
                 $sourceKey .= '_copy';
             }
