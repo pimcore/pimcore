@@ -2359,6 +2359,54 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
+     * @Route("/detect-image-features", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function detectImageFeaturesAction(Request $request)
+    {
+        $asset = Asset::getById((int)$request->get('id'));
+        if (!$asset instanceof Asset) {
+            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        if ($asset->isAllowed('publish')) {
+            $asset->detectFaces();
+            $asset->removeCustomSetting('disableImageFeatureAutoDetection');
+            $asset->save();
+            return $this->adminJson(['success' => true]);
+        }
+
+        throw $this->createAccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/delete-image-features", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteImageFeaturesAction(Request $request)
+    {
+        $asset = Asset::getById((int)$request->get('id'));
+        if (!$asset instanceof Asset) {
+            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        if ($asset->isAllowed('publish')) {
+            $asset->removeCustomSetting('faceCoordinates');
+            $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
+            $asset->save();
+            return $this->adminJson(['success' => true]);
+        }
+
+        throw $this->createAccessDeniedHttpException();
+    }
+
+    /**
      * @param FilterControllerEvent $event
      */
     public function onKernelController(FilterControllerEvent $event)
