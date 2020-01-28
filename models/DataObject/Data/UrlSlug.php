@@ -85,10 +85,10 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @param string $slug
      * @param int|null $siteId
      */
-    public function __construct(?string $slug, ?int $siteId = null)
+    public function __construct(?string $slug, ?int $siteId = 0)
     {
         $this->slug = $slug;
-        $this->siteId = $siteId;
+        $this->siteId = $siteId ?? 0;
     }
 
     /**

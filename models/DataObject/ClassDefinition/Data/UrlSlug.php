@@ -336,8 +336,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
      */
     public function delete($object, $params = [])
     {
-        $db = Db::get();
-        $db->delete('object_url_slugs', ['objectId' => $object->getId()]);
+        if (!isset($params['isUpdate']) || !$params['isUpdate']) {
+            $db = Db::get();
+            $db->delete('object_url_slugs', ['objectId' => $object->getId()]);
+        }
     }
 
     /**

@@ -15,7 +15,7 @@ class Version20200121095650 extends AbstractPimcoreMigration
     {
         $this->addSql('CREATE TABLE `object_url_slugs` (
             `objectId` INT(11) NOT NULL DEFAULT \'0\',
-            `classId` INT(11) NOT NULL DEFAULT \'0\',
+            `classId` VARCHAR(50) NOT NULL DEFAULT \'0\',
             `fieldname` VARCHAR(70) NOT NULL DEFAULT \'0\',
             `index` INT(11) UNSIGNED NOT NULL DEFAULT \'0\',
             `ownertype` ENUM(\'object\',\'fieldcollection\',\'localizedfield\',\'objectbrick\') NOT NULL DEFAULT \'object\',

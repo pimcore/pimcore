@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(DataObject\Concrete $object, $params = [])
     {
-        return $this->delete($object, true);
+        return $this->delete($object, true, true);
     }
 
     /**
@@ -191,10 +191,11 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if ($fd instanceof CustomResourcePersistingInterface && !$fd instanceof DataObject\ClassDefinition\Data\UrlSlug) {
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $fd->delete(
                             $object,
                             [
+                                'isUpdate' => $saveMode,
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,
