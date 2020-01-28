@@ -129,7 +129,7 @@ class DataObjectController extends AbstractElementController
             /** @var WebserviceObjectOut|WebserviceFolderOut $out */
             $out = $this->service->getObjectFolderById($id);
         } else {
-            /** @var WebserviceObjectOut|Out $out */
+            /** @var WebserviceObjectOut $out */
             $out = $this->service->getObjectConcreteById($id);
         }
 
