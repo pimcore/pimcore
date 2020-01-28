@@ -109,8 +109,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {

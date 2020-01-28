@@ -68,8 +68,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {
@@ -183,6 +181,7 @@ class Dao extends Model\Element\Dao
 
             return $objects;
         }
+        return null;
     }
 
     /**
@@ -547,6 +546,8 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
+
+        return null;
     }
 
     /**

@@ -382,7 +382,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|DataObject\ClassDefinition\Data
@@ -399,7 +399,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -586,11 +586,12 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+        return null;
     }
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null

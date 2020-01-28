@@ -361,8 +361,8 @@ LUA;
 
         // TODO implement a better way for multiple items!
 
-        /** @var CacheItem $item */
         while ($item = array_shift($this->deferred)) {
+            /** @var CacheItem $item */
             try {
                 $res = $this->commitItem($item);
             } catch (\Throwable $e) {

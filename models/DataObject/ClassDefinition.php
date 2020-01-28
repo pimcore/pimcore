@@ -235,8 +235,8 @@ class ClassDefinition extends Model\AbstractModel
                 return self::getById($id);
             }
         } catch (\Exception $e) {
-            return null;
         }
+        return null;
     }
 
     /**

@@ -337,7 +337,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data\Link
@@ -353,7 +353,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -475,7 +475,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -492,7 +492,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
@@ -503,6 +503,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 return $data->direct;
             }
         }
+        return null;
     }
 
     /**

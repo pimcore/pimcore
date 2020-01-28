@@ -22,6 +22,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\User\Permission\Definition\Dao getDao()
+ * @method \Pimcore\Model\User\Permission\Definition\Dao save()
  */
 class Definition extends Model\AbstractModel
 {

@@ -46,6 +46,6 @@ class In extends Model\Webservice\Data\Document\Link
             $idMapper->recordMappingFailure('object', $object->getId(), 'document', $sourceId);
         }
 
-        $object->setSourceId = $sourceId;
+        $object->setSourceId($sourceId);
     }
 }

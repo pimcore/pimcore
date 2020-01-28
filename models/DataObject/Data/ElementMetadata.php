@@ -109,7 +109,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param string $ownertype
      * @param string $ownername
      * @param string $position
@@ -182,7 +182,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return Model\Element\ElementInterface|null
+     * @return Model\Element\AbstractElement|null
      */
     public function getElement()
     {

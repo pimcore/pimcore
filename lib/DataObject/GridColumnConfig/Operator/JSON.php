@@ -54,7 +54,7 @@ class JSON extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var string $childValue */
+            /** @var array $childValues */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
                     $valueArray[] = $childValue;

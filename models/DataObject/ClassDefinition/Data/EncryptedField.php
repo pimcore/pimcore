@@ -83,7 +83,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -108,7 +108,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /**
      * @param $data
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -141,10 +141,10 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /**
      * @param $data
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      *
      * @throws \Exception
      */
@@ -182,6 +182,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
                 }
             }
         }
+        return null;
     }
 
     /**
@@ -290,7 +291,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\EncryptedField $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -341,17 +342,18 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return Model\DataObject\Data\RgbaColor|null
+     * @return null
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         // not implemented
+        return null;
     }
 
     /**
@@ -477,8 +479,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -500,11 +502,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @param  $operator
      * @param  $params
      *
-     * @return string
+     * @return null
      *
      */
     public function getFilterCondition($value, $operator, $params = [])
     {
+        return null;
     }
 
     /**
@@ -609,7 +612,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return self

@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Model\User\Role;
 use Pimcore\Tool;
 
 /**
@@ -343,6 +344,7 @@ class User extends User\UserRole
             if (!$this->getPermission($key)) {
                 // check roles
                 foreach ($this->getRoles() as $roleId) {
+                    /** @var Role $role */
                     $role = User\Role::getById($roleId);
                     if ($role->getPermission($key)) {
                         return true;
@@ -354,6 +356,7 @@ class User extends User\UserRole
         } elseif ($type == 'class') {
             $classes = $this->getClasses();
             foreach ($this->getRoles() as $roleId) {
+                /** @var Role $role */
                 $role = User\Role::getById($roleId);
                 $classes = array_merge($classes, $role->getClasses());
             }
@@ -366,6 +369,7 @@ class User extends User\UserRole
         } elseif ($type == 'docType') {
             $docTypes = $this->getDocTypes();
             foreach ($this->getRoles() as $roleId) {
+                /** @var Role $role */
                 $role = User\Role::getById($roleId);
                 $docTypes = array_merge($docTypes, $role->getDocTypes());
             }

@@ -99,7 +99,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -115,6 +115,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+        return null;
     }
 
     /**
@@ -148,7 +149,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      *
      * @return \Carbon\Carbon
      */
@@ -195,8 +196,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param Carbon|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return int|null|string
@@ -280,7 +281,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|\Carbon\Carbon
@@ -296,7 +297,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -346,7 +347,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $useCurrentDate
+     * @param int|bool $useCurrentDate
      *
      * @return $this
      */
@@ -358,7 +359,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -369,8 +370,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|\Carbon\Carbon
@@ -417,8 +418,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|int $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
