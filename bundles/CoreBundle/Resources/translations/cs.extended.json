@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Soubor se nepovedlo uložit",
     "reserved_field_names_error": "Prosím nepoužívejte tyto systémem rezervované názvy polí: ",
     "use_current_date": "Použít aktuální datum",
-    "default_value_warning": "Výchozí hodnoty nejsou uloženy v databázi a nejsou ani předvyplněné v prázdných instancích záznamů. Jsou platné jen v pimcore GUI",
     "instance_identifier": "Identifikátor instance",
     "instance_identifier_info": "Identifikátor instance musí být unikátní napříč vícerými Pimcore instancemi. Generování UUID bude automaticky povoleno, pokud je poskytnut identifikátor instance (následné změny identifikátoru instance nejsou povoleny - vznikly by neplatné UUID)",
     "restrict_selection_to": "Omezit výběr na",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
     "cache_raw_relation_data": "Cache Raw Relation Data",
-    "allow_to_create_new_object": "Allow to create a new object in relation field"
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

@@ -57,7 +57,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     public function loadInternal(array $config, ContainerBuilder $container)
     {
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
-        if(!$container->hasParameter('container.dumper.inline_class_loader')) {
+        if (!$container->hasParameter('container.dumper.inline_class_loader')) {
             $container->setParameter('container.dumper.inline_class_loader', true);
         }
 
@@ -342,7 +342,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        if(!$container->hasParameter('pimcore.geoip.db_file')) {
+        if (!$container->hasParameter('pimcore.geoip.db_file')) {
             $container->setParameter('pimcore.geoip.db_file', null);
         }
 

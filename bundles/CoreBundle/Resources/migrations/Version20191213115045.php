@@ -25,14 +25,14 @@ class Version20191213115045 extends AbstractPimcoreMigration
             if (is_file($configFile)) {
                 $config = Config::getConfigInstance($configFile, true);
 
-                $offset = array_search("cache", array_keys($config['pimcore']));
+                $offset = array_search('cache', array_keys($config['pimcore']));
 
                 if ($offset) {
                     $config['pimcore']['cache']['enabled'] = false;
 
                     $config['pimcore'] = array_merge(
-                        array_slice($config['pimcore'], 0,  $offset),
-                        ["full_page_cache" => $config['pimcore']['cache']],
+                        array_slice($config['pimcore'], 0, $offset),
+                        ['full_page_cache' => $config['pimcore']['cache']],
                         array_slice($config['pimcore'], $offset)
                     );
 
@@ -57,14 +57,14 @@ class Version20191213115045 extends AbstractPimcoreMigration
             if (is_file($configFile)) {
                 $config = Config::getConfigInstance($configFile, true);
 
-                $offset = array_search("full_page_cache", array_keys($config['pimcore']));
+                $offset = array_search('full_page_cache', array_keys($config['pimcore']));
 
                 if ($offset) {
                     $config['pimcore']['full_page_cache']['enabled'] = false;
 
                     $config['pimcore'] = array_merge(
-                        array_slice($config['pimcore'], 0,  $offset),
-                        ["cache" => $config['pimcore']['full_page_cache']],
+                        array_slice($config['pimcore'], 0, $offset),
+                        ['cache' => $config['pimcore']['full_page_cache']],
                         array_slice($config['pimcore'], $offset)
                     );
 

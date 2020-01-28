@@ -158,6 +158,6 @@ class HardlinkController extends DocumentControllerBase
         }
 
         $this->addPropertiesToDocument($request, $link);
-        $this->addSchedulerToDocument($request, $link);
+        $this->applySchedulerDataToElement($request, $link);
     }
 }

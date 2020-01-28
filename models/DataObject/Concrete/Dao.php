@@ -383,8 +383,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function saveChildData()
     {
         $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
-            "inheritanceRelationContext" => [
-                "ownerType" => "object"
+            'inheritanceRelationContext' => [
+                'ownerType' => 'object'
             ]
         ]);
         $this->inheritanceHelper->resetFieldsToCheck();

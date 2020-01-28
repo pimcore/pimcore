@@ -100,6 +100,6 @@ pimcore.object.tags.wysiwyg.defaultEditorConfig = {
 
 ## Input Quantity Value
 
-Quite similar to [Quantity Value](03_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
+Quite similar to [Quantity Value](55_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
 
 

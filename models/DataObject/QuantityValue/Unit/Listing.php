@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\DataObject\QuantityValue\Unit[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $units = null;
 
     public function __construct()
     {
-        $this->units =& $this->data;
+        $this->units = & $this->data;
     }
 
     /**

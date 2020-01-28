@@ -22,7 +22,6 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
-use Pimcore\Model\User;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -267,7 +266,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // set var for editable configurations which is filled by Document\Tag::admin()
         $headHtml .= '<script>
-            var editableConfigurations = new Array();
+            var editableConfigurations = [];
             var pimcore_document_id = ' . $document->getId() . ';
         </script>';
 

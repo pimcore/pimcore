@@ -342,6 +342,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param mixed $params

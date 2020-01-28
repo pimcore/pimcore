@@ -141,6 +141,7 @@ class VisitorInfoResolver
         );
 
         $this->targetingConfigured = $configuredRules && (int)$configuredRules > 0;
+
         return $this->targetingConfigured;
     }
 

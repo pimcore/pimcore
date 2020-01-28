@@ -15,7 +15,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Element;
+namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
+
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 
 trait AdminStyleTrait
 {
@@ -23,9 +26,11 @@ trait AdminStyleTrait
      * @param ElementInterface $element
      * @param null|int $context
      * @param array $data
+     *
      * @throws \Exception
      */
-    protected function addAdminStyle(ElementInterface $element, $context = null, &$data = []) {
+    protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
+    {
         $adminStyle = Service::getElementAdminStyle($element, $context);
         $data['icon'] = $adminStyle->getElementIcon() !== false ? $adminStyle->getElementIcon() : null;
         $data['iconCls'] = $adminStyle->getElementIconClass() !== false ? $adminStyle->getElementIconClass() : null;

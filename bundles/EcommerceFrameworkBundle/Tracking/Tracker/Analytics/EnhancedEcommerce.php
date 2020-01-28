@@ -24,7 +24,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\GetTrackedCodesInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
@@ -274,7 +273,6 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         $this->trackedCodes[] = $code;
         $this->tracker->addCodePart($code, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
-
 
     /**
      * @param Transaction $transaction

@@ -35,7 +35,7 @@ You can do this in `Settings` -> `System Settings` -> `Localization & Internatio
 
 ## Inheritance
 
-Fallback and inherited values are evaluated in a vertical way first. This is contrary to the [Classification Store](13_Classification_Store.md) where the evaluation is done in a horizontal way. If no value for the current language is found, the parent level is checked. 
+Fallback and inherited values are evaluated in a vertical way first. This is contrary to the [Classification Store](15_Classification_Store.md) where the evaluation is done in a horizontal way. If no value for the current language is found, the parent level is checked. 
 
 If walking up the inheritance levels yields no result, the fallback language of the lowermost level will be checked in the same way. (Also walking up the inheritance levels for this language). 
 

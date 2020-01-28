@@ -145,7 +145,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $event->setResponse(new Response($response, $statusCode, $headers));
     }
 
-    protected function logToHttpErrorLog(Request $request, $statusCode) {
+    protected function logToHttpErrorLog(Request $request, $statusCode)
+    {
         $uri = $request->getUri();
         $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
         if ($exists) {

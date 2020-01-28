@@ -417,7 +417,6 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $this->o_children[$cacheKey];
-
     }
 
     /**
@@ -1046,7 +1045,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildrenSortBy($childrenSortBy)
     {
-        if($this->o_childrenSortBy !== $childrenSortBy) {
+        if ($this->o_childrenSortBy !== $childrenSortBy) {
             $this->o_children = [];
             $this->o_hasChildren = [];
         }
@@ -1108,11 +1107,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren($children)
     {
-        if($children === null) {
+        if ($children === null) {
             // unset all cached children
             $this->o_children = [];
             $this->o_hasChildren = [];
-        } elseif(is_array($children)) {
+        } elseif (is_array($children)) {
             //default cache key
             $cacheKey = $this->getListingCacheKey();
             $this->o_children[$cacheKey] = $children;
@@ -1431,15 +1430,16 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    protected function getListingCacheKey(array $args = []) {
+    protected function getListingCacheKey(array $args = [])
+    {
         $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
         $includingUnpublished = (bool)($args[1] ?? false);
 
-        if(is_array($objectTypes)) {
+        if (is_array($objectTypes)) {
             $objectTypes = implode('_', $objectTypes);
         }
 
-        $cacheKey =  $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
+        $cacheKey = $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
 
         return $cacheKey;
     }

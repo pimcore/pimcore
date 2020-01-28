@@ -191,7 +191,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Data\AbstractData|null
      */
-    public function getByOriginalIndex($index) {
+    public function getByOriginalIndex($index)
+    {
         if ($index === null) {
             return null;
         }

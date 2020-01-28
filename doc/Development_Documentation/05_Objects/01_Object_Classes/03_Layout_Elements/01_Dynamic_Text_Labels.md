@@ -1,6 +1,6 @@
 # Dynamic Text Labels
 
-Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/33_Calculated_Value_Type.md) data type,
+Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md) data type,
 it is possible to generate the Layout Text dynamically based on the current object and the label's context.
 This is an alternative to the static text defined in the class definition.
 

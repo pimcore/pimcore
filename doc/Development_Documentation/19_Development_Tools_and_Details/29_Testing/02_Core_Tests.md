@@ -167,3 +167,35 @@ Please follow the structure and principles described above.
 
 If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/master/tests/_support/Helper/Model.php).
 There you will find all class definitions used for testing.
+
+### Perform PHPStan Analysis 
+
+First, get a copy of this [sample configuration file](../../../Samples/phpstan.local.neon) and
+place it in your `PIMCORE_PROJECT_ROOT` root directory.
+
+Replace all occurences `PIMCORE_PROJECT_ROOT` with the real directory according to your setup.
+
+Add dependencies:
+```
+# minmum
+composer require "phpstan/phpstan:^0.12" "phpstan/phpstan-symfony:^0.12"
+
+# required if you want to do a full analysis
+composer require "heidelpay/heidelpay-php:^1.2.5.1" "klarna/checkout:^3.0.0" "elasticsearch/elasticsearch:2.0.0" "paypal/paypal-checkout-sdk:^1" "mpay24/mpay24-php:^4.2" "composer/composer:*"
+```
+
+Run
+```
+TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon vendor/pimcore/pimcore/bundles/ vendor/pimcore/pimcore/lib/ vendor/pimcore/pimcore/models/ -l 1 --memory-limit=-1
+```
+
+where `/tmp/[dedicateddir]` must be a writable temporary directory.
+
+> Note regarding PRs: Please try to meet all 
+level 2 requirements (run it with `-l 2` instead) for all files you touch or add.
+  
+
+
+
+
+

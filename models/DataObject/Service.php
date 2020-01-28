@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use DeepCopy\DeepCopy;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
@@ -105,7 +104,9 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects[] = $objects;
         }
-        $userObjects = \array_merge(...$userObjects);
+        if ($userObjects) {
+            $userObjects = \array_merge(...$userObjects);
+        }
 
         return $userObjects;
     }
@@ -1456,7 +1457,7 @@ class Service extends Model\Element\Service
         $ownerType = $data->getOwnerType();
         $fd = $data->getKeyDefinition();
 
-        if($fd === null) {
+        if ($fd === null) {
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
@@ -1507,7 +1508,7 @@ class Service extends Model\Element\Service
         $ownerType = $data->getOwnerType();
 
         $fd = $data->getKeyDefinition();
-        if($fd === null) {
+        if ($fd === null) {
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
@@ -1550,7 +1551,6 @@ class Service extends Model\Element\Service
     {
         return self::$systemFields;
     }
-
 
     /**
      * @param Concrete $container
@@ -1598,15 +1598,19 @@ class Service extends Model\Element\Service
 
     /**
      * @deprecated
+     *
      * @param int $objectId
+     *
      * @return AbstractObject|null
      */
-    public static function getObjectFromSession($objectId) {
+    public static function getObjectFromSession($objectId)
+    {
         return self::getElementFromSession('object', $objectId);
     }
 
     /**
      * @deprecated
+     *
      * @param int $objectId
      */
     public static function removeObjectFromSession($objectId)

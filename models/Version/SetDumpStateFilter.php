@@ -24,7 +24,7 @@ final class SetDumpStateFilter implements Filter
 {
     protected $state;
 
-    public function __construct(bool  $state)
+    public function __construct(bool $state)
     {
         $this->state = $state;
     }

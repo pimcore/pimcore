@@ -110,4 +110,4 @@ If you prefer the latter you have to create a class which implements  `\Pimcore\
 
 ## Input Quantity Value
 
-[Input Quantity Value](01_Text_Types.md) is quite similar to Quantity Value except that text values are allowed instead of the strict restriction to numeric values.
+[Input Quantity Value](95_Text_Types.md) is quite similar to Quantity Value except that text values are allowed instead of the strict restriction to numeric values.

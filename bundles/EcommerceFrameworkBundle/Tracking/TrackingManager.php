@@ -325,7 +325,6 @@ class TrackingManager implements TrackingManagerInterface
                 if (sizeof($tracker->getTrackedCodes())) {
                     $result .= implode(PHP_EOL, $tracker->getTrackedCodes()).PHP_EOL.PHP_EOL;
                 }
-
             }
         }
 
@@ -341,7 +340,6 @@ class TrackingManager implements TrackingManagerInterface
                 if (sizeof($tracker->getTrackedCodes())) {
                     $trackedCodes[get_class($tracker)] = $tracker->getTrackedCodes();
                 }
-
             }
         }
 
@@ -362,6 +360,4 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
     }
-
-
 }

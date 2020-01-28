@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -46,8 +48,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
-    use Element\AdminStyleTrait;
+    use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var DataObject\Service
@@ -1013,9 +1016,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $values = $this->decodeJson($request->get('values'));
 
         if ($object->isAllowed('settings')) {
-            if ($values['key'] && $object->isAllowed('rename')) {
+            if (isset($values['key']) && $values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
-            } elseif ($values['key'] != $object->getKey()) {
+            } elseif (!isset($values['key']) || $values['key'] != $object->getKey()) {
                 Logger::debug('prevented renaming object because of missing permissions ');
             }
 
@@ -1260,23 +1263,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $object = $this->assignPropertiesFromEditmode($request, $object);
+        $this->applySchedulerDataToElement($request, $object);
 
-        // scheduled tasks
-        if ($request->get('scheduler')) {
-            $tasks = [];
-            $tasksData = $this->decodeJson($request->get('scheduler'));
-
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                    $task = new Model\Schedule\Task($taskData);
-                    $tasks[] = $task;
-                }
-            }
-
-            $object->setScheduledTasks($tasks);
-        }
 
         if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);
@@ -1312,6 +1300,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
+
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {
@@ -1735,7 +1724,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!$data['published']) {
+                    if (!isset($data['published']) || !$data['published']) {
                         $object->setOmitMandatoryCheck(true);
                     }
 

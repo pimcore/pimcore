@@ -88,19 +88,19 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         foreach ($thumbnailConfigList as $thumbnailConfig) {
             if (empty($allowedThumbs) || in_array($thumbnailConfig->getName(), $allowedThumbs)) {
-                $medias = array_merge(['default' => 'defaultMedia'], $thumbnailConfig->getMedias() ? : []);
+                $medias = array_merge(['default' => 'defaultMedia'], $thumbnailConfig->getMedias() ?: []);
                 foreach ($medias as $mediaName => $media) {
                     $configMedia = clone $thumbnailConfig;
                     if ($mediaName !== 'default') {
                         $configMedia->selectMedia($mediaName);
                     }
 
-                    if($input->getOption('skip-medias') && $mediaName !== 'default') {
+                    if ($input->getOption('skip-medias') && $mediaName !== 'default') {
                         continue;
                     }
 
-                    $resolutions = [1,2];
-                    if($input->getOption('skip-high-res')) {
+                    $resolutions = [1, 2];
+                    if ($input->getOption('skip-high-res')) {
                         $resolutions = [1];
                     }
 
@@ -109,7 +109,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                         $resConfig->setHighResolution($resolution);
                         $thumbnailsToGenerate[] = $resConfig;
 
-                        if(!$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
+                        if (!$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
                             $webpConfig = clone $resConfig;
                             $webpConfig->setFormat('webp');
                             $thumbnailsToGenerate[] = $webpConfig;
@@ -171,7 +171,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 }
 
                 if ($input->getOption('force')) {
-                    foreach($thumbnailConfigNames as $thumbnailConfigName) {
+                    foreach ($thumbnailConfigNames as $thumbnailConfigName) {
                         $image->clearThumbnail($thumbnailConfigName);
                     }
                 }

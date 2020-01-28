@@ -404,5 +404,4 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT_ADMIN_STYLE = 'pimcore.admin.resolve.elementAdminStyle';
-
 }

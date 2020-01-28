@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\GeneratorBundle\Generator;
 
 use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Generates a bundle.

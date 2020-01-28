@@ -7,6 +7,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class ObjectTest
+ *
  * @package Pimcore\Tests\Model\DataObject
  * @group model.dataobject.object
  */
@@ -58,17 +59,17 @@ class ObjectTest extends ModelTestCase
 
         //without unpublished flag
         $child = $parent->getChildren();
-        $this->assertEquals(0, count($child), "Expected no child");
+        $this->assertEquals(0, count($child), 'Expected no child');
 
         $hasChild = $parent->hasChildren();
-        $this->assertFalse($hasChild, "hasChild property should be false");
+        $this->assertFalse($hasChild, 'hasChild property should be false');
 
         //with unpublished flag
         $child = $parent->getChildren([], true);
-        $this->assertEquals(1, count($child), "Expected 1 child");
+        $this->assertEquals(1, count($child), 'Expected 1 child');
 
         $hasChild = $parent->hasChildren([], true);
-        $this->assertTrue($hasChild, "hasChild property should be true");
+        $this->assertTrue($hasChild, 'hasChild property should be true');
     }
 
     /**
@@ -92,16 +93,16 @@ class ObjectTest extends ModelTestCase
 
         //without unpublished flag
         $sibling = $firstChild->getSiblings();
-        $this->assertEquals(0, count($sibling), "Expected no sibling");
+        $this->assertEquals(0, count($sibling), 'Expected no sibling');
 
         $hasSibling = $firstChild->hasSiblings();
-        $this->assertFalse($hasSibling, "hasSiblings property should be false");
+        $this->assertFalse($hasSibling, 'hasSiblings property should be false');
 
         //with unpublished flag
         $sibling = $firstChild->getSiblings([], true);
-        $this->assertEquals(1, count($sibling), "Expected 1 sibling");
+        $this->assertEquals(1, count($sibling), 'Expected 1 sibling');
 
         $hasSibling = $firstChild->hasSiblings([], true);
-        $this->assertTrue($hasSibling, "hasSiblings property should be true");
+        $this->assertTrue($hasSibling, 'hasSiblings property should be true');
     }
 }

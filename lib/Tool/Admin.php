@@ -63,7 +63,7 @@ class Admin
                         $parts = explode('.', $file);
 
                         $languageCode = $parts[0];
-                        if($parts[0] === 'admin') {
+                        if ($parts[0] === 'admin') {
                             // this is for the app specific translations
                             $languageCode = $parts[1];
                         }

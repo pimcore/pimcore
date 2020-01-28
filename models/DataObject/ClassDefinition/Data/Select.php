@@ -205,6 +205,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public function getDataForResource($data, $object = null, $params = [])
     {
         $data = $this->handleDefaultValue($data, $object, $params);
+
         return $data;
     }
 
@@ -519,6 +520,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
             return '`'.$name.'` LIKE '."'$value'".' ';
         }
+
         return null;
     }
 
@@ -528,9 +530,31 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param DataObject\Concrete $object
+     * @param array $context
      * @return null|string
      */
-    protected function doGetDefaultValue() {
-        return $this->getDefaultValue() ?? null;
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
+        );
+        if ($optionsProvider) {
+            $context['object'] = $object;
+            if ($object) {
+                $context['class'] = $object->getClass();
+            }
+
+            $context['fieldname'] = $this->getName();
+            if (!isset($context['purpose'])) {
+                $context['purpose'] = 'layout';
+            }
+
+            return $optionsProvider->getDefaultValue($context, $this);
+        } else {
+            return $this->getDefaultValue() ?? null;
+        }
     }
 }

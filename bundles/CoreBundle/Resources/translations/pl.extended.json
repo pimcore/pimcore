@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Nie można zapisać pliku",
     "reserved_field_names_error": "Proszę nie używać następujących zarezerwowanych nazw pól:",
     "use_current_date": "Użyj aktualnej daty",
-    "default_value_warning": "Domyślne wartości nie są przechowywane w definicjach tabel bazy danych, ani nie są ustawione w pustych instancjach Objektu. Są dostępne wyłącznie w interfejsie graaficznym Pimcore'a",
     "instance_identifier": "Identyfikator instancji",
     "instance_identifier_info": "Identyfikator instancji musi być unikalny pomiędzy wieloma instancjami Pimcore. Generowanie UUID zostanie włączone automatycznie jeśli Identyfikator zostanie podany (nie zmieniaj później identyfikatora - wcześniejsze UUID staną się niepoprawne)",
     "restrict_selection_to": "Ogranicz wybór do",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
     "cache_raw_relation_data": "Cache Raw Relation Data",
-    "allow_to_create_new_object": "Allow to create a new object in relation field"
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

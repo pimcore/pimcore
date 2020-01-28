@@ -93,6 +93,7 @@ class User extends User\UserRole
 
     /**
      * @deprecated
+     *
      * @var string|null
      */
     public $apiKey;
@@ -509,6 +510,7 @@ class User extends User\UserRole
 
     /**
      * @deprecated
+     *
      * @param string $apiKey
      *
      * @throws \Exception
@@ -523,6 +525,7 @@ class User extends User\UserRole
 
     /**
      * @deprecated
+     *
      * @return null|string
      */
     public function getApiKey()

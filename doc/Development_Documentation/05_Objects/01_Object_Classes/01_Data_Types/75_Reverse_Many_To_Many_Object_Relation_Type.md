@@ -1,6 +1,6 @@
 # Reverse Many-To-Many Object Relation Datatype
 
-Reverse Many-To-Many Object Relation are the counter part to the [Many-To-Many Object Relation field](09_Relation_Types.md).
+Reverse Many-To-Many Object Relation are the counter part to the [Many-To-Many Object Relation field](70_Relation_Types.md).
 They allow to display and edit relations which are owned by a remote object. 
 
 This is best explained with an example: 

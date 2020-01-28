@@ -25,9 +25,9 @@ class PimcoreClassDefinitionMatcher implements Matcher
     /** @var string $matchType */
     private $matchType;
 
-
     /**
      * PimcoreClassDefinitionMatcher constructor.
+     *
      * @param string $matchType
      */
     public function __construct($matchType)

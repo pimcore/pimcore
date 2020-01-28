@@ -248,6 +248,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -264,6 +265,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -305,7 +307,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
 
-        if($class instanceof DataObject\Objectbrick\Definition) {
+        if ($class instanceof DataObject\Objectbrick\Definition) {
             $code .= "\t" . '$object = $this->getObject();'  . "\n";
         } else {
             $code .= "\t" . '$object = $this;'  . "\n";
@@ -346,7 +348,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}'  . "\n";
 
-        if($class instanceof DataObject\Objectbrick\Definition) {
+        if ($class instanceof DataObject\Objectbrick\Definition) {
             $ownerType = 'objectbrick';
             $index = $class->getKey();
             $ownerName = '$this->getFieldName()';
@@ -360,14 +362,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $code .= "\t" . '$object = $this;'  . "\n";
         }
 
-        if($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition) {
             $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         } else {
             $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         }
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index===null?'null':'"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
+        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index === null ? 'null' : '"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
 
         $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";

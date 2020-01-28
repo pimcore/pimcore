@@ -414,6 +414,7 @@ class Layout
 
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param Model\DataObject\Concrete $object
      * @param array $context additional contextual data
      */

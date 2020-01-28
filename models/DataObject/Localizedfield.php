@@ -190,8 +190,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->_loadedAllLazyData = true;
         }
 
-        foreach($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
-            if($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+        foreach ($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
+            if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                 foreach (Tool::getValidLanguages() as $language) {
                     $this->setLocalizedValue($fieldDefinition->getName(), null, $language, false);
                 }
@@ -575,7 +575,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
         $this->items[$language][$name] = $value;
 
-        if($isLazyLoadedField) {
+        if ($isLazyLoadedField) {
             $this->markLazyKeyAsLoaded($lazyKey);
         }
 

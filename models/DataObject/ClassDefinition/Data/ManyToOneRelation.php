@@ -505,6 +505,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -526,6 +527,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
@@ -757,21 +759,22 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" possible
      */
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
-        if($data instanceof Element\ElementInterface) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if ($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),
                 'type' => Element\Service::getElementType($data)
             ];
         }
 
-        if(!isset($data['id'], $data['type']))
-        {
+        if (!isset($data['id'], $data['type'])) {
             throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
-        if($operator === '=') {
+        if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
+
             return;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');

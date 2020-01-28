@@ -60,6 +60,11 @@ class Task extends Model\AbstractModel
     public $active;
 
     /**
+     * @var null|int
+     */
+    protected $userId;
+
+    /**
      * @param int $id
      *
      * @return Task
@@ -246,6 +251,25 @@ class Task extends Model\AbstractModel
             $active = false;
         }
         $this->active = (bool) $active;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param int|null $userId
+     * @return $this
+     */
+    public function setUserId(?int $userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }

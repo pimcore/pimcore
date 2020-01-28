@@ -591,6 +591,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -624,6 +625,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params

@@ -648,14 +648,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         if (!$classDefinition->getFieldDefinition($realPropertyName) instanceof Model\DataObject\ClassDefinition\Data) {
             $localizedField = $classDefinition->getFieldDefinition('localizedfields');
-            if($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+            if ($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $fieldnames = [];
                 foreach ($localizedField->getFieldDefinitions() as $fd) {
                     $fieldnames[] = $fd->getName();
                 }
                 $realPropertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
                 $localizedFieldDefinition = $localizedField->getFieldDefinition($realPropertyName);
-                if($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
+                if ($localizedFieldDefinition instanceof Model\DataObject\ClassDefinition\Data) {
                     $realPropertyName = 'localizedfields';
                     \array_unshift($arguments, $localizedFieldDefinition->getName());
                 }
@@ -896,10 +896,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @param array $descriptor
+     *
      * @return array
      */
-    public function retrieveRelationData($descriptor) {
-
+    public function retrieveRelationData($descriptor)
+    {
         if ($this instanceof CacheRawRelationDataInterface) {
             $unfilteredData = $this->__getRawRelationData();
 
@@ -913,7 +914,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             }
 
-            $filterFn = static function($row) use ($descriptor, $likes) {
+            $filterFn = static function ($row) use ($descriptor, $likes) {
                 foreach ($descriptor as $column => $expectedValue) {
                     $actualValue = $row[$column];
                     if (isset($likes[$column])) {
@@ -921,10 +922,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         if (strpos($actualValue, $expectedValue) !== 0) {
                             return false;
                         }
-                    } else if ($actualValue != $expectedValue) {
+                    } elseif ($actualValue != $expectedValue) {
                         return false;
                     }
                 }
+
                 return true;
             };
 
@@ -936,19 +938,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $conditionParts = ['src_id = ' . $this->getId()];
             foreach ($descriptor as $key => $value) {
                 $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-                if ($lastChar === "%") {
-                    $conditionParts[] = $key . " LIKE " . $db->quote($value);
+                if ($lastChar === '%') {
+                    $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
                 } else {
-                    $conditionParts[] = $key . " = " . $db->quote($value);
+                    $conditionParts[] = $key . ' = ' . $db->quote($value);
                 }
             }
 
-            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ' , $conditionParts);
+            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ', $conditionParts);
             $result = $db->fetchAll($query);
+
             return $result;
         }
     }
-
-
-
 }

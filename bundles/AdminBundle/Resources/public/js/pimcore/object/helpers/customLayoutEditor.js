@@ -222,7 +222,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             triggerAction: "all",
             selectOnFocus: true,
             forceSelection: true,
-            editable: false,
             store: this.layoutComboStore,
             displayField: 'name',
             valueField: 'id' ,
