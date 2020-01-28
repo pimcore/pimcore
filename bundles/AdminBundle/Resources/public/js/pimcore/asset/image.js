@@ -123,6 +123,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getDisplayPanel: function () {
 
         if (!this.displayPanel) {
+            let detectImageFeaturesHidden = true;
+            if(this.isAllowed('publish')) {
+                if(this.data['customSettings'] && this.data['customSettings']['disableImageFeatureAutoDetection'] === true) {
+                    detectImageFeaturesHidden = false;
+                }
+            }
+
             var details = [{
                 title: t("tools"),
                 bodyStyle: "padding: 10px;",
@@ -138,7 +145,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }, {
                     xtype: "button",
                     id: 'toggle_image_features_' + this.id,
-                    text: t("toggle_image_features"),
+                    text: t("toggle_image_features_visibility"),
                     iconCls: "pimcore_icon_image_features",
                     width: "100%",
                     textAlign: "left",
@@ -153,18 +160,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }, {
                     xtype: "button",
                     id: 'set_image_features_' + this.id,
-                    text: t("set_image_features"),
+                    text: t("detect_image_features"),
                     iconCls: "pimcore_icon_image_region",
                     width: "100%",
                     textAlign: "left",
-                    hidden: !(this.data['customSettings'] && this.data['customSettings']['disableImageFeatureAutoDetection'] === true),
+                    hidden: detectImageFeaturesHidden,
                     style: "margin-top: 5px",
-                    handler: function () {
-                        this.getImageFeature();
-                        Ext.getCmp('set_image_features_' + this.id).hide();
-                        Ext.getCmp('toggle_image_features_' + this.id).show();
-                        Ext.getCmp('remove_image_features_' + this.id).show();
-                    }.bind(this)
+                    handler: this.detectImageFeatures.bind(this)
                 }, {
                     xtype: "button",
                     id: 'remove_image_features_' + this.id,
@@ -174,16 +176,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     textAlign: "left",
                     hidden: !(this.data['customSettings'] && this.data['customSettings']['faceCoordinates']),
                     style: "margin-top: 5px",
-                    handler: function () {
-                        var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
-                        features.forEach(function (feature) {
-                            Ext.get(feature).remove();
-                        });
-                        this.imageFeature = false;
-                        Ext.getCmp('set_image_features_' + this.id).show();
-                        Ext.getCmp('toggle_image_features_' + this.id).hide();
-                        Ext.getCmp('remove_image_features_' + this.id).hide();
-                    }.bind(this)
+                    handler: this.deleteImageFeatures.bind(this)
                 }, {
                     xtype: "container",
                     html: "<hr>"
@@ -490,32 +483,32 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
     },
 
-    getImageFeature: function () {
+    detectImageFeatures: function () {
         Ext.Ajax.request({
-            url: "/admin/asset/get-image-feature",
+            url: "/admin/asset/detect-image-features",
             params: {
                 id: this.id,
             },
             success: function (response) {
-                try {
-                    var rdata = Ext.decode(response.responseText);
-                    if (rdata && rdata.success) {
-                        if(rdata.data.imageFeatures && rdata.data.imageFeatures.faceCoordinates) {
-                            this.data['customSettings']['faceCoordinates'] = rdata.data.imageFeatures.faceCoordinates;
-                            this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                                this.addImageFeature(coord);
-                            }.bind(this));
-                        }
-                    }
-                } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
-                }
+                this.reload();
+            }.bind(this)
+        });
+    },
+
+    deleteImageFeatures: function () {
+        Ext.Ajax.request({
+            url: "/admin/asset/delete-image-features",
+            params: {
+                id: this.id,
+            },
+            success: function (response) {
+                this.reload();
             }.bind(this)
         });
     },
 
     addImageFeature: function (coords) {
-        if(this["imageFeature"] || empty(coords)) {
+        if(empty(coords)) {
             return;
         }
 
@@ -525,8 +518,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         imageFeature.setLeft(coords['x'] + "%");
         imageFeature.setWidth(coords['width'] + "%");
         imageFeature.setHeight(coords['height'] + "%");
-
-        this.imageFeature = imageFeature;
     },
 
     addFocalPoint: function (positionX, positionY) {
@@ -567,7 +558,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
     getSaveData : function ($super, only) {
         var parameters = $super(only);
-        var imageData = {};
 
         if(this["marker"]) {
 
@@ -579,20 +569,12 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             var x = round(left * 100 / boundingBox.width, 8);
             var y = round(top  * 100 / boundingBox.height, 8);
 
-            imageData.focalPoint = {
-                "x": x,
-                "y": y
-            };
-        } else {
-            imageData.focalPoint = false;
-        }
-
-        if('undefined' !== typeof this.imageFeature) {
-            imageData.imageFeature = (this.imageFeature !== false);
-        }
-
-        if(Object.keys(imageData).length > 0) {
-            parameters["image"] = Ext.encode(imageData);
+            parameters["image"] = Ext.encode({
+                "focalPoint": {
+                    "x": x,
+                    "y": y
+                }
+            });
         }
 
         return parameters;

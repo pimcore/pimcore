@@ -923,28 +923,16 @@ class AssetController extends ElementControllerBase implements EventedController
                 if ($asset instanceof Asset\Image) {
                     if ($request->get('image')) {
                         $imageData = $this->decodeJson($request->get('image'));
-                        // set or wipe focalPoint data
                         if (isset($imageData['focalPoint'])) {
-                            if ($imageData['focalPoint'] === false) {
-                                $asset->removeCustomSetting('focalPointX');
-                                $asset->removeCustomSetting('focalPointY');
-                                $asset->setCustomSetting('disableFocalPointDetection', true);
-                            } else {
-                                $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
-                                $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
-                                $asset->removeCustomSetting('disableFocalPointDetection');
-                            }
+                            $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                            $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                            $asset->removeCustomSetting('disableFocalPointDetection');
                         }
-
-                        // set or wipe imageFeature data
-                        if (isset($imageData['imageFeature'])) {
-                            if ($imageData['imageFeature'] === false) {
-                                $asset->removeCustomSetting('faceCoordinates');
-                                $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
-                            } else {
-                                $asset->removeCustomSetting('disableImageFeatureAutoDetection');
-                            }
-                        }
+                    } else {
+                        // wipe all data
+                        $asset->removeCustomSetting('focalPointX');
+                        $asset->removeCustomSetting('focalPointY');
+                        $asset->setCustomSetting('disableFocalPointDetection', true);
                     }
                 }
 
@@ -2371,28 +2359,48 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-image-feature", methods={"GET"})
+     * @Route("/detect-image-features", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getImageFeatureAction(Request $request)
+    public function detectImageFeaturesAction(Request $request)
     {
-        $data = [];
         $asset = Asset::getById((int)$request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        $asset->detectFaces();
-
-        if ($asset->getCustomSetting("faceCoordinates")) {
-            $data["imageFeatures"]["faceCoordinates"] = $asset->getCustomSetting("faceCoordinates");
+        if ($asset->isAllowed('publish')) {
+            $asset->detectFaces();
+            $asset->removeCustomSetting('disableImageFeatureAutoDetection');
+            $asset->save();
+            return $this->adminJson(['success' => true]);
         }
 
-        if ($asset->isAllowed('view')) {
-            return $this->adminJson(['success' => true, 'data' => $data]);
+        throw $this->createAccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/delete-image-features", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteImageFeaturesAction(Request $request)
+    {
+        $asset = Asset::getById((int)$request->get('id'));
+        if (!$asset instanceof Asset) {
+            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        if ($asset->isAllowed('publish')) {
+            $asset->removeCustomSetting('faceCoordinates');
+            $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
+            $asset->save();
+            return $this->adminJson(['success' => true]);
         }
 
         throw $this->createAccessDeniedHttpException();
