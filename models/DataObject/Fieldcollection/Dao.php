@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save(DataObject\Concrete $object, $params = [])
     {
-        return $this->delete($object, true, true);
+        return $this->delete($object, true);
     }
 
     /**
