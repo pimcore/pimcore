@@ -44,6 +44,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
      */
     public $action;
 
+    /** @var null|int[] */
+    public $availableSites;
+
     /**
      * Type for the generated phpdoc
      *
@@ -554,5 +557,33 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
             $params
         );
     }
+
+    /**
+     * @return int[]|null
+     */
+    public function getAvailableSites(): ?array
+    {
+        return $this->availableSites;
+    }
+
+    /**
+     * @param int[]|null $availableSites
+     * @return $this
+     */
+    public function setAvailableSites(?array $availableSites)
+    {
+        $this->availableSites = $availableSites;
+        return $this;
+    }
+
+    /**
+     * @param Model\DataObject\ClassDefinition $classDefinition
+     */
+    public function classSaved(Model\DataObject\ClassDefinition $classDefinition) {
+        Logger::debug("class saved");
+
+    }
+
+
 
 }

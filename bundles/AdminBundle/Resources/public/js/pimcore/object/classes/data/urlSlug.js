@@ -63,6 +63,24 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
     },
 
     getSpecificPanelItems: function (datax) {
+
+        var sitesStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: '/admin/settings/get-available-sites',
+                extraParams: { hideMainSite: 1 }
+            },
+            fields: ['id', 'domain']
+        });
+
+
+        var availableSites = null;
+        if (datax.availableSites) {
+            availableSites = datax.availableSites.join(",");
+        }
+
         var specificItems = [
             {
                 xtype: "textfield",
@@ -75,7 +93,17 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 xtype: 'container',
                 html: t('url_slug_datatype_info'),
                 style: 'margin-bottom:10px'
-            }
+            },
+            new Ext.ux.form.MultiSelect({
+                fieldLabel: t("available_sites"),
+                name: "availableSites",
+                value: availableSites,
+                displayField: "domain",
+                valueField: "id",
+                store: sitesStore,
+                width: 600,
+                disabled: this.isInCustomLayoutEditor()
+            })
         ];
 
         return specificItems;
