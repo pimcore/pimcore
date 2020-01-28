@@ -115,6 +115,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+
         return null;
     }
 
@@ -459,6 +460,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return Carbon|null
      */
     protected function doGetDefaultValue($object, $context = [])

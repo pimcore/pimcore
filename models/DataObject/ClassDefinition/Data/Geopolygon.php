@@ -225,6 +225,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param DataObject\Concrete $object
      * @param mixed $params
      *

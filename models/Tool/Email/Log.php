@@ -372,6 +372,7 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsHtml()) {
             return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
         }
+
         return false;
     }
 
@@ -385,6 +386,7 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsText()) {
             return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
         }
+
         return false;
     }
 

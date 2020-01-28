@@ -181,6 +181,7 @@ class Dao extends Model\Element\Dao
 
             return $objects;
         }
+
         return null;
     }
 

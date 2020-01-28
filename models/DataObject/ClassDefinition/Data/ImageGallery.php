@@ -379,6 +379,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
         }
+
         return null;
     }
 

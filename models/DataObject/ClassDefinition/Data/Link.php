@@ -503,6 +503,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 return $data->direct;
             }
         }
+
         return null;
     }
 

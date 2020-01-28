@@ -346,6 +346,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return null|int
      */
     protected function doGetDefaultValue($object, $context = [])

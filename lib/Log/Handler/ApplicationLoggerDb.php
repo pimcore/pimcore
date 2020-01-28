@@ -29,6 +29,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * ApplicationLoggerDb constructor.
+     *
      * @param Db\ConnectionInterface $db
      * @param string $level
      * @param bool $bubble

@@ -696,13 +696,13 @@ class Service extends Model\AbstractModel
 
                     if ($originalElement) {
                         if ($data instanceof Asset) {
-                            /** @var Asset $originalElement  */
+                            /** @var Asset $originalElement */
                             $data->setFilename($originalElement->getFilename());
                         } elseif ($data instanceof Document) {
-                            /** @var Document $originalElement  */
+                            /** @var Document $originalElement */
                             $data->setKey($originalElement->getKey());
                         } elseif ($data instanceof DataObject\AbstractObject) {
-                            /** @var AbstractObject $originalElement  */
+                            /** @var AbstractObject $originalElement */
                             $data->setKey($originalElement->getKey());
                         }
 

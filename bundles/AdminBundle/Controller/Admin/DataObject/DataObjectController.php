@@ -1265,7 +1265,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = $this->assignPropertiesFromEditmode($request, $object);
         $this->applySchedulerDataToElement($request, $object);
 
-
         if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);
         }

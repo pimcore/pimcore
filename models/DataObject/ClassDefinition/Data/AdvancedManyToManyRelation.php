@@ -339,6 +339,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return $return;
         }
+
         return null;
     }
 
@@ -456,6 +457,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return implode('<br />', $items);
         }
+
         return null;
     }
 

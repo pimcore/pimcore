@@ -532,6 +532,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return null|string
      */
     protected function doGetDefaultValue($object, $context = [])

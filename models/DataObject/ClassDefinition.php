@@ -236,6 +236,7 @@ class ClassDefinition extends Model\AbstractModel
             }
         } catch (\Exception $e) {
         }
+
         return null;
     }
 

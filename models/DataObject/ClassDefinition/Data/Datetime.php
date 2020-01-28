@@ -113,6 +113,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
         return null;
     }
 
@@ -460,6 +461,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return Carbon|null
      */
     protected function doGetDefaultValue($object, $context = [])

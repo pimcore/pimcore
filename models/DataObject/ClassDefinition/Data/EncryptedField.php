@@ -182,6 +182,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
                 }
             }
         }
+
         return null;
     }
 

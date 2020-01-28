@@ -246,6 +246,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param DataObject\Concrete $object
      * @param mixed $params
      *

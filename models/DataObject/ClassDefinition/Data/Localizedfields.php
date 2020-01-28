@@ -129,7 +129,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     public function getDataForEditmode($localizedField, $object = null, $params = [])
     {
-
         $fieldData = [];
         $metaData = [];
 
