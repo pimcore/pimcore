@@ -24,6 +24,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data\Dao;
 
+/**
+ * @method Dao getDao()
+ */
 class Data extends \Pimcore\Model\AbstractModel
 {
     /**
@@ -110,20 +113,6 @@ class Data extends \Pimcore\Model\AbstractModel
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
         }
-    }
-
-    /**
-     * @return \Pimcore\Model\Dao\AbstractDao
-     *
-     * @throws \Exception
-     */
-    public function getDao()
-    {
-        if (!$this->dao) {
-            $this->initDao('\\Pimcore\\Model\\Search\\Backend\\Data');
-        }
-
-        return $this->dao;
     }
 
     /**
@@ -528,18 +517,14 @@ class Data extends \Pimcore\Model\AbstractModel
     public static function getForElement($element)
     {
         $data = new self();
-        /** @var Dao $dao */
-        $dao = $data->getDao();
-        $dao->getForElement($element);
+        $data->getDao()->getForElement($element);
 
         return $data;
     }
 
     public function delete()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-        $dao->delete();
+        $this->getDao()->delete();
     }
 
     /**
@@ -553,9 +538,7 @@ class Data extends \Pimcore\Model\AbstractModel
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
-                    /** @var Dao $dao */
-                    $dao = $this->getDao();
-                    $dao->save();
+                    $this->getDao()->save();
                     // successfully completed, so we cancel the loop here -> no restart required
                     break;
                 } catch (\Exception $e) {
