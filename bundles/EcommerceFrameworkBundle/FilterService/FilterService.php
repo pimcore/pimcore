@@ -80,10 +80,7 @@ class FilterService
 
         if ($filterObject->getFilters()) {
             foreach ($filterObject->getFilters() as $filter) {
-
-                /**
-                 * @var $filter AbstractFilterDefinitionType
-                 */
+                /** @var AbstractFilterDefinitionType $filter */
                 $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
             }
             //do this in a separate loop in order to make sure that all filters are set when group by values are prepared
@@ -95,10 +92,7 @@ class FilterService
 
         if ($filterObject->getConditions()) {
             foreach ($filterObject->getConditions() as $condition) {
-
-                /**
-                 * @var $condition AbstractFilterDefinitionType
-                 */
+                /** @var AbstractFilterDefinitionType $condition */
                 $this->addCondition($condition, $productList, $currentFilter, [], true);
             }
         }
@@ -110,9 +104,8 @@ class FilterService
      * Returns filter frontend script for given filter type (delegates )
      *
      * @param AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
-     * @param ProductListInterface $productList                      current product list (with all set filters) to get
-     *                                                       available options and counts
-     * @param $currentFilter                                 array current filter for this filter definition
+     * @param ProductListInterface $productList current product list (with all set filters) to get available options and counts
+     * @param array $currentFilter current filter for this filter definition
      *
      * @return string view snippet
      */
@@ -128,8 +121,8 @@ class FilterService
      *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
-     * @param $currentFilter
-     * @param $params
+     * @param array $currentFilter
+     * @param array $params
      * @param bool $isPrecondition
      *
      * @return array updated currentFilter array

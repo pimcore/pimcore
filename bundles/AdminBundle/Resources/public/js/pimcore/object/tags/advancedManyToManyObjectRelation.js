@@ -19,6 +19,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -395,7 +396,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ]
+            ],
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
+            }
         });
 
         if (!readOnly) {

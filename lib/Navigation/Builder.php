@@ -53,9 +53,9 @@ class Builder
 
     /**
      * @param Document $activeDocument
-     * @param null $navigationRootDocument
-     * @param null $htmlMenuIdPrefix
-     * @param null $pageCallback
+     * @param Document|null $navigationRootDocument
+     * @param string|null $htmlMenuIdPrefix
+     * @param \Closure|null $pageCallback
      * @param bool|string $cache
      *
      * @return mixed|\Pimcore\Navigation\Container
@@ -206,7 +206,7 @@ class Builder
     }
 
     /**
-     * @param $pageClass
+     * @param string $pageClass
      *
      * @return $this
      */

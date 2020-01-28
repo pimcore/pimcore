@@ -22,11 +22,14 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 abstract class Data
 {
     /**
-     * @param $object
-     * @param null $options
+     * @param mixed $object
+     * @param array|null $options
      *
      * @throws \Exception
      */
@@ -118,9 +121,9 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param mixed $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -137,7 +140,7 @@ abstract class Data
             }
         }
 
-        if ($object instanceof Element\ElementInterface) {
+        if ($object instanceof Element\AbstractElement) {
             // Classes do not have properties
             $object->setProperties(null);
         }

@@ -105,7 +105,7 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
+        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'cacheRawRelationData', 'showVariants', 'parentClass',
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
@@ -242,8 +242,9 @@ class Service
     /**
      * @param array $array
      * @param bool $throwException
+     * @param bool $insideLocalizedField
      *
-     * @return bool
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -259,14 +260,14 @@ class Service
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows childs
-
                     $item->setValues($array, ['childs']);
+                    $childs = $array['childs'] ?? [];
 
-                    if (is_array($array) && is_array($array['childs']) && isset($array['childs']['datatype']) && $array['childs']['datatype']) {
-                        $childO = self::generateLayoutTreeFromArray($array['childs'], $throwException, $insideLocalizedField);
+                    if (!empty($childs['datatype'])) {
+                        $childO = self::generateLayoutTreeFromArray($childs, $throwException, $insideLocalizedField);
                         $item->addChild($childO);
-                    } elseif (is_array($array['childs']) && count($array['childs']) > 0) {
-                        foreach ($array['childs'] as $child) {
+                    } elseif (is_array($childs) && count($childs) > 0) {
+                        foreach ($childs as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);
@@ -329,12 +330,12 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
+     * @param array $tableDefinitions
+     * @param string $table
+     * @param string $colName
+     * @param string $type
+     * @param string $default
+     * @param string $null
      *
      * @return bool
      */

@@ -33,6 +33,7 @@ class Service
     {
         if ($doc instanceof Document\Hardlink) {
             if ($sourceDoc = $doc->getSourceDocument()) {
+                /** @var Document\Hardlink\Wrapper\Hardlink $destDoc */
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
                 $destDoc->setPath($doc->getRealPath());
@@ -113,9 +114,9 @@ class Service
 
     /**
      * @param Document\Hardlink $hardlink
-     * @param $path
+     * @param string $path
      *
-     * @return Document
+     * @return Document|null
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {
@@ -154,5 +155,7 @@ class Service
                 }
             }
         }
+
+        return null;
     }
 }

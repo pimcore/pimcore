@@ -372,13 +372,15 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
         }
+
+        return null;
     }
 
     /**
@@ -403,7 +405,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|DataObject\ClassDefinition\Data
@@ -476,6 +478,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -505,10 +509,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|DataObject\Data\ImageGallery
      *

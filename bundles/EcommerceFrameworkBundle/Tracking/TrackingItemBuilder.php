@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\ElementInterface;
 
 /**
  * Takes an object (e.g. a product, an order) and transforms it into a
@@ -34,11 +33,12 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product impression object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
+     * @param string $list
      *
      * @return ProductImpression
      */
-    public function buildProductImpressionItem(ProductInterface $product)
+    public function buildProductImpressionItem(ProductInterface $product, string $list = 'default')
     {
         $item = new ProductImpression();
         $this->initProductAttributes($item, $product);
@@ -46,7 +46,9 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
         $item
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
-            ->setCategories($this->getProductCategories($product));
+            ->setCategories($this->getProductCategories($product))
+            ->setList($list)
+        ;
 
         // set price if product is ready to check out
         if ($product instanceof CheckoutableInterface) {
@@ -59,7 +61,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product view object
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      *
      * @return ProductAction
      */
@@ -92,7 +94,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product action item
      *
-     * @param ProductInterface|ElementInterface $product
+     * @param ProductInterface $product
      * @param int $quantity
      *
      * @return ProductAction

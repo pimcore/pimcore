@@ -330,7 +330,7 @@ EOT;
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
     public function clearThumbnail($name)
     {
@@ -343,9 +343,9 @@ EOT;
     /**
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
      *
-     * @param mixed $config
+     * @param string|array|Image\Thumbnail\Config $config
      *
-     * @return Image\Thumbnail|bool
+     * @return Image\Thumbnail\Config
      */
     public function getThumbnailConfig($config)
     {
@@ -357,7 +357,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
      *
-     * @param null $config
+     * @param string|array|Image\Thumbnail\Config $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
@@ -414,7 +414,7 @@ EOT;
     }
 
     /**
-     * @param null $path
+     * @param string|null $path
      * @param bool $force
      *
      * @return array

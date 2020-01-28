@@ -58,7 +58,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -89,5 +89,10 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function getRestrictTo()
     {
         return $this->restrictTo;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

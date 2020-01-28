@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 class TargetGroup implements ConditionInterface
 {
     /**
-     * @var int[]
+     * @var int
      */
     protected $targetGroupId;
 
@@ -107,7 +107,7 @@ class TargetGroup implements ConditionInterface
     /**
      * @return int
      */
-    public function getTargetGroupId(): array
+    public function getTargetGroupId(): int
     {
         return $this->targetGroupId;
     }

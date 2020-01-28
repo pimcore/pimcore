@@ -75,7 +75,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -87,7 +87,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getType()
     {
@@ -105,7 +105,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $doDelete
+     * @param bool $doDelete
      *
      * @return $this
      */
@@ -134,7 +134,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      */
     public function delete($object)
     {
@@ -160,7 +160,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      *
@@ -237,7 +237,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */

@@ -34,7 +34,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.getLayoutToolbar(),
                 this.getTabPanel()
             ],
-            iconCls: "pimcore_icon_" + this.data.type,
+            iconCls: this.getIconClass(),
             document: this
         });
 
@@ -111,7 +111,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.save.bind(this),
+                handler: this.save.bind(this, null),
                 menu: [
                     {
                         text: t('save_close'),
@@ -142,7 +142,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                     },{
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this),
+                        handler: this.save.bind(this, null),
                         hidden: !this.isAllowed("save") || !this.data.published
                     },
                     {

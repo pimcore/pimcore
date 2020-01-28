@@ -231,8 +231,8 @@ class SettingsController extends AdminController
         $subType = $request->get('subType');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
+        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
-            /** @var $item Metadata\Predefined */
             $item->expand();
             $result[] = $item;
         }
@@ -364,11 +364,11 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['cache']['excludePatterns']);
+        if (!empty($valueArray['full_page_cache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['full_page_cache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['cache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['full_page_cache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
@@ -445,7 +445,7 @@ class SettingsController extends AdminController
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        $cacheExcludePatterns = $values['cache.excludePatterns'];
+        $cacheExcludePatterns = $values['full_page_cache.excludePatterns'];
         if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
@@ -501,11 +501,11 @@ class SettingsController extends AdminController
                     'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
-            'cache' => [
-                'enabled' => $values['cache.enabled'],
-                'lifetime' => $values['cache.lifetime'],
+            'full_page_cache' => [
+                'enabled' => $values['full_page_cache.enabled'],
+                'lifetime' => $values['full_page_cache.lifetime'],
                 'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['cache.excludeCookie']
+                'exclude_cookie' => $values['full_page_cache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']
@@ -595,15 +595,15 @@ class SettingsController extends AdminController
         $this->forward(self::class . '::clearCacheAction', [
             'only_symfony_cache' => false,
             'only_pimcore_cache' => false,
-            'env' => array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()])
+            'env' => [\Pimcore::getKernel()->getEnvironment()]
         ]);
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
-     * @param $source
-     * @param $definitions
+     * @param string $source
+     * @param array $definitions
      * @param array $fallbacks
      *
      * @throws \Exception
@@ -681,7 +681,7 @@ class SettingsController extends AdminController
                 $parts = explode(' ', substr($line, 2));
                 $key = trim($parts[0]);
                 if ($key) {
-                    $value = trim($parts[1]);
+                    $value = trim($parts[1] ?? '');
                     $optionArray[$key] = $value;
                 }
             }
@@ -923,7 +923,7 @@ class SettingsController extends AdminController
             $list->load();
 
             $routes = [];
-            /** @var $route Staticroute */
+            /** @var Staticroute $route */
             foreach ($list->getRoutes() as $route) {
                 if (is_array($route->getSiteId())) {
                     $route = json_encode($route);
@@ -958,6 +958,10 @@ class SettingsController extends AdminController
                 ];
             }
         }
+
+        usort($langs, function ($a, $b) {
+            return strcmp($a['display'], $b['display']);
+        });
 
         return $this->adminJson($langs);
     }
@@ -1176,7 +1180,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (empty($groups[$item->getGroup()])) {
@@ -1377,7 +1381,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
@@ -1903,8 +1907,8 @@ class SettingsController extends AdminController
      * delete views for localized fields when languages are removed to
      * prevent mysql errors
      *
-     * @param $language
-     * @param $dbName
+     * @param string $language
+     * @param string $dbName
      */
     protected function deleteViews($language, $dbName)
     {

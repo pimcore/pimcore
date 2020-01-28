@@ -84,19 +84,7 @@ class Service extends Model\Element\Service
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
-
-        // set locale based on document
-        $localeService = $container->get('pimcore.locale');
-        $documentLocale = $document->getProperty('language');
-        $tempLocale = $localeService->getLocale();
-        if ($documentLocale) {
-            $localeService->setLocale($documentLocale);
-        }
-
         $content = $renderer->render($document, $attributes, $query, $options);
-
-        // restore original locale
-        $localeService->setLocale($tempLocale);
 
         return $content;
     }
@@ -104,9 +92,11 @@ class Service extends Model\Element\Service
     /**
      * Save document and all child documents
      *
-     * @param     $document
+     * @param Document $document
      * @param int $collectGarbageAfterIteration
      * @param int $saved
+     *
+     * @throws \Exception
      */
     public static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
     {
@@ -136,7 +126,9 @@ class Service extends Model\Element\Service
      * @param  Document $target
      * @param  Document $source
      *
-     * @return Document copied document
+     * @return Document|null copied document
+     *
+     * @throws \Exception
      */
     public function copyRecursive($target, $source)
     {
@@ -146,7 +138,7 @@ class Service extends Model\Element\Service
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         if (method_exists($source, 'getElements')) {
@@ -155,6 +147,7 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        /** @var Document $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
@@ -256,8 +249,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Document $target
+     * @param Document $source
      *
      * @return mixed
      *
@@ -272,6 +265,7 @@ class Service extends Model\Element\Service
         }
 
         if ($source instanceof Document\PageSnippet) {
+            /** @var PageSnippet $target */
             $target->setElements($source->getElements());
 
             $target->setTemplate($source->getTemplate());
@@ -279,10 +273,12 @@ class Service extends Model\Element\Service
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {
+                /** @var Page $target */
                 $target->setTitle($source->getTitle());
                 $target->setDescription($source->getDescription());
             }
         } elseif ($source instanceof Document\Link) {
+            /** @var Link $target */
             $target->setInternalType($source->getInternalType());
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
@@ -320,7 +316,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $doc
+     * @param Document $doc
      *
      * @return mixed
      */
@@ -342,8 +338,8 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $path
-     * @param $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -366,7 +362,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return bool
      */
@@ -386,8 +382,8 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $document
-     * @param $rewriteConfig
+     * @param Document $document
+     * @param array $rewriteConfig
      * @param array $params
      *
      * @return Document
@@ -480,10 +476,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $item
+     * @param Document $item
      * @param int $nr
      *
-     * @return mixed|string
+     * @return string
      *
      * @throws \Exception
      */
@@ -595,7 +591,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param Request $request
      * @param string $hostUrl
      *

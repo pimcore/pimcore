@@ -78,7 +78,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param  $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */
@@ -208,18 +208,17 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function load($object, $params = [])
     {
-        $db = Db::get();
         $data = null;
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
+                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
             }
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
@@ -228,23 +227,14 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                     $index = $context['index'] ?? null;
                     $filter = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/%';
                 } else {
-                    $filter = '/' . $context['containerType'] .'~' . $fieldname . '/%';
+                    $filter = '/' . $context['containerType'] . '~' . $fieldname . '/%';
                 }
-                $relations = $db->fetchAll(
-                    'SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
-                    [$object->getObject()->getId(), $this->getName(), $params['language'], $filter]
-                );
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'ownername' => $filter, 'position' => $params['language']]);
             } else {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params['language']]);
+                $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'localizedfield', 'position' => $params['language']]);
             }
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
-
-            // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
-            if (count($relations) < 1) {
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
-            }
-            // HACK END
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'objectbrick', 'ownername' => $object->getFieldname(), 'position' => $object->getType()]);
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
@@ -362,7 +352,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
 
         $map = [];
 
-        /** @var $item Element\ElementInterface */
+        /** @var Element\ElementInterface $item */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
             $map[$key] = 1;
@@ -375,6 +365,37 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                 if (!isset($map[$key])) {
                     $newData[] = $item;
                 }
+            }
+        }
+
+        return $newData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeData($existingData, $removeData)
+    {
+        $newData = [];
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $removeMap = [];
+
+        /** @var Element\ElementInterface $item */
+        foreach ($removeData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            $removeMap[$key] = 1;
+        }
+
+        $newData = [];
+        /** @var Element\ElementInterface $item */
+        foreach ($existingData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+
+            if (!isset($removeMap[$key])) {
+                $newData[] = $item;
             }
         }
 
@@ -414,9 +435,9 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $values2 = array_values($array2);
 
         for ($i = 0; $i < $count1; $i++) {
-            /** @var $el1 Element\ElementInterface */
+            /** @var Element\ElementInterface $el1 */
             $el1 = $values1[$i];
-            /** @var $el2 Element\ElementInterface */
+            /** @var Element\ElementInterface $el2 */
             $el2 = $values2[$i];
 
             if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
@@ -436,14 +457,14 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Fieldcollection\Data\AbstractData $item
      *
      * @throws \Exception
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $container DataObject\Fieldcollection */
+            /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -455,14 +476,14 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param DataObject\Objectbrick\Data\AbstractData $object
+     * @param DataObject\Objectbrick\Data\AbstractData $item
      *
      * @throws \Exception
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $container DataObject\Objectbrick */
+            /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());

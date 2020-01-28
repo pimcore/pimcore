@@ -1,8 +1,41 @@
 # Upgrade Notes
 
+##6.4.3
+- It is now possible to configure `php:memory_limit` for `web2print:pdf-creation` command with following configuration:
+```yaml
+pimcore:
+  documents: 
+    web_to_print: 
+      pdf_creation_php_memory_limit: '2048M'
+```
+
+## 6.4.0
+- Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
+- Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`
+- The `DocumentRenderer::setEventDispatcher()` method has been removed. Pass event dispatcher to the constructor instead.
+- `RedirectHandler::setRequestHelper()` and `RedirectHandler::setSiteResolver()` methods have been removed. Pass instance of `Pimcore\Http\RequestHelper` & `Pimcore\Http\Request\Resolver\SiteResolver` to the constructor instead.
+- The `ContainerService::setEventDispatcher()` method has been removed and DocumentRenderer event listeners moved to`Pimcore\Bundle\CoreBundle\EventListener\FrontendDocumentRendererListener`
+- Ecommerce: max length of `cartId` is now `190` characters instead of `255`
+- MaxMind GeoIP database is **not** updated automatically anymore, please read the [instructions](../../18_Tools_and_Features/37_Targeting_and_Personalization/README.md) for setting up geo support for targeting.
+
+- System Settings - Full Page Cache configuration changed from
+    ```yaml
+      pimcore:
+        cache:
+          ...
+    ```
+    to 
+    ```yaml
+    pimcore:
+      full_page_cache:
+          ...
+    ```
+    in system.yml to avoid conflicts between output and data cache [#5369](https://github.com/pimcore/pimcore/issues/5369). If you are using custom config files then you have to migrate them manually. Also new config `pimcore:fullpage` is disabled by default, so you have to enable fullpage cache again in system settings.
+- Properties `$children`, `$hasChildren`, `$siblings`, `$hasSiblings` in `Pimcore\Model\Document` & `$o_children`, `$o_hasChildren`, `$o_siblings`, `$o_hasSiblings` in `Pimcore\Model\AbstractObject` uses array to cache result.
+
 ## 6.3.0
 - Asset Metadata: character `~` is not allowed anymore for (predefined/custom) metadata naming. All existing and new metadata name with '~' converts to '---'. This change is introduced to support Localized columns in asset grid [#5093](https://github.com/pimcore/pimcore/pull/5093)
-
+- Custom document editables now have to implement the method `isEmpty()` which is defined on `\Pimcore\Model\Document\Tag\TagInterface`
 - Grid helper functions are moved from `bundles/AdminBundle/Resources/public/js/pimcore/object/helpers/gridcolumnconfig.js(removed)` to `bundles/AdminBundle/Resources/public/js/pimcore/element/helpers/gridColumnConfig.js`
 
 #### Removed jQuery from Admin UI & E-Commerce Back Office

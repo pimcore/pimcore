@@ -68,8 +68,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {
@@ -85,7 +83,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $isUpdate
+     * @param bool|null $isUpdate
      *
      * @throws \Exception
      */
@@ -109,7 +107,7 @@ class Dao extends Model\Element\Dao
         $checkColumns = ['o_type', 'o_classId', 'o_className'];
         $existingData = $this->db->fetchRow('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && in_array($existingData[$column], ['variant', 'object'])) {
+            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && (isset($existingData[$column]) && in_array($existingData[$column], ['variant', 'object']))) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -183,6 +181,8 @@ class Dao extends Model\Element\Dao
 
             return $objects;
         }
+
+        return null;
     }
 
     /**
@@ -291,17 +291,18 @@ class Dao extends Model\Element\Dao
      * Quick test if there are children
      *
      * @param array $objectTypes
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $sql = 'SELECT 1 FROM objects WHERE o_parentId = ?';
 
-        if (DataObject\AbstractObject::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
         }
+
         $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
 
         $c = $this->db->fetchOne($sql, $this->model->getId());
@@ -313,12 +314,21 @@ class Dao extends Model\Element\Dao
      * Quick test if there are siblings
      *
      * @param array $objectTypes
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
+    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
-        $c = $this->db->fetchOne("SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ?';
+
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+            $sql .= ' AND o_published = 1';
+        }
+
+        $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
+        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }
@@ -352,9 +362,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
-     * @return mixed
+     * @return array
      */
     public function getTypeById($id)
     {
@@ -385,6 +395,9 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol('SELECT o_id from objects WHERE o_path LIKE ' . $this->db->quote($this->model->getRealFullPath() . '/%') . ' OR o_id = ' . $this->model->getId());
@@ -428,8 +441,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -468,11 +481,11 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      * @param bool $quote
      *
-     * @return mixed|null
+     * @return array|null
      */
     public function getPermissions($type, $user, $quote = true)
     {
@@ -534,6 +547,8 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
+
+        return null;
     }
 
     /**
@@ -567,7 +582,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $index
+     * @param int $index
      */
     public function saveIndex($index)
     {

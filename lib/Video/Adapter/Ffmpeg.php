@@ -71,10 +71,10 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $file
+     * @param string $file
      * @param array $options
      *
-     * @return $this|mixed
+     * @return $this
      */
     public function load($file, $options = [])
     {
@@ -91,7 +91,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return mixed|void
+     * @return bool
      *
      * @throws \Exception
      */
@@ -165,8 +165,8 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $file
-     * @param null $timeOffset
+     * @param string $file
+     * @param int|null $timeOffset
      */
     public function saveImage($file, $timeOffset = null)
     {
@@ -263,7 +263,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $processId
+     * @param string $processId
      *
      * @return $this
      */
@@ -291,8 +291,8 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param string $value
      */
     public function addArgument($key, $value)
     {
@@ -300,7 +300,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $videoBitrate
+     * @param int $videoBitrate
      *
      * @return $this
      */
@@ -320,7 +320,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $audioBitrate
+     * @param int $audioBitrate
      *
      * @return $this
      */
@@ -340,8 +340,8 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      */
     public function resize($width, $height)
     {
@@ -352,7 +352,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $width
+     * @param int $width
      */
     public function scaleByWidth($width)
     {
@@ -362,7 +362,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param $height
+     * @param int $height
      */
     public function scaleByHeight($height)
     {

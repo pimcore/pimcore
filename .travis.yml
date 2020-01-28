@@ -13,6 +13,12 @@ services:
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
   mariadb: '10.3'
+  artifacts:
+    s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
+    debug: true
+    paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
+#      - app/config
+      - var/logs
   hosts:
     - pimcore-test.dev
 
@@ -40,6 +46,15 @@ matrix:
       sudo: required
       php: 7.2
 
+    # Symfony 4.* all tests
+    - name: "All Tests - PHP 7.2 Symfony 4 - Relation Cache"
+      os: linux
+      sudo: required
+      php: 7.2
+      env:
+        - PIMCORE_TEST_SUITE=cache
+        - PIMCORE_TEST_GROUP=cache.core.redis
+        - PIMCORE_CACHE_RAW_RELATION_DATA=1
 
     - name: "All Tests - PHP 7.3 Symfony 4"
       os: linux
@@ -49,7 +64,16 @@ matrix:
     - name: "All Tests - PHP 7.4 Symfony 4"
       os: linux
       sudo: required
-      php: "7.4snapshot"
+      php: 7.4
+
+    - name: "All Tests - PHP 7.4 Symfony 4 - Relation Cache"
+      os: linux
+      sudo: required
+      php: 7.4
+      env:
+        - PIMCORE_TEST_SUITE=cache
+        - PIMCORE_TEST_GROUP=cache.core.redis
+        - PIMCORE_CACHE_RAW_RELATION_DATA=1
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 Symfony 3.4"
@@ -69,14 +93,6 @@ matrix:
         - SYMFONY_VERSION="^3.4"
         - PIMCORE_TEST_SUITE=rest
         - PIMCORE_TEST_ENV=http
-
-    - name: "Redis Cache Tests - PHP 7.2 Symfony 4"
-      os: linux
-      php: 7.2
-      env:
-        - PIMCORE_TEST_SUITE=cache
-        - PIMCORE_TEST_GROUP=cache.core.redis
-        - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
 
     # Test Stan - see https://github.com/phpstan/phpstan
     - name: "PHPStan Tests - PHP 7.2 Symfony 3.4"

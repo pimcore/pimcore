@@ -130,7 +130,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param string $importValue
-     * @param null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return null|InputQuantityValueDataObject
@@ -149,10 +149,12 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|InputQuantityValueDataObject
      *

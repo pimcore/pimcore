@@ -159,7 +159,7 @@ class EmailController extends AdminController
 
     /**
      * @param array $data
-     * @param $fullEntry
+     * @param array $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
@@ -503,7 +503,7 @@ class EmailController extends AdminController
     /**
      * @param array $params
      *
-     * @return $data
+     * @return array
      */
     protected function parseLoggingParamObject($params)
     {

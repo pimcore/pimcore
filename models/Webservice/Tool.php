@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Tool
 {
     /**
@@ -65,7 +68,7 @@ class Tool
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -93,5 +96,7 @@ class Tool
         } else {
             return $data;
         }
+
+        return null;
     }
 }

@@ -337,7 +337,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data\Link
@@ -353,7 +353,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -370,6 +370,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * converts data to be exposed via webservices
+     *
+     * @deprecated
      *
      * @param string $object
      * @param mixed $params
@@ -395,10 +397,12 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -406,7 +410,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        if ($value instanceof \stdclass) {
+        if ($value instanceof \stdClass) {
             $value = (array) $value;
         }
 
@@ -471,7 +475,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -488,7 +492,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
@@ -499,6 +503,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 return $data->direct;
             }
         }
+
+        return null;
     }
 
     /**

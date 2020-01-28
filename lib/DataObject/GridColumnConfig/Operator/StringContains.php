@@ -80,9 +80,9 @@ class StringContains extends AbstractOperator
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
-     * @return mixed
+     * @return bool
      */
     public function contains($value)
     {

@@ -40,7 +40,7 @@ class Config
     private static $environmentConfig;
 
     /**
-     * @param $name - name of configuration file. slash is allowed for subdirectories.
+     * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return mixed
      */
@@ -120,7 +120,7 @@ class Config
     /**
      * @internal
      *
-     * @param null $languange
+     * @param string|null $languange
      *
      * @return string
      */
@@ -175,7 +175,7 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var $item WebsiteSetting */
+                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
@@ -237,7 +237,7 @@ class Config
      * @internal
      *
      * @param Config\Config $config
-     * @param null $language
+     * @param string|null $language
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
@@ -280,7 +280,7 @@ class Config
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return array|Config\Config
      */
@@ -340,11 +340,11 @@ class Config
                         'browserapikey' => self::getArrayValue(['services', 'google', 'browser_api_key'], $config)
                     ]
                 ],
-                'cache' => [
-                    'enabled' => self::getArrayValue(['cache', 'enabled'], $config),
-                    'lifetime' => self::getArrayValue(['cache', 'lifetime'], $config),
-                    'excludePatterns' => self::getArrayValue(['cache', 'exclude_patterns'], $config),
-                    'excludeCookie' => self::getArrayValue(['cache', 'exclude_cookie'], $config)
+                'full_page_cache' => [
+                    'enabled' => self::getArrayValue(['full_page_cache', 'enabled'], $config),
+                    'lifetime' => self::getArrayValue(['full_page_cache', 'lifetime'], $config),
+                    'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
+                    'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config)
                 ],
                 'webservice' => [
                     'enabled' => self::getArrayValue(['webservice', 'enabled'], $config)
@@ -709,7 +709,7 @@ class Config
         $config = self::getPerspectivesConfig()->toArray();
         $result = [];
 
-        if ($config[$currentConfigName]) {
+        if (isset($config[$currentConfigName])) {
             $result = $config[$currentConfigName];
         } else {
             $availablePerspectives = self::getAvailablePerspectives($currentUser);
@@ -735,7 +735,7 @@ class Config
     /**
      * @internal
      *
-     * @param $name
+     * @param string $name
      *
      * @return array
      */
@@ -777,7 +777,7 @@ class Config
                 if ($rootNode) {
                     $tmpData['type'] = 'customview';
                     $tmpData['rootId'] = $rootNode->getId();
-                    $tmpData['allowedClasses'] = isset($tmpData['classes']) ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['allowedClasses'] = isset($tmpData['classes']) && $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId] = $tmpData;
@@ -796,7 +796,7 @@ class Config
                     Logger::error('custom view id missing ' . var_export($resultItem, true));
                     continue;
                 }
-                $customViewCfg = $cfConfigMapping[$customViewId];
+                $customViewCfg = isset($cfConfigMapping[$customViewId]) ? $cfConfigMapping[$customViewId] : null;
                 if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
@@ -895,7 +895,8 @@ class Config
 
             $currentConfigName = $user->getActivePerspective();
             if ($config && !in_array($currentConfigName, array_keys($config))) {
-                $currentConfigName = reset(array_keys($config));
+                $configNames = array_keys($config);
+                $currentConfigName = reset($configNames);
             }
         } else {
             $config = self::getPerspectivesConfig()->toArray();
@@ -922,8 +923,8 @@ class Config
     /**
      * @internal
      *
-     * @param $runtimeConfig
-     * @param $key
+     * @param array $runtimeConfig
+     * @param string $key
      *
      * @return bool
      */
@@ -945,7 +946,7 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-                if ($menuItem['hidden']) {
+                if (isset($menuItem['hidden']) && $menuItem['hidden']) {
                     return false;
                 }
 

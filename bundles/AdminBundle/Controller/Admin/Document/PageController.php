@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -52,9 +53,7 @@ class PageController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /**
-         * @var $page Document\Page
-         */
+        /** @var Document\Page $page */
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
@@ -88,6 +87,8 @@ class PageController extends DocumentControllerBase
             'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
             'interfaces' => array_values(class_implements($page))
         ];
+
+        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -170,7 +171,9 @@ class PageController extends DocumentControllerBase
                 $page->saveVersion();
                 $this->saveToSession($page);
 
-                return $this->adminJson(['success' => true]);
+                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } else {
                 throw $this->createAccessDeniedHttpException();
             }
@@ -335,6 +338,6 @@ class PageController extends DocumentControllerBase
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);
         $this->addPropertiesToDocument($request, $page);
-        $this->addSchedulerToDocument($request, $page);
+        $this->applySchedulerDataToElement($request, $page);
     }
 }

@@ -67,7 +67,7 @@ class Tool
     /**
      * @static
      *
-     * @param  $path
+     * @param string $path
      *
      * @return bool
      */
@@ -138,7 +138,7 @@ class Tool
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
      * @return array
      */
@@ -220,8 +220,8 @@ class Tool
     }
 
     /**
-     * @param $language
-     * @param $absolutePath
+     * @param string $language
+     * @param bool $absolutePath
      *
      * @return string
      */
@@ -401,7 +401,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getHostname(Request $request = null)
     {
@@ -477,7 +477,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return string|null
      */
     public static function getClientIp(Request $request = null)
     {
@@ -491,8 +491,10 @@ class Tool
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
+        } else {
+            return null;
         }
 
         $ips = explode(',', $ip);
@@ -504,7 +506,7 @@ class Tool
     /**
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getAnonymizedClientIp(Request $request = null)
     {
@@ -551,9 +553,9 @@ class Tool
     }
 
     /**
-     * @param null $recipients
-     * @param null $subject
-     * @param null $charset
+     * @param array|string|null $recipients
+     * @param string|null $subject
+     * @param string|null $charset
      *
      * @return Mail
      *
@@ -584,7 +586,7 @@ class Tool
     /**
      * @static
      *
-     * @param $url
+     * @param string $url
      * @param array $paramsGet
      * @param array $paramsPost
      * @param array $options
@@ -634,7 +636,7 @@ class Tool
     /**
      * @static
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -646,7 +648,7 @@ class Tool
     /**
      * @static
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -656,8 +658,8 @@ class Tool
     }
 
     /**
-     * @param $class
-     * @param $type
+     * @param string $class
+     * @param string $type
      *
      * @return bool
      */
@@ -698,7 +700,21 @@ class Tool
     }
 
     /**
-     * @param $message
+     * @return array
+     */
+    public static function getCachedSymfonyEnvironments(): array
+    {
+        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
+        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
+            unset($dirs[$key]);
+        }
+        $dirs = array_map('basename', $dirs);
+
+        return array_values($dirs);
+    }
+
+    /**
+     * @param string $message
      */
     public static function exitWithError($message)
     {

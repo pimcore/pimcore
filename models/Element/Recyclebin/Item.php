@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Element\Recyclebin;
 
+use DeepCopy\DeepCopy;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Cache;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -24,8 +26,12 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -89,7 +95,7 @@ class Item extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
      * @return self|null
      */
@@ -106,7 +112,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param null $user
+     * @param Model\User|null $user
      *
      * @throws \Exception
      */
@@ -137,11 +143,12 @@ class Item extends Model\AbstractModel
             // see https://github.com/pimcore/pimcore/issues/4219
             Model\Version::disable();
             $className = get_class($element);
+            /** @var Document|Asset|AbstractObject $dummy */
             $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
             $dummy->setParentId($element->getParentId() ?: 1);
             $dummy->setKey($element->getKey());
-            if ($element instanceof DataObject\Concrete) {
+            if ($dummy instanceof DataObject\Concrete) {
                 $dummy->setOmitMandatoryCheck(true);
             }
             $dummy->save(['isRecycleBinRestore' => true]);
@@ -194,7 +201,9 @@ class Item extends Model\AbstractModel
 
         // serialize data
         Element\Service::loadAllFields($this->element);
-        $data = Serialize::serialize($this->getElement());
+
+        $condensedData = $this->marshalData($this->getElement());
+        $data = Serialize::serialize($condensedData);
 
         $this->getDao()->save();
 
@@ -205,7 +214,7 @@ class Item extends Model\AbstractModel
         File::put($this->getStoreageFile(), $data);
 
         $saveBinaryData = function ($element, $rec, $scope) {
-            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
+            // assets are kind of special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 if ($element->getType() != 'folder') {
                     $handle = fopen($scope->getStorageFileBinary($element), 'w', false, File::getContext());
@@ -244,7 +253,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface|Element\ElementDumpStateInterface $element
+     * @param Element\ElementInterface $element
      */
     public function loadChildren(Element\ElementInterface $element)
     {
@@ -258,7 +267,9 @@ class Item extends Model\AbstractModel
             $element->getScheduledTasks();
         }
 
-        $element->setInDumpState(true);
+        if ($element instanceof Element\ElementDumpStateInterface) {
+            $element->setInDumpState(true);
+        }
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
         // with the dump state set to true, because this would cause major issues in wakeUp()
@@ -267,12 +278,14 @@ class Item extends Model\AbstractModel
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
+                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
+            } elseif ($element instanceof Document) {
+                $children = $element->getChildren(true);
             } else {
-                $childs = $element->getChildren();
+                $children = $element->getChildren();
             }
 
-            foreach ($childs as $child) {
+            foreach ($children as $child) {
                 $this->loadChildren($child);
             }
         }
@@ -296,6 +309,7 @@ class Item extends Model\AbstractModel
             }
         };
 
+        $element = $this->unmarshalData($element);
         $restoreBinaryData($element, $this);
 
         if ($element instanceof DataObject\Concrete) {
@@ -306,7 +320,7 @@ class Item extends Model\AbstractModel
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
-                $children = $element->getChildren([], true);
+                $children = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT], true);
             } elseif ($element instanceof Document) {
                 $children = $element->getChildren(true);
             } else {
@@ -322,6 +336,97 @@ class Item extends Model\AbstractModel
     }
 
     /**
+     * @param Element\ElementInterface $data
+     *
+     * @return mixed
+     */
+    public function marshalData($data)
+    {
+        //for full dump of relation fields in container types
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    $elementType = Element\Service::getType($currentValue);
+                    $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+
+                    return $descriptor;
+                }
+            ),
+            new class($this->element) extends TypeMatcher {
+                /**
+                 * @param mixed $element
+                 *
+                 * @return bool
+                 */
+                public function matches($element)
+                {
+                    //compress only elements with full_dump_state = false
+                    return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
+                }
+            }
+        );
+        //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
+        if ($data instanceof Concrete) {
+            $copier->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomRecyclingMarshalInterface) {
+                            return $fieldDefinition->marshalRecycleData($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ), new PimcoreClassDefinitionMatcher(Data\CustomRecyclingMarshalInterface::class)
+            );
+        }
+        $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Element\ElementDumpStateInterface::class, Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+        return $copier->copy($data);
+    }
+
+    /**
+     * @param Element\ElementInterface $data
+     *
+     * @return mixed
+     */
+    public function unmarshalData($data)
+    {
+        $copier = new DeepCopy();
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof Model\Version\ElementDescriptor) {
+                        $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                        return $value;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new Model\Version\UnmarshalMatcher()
+        );
+
+        if ($data instanceof Concrete) {
+            //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
+            $copier->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomRecyclingMarshalInterface) {
+                            return $fieldDefinition->unmarshalRecycleData($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ), new PimcoreClassDefinitionMatcher(Data\CustomRecyclingMarshalInterface::class)
+            );
+        }
+
+        return $copier->copy($data);
+    }
+
+    /**
      * @return string
      */
     public function getStoreageFile()
@@ -330,7 +435,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return string
      */
@@ -348,7 +453,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -368,7 +473,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -388,7 +493,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -408,7 +513,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $subtype
+     * @param string $subtype
      *
      * @return $this
      */
@@ -428,7 +533,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $amount
+     * @param int $amount
      *
      * @return $this
      */
@@ -448,7 +553,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -468,7 +573,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return $this
      */
@@ -480,7 +585,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param $username
+     * @param string $username
      *
      * @return $this
      */

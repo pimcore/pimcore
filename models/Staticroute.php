@@ -117,7 +117,7 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @param $route
+     * @param Staticroute $route
      */
     public static function setCurrentRoute($route)
     {
@@ -164,9 +164,9 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $name
-     * @param null $siteId
+     * @param int|null $siteId
      *
-     * @return Staticroute
+     * @return Staticroute|null
      */
     public static function getByName($name, $siteId = null)
     {
@@ -193,6 +193,8 @@ class Staticroute extends AbstractModel
 
             return self::getById($route->getId());
         }
+
+        return null;
     }
 
     /**
@@ -695,7 +697,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -715,7 +717,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

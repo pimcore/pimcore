@@ -157,7 +157,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -228,7 +228,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geobounds
@@ -262,6 +262,8 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -283,10 +285,12 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -310,7 +314,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

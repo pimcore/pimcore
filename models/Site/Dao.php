@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
      * @throws \Exception
      */
@@ -109,8 +109,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {

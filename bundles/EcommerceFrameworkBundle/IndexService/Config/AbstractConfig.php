@@ -108,9 +108,9 @@ abstract class AbstractConfig implements ConfigInterface
 
     /**
      * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
-     * signature in Pimcore 6.
+     * signature in Pimcore 7.
      *
-     * TODO Pimcore 6 add to constructor signature.
+     * TODO Pimcore 7 add to constructor signature.
      *
      * @required
      *
@@ -229,7 +229,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getAttributes(): array
     {
-        // TODO Pimcore 6 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }
@@ -244,7 +244,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getSearchAttributes(): array
     {
-        // TODO Pimcore 6 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Search attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }
@@ -274,7 +274,7 @@ abstract class AbstractConfig implements ConfigInterface
 
     /**
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return AbstractCategory[]
      */
@@ -314,7 +314,7 @@ abstract class AbstractConfig implements ConfigInterface
      * default is getOSParentId
      *
      * @param IndexableInterface $object
-     * @param $subId
+     * @param int $subId
      *
      * @return mixed
      */
@@ -327,8 +327,8 @@ abstract class AbstractConfig implements ConfigInterface
      * Gets object by id, can consider subIds and therefore return e.g. an array of values
      * always returns object itself - see also getObjectMockupById
      *
-     * @param $objectId
-     * @param $onlyMainObject - only returns main object
+     * @param int $objectId
+     * @param bool $onlyMainObject - only returns main object
      *
      * @return mixed
      */
@@ -341,9 +341,9 @@ abstract class AbstractConfig implements ConfigInterface
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
-     * @param $objectId
+     * @param int $objectId
      *
-     * @return IndexableInterface | array
+     * @return IndexableInterface|array
      */
     public function getObjectMockupById($objectId)
     {
@@ -353,7 +353,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * returns column type for id
      *
-     * @param $isPrimary
+     * @param bool $isPrimary
      *
      * @return string
      */

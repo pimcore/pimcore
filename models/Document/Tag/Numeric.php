@@ -102,10 +102,12 @@ class Numeric extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */

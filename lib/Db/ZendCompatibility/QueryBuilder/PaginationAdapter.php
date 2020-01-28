@@ -110,8 +110,7 @@ class PaginationAdapter implements AdapterInterface
      * Users are therefore encouraged to profile their queries to find
      * the solution that best meets their needs.
      *
-     * @param  QueryBuilder|int $totalRowCount Total row count integer
-     *                                               or query
+     * @param  QueryBuilder|int $rowCount Total row count integer or query
      *
      * @return PaginationAdapter $this
      *

@@ -17,7 +17,7 @@ hierarchy level.
 
 **Solution**
 
-1) Create a [Custom Layout](../05_Objects/01_Object_Classes/05_Class_Settings/09_Custom_Layouts.md) 
+1) Create a [Custom Layout](../05_Objects/01_Object_Classes/05_Class_Settings/15_Custom_Layouts.md) 
 for every hierarchy level. 
 ![Custom Layout Definitions](img/custom-layout-definition.jpg)
 

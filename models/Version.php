@@ -297,7 +297,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
@@ -311,7 +311,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $data
+     * @param ElementInterface $data
      *
      * @return mixed
      */
@@ -344,7 +344,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
@@ -380,7 +380,7 @@ class Version extends AbstractModel
     /**
      * Object
      *
-     * @param $renewReferences
+     * @param bool $renewReferences
      *
      * @return mixed
      */
@@ -433,7 +433,7 @@ class Version extends AbstractModel
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
-            $binaryHandle = fopen($this->getBinaryFilePath(), 'r+', false, File::getContext());
+            $binaryHandle = fopen($this->getBinaryFilePath(), 'rb', false, File::getContext());
             $data->setStream($binaryHandle);
         } elseif ($data instanceof Asset && $data->data) {
             // this is for backward compatibility
@@ -534,7 +534,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $cid
+     * @param int $cid
      *
      * @return $this
      */

@@ -498,7 +498,7 @@ class SearchController extends AdminController
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return string
      */

@@ -465,8 +465,8 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @param $type
-     * @param $value
+     * @param string $type
+     * @param string $value
      *
      * @return string
      */

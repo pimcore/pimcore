@@ -132,7 +132,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
      * @return Site|null
      */
@@ -164,7 +164,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $mixed
+     * @param mixed $mixed
      *
      * @return Site|null
      */
@@ -323,7 +323,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      */
@@ -406,7 +406,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -426,7 +426,7 @@ class Site extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

@@ -156,7 +156,7 @@ class Pimcore
     }
 
     /**
-     * @return object|\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
      */
     public static function getEventDispatcher()
     {

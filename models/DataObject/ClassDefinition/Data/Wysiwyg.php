@@ -147,6 +147,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param bool $excludeFromSearchIndex
+     *
+     * @return self
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -253,6 +255,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param mixed $data
+     *
+     * @return array
      */
     public function resolveDependencies($data)
     {
@@ -297,7 +301,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData  $object
      * @param array $params
      *
      * @return string
@@ -389,5 +393,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         return $data;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

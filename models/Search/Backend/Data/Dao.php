@@ -23,9 +23,7 @@ use Pimcore\Model;
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     /**
-     * @param $element
-     *
-     * @throws
+     * @param Model\Element\ElementInterface $element
      */
     public function getForElement($element)
     {

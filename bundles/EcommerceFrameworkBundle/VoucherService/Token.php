@@ -124,7 +124,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return bool
      */

@@ -40,10 +40,10 @@ class ImageThumbnail
     protected $imageAsset;
 
     /**
-     * @param $asset
-     * @param null $config
-     * @param null $timeOffset
-     * @param null $imageAsset
+     * @param Model\Asset\Video $asset
+     * @param string|array|Image\Thumbnail\Config|null $config
+     * @param int|null $timeOffset
+     * @param Image|null $imageAsset
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
@@ -58,7 +58,7 @@ class ImageThumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
@@ -186,9 +186,9 @@ class ImageThumbnail
     }
 
     /**
-     * @param $selector
+     * @param string|array|Image\Thumbnail\Config $selector
      *
-     * @return bool|static
+     * @return Image\Thumbnail\Config|null
      */
     protected function createConfig($selector)
     {

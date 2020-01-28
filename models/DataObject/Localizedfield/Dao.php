@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 
@@ -108,7 +108,9 @@ class Dao extends Model\Dao\AbstractDao
             $container = $this->model->getClass();
         }
 
-        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(
+        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
+        $localizedfields = $container->getFieldDefinition('localizedfields');
+        $fieldDefinitions = $localizedfields->getFieldDefinitions(
             ['suppressEnrichment' => true]
         );
 
@@ -364,7 +366,22 @@ class Dao extends Model\Dao\AbstractDao
                 $queryTable = $this->getQueryTableName().'_'.$language;
                 $this->db->insertOrUpdate($queryTable, $data);
                 if ($inheritanceEnabled) {
-                    $this->inheritanceHelper->doUpdate($object->getId(), true);
+                    $context = isset($params['context']) ? $params['context'] : [];
+                    if ($context['containerType'] === 'objectbrick') {
+                        $inheritanceRelationContext = [
+                            'ownertype' => 'localizedfield',
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
+                        ];
+                    } else {
+                        $inheritanceRelationContext = [
+                            'ownertype' => 'localizedfield',
+                            'ownername' => 'localizedfield'
+                        ];
+                    }
+                    $this->inheritanceHelper->doUpdate($object->getId(), true, [
+                        'language' => $language,
+                        'inheritanceRelationContext' => $inheritanceRelationContext
+                    ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
             }
@@ -377,6 +394,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param bool $deleteQuery
+     * @param bool $isUpdate
      */
     public function delete($deleteQuery = true, $isUpdate = true)
     {
@@ -416,8 +434,9 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
+            /** @var DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
             $fieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-            $childDefinitions = $fieldDefinition->getFielddefinitions(['suppressEnrichment' => true]);
+            $childDefinitions = $fieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
@@ -543,7 +562,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($data as $row) {
-            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(
+            /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
+            $localizedfields = $container->getFieldDefinition('localizedfields');
+            foreach ($localizedfields->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
                 if ($fd) {
@@ -703,7 +724,6 @@ QUERY;
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
-              INDEX `ooo_id` (`ooo_id`),
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`)
@@ -715,7 +735,6 @@ QUERY;
               `ooo_id` int(11) NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
-              INDEX `ooo_id` (`ooo_id`),
               INDEX `language` (`language`)
             ) DEFAULT CHARSET=utf8mb4;"
             );
@@ -741,8 +760,9 @@ QUERY;
             $container = $this->model->getClass();
         }
 
-        $localizedFieldDefinition = $container->getFielddefinition('localizedfields', ['suppressEnrichment' => true]);
-        foreach ($localizedFieldDefinition->getFielddefinitions(['suppressEnrichment' => true]) as $value) {
+        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
+        $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
+        foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                 if ($value->getColumnType()) {
                     $key = $value->getName();
@@ -777,7 +797,6 @@ QUERY;
                       `ooo_id` int(11) NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
-                      INDEX `ooo_id` (`ooo_id`),
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
@@ -795,15 +814,13 @@ QUERY;
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
-                    $fieldDefinitions = $container->getFielddefinition(
-                        'localizedfields',
-                        ['suppressEnrichment' => true]
-                    )->getFielddefinitions(['suppressEnrichment' => true]);
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
+                    $localizedfields = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
+                    $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                 } else {
-                    $fieldDefinitions = $this->model->getClass()->getFielddefinition(
-                        'localizedfields',
-                        ['suppressEnrichment' => true]
-                    )->getFielddefinitions(['suppressEnrichment' => true]);
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
+                    $localizedfields = $this->model->getClass()->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
+                    $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                 }
 
                 // add non existing columns in the table

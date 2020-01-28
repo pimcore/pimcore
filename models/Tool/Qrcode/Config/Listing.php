@@ -25,12 +25,12 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * @var array|null
+     * @var Model\Tool\Qrcode\Config[]|null
      */
     protected $codes = null;
 
     /**
-     * @return \Pimcore\Model\Tool\Qrcode\Config[]
+     * @return Model\Tool\Qrcode\Config[]
      */
     public function getCodes()
     {
@@ -42,7 +42,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @param $codes
+     * @param Model\Tool\Qrcode\Config[]|null $codes
      *
      * @return $this
      */

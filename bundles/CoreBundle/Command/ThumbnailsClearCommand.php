@@ -60,9 +60,7 @@ class ThumbnailsClearCommand extends AbstractCommand
         }
 
         $configClass = 'Pimcore\Model\Asset\\' . ucfirst($input->getOption('type')) . '\Thumbnail\Config';
-        /**
-         * @var $thumbConfig Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config
-         */
+        /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config $thumbConfig */
         $thumbConfig = $configClass::getByName($input->getOption('name'));
         if (!$thumbConfig) {
             $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s', $input->getOption('type'), $input->getOption('name')));

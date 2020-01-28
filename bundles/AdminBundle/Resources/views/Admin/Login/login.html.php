@@ -1,5 +1,5 @@
 <?php
-/** @var $view \Pimcore\Templating\PhpEngine */
+/** @var \Pimcore\Templating\PhpEngine $view */
 $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 
 $this->get("translate")->setDomain("admin");
@@ -91,3 +91,6 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 </script>
 
 <?php $view->slots()->stop() ?>
+
+<?= $this->breachAttackRandomContent(); ?>
+

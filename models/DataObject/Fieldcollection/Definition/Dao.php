@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 
@@ -73,7 +73,6 @@ class Dao extends Model\Dao\AbstractDao
 		  `index` int(11) default '0',
           `fieldname` varchar(190) default '',
           PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
-          INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8mb4;");
@@ -84,6 +83,7 @@ class Dao extends Model\Dao\AbstractDao
 
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 
+        /** @var DataObject\ClassDefinition\Data $value */
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 

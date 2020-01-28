@@ -54,7 +54,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return {
             text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
+            renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -79,7 +79,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                             url = Ext.String.urlAppend(url, cropParams);
                         }
 
-                        url = url + '" />';
+                        url = url + '" style="width:88px; height:88px;" />';
                         return url;
                     }
                 }

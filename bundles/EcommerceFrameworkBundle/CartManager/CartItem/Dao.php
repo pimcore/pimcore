@@ -41,8 +41,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param int $productId
      * @param int $cartId
+     * @param string $itemKey
+     * @param string $parentKey
      *
      * @return void
      */

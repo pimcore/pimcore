@@ -30,13 +30,6 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         $rawValues = $productList->getGroupBySystemValues($filterDefinition->getField(), true);
         $values = [];
 
-        $availableRelations = [];
-        if ($filterDefinition->getAvailableCategories()) {
-            foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                $availableRelations[$rel->getId()] = true;
-            }
-        }
-
         foreach ($rawValues as $v) {
             $values[$v['value']] = ['value' => $v['value'], 'count' => $v['count']];
         }

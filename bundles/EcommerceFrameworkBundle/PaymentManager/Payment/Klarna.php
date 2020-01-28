@@ -257,7 +257,7 @@ class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewo
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *

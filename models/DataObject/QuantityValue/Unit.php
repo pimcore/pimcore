@@ -128,7 +128,7 @@ class Unit extends Model\AbstractModel
                 $table = [];
                 $list = new Model\DataObject\QuantityValue\Unit\Listing();
                 $list = $list->load();
-                /** @var $item Model\DataObject\QuantityValue\Unit */
+                /** @var Model\DataObject\QuantityValue\Unit $item */
                 foreach ($list as $item) {
                     $table[$item->getId()] = $item;
                 }

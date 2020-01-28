@@ -92,7 +92,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.name,
                 fieldLabel: t("name"),
                 width: 450,
-                disabled: true
+                readOnly: true
             },
                 {
                     xtype: "textarea",
@@ -134,6 +134,11 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("high_resolution_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "forcePictureTag",
+                        boxLabel: t("force_picture_html_tag"),
+                        checked: this.data.forcePictureTag
                     }, {
                         xtype: "checkbox",
                         name: "preserveColor",

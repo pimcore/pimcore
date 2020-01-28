@@ -264,10 +264,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $rData = $this->prepareDataForPersistence($data, $object, $params);
         $return = [];
 
-        if (!empty($rData[0]['dest_id']) && !empty($rData[0]['type'])) {
-            $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
-            $return[$this->getName() . '__type'] = $rData[0]['type'];
-        }
+        $return[$this->getName() . '__id'] = isset($rData[0]['dest_id']) ? $rData[0]['dest_id'] : null;
+        $return[$this->getName() . '__type'] = isset($rData[0]['type']) ? $rData[0]['type'] : null;
 
         return $return;
     }
@@ -429,8 +427,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|Asset|Document|Element\ElementInterface
@@ -506,6 +504,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -526,10 +526,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -570,7 +572,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return null|Element\ElementInterface
@@ -641,7 +643,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -680,7 +682,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToOneRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -734,8 +736,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $value1 Element\ElementInterface
-     * @param $value2 Element\ElementInterface
+     * @param Element\ElementInterface $value1
+     * @param Element\ElementInterface $value2
      *
      * @return bool
      */
@@ -745,6 +747,40 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
 
         return $value1 == $value2;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Listing      $listing
+     * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
+     * @param string                  $operator SQL comparison operator, currently only "=" possible
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if ($data instanceof Element\ElementInterface) {
+            $data = [
+                'id' => $data->getId(),
+                'type' => Element\Service::getElementType($data)
+            ];
+        }
+
+        if (!isset($data['id'], $data['type'])) {
+            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+        }
+
+        if ($operator === '=') {
+            $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
+
+            return;
+        }
+        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 }
 

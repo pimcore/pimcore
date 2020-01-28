@@ -43,8 +43,8 @@ class HtmlToImage
     }
 
     /**
-     * @param $url
-     * @param $outputFile
+     * @param string $url
+     * @param string $outputFile
      * @param int $screenWidth
      * @param string $format
      *

@@ -25,6 +25,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     /**
      * Static type of this element
      *
@@ -74,6 +76,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'datetime') {
@@ -82,6 +86,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -91,7 +97,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -107,6 +113,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -140,7 +148,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      *
      * @return \Carbon\Carbon()
      */
@@ -159,7 +167,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \DateTime|false
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -188,7 +196,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param \DateTime $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null
@@ -206,7 +214,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getVersionPreview
      *
      * @param \DateTime $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -242,7 +250,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|Date|Model\DataObject\ClassDefinition\Data
@@ -258,7 +266,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -271,6 +279,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -282,10 +292,12 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -335,7 +347,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $useCurrentDate
+     * @param bool|int|null $useCurrentDate
      *
      * @return $this
      */
@@ -347,7 +359,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -358,7 +370,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** See parent class.
-     * @param $data
+     *
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *
@@ -406,8 +419,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|int $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -425,7 +438,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             if ($this->getColumnType() == 'datetime') {
                 $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = '. $db->quote($value);
+                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
 
                 return $condition;
             } else {
@@ -438,5 +451,28 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return parent::getFilterConditionExt($value, $operator, $params);
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+
+            return $date;
+        }
+
+        return null;
     }
 }
