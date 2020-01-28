@@ -83,6 +83,10 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_query_'.$this->model->getClass()->getId();
     }
 
+    /**
+     * @param array $params
+     * @throws \Exception
+     */
     public function save($params = [])
     {
         $context = $this->model->getContext();

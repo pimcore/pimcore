@@ -22,6 +22,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Tag\Config\Dao getDao()
+ * @method void save()
  */
 class Config extends Model\AbstractModel
 {

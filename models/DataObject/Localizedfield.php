@@ -22,9 +22,9 @@ use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method Localizedfield\Dao delete()
- * @method Localizedfield\Dao load()
- * @method Localizedfield\Dao save()
+ * @method void delete()
+ * @method void load()
+ * @method void save()
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {

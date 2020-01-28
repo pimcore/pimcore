@@ -23,9 +23,9 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
- * @method \Pimcore\Model\DataObject\Classificationstore\Dao delete()
- * @method \Pimcore\Model\DataObject\Classificationstore\Dao load()
- * @method \Pimcore\Model\DataObject\Classificationstore\Dao save()
+ * @method void delete()
+ * @method Classifictionstore load()
+ * @method void save()
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {

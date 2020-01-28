@@ -49,6 +49,9 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
@@ -124,6 +127,9 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     */
     public function delete()
     {
         $object = $this->model->getObject();
@@ -136,6 +142,9 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($groupsTable, ['o_id' => $objectId]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load()
     {
         /** @var DataObject\Classificationstore $classificationStore */
