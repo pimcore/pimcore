@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Db;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\Concrete;
@@ -314,13 +315,12 @@ class UrlSlug implements OwnerAwareFieldInterface
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug $fd */
         $fd = null;
 
-        $object = Concrete::getById($this->getObjectId());
+        $classDefinition = ClassDefinition::getById($this->getClassId());
 
-        if ($object) {
-
+        if ($classDefinition) {
             // reverse look up the field definition ...
             if ($this->getOwnertype() === 'object') {
-                $fd = $object->getClass()->getFieldDefinition($this->getFieldname());
+                $fd = $classDefinition->getFieldDefinition($this->getFieldname());
             } elseif ($this->getOwnertype() === 'localizedfield') {
                 $ownerName = $this->getOwnername();
                 if (strpos($ownerName, '~') !== false) {
@@ -335,7 +335,7 @@ class UrlSlug implements OwnerAwareFieldInterface
 
                     if ($type == 'objectbrick') {
                         /** @var Objectbricks $objectFieldDef */
-                        if ($objectFieldDef = $object->getClass()->getFieldDefinition($objectFieldname)) {
+                        if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
 
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
@@ -351,8 +351,11 @@ class UrlSlug implements OwnerAwareFieldInterface
                             }
                         }
                     } else if ($type == 'fieldcollection') {
+                        // note that for fieldcollections we need the object data for resolving the
+                        // fieldcollection type. alternative: store the fc type as well (similar to class id)
+                        $object = Concrete::getById($this->getObjectId());
                         $getter = 'get' . ucfirst($objectFieldname);
-                        if (method_exists($object, $getter)) {
+                        if ($object && method_exists($object, $getter)) {
                             $fc = $object->$getter();
                             if ($fc instanceof Fieldcollection) {
                                 $index = explode('/', $objectFieldnameParts);
@@ -371,7 +374,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                     }
                 } else {
                     /** @var Localizedfields $lfDef */
-                    if ($lfDef = $object->getClass()->getFieldDefinition('localizedfields')) {
+                    if ($lfDef = $classDefinition->getFieldDefinition('localizedfields')) {
                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                     }
                 }
@@ -383,6 +386,11 @@ class UrlSlug implements OwnerAwareFieldInterface
             } elseif ($this->getOwnertype() == 'fieldcollection') {
                 $ownerName = $this->getOwnername();
                 $getter = 'get' . ucfirst($ownerName);
+
+                // note that for fieldcollections we need the object data for resolving the
+                // fieldcollection type. alternative: store the fc type as well (similar to class id)
+                $object = Concrete::getById($this->getObjectId());
+
                 if (method_exists($object, $getter)) {
                     $fcValue = $object->$getter();
                     if ($fcValue instanceof Fieldcollection) {
