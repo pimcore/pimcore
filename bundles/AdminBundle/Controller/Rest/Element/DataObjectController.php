@@ -20,7 +20,6 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice\Data\DataObject\Concrete\In as WebserviceObjectIn;
 use Pimcore\Model\Webservice\Data\DataObject\Concrete\Out as WebserviceObjectOut;
-use Pimcore\Model\Webservice\Data\DataObject\Concrete\Out;
 use Pimcore\Model\Webservice\Data\DataObject\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
