@@ -756,8 +756,6 @@ class MiscController extends AdminController
      *
      * @param Request $request
      * @param Profiler $profiler
-     *
-     * @return Response
      */
     public function iconListAction(Request $request, ?Profiler $profiler)
     {

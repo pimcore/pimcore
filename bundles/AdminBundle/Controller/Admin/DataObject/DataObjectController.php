@@ -259,9 +259,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
-
         if ($child->getType() != 'folder') {
+            /** @var DataObject\Concrete $child */
             $tmpObject['published'] = $child->isPublished();
             $tmpObject['className'] = $child->getClass()->getName();
 
@@ -357,7 +356,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $objectFromDatabase = DataObject::getById((int)$request->get('id'));
+        $objectFromDatabase = DataObject\Concrete::getById((int)$request->get('id'));
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
