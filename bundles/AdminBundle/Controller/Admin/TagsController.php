@@ -129,7 +129,7 @@ class TagsController extends AdminController
         if(!empty($request->get('filter'))) {
             $filterIds = [0];
             $filterTagList = new Tag\Listing();
-            $filterTagList->setCondition('`name` LIKE "%'.$request->get('filter').'%"');
+            $filterTagList->setCondition('`name` LIKE '. $filterTagList->quote('%'. $request->get('filter') .'%'));
             foreach ($filterTagList->load() as $filterTag) {
                 if ($parentId = $filterTag->getParentId() == 0) {
                     $filterIds[] = $filterTag->getId();
