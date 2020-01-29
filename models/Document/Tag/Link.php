@@ -279,7 +279,7 @@ class Link extends Model\Document\Tag
                     if ($editmode) {
                         $this->data['path'] = $object->getFullPath();
                     } else {
-                        if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                        if ($linkGenerator = $object instanceof Model\DataObject\Concrete && $object->getClass()->getLinkGenerator()) {
                             if ($realPath) {
                                 $this->data['path'] = $object->getFullPath();
                             } else {

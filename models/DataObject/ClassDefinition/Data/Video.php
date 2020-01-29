@@ -233,7 +233,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $video = null;
 
-        if ($data['type'] == 'asset') {
+        if (isset($data['type']) && $data['type'] === 'asset') {
             if ($asset = Asset::getByPath($data['data'])) {
                 $data['data'] = $asset;
             } else {
@@ -241,7 +241,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
         }
 
-        if ($data['poster']) {
+        if (isset($data['poster']) && $data['poster']) {
             if ($poster = Asset::getByPath($data['poster'])) {
                 $data['poster'] = $poster;
             } else {
@@ -371,7 +371,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -416,7 +416,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      *
      * @return array
      */

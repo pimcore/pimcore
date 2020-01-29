@@ -271,7 +271,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
      *
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

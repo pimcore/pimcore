@@ -211,7 +211,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

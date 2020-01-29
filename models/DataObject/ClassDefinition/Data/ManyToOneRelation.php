@@ -482,7 +482,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $data
+     * @param Element\AbstractElement|null $data
      *
      * @return array
      */

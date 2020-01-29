@@ -283,7 +283,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -315,7 +315,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param Asset|null $data
      *
      * @return array
      */

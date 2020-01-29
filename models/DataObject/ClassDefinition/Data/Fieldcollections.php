@@ -520,7 +520,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\Fieldcollection|null $data
      *
      * @return array
      */

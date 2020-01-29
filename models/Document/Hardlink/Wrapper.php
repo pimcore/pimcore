@@ -34,7 +34,13 @@ trait Wrapper
      */
     protected $sourceDocument;
 
-    // OVERWRITTEN METHODS
+
+
+
+    /**
+     * OVERWRITTEN METHODS
+     * @throws \Exception
+     */
     public function save()
     {
         $this->raiseHardlinkError();

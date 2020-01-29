@@ -399,7 +399,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -457,7 +457,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\Data\Hotspotimage|null $data
      *
      * @return array
      */

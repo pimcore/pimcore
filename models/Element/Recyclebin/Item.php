@@ -388,7 +388,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Element\ElementInterface $data
      *
-     * @return mixed
+     * @return Element\ElementInterface
      */
     public function unmarshalData($data)
     {

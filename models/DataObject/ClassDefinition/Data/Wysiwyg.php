@@ -211,7 +211,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
      *
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -254,7 +254,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
+     * @param string|null $data
      *
      * @return array
      */

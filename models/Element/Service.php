@@ -616,7 +616,7 @@ class Service extends Model\AbstractModel
     /**
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getFilename(ElementInterface $element)
     {
@@ -625,6 +625,7 @@ class Service extends Model\AbstractModel
         } elseif ($element instanceof Asset) {
             return $element->getFilename();
         }
+        return null;
     }
 
     /**

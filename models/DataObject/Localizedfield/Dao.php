@@ -511,7 +511,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function load($object, $params = [])
