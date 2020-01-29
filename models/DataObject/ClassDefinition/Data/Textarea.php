@@ -245,7 +245,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      *
-     * @param $data
+     * @param string|null $data
      * @param null $object
      * @param mixed $params
      *

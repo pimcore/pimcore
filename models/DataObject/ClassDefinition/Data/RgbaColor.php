@@ -153,7 +153,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -173,7 +173,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -217,7 +217,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -277,7 +277,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * display the quantity value field data in the grid
      *
-     * @param $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null $object
      * @param array $params
      *
@@ -359,8 +359,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -394,8 +394,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|array $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string

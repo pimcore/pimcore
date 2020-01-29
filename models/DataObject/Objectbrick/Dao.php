@@ -35,6 +35,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      */
     public function load(DataObject\Concrete $object, $params = [])
     {
+        /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
 
         $values = [];

@@ -140,7 +140,7 @@ abstract class Data
             }
         }
 
-        if ($object instanceof Element\ElementInterface) {
+        if ($object instanceof Element\AbstractElement) {
             // Classes do not have properties
             $object->setProperties(null);
         }

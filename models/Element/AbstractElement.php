@@ -209,7 +209,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function isAllowed($type, ?Model\User\AbstractUser $user = null)
     {
-        if(null === $user) {
+        if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();
         }
 

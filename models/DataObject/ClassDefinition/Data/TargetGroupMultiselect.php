@@ -49,7 +49,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */

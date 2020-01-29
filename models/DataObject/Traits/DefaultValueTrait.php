@@ -26,6 +26,7 @@ trait DefaultValueTrait
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return null|string
      */
     abstract protected function doGetDefaultValue($object, $context = []);

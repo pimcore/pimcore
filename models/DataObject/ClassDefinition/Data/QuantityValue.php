@@ -423,7 +423,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -643,6 +643,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param DataObject\Concrete $object
      * @param array $context
+     *
      * @return Model\DataObject\Data\QuantityValue|null
      */
     protected function doGetDefaultValue($object, $context = [])

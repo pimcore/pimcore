@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Schedule\Task\Dao getDao()
+ * @method \Pimcore\Model\Schedule\Task\Dao save()
  */
 class Task extends Model\AbstractModel
 {
@@ -265,6 +266,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param int|null $userId
+     *
      * @return $this
      */
     public function setUserId(?int $userId): self
