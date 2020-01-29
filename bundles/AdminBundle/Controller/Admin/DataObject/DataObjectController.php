@@ -816,10 +816,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
             if (!DataObject\Service::pathExists($intendedPath)) {
+                /** @var DataObject\Concrete $object */
                 $object = $this->get('pimcore.model.factory')->build($className);
-                if ($object instanceof DataObject\Concrete) {
-                    $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-                }
+                $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
                     $parentId = $request->get('parentId');
@@ -1200,8 +1199,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
-        /** @var DataObject\Concrete $object */
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject\Concrete::getById($request->get('id'));
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode

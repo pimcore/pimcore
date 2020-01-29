@@ -62,6 +62,7 @@ class ElementControllerBase extends AdminController
         }
 
         if (in_array($type, $allowedTypes)) {
+            /** @var Document|Asset|AbstractObject  $root */
             $root = Service::getElementById($type, $id);
             if ($root->isAllowed('list')) {
                 return $this->adminJson($this->getTreeNodeConfig($root));
