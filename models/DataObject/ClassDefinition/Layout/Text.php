@@ -126,15 +126,15 @@ class Text extends Model\DataObject\ClassDefinition\Layout
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $renderingClass = $this->getRenderingClass();
+        $renderingClass = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
+            $this->getRenderingClass()
+        );
 
-        if (Tool::classExists($renderingClass)) {
-            if (method_exists($renderingClass, 'renderLayoutText')) {
-                $context['fieldname'] = $this->getName();
-                $context['layout'] = $this;
-                $result = call_user_func($renderingClass . '::renderLayoutText', $this->renderingData, $object, $context);
-                $this->html = $result;
-            }
+        if (method_exists($renderingClass, 'renderLayoutText')) {
+            $context['fieldname'] = $this->getName();
+            $context['layout'] = $this;
+            $result = call_user_func([$renderingClass, 'renderLayoutText'], $this->renderingData, $object, $context);
+            $this->html = $result;
         }
 
         return $this;
