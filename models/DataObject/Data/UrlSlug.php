@@ -293,7 +293,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 . " AND siteId = " . $db->quote($siteId);
 
             if ($siteId >0) {
-                $query .= ' OR siteId = 0 ORDER BY siteId DESC';
+                $query .= ' OR siteId = 0 ORDER BY siteId DESC LIMIT 1';
             }
 
             $rawItem = $db->fetchRow($query);
