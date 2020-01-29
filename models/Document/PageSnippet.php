@@ -648,14 +648,16 @@ abstract class PageSnippet extends Model\Document
             $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
             try {
                 $document = Document::getById($this->getId());
-                // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                $tagNames = $tagUsageResolver->getUsedTagnames($document);
-                foreach ($tagNames as $tagName) {
-                    $tag = $document->getElement($tagName);
-                    if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
-                        $documentOptions = $tag->getOptions();
-                        if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
-                            $this->setRequireEditableValues(true);
+                if ($document instanceof self) {
+                    // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
+                    $tagNames = $tagUsageResolver->getUsedTagnames($document);
+                    foreach ($tagNames as $tagName) {
+                        $tag = $document->getElement($tagName);
+                        if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
+                            $documentOptions = $tag->getOptions();
+                            if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                                $this->setRequireEditableValues(true);
+                            }
                         }
                     }
                 }
