@@ -80,6 +80,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     protected $position;
 
+
     /**
      * UrlSlug constructor.
      * @param string $slug
@@ -290,6 +291,10 @@ class UrlSlug implements OwnerAwareFieldInterface
         try {
             $query = 'SELECT * FROM object_url_slugs WHERE slug = ' . $db->quote($path)
                 . " AND siteId = " . $db->quote($siteId);
+
+            if ($siteId >0) {
+                $query .= ' OR siteId = 0 ORDER BY siteId DESC';
+            }
 
             $rawItem = $db->fetchRow($query);
 

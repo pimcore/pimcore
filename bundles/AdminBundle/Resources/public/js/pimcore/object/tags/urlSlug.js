@@ -237,7 +237,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         for (key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
-                value.push(textfield.getValue());
+                value.push([key, textfield.getValue()]);
             }
         }
 

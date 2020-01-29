@@ -134,7 +134,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
 
         $result = [];
         if (is_array($data)) {
-            foreach ($data as $item) {
+            foreach ($data as $siteId => $item) {
                 $siteId = $item[0];
                 $slug = $item[1];
                 $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
