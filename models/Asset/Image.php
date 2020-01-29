@@ -172,8 +172,6 @@ class Image extends Model\Asset
                 }
 
                 $this->setCustomSetting('faceCoordinates', $faceCoordinates);
-
-
             }
         }
     }

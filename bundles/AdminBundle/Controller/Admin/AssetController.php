@@ -2376,6 +2376,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $asset->detectFaces();
             $asset->removeCustomSetting('disableImageFeatureAutoDetection');
             $asset->save();
+
             return $this->adminJson(['success' => true]);
         }
 
@@ -2400,6 +2401,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $asset->removeCustomSetting('faceCoordinates');
             $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
             $asset->save();
+
             return $this->adminJson(['success' => true]);
         }
 
