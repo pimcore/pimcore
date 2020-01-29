@@ -377,7 +377,7 @@ pimcore.document.edit = Class.create({
         }
     },
 
-    getValues: function (only) {
+    getValues: function () {
 
         var values = {};
 
@@ -391,17 +391,39 @@ pimcore.document.edit = Class.create({
 
             for (var i = 0; i < editables.length; i++) {
                 try {
-                    if(only == "validate") {
-                        if(editables[i].requiredError) {
-                            editableName = editables[i].getName();
-                            this.frame.editables[i].checkValue(true);
-                            values[editableName] = editables[i];
-                        }
-                    } else if (editables[i].getName() && !editables[i].getInherited()) {
-                            editableName = editables[i].getName();
-                            values[editableName] = {};
-                            values[editableName].type = editables[i].getType();
-                            values[editableName].data = editables[i].getValue();
+                    if (editables[i].getName() && !editables[i].getInherited()) {
+                        editableName = editables[i].getName();
+                        values[editableName] = {};
+                        values[editableName].data = editables[i].getValue();
+                        values[editableName].type = editables[i].getType();
+                    }
+                } catch (e) {
+                }
+            }
+        }
+        catch (e2) {
+        }
+
+        return values;
+    },
+
+    getRequiredEditableValues: function () {
+        var values = {};
+
+        if (!this.frame || !this.frame.editablesReady) {
+            throw "edit not available";
+        }
+
+        try {
+            var requiredEditables = this.frame.requiredEditables;
+            var editableName = "";
+
+            for (var i = 0; i < requiredEditables.length; i++) {
+                try {
+                    if(requiredEditables[i].requiredError) {
+                        editableName = requiredEditables[i].getName();
+                        requiredEditables[i].checkValue(true);
+                        values[editableName] = requiredEditables[i];
                     }
                 } catch (e) {
                 }

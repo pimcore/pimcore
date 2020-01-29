@@ -447,10 +447,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     },
 
-    getRequiredEditables : function () {
-        return this.edit.getValues("validate");
-    },
-
     publish: function($super, only) {
         /* It is needed to have extra validateRequiredEditables check here
          * so as to stop propagating Admin UI changes in case of required content = true */
@@ -468,7 +464,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         $super(task, only);
     },
 
-    validateRequiredEditables: function (dismissalert) {
+    validateRequiredEditables: function (dismissAlert) {
         //validate required editables against missing values
         try {
             //No validation in case of changing system settings
@@ -477,11 +473,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 return;
             }
 
-            var requiredEditables = this.getRequiredEditables();
-            if(Ext.isObject(requiredEditables)) {
-                var requiredEditables = Object.keys(requiredEditables);
+            var requiredEditableValues = this.edit.getRequiredEditableValues();
+            if(Ext.isObject(requiredEditableValues)) {
+                var requiredEditables = Object.keys(requiredEditableValues);
                 if (requiredEditables.length > 0) {
-                    if (!dismissalert) {
+                    if (!dismissAlert) {
                         Ext.MessageBox.show({
                             title: t("error"),
                             width: 500,
@@ -492,14 +488,14 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         });
                     }
 
-                    this.data.contentRequired = true;
+                    this.data.requireEditableValues = true;
 
                     return true;
                 }
             }
 
-            if(this.data.contentRequired == true) {
-                this.data.contentRequired = false;
+            if(this.data.requireEditableValues == true) {
+                this.data.requireEditableValues = false;
             }
         } catch(e) {
         }

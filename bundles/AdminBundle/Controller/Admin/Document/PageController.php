@@ -135,8 +135,8 @@ class PageController extends DocumentControllerBase
                 $page->setPublished(true);
             }
 
-            if ($request->get('contentRequired') !== null) {
-                $page->setContentRequired($request->get('contentRequired'));
+            if ($request->get('requireEditableValues') !== null) {
+                $page->setRequireEditableValues($request->get('requireEditableValues'));
             }
 
             $settings = [];

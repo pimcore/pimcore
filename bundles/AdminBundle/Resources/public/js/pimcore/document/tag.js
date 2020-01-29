@@ -130,7 +130,7 @@ pimcore.document.tag = Class.create({
         return context;
     },
 
-    validateValue: function(value, el, parent, mark) {
+    validateRequiredValue: function(value, el, parent, mark) {
         let valueLength = 1;
         if (typeof value === "string") {
             valueLength = trim(strip_tags(value)).length;

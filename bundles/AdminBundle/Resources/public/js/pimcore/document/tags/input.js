@@ -119,7 +119,7 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         }
 
         if (this.required) {
-            this.validateValue(value, this.element, this, mark);
+            this.validateRequiredValue(value, this.element, this, mark);
         }
 
         this.validateElement(value);

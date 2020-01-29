@@ -12,11 +12,11 @@ class Version20200121131304 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `documents_email` ADD COLUMN `requireContent` tinyint(1) unsigned DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `documents_newsletter` ADD COLUMN `requireContent` tinyint(1) unsigned DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `documents_page` ADD COLUMN `requireContent` tinyint(1) unsigned DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `documents_printpage` ADD COLUMN `requireContent` tinyint(1) unsigned DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `documents_snippet` ADD COLUMN `requireContent` tinyint(1) unsigned DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `documents_email` ADD COLUMN `requireEditableValues` tinyint(1) unsigned DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `documents_newsletter` ADD COLUMN `requireEditableValues` tinyint(1) unsigned DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `documents_page` ADD COLUMN `requireEditableValues` tinyint(1) unsigned DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `documents_printpage` ADD COLUMN `requireEditableValues` tinyint(1) unsigned DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `documents_snippet` ADD COLUMN `requireEditableValues` tinyint(1) unsigned DEFAULT NULL;');
     }
 
     /**
@@ -24,10 +24,10 @@ class Version20200121131304 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `documents_email` DROP COLUMN `requireContent`;');
-        $this->addSql('ALTER TABLE `documents_newsletter` DROP COLUMN `requireContent`;');
-        $this->addSql('ALTER TABLE `documents_page` DROP COLUMN `requireContent`;');
-        $this->addSql('ALTER TABLE `documents_printpage` DROP COLUMN `requireContent`;');
-        $this->addSql('ALTER TABLE `documents_snippet` DROP COLUMN `requireContent`;');
+        $this->addSql('ALTER TABLE `documents_email` DROP COLUMN `requireEditableValues`;');
+        $this->addSql('ALTER TABLE `documents_newsletter` DROP COLUMN `requireEditableValues`;');
+        $this->addSql('ALTER TABLE `documents_page` DROP COLUMN `requireEditableValues`;');
+        $this->addSql('ALTER TABLE `documents_printpage` DROP COLUMN `requireEditableValues`;');
+        $this->addSql('ALTER TABLE `documents_snippet` DROP COLUMN `requireEditableValues`;');
     }
 }

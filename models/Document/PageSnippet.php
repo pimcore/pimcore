@@ -74,7 +74,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var null|int
      */
-    protected $contentRequired = null;
+    protected $requireEditableValues = null;
 
     /**
      * @var array
@@ -110,8 +110,8 @@ abstract class PageSnippet extends Model\Document
         $this->getElements();
 
 
-        $this->checkContentRequired();
-        if($this->isContentRequired() && $this->getPublished()) {
+        $this->checkRequireEditableValues();
+        if($this->getRequireEditableValues() && $this->getPublished()) {
             throw new \Exception('Prevented publishing document - missing values for required editables');
         }
 
@@ -623,25 +623,27 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return int|null
      */
-    public function isContentRequired()
+    public function getRequireEditableValues()
     {
-        return $this->contentRequired;
+        return $this->requireEditableValues;
     }
 
     /**
-     * @param int|null $contentRequired
+     * @param int|null $requireEditableValues
      */
-    public function setContentRequired($contentRequired)
+    public function setRequireEditableValues($requireEditableValues)
     {
-        $this->contentRequired = $contentRequired;
+        $this->requireEditableValues = $requireEditableValues;
     }
 
     /**
      * Validates if there is a missing value for required editable
      */
-    public function checkContentRequired() {
-        $allowedTypes = ['input', 'wysiwyg'];
-        if ($this->isContentRequired() == null) {
+    public function checkRequireEditableValues() {
+        //Allowed tags for required check
+        $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
+
+        if ($this->getRequireEditableValues() == null) {
             /** @var TagUsageResolver $tagUsageResolver */
             $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
             try {
@@ -652,7 +654,7 @@ abstract class PageSnippet extends Model\Document
                     if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
                         $documentOptions = $tag->getOptions();
                         if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
-                            $this->setContentRequired(true);
+                            $this->setRequireEditableValues(true);
                         }
                     }
                 }

@@ -89,8 +89,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
-            if(this.data.contentRequired !== null) {
-                saveData.contentRequired = intval(this.data.contentRequired);
+            if(this.data.requireEditableValues !== null) {
+                saveData.requireEditableValues = intval(this.data.requireEditableValues);
             }
 
             // check for version notification
@@ -179,11 +179,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     publish: function (only, callback) {
         this.data.published = true;
-
-        //validate editables for required values
-        if (this.validateRequiredEditables()) {
-            return false;
-        }
 
         // toogle buttons
         this.toolbarButtons.unpublish.show();
@@ -643,21 +638,5 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.key = rdata.key;
             }.bind(this)
         });
-    },
-
-    validateRequiredEditables: function () {
-        var requiredEditables = Object.keys(this.getRequiredEditables());
-        if (requiredEditables.length > 0) {
-            Ext.MessageBox.show({
-                title: t("error"),
-                width: 500,
-                msg: t("complete_required_fields")
-                    + '<br /><br /><textarea style="width:100%; min-height:100px; resize:none" readonly="readonly">'
-                    + requiredEditables.join(", ") + "</textarea>",
-                buttons: Ext.Msg.OK
-            });
-            return true;
-        }
-        return false;
     }
 });

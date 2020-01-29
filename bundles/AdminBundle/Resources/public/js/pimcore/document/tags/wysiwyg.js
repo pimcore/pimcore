@@ -258,7 +258,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
 
         if (this.required) {
-            this.validateValue(value, Ext.get(this.textarea), this, mark);
+            this.validateRequiredValue(value, Ext.get(this.textarea), this, mark);
         }
     },
 

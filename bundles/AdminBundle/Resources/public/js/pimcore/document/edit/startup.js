@@ -26,6 +26,7 @@ if (!console) {
 
 // some globals
 var editables = [];
+var requiredEditables = [];
 var editablesReady = false;
 var editableNames = [];
 var editWindow;
@@ -143,7 +144,11 @@ Ext.onReady(function () {
 
         for (var i = 0; i < editableConfigurations.length; i++) {
             try {
-                editables.push(getEditable(editableConfigurations[i]));
+                let editable = getEditable(editableConfigurations[i]);
+                editables.push(editable);
+                if (editableConfigurations[i]['options']['required']) {
+                    requiredEditables.push(editable)
+                }
             } catch (e) {
                 console.error(e);
                 if(e.stack) {
