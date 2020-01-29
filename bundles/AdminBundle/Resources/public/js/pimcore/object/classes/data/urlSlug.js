@@ -70,7 +70,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             proxy: {
                 type: 'ajax',
                 url: '/admin/settings/get-available-sites',
-                extraParams: { hideMainSite: 1 }
+                extraParams: {hideMainSite: 1}
             },
             fields: ['id', 'domain']
         });
@@ -83,11 +83,25 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
 
         var specificItems = [
             {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("domain_label_width"),
+                name: "domainLabelWidth",
+                value: datax.domainLabelWidth
+            }
+            ,
+            {
                 xtype: "textfield",
                 fieldLabel: t("controller_action"),
                 name: "action",
                 value: datax.action,
-                width: 740
+                width: 740,
+                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: 'container',
@@ -118,7 +132,9 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
-                    action: source.datax.action
+                    action: source.datax.action,
+                    availableSites: source.datax.availableSites,
+                    domainLabelWidth: source.datax.domainLabelWidth
                 });
         }
     }

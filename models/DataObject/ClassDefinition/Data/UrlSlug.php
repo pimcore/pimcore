@@ -35,9 +35,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     public $fieldtype = 'urlSlug';
 
     /**
-     * @var int
+     * @var int|null
      */
     public $width;
+
+    /**
+     * @var int|null
+     */
+    public $domainLabelWidth;
 
     /**
      * @var string
@@ -63,7 +68,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param int $width
+     * @param int|null $width
      *
      * @return $this
      */
@@ -82,18 +87,37 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return null|array
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
+        $result = [];
+
         // for now we don't support sites (=> there is just a plain input field in the UI)
         if (is_array($data)) {
-            $data = $data[0];
-            if ($data instanceof Model\DataObject\Data\UrlSlug) {
-                return $data->getSlug();
+
+            foreach ($data as $slug) {
+                if ($slug instanceof Model\DataObject\Data\UrlSlug) {
+                    $siteId = $slug->getSiteId();
+                    $site = null;
+                    if ($siteId) {
+                        $site = Model\Site::getById($siteId);
+                    }
+
+                    $resultItem = [
+                        "slug" => $slug->getSlug(),
+                        "siteId" => $slug->getSiteId(),
+                        "domain" => $site ? $site->getMainDomain() : null
+                    ];
+
+                    $result[$siteId]= $resultItem;
+                }
             }
         }
-        return null;
+        ksort($result);
+
+        return $result;
+
     }
 
     /**
@@ -108,12 +132,18 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
 
-        if ($data) {
-            // currently slug per site is not supported
-            $slug = new Model\DataObject\Data\UrlSlug($data, null);
-            return [$slug];
+        $result = [];
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                $siteId = $item[0];
+                $slug = $item[1];
+                $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
+                $result[] = $slug;
+            }
+
+
         }
-        return null;
+        return $result;
     }
 
     /**
@@ -577,13 +607,22 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition $classDefinition
+     * @return int|null
      */
-    public function classSaved(Model\DataObject\ClassDefinition $classDefinition) {
-        Logger::debug("class saved");
-
+    public function getDomainLabelWidth(): ?int
+    {
+        return $this->domainLabelWidth;
     }
 
+    /**
+     * @param int|null $domainLabelWidth
+     * @return $this
+     */
+    public function setDomainLabelWidth(?int $domainLabelWidth)
+    {
+        $this->domainLabelWidth = $domainLabelWidth;
+        return $this;
+    }
 
 
 }
