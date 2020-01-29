@@ -186,8 +186,22 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
                         throw new Model\Element\ValidationException('Found conflict with docucment path "' . $slug . '"');
                     }
 
-                    if (!preg_match('#^(\/\w+)+(\.)?\w+(\?(\w+=[\w\d]+(&\w+=[\w\d]+)*)+){0,1}$#', $slug)) {
-                        throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] is not a valid slug");
+                    if (strlen($slug) <2 || $slug[0] !== "/") {
+                        throw new Model\Element\ValidationException("slug must be at least 2 characters long and start with slash");
+                    }
+                    $slug = substr($slug, 1);
+                    $slug  = preg_replace('/\/$/', '', $slug);
+
+                    $parts = explode('/', $slug);
+                    for ($i = 0; $i < count($parts); $i++) {
+                        $part = $parts[$i];
+                        if (strlen($part) === 0) {
+                            throw new Model\Element\ValidationException("Slug " . $slug ." not valid");
+                        }
+                        $sanitizedKey = Model\Element\Service::getValidKey($part, 'document');
+                        if ($sanitizedKey != $part) {
+                            throw new Model\Element\ValidationException("Slug part " . $part ." not valid");
+                        }
                     }
                 }
             }
