@@ -366,6 +366,8 @@ class Item extends Model\AbstractModel
                 }
             }
         );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+        
         //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
             $copier->addFilter(
@@ -407,6 +409,7 @@ class Item extends Model\AbstractModel
             ),
             new Model\Version\UnmarshalMatcher()
         );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
         if ($data instanceof Concrete) {
             //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
