@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Tool;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 /**
  * @method Localizedfield\Dao getDao()*

@@ -217,11 +217,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$params['objectFromVersion']
-            && ($fielddefinition instanceof DataObject\LazyLoadingSupportInterface || method_exists($fielddefinition, 'getLazyLoading'))
+            && ($fielddefinition instanceof LazyLoadingSupportInterface || method_exists($fielddefinition, 'getLazyLoading'))
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\Block) {
+            && !$fielddefinition instanceof ManyToManyObjectRelation
+            && !$fielddefinition instanceof AdvancedManyToManyRelation
+            && !$fielddefinition instanceof Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {

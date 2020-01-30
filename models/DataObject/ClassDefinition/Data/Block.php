@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
@@ -1187,7 +1188,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (($field instanceof DataObject\LazyLoadingSupportInterface ||method_exists($field, 'getLazyLoading'))
+                if (($field instanceof LazyLoadingSupportInterface ||method_exists($field, 'getLazyLoading'))
                                                         && $field->getLazyLoading()) {
                     $field->setLazyLoading(false);
                 }

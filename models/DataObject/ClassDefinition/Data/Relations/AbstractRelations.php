@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterf
 use Pimcore\Model\Element;
 
 abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface,
-    DataObject\ClassDefinition\PathFormatterAwareInterface, DataObject\LazyLoadingSupportInterface
+    DataObject\ClassDefinition\PathFormatterAwareInterface, Data\LazyLoadingSupportInterface
 {
     const RELATION_ID_SEPARATOR = '$$';
 
