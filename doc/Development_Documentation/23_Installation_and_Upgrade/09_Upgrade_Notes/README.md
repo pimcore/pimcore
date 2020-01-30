@@ -9,6 +9,8 @@ pimcore:
       pdf_creation_php_memory_limit: '2048M'
 ```
 
+- Using static methods for [dynamic text labels](../../05_Objects/01_Object_Classes/03_Layout_Elements/01_Dynamic_Text_Labels.md) is now deprecated, use services instead.
+
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
 - Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`

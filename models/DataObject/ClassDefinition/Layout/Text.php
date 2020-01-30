@@ -126,14 +126,18 @@ class Text extends Model\DataObject\ClassDefinition\Layout
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $renderingClass = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
+        $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
             $this->getRenderingClass()
         );
 
-        if (method_exists($renderingClass, 'renderLayoutText')) {
+        if (!$renderer instanceof DynamicTextLabelInterface) {
+            @trigger_error('Using a text renderer class which does not implement ' . DynamicTextLabelInterface::class.' is deprecated', \E_USER_DEPRECATED);
+        }
+
+        if (method_exists($renderer, 'renderLayoutText')) {
             $context['fieldname'] = $this->getName();
             $context['layout'] = $this;
-            $result = call_user_func([$renderingClass, 'renderLayoutText'], $this->renderingData, $object, $context);
+            $result = call_user_func([$renderer, 'renderLayoutText'], $this->renderingData, $object, $context);
             $this->html = $result;
         }
 
