@@ -533,7 +533,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -591,7 +591,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Hotspotimage|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -654,8 +654,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $dataArray
-     * @param $idMapping
+     * @param array|null $dataArray
+     * @param array $idMapping
      *
      * @return array
      */

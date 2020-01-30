@@ -288,7 +288,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param null $object
      * @param mixed $params
      *

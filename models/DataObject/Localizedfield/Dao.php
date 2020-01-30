@@ -608,6 +608,9 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     */
     public function createLocalizedViews()
     {
 
@@ -715,6 +718,10 @@ QUERY;
         }
     }
 
+    /**
+     * @param array $params
+     * @throws \Exception
+     */
     public function createUpdateTable($params = [])
     {
         $table = $this->getTableName();
@@ -768,6 +775,7 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                /** @var ResourcePersistenceAwareInterface $value */
                 if ($value->getColumnType()) {
                     $key = $value->getName();
 

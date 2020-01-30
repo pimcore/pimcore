@@ -388,7 +388,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $uploadPath
+     * @param string $uploadPath
      *
      * @return $this
      */
@@ -421,7 +421,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      *
-     * @param $data
+     * @param Asset\Image|null $data
      * @param null $object
      * @param mixed $params
      *

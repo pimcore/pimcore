@@ -98,9 +98,9 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /** Enrich relation with type-specific data.
-     * @param $object
-     * @param $params
-     * @param $classId
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData|DataObject\Localizedfield $object
+     * @param array $params
+     * @param int $classId
      * @param array $relation
      */
     protected function enrichRelation($object, $params, &$classId, &$relation = [])
@@ -403,7 +403,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $item
+     * @param Element\ElementInterface $item
      *
      * @return string
      */
@@ -416,8 +416,8 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $array1
-     * @param $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return bool
      */

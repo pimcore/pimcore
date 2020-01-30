@@ -460,7 +460,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
+     * @param \Pimcore\Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return Carbon|null

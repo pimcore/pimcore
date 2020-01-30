@@ -25,6 +25,7 @@ use Pimcore\Tool;
  * @method void delete()
  * @method void load()
  * @method void save()
+ * @method void createUpdateTable($params = [])
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {

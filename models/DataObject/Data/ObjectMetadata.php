@@ -115,7 +115,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param string $ownertype
      * @param string $ownername
      * @param string $position
@@ -179,11 +179,8 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $element
-     *
+     * @param DataObject\Concrete $element
      * @return $this
-     *
-     * @internal param $object
      */
     public function setElement($element)
     {

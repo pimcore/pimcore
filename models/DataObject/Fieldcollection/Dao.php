@@ -46,6 +46,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load(DataObject\Concrete $object)
     {
+        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $values = [];
 
@@ -67,6 +68,7 @@ class Dao extends Model\Dao\AbstractDao
             $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
                 $collection = $modelFactory->build($collectionClass);
                 $collection->setIndex($result['index']);
                 $collection->setFieldname($result['fieldname']);
@@ -142,6 +144,8 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // empty or create all relevant tables
+
+        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
 

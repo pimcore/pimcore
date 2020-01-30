@@ -181,7 +181,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      * Returns whether or not a time is earlier than the subject
      *
      * @param $subject
-     * @param $comparison
+     * @param string $comparison
      *
      * @return int
      */

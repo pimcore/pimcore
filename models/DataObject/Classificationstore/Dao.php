@@ -97,6 +97,7 @@ class Dao extends Model\Dao\AbstractDao
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
                     } else {
+                        /** @var DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $fd */
                         $value = $fd->getDataForResource($value, $this->model->getObject());
                     }
                     $value = $fd->marshal($value, $object);

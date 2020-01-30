@@ -27,6 +27,7 @@ use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
+ * @method string getTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
