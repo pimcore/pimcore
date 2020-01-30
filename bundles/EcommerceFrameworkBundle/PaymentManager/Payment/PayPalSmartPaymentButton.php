@@ -193,7 +193,6 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
         $required = [
             'orderID' => null,
             'payerID' => null,
-            'paymentID' => null
         ];
 
         $authorizedData = [
