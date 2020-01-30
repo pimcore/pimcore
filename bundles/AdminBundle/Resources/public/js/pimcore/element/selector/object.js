@@ -29,7 +29,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var i;
 
         //set "Home" object ID for search grid column configuration
-        this.object  = new Object();
+        this.object  = {};
         this.object.id = 1;
 
         this.searchType = "search";

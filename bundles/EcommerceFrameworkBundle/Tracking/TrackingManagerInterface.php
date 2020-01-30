@@ -33,7 +33,6 @@ interface TrackingManagerInterface extends
      */
     public function getTrackedCodes(): string;
 
-
     /**
      * Forwards all tracked tracking codes to the next request via FlashMesssageBag
      *

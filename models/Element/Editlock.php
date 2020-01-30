@@ -22,6 +22,8 @@ use Pimcore\Tool\Session;
 
 /**
  * @method \Pimcore\Model\Element\Editlock\Dao getDao()
+ * @method \Pimcore\Model\Element\Editlock\Dao delete()
+ * @method \Pimcore\Model\Element\Editlock\Dao save()
  */
 class Editlock extends Model\AbstractModel
 {

@@ -33,6 +33,7 @@ class Service
     {
         if ($doc instanceof Document\Hardlink) {
             if ($sourceDoc = $doc->getSourceDocument()) {
+                /** @var Document\Hardlink\Wrapper\Hardlink $destDoc */
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
                 $destDoc->setPath($doc->getRealPath());

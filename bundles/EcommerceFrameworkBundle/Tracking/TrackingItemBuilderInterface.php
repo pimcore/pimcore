@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
-use Pimcore\Model\Element\ElementInterface;
 
 interface TrackingItemBuilderInterface
 {
@@ -35,8 +34,8 @@ interface TrackingItemBuilderInterface
      * Build a product action item object
      *
      * @param ProductInterface $product
-     *
      * @param int $quantity
+     *
      * @return ProductAction
      */
     public function buildProductActionItem(ProductInterface $product, $quantity = 1);

@@ -235,8 +235,9 @@ class ClassDefinition extends Model\AbstractModel
                 return self::getById($id);
             }
         } catch (\Exception $e) {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -376,7 +377,7 @@ class ClassDefinition extends Model\AbstractModel
                             $def->getName()
                         ).' ($field, $value, $locale = null, $limit = 0) '."\n";
 
-                    foreach($def->getFieldDefinitions() as $localizedFieldDefinition) {
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
                             ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -385,7 +386,7 @@ class ClassDefinition extends Model\AbstractModel
                                 $localizedFieldDefinition->getName()
                             ).' ($value, $locale = null, $limit = 0) '."\n";
                     }
-                } elseif($def->isFilterable()) {
+                } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -395,7 +396,6 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
         $cd .= "*/\n\n";
-
 
         $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
         if ($this->getCacheRawRelationData()) {
@@ -505,13 +505,13 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= "\n\n";
 
-        if(\is_array($this->getFieldDefinitions())) {
+        if (\is_array($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    foreach($def->getFieldDefinitions() as $localizedFieldDefinition) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= $localizedFieldDefinition->getFilterCode();
                     }
-                } elseif($def->isFilterable()) {
+                } elseif ($def->isFilterable()) {
                     $cd .= $def->getFilterCode();
                 }
             }
@@ -1337,13 +1337,13 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $cacheRawRelationData
+     *
      * @return $this
      */
     public function setCacheRawRelationData($cacheRawRelationData)
     {
         $this->cacheRawRelationData = (bool) $cacheRawRelationData;
+
         return $this;
     }
-
-
 }

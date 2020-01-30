@@ -547,7 +547,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -633,6 +633,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -661,6 +662,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
@@ -710,7 +712,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -813,7 +815,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -872,7 +874,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -1076,21 +1078,22 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" supported
      */
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
-        if($data instanceof Element\ElementInterface) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if ($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),
                 'type' => Element\Service::getElementType($data)
             ];
         }
 
-        if(!isset($data['id'], $data['type']))
-        {
+        if (!isset($data['id'], $data['type'])) {
             throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
-        if($operator === '=') {
+        if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data['type'].'|'.$data['id'].',%');
+
             return;
         }
 

@@ -27,7 +27,7 @@ use Pimcore\Model\Element\ElementInterface;
 class DefaultValue extends AbstractValue
 {
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      * @param string $key
      * @param string|null $brickType
      * @param string|null $brickKey

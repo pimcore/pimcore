@@ -168,7 +168,7 @@ class SnippetController extends DocumentControllerBase
     {
         $this->addSettingsToDocument($request, $snippet);
         $this->addDataToDocument($request, $snippet);
-        $this->addSchedulerToDocument($request, $snippet);
+        $this->applySchedulerDataToElement($request, $snippet);
         $this->addPropertiesToDocument($request, $snippet);
     }
 }

@@ -255,6 +255,7 @@ class Relations extends Model\Document\Tag implements \Iterator
 
     /**
      * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param Model\Document\PageSnippet $document
      * @param array $params
@@ -414,6 +415,7 @@ class Relations extends Model\Document\Tag implements \Iterator
      * Returns the current tag's data for web service export
      *
      * @deprecated
+     *
      * @param Model\Document\PageSnippet|null $document
      * @param array $params
      *

@@ -108,12 +108,6 @@ pimcore.element.helpers.gridColumnConfig = {
         this.getTableDescription();
     },
 
-    columnConfigurationSavedHandler: function (rdata) {
-        this.settings = rdata.settings;
-        this.availableConfigs = rdata.availableConfigs;
-        this.buildColumnConfigMenu();
-    },
-
     addGridConfigMenuItems: function(menu, list, onlyConfigs) {
         for (var i = 0; i < list.length; i++) {
             var disabled = false;
@@ -732,6 +726,4 @@ pimcore.element.helpers.gridColumnConfig = {
         this.availableConfigs = rdata.availableConfigs;
         this.buildColumnConfigMenu();
     }
-
-
 };

@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Glossary\Dao getDao()
+ * @method \Pimcore\Model\Glossary\Dao save()
  */
 class Glossary extends AbstractModel
 {

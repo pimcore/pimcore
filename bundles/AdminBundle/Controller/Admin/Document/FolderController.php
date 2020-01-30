@@ -69,7 +69,7 @@ class FolderController extends DocumentControllerBase
             'interfaces' => array_values(class_implements($folder))
         ];
 
-        $this->addAdminStyle($folder,  ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+        $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -105,7 +105,7 @@ class FolderController extends DocumentControllerBase
                 $this->setValuesToDocument($request, $folder);
                 $folder->save();
 
-                $this->addAdminStyle($folder,  ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+                $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
 
                 return $this->adminJson(['success' => true, 'treeData' => $treeData]);
             } else {

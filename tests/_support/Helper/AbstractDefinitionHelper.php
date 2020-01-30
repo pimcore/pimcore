@@ -70,15 +70,16 @@ abstract class AbstractDefinitionHelper extends Module
      * @param bool $index
      * @param bool $visibleInGridView
      * @param bool $visibleInSearchResult
+     *
      * @return Data
      */
-    public function createDataChild($type, $name = null, $mandatory = false, $index = true, $visibleInGridView = true, $visibleInSearchResult = true) {
-
+    public function createDataChild($type, $name = null, $mandatory = false, $index = true, $visibleInGridView = true, $visibleInSearchResult = true)
+    {
         if (!$name) {
             $name = $type;
         }
         $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
-        /** @var  $child Data */
+        /** @var $child Data */
         $child = new $classname();
         $child->setName($name);
         $child->setTitle($name);
@@ -86,9 +87,9 @@ abstract class AbstractDefinitionHelper extends Module
         $child->setIndex($index);
         $child->setVisibleGridView($visibleInGridView);
         $child->setVisibleSearch($visibleInSearchResult);
+
         return $child;
     }
-
 
     abstract public function initializeDefinitions();
 }

@@ -19,9 +19,13 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Tool;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 /**
- * @method Localizedfield\Dao getDao()
+ * @method Localizedfield\Dao getDao()*
+ * @method Localizedfield\Dao delete()
+ * @method Localizedfield\Dao load()
+ * @method Localizedfield\Dao save()
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
@@ -190,8 +194,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->_loadedAllLazyData = true;
         }
 
-        foreach($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
-            if($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
+        foreach ($this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]) as $fieldDefinition) {
+            if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                 foreach (Tool::getValidLanguages() as $language) {
                     $this->setLocalizedValue($fieldDefinition->getName(), null, $language, false);
                 }
@@ -411,7 +415,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -550,7 +554,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
-        $isLazyLoadedField = method_exists($fieldDefinition, 'getLazyLoading') && $fieldDefinition->getLazyLoading();
+        $isLazyLoadedField = ($fieldDefinition instanceof LazyLoadingSupportInterface || method_exists($fieldDefinition, 'getLazyLoading'))
+                                    && $fieldDefinition->getLazyLoading();
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
 
         if ($isLazyLoadedField) {
@@ -575,7 +580,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
         $this->items[$language][$name] = $value;
 
-        if($isLazyLoadedField) {
+        if ($isLazyLoadedField) {
             $this->markLazyKeyAsLoaded($lazyKey);
         }
 
@@ -732,7 +737,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

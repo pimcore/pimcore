@@ -340,8 +340,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null
@@ -445,6 +445,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -462,6 +463,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
@@ -533,7 +535,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

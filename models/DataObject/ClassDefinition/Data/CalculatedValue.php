@@ -112,7 +112,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -177,13 +177,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
+        return null;
     }
 
     /**
@@ -234,7 +235,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -242,12 +243,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         // nothing to do
+        return null;
     }
 
     /**
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -264,6 +267,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -287,7 +291,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -305,7 +309,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
 
-        if($class instanceof DataObject\Objectbrick\Definition) {
+        if ($class instanceof DataObject\Objectbrick\Definition) {
             $code .= "\t" . '$object = $this->getObject();'  . "\n";
         } else {
             $code .= "\t" . '$object = $this;'  . "\n";
@@ -346,7 +350,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}'  . "\n";
 
-        if($class instanceof DataObject\Objectbrick\Definition) {
+        if ($class instanceof DataObject\Objectbrick\Definition) {
             $ownerType = 'objectbrick';
             $index = $class->getKey();
             $ownerName = '$this->getFieldName()';
@@ -360,14 +364,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $code .= "\t" . '$object = $this;'  . "\n";
         }
 
-        if($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition) {
             $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         } else {
             $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         }
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index===null?'null':'"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
+        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index === null ? 'null' : '"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
 
         $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
@@ -407,9 +411,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     * Creates getter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -441,7 +445,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */

@@ -360,6 +360,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @internal
+     *
      * @param string $brick
      * @param string $brickField
      * @param string $field

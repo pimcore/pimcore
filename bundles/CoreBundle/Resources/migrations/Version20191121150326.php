@@ -32,28 +32,26 @@ class Version20191121150326 extends AbstractPimcoreMigration
 
                     $table = $schema->getTable($tableName);
                     if (!$table->hasColumn('preparation_status')) {
-                        $table->addColumn('preparation_status', 'smallint', ['unsigned' => true, 'length'=>5, 'notnull' => false, 'default'=>'null']);
+                        $table->addColumn('preparation_status', 'smallint', ['unsigned' => true, 'length' => 5, 'notnull' => false, 'default' => 'null']);
                     }
                     if (!$table->hasColumn('preparation_error')) {
-                        $table->addColumn('preparation_error', 'string', [ 'length'=>255, 'notnull' => false, 'default'=>'null']);
+                        $table->addColumn('preparation_error', 'string', [ 'length' => 255, 'notnull' => false, 'default' => 'null']);
                     }
                     if (!$table->hasColumn('trigger_info')) {
-                        $table->addColumn('trigger_info', 'string', ['length'=>255, 'notnull' => false, 'default'=>'null']);
+                        $table->addColumn('trigger_info', 'string', ['length' => 255, 'notnull' => false, 'default' => 'null']);
                     }
 
-
-                    if(!$table->hasIndex('update_worker_index')) {
-                        $table->addIndex(['tenant','crc_current','crc_index','worker_timestamp'], 'update_worker_index');
+                    if (!$table->hasIndex('update_worker_index')) {
+                        $table->addIndex(['tenant', 'crc_current', 'crc_index', 'worker_timestamp'], 'update_worker_index');
                     }
 
-                    if(!$table->hasIndex('preparation_status_index')) {
-                        $table->addIndex(['tenant','preparation_status'], 'preparation_status_index');
+                    if (!$table->hasIndex('preparation_status_index')) {
+                        $table->addIndex(['tenant', 'preparation_status'], 'preparation_status_index');
                     }
 
-                    if(!$table->hasIndex('worker_id_index')) {
+                    if (!$table->hasIndex('worker_id_index')) {
                         $table->addIndex(['worker_id'], 'worker_id_index');
                     }
-
                 }
             }
         }

@@ -869,7 +869,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     } else {
                         record.set("left", 1);
                     }
-                    ;
+
                 }.bind(this)
             }
         });

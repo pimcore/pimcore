@@ -49,7 +49,7 @@ Now you can create a filter for the nested document field, which has to be defin
 ```php
 class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType
 {
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
     {
         /* @var AbstractElasticSearch $productList */
 
@@ -84,7 +84,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
         ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $nestedPath = "attributes.my_attributes";
         
@@ -117,12 +117,12 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
 
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList $productList
+     * @param ProductListInterface $productList
      * @param array $currentFilter
      * @return string
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
         $this->prepareGroupByValues($filterDefinition, $productList);
@@ -137,11 +137,9 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
     }
 
 }
-
-    
 ```
 
-### Futher information
+### Further information
 Read more about 
 
 - [_nested documents_ ](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)

@@ -284,7 +284,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // object preview
         if ($objectId = $request->get('pimcore_object_preview')) {
             if ($object = Service::getElementFromSession('object', $objectId)) {
-
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
                     'object' => $object->getFullPath(),
                     'objectId' => $object->getId()

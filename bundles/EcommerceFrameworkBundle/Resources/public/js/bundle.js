@@ -74,12 +74,6 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
 
         var user = pimcore.globalmanager.get("user");
 
-        var insertPoint = Ext.get("pimcore_menu_settings");
-        if (!insertPoint) {
-            var dom = Ext.dom.Query.select('#pimcore_navigation ul li:last');
-            insertPoint = Ext.get(dom[0]);
-        }
-
         var config = pimcore.bundle.EcommerceFramework.bundle.config;
 
         // pricing rules

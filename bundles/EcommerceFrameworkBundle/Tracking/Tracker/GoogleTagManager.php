@@ -14,15 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 
-use AppBundle\Ecommerce\CartManager\Cart;
-use AppBundle\Ecommerce\Checkout\B2B\Step\Billing;
-use AppBundle\Ecommerce\Checkout\B2B\Step\Payment;
-use AppBundle\Ecommerce\Checkout\B2B\Step\Shipping;
-use AppBundle\Ecommerce\Checkout\B2B\TrackableStep;
-use AppBundle\Ecommerce\Tracking\TrackingItemBuilder;
-use AppBundle\Model\DataObject\ShopCategory;
-use AppBundle\Service\Formatter\PriceFormatter;
-use AppBundle\Traits\EnvironmentAware;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -40,8 +31,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GoogleTagManager extends Tracker implements
@@ -54,7 +43,6 @@ class GoogleTagManager extends Tracker implements
     CheckoutCompleteInterface,
     TrackingCodeAwareInterface
 {
-
     const DEFERRED_DIMENSION_IMPRESSIONS = 'impressions';
 
     const DEFERRED_DIMENSIONS = [
@@ -91,9 +79,10 @@ class GoogleTagManager extends Tracker implements
         $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
         $call = [
-            "ecommerce" => [
-                "detail" => [
-                    "products" => [
+            'event' => 'detail',
+            'ecommerce' => [
+                'detail' => [
+                    'products' => [
                         $this->transformProductAction($item),
                     ],
                 ],
@@ -112,9 +101,9 @@ class GoogleTagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
-            "ecommerce" => [
-                "add" => [
-                    "products" => [
+            'ecommerce' => [
+                'add' => [
+                    'products' => [
                         $productArray,
                     ],
                 ],
@@ -133,9 +122,9 @@ class GoogleTagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
-            "ecommerce" => [
-                "remove" => [
-                    "products" => [
+            'ecommerce' => [
+                'remove' => [
+                    'products' => [
                         $productArray,
                     ],
                 ],
@@ -147,19 +136,20 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-     public function trackCheckout(CartInterface $cart)
+    public function trackCheckout(CartInterface $cart)
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
         $products = $this->transformCheckoutItems($items);
 
         $call = [
-            "ecommerce" => [
-                "checkout" => [
-                    "actionField" => [
-                        "step" => 1,
+            'event' => 'checkout',
+            'ecommerce' => [
+                'checkout' => [
+                    'actionField' => [
+                        'step' => 1,
                     ],
-                    "products" => $products,
+                    'products' => $products,
                 ],
             ],
         ];
@@ -176,13 +166,14 @@ class GoogleTagManager extends Tracker implements
         $products = $this->transformCheckoutItems($items);
 
         $call = [
-            "ecommerce" => [
-                "checkout" => [
-                    "actionField" => [
-                        "step" => $stepNumber,
-                        "option" => $checkoutOption,
+            'event' => 'checkout',
+            'ecommerce' => [
+                'checkout' => [
+                    'actionField' => [
+                        'step' => $stepNumber,
+                        'option' => $checkoutOption,
                     ],
-                    "products" => $products,
+                    'products' => $products,
                 ],
             ],
         ];
@@ -198,11 +189,12 @@ class GoogleTagManager extends Tracker implements
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $call = [
-            "ecommerce" => [
-                "currencyCode" => $order->getCurrency(),
-                "purchase" => [
-                    "actionField" => $this->transformTransaction($transaction),
-                    "products" => $this->transformCheckoutItems($items),
+            'event' => 'checkout',
+            'ecommerce' => [
+                'currencyCode' => $order->getCurrency(),
+                'purchase' => [
+                    'actionField' => $this->transformTransaction($transaction),
+                    'products' => $this->transformCheckoutItems($items),
                 ],
             ],
         ];
@@ -223,14 +215,14 @@ class GoogleTagManager extends Tracker implements
     {
         return $this->filterNullValues(
             array_merge([
-                "name" => $item->getName(),
-                "id" => $item->getId(),
-                "price" => $this->formatPrice($item->getPrice()),
+                'name' => $item->getName(),
+                'id' => (string)$item->getId(),
+                'price' => $this->formatPrice($item->getPrice()),
                 'brand' => $item->getBrand(),
-                "category" => $item->getCategory(),
-                "variant" => $item->getVariant(),
-                "quantity" => $item->getQuantity(),
-                "position" => $item->getPosition(),
+                'category' => $item->getCategory(),
+                'variant' => $item->getVariant(),
+                'quantity' => $item->getQuantity(),
+                'position' => $item->getPosition(),
                 'coupon' => $item->getCoupon(),
             ],
                 $item->getAdditionalAttributes())
@@ -248,7 +240,7 @@ class GoogleTagManager extends Tracker implements
     {
         $data = $this->filterNullValues(
             array_merge([
-                'id' => $item->getId(),
+                'id' => (string) $item->getId(),
                 'name' => $item->getName(),
                 'category' => $item->getCategory(),
                 'brand' => $item->getBrand(),
@@ -274,12 +266,12 @@ class GoogleTagManager extends Tracker implements
     {
         return $this->filterNullValues(
             array_merge([
-                "id" => $transaction->getId(),
-                "affiliation" => $transaction->getAffiliation(),
-                "revenue" => $this->formatPrice($transaction->getTotal()),
-                "tax" => $this->formatPrice($transaction->getTax()),
-                "coupon" => $transaction->getCoupon(),
-                "shipping" => $this->formatPrice($transaction->getShipping()),
+                'id' => $transaction->getId(),
+                'affiliation' => $transaction->getAffiliation(),
+                'revenue' => $this->formatPrice($transaction->getTotal()),
+                'tax' => $this->formatPrice($transaction->getTax()),
+                'coupon' => $transaction->getCoupon(),
+                'shipping' => $this->formatPrice($transaction->getShipping()),
             ],
                 $transaction->getAdditionalAttributes())
         );
@@ -287,6 +279,7 @@ class GoogleTagManager extends Tracker implements
 
     /**
      * @param array $items
+     *
      * @return array
      */
     protected function transformCheckoutItems(array $items)
@@ -296,9 +289,9 @@ class GoogleTagManager extends Tracker implements
         }, $items);
     }
 
-
     /**
      * @param int|float|string $price
+     *
      * @return mixed
      */
     private function formatPrice($price = null)
@@ -306,9 +299,9 @@ class GoogleTagManager extends Tracker implements
         return Decimal::fromNumeric($price)->asString();
     }
 
-
     /**
      * @param array $call
+     *
      * @return string
      */
     private function renderCall(?array $call): string
@@ -333,7 +326,7 @@ class GoogleTagManager extends Tracker implements
         foreach (self::DEFERRED_DIMENSIONS as $dimension) {
             if ($items = $this->getDeferredItems($dimension)) {
                 $call = [
-                    "ecommerce" => [
+                    'ecommerce' => [
                         $dimension => $items,
                     ],
                 ];
