@@ -359,7 +359,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     applyDefaultValue: function() {
 
         this.defaultValue = null;
-        if ((typeof this.data === "undefined" || data === null) && this.fieldConfig.defaultValue) {
+        if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.defaultValue) {
             this.data = this.fieldConfig.defaultValue;
             this.defaultValue = this.data;
         }
