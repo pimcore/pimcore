@@ -12,6 +12,7 @@ class Version20200129102132 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
+        $this->addSql('ALTER TABLE `tags` ROW_FORMAT=DYNAMIC;');
         $this->addSql('ALTER TABLE `tags` ADD INDEX `name` (`name`);');
     }
 
@@ -21,5 +22,6 @@ class Version20200129102132 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         $this->addSql('ALTER TABLE `tags` DROP INDEX `name`;');
+        $this->addSql('ALTER TABLE `tags` ROW_FORMAT=DEFAULT;');
     }
 }

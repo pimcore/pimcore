@@ -501,7 +501,7 @@ CREATE TABLE `tags` (
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`),
   KEY `name` (`name`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
 CREATE TABLE `tags_assignment` (
