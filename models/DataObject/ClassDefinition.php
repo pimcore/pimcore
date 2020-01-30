@@ -266,7 +266,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      */
     public static function cleanupForExport(&$data)
     {

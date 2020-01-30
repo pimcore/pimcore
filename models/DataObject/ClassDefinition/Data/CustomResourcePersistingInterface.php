@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 interface CustomResourcePersistingInterface
 {
     /**
-     * @param $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = []);

@@ -536,7 +536,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\ImageGallery|null $data
      * @param null $object
      * @param mixed $params
      *

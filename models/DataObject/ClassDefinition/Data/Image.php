@@ -385,6 +385,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+        return null;
     }
 
     /**
@@ -419,7 +420,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param Asset\Image|null $data
      * @param null $object

@@ -70,7 +70,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $defaultValue
+     * @param mixed $defaultValue
      *
      * @return $this
      */

@@ -546,9 +546,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -574,7 +574,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param $idMapping
      * @param array $params
      *

@@ -530,8 +530,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param $data
      * @param DataObject\Concrete|null $object

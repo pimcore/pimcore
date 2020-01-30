@@ -58,4 +58,8 @@ abstract class Adapter
     {
         $this->removeTmpFiles();
     }
+
+    public abstract function load($path);
+
+    public abstract function saveImage($path, $page, $resolution);
 }

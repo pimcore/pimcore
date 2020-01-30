@@ -23,8 +23,8 @@ use Pimcore\Tool;
 /**
  * @method Localizedfield\Dao getDao()*
  * @method void delete()
- * @method void load()
- * @method void save()
+ * @method void load($object, $params = [])
+ * @method void save($params = [])
  * @method void createUpdateTable($params = [])
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
