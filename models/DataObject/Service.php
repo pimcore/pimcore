@@ -946,10 +946,9 @@ class Service extends Model\Element\Service
         }
 
         foreach ($list as $customLayout) {
-            if($customLayout instanceof ClassDefinition\CustomLayout) {
+            if ($customLayout instanceof ClassDefinition\CustomLayout) {
                 $resultList[$customLayout->getId()] = $customLayout;
             }
-
         }
 
         return $resultList;

@@ -40,7 +40,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
     public function execute()
     {
         $lockId = self::class;
-        if (!Lock::isLocked($lockId, 86400*2) && date('H') <= 4) {
+        if (!Lock::isLocked($lockId, 86400 * 2) && date('H') <= 4) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             Lock::lock($lockId);
             $this->logger->debug('Execute low quality image preview generation');
@@ -71,7 +71,6 @@ final class LowQualityImagePreviewTask implements TaskInterface
                 }
                 \Pimcore::collectGarbage();
             }
-
         } else {
             $this->logger->debug('Skip low quality image preview execution, was done within the last 24 hours');
         }

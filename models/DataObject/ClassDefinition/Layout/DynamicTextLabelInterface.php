@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 interface DynamicTextLabelInterface
 {
-
     /**
      * @param string $data as provided in the class definition
      * @param Concrete $object

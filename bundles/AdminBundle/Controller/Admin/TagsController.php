@@ -126,7 +126,7 @@ class TagsController extends AdminController
         }
         $tagList->setOrderKey('name');
 
-        if(!empty($request->get('filter'))) {
+        if (!empty($request->get('filter'))) {
             $filterIds = [0];
             $filterTagList = new Tag\Listing();
             $filterTagList->setCondition('`name` LIKE '. $filterTagList->quote('%'. $request->get('filter') .'%'));
@@ -134,12 +134,11 @@ class TagsController extends AdminController
                 if ($parentId = $filterTag->getParentId() == 0) {
                     $filterIds[] = $filterTag->getId();
                 } else {
-                    $ids = explode("/", $filterTag->getIdPath());
+                    $ids = explode('/', $filterTag->getIdPath());
                     if (isset($ids[1])) {
                         $filterIds[] = intval($ids[1]);
                     }
                 }
-
             }
 
             $filterIds = array_unique(array_values($filterIds));

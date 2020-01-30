@@ -17,7 +17,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
-use Pimcore\Tool;
 
 class Text extends Model\DataObject\ClassDefinition\Layout
 {
