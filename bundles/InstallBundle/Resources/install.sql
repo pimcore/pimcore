@@ -499,7 +499,8 @@ CREATE TABLE `tags` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
-  KEY `parentid` (`parentId`)
+  KEY `parentid` (`parentId`),
+  KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS  `tags_assignment`;

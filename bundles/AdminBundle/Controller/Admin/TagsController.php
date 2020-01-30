@@ -108,6 +108,7 @@ class TagsController extends AdminController
         $assginmentCId = intval($request->get('assignmentCId'));
         $assginmentCType = strip_tags($request->get('assignmentCType'));
 
+        $recursiveChildren = false;
         $assignedTagIds = [];
         if ($assginmentCId && $assginmentCType) {
             $assignedTags = Tag::getTagsForElement($assginmentCType, $assginmentCId);
@@ -125,9 +126,30 @@ class TagsController extends AdminController
         }
         $tagList->setOrderKey('name');
 
+        if(!empty($request->get('filter'))) {
+            $filterIds = [0];
+            $filterTagList = new Tag\Listing();
+            $filterTagList->setCondition('`name` LIKE '. $filterTagList->quote('%'. $request->get('filter') .'%'));
+            foreach ($filterTagList->load() as $filterTag) {
+                if ($parentId = $filterTag->getParentId() == 0) {
+                    $filterIds[] = $filterTag->getId();
+                } else {
+                    $ids = explode("/", $filterTag->getIdPath());
+                    if (isset($ids[1])) {
+                        $filterIds[] = intval($ids[1]);
+                    }
+                }
+
+            }
+
+            $filterIds = array_unique(array_values($filterIds));
+            $tagList->setCondition('id IN('.implode(',', $filterIds).')');
+            $recursiveChildren = true;
+        }
+
         $tags = [];
         foreach ($tagList->load() as $tag) {
-            $tags[] = $this->convertTagToArray($tag, $showSelection, $assignedTagIds, true);
+            $tags[] = $this->convertTagToArray($tag, $showSelection, $assignedTagIds, true, $recursiveChildren);
         }
 
         return $this->adminJson($tags);
@@ -138,10 +160,11 @@ class TagsController extends AdminController
      * @param bool $showSelection
      * @param array $assignedTagIds
      * @param bool $loadChildren
+     * @param bool $recursiveChildren
      *
      * @return array
      */
-    protected function convertTagToArray(Tag $tag, $showSelection, $assignedTagIds, $loadChildren = false)
+    protected function convertTagToArray(Tag $tag, $showSelection, $assignedTagIds, $loadChildren = false, $recursiveChildren = false)
     {
         $tagArray = [
             'id' => $tag->getId(),
@@ -161,8 +184,9 @@ class TagsController extends AdminController
 
         if ($loadChildren) {
             $children = $tag->getChildren();
+            $loadChildren = $recursiveChildren ?? false;
             foreach ($children as $child) {
-                $tagArray['children'][] = $this->convertTagToArray($child, $showSelection, $assignedTagIds);
+                $tagArray['children'][] = $this->convertTagToArray($child, $showSelection, $assignedTagIds, $loadChildren, $recursiveChildren);
             }
         }
 
