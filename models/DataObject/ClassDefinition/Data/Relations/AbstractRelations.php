@@ -31,11 +31,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     /**
      * @var bool
      */
-    public static $remoteOwner = false;
-
-    /**
-     * @var bool
-     */
     public $lazyLoading;
 
     /**
@@ -88,14 +83,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $this->lazyLoading = $lazyLoading;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
     }
 
     /** Enrich relation with type-specific data.

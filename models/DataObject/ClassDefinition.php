@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Bundle\DataHubBundle\GraphQL\DataObjectQueryFieldConfigGenerator\ReverseManyToManyObjectRelation;
 use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
@@ -423,8 +424,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') && $def->isRemoteOwner(
-                        )) && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -448,7 +448,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner()) {
+                if ($def instanceof ReverseManyToManyObjectRelation) {
                     continue;
                 }
 

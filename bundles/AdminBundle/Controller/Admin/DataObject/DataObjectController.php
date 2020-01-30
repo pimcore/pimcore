@@ -569,7 +569,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             $refId = null;
 
-            if ($fielddefinition->isRemoteOwner()) {
+            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = DataObject\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
@@ -579,7 +579,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
 
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -1233,7 +1233,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
 
-                    if (method_exists($fd, 'isRemoteOwner') and $fd->isRemoteOwner()) {
+                    if ($fd instanceof ReverseManyToManyObjectRelation) {
                         $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
