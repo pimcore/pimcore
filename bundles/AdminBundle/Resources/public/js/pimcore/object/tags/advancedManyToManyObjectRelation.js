@@ -42,10 +42,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
 
         var fields = [];
-        if (typeof this.fieldConfig.visibleFields != "string") {
-            this.fieldConfig.visibleFields = "";
-        }
-
         var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
         this.visibleFields = visibleFields;
 
@@ -105,9 +101,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var cls = 'object_field';
         var i;
 
-        var visibleFields = this.visibleFields;
+        var visibleFields = this.visibleFields || [];
 
-        var columns = [];
+        var columns = [
+            {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
+            {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length}
+        ];
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
