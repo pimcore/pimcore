@@ -81,7 +81,7 @@ class DataObjectRoute extends Route implements RouteObjectInterface
      */
     public function getContent()
     {
-        return $this->getObject();
+        return null;
     }
 
     /**

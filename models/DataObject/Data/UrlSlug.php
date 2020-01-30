@@ -80,6 +80,10 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     protected $position;
 
+    /**
+     * @var array
+     */
+    protected static $cache = [];
 
     /**
      * UrlSlug constructor.
@@ -287,6 +291,13 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @return UrlSlug|null
      */
     public static function resolveSlug($path, $siteId = 0) {
+
+        $cacheKey = $path . '~~' . $siteId;
+        if(isset(self::$cache[$cacheKey])) {
+            return self::$cache[$cacheKey];
+        }
+
+        $slug = null;
         $db = Db::get();
         try {
             $query = 'SELECT * FROM object_url_slugs WHERE slug = ' . $db->quote($path)
@@ -300,14 +311,14 @@ class UrlSlug implements OwnerAwareFieldInterface
 
             if ($rawItem) {
                 $slug = self::createFromDataRow($rawItem);
-                return $slug;
             }
-
-
         } catch (\Exception $e) {
             Logger::error($e);
         }
-        return null;
+
+        self::$cache[$cacheKey] = $slug;
+
+        return $slug;
     }
 
     /**

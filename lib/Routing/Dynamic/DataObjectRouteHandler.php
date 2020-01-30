@@ -88,7 +88,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
             if($slug && $slug->getObjectId() == $match[1]) {
                 /** @var DataObject\Concrete $object **/
                 $object = DataObject::getById($match[1]);
-                if($object) {
+                if($object instanceof DataObject\Concrete && $object->isPublished()) {
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
             }
@@ -112,7 +112,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getPath());
         if($slug) {
             $object = DataObject::getById($slug->getObjectId());
-            if($object instanceof DataObject\Concrete) {
+            if($object instanceof DataObject\Concrete && $object->isPublished()) {
                 $route = $this->buildRouteForFromSlug($slug, $object);
                 $collection->add($route->getRouteKey(), $route);
             }
@@ -132,6 +132,8 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setObject($object);
         $route->setSlug($slug);
         $route->setDefault('_controller', $slug->getAction());
+        $route->setDefault('object', $object);
+        $route->setDefault('urlSlug', $slug);
         return $route;
     }
 }
