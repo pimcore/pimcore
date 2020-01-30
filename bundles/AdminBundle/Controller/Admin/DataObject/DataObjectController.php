@@ -27,6 +27,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
@@ -559,7 +560,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if (
             (
                 !$objectFromVersion
-                && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                && $fielddefinition instanceof LazyLoadingSupportInterface
                 && $fielddefinition->getLazyLoading()
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation

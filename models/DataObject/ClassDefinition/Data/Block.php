@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
@@ -984,7 +985,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
 
         if ($container instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
@@ -1187,7 +1188,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                if (($field instanceof LazyLoadingSupportInterface ||method_exists($field, 'getLazyLoading'))
+                                                        && $field->getLazyLoading()) {
                     $field->setLazyLoading(false);
                 }
             }

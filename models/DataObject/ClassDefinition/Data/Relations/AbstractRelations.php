@@ -23,7 +23,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface, DataObject\ClassDefinition\PathFormatterAwareInterface
+abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface, Data\LazyLoadingSupportInterface
 {
     const RELATION_ID_SEPARATOR = '$$';
 
@@ -212,7 +213,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;

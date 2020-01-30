@@ -1,6 +1,9 @@
 # Upgrade Notes
 
-##6.4.3
+
+## 6.5.0
+- If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`, implement the `LazyLoadingSupportInterface`
+  The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.
 - It is now possible to configure `php:memory_limit` for `web2print:pdf-creation` command with following configuration:
 ```yaml
 pimcore:
