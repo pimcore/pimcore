@@ -559,7 +559,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if (
             (
                 !$objectFromVersion
-                && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                && $fielddefinition instanceof DataObject\LazyLoadingSupportInterface
                 && $fielddefinition->getLazyLoading()
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation

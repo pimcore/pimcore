@@ -216,7 +216,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $valueGetter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        if (!$params['objectFromVersion'] && method_exists($fielddefinition, 'getLazyLoading')
+        if (!$params['objectFromVersion']
+            && ($fielddefinition instanceof DataObject\LazyLoadingSupportInterface || method_exists($fielddefinition, 'getLazyLoading'))
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation

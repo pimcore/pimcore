@@ -65,7 +65,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($fd instanceof DataObject\LazyLoadingSupportInterface) {
                             if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
