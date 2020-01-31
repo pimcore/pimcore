@@ -22,7 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
     use Extension\ColumnType;
     use Model\DataObject\Traits\ContextPersistenceTrait;
@@ -530,6 +530,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     }
 
 
+    /**
+     * @param $data
+     * @param null $object
+     * @param array $params
+     * @param string $lineBreak
+     * @return string|null
+     */
     protected function getPreviewData($data, $object = null, $params = [], $lineBreak = '<br />') {
         if (is_array($data) && count($data) > 0) {
             $pathes = [];
@@ -636,6 +643,88 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface
     {
         $this->domainLabelWidth = $domainLabelWidth;
         return $this;
+    }
+
+    /**
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     *
+     * @return array
+     */
+    public function preGetData($object, $params = [])
+    {
+        $data = null;
+        if ($object instanceof Model\DataObject\Concrete) {
+            $data = $object->getObjectVar($this->getName());
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object, ['force' => true]);
+
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
+
+                if ($object instanceof Model\DataObject\DirtyIndicatorInterface) {
+                    $object->markFieldDirty($this->getName(), false);
+                }
+            }
+        }
+
+        elseif ($object instanceof Model\DataObject\Localizedfield) {
+            $data = $params['data'];
+        } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+            if ($this->getLazyLoading() && $object->getObject()) {
+                /** @var Model\DataObject\Fieldcollection $container */
+                $container = $object->getObject()->getObjectVar($object->getFieldname());
+                if ($container) {
+                    $container->loadLazyField($object->getObject(), $object->getType(), $object->getFieldname(), $object->getIndex(), $this->getName());
+                } else {
+                    // if container is not available we assume that it is a newly set item
+                    $object->markLazyKeyAsLoaded($this->getName());
+                }
+            }
+
+            $data = $object->getObjectVar($this->getName());
+        } elseif ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+            if ($this->getLazyLoading() && $object->getObject()) {
+                /** @var Model\DataObject\Objectbrick $container */
+                $brickGetter = 'get' . ucfirst($object->getFieldname());
+                $container = $object->getObject()->$brickGetter();
+                if ($container) {
+                    $container->loadLazyField($object->getType(), $object->getFieldname(), $this->getName());
+                } else {
+                    $object->markLazyKeyAsLoaded($this->getName());
+                }
+            }
+
+            $data = $object->getObjectVar($this->getName());
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    /**
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function preSetData($object, $data, $params = [])
+    {
+        if ($data === null) {
+            $data = [];
+        }
+
+        $this->markLazyloadedFieldAsLoaded($object);
+
+        return $data;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function getLazyLoading() {
+        return true;
     }
 
 

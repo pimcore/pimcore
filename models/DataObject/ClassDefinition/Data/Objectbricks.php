@@ -215,9 +215,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         }
         $valueGetter = 'get' . ucfirst($key);
 
-        // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
+        // Editmode optimization for lazy loaded relations except metadata relations because they have additional data
+        // which cannot be loaded directly from the DB.
+        // Note that this is just for AbstractRelations, not for all LazyLoadingSupportInterface types.
+        // It tries to optimize fetching the data needed for the editmode without loading the entire target element.
+
         if (!$params['objectFromVersion']
-            && ($fielddefinition instanceof LazyLoadingSupportInterface || method_exists($fielddefinition, 'getLazyLoading'))
+            && ($fielddefinition instanceof Data\Relations\AbstractRelations)
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof ManyToManyObjectRelation
             && !$fielddefinition instanceof AdvancedManyToManyRelation
