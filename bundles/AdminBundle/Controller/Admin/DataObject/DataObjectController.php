@@ -199,7 +199,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
 
-        $objects = $this->sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getReverseSort());
+        $objects = $this->sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getChildrenSortOrder());
 
         if ($limit) {
             return $this->adminJson([
@@ -217,7 +217,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         return $this->adminJson($objects);
     }
 
-    private function sortChildrenNaturally(array $objects, string $sortBy, bool $reverse): array
+    /**
+     * @param array $objects
+     * @param string $sortBy
+     * @param string $childrenSortOrder
+     * @return array
+     */
+    private function sortChildrenNaturally(array $objects, string $sortBy, string $childrenSortOrder): array
     {
         if('index' === $sortBy) {
             $sortBy = 'idx';
@@ -230,7 +236,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         );
 
-        return $reverse ? array_reverse($objects) : $objects;
+        return $childrenSortOrder === 'ASC' ? $objects : array_reverse($objects);
     }
 
     /**
@@ -238,7 +244,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return array
      */
-    protected function getTreeNodeConfig($element)
+    protected function getTreeNodeConfig($element): array
     {
         $child = $element;
 
@@ -247,6 +253,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'idx' => intval($child->getIndex()),
             'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
+            'sortOrder' => $child->getChildrenSortOrder(),
             'text' => htmlspecialchars($child->getKey()),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
@@ -996,7 +1003,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
-            $object->setReverseSort(filter_var($request->get('reverseSort'), FILTER_VALIDATE_BOOLEAN));
+            $object->setChildrenSortOrder($request->get('childrenSortOrder'));
             $object->save();
 
             return $this->json(['success' => true]);
