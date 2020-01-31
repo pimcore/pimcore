@@ -17,7 +17,7 @@ class Version20200131102335 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `objects` ADD COLUMN `o_childrenSortOrder` VARCHAR(50) NULL DEFAULT NULL AFTER `o_childrenSortBy`;');
+        $this->addSql("ALTER TABLE `objects` ADD COLUMN `o_childrenSortOrder` enum('ASC','DESC') NULL DEFAULT NULL AFTER `o_childrenSortBy`;");
     }
 
     /**
