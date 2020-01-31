@@ -418,7 +418,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setUnpublished($includingUnpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder('asc');
+            $list->setOrder($this->getChildrenSortOrder());
             $list->setObjectTypes($objectTypes);
             $this->o_children[$cacheKey] = $list->load();
             $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
