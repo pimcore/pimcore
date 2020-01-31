@@ -23,8 +23,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface,
-    DataObject\ClassDefinition\PathFormatterAwareInterface, Data\LazyLoadingSupportInterface
+abstract class AbstractRelations extends Data implements
+    CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface,
+    Data\LazyLoadingSupportInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 
