@@ -173,7 +173,7 @@ abstract class AbstractRelations extends Data implements
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
-                $this->enrichDataRow($object, $params, $classId, $relation);
+                $this->enrichRelation($object, $params, $classId, $relation);
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
