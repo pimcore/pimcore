@@ -89,8 +89,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
-            if(this.data.requireEditableValues !== null) {
-                saveData.requireEditableValues = intval(this.data.requireEditableValues);
+            if(this.data.missingRequiredEditable !== null) {
+                saveData.missingRequiredEditable = this.data.missingRequiredEditable;
             }
 
             // check for version notification

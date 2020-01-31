@@ -72,9 +72,9 @@ abstract class PageSnippet extends Model\Document
     protected $contentMasterDocumentId;
 
     /**
-     * @var null|int
+     * @var null|bool
      */
-    protected $requireEditableValues = null;
+    protected $missingRequiredEditable = null;
 
     /**
      * @var array
@@ -110,8 +110,8 @@ abstract class PageSnippet extends Model\Document
         $this->getElements();
 
 
-        $this->checkRequireEditableValues();
-        if($this->getRequireEditableValues() && $this->getPublished()) {
+        $this->checkMissingRequiredEditable();
+        if($this->getMissingRequiredEditable() && $this->getPublished()) {
             throw new \Exception('Prevented publishing document - missing values for required editables');
         }
 
@@ -621,29 +621,39 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return int|null
+     * checks if the document is missing values for required editables
+     *
+     * @return bool|null
      */
-    public function getRequireEditableValues()
+    public function getMissingRequiredEditable()
     {
-        return $this->requireEditableValues;
+        return $this->missingRequiredEditable;
     }
 
     /**
-     * @param int|null $requireEditableValues
+     * @param bool|null $missingRequiredEditable
+     *
+     * @return $this
      */
-    public function setRequireEditableValues($requireEditableValues)
+    public function setMissingRequiredEditable($missingRequiredEditable)
     {
-        $this->requireEditableValues = $requireEditableValues;
+        if ($missingRequiredEditable !== null) {
+            $missingRequiredEditable = (bool) $missingRequiredEditable;
+        }
+
+        $this->missingRequiredEditable = $missingRequiredEditable;
+
+        return $this;
     }
 
     /**
      * Validates if there is a missing value for required editable
      */
-    public function checkRequireEditableValues() {
+    protected function checkMissingRequiredEditable() {
         //Allowed tags for required check
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
-        if ($this->getRequireEditableValues() == null) {
+        if ($this->getMissingRequiredEditable() === null) {
             /** @var TagUsageResolver $tagUsageResolver */
             $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
             try {
@@ -656,7 +666,7 @@ abstract class PageSnippet extends Model\Document
                         if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
                             $documentOptions = $tag->getOptions();
                             if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
-                                $this->setRequireEditableValues(true);
+                                $this->setMissingRequiredEditable(true);
                             }
                         }
                     }

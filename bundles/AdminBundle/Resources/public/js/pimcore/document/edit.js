@@ -407,8 +407,8 @@ pimcore.document.edit = Class.create({
         return values;
     },
 
-    getRequiredEditableValues: function () {
-        var values = {};
+    getEmptyRequiredEditables: function () {
+        var emptyRequiredEditables = [];
 
         if (!this.frame || !this.frame.editablesReady) {
             throw "edit not available";
@@ -423,7 +423,7 @@ pimcore.document.edit = Class.create({
                     if(requiredEditables[i].requiredError) {
                         editableName = requiredEditables[i].getName();
                         requiredEditables[i].checkValue(true);
-                        values[editableName] = requiredEditables[i];
+                        emptyRequiredEditables.push(editableName);
                     }
                 } catch (e) {
                 }
@@ -432,7 +432,7 @@ pimcore.document.edit = Class.create({
         catch (e2) {
         }
 
-        return values;
+        return emptyRequiredEditables;
     }
 
 });

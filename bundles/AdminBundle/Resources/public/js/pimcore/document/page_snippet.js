@@ -467,35 +467,34 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     validateRequiredEditables: function (dismissAlert) {
         //validate required editables against missing values
         try {
-            //No validation in case of changing system settings
+            /* No validation in case of changing system settings as template can be changed
+             * if template is changed, then document editables be validated on server side
+             */
             var settingsForm = Ext.getCmp("pimcore_document_settings_" + this.id);
             if(settingsForm.dirty) {
                 return;
             }
 
-            var requiredEditableValues = this.edit.getRequiredEditableValues();
-            if(Ext.isObject(requiredEditableValues)) {
-                var requiredEditables = Object.keys(requiredEditableValues);
-                if (requiredEditables.length > 0) {
-                    if (!dismissAlert) {
-                        Ext.MessageBox.show({
-                            title: t("error"),
-                            width: 500,
-                            msg: t("complete_required_fields")
-                                + '<br /><br /><textarea style="width:100%; min-height:100px; resize:none" readonly="readonly">'
-                                + requiredEditables.join(", ") + "</textarea>",
-                            buttons: Ext.Msg.OK
-                        });
-                    }
-
-                    this.data.requireEditableValues = true;
-
-                    return true;
+            var emptyRequiredEditables = this.edit.getEmptyRequiredEditables();
+            if (emptyRequiredEditables.length > 0) {
+                if (!dismissAlert) {
+                    Ext.MessageBox.show({
+                        title: t("error"),
+                        width: 500,
+                        msg: t("complete_required_fields")
+                            + '<br /><br /><textarea style="width:100%; min-height:100px; resize:none" readonly="readonly">'
+                            + emptyRequiredEditables.join(", ") + "</textarea>",
+                        buttons: Ext.Msg.OK
+                    });
                 }
+
+                this.data.missingRequiredEditable = true;
+
+                return true;
             }
 
-            if(this.data.requireEditableValues == true) {
-                this.data.requireEditableValues = false;
+            if(this.data.missingRequiredEditable == true) {
+                this.data.missingRequiredEditable = false;
             }
         } catch(e) {
         }
