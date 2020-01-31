@@ -224,7 +224,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             && !$fielddefinition instanceof Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
-            if ($fielddefinition->isRemoteOwner()) {
+            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refId = $fielddefinition->getOwnerClassId();
             } else {
@@ -232,7 +232,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $refId = null;
             }
 
-            $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            $relations = $item->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
             if (empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}();
                 if (!empty($parentItem)) {

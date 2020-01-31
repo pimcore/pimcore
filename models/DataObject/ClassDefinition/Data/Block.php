@@ -1068,14 +1068,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return false;
-    }
-
-    /**
      * @return int
      */
     public function getMaxItems()

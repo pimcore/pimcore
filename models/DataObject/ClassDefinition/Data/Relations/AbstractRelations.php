@@ -33,11 +33,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @var bool
      */
-    public static $remoteOwner = false;
-
-    /**
-     * @var bool
-     */
     public $lazyLoading;
 
     /**
@@ -90,14 +85,6 @@ abstract class AbstractRelations extends Data implements
         $this->lazyLoading = $lazyLoading;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
     }
 
     /** Enrich relation with type-specific data.
