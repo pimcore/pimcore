@@ -743,7 +743,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         $data = $this->getDataFromObjectParam($object, $params);;
         if (is_array($data)) {
             foreach ($data as $slug) {
-                if ($slug instanceof DataObject\Data\UrlSlug) {
+                if ($slug instanceof Model\DataObject\Data\UrlSlug) {
                     $result[] = $slug->getSlug() . ":" . $slug->getSiteId();
                 }
             }
@@ -766,7 +766,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             if (is_array($items)) {
                 foreach ($items as $item) {
                     $parts = explode(':', $item);
-                    $slug = new DataObject\Data\UrlSlug($parts[0], $parts[1]);
+                    $slug = new Model\DataObject\Data\UrlSlug($parts[0], $parts[1]);
                     $result[] = $slug;
                 }
             }
