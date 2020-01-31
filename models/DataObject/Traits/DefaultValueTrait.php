@@ -24,9 +24,12 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 trait DefaultValueTrait
 {
     /**
-     * @return mixed
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return null|string
      */
-    abstract protected function doGetDefaultValue();
+    abstract protected function doGetDefaultValue($object, $context = []);
 
     /**
      * @param mixed $data
@@ -37,6 +40,7 @@ trait DefaultValueTrait
      */
     protected function handleDefaultValue($data, $object = null, $params = [])
     {
+        $context = isset($params['context']) ? $params['context'] : [];
         $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
 
         /**
@@ -50,7 +54,7 @@ trait DefaultValueTrait
          * 2. if inheritance is enabled and there is no parent value then take the default value.
          * 3. if inheritance is disabled, take the default value.
          */
-        if ($this->isEmpty($data) && $this->doGetDefaultValue()) {
+        if ($this->isEmpty($data) && $this->doGetDefaultValue($object, $context)) {
             $class = null;
             $owner = isset($params['owner']) ? $params['owner'] : null;
             if ($owner instanceof Concrete) {
@@ -79,7 +83,7 @@ trait DefaultValueTrait
                     // no data from parent available, use the default value
                 }
             }
-            $data = $this->doGetDefaultValue();
+            $data = $this->doGetDefaultValue($object, $context);
         }
 
         return $data;

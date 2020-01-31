@@ -650,6 +650,14 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('web_to_print')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('pdf_creation_php_memory_limit')
+                            ->defaultValue('2048M')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
     }
 

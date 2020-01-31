@@ -83,6 +83,7 @@ class Dao extends Model\Dao\AbstractDao
 
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 
+        /** @var DataObject\ClassDefinition\Data $value */
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 

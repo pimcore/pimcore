@@ -48,7 +48,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      * @return array
      */
     public function getOptions($context, $fieldDefinition) {
-        $object = $context["object"];
+        $object = isset($context["object"]) ? $context["object"] : null;
         $fieldname = "id: " . ($object ? $object->getId() : "unknown") . " - " .$context["fieldname"];
         $result = array(
 

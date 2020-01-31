@@ -351,8 +351,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -401,8 +401,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -418,7 +418,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -467,7 +467,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -559,8 +559,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $existingData
-     * @param $additionalData
+     * @param array|null $existingData
+     * @param array $additionalData
      *
      * @return mixed
      */

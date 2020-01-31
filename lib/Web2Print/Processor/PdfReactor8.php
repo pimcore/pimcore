@@ -39,15 +39,15 @@ class PdfReactor8 extends Processor
             'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
             'author' => $config->author ?? '',
             'title' => $config->title ?? '',
-            'addLinks' => isset($config->links) && $config->links === 'true',
-            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === 'true',
+            'addLinks' => isset($config->links) && $config->links === true,
+            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === true,
             'javaScriptMode' => $config->javaScriptMode,
             'defaultColorSpace' => $config->colorspace ?? \ColorSpace::CMYK,
             'encryption' => $config->encryption ?? \Encryption::NONE,
-            'addTags' => isset($config->tags) && $config->tags === 'true',
+            'addTags' => isset($config->tags) && $config->tags === true,
             'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
-            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode === 'true',
-            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === 'true',
+            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode === true,
+            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
             'httpsMode' => $web2PrintConfig->pdfreactorEnableLenientHttpsMode ? \HttpsMode::LENIENT : \HttpsMode::STRICT
         ];
         if (!empty($config->viewerPreference)) {
@@ -127,8 +127,8 @@ class PdfReactor8 extends Processor
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $params = [];
-        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === 'true';
-        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === 'true';
+        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
+        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
         $params['colorspace'] = $config->colorspace ?? \ColorSpace::CMYK;
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');

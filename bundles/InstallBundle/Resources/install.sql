@@ -447,6 +447,7 @@ CREATE TABLE `schedule_tasks` (
   `action` enum('publish','unpublish','delete','publish-version') DEFAULT NULL,
   `version` bigint(20) unsigned DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '0',
+  `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
@@ -499,8 +500,9 @@ CREATE TABLE `tags` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
-  KEY `parentid` (`parentId`)
-) DEFAULT CHARSET=utf8mb4;
+  KEY `parentid` (`parentId`),
+  KEY `name` (`name`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
 CREATE TABLE `tags_assignment` (

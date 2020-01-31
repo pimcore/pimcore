@@ -270,6 +270,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             foreach ($data as $relation) {
                 $o = DataObject::getById($relation['id']);
                 if ($o && $o->getClassName() == $this->getAllowedClassId()) {
+                    /** @var DataObject\Data\ObjectMetadata $metaData */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -314,7 +315,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -424,8 +425,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -542,7 +543,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -600,7 +601,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param Element\AbstractElement $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -707,7 +708,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -909,8 +910,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $a
-     * @param $b
+     * @param array|null $a
+     * @param array|null $b
      *
      * @return int
      */
@@ -924,7 +925,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      * @param array $params
      */
     public function classSaved($class, $params = [])
@@ -977,7 +978,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {

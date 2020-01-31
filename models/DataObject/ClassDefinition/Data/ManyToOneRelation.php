@@ -427,8 +427,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|Asset|Document|Element\ElementInterface
@@ -572,7 +572,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return null|Element\ElementInterface
@@ -643,7 +643,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -682,7 +682,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToOneRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -736,8 +736,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $value1 Element\ElementInterface
-     * @param $value2 Element\ElementInterface
+     * @param Element\ElementInterface $value1
+     * @param Element\ElementInterface $value2
      *
      * @return bool
      */
@@ -749,6 +749,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $value1 == $value2;
     }
 
+    /**
+     * @return bool
+     */
     public function isFilterable(): bool
     {
         return true;

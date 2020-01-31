@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 /**
  * @property \Pimcore\Model\DataObject\Concrete $model
@@ -188,7 +189,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $db = Db::get();
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
+            if (($fd instanceof LazyLoadingSupportInterface || method_exists($fd, 'getLazyLoading'))
+                                    && $fd->getLazyLoading()) {
                 if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;

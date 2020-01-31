@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
-use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -946,7 +945,9 @@ class Service extends Model\Element\Service
         }
 
         foreach ($list as $customLayout) {
-            $resultList[$customLayout->getId()] = $customLayout;
+            if ($customLayout instanceof ClassDefinition\CustomLayout) {
+                $resultList[$customLayout->getId()] = $customLayout;
+            }
         }
 
         return $resultList;

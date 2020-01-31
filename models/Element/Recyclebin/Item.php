@@ -143,11 +143,12 @@ class Item extends Model\AbstractModel
             // see https://github.com/pimcore/pimcore/issues/4219
             Model\Version::disable();
             $className = get_class($element);
+            /** @var Document|Asset|AbstractObject $dummy */
             $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
             $dummy->setParentId($element->getParentId() ?: 1);
             $dummy->setKey($element->getKey());
-            if ($element instanceof DataObject\Concrete) {
+            if ($dummy instanceof DataObject\Concrete) {
                 $dummy->setOmitMandatoryCheck(true);
             }
             $dummy->save(['isRecycleBinRestore' => true]);
@@ -266,7 +267,9 @@ class Item extends Model\AbstractModel
             $element->getScheduledTasks();
         }
 
-        $element->setInDumpState(true);
+        if ($element instanceof Element\ElementDumpStateInterface) {
+            $element->setInDumpState(true);
+        }
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
         // with the dump state set to true, because this would cause major issues in wakeUp()
@@ -363,6 +366,8 @@ class Item extends Model\AbstractModel
                 }
             }
         );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+        
         //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
             $copier->addFilter(
@@ -404,6 +409,7 @@ class Item extends Model\AbstractModel
             ),
             new Model\Version\UnmarshalMatcher()
         );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
         if ($data instanceof Concrete) {
             //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface

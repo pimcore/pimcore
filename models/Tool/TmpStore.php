@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool;
 use Pimcore\Model;
 
 /**
+ * @method \Pimcore\Model\Tool\TmpStore\Dao getById(string $id)
  * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
  */
 class TmpStore extends Model\AbstractModel
@@ -140,7 +141,7 @@ class TmpStore extends Model\AbstractModel
      */
     public static function get($id)
     {
-        $item = new self;
+        $item = new self();
         if ($item->getById($id)) {
             if ($item->getExpiryDate() < time()) {
                 self::delete($id);

@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -25,6 +27,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
@@ -46,8 +49,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
-    use Element\AdminStyleTrait;
+    use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var DataObject\Service
@@ -585,7 +589,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if (
             (
                 !$objectFromVersion
-                && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                && $fielddefinition instanceof LazyLoadingSupportInterface
                 && $fielddefinition->getLazyLoading()
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
@@ -1290,23 +1294,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $object = $this->assignPropertiesFromEditmode($request, $object);
-
-        // scheduled tasks
-        if ($request->get('scheduler')) {
-            $tasks = [];
-            $tasksData = $this->decodeJson($request->get('scheduler'));
-
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                    $task = new Model\Schedule\Task($taskData);
-                    $tasks[] = $task;
-                }
-            }
-
-            $object->setScheduledTasks($tasks);
-        }
+        $this->applySchedulerDataToElement($request, $object);
 
         if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);

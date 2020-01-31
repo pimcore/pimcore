@@ -79,6 +79,7 @@ class GoogleTagManager extends Tracker implements
         $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
         $call = [
+            'event' => 'detail',
             'ecommerce' => [
                 'detail' => [
                     'products' => [
@@ -142,6 +143,7 @@ class GoogleTagManager extends Tracker implements
         $products = $this->transformCheckoutItems($items);
 
         $call = [
+            'event' => 'checkout',
             'ecommerce' => [
                 'checkout' => [
                     'actionField' => [
@@ -164,6 +166,7 @@ class GoogleTagManager extends Tracker implements
         $products = $this->transformCheckoutItems($items);
 
         $call = [
+            'event' => 'checkout',
             'ecommerce' => [
                 'checkout' => [
                     'actionField' => [
@@ -186,6 +189,7 @@ class GoogleTagManager extends Tracker implements
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $call = [
+            'event' => 'checkout',
             'ecommerce' => [
                 'currencyCode' => $order->getCurrency(),
                 'purchase' => [

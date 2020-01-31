@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
@@ -75,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($fd instanceof LazyLoadingSupportInterface) {
                             if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                                 $doLoad = false;
                             }

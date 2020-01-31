@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Property;
-use Pimcore\Model\Schedule;
-use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -30,7 +30,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-    use Model\Element\AdminStyleTrait;
+    use AdminStyleTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @param Request $request
@@ -80,33 +81,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
         // force loading of properties
         $document->getProperties();
-    }
-
-    /**
-     * @param Request $request
-     * @param Model\Document $document
-     */
-    protected function addSchedulerToDocument(Request $request, Model\Document $document)
-    {
-
-        // scheduled tasks
-        if ($request->get('scheduler')) {
-            $tasks = [];
-            $tasksData = $this->decodeJson($request->get('scheduler'));
-
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                    $task = new Schedule\Task($taskData);
-                    $tasks[] = $task;
-                }
-            }
-
-            if ($document->isAllowed('settings')) {
-                $document->setScheduledTasks($tasks);
-            }
-        }
     }
 
     /**
