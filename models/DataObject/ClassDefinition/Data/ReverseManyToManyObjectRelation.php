@@ -31,19 +31,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $fieldtype = 'reverseManyToManyObjectRelation';
 
     /**
-     * @var bool
-     */
-    public static $remoteOwner = true;
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /**
      * @var string
      */
     public $ownerClassName;

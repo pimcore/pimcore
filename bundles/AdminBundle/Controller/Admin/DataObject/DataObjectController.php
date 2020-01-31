@@ -27,7 +27,6 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
@@ -555,21 +554,22 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
-        // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not), so that the values can be loaded
+        // Optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
+        // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
+        // loading the entire target element.
+        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
+        // so that the values can be loaded.
         if (
             (
                 !$objectFromVersion
-                && $fielddefinition instanceof LazyLoadingSupportInterface
+                && $fielddefinition instanceof AbstractRelations
                 && $fielddefinition->getLazyLoading()
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
-
-            //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             $refId = null;
 
-            if ($fielddefinition->isRemoteOwner()) {
+            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = DataObject\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
@@ -579,7 +579,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
 
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -1233,7 +1233,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
 
-                    if (method_exists($fd, 'isRemoteOwner') and $fd->isRemoteOwner()) {
+                    if ($fd instanceof ReverseManyToManyObjectRelation) {
                         $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);

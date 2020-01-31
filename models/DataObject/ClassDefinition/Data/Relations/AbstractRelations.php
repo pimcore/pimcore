@@ -35,11 +35,6 @@ abstract class AbstractRelations extends Data implements
     /**
      * @var bool
      */
-    public static $remoteOwner = false;
-
-    /**
-     * @var bool
-     */
     public $lazyLoading;
 
     /**
@@ -94,12 +89,52 @@ abstract class AbstractRelations extends Data implements
         return $this;
     }
 
-    /**
-     * @return bool
+    /** Enrich relation with type-specific data.
+     * @param $object
+     * @param $params
+     * @param $classId
+     * @param array $relation
      */
-    public function isRemoteOwner()
+    protected function enrichRelation($object, $params, &$classId, &$relation = [])
     {
-        return self::$remoteOwner;
+        if (!$relation) {
+            $relation = [];
+        }
+
+        if ($object instanceof DataObject\Concrete) {
+            $relation['src_id'] = $object->getId();
+            $relation['ownertype'] = 'object';
+
+            $classId = $object->getClassId();
+        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $relation['src_id'] = $object->getObject()->getId(); // use the id from the object, not from the field collection
+            $relation['ownertype'] = 'fieldcollection';
+            $relation['ownername'] = $object->getFieldname();
+            $relation['position'] = $object->getIndex();
+
+            $classId = $object->getObject()->getClassId();
+        } elseif ($object instanceof DataObject\Localizedfield) {
+            $relation['src_id'] = $object->getObject()->getId();
+            $relation['ownertype'] = 'localizedfield';
+            $relation['ownername'] = 'localizedfield';
+            $context = $object->getContext();
+            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
+                $fieldname = $context['fieldname'];
+                $index = $context['index'] ?? null;
+                $relation['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
+            }
+
+            $relation['position'] = $params['language'];
+
+            $classId = $object->getObject()->getClassId();
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $relation['src_id'] = $object->getObject()->getId();
+            $relation['ownertype'] = 'objectbrick';
+            $relation['ownername'] = $object->getFieldname();
+            $relation['position'] = $object->getType();
+
+            $classId = $object->getObject()->getClassId();
+        }
     }
 
     /**
