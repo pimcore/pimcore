@@ -19,9 +19,9 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 
 /**
  * @method Dao getDao()
