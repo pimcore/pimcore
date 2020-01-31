@@ -39,7 +39,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
-    const OBJECT_REVERSE_SORT_DEFAULT = 'ASC';
+    const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
      * @var bool
@@ -1469,6 +1469,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function getChildrenSortOrder(): string
     {
-        return $this->o_childrenSortOrder ?? self::OBJECT_REVERSE_SORT_DEFAULT;
+        return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
     }
 }
