@@ -727,5 +727,52 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return true;
     }
 
+    /**
+     * converts object data to a simple string value or CSV Export
+     *
+     * @abstract
+     *
+     * @param DataObject\AbstractObject $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getForCsvExport($object, $params = [])
+    {
+        $result = [];
+        $data = $this->getDataFromObjectParam($object, $params);;
+        if (is_array($data)) {
+            foreach ($data as $slug) {
+                if ($slug instanceof DataObject\Data\UrlSlug) {
+                    $result[] = $slug->getSlug() . ":" . $slug->getSiteId();
+                }
+            }
+        }
+        return implode(',', $result);
+    }
+
+    /**
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function getFromCsvImport($importValue, $object = null, $params = [])
+    {
+        $result = [];
+        if (strlen($importValue) >0 ) {
+            $items = explode(',', $importValue);
+            if (is_array($items)) {
+                foreach ($items as $item) {
+                    $parts = explode(':', $item);
+                    $slug = new DataObject\Data\UrlSlug($parts[0], $parts[1]);
+                    $result[] = $slug;
+                }
+            }
+
+        }
+        return $result;
+    }
 
 }
