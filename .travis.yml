@@ -25,6 +25,9 @@ addons:
 
 # see https://docs.travis-ci.com/user/build-matrix/
 matrix:
+  allow_failures:
+    -env: PHPSTAN_LEVEL=2
+
   include:
     # Symfony 3.4 all tests
     - name: "All Tests - PHP 7.2 Symfony 3.4"
@@ -129,8 +132,6 @@ matrix:
     - name: "PHPStan Tests Lvl 2 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.4
-      allow_failures:
-        -env: PHPSTAN_LEVEL=2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
