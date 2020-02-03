@@ -96,14 +96,14 @@ matrix:
         - PIMCORE_TEST_ENV=http
 
     # Test Stan - see https://github.com/phpstan/phpstan
-    - name: "PHPStan Tests - PHP 7.2 Symfony 3.4"
+    - name: "PHPStan Tests Lvl 1 - PHP 7.2 Symfony 3.4"
       os: linux
       php: 7.2
       env:
         - SYMFONY_VERSION="^3.4"
         - TASK_TESTS=0
         - TASK_STAN=1
-    - name: "PHPStan Tests - PHP 7.3 Symfony 3.4"
+    - name: "PHPStan Tests Lvl 1 - PHP 7.3 Symfony 3.4"
       os: linux
       php: 7.3
       env:
@@ -112,19 +112,28 @@ matrix:
         - TASK_STAN=1
 
     # Test Stan Symfony ^4.0
-    - name: "PHPStan Tests - PHP 7.2 Symfony 4"
+    - name: "PHPStan Tests Lvl 1 - PHP 7.2 Symfony 4"
       os: linux
       php: 7.2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Tests - PHP 7.3 Symfony 4"
+    - name: "PHPStan Tests Lvl 1 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.3
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
+
+    - name: "PHPStan Tests Lvl 2 - PHP 7.3 Symfony 4"
+      os: linux
+      php: 7.4
+      allow_failures: true
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - PHPSTAN_LEVEL=2
 
     # Test Docs
     - name: "Documentation"
@@ -148,6 +157,7 @@ env:
     - TASK_TESTS=1
     - TASK_STAN=0
     - TASK_DOCS=0
+    - PHPSTAN_LEVEL=1
     - PIMCORE_ENVIRONMENT=test
     - PIMCORE_TEST=1
     - PIMCORE_TEST_URL=http://pimcore-test.dev
