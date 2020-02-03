@@ -23,14 +23,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface, DataObject\ClassDefinition\PathFormatterAwareInterface
+abstract class AbstractRelations extends Data implements
+    CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface,
+    Data\LazyLoadingSupportInterface
 {
     const RELATION_ID_SEPARATOR = '$$';
-
-    /**
-     * @var bool
-     */
-    public static $remoteOwner = false;
 
     /**
      * @var bool
@@ -87,14 +85,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $this->lazyLoading = $lazyLoading;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
     }
 
     /** Enrich relation with type-specific data.
@@ -212,13 +202,13 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
             }
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername'=> $object->getFieldname(), 'position' => $object->getIndex()]);
+            $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'] ?? null;
             if (isset($context['containerType']) && (($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick'))) {
@@ -394,7 +384,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
 
-            if(!isset($removeMap[$key])) {
+            if (!isset($removeMap[$key])) {
                 $newData[] = $item;
             }
         }

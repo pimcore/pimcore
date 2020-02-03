@@ -50,11 +50,13 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
 
     /**
      * @param RuleInterface|null $rule
+     *
      * @return $this
      */
     public function setRule($rule)
     {
         $this->rule = $rule;
+
         return $this;
     }
 

@@ -30,13 +30,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\Element\Tag[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $tags = null;
 
     public function __construct()
     {
-        $this->tags =& $this->data;
+        $this->tags = & $this->data;
     }
 
     /**

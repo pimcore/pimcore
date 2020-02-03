@@ -62,6 +62,7 @@ trait ScheduledTasksTrait
         $this->getDao()->deleteAllTasks();
 
         if (is_array($scheduledTasks) && count($scheduledTasks) > 0) {
+            /** @var Task $task */
             foreach ($scheduledTasks as $task) {
                 $task->setId(null);
                 $task->setDao(null);

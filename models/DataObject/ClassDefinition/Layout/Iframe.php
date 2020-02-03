@@ -17,7 +17,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
-use Pimcore\Tests\Helper\Pimcore;
 
 class Iframe extends Model\DataObject\ClassDefinition\Layout
 {

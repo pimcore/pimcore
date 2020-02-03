@@ -15,11 +15,14 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -45,7 +48,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
+    use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var DataObject\Service
@@ -254,7 +259,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        $tmpObject['qtipCfg'] = $child->getElementAdminStyle()->getElementQtipConfig();
+        $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
 
         if ($child->getType() != 'folder') {
             $tmpObject['published'] = $child->isPublished();
@@ -267,21 +272,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $tmpObject['allowVariants'] = $child->getClass()->getAllowVariants();
         }
 
-        if ($child->getElementAdminStyle()->getElementIcon()) {
-            $tmpObject['icon'] = $child->getElementAdminStyle()->getElementIcon();
-        }
-
-        if ($child->getElementAdminStyle()->getElementIconClass()) {
-            $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
-        }
-
-        if ($tmpObject['type'] == 'variant' && !$tmpObject['icon'] && !$tmpObject['iconCls']) {
-            $tmpObject['iconCls'] = 'pimcore_icon_variant';
-        }
-
-        if ($child->getElementAdminStyle()->getElementCssClass()) {
-            $tmpObject['cls'] .= $child->getElementAdminStyle()->getElementCssClass() . ' ';
-        }
+        $this->addAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE, $tmpObject);
 
         $tmpObject['expanded'] = !$hasChildren;
         $tmpObject['permissions'] = $child->getUserPermissions();
@@ -452,12 +443,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
-            if ($object->getElementAdminStyle()->getElementIcon()) {
-                $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
-            }
-            if ($object->getElementAdminStyle()->getElementIconClass()) {
-                $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
-            }
+            $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
             $currentLayoutId = $request->get('layoutId', null);
 
@@ -568,21 +554,22 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
-        // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not), so that the values can be loaded
+        // Optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
+        // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
+        // loading the entire target element.
+        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
+        // so that the values can be loaded.
         if (
             (
                 !$objectFromVersion
-                && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                && $fielddefinition instanceof AbstractRelations
                 && $fielddefinition->getLazyLoading()
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
-
-            //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             $refId = null;
 
-            if ($fielddefinition->isRemoteOwner()) {
+            if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = DataObject\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
@@ -592,7 +579,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            $relations = $object->getRelationData($refKey, !$fielddefinition instanceof ReverseManyToManyObjectRelation, $refId);
 
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -1030,9 +1017,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $values = $this->decodeJson($request->get('values'));
 
         if ($object->isAllowed('settings')) {
-            if ($values['key'] && $object->isAllowed('rename')) {
+            if (isset($values['key']) && $values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
-            } elseif ($values['key'] != $object->getKey()) {
+            } elseif (!isset($values['key']) || $values['key'] != $object->getKey()) {
                 Logger::debug('prevented renaming object because of missing permissions ');
             }
 
@@ -1246,7 +1233,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
 
-                    if (method_exists($fd, 'isRemoteOwner') and $fd->isRemoteOwner()) {
+                    if ($fd instanceof ReverseManyToManyObjectRelation) {
                         $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                         $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
@@ -1277,23 +1264,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $object = $this->assignPropertiesFromEditmode($request, $object);
-
-        // scheduled tasks
-        if ($request->get('scheduler')) {
-            $tasks = [];
-            $tasksData = $this->decodeJson($request->get('scheduler'));
-
-            if (!empty($tasksData)) {
-                foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                    $task = new Model\Schedule\Task($taskData);
-                    $tasks[] = $task;
-                }
-            }
-
-            $object->setScheduledTasks($tasks);
-        }
+        $this->applySchedulerDataToElement($request, $object);
 
         if ($request->get('task') == 'unpublish') {
             $object->setPublished(false);
@@ -1329,6 +1300,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
+
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
             if ($object->isAllowed('settings')) {
@@ -1491,8 +1463,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $object->setUserModification($this->getAdminUser()->getId());
             try {
                 $object->save();
-                $treeData = [];
-                $treeData['qtipCfg'] = $object->getElementAdminStyle()->getElementQtipConfig();
+
+                $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
 
                 return $this->adminJson(
                     [
@@ -1752,7 +1724,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!$data['published']) {
+                    if (!isset($data['published']) || !$data['published']) {
                         $object->setOmitMandatoryCheck(true);
                     }
 
@@ -2049,7 +2021,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // replace named variables
                 $vars = $object->getObjectVars();
                 foreach ($vars as $key => $value) {
-                    if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                    if (!empty($value) && \is_scalar($value)) {
                         $url = str_replace('%' . $key, urlencode($value), $url);
                     } else {
                         if (strpos($url, '%' . $key) !== false) {
@@ -2057,6 +2029,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         }
                     }
                 }
+                $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
             }

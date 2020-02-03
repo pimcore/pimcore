@@ -103,6 +103,7 @@ class Numeric extends Model\Document\Tag
 
     /**
      * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param Model\Document\PageSnippet $document
      * @param array $params

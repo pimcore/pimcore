@@ -421,33 +421,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         return buttons;
     },
 
-    getColumnWidth: function(field, defaultValue) {
-        if (field.width) {
-            return field.width;
-        } else if(field.layout && field.layout.width) {
-            return field.layout.width;
-        } else {
-            return defaultValue;
-        }
-    },
-
-    getExportButtons: function () {
-        var buttons = [];
-        pimcore.globalmanager.get("pimcore.asset.gridexport").forEach(function (exportType) {
-            buttons.push({
-                text: t(exportType.text),
-                iconCls: exportType.icon || "pimcore_icon_export",
-                handler: function () {
-                    pimcore.helpers.exportWarning(exportType, function (settings) {
-                        this.exportPrepare(settings, exportType);
-                    }.bind(this));
-                }.bind(this),
-            })
-        }.bind(this));
-
-        return buttons;
-    },
-
     getGridConfig: function ($super) {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;

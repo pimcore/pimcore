@@ -13,6 +13,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class MultipleAssigmentTest
+ *
  * @package Pimcore\Tests\Model\Relations
  * @group model.relations.multipleassignment
  */

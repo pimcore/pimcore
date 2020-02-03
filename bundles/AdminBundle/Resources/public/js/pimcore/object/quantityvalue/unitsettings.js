@@ -100,6 +100,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                 }
 
             },
+            // disable client pagination, default: 25
+            pageSize: 0,
             listeners: {
                 load: function (store, records) {
                     var storeData = records;

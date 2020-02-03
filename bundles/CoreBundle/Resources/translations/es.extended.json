@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "No se pudo guardar el archivo",
     "reserved_field_names_error": "Por favor, no use los siguientes nombres de campo reservados:",
     "use_current_date": "Usar fecha actual",
-    "default_value_warning": "default_value_warning",
     "instance_identifier": "instance_identifier",
     "instance_identifier_info": "instance_identifier_info",
     "restrict_selection_to": "restrict_selection_to",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
     "cache_raw_relation_data": "Cache Raw Relation Data",
-    "allow_to_create_new_object": "Allow to create a new object in relation field"
+    "allow_to_create_new_object": "Allow to create a new object in relation field",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

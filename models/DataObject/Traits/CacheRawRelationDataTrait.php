@@ -21,18 +21,17 @@ use Pimcore\Db;
 
 trait CacheRawRelationDataTrait
 {
-
-    /** @var array|null  */
+    /** @var array|null */
     protected $__rawRelationData = null;
 
     /**
      * @return array
      */
-    public function __getRawRelationData() : array
+    public function __getRawRelationData(): array
     {
         if ($this->__rawRelationData === null) {
             $db = Db::get();
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . " WHERE src_id = ?", [$this->getId()]);
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
             $this->__rawRelationData = $relations ?? [];
         }
 

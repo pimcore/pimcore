@@ -29,13 +29,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var TargetGroup[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $targetGroups = null;
 
     public function __construct()
     {
-        $this->targetGroups =& $this->data;
+        $this->targetGroups = & $this->data;
     }
 
     /**

@@ -190,8 +190,8 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -211,7 +211,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -225,7 +225,8 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * converts data to be exposed via webservices
      *
      * @deprecated
-     * @param string $object
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -242,8 +243,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
 
     /**
      * @deprecated
+     *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -273,7 +275,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

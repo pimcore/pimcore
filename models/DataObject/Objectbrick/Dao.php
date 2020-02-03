@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
@@ -35,6 +36,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      */
     public function load(DataObject\Concrete $object, $params = [])
     {
+        /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
 
         $values = [];
@@ -64,7 +66,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($fd instanceof LazyLoadingSupportInterface) {
                             if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                                 $doLoad = false;
                             }

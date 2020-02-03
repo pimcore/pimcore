@@ -38,7 +38,7 @@ class BreachAttackRandomContent extends Helper
             . substr(
                 base64_encode($randomData),
                 0,
-                ord($randomData[$length-1]) % 32
+                ord($randomData[$length - 1]) % 32
             )
             . '-->';
     }

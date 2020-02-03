@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
@@ -188,7 +189,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $db = Db::get();
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
+            if (($fd instanceof LazyLoadingSupportInterface || method_exists($fd, 'getLazyLoading'))
+                                    && $fd->getLazyLoading()) {
                 if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
@@ -241,13 +243,18 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model);
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model,
+                        [
+                            'isUpdate' => $isUpdate,
+                            'owner' => $this->model
+                        ]);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
                     }
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $this->model,
                         [
+                            'isUpdate' => $isUpdate,
                             'owner' => $this->model
                         ]);
                     $data[$key] = $insertData;
@@ -283,7 +290,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
                     $fieldValue = $this->model->$method();
-                    $insertData = $fd->getDataForQueryResource($fieldValue, $this->model);
+                    $insertData = $fd->getDataForQueryResource($fieldValue, $this->model,
+                        [
+                            'isUpdate' => $isUpdate,
+                            'owner' => $this->model
+                        ]);
                     $isEmpty = $fd->isEmpty($fieldValue);
 
                     if (is_array($insertData)) {
@@ -374,8 +385,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function saveChildData()
     {
         $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
-            "inheritanceRelationContext" => [
-                "ownerType" => "object"
+            'inheritanceRelationContext' => [
+                'ownerType' => 'object'
             ]
         ]);
         $this->inheritanceHelper->resetFieldsToCheck();

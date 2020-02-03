@@ -401,7 +401,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
             return null;
         }
 
-        if(empty($paymentInfo->getPaymentReference())) {
+        if (empty($paymentInfo->getPaymentReference())) {
             return null;
         }
 

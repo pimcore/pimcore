@@ -1,6 +1,6 @@
 # Showing Custom Layouts based on Object Data
 
-The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L282-L292)
+The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php#L292-L304)
 can be used to manipulate the server response before object data is sent to Pimcore Backend UI when opening the detail
 view of an Pimcore object. 
 
@@ -17,7 +17,7 @@ hierarchy level.
 
 **Solution**
 
-1) Create a [Custom Layout](../05_Objects/01_Object_Classes/05_Class_Settings/09_Custom_Layouts.md) 
+1) Create a [Custom Layout](../05_Objects/01_Object_Classes/05_Class_Settings/15_Custom_Layouts.md) 
 for every hierarchy level. 
 ![Custom Layout Definitions](img/custom-layout-definition.jpg)
 

@@ -394,7 +394,6 @@
     "file_explorer_saved_file_error": "Kann Datei nicht speichern",
     "reserved_field_names_error": "Bitte verwenden Sie die folgenden reservierten Feldnamen nicht:",
     "use_current_date": "Aktuelles Datum verwenden",
-    "default_value_warning": "Standardwerte sind weder in der Datenbanktabellendefinition abgelegt, noch wurden als sie leere Objektinstanzen gesetzt. Sie sind einzig in der pimcore GUI verfügbar.",
     "instance_identifier": "Instanz-ID",
     "instance_identifier_info": "Die Instanz-ID muss über mehrere Pimcore Instanzen eindeutig sein. Die Generierung der UUID wird automatisch aktiviert, wenn eine Instanz-ID vorhergesehen ist (ändern Sie die Instanz-ID nicht mehr nachträglich - dies wird ungültige UUIDs verursachen)",
     "restrict_selection_to": "Auswahl einschränken auf",
@@ -717,5 +716,6 @@
     "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits",
     "classificationstore_group_by_key": "Gruppieren nach Key",
     "cache_raw_relation_data": "Roh-Beziehungsdaten zwischenspeichern",
-    "allow_to_create_new_object": "Ermöglicht ein neues Objekt im Beziehungsfeld zu erstellen"
+    "allow_to_create_new_object": "Ermöglicht ein neues Objekt im Beziehungsfeld zu erstellen",
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
 }

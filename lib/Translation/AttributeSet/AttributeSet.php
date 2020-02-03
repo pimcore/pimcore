@@ -14,7 +14,6 @@
 
 namespace Pimcore\Translation\AttributeSet;
 
-use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 

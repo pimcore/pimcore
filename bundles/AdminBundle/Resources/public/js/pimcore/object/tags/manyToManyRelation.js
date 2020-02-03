@@ -409,6 +409,9 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 

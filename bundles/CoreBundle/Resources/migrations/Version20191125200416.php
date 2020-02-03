@@ -32,9 +32,8 @@ class Version20191125200416 extends AbstractPimcoreMigration
 
                     $table = $schema->getTable($tableName);
                     if (!$table->hasColumn('metadata')) {
-                        $table->addColumn('metadata', 'text', ['notnull' => false, 'default'=>'null', 'length'=>65535]);
+                        $table->addColumn('metadata', 'text', ['notnull' => false, 'default' => 'null', 'length' => 65535]);
                     }
-
                 }
             }
         }

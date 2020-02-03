@@ -136,7 +136,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -147,7 +147,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */

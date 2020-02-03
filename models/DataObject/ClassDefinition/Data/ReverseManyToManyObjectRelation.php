@@ -31,19 +31,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $fieldtype = 'reverseManyToManyObjectRelation';
 
     /**
-     * @var bool
-     */
-    public static $remoteOwner = true;
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /**
      * @var string
      */
     public $ownerClassName;
@@ -227,10 +214,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * fills object field data values from CSV Import String
      *
-     * @abstract
-     *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -265,6 +250,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -279,6 +265,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params

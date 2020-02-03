@@ -264,8 +264,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|Asset
@@ -337,6 +337,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -352,6 +353,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
@@ -406,7 +408,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -473,7 +475,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {

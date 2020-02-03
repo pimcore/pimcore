@@ -17,30 +17,34 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     type: "quantityValue",
 
     initialize: function (data, fieldConfig) {
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
+
+    applyDefaultValue: function() {
         this.defaultValue = null;
         this.defaultUnit = null;
         this.autoConvert = false;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert)) {
-            data = {
-                value: fieldConfig.defaultValue,
-                unit: fieldConfig.defaultUnit,
-                autoConvert: fieldConfig.autoConvert
+        if ((typeof this.data === "undefined" || this.data === null) && (this.fieldConfig.defaultValue || this.fieldConfig.defaultUnit || this.fieldConfig.autoConvert)) {
+            this.data = {
+                value: this.fieldConfig.defaultValue,
+                unit: this.fieldConfig.defaultUnit,
+                autoConvert: this.fieldConfig.autoConvert
             };
-            this.defaultValue = data.value;
-            this.defaultUnit = data.unit;
-            this.autoConvert = data.autoConvert;
+            this.defaultValue = this.data.value;
+            this.defaultUnit = this.data.unit;
+            this.autoConvert = this.data.autoConvert;
         }
+    },
 
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
+    finishSetup: function() {
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: 'data',
             fields: ['id', 'abbreviation']
         });
 
-        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), this.fieldConfig.validUnits);
     },
 
     setData: function(data) {
@@ -55,6 +59,56 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
+        var compatibleUnitsTooltip = Ext.create('Ext.tip.QuickTip', {
+            title: t('unit_tooltip')
+        });
+
+        var compatibleUnitsButton = Ext.create('Ext.Button', {
+            iconCls: "pimcore_icon_calculatedValue",
+            style: "margin-left: 5px",
+            hidden: true,
+            handler: function() {
+                compatibleUnitsTooltip.show();
+            },
+            listeners: {
+                afterrender: function(me) {
+                    compatibleUnitsTooltip.setTarget(me.getId());
+                }
+            }
+        });
+
+        var updateCompatibleUnitsToolTipContent = function() {
+            if (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value) {
+                compatibleUnitsButton.hide();
+                return false;
+            }
+
+            Ext.Ajax.request({
+                url: "/admin/quantity-value/convert-all",
+                params: {
+                    value: this.inputField.value,
+                    unit: this.unitField.value,
+                },
+                success: function (response) {
+                    response = Ext.decode(response.responseText);
+                    if (response && response.success && response.values.length > 0) {
+                        var html = '<dl><dt>'+Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =</dt>';
+                        for (var i = 0; i < response.values.length; i++) {
+                            html += '<dd>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</dd>';
+                        }
+                        html += '</dl>';
+                        compatibleUnitsTooltip.setHtml(html);
+                        compatibleUnitsButton.show();
+                    } else {
+                        compatibleUnitsButton.hide();
+                    }
+                }
+            });
+        }.bind(this);
+
+        this.store.on('datachanged', function() {
+            updateCompatibleUnitsToolTipContent();
+        });
 
         var input = {};
 
@@ -74,6 +128,12 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig["decimalPrecision"] !== null) {
             input.decimalPrecision = this.fieldConfig["decimalPrecision"];
         }
+
+        input.listeners = {
+            change: function(input, newValue) {
+                updateCompatibleUnitsToolTipContent();
+            }
+        };
 
         this.inputField = new Ext.form.field.Number(input);
 
@@ -100,7 +160,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             queryMode: 'local',
             listeners: {
                 change: function( combo, newValue, oldValue) {
-                    if(this.fieldConfig.autoConvert && oldValue && newValue) {
+                    if(this.fieldConfig.autoConvert && (oldValue !== '' || oldValue !== null) && (newValue !== '' && newValue !== null)) {
                         Ext.Ajax.request({
                             url: "/admin/quantity-value/convert",
                             params: {
@@ -116,6 +176,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                             }.bind(this)
                         });
                     }
+
+                    updateCompatibleUnitsToolTipContent();
                 }.bind(this)
             }
         };
@@ -128,13 +190,15 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         this.unitField = new Ext.form.ComboBox(options);
 
+        updateCompatibleUnitsToolTipContent();
+
         this.component = new Ext.form.FieldContainer({
             layout: 'hbox',
             margin: '0 0 10 0',
             fieldLabel: this.fieldConfig.title,
             labelWidth: labelWidth,
             combineErrors: false,
-            items: [this.inputField, this.unitField],
+            items: [this.inputField, this.unitField, compatibleUnitsButton],
             componentCls: "object_field",
             isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty()

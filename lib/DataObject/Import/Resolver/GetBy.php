@@ -76,7 +76,7 @@ class GetBy extends AbstractResolver
         $list = $list->load();
 
         if ($list) {
-            /** @var ElementInterface|Concrete|Document|Asset $object */
+            /** @var Concrete|Document|Asset $object */
             $object = $list[0];
 
             if ($object) {
