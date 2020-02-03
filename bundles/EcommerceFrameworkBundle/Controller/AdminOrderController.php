@@ -154,6 +154,18 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
         $list->addFilter($filterDate);
 
+        if (!empty($request->get('pricingRule'))) {
+            $pricingRuleId = $request->get('pricingRule');
+
+            //apply filter on PricingRule(OrderItem)
+            $list->joinPricingRule();
+            $list->getQuery()->where('pricingRule.ruleId = ?', $pricingRuleId);
+
+            //apply filter on PriceModifications
+            $list->joinPriceModifications();
+            $list->getQuery()->orWhere('OrderPriceModifications.pricingRuleId = ?', $pricingRuleId);
+        }
+
         // set default order
         $list->setOrder('order.orderDate desc');
 

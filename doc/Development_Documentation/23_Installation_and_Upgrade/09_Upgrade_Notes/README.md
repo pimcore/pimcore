@@ -14,6 +14,7 @@ pimcore:
 
 - Using static methods for [dynamic text labels](../../05_Objects/01_Object_Classes/03_Layout_Elements/01_Dynamic_Text_Labels.md) is now deprecated, use services instead.
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::isRemoteOwner()`, as this method was only used for `ReverseManyToManyObjectRelation` internal check are now made using `instanceof` 
+- Data object inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
 - Glossary: _Acronym_ values are migrated to _Abbr_ , methods `getAcronym()` and `setAcronym()` are marked as deprecated (they are now an alias of Abbr)
 
 ## 6.4.0
