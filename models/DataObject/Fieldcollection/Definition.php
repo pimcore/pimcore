@@ -23,6 +23,9 @@ use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
+ * @method string getTableName(DataObject\ClassDefinition $class)
+ * @method void createUpdateTable(DataObject\ClassDefinition $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinition $class)
  */
 class Definition extends Model\AbstractModel
 {

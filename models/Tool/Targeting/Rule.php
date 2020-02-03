@@ -22,6 +22,9 @@ use Pimcore\Model\Tool;
 
 /**
  * @method Rule\Dao getDao()
+ * @method void save()
+ * @method void update()
+ * @method void delete()
  */
 class Rule extends Model\AbstractModel
 {

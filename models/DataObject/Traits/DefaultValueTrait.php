@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 trait DefaultValueTrait
 {
     /**
-     * @param DataObject\Concrete $object
+     * @param \Pimcore\Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return null|string

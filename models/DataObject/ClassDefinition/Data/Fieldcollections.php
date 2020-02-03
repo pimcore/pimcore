@@ -520,7 +520,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\Fieldcollection|null $data
      *
      * @return array
      */
@@ -745,7 +745,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param $data
      * @param null $object

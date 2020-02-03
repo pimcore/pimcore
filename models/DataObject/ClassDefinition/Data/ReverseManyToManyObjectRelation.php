@@ -72,7 +72,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param  $lazyLoading
+     * @param  bool|int|null $lazyLoading
      *
      * @return $this
      */
@@ -153,7 +153,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * Checks if an object is an allowed relation
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      */
@@ -163,12 +163,11 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
         if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof DataObject\ClassDefinition\Data\Objects) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
                 return $fd->allowObjectRelation($object);
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

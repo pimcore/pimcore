@@ -393,7 +393,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *

@@ -259,9 +259,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
-
         if ($child->getType() != 'folder') {
+            /** @var DataObject\Concrete $child */
             $tmpObject['published'] = $child->isPublished();
             $tmpObject['className'] = $child->getClass()->getName();
 
@@ -357,7 +356,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $objectFromDatabase = DataObject::getById((int)$request->get('id'));
+        $objectFromDatabase = DataObject\Concrete::getById((int)$request->get('id'));
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -818,10 +817,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
             if (!DataObject\Service::pathExists($intendedPath)) {
+                /** @var DataObject\Concrete $object */
                 $object = $this->get('pimcore.model.factory')->build($className);
-                if ($object instanceof DataObject\Concrete) {
-                    $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-                }
+                $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
                     $parentId = $request->get('parentId');
@@ -1202,8 +1200,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
-        /** @var DataObject\Concrete $object */
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject\Concrete::getById($request->get('id'));
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode

@@ -1,8 +1,8 @@
 <?php
 /** @var \Pimcore\Templating\PhpEngine $view */
+/** @var \Pimcore\Config\Config $config */
 
 $config = $this->config;
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,11 +20,11 @@ $config = $this->config;
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= time(); ?>"/>
     <?php endforeach; ?>
 </head>
-<body class="pimcore_version_6 <?= $config->branding->login_screen_invert_colors ? 'inverted' : '' ?>">
+<body class="pimcore_version_6 <?= $config->get('branding')->login_screen_invert_colors ? 'inverted' : '' ?>">
 
 <?php
-    if ($config->general->loginscreencustomimage) {
-        $backgroundImageUrl = $config->general->loginscreencustomimage;
+    if ($config->get('general')->loginscreencustomimage) {
+        $backgroundImageUrl = $config->get('general')->loginscreencustomimage;
     } else {
         $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'];
         $backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' . $defaultImages[array_rand($defaultImages)];
@@ -37,9 +37,9 @@ $config = $this->config;
         }
     </style>
 
-<?php if($config->branding) { ?>
-    <?php if($config->branding->color_login_screen) {
-        $customColor = $config->branding->color_login_screen;
+<?php if($config->get('branding')) { ?>
+    <?php if($config->get('branding')->color_login_screen) {
+        $customColor = $config->get('branding')->color_login_screen;
         ?>
         <style type="text/css">
             #content button {
@@ -54,7 +54,7 @@ $config = $this->config;
 <?php } ?>
 
 <div id="logo">
-    <img src="/admin/settings/display-custom-logo<?= $config->branding->login_screen_invert_colors ? '' : '?white=true' ?>">
+    <img src="/admin/settings/display-custom-logo<?= $config->get('branding')->login_screen_invert_colors ? '' : '?white=true' ?>">
 </div>
 
 <div id="content">

@@ -116,11 +116,11 @@ class QueryParams
 
                 if ($f->operator == 'eq') {
                     $conditions[$f->property][] = ' ' . $f->property . ' >= ' . $db->quote($date->getTimestamp());
-                    $conditions[$f->property][] = ' ' . $f->property . ' <= ' . $db->quote($date->addDay(1)->subSecond(1)->getTimestamp());
+                    $conditions[$f->property][] = ' ' . $f->property . ' <= ' . $db->quote($date->addDay()->subSecond()->getTimestamp());
                 } elseif ($f->operator == 'lt') {
                     $conditions[$f->property][] = ' ' . $f->property . ' < ' . $db->quote($date->getTimestamp());
                 } elseif ($f->operator == 'gt') {
-                    $conditions[$f->property][] = ' ' . $f->property . ' > ' . $db->quote($date->addDay(1)->subSecond(1)->getTimestamp());
+                    $conditions[$f->property][] = ' ' . $f->property . ' > ' . $db->quote($date->addDay()->subSecond()->getTimestamp());
                 }
             } else {
                 throw new \Exception('Filer of type ' . $f->type . ' not jet supported.');

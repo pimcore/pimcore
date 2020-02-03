@@ -129,6 +129,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // this is to clean up also the inherited values
+
+        /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
             if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {

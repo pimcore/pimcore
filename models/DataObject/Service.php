@@ -230,10 +230,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
+     * @param Concrete $target
+     * @param Concrete $source
      *
-     * @return AbstractObject
+     * @return Concrete
      *
      * @throws \Exception
      */
@@ -248,7 +248,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         /**
-         * @var AbstractObject $new
+         * @var Concrete $new
          */
         $new = Element\Service::cloneMe($source);
         $new->setChildren($target->getChildren());
@@ -262,7 +262,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        $target = AbstractObject::getById($new->getId());
+        $target = Concrete::getById($new->getId());
 
         return $target;
     }

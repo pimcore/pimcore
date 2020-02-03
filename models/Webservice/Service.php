@@ -1072,7 +1072,7 @@ class Service
     {
         try {
             $object = DataObject\AbstractObject::getById($id);
-            if ($object instanceof DataObject\AbstractObject) {
+            if ($object instanceof DataObject\Concrete) {
                 $object->setPublished(false);
                 $object->save();
 
@@ -1112,7 +1112,7 @@ class Service
 
     /**
      * @param Webservice\Data\Document $wsDocument
-     * @param AbstractElement $element
+     * @param Document|Asset|DataObject\AbstractObject $element
      *
      * @return mixed
      *
@@ -1205,12 +1205,12 @@ class Service
         }
 
         $this->setModificationParams($object, false);
-        if ($object instanceof DataObject\Concrete and $object->getClassName() == $wsDocument->className) {
+        if ($object instanceof DataObject\Concrete && $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();
 
             return true;
-        } elseif ($object instanceof DataObject\Folder and $object->getType() == strtolower($wsDocument->type)) {
+        } elseif ($object instanceof DataObject\Folder && $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
 

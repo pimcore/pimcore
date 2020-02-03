@@ -1248,7 +1248,7 @@ abstract class Data
                                     $item = $items[$originalIndex];
 
                                     if ($context['containerType'] === 'block') {
-                                        $data = $item[$this->getName()];
+                                        $data = $item[$this->getName()] ?? null;
                                         if ($data instanceof DataObject\Data\BlockElement) {
                                             $data = $data->getData();
 

@@ -21,7 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao getDao()
- * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao save()
+ * @method void save()
+ * @method void delete()
  */
 class KeyGroupRelation extends Model\AbstractModel
 {

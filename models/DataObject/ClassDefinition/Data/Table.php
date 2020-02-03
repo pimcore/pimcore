@@ -525,7 +525,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -562,9 +562,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -645,9 +645,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->cols = $masterDefinition->cols;
-        $this->colsFixed = $masterDefinition->cols_fixed;
+        $this->colsFixed = $masterDefinition->colsFixed;
         $this->rows = $masterDefinition->rows;
-        $this->rowsFixed = $masterDefinition->rows_fixed;
+        $this->rowsFixed = $masterDefinition->rowsFixed;
         $this->data = $masterDefinition->data;
     }
 }

@@ -32,6 +32,8 @@ use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
 {
@@ -269,7 +271,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $options
      * @param bool $return
      *
-     * @return string
+     * @return string|void
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
@@ -302,6 +304,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $this->outputEditmode($code);
+        return;
     }
 
     /**

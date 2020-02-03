@@ -19,9 +19,6 @@ namespace Pimcore\Model\Document\Targeting;
 
 use Pimcore\Model\Document\PageSnippet;
 
-/**
- * @implements TargetingDocumentDaoInterface
- */
 trait TargetingDocumentDaoTrait
 {
     public function hasTargetGroupSpecificElements(): bool

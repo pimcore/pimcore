@@ -49,6 +49,7 @@ class EmailController extends DocumentControllerBase
 
         $email = Document\Email::getById($request->get('id'));
         $email = clone $email;
+        /** @var Document\Email $email */
         $email = $this->getLatestVersion($email);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());

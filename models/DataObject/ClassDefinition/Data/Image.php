@@ -283,7 +283,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -315,7 +315,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param Asset|null $data
      *
      * @return array
      */
@@ -385,10 +385,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+        return null;
     }
 
     /**
-     * @param $uploadPath
+     * @param string $uploadPath
      *
      * @return $this
      */
@@ -419,9 +420,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param Asset\Image|null $data
      * @param null $object
      * @param mixed $params
      *
