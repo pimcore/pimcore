@@ -667,6 +667,7 @@ abstract class PageSnippet extends Model\Document
                             $documentOptions = $tag->getOptions();
                             if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
+                                break;
                             }
                         }
                     }
