@@ -252,14 +252,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         $deleteDescriptor = [
             'fieldname' => $this->getName()
         ];
-        $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, false);
+        $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
         $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
         $db->query('DELETE FROM object_url_slugs WHERE ' . implode(' AND ', $conditionParts));
         // now save the new data
         if (is_array($slugs) && !empty($slugs)) {
             /** @var Model\DataObject\Data\UrlSlug $slug */
             foreach ($slugs as $slug) {
-                $this->enrichDataRow($object, $params, $classId, $slug, false);
+                $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
 
                 /* relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {

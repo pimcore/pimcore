@@ -89,54 +89,6 @@ abstract class AbstractRelations extends Data implements
         return $this;
     }
 
-    /** Enrich relation with type-specific data.
-     * @param $object
-     * @param $params
-     * @param $classId
-     * @param array $relation
-     */
-    protected function enrichRelation($object, $params, &$classId, &$relation = [])
-    {
-        if (!$relation) {
-            $relation = [];
-        }
-
-        if ($object instanceof DataObject\Concrete) {
-            $relation['src_id'] = $object->getId();
-            $relation['ownertype'] = 'object';
-
-            $classId = $object->getClassId();
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId(); // use the id from the object, not from the field collection
-            $relation['ownertype'] = 'fieldcollection';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getIndex();
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Localizedfield) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'localizedfield';
-            $relation['ownername'] = 'localizedfield';
-            $context = $object->getContext();
-            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? null;
-                $relation['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
-            }
-
-            $relation['position'] = $params['language'];
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'objectbrick';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getType();
-
-            $classId = $object->getObject()->getClassId();
-        }
-    }
-
     /**
      * @param $object
      * @param array $params
@@ -173,7 +125,7 @@ abstract class AbstractRelations extends Data implements
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
-                $this->enrichRelation($object, $params, $classId, $relation);
+                $this->enrichDataRow($object, $params, $classId, $relation);
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {

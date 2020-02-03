@@ -986,4 +986,4 @@ CREATE TABLE `object_url_slugs` (
       INDEX `ownername` (`ownername`),
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

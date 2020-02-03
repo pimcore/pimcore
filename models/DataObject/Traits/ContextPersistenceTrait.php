@@ -24,21 +24,19 @@ use Pimcore\Model\DataObject\Localizedfield;
 trait ContextPersistenceTrait
 {
 
-    /** Enrich relation / slug with type-specific data.
+    /**
+     * Enrich relation / slug with type-specific data.
      * @param Concrete $object
      * @param array $params
-     * @param int $classId
+     * @param string $classId
      * @param array $row
-     * @param boolean $forRelations
+     * @param string $srcCol
      */
-    protected function enrichDataRow($object, $params, &$classId, &$row = [], $forRelations = true)
+    protected function enrichDataRow(Concrete $object, array $params, string &$classId, array &$row = [], string $srcCol = 'src_id')
     {
         if (!$row) {
             $row = [];
         }
-
-        $srcCol = $forRelations ? 'src_id' : 'objectId';
-
 
         if ($object instanceof Concrete) {
             $row[$srcCol] = $object->getId();
@@ -75,5 +73,5 @@ trait ContextPersistenceTrait
             $classId = $object->getObject()->getClassId();
         }
     }
-    
+
 }
