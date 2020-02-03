@@ -154,6 +154,25 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @return $this
+     *
+     */
+    public function joinPriceModifications()
+    {
+        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+
+        if (!array_key_exists('OrderPriceModifications', $joins)) {
+            $this->getQuery()->joinLeft(
+                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
+                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
+                ''
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
      */
     public function joinPaymentInfo()
     {
