@@ -129,7 +129,8 @@ matrix:
     - name: "PHPStan Tests Lvl 2 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.4
-      allow_failures: true
+      allow_failures:
+        -env: PHPSTAN_LEVEL=2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
