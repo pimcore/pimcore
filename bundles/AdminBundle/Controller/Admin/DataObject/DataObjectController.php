@@ -202,7 +202,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
 
-        $objects = DataObject\Service::sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getChildrenSortOrder());
+        $objects = $event->getArgument('objects');
 
         if ($limit) {
             return $this->adminJson([
