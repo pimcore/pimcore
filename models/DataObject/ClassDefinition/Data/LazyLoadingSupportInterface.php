@@ -22,10 +22,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 interface LazyLoadingSupportInterface
 {
-
     /**
      * @return bool
      */
     public function getLazyLoading();
-
 }

@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * @method Dao getDao()

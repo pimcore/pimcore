@@ -23,15 +23,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface,
-    DataObject\ClassDefinition\PathFormatterAwareInterface, Data\LazyLoadingSupportInterface
+abstract class AbstractRelations extends Data implements
+    CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface,
+    Data\LazyLoadingSupportInterface
 {
     const RELATION_ID_SEPARATOR = '$$';
-
-    /**
-     * @var bool
-     */
-    public static $remoteOwner = false;
 
     /**
      * @var bool
@@ -88,14 +85,6 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $this->lazyLoading = $lazyLoading;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
     }
 
     /** Enrich relation with type-specific data.
