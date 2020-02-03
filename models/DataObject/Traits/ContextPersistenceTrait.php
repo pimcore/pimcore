@@ -32,7 +32,7 @@ trait ContextPersistenceTrait
      * @param array $row
      * @param string $srcCol
      */
-    protected function enrichDataRow(Concrete $object, array $params, ?string &$classId, array &$row = [], string $srcCol = 'src_id')
+    protected function enrichDataRow(Concrete $object, array $params, ?string &$classId, &$row = [], string $srcCol = 'src_id')
     {
         if (!$row) {
             $row = [];
