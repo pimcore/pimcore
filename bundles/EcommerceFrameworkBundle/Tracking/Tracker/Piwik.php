@@ -226,7 +226,6 @@ class Piwik extends Tracker implements
         $this->trackCode($result);
     }
 
-
     public function getTrackedCodes(): array
     {
         return $this->trackedCodes;
@@ -237,7 +236,6 @@ class Piwik extends Tracker implements
         $this->trackedCodes[] = $code;
         $this->tracker->addCodePart($code, PiwikTracker::BLOCK_BEFORE_TRACK);
     }
-
 
     private function renderCalls(array $calls): string
     {

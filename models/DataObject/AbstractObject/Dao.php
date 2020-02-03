@@ -68,8 +68,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Create a new record for the object in database
-     *
-     * @return bool
      */
     public function create()
     {
@@ -109,7 +107,7 @@ class Dao extends Model\Element\Dao
         $checkColumns = ['o_type', 'o_classId', 'o_className'];
         $existingData = $this->db->fetchRow('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && in_array($existingData[$column], ['variant', 'object'])) {
+            if ($column == 'o_type' && in_array($data[$column], ['variant', 'object']) && (isset($existingData[$column]) && in_array($existingData[$column], ['variant', 'object']))) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -183,6 +181,8 @@ class Dao extends Model\Element\Dao
 
             return $objects;
         }
+
+        return null;
     }
 
     /**
@@ -305,7 +305,6 @@ class Dao extends Model\Element\Dao
 
         $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
 
-
         $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
@@ -321,7 +320,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
-        $sql = "SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ?";
+        $sql = 'SELECT 1 FROM objects WHERE o_parentId = ? and o_id != ?';
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND o_published = 1';
@@ -548,6 +547,8 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
+
+        return null;
     }
 
     /**

@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Model\User\Permission\Definition[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $definitions = null;
 
     public function __construct()
     {
-        $this->definitions =& $this->data;
+        $this->definitions = & $this->data;
     }
 
     /**

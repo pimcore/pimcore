@@ -81,7 +81,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, CartInterface  $cart)
+    public function checkToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
@@ -95,7 +95,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function reserveToken($code, CartInterface  $cart)
+    public function reserveToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -110,7 +110,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function releaseToken($code, CartInterface  $cart)
+    public function releaseToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -126,7 +126,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function applyToken($code, CartInterface  $cart, AbstractOrder $order)
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {

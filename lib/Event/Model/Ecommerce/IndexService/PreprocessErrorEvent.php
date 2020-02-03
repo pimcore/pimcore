@@ -27,12 +27,12 @@ class PreprocessErrorEvent extends Event
      * @var bool
      */
     protected $throwException;
-    
+
     /**
      * @var int
      */
     protected $subObjectId;
-    
+
     /**
      * PreprocessErrorEvent constructor.
      *
@@ -62,7 +62,7 @@ class PreprocessErrorEvent extends Event
     {
         $this->throwException = $throwException;
     }
-    
+
     /**
      * @return bool
      */
@@ -70,8 +70,8 @@ class PreprocessErrorEvent extends Event
     {
         return $this->throwException;
     }
-    
-      /**
+
+    /**
      * @return int
      */
     public function getSubObjectId(): int

@@ -21,7 +21,7 @@ As soon the reindex is finished, the current index is switched to the newly crea
 
 ## Indexing of Classification Store Attributes
 
-With Elastic Search it is possible to index all attributes of [Classification Store](../../../../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md) 
+With Elastic Search it is possible to index all attributes of [Classification Store](../../../../05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
 data without defining an attribute for each single classification store key.   
 
 For details see [Filter Classification Store](../../../07_Filter_Service/03_Elastic_Search/01_Filter_Classification_Store.md) 

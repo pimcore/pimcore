@@ -96,5 +96,7 @@ class Tool
         } else {
             return $data;
         }
+
+        return null;
     }
 }

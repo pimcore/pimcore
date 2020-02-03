@@ -215,15 +215,15 @@ class ClassManager extends Module
         $path = $this->resolveFilePath($filename, false);
 
         file_put_contents($path, $json);
+
         return $path;
     }
-
 
     /**
      * Resolve filename to reource path
      *
      * @param string $filename
-     * @param boolean $assert
+     * @param bool $assert
      *
      * @return string
      */

@@ -136,10 +136,12 @@ class CsrfProtectionListener implements EventSubscriberInterface
         return $this->csrfToken;
     }
 
-    public function regenerateCsrfToken() {
+    public function regenerateCsrfToken()
+    {
         $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
             $token = sha1(generateRandomSymfonySecret());
             $adminSession->set('csrfToken', $token);
+
             return $token;
         });
 

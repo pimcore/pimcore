@@ -100,7 +100,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string
+     * @return string|null
      */
     public function frontend()
     {
@@ -248,6 +248,7 @@ class Snippet extends Model\Document\Tag
 
     /**
      * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param Model\Document\PageSnippet $document
      * @param array $params

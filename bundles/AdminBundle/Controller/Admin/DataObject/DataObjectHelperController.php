@@ -924,7 +924,6 @@ class DataObjectHelperController extends AdminController
                 $favourite->setObjectId($objectId);
                 $favourite->save();
 
-
                 if ($global) {
                     $favourite->setObjectId(0);
                     $favourite->save();
@@ -2157,7 +2156,7 @@ class DataObjectHelperController extends AdminController
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!($value instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
+            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }

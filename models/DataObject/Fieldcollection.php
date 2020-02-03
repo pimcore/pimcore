@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model;
 
 /**
+ * @method \Pimcore\Model\DataObject\Fieldcollection\Dao delete()
  * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
@@ -191,7 +192,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Data\AbstractData|null
      */
-    public function getByOriginalIndex($index) {
+    public function getByOriginalIndex($index)
+    {
         if ($index === null) {
             return null;
         }

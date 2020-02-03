@@ -87,7 +87,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.component.addCls("strikeThrough");
         }
         this.component.on("render", function (el) {
-
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
@@ -108,6 +107,14 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
+            el.getEl().on('dblclick', function(){
+                var subtype = this.data.subtype;
+                if (this.data.type == "object" && this.data.subtype != "folder") {
+                    subtype = "object";
+                }
+
+                pimcore.helpers.openElement(this.data.id, this.data.type, subtype);
+            }.bind(this));
         }.bind(this));
 
         // disable typing into the textfield

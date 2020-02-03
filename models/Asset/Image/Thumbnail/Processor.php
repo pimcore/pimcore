@@ -111,7 +111,7 @@ class Processor
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
-            if($format === 'jpeg') {
+            if ($format === 'jpeg') {
                 $format = 'pjpeg';
             }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
@@ -402,19 +402,23 @@ class Processor
 
     /**
      * @param bool|null $webpSupport
+     *
      * @return bool|null
      */
-    public static function setHasWebpSupport(?bool $webpSupport):?bool {
+    public static function setHasWebpSupport(?bool $webpSupport): ?bool
+    {
         $prevValue = self::$hasWebpSupport;
         self::$hasWebpSupport = $webpSupport;
+
         return $prevValue;
     }
 
     /**
      * @return bool
      */
-    protected static function hasWebpSupport(): bool {
-        if(self::$hasWebpSupport !== null) {
+    protected static function hasWebpSupport(): bool
+    {
+        if (self::$hasWebpSupport !== null) {
             return self::$hasWebpSupport;
         }
 

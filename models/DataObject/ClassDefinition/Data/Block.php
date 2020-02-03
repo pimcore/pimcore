@@ -155,7 +155,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -263,7 +263,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -328,7 +328,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
@@ -425,8 +425,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -440,6 +440,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -479,6 +480,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
@@ -517,7 +519,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -531,7 +534,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * a image URL. See the ObjectMerger plugin documentation for details
      *
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -544,7 +547,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -757,7 +760,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return array
+     * @return Data[]
      */
     public function getReferencedFields()
     {
@@ -765,7 +768,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $field
+     * @param Data $field
      */
     public function addReferencedField($field)
     {
@@ -912,7 +915,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param  $lazyLoading
+     * @param int|bool|null $lazyLoading
      *
      * @return $this
      */
@@ -924,8 +927,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete $object
+     * @param null|DataObject\Data\BlockElement[] $data
      * @param array $params
      *
      * @return mixed
@@ -961,7 +964,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -969,7 +972,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
      * @return null
@@ -981,7 +984,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
 
         if ($container instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
@@ -1034,7 +1037,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array|mixed|null
@@ -1062,14 +1065,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         return is_array($data) ? $data : [];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return false;
     }
 
     /**
@@ -1184,7 +1179,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                                                        && $field->getLazyLoading()) {
                     $field->setLazyLoading(false);
                 }
             }

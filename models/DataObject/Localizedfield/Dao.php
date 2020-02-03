@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
@@ -366,8 +367,8 @@ class Dao extends Model\Dao\AbstractDao
                 $queryTable = $this->getQueryTableName().'_'.$language;
                 $this->db->insertOrUpdate($queryTable, $data);
                 if ($inheritanceEnabled) {
-                    $context = isset($params["context"]) ? $params["context"] : [];
-                    if ($context["containerType"] === "objectbrick") {
+                    $context = isset($params['context']) ? $params['context'] : [];
+                    if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
                             'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
@@ -577,7 +578,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params['context']['object'] = $object;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                        if ($fd instanceof LazyLoadingSupportInterface && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                         } else {
                             $value = $fd->load($this->model, $params);

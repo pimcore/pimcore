@@ -402,7 +402,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -473,6 +473,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated
+     *
      * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -500,6 +501,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param mixed $params
@@ -546,7 +548,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -625,7 +627,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -639,7 +641,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * a image URL. See the ObjectMerger plugin documentation for details
      *
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -684,7 +686,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -694,6 +696,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
      * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
@@ -998,13 +1001,15 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Concrete|int $data     object or object ID
      * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      */
-    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=') {
-        if($data instanceof DataObject\Concrete) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        if ($data instanceof DataObject\Concrete) {
             $data = $data->getId();
         }
 
-        if($operator === '=') {
+        if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+
             return;
         }
 

@@ -9,6 +9,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class ListingTest
+ *
  * @package Pimcore\Tests\Model\DataObject
  * @group model.dataobject.listing
  */

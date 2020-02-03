@@ -400,6 +400,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 containerName: this.fieldConfig.name,
                 containerKey: type,
                 index: index,
+                applyDefaults: true
             }, false, false, this, true).items;
 
 

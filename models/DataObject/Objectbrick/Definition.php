@@ -446,7 +446,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
-                if (!$fd) {
+                if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
                     throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
 

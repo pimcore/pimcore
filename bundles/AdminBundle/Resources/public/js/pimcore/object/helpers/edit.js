@@ -297,11 +297,26 @@ pimcore.object.helpers.edit = {
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
+                let applyDefaults = false;
+                if (context && context['applyDefaults']) {
+                    applyDefaults = true;
+                }
                 field.setObject(this.object);
                 field.updateContext(context);
+
                 field.setName(l.name);
                 field.setTitle(l.titleOriginal);
+
+                if (applyDefaults && typeof field["applyDefaultValue"] !== "undefined") {
+                    field.applyDefaultValue();
+                }
                 field.setInitialData(data);
+
+
+                if (typeof field["finishSetup"] !== "undefined") {
+                    field.finishSetup();
+                }
+
 
                 if (typeof l.labelWidth != "undefined") {
                     field.labelWidth = l.labelWidth;

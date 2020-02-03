@@ -191,7 +191,7 @@
     position: absolute;
     color: #FFFFFF;
     background: #2A2D30;
-    height: 30px;
+    min-height: 30px;
     line-height: 30px;
     text-align: center;
     border-radius: 6px;

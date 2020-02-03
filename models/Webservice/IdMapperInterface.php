@@ -9,6 +9,7 @@ interface IdMapperInterface
 {
     /**
      * @deprecated
+     *
      * @param string $type
      * @param int $id
      *
@@ -18,6 +19,7 @@ interface IdMapperInterface
 
     /**
      * @deprecated
+     *
      * @param string $sourceType
      * @param int $sourceId
      * @param string $destinationType
@@ -27,6 +29,7 @@ interface IdMapperInterface
 
     /**
      * @deprecated
+     *
      * @return bool
      */
     public function ignoreMappingFailures(): bool;

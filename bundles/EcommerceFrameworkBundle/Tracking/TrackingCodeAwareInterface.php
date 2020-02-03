@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-
 interface TrackingCodeAwareInterface
 {
     /**
@@ -24,6 +23,7 @@ interface TrackingCodeAwareInterface
 
     /**
      * @param string $code
+     *
      * @return void
      */
     public function trackCode(string $code);

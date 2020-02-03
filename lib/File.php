@@ -32,8 +32,6 @@ class File
     protected static $context = null;
 
     /**
-     * @static
-     *
      * @param string $name
      *
      * @return string
@@ -44,14 +42,14 @@ class File
         $parts = explode('.', $name);
 
         if (count($parts) > 1) {
-            return strtolower($parts[count($parts) - 1]);
+            return $parts[count($parts) - 1];
         }
 
         return '';
     }
 
     /**
-     * @static
+     * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
      * @param string $tmpFilename
      * @param string|null $language
@@ -73,8 +71,6 @@ class File
     }
 
     /**
-     * @static
-     *
      * @param string $filename
      *
      * @return bool

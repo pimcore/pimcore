@@ -88,7 +88,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             for (var i = 0; i < this.data.length; i++) {
                 if (this.data[i] != null) {
                     this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title);
+                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
                 }
             }
         }
@@ -183,7 +183,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             var index = 0;
 
-            this.addBlockElement(index, type, null, false, title);
+            this.addBlockElement(index, type, null, false, title, true);
         }
     ,
 
@@ -224,7 +224,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         }
     ,
 
-        addBlockElement: function (index, type, blockData, ignoreChange, title) {
+        addBlockElement: function (index, type, blockData, ignoreChange, title, manuallyAdded) {
             if (!type) {
                 return;
             }
@@ -274,13 +274,14 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 // items: items
                 items: [],
                 listeners: {
-                    afterrender: function (childConfig, dataProvider, panel) {
+                    afterrender: function (childConfig, dataProvider, manuallyAdded, panel) {
                         if (!panel.__tabpanel_initialized) {
                             var copy = Ext.decode(Ext.encode(childConfig));
                             var children = this.getRecursiveLayout(copy, null, {
                                 containerType: "objectbrick",
                                 containerKey: type,
-                                ownerName: this.fieldConfig.name
+                                ownerName: this.fieldConfig.name,
+                                applyDefaults: manuallyAdded
                             }, false, true, dataProvider);
                             if (this.fieldConfig.noteditable && children) {
                                 children.forEach(function (record) {
@@ -306,7 +307,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
 
                         }
-                    }.bind(this, childConfig, dataProvider)
+                    }.bind(this, childConfig, dataProvider, manuallyAdded)
 
                 }
             });

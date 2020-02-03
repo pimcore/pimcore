@@ -22,7 +22,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Search\Backend\Data\Dao;
 
+/**
+ * @method Dao getDao()
+ */
 class Data extends \Pimcore\Model\AbstractModel
 {
     /**
@@ -109,20 +113,6 @@ class Data extends \Pimcore\Model\AbstractModel
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
         }
-    }
-
-    /**
-     * @return \Pimcore\Model\Dao\AbstractDao
-     *
-     * @throws \Exception
-     */
-    public function getDao()
-    {
-        if (!$this->dao) {
-            $this->initDao('\\Pimcore\\Model\\Search\\Backend\\Data');
-        }
-
-        return $this->dao;
     }
 
     /**
