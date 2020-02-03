@@ -84,6 +84,10 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_query_'.$this->model->getClass()->getId();
     }
 
+    /**
+     * @param array $params
+     * @throws \Exception
+     */
     public function save($params = [])
     {
         $context = $this->model->getContext();
@@ -510,7 +514,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function load($object, $params = [])
@@ -607,6 +611,9 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     *
+     */
     public function createLocalizedViews()
     {
 
@@ -714,6 +721,10 @@ QUERY;
         }
     }
 
+    /**
+     * @param array $params
+     * @throws \Exception
+     */
     public function createUpdateTable($params = [])
     {
         $table = $this->getTableName();
@@ -767,6 +778,7 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                /** @var ResourcePersistenceAwareInterface $value */
                 if ($value->getColumnType()) {
                     $key = $value->getName();
 

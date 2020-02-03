@@ -158,7 +158,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $maxValue
+     * @param string|int|null $maxValue
      *
      * @return $this
      *

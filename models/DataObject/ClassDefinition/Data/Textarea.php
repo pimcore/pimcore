@@ -243,7 +243,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param string|null $data
      * @param null $object
@@ -271,7 +271,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
      *
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

@@ -603,6 +603,7 @@ class Service extends Model\Element\Service
     {
         $success = false;
 
+        /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl(false, $request);

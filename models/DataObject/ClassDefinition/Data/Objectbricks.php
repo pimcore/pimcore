@@ -629,7 +629,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param Objectbrick $data
+     * @param Objectbrick|null $data
      *
      * @return array
      */

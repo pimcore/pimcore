@@ -380,6 +380,7 @@ class DocumentController extends AbstractElementController
         $wsData = $this->fillWebserviceData($className, $data);
 
         $document = new Document();
+        /** @var Webservice\Data\Document $wsData */
         $document->setId($wsData->parentId);
 
         $this->checkElementPermission($document, 'create');

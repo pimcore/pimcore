@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
@@ -200,7 +199,7 @@ class Assets extends Elements implements DataProviderInterface
         $hits = $searcherList->load();
 
         $elements = [];
-        /** @var AbstractElement $hit */
+        /** @var Data $hit */
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 

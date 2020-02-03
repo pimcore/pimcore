@@ -120,7 +120,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Correct old column definitions (e.g varchar(255)) to the new format
      *
-     * @param $type
+     * @param string $type
      */
     protected function correctColumnDefinition($type)
     {
@@ -182,7 +182,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $width
+     * @param string|int|null $width
      *
      * @return $this
      */
@@ -340,7 +340,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      *
      * @return bool
      */
@@ -467,8 +467,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param string|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array

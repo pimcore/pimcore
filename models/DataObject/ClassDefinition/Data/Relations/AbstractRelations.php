@@ -347,7 +347,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $item
+     * @param Element\ElementInterface $item
      *
      * @return string
      */
@@ -360,8 +360,8 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $array1
-     * @param $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return bool
      */

@@ -171,7 +171,7 @@ class Wysiwyg extends Model\Document\Tag
      *
      * @param array $idMapping
      *
-     * @return string|null
+     * @return string|void
      *
      * @todo: no rewriteIds method ever returns anything, why this one?
      */
@@ -203,5 +203,6 @@ class Wysiwyg extends Model\Document\Tag
 
         $html->clear();
         unset($html);
+        return;
     }
 }

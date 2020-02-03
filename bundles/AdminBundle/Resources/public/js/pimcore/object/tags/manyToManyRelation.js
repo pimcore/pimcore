@@ -114,6 +114,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         columns.push({
             xtype: 'actioncolumn',
             menuText: t('up'),
+            hideable: false,
             width: 40,
             items: [
                 {
@@ -133,6 +134,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('down'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('down'),
@@ -151,6 +153,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [{
                 tooltip: t('open'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
@@ -168,6 +171,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('remove'),
             width: 40,
+            hideable: false,
             items: [{
                 tooltip: t('remove'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",

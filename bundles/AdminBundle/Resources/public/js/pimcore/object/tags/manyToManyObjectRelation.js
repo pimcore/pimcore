@@ -294,11 +294,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     getVisibleColumns: function () {
         var visibleFields = this.visibleFields || [];
 
-        var columns = [
-            {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
-            {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
-            {text: t("class"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
-        ];
+        var columns = [];
+
+        if(visibleFields.length === 0) {
+            columns.push(
+                {text: 'ID', dataIndex: 'id', width: 50},
+                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)},
+                {text: t("class"), dataIndex: 'classname', width: 100}
+            );
+        }
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
@@ -345,6 +349,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             xtype: 'actioncolumn',
             menuText: t('up'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('up'),
@@ -361,57 +366,57 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         });
 
         columns.push({
-                xtype: 'actioncolumn',
-                menuText: t('down'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('down'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
-                        handler: function (grid, rowIndex) {
-                            if (rowIndex < (grid.getStore().getCount() - 1)) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                grid.getStore().removeAt(rowIndex);
-                                grid.getStore().insert(rowIndex + 1, [rec]);
-                            }
-                        }.bind(this)
-                    }
-                ]
-            });
-
-        columns.push(
-            {
-                xtype: 'actioncolumn',
-                menuText: t('open'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('open'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                        handler: function (grid, rowIndex) {
-                            var data = grid.getStore().getAt(rowIndex);
-                            pimcore.helpers.openObject(data.data.id, "object");
-                        }.bind(this)
-                    }
-                ]
-            });
-
-        columns.push(
-            {
-                xtype: 'actioncolumn',
-                menuText: t('remove'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('remove'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                        handler: function (grid, rowIndex) {
+            xtype: 'actioncolumn',
+            menuText: t('down'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('down'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
+                    handler: function (grid, rowIndex) {
+                        if (rowIndex < (grid.getStore().getCount() - 1)) {
+                            var rec = grid.getStore().getAt(rowIndex);
                             grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }
-                ]
-            }
-        );
+                            grid.getStore().insert(rowIndex + 1, [rec]);
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
+
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('open'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('open'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openObject(data.data.id, "object");
+                    }.bind(this)
+                }
+            ]
+        });
+
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('remove'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('remove'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }
+            ]
+        });
 
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,

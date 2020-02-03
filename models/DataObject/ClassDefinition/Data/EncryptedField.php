@@ -91,6 +91,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data) {
+            /** @var ResourcePersistenceAwareInterface $fd */
             $fd = $this->getDelegateDatatypeDefinition();
             if ($fd) {
                 $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
@@ -107,7 +108,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Model\DataObject\Concrete $object
      * @param array $params
      *
@@ -360,7 +361,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * display the quantity value field data in the grid
      *
-     * @param $data
+     * @param mixed $data
      * @param null $object
      * @param array $params
      *

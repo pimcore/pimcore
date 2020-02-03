@@ -162,7 +162,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param bool $data
+     * @param string|bool $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -247,7 +247,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Consent|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
@@ -259,7 +259,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
+     * @param string|bool $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
@@ -430,7 +430,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Config extends Model\AbstractModel implements \JsonSerializable
 {

@@ -352,6 +352,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -428,6 +429,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($request->get('oid')) {
             $object = DataObject\Concrete::getById($request->get('oid'));
             $class = $object->getClass();
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
             $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -500,6 +502,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -633,6 +636,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -910,6 +914,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -925,7 +930,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
         $data = [];
 
@@ -948,6 +953,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             if ($request->get('oid')) {
                 $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
+                /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
             }
@@ -1034,7 +1040,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
 
         $keyCondition = 'groupId in (' . implode(',', array_fill(0, count($ids), '?')) . ')';
@@ -1280,6 +1286,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $item]);
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**

@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\KeyGroupRelation[] load()
  * @method Model\DataObject\Classificationstore\KeyGroupRelation current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

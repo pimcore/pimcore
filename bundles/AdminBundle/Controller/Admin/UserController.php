@@ -293,6 +293,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateAction(Request $request)
     {
+        /** @var User|User\Role $user */
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -319,7 +320,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
-            if (isset($values['2fa_required'])) {
+            if ($user instanceof User && isset($values['2fa_required'])) {
                 $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
             }
 
@@ -495,6 +496,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getMinimalAction(Request $request)
     {
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
         $user->setPassword(null);
 
@@ -720,6 +722,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function roleGetAction(Request $request)
     {
+        /** @var User\UserRole $role */
         $role = User\Role::getById(intval($request->get('id')));
 
         // workspaces
@@ -773,6 +776,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             $id = $this->getAdminUser()->getId();
         }
 
+        /** @var User $userObj */
         $userObj = User::getById($id);
 
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -1140,6 +1144,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $message = '';
 
         if ($username = $request->get('username')) {
+            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {

@@ -132,6 +132,7 @@ class QuantityValueController extends AdminController
                 return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
             }
         }
+        return $this->adminJson(['success' => false]);
     }
 
     /**
