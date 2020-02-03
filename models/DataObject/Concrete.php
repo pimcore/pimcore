@@ -898,6 +898,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @param array $descriptor
      * @param string $table
      * @return array
@@ -912,6 +913,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @param array $descriptor
      * @return array
      */
@@ -921,8 +923,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @param array $descriptor
-     *
      * @return array
      */
     public function retrieveRelationData($descriptor) {

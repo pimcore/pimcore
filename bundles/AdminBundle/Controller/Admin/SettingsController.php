@@ -1084,12 +1084,12 @@ class SettingsController extends AdminController
      */
     public function getAvailableSitesAction(Request $request)
     {
-        $hideMainSite = $request->get('hideMainSite');
+        $excludeMainSite = $request->get('excludeMainSite');
 
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
         $sites = [];
-        if (!$hideMainSite) {
+        if (!$excludeMainSite) {
             $sites[] = [
                 'id' => 'default',
                 'rootId' => 1,

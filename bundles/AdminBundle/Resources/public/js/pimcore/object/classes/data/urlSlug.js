@@ -70,7 +70,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             proxy: {
                 type: 'ajax',
                 url: '/admin/settings/get-available-sites',
-                extraParams: {hideMainSite: 1}
+                extraParams: {excludeMainSite: 1}
             },
             fields: ['id', 'domain']
         });

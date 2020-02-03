@@ -441,7 +441,6 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    // Url slug handles removed stuff in its save method
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $params = [
                             'context' => $this->model->getContext() ? $this->model->getContext() : [],
