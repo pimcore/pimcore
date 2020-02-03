@@ -203,7 +203,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
 
-        $objects = $this->sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getChildrenSortOrder());
+        $objects = DataObject\Service::sortChildrenNaturally($event->getArgument('objects'), $object->getChildrenSortBy(), $object->getChildrenSortOrder());
 
         if ($limit) {
             return $this->adminJson([
@@ -219,28 +219,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         return $this->adminJson($objects);
-    }
-
-    /**
-     * @param array $objects
-     * @param string $sortBy
-     * @param string $childrenSortOrder
-     * @return array
-     */
-    private function sortChildrenNaturally(array $objects, string $sortBy, string $childrenSortOrder): array
-    {
-        if('index' === $sortBy) {
-            $sortBy = 'idx';
-        }
-
-        usort(
-            $objects,
-            function ($a, $b) use ($sortBy) {
-                return strnatcasecmp($a[$sortBy], $b[$sortBy]);
-            }
-        );
-
-        return $childrenSortOrder === 'ASC' ? $objects : array_reverse($objects);
     }
 
     /**

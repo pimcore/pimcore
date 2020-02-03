@@ -420,7 +420,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder($this->getChildrenSortOrder());
             $list->setObjectTypes($objectTypes);
-            $this->o_children[$cacheKey] = $list->load();
+            $this->o_children[$cacheKey] = Service::sortChildrenNaturally($list->load(), $this->getChildrenSortBy(), $this->getChildrenSortOrder());
             $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
         }
 

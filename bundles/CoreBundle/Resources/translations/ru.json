@@ -693,7 +693,6 @@
     "targeting_toolbar": "Панель инструментов таргетинга",
     "sort_children_by": "Сортировать дочерние элемнты по",
     "by_key": "Ключу (в алфавитном порядке)",
-    "by_key_reverse": "Ключу (в алфавитном порядке обратный)",
     "by_index": "Индекс (сортировка вручную)",
     "successful_object_change_children_sort_to_index": "Изменена сортировка дочерних объектов  по индексу",
     "successful_object_change_children_sort_to_key": "Изменена сортировка дочерних объектов  по ключу",
