@@ -46,11 +46,6 @@ class Glossary extends AbstractModel
     /**
      * @var string
      */
-    public $acronym;
-
-    /**
-     * @var string
-     */
     public $language;
 
     /**
@@ -188,23 +183,23 @@ class Glossary extends AbstractModel
     }
 
     /**
+     * @deprecated
      * @param string $acronym
      *
      * @return $this
      */
     public function setAcronym($acronym)
     {
-        $this->acronym = $acronym;
-
-        return $this;
+        return $this->setAbbr($acronym);
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getAcronym()
     {
-        return $this->acronym;
+        return $this->getAbbr();
     }
 
     /**
