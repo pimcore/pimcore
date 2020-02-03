@@ -1627,14 +1627,10 @@ class Service extends Model\Element\Service
      */
     public static function sortChildrenNaturally(array $objects, string $sortBy, string $childrenSortOrder): array
     {
-        if('index' === $sortBy) {
-            $sortBy = 'idx';
-        }
-
         usort(
             $objects,
             function ($a, $b) use ($sortBy) {
-                return strnatcasecmp($a[$sortBy], $b[$sortBy]);
+                return strnatcasecmp($a->get('o_'. $sortBy), $b->get('o_'. $sortBy));
             }
         );
 

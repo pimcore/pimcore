@@ -179,7 +179,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $childsList = $beforeListLoadEvent->getArgument('list');
 
-            $childs = $childsList->load();
+            $childs = DataObject\Service::sortChildrenNaturally($childsList->load(), $object->getChildrenSortBy(), $object->getChildrenSortOrder());
             $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $child) {
