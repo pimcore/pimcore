@@ -862,6 +862,9 @@ class Document extends Element\AbstractElement
             Logger::error($e);
         }
 
+        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $masterRequest = $requestStack->getMasterRequest();
+
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
 
@@ -872,9 +875,6 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            $requestStack = \Pimcore::getContainer()->get('request_stack');
-
-            $masterRequest = $requestStack->getMasterRequest();
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
                     $hardlink = $masterDocument->getHardLinkSource();
@@ -920,7 +920,13 @@ class Document extends Element\AbstractElement
             $link = $this->getPath() . $this->getKey();
         }
 
-        $this->fullPathCache = $link;
+        if($masterRequest) {
+            // caching should only be done when master request is available as it is done for performance reasons
+            // of the web frontend, without a request object there's no need to cache anything
+            // for details also see https://github.com/pimcore/pimcore/issues/5707
+            $this->fullPathCache = $link;
+        }
+
         $link = $this->prepareFrontendPath($link);
 
         return $link;
@@ -1345,7 +1351,7 @@ class Document extends Element\AbstractElement
         return $this->parent;
     }
 
-    /**
+    /**fullPathCache
      * Set the parent document instance.
      *
      * @param Document $parent
