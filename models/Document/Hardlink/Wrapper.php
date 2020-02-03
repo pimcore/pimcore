@@ -159,7 +159,7 @@ trait Wrapper
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren(func_get_args());
+            return parent::hasChildren($unpublished);
         }
 
         return false;
