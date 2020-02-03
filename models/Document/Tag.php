@@ -271,7 +271,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $options
      * @param bool $return
      *
-     * @return string|null
+     * @return string|void
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
@@ -304,7 +304,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $this->outputEditmode($code);
-        return null;
+        return;
     }
 
     /**

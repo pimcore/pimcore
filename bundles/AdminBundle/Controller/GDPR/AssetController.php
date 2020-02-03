@@ -61,7 +61,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             strip_tags($allParams['email']),
             intval($allParams['start']),
             intval($allParams['limit']),
-            isset($allParams['sort']) ? $allParams['sort'] : null
+            $allParams['sort'] ?? null
         );
 
         return $this->adminJson($result);

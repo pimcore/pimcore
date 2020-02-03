@@ -104,7 +104,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string|null
+     * @return string|void
      */
     public function frontend()
     {
@@ -177,7 +177,7 @@ class Renderlet extends Model\Document\Tag
                 Logger::error($e);
             }
         }
-        return null;
+        return;
     }
 
     /**

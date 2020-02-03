@@ -241,7 +241,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
         }
 
-        if (isset($data['poster']) && $data['poster']) {
+        if (!empty($data['poster'])) {
             if ($poster = Asset::getByPath($data['poster'])) {
                 $data['poster'] = $poster;
             } else {
