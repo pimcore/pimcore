@@ -233,6 +233,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('up'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('up'),
@@ -251,6 +252,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('down'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('down'),
@@ -271,6 +273,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('open'),
@@ -293,6 +296,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('remove'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('remove'),

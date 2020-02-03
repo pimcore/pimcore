@@ -103,10 +103,14 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         var visibleFields = this.visibleFields || [];
 
-        var columns = [
-            {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
-            {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length}
-        ];
+        var columns = [];
+
+        if(visibleFields.length === 0) {
+            columns.push(
+                {text: 'ID', dataIndex: 'id', width: 50},
+                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)}
+            );
+        }
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
@@ -242,6 +246,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('up'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('up'),
@@ -260,6 +265,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('down'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('down'),
@@ -280,6 +286,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('open'),
@@ -297,6 +304,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('remove'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('remove'),
