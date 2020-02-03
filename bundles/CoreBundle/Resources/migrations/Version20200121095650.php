@@ -21,7 +21,7 @@ class Version20200121095650 extends AbstractPimcoreMigration
           `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
           `ownername` VARCHAR(70) NOT NULL DEFAULT '',
           `position` VARCHAR(70) NOT NULL DEFAULT '0',
-          `slug` VARCHAR(765) NULL DEFAULT NULL CHARACTER SET utf8 COLLATE utf8_bin,
+          `slug` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
           `siteId` INT(11) NOT NULL DEFAULT '0',
           PRIMARY KEY (`slug`, `siteId`),
           INDEX `index` (`index`),
