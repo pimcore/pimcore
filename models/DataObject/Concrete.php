@@ -598,6 +598,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @param string $classId
      * @return AbstractObject|null
      */
     public function getClosestParentOfClass(string $classId) {
