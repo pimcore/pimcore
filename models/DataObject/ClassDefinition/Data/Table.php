@@ -324,25 +324,30 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
+        if ($unserializedData === null)
+            return $unserializedData;
+        
         //set array keys based on column configuration if set
         $columnConfig = $this->getColumnConfig();
-        if ($this->isColumnConfigActivated() && $columnConfig) {
-            $dataWithKeys = [];
-            foreach ($unserializedData as $row) {
-                $indexedRow = [];
-                $index = 0;
-                foreach ($row as $col) {
-                    $indexedRow[$columnConfig[$index]['key']] = $col;
-                    $index++;
-                }
-
-                $dataWithKeys[] = $indexedRow;
+        
+        if (!$this->isColumnConfigActivated() || !$columnConfig)
+            return $unserializedData;
+            
+        $dataWithKeys = [];
+        
+        foreach ($unserializedData as $row) {
+            $indexedRow = [];
+            $index = 0;
+            
+            foreach ($row as $col) {
+                $indexedRow[$columnConfig[$index]['key']] = $col;
+                $index++;
             }
 
-            return $dataWithKeys;
-        } else {
-            return $unserializedData;
+            $dataWithKeys[] = $indexedRow;
         }
+
+        return $dataWithKeys;
     }
 
     /**
