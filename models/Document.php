@@ -648,17 +648,18 @@ class Document extends Element\AbstractElement
      * set the children of the document
      *
      * @param self[] $children
+     * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren($children, $includingUnpublished = false)
     {
         if (empty($children)) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
         } elseif (is_array($children)) {
-            $cacheKey = $this->getListingCacheKey();
+            $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
             $this->hasChildren[$cacheKey] = (bool) count($children);
         }

@@ -121,18 +121,18 @@ trait Wrapper
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return Document[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+        if (!isset($this->children[$cacheKey])) {
             $hardLink = $this->getHardLinkSource();
             $children = [];
-
             if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-                foreach (parent::getChildren() as $c) {
+                foreach (parent::getChildren($includingUnpublished) as $c) {
                     $c = Service::wrap($c);
                     if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                         $c->setHardLinkSource($hardLink);
@@ -143,10 +143,10 @@ trait Wrapper
                 }
             }
 
-            $this->setChildren($children);
+            $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children;
+        return $this->children[$cacheKey];
     }
 
     /**
@@ -159,7 +159,7 @@ trait Wrapper
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren();
+            return parent::hasChildren(func_get_args());
         }
 
         return false;
