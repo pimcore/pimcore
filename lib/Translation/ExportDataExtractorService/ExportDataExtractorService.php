@@ -43,7 +43,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     }
 
     /**
-     * @param DataExtractorInterface $dataExtractor
+     * @param string $type
      *
      * @return DataExtractorInterface
      *

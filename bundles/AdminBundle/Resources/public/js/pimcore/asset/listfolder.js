@@ -153,10 +153,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var gridColumns = gridHelper.getGridColumns();
 
-        // add filters
-        this.gridfilters = gridHelper.getGridFilters();
-
-
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.languageInfo = new Ext.Toolbar.TextItem({
@@ -396,33 +392,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         }
 
         return gridColumns;
-    },
-
-    getColumnWidth: function(field, defaultValue) {
-        if (field.width) {
-            return field.width;
-        } else if(field.layout && field.layout.width) {
-            return field.layout.width;
-        } else {
-            return defaultValue;
-        }
-    },
-
-    getExportButtons: function () {
-        var buttons = [];
-        pimcore.globalmanager.get("pimcore.asset.gridexport").forEach(function (exportType) {
-            buttons.push({
-                text: t(exportType.text),
-                iconCls: exportType.icon || "pimcore_icon_export",
-                handler: function () {
-                    pimcore.helpers.exportWarning(exportType, function (settings) {
-                        this.exportPrepare(settings, exportType);
-                    }.bind(this));
-                }.bind(this),
-            })
-        }.bind(this));
-
-        return buttons;
     },
 
     getColumnWidth: function(field, defaultValue) {

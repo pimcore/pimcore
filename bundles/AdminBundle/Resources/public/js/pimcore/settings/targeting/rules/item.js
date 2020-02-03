@@ -152,6 +152,7 @@ pimcore.settings.targeting.rules.item = Class.create({
             addMenu.push({
                 iconCls: condition.getIconCls(),
                 text: condition.getName(),
+                disabled: !condition.isAvailable(),
                 handler: createHandler(condition)
             });
         });

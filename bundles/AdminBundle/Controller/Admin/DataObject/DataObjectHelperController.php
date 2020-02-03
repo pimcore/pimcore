@@ -76,9 +76,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $userId
-     * @param $classId
-     * @param $searchType
+     * @param int $userId
+     * @param string $classId
+     * @param string $searchType
      *
      * @return GridConfig\Listing
      */
@@ -104,23 +104,14 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $user User
-     * @param $classId
-     * @param $searchType
+     * @param User $user
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
-        $db = Db::get();
-        $configListingConditionParts = [];
-        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
-
-        if ($searchType) {
-            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-        }
-
         $configListing = [];
 
         $userIds = [$user->getId()];
@@ -129,7 +120,7 @@ class DataObjectHelperController extends AdminController
         $userIds = implode(',', $userIds);
         $db = Db::get();
 
-        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
@@ -191,12 +182,12 @@ class DataObjectHelperController extends AdminController
         } else {
             $gridConfig = GridConfig::getById($gridConfigId);
             $user = $this->getAdminUser();
+            $found = false;
             if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
                 $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $gridConfig->getClassId());
 
                 if ($sharedGridConfigs) {
-                    $found = false;
-                    /** @var $sharedConfig GridConfigShare */
+                    /** @var GridConfigShare $sharedConfig */
                     foreach ($sharedGridConfigs as $sharedConfig) {
                         if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
                             $found = true;
@@ -221,8 +212,8 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param ImportService $importService
-     * @param $user
-     * @param $classId
+     * @param User $user
+     * @param string $classId
      *
      * @return array
      */
@@ -236,7 +227,7 @@ class DataObjectHelperController extends AdminController
         $list = array_merge($list, $importService->getSharedImportConfigs($user, $classId));
         $result = [];
         if ($list) {
-            /** @var $config ImportConfig */
+            /** @var ImportConfig $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -271,7 +262,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         if ($list) {
-            /** @var $config Config */
+            /** @var Config $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -367,7 +358,7 @@ class DataObjectHelperController extends AdminController
         $class = null;
         $fields = null;
 
-        /** @var $class DataObject\ClassDefinition */
+        /** @var DataObject\ClassDefinition $class */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
@@ -556,6 +547,7 @@ class DataObjectHelperController extends AdminController
 
                             if ($brickDescriptor) {
                                 $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                                 $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                             } else {
@@ -657,13 +649,14 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $noSystemColumns
-     * @param $class DataObject\ClassDefinition
-     * @param $gridType
-     * @param $noBrickColumns
-     * @param $fields
-     * @param $context
-     * @param $objectId
+     * @param bool $noSystemColumns
+     * @param DataObject\ClassDefinition $class
+     * @param string $gridType
+     * @param bool $noBrickColumns
+     * @param DataObject\ClassDefinition\Data[] $fields
+     * @param array $context
+     * @param int $objectId
+     * @param array $types
      *
      * @return array
      */
@@ -739,15 +732,15 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field DataObject\ClassDefinition\Data
-     * @param $brickFields
-     * @param $availableFields
-     * @param $gridType
-     * @param $count
-     * @param $brickType
-     * @param $class
-     * @param $objectId
-     * @param null $context
+     * @param DataObject\ClassDefinition\Data $field
+     * @param DataObject\ClassDefinition\Data[] $brickFields
+     * @param array $availableFields
+     * @param string $gridType
+     * @param int $count
+     * @param string $brickType
+     * @param DataObject\ClassDefinition $class
+     * @param int $objectId
+     * @param array|null $context
      */
     protected function appendBrickFields($field, $brickFields, &$availableFields, $gridType, &$count, $brickType, $class, $objectId, $context = null)
     {
@@ -779,6 +772,11 @@ class DataObjectHelperController extends AdminController
         }
     }
 
+    /**
+     * @param array $config
+     *
+     * @return mixed
+     */
     protected function getCalculatedColumnConfig($config)
     {
         try {
@@ -837,7 +835,7 @@ class DataObjectHelperController extends AdminController
         $newData = [];
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
-            if ($item->isOperator) {
+            if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
 
                 $item->key = $itemKey;
@@ -926,7 +924,6 @@ class DataObjectHelperController extends AdminController
                 $favourite->setObjectId($objectId);
                 $favourite->save();
 
-
                 if ($global) {
                     $favourite->setObjectId(0);
                     $favourite->save();
@@ -950,7 +947,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfigId
+     * @param int $gridConfigId
      *
      * @return array
      */
@@ -962,7 +959,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -1129,8 +1126,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $importConfig ImportConfig
-     * @param $metadata
+     * @param ImportConfig $importConfig
+     * @param array $configData
      *
      * @throws \Exception
      */
@@ -1170,8 +1167,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfig GridConfig
-     * @param $metadata
+     * @param GridConfig $gridConfig
+     * @param array $metadata
      *
      * @throws \Exception
      */
@@ -1211,11 +1208,13 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field
-     * @param $gridType
-     * @param $position
+     * @param DataObject\ClassDefinition\Data $field
+     * @param string $gridType
+     * @param string $position
      * @param bool $force
-     * @param null $keyPrefix
+     * @param string|null $keyPrefix
+     * @param DataObject\ClassDefinition|null $class
+     * @param int|null $objectId
      *
      * @return array|null
      */
@@ -1435,7 +1434,7 @@ class DataObjectHelperController extends AdminController
 
             $attributes = $selectedGridColumn->attributes;
 
-            /** @var $config ConfigElementInterface */
+            /** @var ConfigElementInterface $config */
             $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
@@ -1692,7 +1691,7 @@ class DataObjectHelperController extends AdminController
                 $configData->classId = $request->get('classId');
                 $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-                /** @var $object DataObject\Concrete */
+                /** @var DataObject\Concrete $object */
                 $object = $resolver->resolve($configData, $parentId, $rowData);
 
                 $context = $eventData->getContext();
@@ -1742,7 +1741,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $fileHandle
+     * @param string $fileHandle
      *
      * @return string
      */
@@ -1806,9 +1805,7 @@ class DataObjectHelperController extends AdminController
         $className = $class->getName();
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
-        /**
-         * @var $list \Pimcore\Model\DataObject\Listing
-         */
+        /** @var \Pimcore\Model\DataObject\Listing $list */
         $list = new $listClass();
 
         $quotedIds = [];
@@ -1904,7 +1901,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param $field
+     * @param string $field
+     * @param array $helperDefinitions
      *
      * @return string
      */
@@ -1941,8 +1939,8 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param DataObject\Listing $list
+     * @param string[] $fields
      * @param bool $addTitles
      *
      * @return array
@@ -2008,9 +2006,10 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param $field
-     * @param $object DataObject\AbstractObject
-     * @param $requestedLanguage
+     * @param string $field
+     * @param DataObject\AbstractObject $object
+     * @param string $requestedLanguage
+     * @param array $helperDefinitions
      *
      * @return mixed
      */
@@ -2059,7 +2058,7 @@ class DataObjectHelperController extends AdminController
                             $definition = json_decode($keyConfig->getDefinition());
                             $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
-                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                             $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
                             $csLanguage = $requestedLanguage;
                             if (!$csFieldDefinition->isLocalized()) {
@@ -2098,6 +2097,7 @@ class DataObjectHelperController extends AdminController
                     $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
 
                     if ($brickDescriptor) {
+                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                     } else {
@@ -2212,6 +2212,7 @@ class DataObjectHelperController extends AdminController
                     }
 
                     $append = $params['append'];
+                    $remove = $params['remove'];
 
                     $className = $object->getClassName();
                     $class = DataObject\ClassDefinition::getByName($className);
@@ -2245,19 +2246,19 @@ class DataObjectHelperController extends AdminController
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
 
-                                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;
                                 if (!$csFieldDefinition->isLocalized()) {
                                     $csLanguage = 'default';
                                 }
 
-                                /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                                 $fd = $class->getFieldDefinition($field);
                                 $keyConfig = $fd->getKeyConfiguration($keyid);
                                 $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                                /** @var $classificationStoreData DataObject\Classificationstore */
+                                /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
@@ -2295,6 +2296,11 @@ class DataObjectHelperController extends AdminController
                             $existingData = $brick->$valueGetter();
                             $newData = $field->appendData($existingData, $newData);
                         }
+                        if ($remove) {
+                            $valueGetter = 'get' . ucfirst($brickKey);
+                            $existingData = $brick->$valueGetter();
+                            $newData = $field->removeData($existingData, $newData);
+                        }
                         $brick->$valueSetter($newData);
                     } else {
                         // everything else
@@ -2306,21 +2312,29 @@ class DataObjectHelperController extends AdminController
                                 $existingData = $object->{'get' . $name}();
                                 $newData = $field->appendData($existingData, $newData);
                             }
+                            if ($remove) {
+                                $existingData = $object->{'get' . $name}();
+                                $newData = $field->removeData($existingData, $newData);
+                            }
                             $object->setValue($name, $newData);
                         } else {
                             // check if it is a localized field
                             if ($params['language']) {
+                                /** @var DataObject\Localizedfield $localizedField */
                                 $localizedField = $class->getFieldDefinition('localizedfields');
                                 if ($localizedField) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
                                         $setter = 'set' . $name;
-                                        /** @var $field DataObject\ClassDefinition\Data */
                                         $newData = $field->getDataFromEditmode($value, $object);
                                         if ($append) {
                                             $existingData = $object->$getter($params['language']);
                                             $newData = $field->appendData($existingData, $newData);
+                                        }
+                                        if ($remove) {
+                                            $existingData = $object->$getter($request->get('language'));
+                                            $newData = $field->removeData($existingData, $newData);
                                         }
 
                                         $object->$setter($newData, $params['language']);
@@ -2400,7 +2414,7 @@ class DataObjectHelperController extends AdminController
             ];
         }
 
-        /** @var $commonFields DataObject\ClassDefinition\Data[] */
+        /** @var DataObject\ClassDefinition\Data[] $commonFields */
         $commonFields = [];
 
         $firstOne = true;
@@ -2410,6 +2424,7 @@ class DataObjectHelperController extends AdminController
                 $fds = $class->getFieldDefinitions();
 
                 $additionalFieldNames = array_keys($fds);
+                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
                 $localizedFields = $class->getFieldDefinition('localizedfields');
                 if ($localizedFields) {
                     $lfNames = array_keys($localizedFields->getFieldDefinitions());
@@ -2439,6 +2454,11 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['availableFields' => $availableFields]);
     }
 
+    /**
+     * @param DataObject\ClassDefinition\Data[] $fds
+     * @param bool $firstOne
+     * @param DataObject\ClassDefinition\Data[] $commonFields
+     */
     protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)
     {
         foreach ($fds as $fd) {

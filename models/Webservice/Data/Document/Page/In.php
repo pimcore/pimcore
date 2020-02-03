@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Document\Page;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class In extends Model\Webservice\Data\Document\Page
 {
 }

@@ -162,7 +162,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $info = password_get_info($data);
 
             // is already a hashed string
-            if ($info['algo'] !== 0) {
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;
             }
         } else {
@@ -350,7 +350,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -374,6 +374,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -386,7 +388,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -438,7 +440,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {

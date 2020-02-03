@@ -204,7 +204,7 @@ class SearchController extends AdminController
             $tagIds = $allParams['tagIds'];
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
-                    if ($allParams['considerChildTags'] == 'true') {
+                    if (($allParams['considerChildTags'] ?? 'false') === 'true') {
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
@@ -498,7 +498,7 @@ class SearchController extends AdminController
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return string
      */

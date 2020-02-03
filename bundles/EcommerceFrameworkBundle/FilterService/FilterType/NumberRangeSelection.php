@@ -55,7 +55,7 @@ class NumberRangeSelection extends AbstractFilterType
 
         $currentValue = '';
         if ($currentFilter[$field]['from'] || $currentFilter[$field]['to']) {
-            $currentValue = implode($currentFilter[$field], '-');
+            $currentValue = implode('-', $currentFilter[$field]);
         }
 
         return $this->render($this->getTemplate($filterDefinition), [

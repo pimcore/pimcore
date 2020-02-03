@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param DataObject\Concrete $object
-     * @param $params mixed
+     * @param array $params
      *
      * @return array
      */
@@ -75,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($fd instanceof LazyLoadingSupportInterface) {
                             if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
@@ -135,7 +136,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $object
-     * @param $saveMode true if called from save method
+     * @param bool $saveMode true if called from save method
      *
      * @return array
      */
@@ -179,7 +180,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $childDefinitions = $definition->getFielddefinitions(['suppressEnrichment' => true]);
+            $childDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {

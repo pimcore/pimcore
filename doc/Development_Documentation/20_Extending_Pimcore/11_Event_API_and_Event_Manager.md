@@ -30,11 +30,16 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/lib/Event/WorkflowEvents.php)
 - [Elements](https://github.com/pimcore/pimcore/blob/master/lib/Event/ElementEvents.php)
 - [Mail](https://github.com/pimcore/pimcore/blob/master/lib/Event/MailEvents.php)
+- [Redirect](https://github.com/pimcore/pimcore/blob/master/lib/Event/RedirectEvents.php)
 - [Admin](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php)
 - [Frontend](https://github.com/pimcore/pimcore/blob/master/lib/Event/FrontendEvents.php)
 - [Cache](https://github.com/pimcore/pimcore/blob/master/lib/Event/CoreCacheEvents.php)
+- [Full-Page Cache](https://github.com/pimcore/pimcore/blob/master/lib/Event/FullPageCacheEvents.php)
 - [Search](https://github.com/pimcore/pimcore/blob/master/lib/Event/SearchBackendEvents.php)
 - [System](https://github.com/pimcore/pimcore/blob/master/lib/Event/SystemEvents.php)
+- [Target Group](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetGroupEvents.php)
+- [Targeting](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetingEvents.php)
+- [Tests](https://github.com/pimcore/pimcore/blob/master/lib/Event/TestEvents.php)
 - [Translation](https://github.com/pimcore/pimcore/blob/master/lib/Event/TranslationEvents.php)
 - [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/master/lib/Event/BundleManagerEvents.php)
 - [Web Services](https://github.com/pimcore/pimcore/blob/master/lib/Event/WebserviceEvents.php)
@@ -136,7 +141,7 @@ allows you to dynamically modify the target path depending on the object it will
 Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
 support the decision.
 
-The contextual info provided is the same as described [here](../05_Objects/01_Object_Classes/01_Data_Types/33_Calculated_Value_Type.md):
+The contextual info provided is the same as described [here](../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md):
 
 Example Code: For the demo instance, this sample code would place an image which is dragged onto the image_1 field of object 6 (in-enim-justo_2)
 into the /news/in-enim-justo_2/image_1 asset folder.

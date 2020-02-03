@@ -119,8 +119,8 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * Set cache lifetime to timestamp of next element
      *
-     * @param $outputTimestamp
-     * @param $nextElement
+     * @param int $outputTimestamp
+     * @param array $nextElement
      */
     protected function updateOutputCacheLifetime($outputTimestamp, $nextElement)
     {

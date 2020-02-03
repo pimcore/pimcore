@@ -245,7 +245,7 @@ trait PimcoreExtensionsTrait
     /**
      * Fetches the first row of the SQL result.
      *
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -263,7 +263,7 @@ trait PimcoreExtensionsTrait
     /**
      * Fetches the first column of all SQL result rows as an array.
      *
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -290,7 +290,7 @@ trait PimcoreExtensionsTrait
     /**
      * Fetches the first column of the first row of the SQL result.
      *
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -309,7 +309,7 @@ trait PimcoreExtensionsTrait
      * The first column is the key, the second column is the
      * value.
      *
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -330,7 +330,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param $table
+     * @param string $table
      * @param array $data
      *
      * @return int
@@ -546,7 +546,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param $sql
+     * @param string $sql
      * @param array $exclusions
      *
      * @return \Doctrine\DBAL\Driver\Statement|int|null
@@ -572,7 +572,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return array
      */
@@ -586,7 +586,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array
      */

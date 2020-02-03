@@ -47,7 +47,7 @@ class TagRenderer implements LoggerAwareInterface
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return bool
      */
@@ -60,8 +60,8 @@ class TagRenderer implements LoggerAwareInterface
      * Loads a document tag
      *
      * @param PageSnippet $document
-     * @param $type
-     * @param $inputName
+     * @param string $type
+     * @param string $inputName
      * @param array $options
      * @param bool|null $editmode
      *
@@ -89,7 +89,7 @@ class TagRenderer implements LoggerAwareInterface
 
                 $tag = $document->getElement($name);
 
-                // @TODO: BC layer, to be removed in v6.0
+                // @TODO: BC layer, to be removed in v7.0
                 $aliases = [
                     'href' => 'relation',
                     'multihref' => 'relations',
@@ -126,8 +126,8 @@ class TagRenderer implements LoggerAwareInterface
      * Renders a tag
      *
      * @param PageSnippet $document
-     * @param $type
-     * @param $inputName
+     * @param string $type
+     * @param string $inputName
      * @param array $options
      * @param bool|null $editmode
      *

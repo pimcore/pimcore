@@ -22,8 +22,8 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 {
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface                  $productList
-     * @param                                                   $currentFilter
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
      *
      * @return string
      */
@@ -59,10 +59,10 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface                  $productList
-     * @param array                                             $currentFilter
-     * @param                                                   $params
-     * @param bool                                              $isPrecondition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
      *
      * @return string[]
      */

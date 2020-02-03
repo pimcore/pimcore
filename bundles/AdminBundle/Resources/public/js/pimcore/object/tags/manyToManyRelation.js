@@ -19,6 +19,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
     dataObjectFolderAllowed: false,
 
     initialize: function (data, fieldConfig) {
@@ -408,6 +409,9 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 

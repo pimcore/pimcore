@@ -388,7 +388,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
     }
 
     /**
-     * @param $response
+     * @param array $response
      *
      * @return array
      */

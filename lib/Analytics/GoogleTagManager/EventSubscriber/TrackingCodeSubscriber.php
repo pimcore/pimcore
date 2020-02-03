@@ -27,10 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
 use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
-
 
 class TrackingCodeSubscriber implements EventSubscriberInterface
 {
@@ -42,7 +39,7 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     /** @var TrackingManager */
     protected $trackingManager;
 
-    /** @var EngineInterface **/
+    /** @var EngineInterface * */
     protected $templatingEngine;
 
     public function __construct(TrackingManager $trackingManager, EngineInterface $templatingEngine)
@@ -68,7 +65,6 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
 
         foreach ($activeTrackers as $activeTracker) {
             if ($activeTracker instanceof GoogleTagManager) {
-
                 $trackedCodes = $activeTracker->getTrackedCodes();
 
                 if (empty($trackedCodes) || ! is_array($trackedCodes)) {

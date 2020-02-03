@@ -23,7 +23,7 @@ trait DryRun
     /**
      * Configure --dry-run
      *
-     * @param null $description
+     * @param string|null $description
      *
      * @return $this
      */
@@ -60,7 +60,7 @@ trait DryRun
     /**
      * Prefix message with DRY-RUN
      *
-     * @param $message
+     * @param string $message
      * @param string $prefix
      *
      * @return string
@@ -77,7 +77,7 @@ trait DryRun
     /**
      * Prefix message with dry run if in dry-run mode
      *
-     * @param $message
+     * @param string $message
      * @param string $prefix
      *
      * @return string

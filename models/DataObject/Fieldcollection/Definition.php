@@ -140,7 +140,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -185,10 +185,10 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -202,7 +202,7 @@ class Definition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
@@ -243,7 +243,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @throws \Exception
      *
@@ -251,7 +251,7 @@ class Definition extends Model\AbstractModel
      */
     public static function getByKey($key)
     {
-        /** @var $fc Definition */
+        /** @var Definition $fc */
         $fc = null;
         $cacheKey = 'fieldcollection_' . $key;
 
@@ -356,10 +356,6 @@ class Definition extends Model\AbstractModel
         $fdDefs = $this->getFieldDefinitions();
         if (is_array($fdDefs) && count($fdDefs)) {
             foreach ($fdDefs as $key => $def) {
-
-                /**
-                 * @var $def DataObject\ClassDefinition\Data
-                 */
                 $cd .= $def->getGetterCodeFieldcollection($this);
 
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -466,9 +462,9 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param Definition|DataObject\ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */

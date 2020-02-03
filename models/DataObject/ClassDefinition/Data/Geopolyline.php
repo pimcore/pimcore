@@ -190,8 +190,8 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -211,7 +211,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -224,7 +224,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -240,10 +242,12 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -271,7 +275,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -316,7 +320,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var $point DataObject\Data\Geopoint */
+                /** @var DataObject\Data\Geopoint $point */
                 foreach ($value as $point) {
                     $result[] = [
                         $point->getLatitude(),

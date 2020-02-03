@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
@@ -149,13 +151,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
         }
+
+        return null;
     }
 
     /**
@@ -372,6 +376,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if (is_numeric($data)) {
             return $data;
         }
@@ -408,6 +414,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
+        //TODO same fallback as above
+
         return $this->getDataForResource($data, $object, $params);
     }
 
@@ -517,7 +525,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -530,7 +538,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -584,5 +592,21 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         return $data;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return null|int
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        return $this->getDefaultValue() ?? null;
     }
 }

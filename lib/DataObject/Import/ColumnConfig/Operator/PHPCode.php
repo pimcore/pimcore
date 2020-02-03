@@ -43,7 +43,7 @@ class PHPCode extends AbstractOperator
      * PHPCode constructor.
      *
      * @param \stdClass $config
-     * @param null $context
+     * @param mixed|null $context
      */
     public function __construct(\stdClass $config, $context = null)
     {

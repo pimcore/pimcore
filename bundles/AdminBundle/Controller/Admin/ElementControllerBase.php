@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ElementControllerBase extends AdminController
 {
     /**
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return array
      */
@@ -98,7 +98,10 @@ class ElementControllerBase extends AdminController
                 if (!$element) {
                     continue;
                 }
-                $hasDependency = $element->getDependencies()->isRequired();
+
+                if (!$hasDependency) {
+                    $hasDependency = $element->getDependencies()->isRequired();
+                }
             } catch (\Exception $e) {
                 Logger::err('failed to access element with id: ' . $id);
                 continue;

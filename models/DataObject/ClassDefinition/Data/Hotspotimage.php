@@ -382,7 +382,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|DataObject\ClassDefinition\Data
@@ -399,7 +399,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -502,6 +502,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -528,10 +530,12 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|Asset|DataObject\Data\Hotspotimage
      *
@@ -555,7 +559,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
         $hotspotImage = $this->getDataFromResource($value);
 
-        /** @var $hotspotImage DataObject\Data\Hotspotimage */
+        /** @var DataObject\Data\Hotspotimage $hotspotImage */
         if (!$hotspotImage) {
             return null;
         }
@@ -582,11 +586,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+
+        return null;
     }
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null

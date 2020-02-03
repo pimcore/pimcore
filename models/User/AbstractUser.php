@@ -24,7 +24,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  */
-abstract class AbstractUser extends Model\AbstractModel
+class AbstractUser extends Model\AbstractModel
 {
     /**
      * @var int
@@ -243,7 +243,7 @@ abstract class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */

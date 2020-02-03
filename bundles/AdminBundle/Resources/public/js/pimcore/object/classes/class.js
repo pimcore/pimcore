@@ -264,7 +264,7 @@ pimcore.object.classes.klass = Class.create({
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
 
-        // @TODO: ignoredAliases are there for BC reasons, to be removed in v6
+        // @TODO: ignoredAliases are there for BC reasons, to be removed in v7
         var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
         ignoredAliases.forEach(function (item) {
             dataComps = array_remove_value(dataComps, item);
@@ -310,7 +310,7 @@ pimcore.object.classes.klass = Class.create({
                         if (!in_array(group, groupNames)) {
                             groupNames.push(group);
                         }
-                        groups[group] = new Array();
+                        groups[group] = [];
                     }
                     var handler;
                     if (editMode) {
@@ -834,10 +834,18 @@ pimcore.object.classes.klass = Class.create({
                     name: "encryption",
                     style: 'margin: 0',
                     checked: this.data.encryption
-                }, {
+                },
+                {
                     xtype: 'container',
                     html: t('encrypt_data_description'),
                     style: 'margin-bottom:10px'
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("cache_raw_relation_data"),
+                    name: "cacheRawRelationData",
+                    style: 'margin: 0',
+                    checked: this.data.cacheRawRelationData
                 },
                 {
                     xtype: "displayfield",

@@ -41,7 +41,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     protected $phpTemplatingEngine;
 
     /**
-     * @param $excludedRoutes
+     * @param array $excludedRoutes
      * @param PhpEngine $phpTemplatingEngine
      */
     public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
@@ -134,5 +134,17 @@ class CsrfProtectionListener implements EventSubscriberInterface
         }
 
         return $this->csrfToken;
+    }
+
+    public function regenerateCsrfToken()
+    {
+        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+            $token = sha1(generateRandomSymfonySecret());
+            $adminSession->set('csrfToken', $token);
+
+            return $token;
+        });
+
+        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->csrfToken);
     }
 }

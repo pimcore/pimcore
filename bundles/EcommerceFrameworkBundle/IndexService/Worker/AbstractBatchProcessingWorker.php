@@ -44,9 +44,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     abstract protected function getStoreTableName();
 
     /**
-     * @param $objectId
-     * @param null $data
-     * @param null $metadata
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
     abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
 
@@ -86,7 +86,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * deletes element from store table
      *
-     * @param $objectId
+     * @param int $objectId
      */
     protected function deleteFromStoreTable($objectId)
     {
@@ -97,7 +97,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      * prepare data for index creation and store is in store table
      *
      * @param IndexableInterface $object
-     * @param $subObjectId
+     * @param int $subObjectId
      *
      * @return array
      */
@@ -233,8 +233,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         if (is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
+                        $event->setSubObjectId($subObjectId);
                         $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
 
                         if ($event->doSkipAttribute()) {
@@ -272,6 +273,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 if ($jsonLastError !== JSON_ERROR_NONE) {
                     $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
                     $event = new PreprocessErrorEvent($e);
+                    $event->setSubObjectId($subObjectId);
                     $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
                     if ($event->doThrowException()) {
                         throw $e;
@@ -340,8 +342,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * Inserts the data do the store table
      *
-     * @param $data
-     * @param $subObjectId
+     * @param array $data
+     * @param int $subObjectId
      */
     protected function insertDataToIndex($data, $subObjectId)
     {

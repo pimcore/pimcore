@@ -21,6 +21,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Concrete extends Model\Webservice\Data\DataObject
 {
     /**
@@ -34,8 +37,8 @@ class Concrete extends Model\Webservice\Data\DataObject
     public $className;
 
     /**
-     * @param $object
-     * @param null $options
+     * @param Model\DataObject\Concrete $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {
@@ -65,9 +68,9 @@ class Concrete extends Model\Webservice\Data\DataObject
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete $object
      * @param bool $disableMappingExceptions
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -112,5 +115,8 @@ class Concrete extends Model\Webservice\Data\DataObject
                 }
             }
         }
+
+        // potentially there is no parent with this parentId -> as the setter methods above call Concrete::getValueFromParent() which calls Concrete::getParent() which calls Concrete::setParent(AbstractObject::getById($this->parentId)). As AbstractObject::getById($this->parentId) is null in this case, Concrete::setParent() sets $this->parentId to 0
+        $object->setParentId($this->parentId);
     }
 }

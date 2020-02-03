@@ -391,9 +391,7 @@ class Installer
 
     private function markMigrationsAsDone(KernelInterface $kernel)
     {
-        /**
-         * @var $manager \Pimcore\Migrations\MigrationManager
-         */
+        /** @var \Pimcore\Migrations\MigrationManager $manager */
         $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
         $config = $manager->getConfiguration('pimcore_core');
         $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
@@ -619,6 +617,9 @@ class Installer
         return $errors;
     }
 
+    /**
+     * @return array
+     */
     protected function getDataFiles()
     {
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
@@ -653,7 +654,7 @@ class Installer
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @throws \Exception
      */

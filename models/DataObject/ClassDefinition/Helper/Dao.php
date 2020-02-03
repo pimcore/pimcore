@@ -22,8 +22,8 @@ use Pimcore\Model\DataObject;
 trait Dao
 {
     /**
-     * @param $field
-     * @param $table
+     * @param DataObject\ClassDefinition\Data $field
+     * @param string $table
      * @param string $columnTypeGetter
      */
     protected function addIndexToField($field, $table, $columnTypeGetter = 'getColumnType', $considerUniqueIndex = false, $isLocalized = false, $isFieldcollection = false)
@@ -92,11 +92,11 @@ trait Dao
     }
 
     /**
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
+     * @param string $table
+     * @param string $colName
+     * @param string $type
+     * @param string $default
+     * @param string $null
      */
     protected function addModifyColumn($table, $colName, $type, $default, $null)
     {
@@ -120,9 +120,9 @@ trait Dao
     }
 
     /**
-     * @param $table
-     * @param $columnsToRemove
-     * @param $protectedColumns
+     * @param string $table
+     * @param array $columnsToRemove
+     * @param array $protectedColumns
      */
     protected function removeUnusedColumns($table, $columnsToRemove, $protectedColumns)
     {

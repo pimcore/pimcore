@@ -223,7 +223,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $callback Callable
+     * @param callable $callback
      */
     public function onCreateQuery(callable $callback)
     {

@@ -122,6 +122,17 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 }
             });
 
+            // force paste dialog to prevent security message on various browsers
+            this.ckeditor.on('beforeCommandExec', function(event) {
+                if (event.data.name === 'paste') {
+                    event.editor._.forcePasteDialog = true;
+                }
+
+                if (event.data.name === 'pastetext' && event.data.commandData.from === 'keystrokeHandler') {
+                    event.cancel();
+                }
+            });
+
             this.ckeditorReady = false;
             this.ckeditor.on("instanceReady", function() {
                 this.ckeditorReady = true;

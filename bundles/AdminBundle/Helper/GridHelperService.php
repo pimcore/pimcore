@@ -89,7 +89,7 @@ class GridHelperService
                 $fieldName = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                 $csFieldDefinition = $class->getFieldDefinition($fieldName);
 
                 $language = $requestedLanguage;
@@ -145,6 +145,7 @@ class GridHelperService
         if ($filterJson) {
             $db = \Pimcore\Db::get();
             $filters = json_decode($filterJson, true);
+
             foreach ($filters as $filter) {
                 $operator = '=';
 
@@ -153,14 +154,6 @@ class GridHelperService
 
                 if ($filter['type'] == 'string') {
                     $operator = 'LIKE';
-                } elseif ($filter['type'] == 'numeric') {
-                    if ($filterOperator == 'lt') {
-                        $operator = '<';
-                    } elseif ($filterOperator == 'gt') {
-                        $operator = '>';
-                    } elseif ($filterOperator == 'eq') {
-                        $operator = '=';
-                    }
                 } elseif ($filter['type'] == 'date') {
                     if ($filterOperator == 'lt') {
                         $operator = '<';
@@ -175,6 +168,14 @@ class GridHelperService
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
                     $filter['value'] = (int)$filter['value'];
+                } else {
+                    if ($filterOperator == 'lt') {
+                        $operator = '<';
+                    } elseif ($filterOperator == 'gt') {
+                        $operator = '>';
+                    } elseif ($filterOperator == 'eq') {
+                        $operator = '=';
+                    }
                 }
 
                 $field = $class->getFieldDefinition($filterField);
@@ -213,7 +214,11 @@ class GridHelperService
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
                         if ($brickDescriptor) {
-                            $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
+                            /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
+                            $localizedFields = $brickClass->getFieldDefinition('localizedfields');
+                            if ($localizedFields) {
+                                $brickField = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                            }
                         } else {
                             $brickField = $brickClass->getFieldDefinition($brickKey);
                         }
@@ -296,7 +301,7 @@ class GridHelperService
     }
 
     /**
-     * @param array $fieldsParameter
+     * @param array $fields
      *
      * @return array
      */
@@ -384,9 +389,7 @@ class GridHelperService
         $className = $class->getName();
 
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-        /**
-         * @var $list DataObject\Listing\Concrete
-         */
+        /** @var DataObject\Listing\Concrete $list */
         $list = new $listClass();
 
         $colMappings = [
@@ -406,7 +409,7 @@ class GridHelperService
 
         $fields = [];
         $bricks = [];
-        if ($requestParams['fields']) {
+        if (!empty($requestParams['fields'])) {
             $fields = $requestParams['fields'];
             $bricks = $this->extractBricks($fields);
         }
@@ -519,7 +522,7 @@ class GridHelperService
             $parts = explode('_', $orderKey);
 
             $fieldname = $parts[1];
-            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
             $csFieldDefinition = $class->getFieldDefinition($fieldname);
             $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
             $featureJoins[] = $sortingSettings;
@@ -657,15 +660,15 @@ class GridHelperService
                     $filterField = 'CONCAT(path,filename)';
                 }
 
-                if ($filterDef[1] != 'system') {
+                if (isset($filterDef[1]) && $filterDef[1] == 'system') {
+                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
+                } else {
                     $language = $allParams['language'];
                     if (isset($filterDef[1])) {
                         $language = $filterDef[1];
                     }
                     $language = str_replace(['none', 'default'], '', $language);
                     $conditionFilters[] = 'id IN (SELECT cid FROM assets_metadata WHERE `name` = ' . $db->quote($filterField) . ' AND `data` ' . $operator . ' ' . $value . ' AND `language` = ' . $db->quote($language). ')';
-                } else {
-                    $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 }
             }
         }

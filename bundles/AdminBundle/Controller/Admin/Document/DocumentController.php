@@ -15,9 +15,11 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
@@ -43,6 +45,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends ElementControllerBase implements EventedControllerInterface
 {
+    use AdminStyleTrait;
+
     /**
      * @var Document\Service
      */
@@ -69,6 +73,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
             'interfaces' => array_values(class_implements($document))
         ];
+
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -491,8 +497,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document $updatedObject
-     * @param $newIndex
+     * @param Document $document
+     * @param int $newIndex
      */
     protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
     {
@@ -637,11 +643,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $version = Version::getById($request->get('id'));
         $document = $version->loadData();
-
-        Session::useSession(function (AttributeBagInterface $session) use ($document) {
-            $key = 'document_' . $document->getId();
-            $session->set($key, $document);
-        }, 'pimcore_documents');
+        Document\Service::saveElementToSession($document);
 
         return new Response();
     }
@@ -674,7 +676,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->adminJson(['success' => true]);
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+        return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 
     /**
@@ -1019,7 +1023,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param $element Document
+     * @param Document $element
      *
      * @return array
      */
@@ -1046,12 +1050,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'settings' => $childDocument->isAllowed('settings'),
                 'rename' => $childDocument->isAllowed('rename'),
                 'publish' => $childDocument->isAllowed('publish'),
-                'unpublish' => $childDocument->isAllowed('unpublish')
+                'unpublish' => $childDocument->isAllowed('unpublish'),
+                'create' => $childDocument->isAllowed('create')
             ]
         ];
 
         // add icon
-        $tmpDocument['iconCls'] = 'pimcore_icon_' . $childDocument->getType();
         $tmpDocument['expandable'] = $childDocument->hasChildren();
         $tmpDocument['loaded'] = !$childDocument->hasChildren();
 
@@ -1059,36 +1063,21 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
-            $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
             if ($site = Site::getByRootId($childDocument->getId())) {
-                $tmpDocument['iconCls'] = 'pimcore_icon_site';
                 unset($site->rootDocument);
                 $tmpDocument['site'] = $site;
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
             $tmpDocument['expanded'] = !$childDocument->hasChildren();
-
-            if (!$childDocument->hasChildren() && $childDocument->getType() == 'folder') {
-                $tmpDocument['iconCls'] = 'pimcore_icon_folder';
-            }
-            $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
         } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
             $tmp = $childDocument->getTreeNodeConfig();
             $tmpDocument = array_merge($tmpDocument, $tmp);
         }
 
-        $tmpDocument['qtipCfg'] = [
-            'title' => 'ID: ' . $childDocument->getId(),
-            'text' => 'Type: ' . $childDocument->getType()
-        ];
-
-        if ($site instanceof Site) {
-            $tmpDocument['qtipCfg']['text'] .= '<br>' . $this->trans('site_id') . ': ' . $site->getId();
-        }
+        $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
         if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
@@ -1104,15 +1093,19 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
+        $tmpDocument['cls'] = '';
+
         if ($childDocument instanceof Document\Page) {
             $tmpDocument['url'] = $childDocument->getFullPath();
             $site = Tool\Frontend::getSiteForDocument($childDocument);
             if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
-        }
 
-        $tmpDocument['cls'] = '';
+            if ($childDocument->getProperty('navigation_exclude')) {
+                $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
+            }
+        }
 
         if (!$childDocument->isPublished()) {
             $tmpDocument['cls'] .= 'pimcore_unpublished ';

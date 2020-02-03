@@ -21,10 +21,14 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Admin;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**
@@ -42,7 +46,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -65,7 +71,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -88,7 +96,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -111,7 +121,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -134,7 +146,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -159,7 +173,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -184,12 +200,14 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -231,7 +249,7 @@ class Service
             $list->setUnpublished(1);
 
             $items = [];
-            /** @var $doc Document */
+            /** @var Document $doc */
             foreach ($list as $doc) {
                 $item = new Webservice\Data\Document\Listing\Item();
                 $item->id = $doc->getId();
@@ -251,7 +269,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -274,7 +294,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -296,7 +318,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -315,7 +339,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -334,7 +360,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -353,7 +381,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -372,7 +402,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -391,7 +423,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -410,7 +444,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -429,7 +465,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -448,7 +486,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -467,7 +507,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -486,7 +528,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -507,7 +551,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -529,7 +575,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -551,7 +599,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -572,7 +622,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -593,7 +645,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -614,7 +668,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -635,7 +691,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -666,7 +724,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -688,7 +748,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -713,7 +775,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -736,8 +800,10 @@ class Service
     }
 
     /**
-     * @param $id
-     * @param null $options
+     * @param int $id
+     * @param array|null $options
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -759,12 +825,14 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -832,7 +900,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -854,7 +924,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -876,7 +948,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -901,13 +975,15 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
-     * @param null $objectClass
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     * @param string|null $objectClass
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -986,7 +1062,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1009,7 +1087,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1031,8 +1111,8 @@ class Service
     }
 
     /**
-     * @param $wsDocument
-     * @param $element
+     * @param Webservice\Data\Document $wsDocument
+     * @param AbstractElement $element
      *
      * @return mixed
      *
@@ -1055,9 +1135,9 @@ class Service
     }
 
     /**
-     * @param $element
-     * @param $key
-     * @param $path
+     * @param AbstractElement $element
+     * @param string $key
+     * @param string $path
      *
      * @return string
      */
@@ -1083,7 +1163,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1108,7 +1190,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1137,7 +1221,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1161,7 +1247,7 @@ class Service
     }
 
     /**
-     * @param $element
+     * @param AbstractElement $element
      * @param bool $creation
      *
      * @return $this
@@ -1184,7 +1270,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -1207,7 +1295,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -1231,8 +1321,8 @@ class Service
     }
 
     /**
-     * @param $type
-     * @param $params
+     * @param string $type
+     * @param array $params
      *
      * @return array
      *
@@ -1242,9 +1332,7 @@ class Service
     {
         if (in_array($type, ['website', 'admin'])) {
             $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
-            /**
-             * @var $list \Pimcore\Model\Translation\Website\Listing
-             */
+            /** @var \Pimcore\Model\Translation\Website\Listing $list */
             $list = new $listClass();
             if ($key = $params['key']) {
                 $list->addConditionParam(' `key` LIKE ' . \Pimcore\Db::get()->quote('%' . $key . '%'), '');

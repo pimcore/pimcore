@@ -54,7 +54,7 @@ class Document extends Url
     protected $customSettings = [];
 
     /**
-     * @param  $tabindex
+     * @param string $tabindex
      *
      * @return $this
      */
@@ -74,7 +74,7 @@ class Document extends Url
     }
 
     /**
-     * @param null $character
+     * @param string|null $character
      *
      * @return $this
      */
@@ -94,7 +94,7 @@ class Document extends Url
     }
 
     /**
-     * @param  $relation
+     * @param string $relation
      *
      * @return $this
      */
@@ -114,7 +114,7 @@ class Document extends Url
     }
 
     /**
-     * @param $document
+     * @param Model\Document $document
      *
      * @return $this
      */
@@ -162,7 +162,7 @@ class Document extends Url
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDocumentType()
     {
@@ -170,7 +170,7 @@ class Document extends Url
     }
 
     /**
-     * @param mixed $documentType
+     * @param string $documentType
      */
     public function setDocumentType($documentType)
     {
@@ -194,8 +194,8 @@ class Document extends Url
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      *
      * @return $this
      */
@@ -207,9 +207,9 @@ class Document extends Url
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return null
+     * @return mixed|null
      */
     public function getCustomSetting($name)
     {

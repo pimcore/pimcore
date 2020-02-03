@@ -18,19 +18,20 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     initialize:function (data, fieldConfig) {
 
-        this.data = "";
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
 
-        if (data) {
-            this.data = data;
-        } else if ((typeof data === "undefined" || data === null)) {
-            if (fieldConfig.defaultValue !== null) {
+    applyDefaultValue: function() {
+        if ((typeof this.data === "undefined" || this.data === null)) {
+            if (this.fieldConfig.defaultValue !== null) {
                 this.dataChanged = true;
             }
 
-            this.data = fieldConfig.defaultValue;
+            this.data = this.fieldConfig.defaultValue;
         }
-        this.fieldConfig = fieldConfig;
     },
+
 
     getGridColumnConfig:function (field) {
         var columnConfig = {

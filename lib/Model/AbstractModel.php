@@ -56,7 +56,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $dao
+     * @param \Pimcore\Model\Dao\AbstractDao $dao
      *
      * @return self
      */
@@ -68,7 +68,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      * @param bool $forceDetection
      *
      * @throws \Exception
@@ -188,8 +188,8 @@ abstract class AbstractModel
     }
 
     /**
-     * @param  $key
-     * @param  $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return $this
      */
@@ -226,8 +226,8 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $method
-     * @param $args
+     * @param string $method
+     * @param array $args
      *
      * @return mixed
      *

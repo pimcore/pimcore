@@ -42,7 +42,7 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
      * This method extracts assigned tenants and returns an array of subtenant-IDs
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return array $subTenantData
      */

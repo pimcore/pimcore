@@ -18,14 +18,18 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+
+    use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
      * Static type of this element
@@ -137,6 +141,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if ($this->defaultValue !== null) {
             return (float) $this->defaultValue;
         }
+
+        return null;
     }
 
     /**
@@ -224,6 +230,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
@@ -415,7 +423,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -465,6 +473,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -488,10 +498,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      *
@@ -606,7 +618,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     $list->setOrderKey('abbreviation');
                     $list->setOrder('asc');
                     $list = $list->load();
-                    /** @var $item Model\DataObject\QuantityValue\Unit */
+                    /** @var Model\DataObject\QuantityValue\Unit $item */
                     foreach ($list as $item) {
                         $table[$item->getId()] = $item;
                     }
@@ -620,12 +632,27 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
             if (is_array($table)) {
                 $this->validUnits = [];
-                /** @var $unit Model\DataObject\QuantityValue\Unit */
+                /** @var Model\DataObject\QuantityValue\Unit $unit */
                 foreach ($table as $unit) {
                     $this->validUnits[] = $unit->getId();
                 }
             }
         }
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return Model\DataObject\Data\QuantityValue|null
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        if ($this->getDefaultValue() || $this->getDefaultUnit()) {
+            return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
+        }
+
+        return null;
     }
 
     /**
@@ -639,5 +666,46 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    public function getFilterCondition($value, $operator, $params = [])
+    {
+        /** @var UnitConversionService $converter */
+        $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
+
+        $filterValue = $value[0];
+        $filterUnit = Model\DataObject\QuantityValue\Unit::getById($value[1]);
+
+        if (!$filterUnit instanceof Model\DataObject\QuantityValue\Unit) {
+            return '0';
+        }
+
+        $filterQuantityValue = new Model\DataObject\Data\QuantityValue($filterValue, $filterUnit->getId());
+
+        $baseUnit = $filterUnit->getBaseunit() ?? $filterUnit;
+
+        $unitListing = new Model\DataObject\QuantityValue\Unit\Listing();
+        $unitListing->setCondition('baseunit='.Db::get()->quote($baseUnit->getId()).' OR id='.Db::get()->quote($filterUnit->getId()));
+
+        $conditions = [];
+        foreach ($unitListing->load() as $unit) {
+            $convertedQuantityValue = $converter->convert($filterQuantityValue, $unit);
+
+            $conditions[] = '('.
+                $this->getFilterConditionExt(
+                    $convertedQuantityValue->getValue(),
+                    $operator,
+                    ['name' => $this->getName().'__value']
+                ).
+                ' AND '.
+                $this->getFilterConditionExt(
+                    $convertedQuantityValue->getUnitId(),
+                    '=',
+                    ['name' => $this->getName().'__unit']
+                ).
+            ')';
+        }
+
+        return implode(' OR ', $conditions);
     }
 }

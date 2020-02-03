@@ -67,12 +67,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanupbrokenviews }
 
-    Pimcore\Maintenance\Tasks\DownloadMaxMinDbTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: downloadmaxminddb }
-
     Pimcore\Maintenance\Tasks\CacheCleanupTask:
         arguments:
             - '@Pimcore\Cache\Core\CoreHandlerInterface'
@@ -99,8 +93,17 @@ services:
             - { name: pimcore.maintenance.task, type: asset_document_convert }
 
     Pimcore\Maintenance\Tasks\HousekeepingTask:
+        arguments:
+            - '%pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than%'
+            - '%pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than%'
         tags:
             - { name: pimcore.maintenance.task, type: housekeeping }
+
+    Pimcore\Maintenance\Tasks\LowQualityImagePreviewTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: low_quality_image_preview }
 
     Pimcore\Maintenance\Tasks\TagsExpireTask:
         arguments:

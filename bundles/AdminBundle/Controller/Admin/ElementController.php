@@ -501,7 +501,8 @@ class ElementController extends AdminController
                 $editModeData = $fd->getDataForEditmode($data, $source);
                 if (is_array($editModeData)) {
                     foreach ($editModeData as $relationObjectAttribute) {
-                        $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
+                        $relationObjectAttribute['$$nicepath'] =
+                            isset($relationObjectAttribute[$idProperty]) && isset($result[$relationObjectAttribute[$idProperty]]) ? $result[$relationObjectAttribute[$idProperty]] : null;
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
                 } else {
@@ -736,8 +737,8 @@ class ElementController extends AdminController
     }
 
     /**
-     * @param $source
-     * @param $context
+     * @param DataObject\Concrete $source
+     * @param array $context
      *
      * @return bool|DataObject\ClassDefinition\Data|null
      *
@@ -766,6 +767,7 @@ class ElementController extends AdminController
             $containerKey = $context['containerKey'];
             $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
             if ($context['subContainerType'] == 'localizedfield') {
+                /** @var DataObject\ClassDefinition\Data\Localizedfields $fdLocalizedFields */
                 $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
                 $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
             } else {
@@ -778,9 +780,9 @@ class ElementController extends AdminController
 
     /**
      * @param DataObject\Concrete $source
-     * @param                     $context
-     * @param                     $result
-     * @param                     $targets
+     * @param array $context
+     * @param array $result
+     * @param array $targets
      *
      * @return array
      *

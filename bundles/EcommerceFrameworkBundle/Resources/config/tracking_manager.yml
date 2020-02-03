@@ -38,3 +38,10 @@ services:
             - '@Pimcore\Analytics\Piwik\Tracker'
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
+
+
+    #
+    # GOOGLE TAG MANAGER
+    #
+
+    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
