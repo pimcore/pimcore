@@ -1351,7 +1351,7 @@ class Document extends Element\AbstractElement
         return $this->parent;
     }
 
-    /**fullPathCache
+    /**
      * Set the parent document instance.
      *
      * @param Document $parent
