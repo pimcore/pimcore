@@ -116,7 +116,8 @@ Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(fals
 ```
 
 ## URL Slug (experimental)
-> Experimal: Subject to change without notice
+> **This feature is experimental!**  
+> Subject to change with short notice in upgrade notes
 
 A slug is the part of a URL which identifies a particular page on a website in an easy 
 to read form. In other words, it’s the part of the URL that explains the page’s content.
