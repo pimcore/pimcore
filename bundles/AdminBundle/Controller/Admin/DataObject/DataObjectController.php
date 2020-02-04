@@ -553,7 +553,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
-        // Optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
+        // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
         // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
         // loading the entire target element.
         // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),

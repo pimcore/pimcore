@@ -5,6 +5,7 @@ namespace Pimcore\Tests\Test\DataType;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Test\TestCase;
@@ -473,4 +474,73 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
     }
+
+    public function testUrlSlug()
+    {
+        $this->createTestObject('urlSlug');
+
+        $this->testDataHelper->assertUrlSlug($this->testObject, 'urlSlug', $this->seed);
+
+        // test invalid slug
+
+        $validSlug = new UrlSlug("/xyz/abc");
+        $this->testObject->setUrlSlug([$validSlug]);
+        $this->testObject->save();
+
+        $invalidSlug = new UrlSlug("/xyz      /abc");
+        $this->testObject->setUrlSlug([$invalidSlug]);
+        $ex = null;
+        try {
+            $this->testObject->save();
+        } catch (\Exception $e) {
+            $ex = $e;
+        }
+        $this->assertNotNull($ex, "invalid slug, expected an exception");
+
+        // make sure the invalid slug wasn't save and get a fresh copy
+        $this->testObject = Concrete::getById($this->testObject->getId(), true);
+
+
+        // test lookup
+        $slug = UrlSlug::resolveSlug("/xyz/abc");
+        $this->assertTrue($slug instanceof UrlSlug, "expected a slug");
+        /** @var  $slug UrlSlug */
+        $action = $slug->getAction();
+        $this->assertEquals("MyController::myAction", $action, "wrong controller/action");
+
+
+        // check uniqueness
+        $ex = null;
+        $duplicateSlug = new UrlSlug("/xyz/abc");
+        $this->testObject->setUrlSlug2([$duplicateSlug]);
+        $ex = null;
+        try {
+            $this->testObject->save();
+        } catch (\Exception $e) {
+            $ex = $e;
+        }
+        $this->assertNotNull($ex, "duplicate slug, expected an exception");
+
+    }
+
+    public function testLocalizedUrlSlug()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillUrlSlug',
+                'field' => 'lurlSlug',
+                'arguments' => ['de']
+            ],
+            [
+                'method' => 'fillUrlSlug',
+                'field' => 'lurlSlug',
+                'arguments' => ['en']
+            ]
+        ]);
+
+        $this->testObject = Concrete::getById($this->testObject->getId(), true);
+        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
+        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
+    }
+
 }

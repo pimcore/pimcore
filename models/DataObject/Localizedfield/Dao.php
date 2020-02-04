@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
-            $this->delete(false);
+            $this->delete(false, true);
         }
 
         $object = $this->model->getObject();
@@ -447,8 +447,10 @@ class Dao extends Model\Dao\AbstractDao
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
-                        $params = [];
-                        $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
+                        $params = [
+                            'context' => $this->model->getContext() ? $this->model->getContext() : [],
+                            'isUpdate' => $isUpdate
+                        ];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }

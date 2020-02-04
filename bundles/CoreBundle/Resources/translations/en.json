@@ -927,5 +927,10 @@
   "cannot_save_metadata_please_try_to_edit_the_metadata_in_asset": "<b>Cannot save Metadata!</b><br />Please try to edit the metadata in Asset.",
   "email_log_forward": "Forward email",
   "detect_image_features": "Detect Image Features",
-  "remove_image_features": "Remove Image Features"
+  "remove_image_features": "Remove Image Features",
+  "email_log_forward": "Forward email",
+  "available_sites": "Available Sites",
+  "fallback": "Fallback",
+  "add_site": "Add Site",
+  "domain_label_width": "Domain label width"
 }

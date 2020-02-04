@@ -36,10 +36,12 @@ class GridHelperService
      *
      * @return array
      */
-    public function getFeatureFilters(string $filterJson, ClassDefinition $class, string $requestedLanguage): array
+    public function getFeatureAndSlugFilters(string $filterJson, ClassDefinition $class, string $requestedLanguage): array
     {
-        $joins = [];
-        $conditions = [];
+        $featureJoins = [];
+        $slugJoins = [];
+        $slugConditions = [];
+        $featureConditions = [];
 
         if ($filterJson) {
             $filters = json_decode($filterJson, true);
@@ -77,52 +79,84 @@ class GridHelperService
 
                 $keyParts = explode('~', $filterField);
 
-                if (substr($filterField, 0, 1) != '~') {
-                    continue;
+                $slugFd = null;
+                $field = null;
+                $slugKey = null;
+                $mappedKey = null;
+
+                if (substr($filterField, 0, 1) == '~') {
+                    $type = $keyParts[1];
+                    if ($type != 'classificationstore') {
+                        continue;
+                    }
+
+                    $fieldName = $keyParts[2];
+                    $groupKeyId = explode('-', $keyParts[3]);
+
+                    /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                    $csFieldDefinition = $class->getFieldDefinition($fieldName);
+
+                    $language = $requestedLanguage;
+                    if (!$csFieldDefinition->isLocalized()) {
+                        $language = 'default';
+                    }
+
+                    $groupId = $groupKeyId[0];
+                    $keyid = $groupKeyId[1];
+
+                    $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
+                    $type = $keyConfig->getType();
+                    $definition = json_decode($keyConfig->getDefinition());
+                    $field = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                    if ($field instanceof Model\DataObject\ClassDefinition\Data) {
+                        $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
+                        $featureJoins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
+                        $featureCondition = $field->getFilterConditionExt(
+                            $filter['value'],
+                            $operator,
+                            [
+                                'name' => $mappedKey]
+                        );
+
+                        $featureConditions[$mappedKey] = $featureCondition;
+                    }
+
+                } elseif (count($keyParts) > 1) {
+                    $brickType = $keyParts[0];
+                    $brickKey = $keyParts[1];
+
+                    $brickDef = Objectbrick\Definition::getByKey($brickType);
+                    if ($slugFd = $brickDef->getFieldDefinition($brickKey) instanceof ClassDefinition\Data\UrlSlug) {
+                        $slugKey = $brickKey;
+                        $slugJoins[] = ['fieldname' => $brickKey];
+                    }
+                } else {
+                    if ($slugFd = $class->getFieldDefinition($filterField) instanceof ClassDefinition\Data\UrlSlug) {
+                        $slugKey = $filterField;
+                        $slugJoins[] = ['fieldname' => $filterField];
+
+                    }
                 }
 
-                $type = $keyParts[1];
-                if ($type != 'classificationstore') {
-                    continue;
-                }
-
-                $fieldName = $keyParts[2];
-                $groupKeyId = explode('-', $keyParts[3]);
-
-                /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
-                $csFieldDefinition = $class->getFieldDefinition($fieldName);
-
-                $language = $requestedLanguage;
-                if (!$csFieldDefinition->isLocalized()) {
-                    $language = 'default';
-                }
-
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
-
-                $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
-                $type = $keyConfig->getType();
-                $definition = json_decode($keyConfig->getDefinition());
-                $field = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                if ($field instanceof Model\DataObject\ClassDefinition\Data) {
-                    $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
-                    $joins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
-                    $condition = $field->getFilterConditionExt(
+                if ($field && $slugFd) {
+                    $slugCondition = $field->getFilterConditionExt(
                         $filter['value'],
                         $operator,
                         [
-                            'name' => $mappedKey]
+                            'name' => $slugKey]
                     );
 
-                    $conditions[$mappedKey] = $condition;
+                    $slugConditions[$mappedKey] = $slugCondition;
                 }
             }
         }
 
         $result = [
-            'joins' => $joins,
-            'conditions' => $conditions
+            'featureJoins' => $featureJoins,
+            'slugJoins' => $slugJoins,
+            'featureConditions' => $featureConditions,
+            'slugConditions' => $slugConditions
         ];
 
         return $result;
@@ -180,6 +214,7 @@ class GridHelperService
 
                 $field = $class->getFieldDefinition($filterField);
                 $brickField = null;
+                $brickKey = null;
                 $brickType = null;
                 $brickDescriptor = null;
                 if (!$field) {
@@ -241,7 +276,11 @@ class GridHelperService
                         if ($brickDescriptor) {
                             $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
                         } else {
-                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
+                            if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
+                                $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
+                            } else {
+                                $brickPrefix = $db->quoteIdentifier($brickType) . '.';
+                            }
                         }
                     }
                     if (is_array($filter['value'])) {
@@ -256,6 +295,8 @@ class GridHelperService
                         $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
                                 ['brickType' => $brickType]);
                     }
+                } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
+                    $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . "." . $field->getFilterCondition($filter['value'], $operator);;
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
                     if (is_array($filter['value'])) {
@@ -338,13 +379,13 @@ class GridHelperService
      * @param DataObject\Listing\Concrete $list
      * @param array $featureJoins
      * @param ClassDefinition $class
-     * @param array $featureFilters
+     * @param array $featureAndSlugFilters
      */
-    public function addGridFeatureJoins(DataObject\Listing\Concrete $list, array $featureJoins, ClassDefinition $class, array $featureFilters)
+    public function addGridFeatureJoins(DataObject\Listing\Concrete $list, array $featureJoins, ClassDefinition $class, array $featureAndSlugFilters)
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureFilters, $me) {
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureAndSlugFilters, $me) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -373,7 +414,51 @@ class GridHelperService
                     );
                 }
 
-                $havings = $featureFilters['conditions'];
+                $havings = $featureAndSlugFilters['featureConditions'];
+                if ($havings) {
+                    $havings = implode(' AND ', $havings);
+                    $select->having($havings);
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds all the query stuff that is needed for displaying, filtering and exporting the slug grid data.
+     *
+     * @param DataObject\Listing\Concrete $list
+     * @param array $slugJoins
+     * @param array $featureAndSlugFilters
+     */
+    public function addSlugJoins(DataObject\Listing\Concrete $list, array $slugJoins, array $featureAndSlugFilters)
+    {
+        if ($slugJoins) {
+            $me = $list;
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($slugJoins, $featureAndSlugFilters, $me) {
+                $db = \Pimcore\Db::get();
+
+                $alreadyJoined = [];
+
+                foreach ($slugJoins as $slugJoin) {
+                    $fieldname = $slugJoin['fieldname'];
+
+                    $mappedKey = $fieldname;
+                    $alreadyJoined[$mappedKey] = 1;
+                    $table = $me->getDao()->getTableName();
+                    
+                    $select->joinLeft(
+                        [$mappedKey => 'object_url_slugs'],
+                        '('
+                        . $mappedKey . '.objectId = ' . $table . '.o_id'
+                        . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
+                        . ')',
+                        [
+                            $mappedKey => 'slug'
+                        ]
+                    );
+                }
+
+                $havings = $featureAndSlugFilters['slugConditions'];
                 if ($havings) {
                     $havings = implode(' AND ', $havings);
                     $select->having($havings);
@@ -476,14 +561,16 @@ class GridHelperService
         }
 
         $featureJoins = [];
-        $featureFilters = [];
+        $slugJoins = [];
+        $featureAndSlugFilters = [];
 
         // create filter condition
         if (!empty($requestParams['filter'])) {
             $conditionFilters[] = $this->getFilterCondition($requestParams['filter'], $class);
-            $featureFilters = $this->getFeatureFilters($requestParams['filter'], $class, $requestedLanguage);
-            if ($featureFilters) {
-                $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
+            $featureAndSlugFilters = $this->getFeatureAndSlugFilters($requestParams['filter'], $class, $requestedLanguage);
+            if ($featureAndSlugFilters) {
+                $featureJoins = array_merge($featureJoins, $featureAndSlugFilters['featureJoins']);
+                $slugJoins = array_merge($slugJoins, $featureAndSlugFilters['slugJoins']);
             }
         }
 
@@ -547,7 +634,9 @@ class GridHelperService
             $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
         }
 
-        $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
+        $this->addGridFeatureJoins($list, $featureJoins, $class, $featureAndSlugFilters);
+        $this->addSlugJoins($list, $slugJoins, $featureAndSlugFilters);
+
         $list->setLocale($requestedLanguage);
 
         if (empty($requestParams['filter']) && empty($requestParams['condition']) && empty($requestParams['sort'])) {

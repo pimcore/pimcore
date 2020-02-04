@@ -44,6 +44,25 @@ class TestDataHelper extends Module
      * @param int         $seed
      * @param string|null $language
      */
+    public function fillUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $setter = 'set' . ucfirst($field);
+        if ($language) {
+            $data = new DataObject\Data\UrlSlug('/' . $language . '/content' . $seed);
+            $object->$setter([$data], $language);
+        } else {
+            $data = new DataObject\Data\UrlSlug('/content' . $seed);
+            $object->$setter([$data]);
+        }
+    }
+
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
     public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
     {
         $getter = 'get' . ucfirst($field);
@@ -54,6 +73,33 @@ class TestDataHelper extends Module
         }
 
         $expected = $language . 'content' . $seed;
+
+        $this->assertEquals($expected, $value);
+    }
+
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function assertUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $getter = 'get' . ucfirst($field);
+        if ($language) {
+            $value = $object->$getter($language);
+            $expected = "/" . $language . '/content' . $seed;
+        } else {
+            $value = $object->$getter();
+            $expected = '/content' . $seed;
+        }
+
+        $this->assertTrue(is_array($value) && count($value) == 1, "expected one item");
+
+        /** @var $value DataObject\Data\UrlSlug */
+        $value = $value[0];
+        $value = $value->getSlug();
 
         $this->assertEquals($expected, $value);
     }

@@ -908,12 +908,38 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @param array $descriptor
-     *
+     * @param string $table
      * @return array
      */
-    public function retrieveRelationData($descriptor)
-    {
+    protected function doRetrieveData(array $descriptor, string $table) {
+        $db = Db::get();
+        $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
+
+        $query = 'SELECT * FROM ' . $table . ' WHERE ' . implode(' AND ' , $conditionParts);
+        $result = $db->fetchAll($query);
+        return $result;
+    }
+
+    /**
+     * @internal
+     * @param array $descriptor
+     * @return array
+     */
+    public function retrieveSlugData($descriptor) {
+        $descriptor['objectId'] = $this->getId();
+        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+    }
+
+    /**
+     * @internal
+     * @param array $descriptor
+     * @return array
+     */
+    public function retrieveRelationData($descriptor) {
+
+        $descriptor['src_id'] = $this->getId();
         if ($this instanceof CacheRawRelationDataInterface) {
             $unfilteredData = $this->__getRawRelationData();
 
@@ -947,21 +973,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             return $filteredData;
         } else {
-            $db = Db::get();
-            $conditionParts = ['src_id = ' . $this->getId()];
-            foreach ($descriptor as $key => $value) {
-                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-                if ($lastChar === '%') {
-                    $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
-                } else {
-                    $conditionParts[] = $key . ' = ' . $db->quote($value);
-                }
-            }
+            return $this->doRetrieveData($descriptor, 'object_relations_' . $this->getClassId());
 
-            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ', $conditionParts);
-            $result = $db->fetchAll($query);
-
-            return $result;
         }
     }
 }

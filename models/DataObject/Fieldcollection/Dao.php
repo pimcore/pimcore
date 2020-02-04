@@ -200,6 +200,7 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->delete(
                             $object,
                             [
+                                'isUpdate' => $saveMode,
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,

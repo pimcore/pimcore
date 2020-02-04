@@ -1343,6 +1343,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/data_sheet.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_urlSlug {
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f40c.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_input {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/input.svg) center center no-repeat !important;
 }

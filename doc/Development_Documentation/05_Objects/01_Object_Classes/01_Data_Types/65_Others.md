@@ -2,7 +2,7 @@
 
 ## Checkbox
 
-![Link Field](../../../img/classes-datatypes-checkbox.png)
+![Checkbox](../../../img/classes-datatypes-checkbox.png)
 
 A checkbox field can be configured to be checked by default when a new object is created. 
 
@@ -23,7 +23,7 @@ The boolean select takes care of this problem by introducing a third state. The 
 null for empty.
 For the admin UI you can specify the display values according to your needs. Default values are `yes`, `no` and `empty`.
 
-![Link Field](../../../img/boolean_select.png)
+![Boolean Select](../../../img/boolean_select.png)
 
 ## Link 
 
@@ -114,3 +114,44 @@ You can switch this off by calling
 ```php
 Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(false)
 ```
+
+## URL Slug (experimental)
+> **This feature is experimental!**  
+> Subject to change with short notice in upgrade notes
+
+A slug is the part of a URL which identifies a particular page on a website in an easy 
+to read form. In other words, it’s the part of the URL that explains the page’s content.
+For example, the URL is https://demo.pimcore.fun/slug, and the slug simply is ‘/slug’.
+
+![URL Slug](../../../img/classes-datatypes-urlslug.png)
+
+> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md).
+
+This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
+Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.
+
+### Example
+
+```php
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Pimcore\Model\DataObject;
+use Symfony\Component\HttpFoundation\Request;
+
+class ExampleController extends FrontendController
+{
+    public function mySlugAction(Request $request, DataObject\Foo $object, DataObject\Data\UrlSlug $urlSlug) {
+        
+        // we use param converters to the the matched data object ($object)
+        // $urlSlug contains the context information of the slug
+
+        return [
+            'news' => $object
+        ];
+    }
+}
+```
+
