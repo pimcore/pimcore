@@ -602,16 +602,16 @@ class ClassController extends AdminController implements EventedControllerInterf
         if (!$class instanceof DataObject\ClassDefinition) {
             $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
-            echo $errorMessage;
-        } else {
-            $json = DataObject\ClassDefinition\Service::generateClassDefinitionJson($class);
-
-            $response = new Response($json);
-            $response->headers->set('Content-type', 'application/json');
-            $response->headers->set('Content-Disposition', 'attachment; filename="class_' . $class->getName() . '_export.json"');
-
-            return $response;
+            throw $this->createNotFoundException($errorMessage);
         }
+
+        $json = DataObject\ClassDefinition\Service::generateClassDefinitionJson($class);
+
+        $response = new Response($json);
+        $response->headers->set('Content-type', 'application/json');
+        $response->headers->set('Content-Disposition', 'attachment; filename="class_' . $class->getName() . '_export.json"');
+
+        return $response;
     }
 
     /**
@@ -650,7 +650,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
-        echo $errorMessage;
+        throw $this->createNotFoundException($errorMessage);
     }
 
     /**
@@ -763,19 +763,19 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function exportFieldcollectionAction(Request $request)
     {
         $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
-        $key = $fieldCollection->getKey();
+
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
             $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
-            echo $errorMessage;
-        } else {
-            $json = DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
-            $response = new Response($json);
-            $response->headers->set('Content-type', 'application/json');
-            $response->headers->set('Content-Disposition', 'attachment; filename="fieldcollection_' . $key . '_export.json"');
-
-            return $response;
+            throw $this->createNotFoundException($errorMessage);
         }
+
+        $json = DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
+        $response = new Response($json);
+        $response->headers->set('Content-type', 'application/json');
+        $response->headers->set('Content-Disposition', 'attachment; filename="fieldcollection_' . $fieldCollection->getKey() . '_export.json"');
+
+        return $response;
     }
 
     /**
@@ -1127,19 +1127,19 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function exportObjectbrickAction(Request $request)
     {
         $objectBrick = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
-        $key = $objectBrick->getKey();
+
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
             $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
-            echo $errorMessage;
-        } else {
-            $xml = DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
-            $response = new Response($xml);
-            $response->headers->set('Content-type', 'application/json');
-            $response->headers->set('Content-Disposition', 'attachment; filename="objectbrick_' . $key . '_export.json"');
-
-            return $response;
+            throw $this->createNotFoundException($errorMessage);
         }
+
+        $xml = DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
+        $response = new Response($xml);
+        $response->headers->set('Content-type', 'application/json');
+        $response->headers->set('Content-Disposition', 'attachment; filename="objectbrick_' . $objectBrick->getKey() . '_export.json"');
+
+        return $response;
     }
 
     /**

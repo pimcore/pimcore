@@ -111,6 +111,8 @@ class ControllerDataProvider
         if (isset($bundles[$name])) {
             return $bundles[$name];
         }
+
+        return null;
     }
 
     /**

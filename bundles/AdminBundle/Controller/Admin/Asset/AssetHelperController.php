@@ -809,6 +809,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -840,6 +842,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

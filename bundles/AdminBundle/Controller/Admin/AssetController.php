@@ -993,23 +993,24 @@ class AssetController extends ElementControllerBase implements EventedController
      * @param Request $request
      *
      * @return Response
-     *
-     * @throws \Exception
      */
     public function showVersionAction(Request $request)
     {
         $id = intval($request->get('id'));
         $version = Model\Version::getById($id);
+        if (!$version) {
+            throw $this->createNotFoundException('Version not found');
+        }
         $asset = $version->loadData();
 
-        if ($asset->isAllowed('versions')) {
-            return $this->render(
-                'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
-                ['asset' => $asset]
-            );
-        } else {
-            throw new \Exception('Permission denied, version id [' . $id . ']');
+        if (!$asset->isAllowed('versions')) {
+            throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
         }
+
+        return $this->render(
+            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
+            ['asset' => $asset]
+        );
     }
 
     /**
@@ -1023,13 +1024,19 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
-        if ($asset->isAllowed('view')) {
-            $response = new BinaryFileResponse($asset->getFileSystemPath());
-            $response->headers->set('Content-Type', $asset->getMimetype());
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $asset->getFilename());
-
-            return $response;
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
         }
+
+        if (!$asset->isAllowed('view')) {
+            throw $this->createAccessDeniedException('not allowed to view asset');
+        }
+
+        $response = new BinaryFileResponse($asset->getFileSystemPath());
+        $response->headers->set('Content-Type', $asset->getMimetype());
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $asset->getFilename());
+
+        return $response;
     }
 
     /**
@@ -1043,8 +1050,12 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $image = Asset\Image::getById($request->get('id'));
 
+        if (!$image) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
         if (!$image->isAllowed('view')) {
-            throw new \Exception('not allowed to view thumbnail');
+            throw $this->createAccessDeniedException('not allowed to view thumbnail');
         }
 
         $config = null;
@@ -1142,6 +1153,8 @@ class AssetController extends ElementControllerBase implements EventedController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -1161,7 +1174,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if (!$image->isAllowed('view')) {
-            throw new \Exception('not allowed to view thumbnail');
+            throw $this->createAccessDeniedException('not allowed to view thumbnail');
         }
 
         $thumbnail = null;
@@ -1237,11 +1250,11 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('path')) {
             $video = Asset::getByPath($request->get('path'));
         } else {
-            throw new \Exception('could not load video asset');
+            throw $this->createNotFoundException('could not load video asset');
         }
 
         if (!$video->isAllowed('view')) {
-            throw new \Exception('not allowed to view thumbnail');
+            throw $this->createAccessDeniedException('not allowed to view thumbnail');
         }
 
         $thumbnail = array_merge($request->request->all(), $request->query->all());
@@ -1294,8 +1307,12 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $document = Asset::getById(intval($request->get('id')));
 
+        if (!$document) {
+            throw $this->createNotFoundException('could not load document asset');
+        }
+
         if (!$document->isAllowed('view')) {
-            throw new \Exception('not allowed to view thumbnail');
+            throw $this->createAccessDeniedException('not allowed to view thumbnail');
         }
 
         $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect(array_merge($request->request->all(), $request->query->all()));
@@ -1350,6 +1367,10 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset) {
+            throw $this->createNotFoundException('could not load document asset');
+        }
+
         if ($asset->isAllowed('view')) {
             $pdfFsPath = $this->getDocumentPreviewPdf($asset);
             if ($pdfFsPath) {
@@ -1402,8 +1423,12 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset) {
+            throw $this->createNotFoundException('could not load video asset');
+        }
+
         if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to preview');
+            throw $this->createAccessDeniedException('not allowed to preview');
         }
 
         $previewData = ['asset' => $asset];
@@ -1443,6 +1468,10 @@ class AssetController extends ElementControllerBase implements EventedController
     public function serveVideoPreviewAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
+
+        if (!$asset) {
+            throw $this->createNotFoundException('could not load video asset');
+        }
 
         if (!$asset->isAllowed('view')) {
             throw $this->createAccessDeniedException('not allowed to preview');
@@ -2332,6 +2361,8 @@ class AssetController extends ElementControllerBase implements EventedController
 
             return $this->adminJson($result);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**

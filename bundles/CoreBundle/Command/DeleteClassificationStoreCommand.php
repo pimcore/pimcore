@@ -79,5 +79,7 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         $db->query($sql);
 
         Cache::clearAll();
+
+        return 0;
     }
 }

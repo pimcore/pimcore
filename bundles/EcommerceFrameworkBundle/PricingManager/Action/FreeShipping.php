@@ -69,7 +69,7 @@ class FreeShipping implements ActionInterface
     /**
      * @param string $string
      *
-     * @return ConditionInterface
+     * @return ActionInterface
      */
     public function fromJSON($string)
     {

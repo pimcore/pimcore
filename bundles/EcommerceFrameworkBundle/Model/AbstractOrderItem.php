@@ -129,8 +129,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function getTotalNetPrice()
     {
-        //prevent throwing an exception for backward compatibility
-        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTotalNetPrice is not implemented for ' . get_class($this));
     }
 
     /**
@@ -140,8 +139,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function setTotalNetPrice($totalNetPrice)
     {
-        //prevent throwing an exception for backward compatibility
-        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTotalNetPrice is not implemented for ' . get_class($this));
     }
 
     /**
@@ -151,8 +149,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function getTaxInfo()
     {
-        //prevent throwing an exception for backward compatibility
-        Logger::err('getTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTaxInfo is not implemented for ' . get_class($this));
     }
 
     /**
@@ -162,8 +159,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function setTaxInfo($taxInfo)
     {
-        //prevent throwing an exception for backward compatibility
-        Logger::err('setTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTaxInfo is not implemented for ' . get_class($this));
     }
 
     /**

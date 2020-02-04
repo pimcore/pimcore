@@ -376,6 +376,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         if (!empty($check)) {
             return true;
         }
+
+        return false;
     }
 
     /**

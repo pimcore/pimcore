@@ -164,7 +164,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getObject()
     {
@@ -176,6 +176,8 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
             return $object;
         }
+
+        return null;
     }
 
     /**
@@ -191,7 +193,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getElement()
     {

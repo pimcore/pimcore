@@ -316,8 +316,6 @@ class FullPageCacheListener
 
     /**
      * @param FilterResponseEvent $event
-     *
-     * @return bool|void
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {

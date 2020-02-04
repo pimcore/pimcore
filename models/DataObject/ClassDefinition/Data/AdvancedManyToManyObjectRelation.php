@@ -361,6 +361,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             return implode('<br />', $items);
         }
+
+        return '';
     }
 
     /**

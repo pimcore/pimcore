@@ -15,7 +15,9 @@ pimcore:
 - Using static methods for [dynamic text labels](../../05_Objects/01_Object_Classes/03_Layout_Elements/01_Dynamic_Text_Labels.md) is now deprecated, use services instead.
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::isRemoteOwner()`, as this method was only used for `ReverseManyToManyObjectRelation` internal check are now made using `instanceof` 
 - Data object inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
-- The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
+- The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7.
+- The methods `getSubTotalNetPrice`, `setSubTotalNetPrice`, `getTotalNetPrice`, `setTotalNetPrice`, `getTaxInfo`, `setTaxInfo`, `setGiftItems` in `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder` now throw `UnsupportedException` if not overwritten. 
+- The methods `getTotalNetPrice`, `setTotalNetPrice`, `getTaxInfo`, `setTaxInfo` in `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem` now throw `UnsupportedException` if not overwritten. 
 
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.

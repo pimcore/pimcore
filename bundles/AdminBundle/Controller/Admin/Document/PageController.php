@@ -239,6 +239,8 @@ class PageController extends DocumentControllerBase
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

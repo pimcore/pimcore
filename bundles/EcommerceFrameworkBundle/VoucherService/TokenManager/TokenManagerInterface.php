@@ -46,7 +46,7 @@ interface TokenManagerInterface
      *
      * @param array|null $filter Associative with the indices: "usage" and "olderThan".
      *
-     * @return mixed
+     * @return bool
      */
     public function cleanUpCodes($filter = []);
 

@@ -93,7 +93,7 @@ class CartDiscount implements DiscountInterface
     /**
      * @param string $string
      *
-     * @return ConditionInterface
+     * @return ActionInterface
      */
     public function fromJSON($string)
     {
@@ -104,6 +104,8 @@ class CartDiscount implements DiscountInterface
         if ($json->percent) {
             $this->setPercent($json->percent);
         }
+
+        return $this;
     }
 
     /**

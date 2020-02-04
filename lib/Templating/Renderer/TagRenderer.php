@@ -119,6 +119,8 @@ class TagRenderer implements LoggerAwareInterface
             return $tag;
         } catch (\Exception $e) {
             $this->logger->warning($e);
+
+            return null;
         }
     }
 
