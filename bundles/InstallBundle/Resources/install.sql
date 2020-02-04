@@ -151,6 +151,7 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -169,6 +170,7 @@ CREATE TABLE `documents_newsletter` (
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
   `plaintext` LONGTEXT NULL DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -205,6 +207,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -217,6 +220,7 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -240,6 +244,7 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 

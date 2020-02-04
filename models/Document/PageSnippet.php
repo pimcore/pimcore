@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Config;
+use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
@@ -71,6 +72,11 @@ abstract class PageSnippet extends Model\Document
     protected $contentMasterDocumentId;
 
     /**
+     * @var null|bool
+     */
+    protected $missingRequiredEditable = null;
+
+    /**
      * @var array
      */
     protected $inheritedElements = [];
@@ -102,6 +108,12 @@ abstract class PageSnippet extends Model\Document
         // load data which must be requested
         $this->getProperties();
         $this->getElements();
+
+
+        $this->checkMissingRequiredEditable();
+        if($this->getMissingRequiredEditable() && $this->getPublished()) {
+            throw new \Exception('Prevented publishing document - missing values for required editables');
+        }
 
         // update this
         parent::update($params);
@@ -606,5 +618,63 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $url;
+    }
+
+    /**
+     * checks if the document is missing values for required editables
+     *
+     * @return bool|null
+     */
+    public function getMissingRequiredEditable()
+    {
+        return $this->missingRequiredEditable;
+    }
+
+    /**
+     * @param bool|null $missingRequiredEditable
+     *
+     * @return $this
+     */
+    public function setMissingRequiredEditable($missingRequiredEditable)
+    {
+        if ($missingRequiredEditable !== null) {
+            $missingRequiredEditable = (bool) $missingRequiredEditable;
+        }
+
+        $this->missingRequiredEditable = $missingRequiredEditable;
+
+        return $this;
+    }
+
+    /**
+     * Validates if there is a missing value for required editable
+     */
+    protected function checkMissingRequiredEditable() {
+        //Allowed tags for required check
+        $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
+
+        if ($this->getMissingRequiredEditable() === null) {
+            /** @var TagUsageResolver $tagUsageResolver */
+            $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
+            try {
+                $document = Document::getById($this->getId());
+                if ($document instanceof self) {
+                    // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
+                    $tagNames = $tagUsageResolver->getUsedTagnames($document);
+                    foreach ($tagNames as $tagName) {
+                        $tag = $document->getElement($tagName);
+                        if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
+                            $documentOptions = $tag->getOptions();
+                            if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                                $this->setMissingRequiredEditable(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // noting to do, as rendering the document failed for whatever reason
+            }
+        }
     }
 }

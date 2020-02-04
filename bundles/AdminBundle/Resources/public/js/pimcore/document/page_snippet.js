@@ -445,5 +445,59 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 pimcore.globalmanager.get("new_notifications").getWindow().destroy();
             }
             pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
+    },
+
+    publish: function($super, only) {
+        /* It is needed to have extra validateRequiredEditables check here
+         * so as to stop propagating Admin UI changes in case of required content = true */
+        if (this.validateRequiredEditables()) {
+            return false;
+        }
+
+        $super(only);
+    },
+
+    save : function ($super, task, only) {
+        if(task !== "publish") {
+            this.validateRequiredEditables(true);
+        }
+        $super(task, only);
+    },
+
+    validateRequiredEditables: function (dismissAlert) {
+        //validate required editables against missing values
+        try {
+            /* No validation in case of changing system settings as template can be changed
+             * if template is changed, then document editables be validated on server side
+             */
+            var settingsForm = Ext.getCmp("pimcore_document_settings_" + this.id);
+            if(settingsForm.dirty) {
+                return;
+            }
+
+            var emptyRequiredEditables = this.edit.getEmptyRequiredEditables();
+            if (emptyRequiredEditables.length > 0) {
+                if (!dismissAlert) {
+                    Ext.MessageBox.show({
+                        title: t("error"),
+                        width: 500,
+                        msg: t("complete_required_fields")
+                            + '<br /><br /><textarea style="width:100%; min-height:100px; resize:none" readonly="readonly">'
+                            + emptyRequiredEditables.join(", ") + "</textarea>",
+                        buttons: Ext.Msg.OK
+                    });
+                }
+
+                this.data.missingRequiredEditable = true;
+
+                return true;
+            }
+
+            if(this.data.missingRequiredEditable == true) {
+                this.data.missingRequiredEditable = false;
+            }
+        } catch(e) {
+        }
+
     }
 });

@@ -534,6 +534,11 @@ input.cke_dialog_ui_input_tel {
     outline: 1px dashed #BABABA;
 }
 
+.editable-error {
+    outline: 2px dashed #ff5500 !important;
+    outline-offset: 5px;
+}
+
 .pimcore_wysiwyg.empty:after {
     /* this is a firefox fix, to set the hight automatically to the font height, otherwise the height of the input can be 0px */
     content: "\0000a0";

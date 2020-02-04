@@ -135,6 +135,10 @@ class PageController extends DocumentControllerBase
                 $page->setPublished(true);
             }
 
+            if ($request->get('missingRequiredEditable') !== null) {
+                $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
+            }
+
             $settings = [];
             if ($request->get('settings')) {
                 $settings = $this->decodeJson($request->get('settings'));
