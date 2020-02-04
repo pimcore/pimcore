@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
+use Pimcore\Event\Ecommerce\IndexServiceEvents;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
@@ -92,6 +94,10 @@ class IndexController extends AdminController
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $request->get('field'));
             }
 
+            $event = new GenericEvent(null, ["data" => $data, "field" => $request->get('field')]);
+            \Pimcore::getEventDispatcher()->dispatch($event, IndexServiceEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA);
+            $data = $event->getArgument("data");
+            
             return $this->adminJson(['data' => array_values($data)]);
         } catch (\Exception $e) {
             return $this->adminJson(['message' => $e->getMessage()]);
