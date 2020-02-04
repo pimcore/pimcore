@@ -134,7 +134,10 @@ jobs:
     - name: "PHPStan Tests Lvl 2 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.4
-      env: PHPSTAN_LEVEL=2
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - PHPSTAN_LEVEL=2
 
     # Test Docs
     - name: "Documentation"
