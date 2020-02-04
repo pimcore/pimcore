@@ -203,6 +203,7 @@ class Wysiwyg extends Model\Document\Tag
 
         $html->clear();
         unset($html);
+
         return;
     }
 }

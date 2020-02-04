@@ -625,6 +625,7 @@ class Service extends Model\AbstractModel
         } elseif ($element instanceof Asset) {
             return $element->getFilename();
         }
+
         return null;
     }
 

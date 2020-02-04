@@ -41,6 +41,7 @@ class Item extends AbstractBlockItem
         if (!strcasecmp(get_class($element), $class)) {
             return $element;
         }
+
         return null;
     }
 }

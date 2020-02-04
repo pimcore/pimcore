@@ -385,6 +385,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+
         return null;
     }
 

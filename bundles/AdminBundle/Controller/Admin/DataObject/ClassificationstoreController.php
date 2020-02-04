@@ -352,6 +352,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
         return $this->adminJson(['success' => false]);
     }
 
@@ -502,6 +503,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
         return $this->adminJson(['success' => false]);
     }
 
@@ -636,6 +638,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
         return $this->adminJson(['success' => false]);
     }
 
@@ -914,6 +917,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
         return $this->adminJson(['success' => false]);
     }
 
@@ -1286,6 +1290,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $item]);
         }
+
         return $this->adminJson(['success' => false]);
     }
 

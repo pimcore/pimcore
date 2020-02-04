@@ -304,6 +304,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $this->outputEditmode($code);
+
         return;
     }
 

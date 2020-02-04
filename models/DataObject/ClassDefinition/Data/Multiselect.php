@@ -415,6 +415,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
             return '`'.$name.'` LIKE '.$value.' ';
         }
+
         return null;
     }
 

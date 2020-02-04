@@ -194,6 +194,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
             return $element;
         }
+
         return null;
     }
 

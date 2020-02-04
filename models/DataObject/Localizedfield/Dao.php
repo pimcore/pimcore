@@ -86,6 +86,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param array $params
+     *
      * @throws \Exception
      */
     public function save($params = [])
@@ -609,9 +610,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     *
-     */
     public function createLocalizedViews()
     {
 
@@ -721,6 +719,7 @@ QUERY;
 
     /**
      * @param array $params
+     *
      * @throws \Exception
      */
     public function createUpdateTable($params = [])

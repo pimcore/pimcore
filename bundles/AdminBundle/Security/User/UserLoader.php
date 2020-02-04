@@ -88,6 +88,7 @@ class UserLoader
         if ($this->requestHelper->isFrontendRequestByAdmin()) {
             return Authentication::authenticateSession($this->requestHelper->getCurrentRequest());
         }
+
         return null;
     }
 }

@@ -177,6 +177,7 @@ class Renderlet extends Model\Document\Tag
                 Logger::error($e);
             }
         }
+
         return;
     }
 

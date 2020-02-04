@@ -167,6 +167,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                 return $fd->allowObjectRelation($object);
             }
         }
+
         return false;
     }
 

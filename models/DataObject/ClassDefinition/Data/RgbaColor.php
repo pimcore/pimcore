@@ -304,6 +304,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
             return $result;
         }
+
         return null;
     }
 

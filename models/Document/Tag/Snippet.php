@@ -177,6 +177,7 @@ class Snippet extends Model\Document\Tag
                 return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
+
         return;
     }
 

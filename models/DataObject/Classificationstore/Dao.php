@@ -128,9 +128,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         $object = $this->model->getObject();

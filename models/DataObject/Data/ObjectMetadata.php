@@ -180,6 +180,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     /**
      * @param DataObject\Concrete $element
+     *
      * @return $this
      */
     public function setElement($element)
