@@ -535,10 +535,6 @@ input.cke_dialog_ui_input_tel {
 }
 
 .editable-error {
-    outline: 1px dashed #ff5500 !important;
-}
-
-.editable-error:hover {
     outline: 2px dashed #ff5500 !important;
     outline-offset: 5px;
 }
