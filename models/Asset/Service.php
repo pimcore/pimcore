@@ -207,7 +207,7 @@ class Service extends Model\Element\Service
                 $fieldDef = explode('~', $field);
                 if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
                     if ($fieldDef[0] === 'preview') {
-                        $data[$field] = self::getPreviewThumbnail($asset, ['width' => 108, 'height' => 70, 'frame' => true]);
+                        $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
                     } elseif ($fieldDef[0] === 'size') {
                         /** @var Asset $asset */
                         $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
