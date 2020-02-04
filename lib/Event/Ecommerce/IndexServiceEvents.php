@@ -33,4 +33,13 @@ final class IndexServiceEvents
      * @var string
      */
     const GENERAL_PREPROCESSING_ERROR = 'pimcore.ecommerce.indexservice.generalPreProcessingError';
+    
+       /**
+     * Fired when values in filter definition get fetched
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA = 'pimcore.ecommerce.indexservice.getValuesForFilterFieldPreSendData';
 }
