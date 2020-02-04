@@ -192,3 +192,11 @@ where `/tmp/[dedicateddir]` must be a writable temporary directory.
 
 > Note regarding PRs: Please try to meet all 
 level 2 requirements (run it with `-l 2` instead) for all files you touch or add.
+
+Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
+
+![PHPStan Job](../../img/phpstan1.png)
+
+Open the build log and check for problems.
+
+![PHPStan Log](../../img/phpstan2.png) 
