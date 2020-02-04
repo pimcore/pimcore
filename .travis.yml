@@ -135,6 +135,8 @@ jobs:
       os: linux
       php: 7.4
       env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
         - PHPSTAN_LEVEL=2
 
     # Test Docs
