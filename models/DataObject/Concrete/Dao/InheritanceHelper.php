@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject;
 
 class InheritanceHelper
 {
+
+    static $protectedFields = ['language', 'id', 'parentId', 'classId'];
+
     const STORE_TABLE = 'object_store_';
 
     const QUERY_TABLE = 'object_query_';
@@ -456,15 +459,28 @@ class InheritanceHelper
         }
 
         if (isset($parentIdGroups[$currentParentId])) {
-            foreach ($parentIdGroups[$currentParentId] as $r) {
-                if ($r['classId'] == $this->classId) {
+            foreach ($parentIdGroups[$currentParentId] as $rowData) {
+                if ($rowData['classId'] == $this->classId) {
                     $this->childFound = true;
                 }
 
-                $id = $r['id'];
+                $id = $rowData['id'];
+
+                foreach ($rowData as $key => $value) {
+                    if (!in_array($key, self::$protectedFields)) {
+                        if ($value === null) {
+                            unset($rowData[$key]);
+                        }
+                    } else {
+                        // get rid of system stuff
+                        unset($rowData[$key]);
+                    }
+                }
+
+
                 $o = [
                     'id' => $id,
-                    'values' => $r,
+                    'values' => $rowData,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params)
                 ];
 
@@ -565,7 +581,7 @@ class InheritanceHelper
      */
     protected function getIdsToUpdateForValuefields($currentNode, $fieldname)
     {
-        $value = $currentNode['values'][$fieldname];
+        $value = $currentNode['values'][$fieldname] ?? null;
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode['id'];
             if (!empty($currentNode['children'])) {
