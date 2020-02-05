@@ -247,6 +247,8 @@ class InheritanceHelper
                     }
 
                     $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
+                    // not needed anymore
+                    unset($this->fieldIds[$fieldname]);
                 }
             }
 
@@ -263,6 +265,8 @@ class InheritanceHelper
                     } else {
                         $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
                     }
+                    // not needed anymore
+                    unset($this->fieldIds[$fieldname]);
                 }
             }
         }
@@ -408,22 +412,6 @@ class InheritanceHelper
         return $filteredResult;
     }
 
-
-    /**
-     * @param array $rowData
-     */
-    private function filterRow(array &$rowData) {
-        foreach ($rowData as $key => $value) {
-            if (!in_array($key, self::$protectedFields)) {
-                if ($value === null) {
-                    unset($rowData[$key]);
-                }
-            } else {
-                // get rid of system stuff
-                unset($rowData[$key]);
-            }
-        }
-    }
     /**
      * @param int $currentParentId
      * @param string $fields
@@ -469,7 +457,7 @@ class InheritanceHelper
                         $parentIdGroups[$rowData['parentId']] = [];
                     }
 
-                    $parentIdGroups[$rowData['parentId']][] = $rowData;
+                    $parentIdGroups[$rowData['parentId']][] = &$rowData;
                 }
                 if (self::$useRuntimeCache) {
                     self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
@@ -489,16 +477,11 @@ class InheritanceHelper
 
                 $id = $rowData['id'];
 
-                $this->filterRow($rowData);
-
                 $o = [
                     'id' => $id,
-                    'children' => $this->buildTree($id, $fields, $parentIdGroups, $params)
+                    'children' => $this->buildTree($id, $fields, $parentIdGroups, $params),
+                    'values' => $rowData
                 ];
-
-                if ($rowData) {
-                    $o['values'] = $rowData;
-                }
 
                 $objects[] = $o;
             }
