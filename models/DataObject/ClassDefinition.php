@@ -529,10 +529,8 @@ class ClassDefinition extends Model\AbstractModel
             $cd .= '*/' . "\n";
 
             $cd .= 'public function filterBy' . ucfirst($fieldName) .' ($data, $operator = \'=\') {'."\n";
-            $cd .= "\t" . 'if(strpos($operator, \'?\') === false) {'."\n";
-            $cd .= "\t\t".'$operator .= \' ?\';'."\n";
-            $cd .= "\t}\n";
-            $cd .="\t" . '$listing->addConditionParam(\'`'.$systemField.'` \'.$operator, $data);' . "\n";
+            $cd .= "\t" . '$operator = $this->expandFilterOperator($operator);'."\n";
+            $cd .="\t" . '$this->addConditionParam(\'`'.$systemField.'` \'.$operator, $data);' . "\n";
             $cd .= "\treturn " . '$this' . ";\n";
             $cd .= "}\n\n";
         }

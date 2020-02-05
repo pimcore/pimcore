@@ -211,4 +211,12 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     {
         return false;
     }
+
+    public function expandFilterOperator($operator) {
+        if(strpos($operator, '?') === false) {
+            $operator .= ' ?';
+        }
+
+        return $operator;
+    }
 }

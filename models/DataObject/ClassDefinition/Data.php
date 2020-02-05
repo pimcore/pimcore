@@ -1470,9 +1470,7 @@ abstract class Data
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
-        if (strpos($operator, '?') === false) {
-            $operator .= ' ?';
-        }
+        $operator = $listing->expandFilterOperator($operator);
 
         $listing->addConditionParam('`'.$this->getName().'` '.$operator, $data);
     }
