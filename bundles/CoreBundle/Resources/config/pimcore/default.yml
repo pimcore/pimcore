@@ -47,9 +47,8 @@ doctrine:
                 logging: false
                 profiling: false
                 options:
-                    # 20 is the value of PDO::ATTR_EMULATE_PREPARES => FALSE
                     # this stops Doctrine to return strings for integer values
-                    20: false
+                    !php/const PDO::ATTR_EMULATE_PREPARES: false
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
