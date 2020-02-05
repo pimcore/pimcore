@@ -31,6 +31,9 @@ server {
     server_name pimcore.loc;
     root /var/www/pimcore/web;
     index index.php;
+    
+    # Filesize depending on your data
+    client_max_body_size 100m;
 
     access_log  /var/log/access.log;
     error_log   /var/log/error.log error;
