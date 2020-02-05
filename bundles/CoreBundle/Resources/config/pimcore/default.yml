@@ -46,6 +46,8 @@ doctrine:
                 charset: UTF8MB4
                 logging: false
                 profiling: false
+                options:
+                    20: false
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_general_ci
