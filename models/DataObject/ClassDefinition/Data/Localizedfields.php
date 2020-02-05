@@ -230,7 +230,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $fieldDefinitions = $this->getFieldDefinitions();
                     foreach ($fieldDefinitions as $fd) {
                         $key = $fd->getName();
-                        if ($fd->isEmpty($fieldData[$language][$key])) {
+
+                        if ($fd->isEmpty($fieldData[$language][$key] ?? null)) {
                             $foundEmptyValue = true;
                             $inherited = true;
                             $metaData[$language][$key] = ['inherited' => true, 'objectid' => $parent->getId()];
