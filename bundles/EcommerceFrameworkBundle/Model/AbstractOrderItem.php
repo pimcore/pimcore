@@ -123,43 +123,43 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @throws UnsupportedException
+     * Should return a float
      *
-     * @return float
+     * @return void
      */
     public function getTotalNetPrice()
     {
-        throw new UnsupportedException('getTotalNetPrice is not implemented for ' . get_class($this));
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
-     *
      * @param float $totalNetPrice
      */
     public function setTotalNetPrice($totalNetPrice)
     {
-        throw new UnsupportedException('setTotalNetPrice is not implemented for ' . get_class($this));
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
+     * Should return an array
      *
-     * @return array
+     * @return void
      */
     public function getTaxInfo()
     {
-        throw new UnsupportedException('getTaxInfo is not implemented for ' . get_class($this));
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        Logger::err('getTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
-     *
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo)
     {
-        throw new UnsupportedException('setTaxInfo is not implemented for ' . get_class($this));
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        Logger::err('setTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
@@ -233,7 +233,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function isCancelAble()
     {
-        return true && !$this->isCanceled();
+        return !$this->isCanceled();
     }
 
     /**
@@ -243,7 +243,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function isEditAble()
     {
-        return true && !$this->isCanceled();
+        return !$this->isCanceled();
     }
 
     /**
