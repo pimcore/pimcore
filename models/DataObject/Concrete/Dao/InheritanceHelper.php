@@ -235,7 +235,7 @@ class InheritanceHelper
             $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
-                'values' => $result
+                'values' => $result ?? null
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
@@ -317,7 +317,6 @@ class InheritanceHelper
 
         $o = [
             'id' => $objectId,
-            'values' => [],
             'children' => $this->buildTree($objectId, $fields, null, $params)
         ];
 
@@ -409,6 +408,22 @@ class InheritanceHelper
         return $filteredResult;
     }
 
+
+    /**
+     * @param array $rowData
+     */
+    private function filterRow(array &$rowData) {
+        foreach ($rowData as $key => $value) {
+            if (!in_array($key, self::$protectedFields)) {
+                if ($value === null) {
+                    unset($rowData[$key]);
+                }
+            } else {
+                // get rid of system stuff
+                unset($rowData[$key]);
+            }
+        }
+    }
     /**
      * @param int $currentParentId
      * @param string $fields
@@ -445,12 +460,16 @@ class InheritanceHelper
 
                 // group the results together based on the parent id's
                 $parentIdGroups = [];
-                foreach ($result as $r) {
-                    if (!isset($parentIdGroups[$r['parentId']])) {
-                        $parentIdGroups[$r['parentId']] = [];
+                $rowCount = count($result);
+                for ($rowIdx = 0; $rowIdx < $rowCount; ++$rowIdx) {
+                    // assign the reference
+                    $rowData = &$result[$rowIdx];
+
+                    if (!isset($parentIdGroups[$rowData['parentId']])) {
+                        $parentIdGroups[$rowData['parentId']] = [];
                     }
 
-                    $parentIdGroups[$r['parentId']][] = $r;
+                    $parentIdGroups[$rowData['parentId']][] = $rowData;
                 }
                 if (self::$useRuntimeCache) {
                     self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
@@ -459,30 +478,27 @@ class InheritanceHelper
         }
 
         if (isset($parentIdGroups[$currentParentId])) {
-            foreach ($parentIdGroups[$currentParentId] as $rowData) {
+            $childData = $parentIdGroups[$currentParentId];
+            $childCount = count($childData);
+            for ($childIdx = 0; $childIdx < $childCount; ++$childIdx) {
+                $rowData = &$childData[$childIdx];
+
                 if ($rowData['classId'] == $this->classId) {
                     $this->childFound = true;
                 }
 
                 $id = $rowData['id'];
 
-                foreach ($rowData as $key => $value) {
-                    if (!in_array($key, self::$protectedFields)) {
-                        if ($value === null) {
-                            unset($rowData[$key]);
-                        }
-                    } else {
-                        // get rid of system stuff
-                        unset($rowData[$key]);
-                    }
-                }
-
+                $this->filterRow($rowData);
 
                 $o = [
                     'id' => $id,
-                    'values' => $rowData,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params)
                 ];
+
+                if ($rowData) {
+                    $o['values'] = $rowData;
+                }
 
                 $objects[] = $o;
             }
@@ -560,7 +576,7 @@ class InheritanceHelper
      */
     protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname, $params = [])
     {
-        $value = $currentNode['values'][$fieldname];
+        $value = $currentNode['values'][$fieldname] ?? null;
 
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
