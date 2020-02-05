@@ -151,12 +151,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         };
 
         //tags filter
-        if(this.tagsTree) {
+        if (this.tagsPanel) {
             extraParams["tagIds[]"] = this.tagsTree.getCheckedTagIds();
-
-            if(this.tagsPanel) {
-                extraParams["considerChildTags"] = this.tagsPanel.considerChildTags;
-            }
+            extraParams["considerChildTags"] = this.considerChildTags;
         }
 
         this.store.getProxy().extraParams = extraParams;

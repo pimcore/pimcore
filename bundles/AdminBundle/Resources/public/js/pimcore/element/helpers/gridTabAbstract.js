@@ -14,6 +14,8 @@
 pimcore.registerNS("pimcore.element.helpers.gridTabAbstract");
 pimcore.element.helpers.gridTabAbstract = Class.create({
 
+    considerChildTags: 0, // 0 => false
+
     getTagsPanel: function() {
 
         if(!this.tagsPanel) {
@@ -25,8 +27,8 @@ pimcore.element.helpers.gridTabAbstract = Class.create({
                 boxLabel: t("consider_child_tags"),
                 listeners: {
                     change: function (field, checked) {
-                        this.tagsPanel.considerChildTags = checked;
-                        this.store.getProxy().setExtraParam("considerChildTags", checked);
+                        this.considerChildTags = checked === true ? 1 : 0;
+                        this.store.getProxy().setExtraParam("considerChildTags", this.considerChildTags);
                         this.pagingtoolbar.moveFirst();
                     }.bind(this)
                 }
@@ -51,6 +53,7 @@ pimcore.element.helpers.gridTabAbstract = Class.create({
                 region: "west",
                 width: 300,
                 collapsedCls: "tag-tree-toolbar-collapsed",
+                resizable : true,
                 collapsible: true,
                 collapsed: true,
                 autoScroll: true,

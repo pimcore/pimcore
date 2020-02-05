@@ -687,7 +687,7 @@ class GridHelperService
         if (!empty($allParams['tagIds'])) {
             $tagIds = $allParams['tagIds'];
             foreach ($tagIds as $tagId) {
-                if (($allParams['considerChildTags'] ?? 'false') === 'true') {
+                if ($allParams['considerChildTags'] ?? false) {
                     $tag = Model\Element\Tag::getById($tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
