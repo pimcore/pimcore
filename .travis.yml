@@ -25,7 +25,8 @@ addons:
 
 # see https://docs.travis-ci.com/user/build-matrix/
 jobs:
-  allow_failures:               # Execute PHPStan level 2 tests but allow them to fail
+  allow_failures:
+    # Run PHPStan level 2, but allow them to fail
     - os: linux
       php: 7.4
       env:
@@ -104,14 +105,14 @@ jobs:
         - PIMCORE_TEST_ENV=http
 
     # Test Stan - see https://github.com/phpstan/phpstan
-    - name: "PHPStan Tests Lvl 1 - PHP 7.2 Symfony 3.4"
+    - name: "PHPStan Level 1 - PHP 7.2 Symfony 3.4"
       os: linux
       php: 7.2
       env:
         - SYMFONY_VERSION="^3.4"
         - TASK_TESTS=0
         - TASK_STAN=1
-    - name: "PHPStan Tests Lvl 1 - PHP 7.3 Symfony 3.4"
+    - name: "PHPStan Level 1 - PHP 7.3 Symfony 3.4"
       os: linux
       php: 7.3
       env:
@@ -120,21 +121,21 @@ jobs:
         - TASK_STAN=1
 
     # Test Stan Symfony ^4.0
-    - name: "PHPStan Tests Lvl 1 - PHP 7.2 Symfony 4"
+    - name: "PHPStan Level 1 - PHP 7.2 Symfony 4"
       os: linux
       php: 7.2
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Tests Lvl 1 - PHP 7.3 Symfony 4"
+    - name: "PHPStan Level 1 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.3
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Tests Lvl 2 - PHP 7.3 Symfony 4"
+    - name: "PHPStan Level 2 - PHP 7.3 Symfony 4"
       os: linux
       php: 7.4
       env:
