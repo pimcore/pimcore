@@ -41,11 +41,11 @@ class DataObject extends AbstractPlaceholder
         $object = is_object($this->getValue()) ? $this->getValue() : Model\DataObject\Concrete::getById($this->getValue());
 
         if ($object) {
-            if (is_string($this->getPlaceholderConfig()->method) && method_exists($object, $this->getPlaceholderConfig()->method)) {
-                $string = $object->{$this->getPlaceholderConfig()->method}($this->getLocale());
+            if (is_string($this->getPlaceholderConfig()->get('method')) && method_exists($object, $this->getPlaceholderConfig()->get('method'))) {
+                $string = $object->{$this->getPlaceholderConfig()->get('method')}($this->getLocale());
             }
         }
-        if (is_bool($this->getPlaceholderConfig()->nl2br)) {
+        if (is_bool($this->getPlaceholderConfig()->get('nl2br'))) {
             $string = nl2br($string);
         }
 

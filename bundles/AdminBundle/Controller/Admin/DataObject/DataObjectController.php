@@ -972,7 +972,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function changeChildrenSortByAction(Request $request)
     {
-        /** @var Model\Object $object */
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
@@ -1156,7 +1155,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     [$updatedObject->getParentId(), $updatedObject->getId()]
                 );
                 $index = 0;
-                /** @var DataObject\AbstractObject $child */
+
                 foreach ($siblings as $sibling) {
                     if ($index == $newIndex) {
                         $index++;
@@ -1501,10 +1500,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object->isAllowed('versions')) {
                 return ['object' => $object];
             } else {
-                throw new \Exception('Permission denied, version id [' . $id . ']');
+                throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
         } else {
-            throw new \Exception('Version with id [' . $id . "] doesn't exist");
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
     }
 
@@ -1542,10 +1541,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'object2' => $object2
                 ];
             } else {
-                throw new \Exception('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+                throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
         } else {
-            throw new \Exception('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+            throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
         }
     }
 
@@ -1587,11 +1586,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     // save
                     $object = DataObject::getById($data['id']);
-                    /** @var DataObject\ClassDefinition $class */
+
+                    if (!$object instanceof DataObject\Concrete) {
+                        throw $this->createNotFoundException('Object not found');
+                    }
+
                     $class = $object->getClass();
 
                     if (!$object->isAllowed('publish')) {
-                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                        throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this object.");
                     }
 
                     $user = Tool\Admin::getCurrentUser();
@@ -2018,8 +2021,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function previewAction(Request $request)
     {
         $id = $request->get('id');
+        $object = DataObject\Service::getElementFromSession('object', $id);
 
-        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
+        if ($object instanceof DataObject\Concrete) {
             $url = $object->getClass()->getPreviewUrl();
             if ($url) {
                 // replace named variables

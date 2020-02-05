@@ -603,7 +603,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getIsBookable()
     {
         foreach ($this->getItems() as $item) {
-            if (!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
+            if (!$item->getProduct()->getOSIsBookable($item->getCount())) {
                 return false;
             }
         }

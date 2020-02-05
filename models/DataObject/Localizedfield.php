@@ -23,7 +23,7 @@ use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method void delete()
+ * @method void delete($deleteQuery = true, $isUpdate = true)
  * @method void load($object, $params = [])
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
