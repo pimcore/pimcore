@@ -1624,19 +1624,22 @@ class Service extends Model\Element\Service
      * @internal
      *
      * @param array $descriptor
+     *
      * @return array
      */
-    public static function buildConditionPartsFromDescriptor($descriptor) {
+    public static function buildConditionPartsFromDescriptor($descriptor)
+    {
         $db = Db::get();
         $conditionParts = [];
         foreach ($descriptor as $key => $value) {
             $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-            if ($lastChar === "%") {
-                $conditionParts[] = $key . " LIKE " . $db->quote($value);
+            if ($lastChar === '%') {
+                $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
             } else {
-                $conditionParts[] = $key . " = " . $db->quote($value);
+                $conditionParts[] = $key . ' = ' . $db->quote($value);
             }
         }
+
         return $conditionParts;
     }
 }

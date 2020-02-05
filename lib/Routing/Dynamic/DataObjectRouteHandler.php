@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
-use Pimcore\Config;
 use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Http\Request\Resolver\SiteResolver;
@@ -25,7 +24,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Routing\DataObjectRoute;
-use Pimcore\Routing\DocumentRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -50,7 +48,6 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      * @var ConfigNormalizer
      */
     private $configNormalizer;
-
 
     /**
      * @var ConnectionInterface
@@ -85,10 +82,10 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     {
         if (preg_match('/^data_object_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[2]);
-            if($slug && $slug->getObjectId() == $match[1]) {
-                /** @var DataObject\Concrete $object **/
+            if ($slug && $slug->getObjectId() == $match[1]) {
+                /** @var DataObject\Concrete $object * */
                 $object = DataObject::getById($match[1]);
-                if($object instanceof DataObject\Concrete && $object->isPublished()) {
+                if ($object instanceof DataObject\Concrete && $object->isPublished()) {
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
             }
@@ -102,17 +99,16 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
      */
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
-
         $siteIds = [0];
         $site = $this->siteResolver->getSite($context->getRequest());
-        if($site) {
+        if ($site) {
             $siteIds[] = $site->getId();
         }
 
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getPath());
-        if($slug) {
+        if ($slug) {
             $object = DataObject::getById($slug->getObjectId());
-            if($object instanceof DataObject\Concrete && $object->isPublished()) {
+            if ($object instanceof DataObject\Concrete && $object->isPublished()) {
                 $route = $this->buildRouteForFromSlug($slug, $object);
                 $collection->add($route->getRouteKey(), $route);
             }
@@ -122,7 +118,9 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     /**
      * @param DataObject\Data\UrlSlug $slug
      * @param DataObject\Concrete $object
+     *
      * @return DataObjectRoute
+     *
      * @throws \Exception
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute
@@ -134,6 +132,7 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $slug->getAction());
         $route->setDefault('object', $object);
         $route->setDefault('urlSlug', $slug);
+
         return $route;
     }
 }

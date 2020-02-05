@@ -441,8 +441,8 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('fieldcollections', 'myfieldcollection')
                 ->setAllowedTypes(['unittestfieldcollection']));
 
-            $panel->addChild($this->createDataChild("urlSlug")->setAction('MyController::myAction'));
-            $panel->addChild($this->createDataChild("urlSlug", "urlSlug2")->setAction('MyController::myAction'));
+            $panel->addChild($this->createDataChild('urlSlug')->setAction('MyController::myAction'));
+            $panel->addChild($this->createDataChild('urlSlug', 'urlSlug2')->setAction('MyController::myAction'));
 
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
@@ -476,7 +476,7 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
-            $lFields->addChild($this->createDataChild("urlSlug", "lurlSlug")->setAction('MyController::myLocalizedAction'));
+            $lFields->addChild($this->createDataChild('urlSlug', 'lurlSlug')->setAction('MyController::myLocalizedAction'));
 
             $panel->addChild($lFields);
             $panel->addChild($this->createDataChild('objectbricks', 'mybricks'));

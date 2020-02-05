@@ -483,11 +483,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         // test invalid slug
 
-        $validSlug = new UrlSlug("/xyz/abc");
+        $validSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug([$validSlug]);
         $this->testObject->save();
 
-        $invalidSlug = new UrlSlug("/xyz      /abc");
+        $invalidSlug = new UrlSlug('/xyz      /abc');
         $this->testObject->setUrlSlug([$invalidSlug]);
         $ex = null;
         try {
@@ -495,23 +495,21 @@ abstract class AbstractDataTypeTestCase extends TestCase
         } catch (\Exception $e) {
             $ex = $e;
         }
-        $this->assertNotNull($ex, "invalid slug, expected an exception");
+        $this->assertNotNull($ex, 'invalid slug, expected an exception');
 
         // make sure the invalid slug wasn't save and get a fresh copy
         $this->testObject = Concrete::getById($this->testObject->getId(), true);
 
-
         // test lookup
-        $slug = UrlSlug::resolveSlug("/xyz/abc");
-        $this->assertTrue($slug instanceof UrlSlug, "expected a slug");
-        /** @var  $slug UrlSlug */
+        $slug = UrlSlug::resolveSlug('/xyz/abc');
+        $this->assertTrue($slug instanceof UrlSlug, 'expected a slug');
+        /** @var $slug UrlSlug */
         $action = $slug->getAction();
-        $this->assertEquals("MyController::myAction", $action, "wrong controller/action");
-
+        $this->assertEquals('MyController::myAction', $action, 'wrong controller/action');
 
         // check uniqueness
         $ex = null;
-        $duplicateSlug = new UrlSlug("/xyz/abc");
+        $duplicateSlug = new UrlSlug('/xyz/abc');
         $this->testObject->setUrlSlug2([$duplicateSlug]);
         $ex = null;
         try {
@@ -519,8 +517,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         } catch (\Exception $e) {
             $ex = $e;
         }
-        $this->assertNotNull($ex, "duplicate slug, expected an exception");
-
+        $this->assertNotNull($ex, 'duplicate slug, expected an exception');
     }
 
     public function testLocalizedUrlSlug()
@@ -542,5 +539,4 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
     }
-
 }

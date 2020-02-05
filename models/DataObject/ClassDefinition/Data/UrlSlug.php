@@ -79,7 +79,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-
     /**
      * @see Data::getDataForEditmode
      *
@@ -95,7 +94,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         // for now we don't support sites (=> there is just a plain input field in the UI)
         if (is_array($data)) {
-
             foreach ($data as $slug) {
                 if ($slug instanceof Model\DataObject\Data\UrlSlug) {
                     $siteId = $slug->getSiteId();
@@ -105,19 +103,18 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     }
 
                     $resultItem = [
-                        "slug" => $slug->getSlug(),
-                        "siteId" => $slug->getSiteId(),
-                        "domain" => $site ? $site->getMainDomain() : null
+                        'slug' => $slug->getSlug(),
+                        'siteId' => $slug->getSiteId(),
+                        'domain' => $site ? $site->getMainDomain() : null
                     ];
 
-                    $result[$siteId]= $resultItem;
+                    $result[$siteId] = $resultItem;
                 }
             }
         }
         ksort($result);
 
         return $result;
-
     }
 
     /**
@@ -131,7 +128,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         $result = [];
         if (is_array($data)) {
             foreach ($data as $siteId => $item) {
@@ -140,9 +136,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
                 $result[] = $slug;
             }
-
-
         }
+
         return $result;
     }
 
@@ -168,7 +163,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-
         if ($data && !is_array($data)) {
             throw new Model\Element\ValidationException('Invalid slug data');
         }
@@ -180,27 +174,26 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
-                    //
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
                         throw new Model\Element\ValidationException('Found conflict with docucment path "' . $slug . '"');
                     }
 
-                    if (strlen($slug) <2 || $slug[0] !== "/") {
-                        throw new Model\Element\ValidationException("slug must be at least 2 characters long and start with slash");
+                    if (strlen($slug) < 2 || $slug[0] !== '/') {
+                        throw new Model\Element\ValidationException('slug must be at least 2 characters long and start with slash');
                     }
                     $slug = substr($slug, 1);
-                    $slug  = preg_replace('/\/$/', '', $slug);
+                    $slug = preg_replace('/\/$/', '', $slug);
 
                     $parts = explode('/', $slug);
                     for ($i = 0; $i < count($parts); $i++) {
                         $part = $parts[$i];
                         if (strlen($part) === 0) {
-                            throw new Model\Element\ValidationException("Slug " . $slug ." not valid");
+                            throw new Model\Element\ValidationException('Slug ' . $slug .' not valid');
                         }
                         $sanitizedKey = Model\Element\Service::getValidKey($part, 'document');
                         if ($sanitizedKey != $part) {
-                            throw new Model\Element\ValidationException("Slug part " . $part ." not valid");
+                            throw new Model\Element\ValidationException('Slug part ' . $part .' not valid');
                         }
                     }
                 }
@@ -222,20 +215,22 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->action;
     }
 
-
     /**
      * @param string|null $action
+     *
      * @return $this
      */
     public function setAction(?string $action)
     {
         $this->action = $action;
+
         return $this;
     }
 
     /**
      * @param Model\DataObject\Concrete $object
      * @param array $params
+     *
      * @throws \Exception
      */
     public function save($object, $params = [])
@@ -278,12 +273,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                                 $existingSlug->getAction();
                             } catch (\Exception $e) {
                                 $db->insert('object_url_slugs', $slug);
+
                                 return;
                             }
 
                             // if now exception is thrown then the slug is owned by a diffrent object/field
-                            throw new \Exception("Unique constraint violated. Slug alreay used by object "
-                                . $existingSlug->getFieldname() . ", fieldname: " . $existingSlug->getFieldname());
+                            throw new \Exception('Unique constraint violated. Slug alreay used by object '
+                                . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
                         }
                     }
                     throw $e;
@@ -292,11 +288,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
     }
 
-
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
      * @param array $params
+     *
      * @return array|null
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -305,12 +301,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         if ($object instanceof Model\DataObject\Localizedfield) {
             $object = $object->getObject();
-        } else if ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData || $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData || $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             $object = $object->getObject();
         }
 
         if ($data && !is_array($data)) {
-            throw new \Exception("Slug data not valid");
+            throw new \Exception('Slug data not valid');
         }
 
         if (is_array($data) && count($data) > 0) {
@@ -326,19 +322,20 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'siteId' => $slugItem->getSiteId() ?? 0
                     ];
                 } else {
-                    throw new \Exception("expected instance of UrlSlug");
+                    throw new \Exception('expected instance of UrlSlug');
                 }
             }
 
             return $return;
         }
+
         return null;
     }
-
 
     /**
      * @param Model\DataObject\Concrete $object
      * @param array $params
+     *
      * @return mixed|void
      */
     public function load($object, $params = [])
@@ -416,7 +413,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      */
     public function isEqual($oldValue, $newValue)
     {
-
         $oldData = [];
         $newData = [];
 
@@ -440,7 +436,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         $oldData = json_encode($oldData);
         $newData = json_encode($newData);
-        return ($oldData === $newData);
+
+        return $oldData === $newData;
     }
 
     /**
@@ -458,7 +455,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      */
     public function isEmpty($data)
     {
-
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
@@ -469,14 +465,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 }
             }
         }
+
         return true;
     }
-
 
     /**
      * converts data to be exposed via webservices
      *
      * @deprecated
+     *
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -493,9 +490,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             foreach ($data as $slug) {
                 $result[] = $slug->getObjectVars();
             }
-            return $result;
 
+            return $result;
         }
+
         return null;
     }
 
@@ -503,6 +501,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * converts data to be imported via webservices
      *
      * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
@@ -516,36 +515,37 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $result = [];
             foreach ($value as $dataItem) {
                 $dataItem = (array)$dataItem;
-                $slug = new Model\DataObject\Data\UrlSlug($dataItem["slug"]);
+                $slug = new Model\DataObject\Data\UrlSlug($dataItem['slug']);
                 foreach ($dataItem as $var => $value) {
                     $slug->setObjectVar($var, $value, true);
                 }
                 $result[] = $slug;
             }
+
             return $result;
         }
 
-
         return null;
     }
-
 
     /**
      * @param $data
      * @param null $object
      * @param array $params
      * @param string $lineBreak
+     *
      * @return string|null
      */
-    protected function getPreviewData($data, $object = null, $params = [], $lineBreak = '<br />') {
+    protected function getPreviewData($data, $object = null, $params = [], $lineBreak = '<br />')
+    {
         if (is_array($data) && count($data) > 0) {
             $pathes = [];
 
             foreach ($data as $e) {
                 if ($e instanceof Model\DataObject\Data\UrlSlug) {
-                    $line = $e->getSlug();;
+                    $line = $e->getSlug();
                     if ($e->getSiteId()) {
-                        $line .= " : " . $e->getSiteId();
+                        $line .= ' : ' . $e->getSiteId();
                     }
                     $pathes[] = $line;
                 }
@@ -553,8 +553,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
             return implode($lineBreak, $pathes);
         }
+
         return null;
     }
+
     /**
      * @param null|array $data
      * @param Model\DataObject\Concrete $object
@@ -565,7 +567,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public function getVersionPreview($data, $object = null, $params = [])
     {
         return $this->getPreviewData($data, $object, $params);
-
     }
 
     /**
@@ -619,11 +620,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param int[]|null $availableSites
+     *
      * @return $this
      */
     public function setAvailableSites(?array $availableSites)
     {
         $this->availableSites = $availableSites;
+
         return $this;
     }
 
@@ -637,11 +640,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param int|null $domainLabelWidth
+     *
      * @return $this
      */
     public function setDomainLabelWidth(?int $domainLabelWidth)
     {
         $this->domainLabelWidth = $domainLabelWidth;
+
         return $this;
     }
 
@@ -666,9 +671,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     $object->markFieldDirty($this->getName(), false);
                 }
             }
-        }
-
-        elseif ($object instanceof Model\DataObject\Localizedfield) {
+        } elseif ($object instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             if ($this->getLazyLoading() && $object->getObject()) {
@@ -719,11 +722,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $data;
     }
 
-
     /**
      * @return bool
      */
-    public function getLazyLoading() {
+    public function getLazyLoading()
+    {
         return true;
     }
 
@@ -740,14 +743,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public function getForCsvExport($object, $params = [])
     {
         $result = [];
-        $data = $this->getDataFromObjectParam($object, $params);;
+        $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             foreach ($data as $slug) {
                 if ($slug instanceof Model\DataObject\Data\UrlSlug) {
-                    $result[] = $slug->getSlug() . ":" . $slug->getSiteId();
+                    $result[] = $slug->getSlug() . ':' . $slug->getSiteId();
                 }
             }
         }
+
         return implode(',', $result);
     }
 
@@ -761,7 +765,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $result = [];
-        if (strlen($importValue) >0 ) {
+        if (strlen($importValue) > 0) {
             $items = explode(',', $importValue);
             if (is_array($items)) {
                 foreach ($items as $item) {
@@ -770,9 +774,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     $result[] = $slug;
                 }
             }
-
         }
+
         return $result;
     }
-
 }

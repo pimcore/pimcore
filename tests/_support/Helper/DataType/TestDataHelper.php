@@ -56,7 +56,6 @@ class TestDataHelper extends Module
         }
     }
 
-
     /**
      * @param Concrete    $object
      * @param string      $field
@@ -77,7 +76,6 @@ class TestDataHelper extends Module
         $this->assertEquals($expected, $value);
     }
 
-
     /**
      * @param Concrete    $object
      * @param string      $field
@@ -89,13 +87,13 @@ class TestDataHelper extends Module
         $getter = 'get' . ucfirst($field);
         if ($language) {
             $value = $object->$getter($language);
-            $expected = "/" . $language . '/content' . $seed;
+            $expected = '/' . $language . '/content' . $seed;
         } else {
             $value = $object->$getter();
             $expected = '/content' . $seed;
         }
 
-        $this->assertTrue(is_array($value) && count($value) == 1, "expected one item");
+        $this->assertTrue(is_array($value) && count($value) == 1, 'expected one item');
 
         /** @var $value DataObject\Data\UrlSlug */
         $value = $value[0];
