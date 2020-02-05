@@ -104,7 +104,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param null|int $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -120,7 +120,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Correct old column definitions (e.g varchar(255)) to the new format
      *
-     * @param $type
+     * @param string $type
      */
     protected function correctColumnDefinition($type)
     {
@@ -182,7 +182,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $width
+     * @param string|int|null $width
      *
      * @return $this
      */
@@ -269,7 +269,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -280,7 +280,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -340,7 +340,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      *
      * @return bool
      */
@@ -350,7 +350,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Select $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -467,8 +467,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param string|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -506,8 +506,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -530,10 +530,32 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
      * @return null|string
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
-        return $this->getDefaultValue() ?? null;
+        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface $optionsProvider */
+        $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
+        );
+        if ($optionsProvider) {
+            $context['object'] = $object;
+            if ($object) {
+                $context['class'] = $object->getClass();
+            }
+
+            $context['fieldname'] = $this->getName();
+            if (!isset($context['purpose'])) {
+                $context['purpose'] = 'layout';
+            }
+
+            return $optionsProvider->getDefaultValue($context, $this);
+        } else {
+            return $this->getDefaultValue() ?? null;
+        }
     }
 }

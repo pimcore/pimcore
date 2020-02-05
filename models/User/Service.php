@@ -35,6 +35,8 @@ class Service
             case 'userfolder': return '\\Pimcore\\Model\\User\\Folder';
             case 'role': return '\\Pimcore\\Model\\User\\Role';
             case 'rolefolder': return '\\Pimcore\\Model\\User\\Role\\Folder';
+            default:
+                return null;
         }
     }
 }

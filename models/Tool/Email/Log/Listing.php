@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Tool\Email\Log\Listing\Dao getDao()
  * @method Model\Tool\Email\Log[] load()
  * @method Model\Tool\Email\Log current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -60,7 +60,7 @@ pimcore.element.tag.tree = Class.create({
         if (!this.tree) {
 
             var store = Ext.create('Ext.data.TreeStore', {
-                autoLoad: true,
+                autoLoad: false,
                 proxy: {
                     type: 'ajax',
                     url: '/admin/tags/tree-get-children-by-id',
@@ -97,10 +97,9 @@ pimcore.element.tag.tree = Class.create({
                     enableKeyEvents: true,
                     listeners: {
                         "keyup": function (field, key) {
-                            // if (key.getKey() == key.ENTER) {
-                            // mhm
-                            this.updateTagFilter();
-                            // }
+                             if (key.getKey() == key.ENTER) {
+                                this.tagFilter();
+                             }
                         }.bind(this)
                     }
                 }
@@ -111,7 +110,7 @@ pimcore.element.tag.tree = Class.create({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     text: t("filter"),
-                    handler: this.updateTagFilter.bind(this)
+                    handler: this.tagFilter.bind(this)
                 }];
 
             this.tree = Ext.create('Ext.tree.Panel', {
@@ -135,7 +134,8 @@ pimcore.element.tag.tree = Class.create({
                                     parentId: overModel.id
                                 }
                             });
-                        },
+                            this.tagFilter();
+                        }.bind(this),
                         ontreenodeover: function (targetNode, position, dragData, e, eOpts) {
                             var node = dragData.records[0];
                             return node.getOwnerTree() == targetNode.getOwnerTree();
@@ -147,7 +147,9 @@ pimcore.element.tag.tree = Class.create({
                 root: {
                     id: '0',
                     text: t('element_tag_all_tags'),
-                    iconCls: 'pimcore_icon_folder'
+                    iconCls: 'pimcore_icon_folder',
+                    expanded: true,
+                    loaded:true
                 },
                 rootVisible: true,
                 listeners: {
@@ -161,48 +163,64 @@ pimcore.element.tag.tree = Class.create({
             });
 
             this.tree.on("render", function () {
-                this.getRootNode().expand();
+                this.getStore().load();
             });
         }
 
         return this.tree;
     },
 
-    updateTagFilter: function () {
-
+    tagFilter: function() {
         this.tree.getStore().clearFilter();
         var currentFilterValue = this.filterField.getValue().toLowerCase();
 
-        this.tree.getStore().filterBy(function (item) {
-            if (item.data.text.toLowerCase().indexOf(currentFilterValue) !== -1) {
-                return true;
-            }
+        this.tree.getStore().load({
+            params: {
+                filter : currentFilterValue
+            },
+            callback: this.updateTagFilter.bind(this)
+        });
+    },
 
-            if (!item.data.leaf) {
-                if (item.data.root) {
+    updateTagFilter: function () {
+        this.tree.getStore().clearFilter();
+        var currentFilterValue = this.filterField.getValue().toLowerCase();
+
+        if(currentFilterValue) {
+            this.tree.getStore().filterBy(function (item) {
+                if (item.data.text.toLowerCase().indexOf(currentFilterValue) !== -1) {
                     return true;
                 }
 
-                var childNodes = item.childNodes;
-                var hide = true;
-                if (childNodes) {
-                    var i;
-                    for (i = 0; i < childNodes.length; i++) {
-                        var childNode = childNodes[i];
-                        if (childNode.get("visible")) {
-                            hide = false;
-                            break;
+                if (!item.data.leaf) {
+                    if (item.data.root) {
+                        return true;
+                    }
+
+                    var childNodes = item.childNodes;
+                    var hide = true;
+                    if (childNodes) {
+                        var i;
+                        for (i = 0; i < childNodes.length; i++) {
+                            var childNode = childNodes[i];
+                            if (childNode.get("visible")) {
+                                hide = false;
+                                break;
+                            }
                         }
                     }
+
+                    return !hide;
                 }
+            }.bind(this));
 
-                return !hide;
+            var rootNode = this.tree.getRootNode();
+            rootNode.set('text', currentFilterValue ? t('element_tag_filtered_tags') : t('element_tag_all_tags'));
+            var storeCount = this.tree.getStore().data.items.length;
+            if (currentFilterValue && storeCount > 1) {
+                rootNode.expand(true);
             }
-        }.bind(this));
-
-        var rootNode = this.tree.getRootNode()
-        rootNode.set('text', currentFilterValue ? t('element_tag_filtered_tags') : t('element_tag_all_tags'));
-        rootNode.expand(true);
+        }
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
@@ -266,7 +284,11 @@ pimcore.element.tag.tree = Class.create({
                                 },
                                 success: function (record, value) {
                                     record.set('text', value);
-                                    tree.getStore().reload();
+                                    var currentFilterValue = this.filterField.getValue().toLowerCase();
+                                    if (currentFilterValue) {
+                                        this.tagFilter();
+                                        return;
+                                    }
                                 }.bind(this, record, value)
                             });
                         } else if (button == "cancel") {
@@ -298,6 +320,11 @@ pimcore.element.tag.tree = Class.create({
                     text: value
                 },
                 success: function (tree, record) {
+                    var currentFilterValue = this.filterField.getValue().toLowerCase();
+                    if (currentFilterValue) {
+                        this.tagFilter();
+                        return;
+                    }
                     record.set('leaf', false);
                     record.set('expandable', true);
                     tree.getStore().reload({

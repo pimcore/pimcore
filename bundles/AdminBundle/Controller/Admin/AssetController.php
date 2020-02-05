@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -45,8 +47,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends ElementControllerBase implements EventedControllerInterface
 {
-    use Element\AdminStyleTrait;
+    use AdminStyleTrait;
     use ElementEditLockHelperTrait;
+    use ApplySchedulerDataTrait;
 
     /**
      * @var Asset\Service
@@ -910,22 +913,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
 
-                // scheduled tasks
-                if ($request->get('scheduler')) {
-                    $tasks = [];
-                    $tasksData = $this->decodeJson($request->get('scheduler'));
-
-                    if (!empty($tasksData)) {
-                        foreach ($tasksData as $taskData) {
-                            $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
-
-                            $task = new Model\Schedule\Task($taskData);
-                            $tasks[] = $task;
-                        }
-                    }
-
-                    $asset->setScheduledTasks($tasks);
-                }
+                $this->applySchedulerDataToElement($request, $asset);
 
                 if ($request->get('data')) {
                     $asset->setData($request->get('data'));
@@ -2368,6 +2356,56 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         return $this->adminJson(['success' => 'true', 'text' => $text]);
+    }
+
+    /**
+     * @Route("/detect-image-features", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function detectImageFeaturesAction(Request $request)
+    {
+        $asset = Asset::getById((int)$request->get('id'));
+        if (!$asset instanceof Asset) {
+            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        if ($asset->isAllowed('publish')) {
+            $asset->detectFaces();
+            $asset->removeCustomSetting('disableImageFeatureAutoDetection');
+            $asset->save();
+
+            return $this->adminJson(['success' => true]);
+        }
+
+        throw $this->createAccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/delete-image-features", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteImageFeaturesAction(Request $request)
+    {
+        $asset = Asset::getById((int)$request->get('id'));
+        if (!$asset instanceof Asset) {
+            return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
+        }
+
+        if ($asset->isAllowed('publish')) {
+            $asset->removeCustomSetting('faceCoordinates');
+            $asset->setCustomSetting('disableImageFeatureAutoDetection', true);
+            $asset->save();
+
+            return $this->adminJson(['success' => true]);
+        }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**

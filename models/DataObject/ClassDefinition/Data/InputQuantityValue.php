@@ -130,7 +130,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param string $importValue
-     * @param null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return null|InputQuantityValueDataObject

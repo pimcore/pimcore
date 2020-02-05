@@ -18,6 +18,7 @@ namespace Pimcore\Model;
  * Class Workflow
  *
  * @method Workflow\Dao getDao()
+ * @method void save()
  *
  * @package Pimcore\Model
  */

@@ -435,9 +435,9 @@ class Version extends AbstractModel
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
             $binaryHandle = fopen($this->getBinaryFilePath(), 'rb', false, File::getContext());
             $data->setStream($binaryHandle);
-        } elseif ($data instanceof Asset && $data->data) {
+        } elseif ($data instanceof Asset && $data->getObjectVar('data')) {
             // this is for backward compatibility
-            $data->setData($data->data);
+            $data->setData($data->getObjectVar('data'));
         }
 
         if ($renewReferences) {

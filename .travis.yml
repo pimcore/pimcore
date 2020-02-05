@@ -19,6 +19,7 @@ addons:
     paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
 #      - app/config
       - var/logs
+      - var/classes
   hosts:
     - pimcore-test.dev
 

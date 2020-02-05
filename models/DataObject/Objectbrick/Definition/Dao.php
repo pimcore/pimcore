@@ -86,11 +86,16 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
 
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
 
+        /** @var DataObject\ClassDefinition\Data $value */
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
             if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
+
+                /** @var DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value
+                 * note that method_exists is only used for BC reasons
+                 */
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {

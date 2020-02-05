@@ -118,7 +118,6 @@ class Bootstrap
 
     public static function bootstrap()
     {
-        /** @var \Composer\Autoload\ClassLoader $loader */
         if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
             // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
             $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
@@ -135,6 +134,7 @@ class Bootstrap
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
+        /** @var \Composer\Autoload\ClassLoader $loader */
         \Pimcore::setAutoloader($loader);
         self::autoload();
 

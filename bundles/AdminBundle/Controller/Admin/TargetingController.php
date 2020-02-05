@@ -45,7 +45,6 @@ class TargetingController extends AdminController implements EventedControllerIn
     {
         $targets = [];
 
-        /** @var Targeting\Rule\Listing|Targeting\Rule\Listing\Dao $target */
         $list = new Targeting\Rule\Listing();
         $list->setOrderKey('prio');
         $list->setOrder('ASC');

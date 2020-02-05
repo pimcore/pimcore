@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
-use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -104,7 +103,7 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects[] = $objects;
         }
-        if($userObjects) {
+        if ($userObjects) {
             $userObjects = \array_merge(...$userObjects);
         }
 
@@ -231,10 +230,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
+     * @param Concrete $target
+     * @param Concrete $source
      *
-     * @return AbstractObject
+     * @return Concrete
      *
      * @throws \Exception
      */
@@ -249,7 +248,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         /**
-         * @var AbstractObject $new
+         * @var Concrete $new
          */
         $new = Element\Service::cloneMe($source);
         $new->setChildren($target->getChildren());
@@ -263,7 +262,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        $target = AbstractObject::getById($new->getId());
+        $target = Concrete::getById($new->getId());
 
         return $target;
     }
@@ -946,7 +945,9 @@ class Service extends Model\Element\Service
         }
 
         foreach ($list as $customLayout) {
-            $resultList[$customLayout->getId()] = $customLayout;
+            if ($customLayout instanceof ClassDefinition\CustomLayout) {
+                $resultList[$customLayout->getId()] = $customLayout;
+            }
         }
 
         return $resultList;

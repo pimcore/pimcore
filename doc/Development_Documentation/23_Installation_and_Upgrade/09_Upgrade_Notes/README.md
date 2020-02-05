@@ -1,5 +1,22 @@
 # Upgrade Notes
 
+
+## 6.5.0
+- If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`, implement the `LazyLoadingSupportInterface`
+  The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.
+- It is now possible to configure `php:memory_limit` for `web2print:pdf-creation` command with following configuration:
+```yaml
+pimcore:
+  documents: 
+    web_to_print: 
+      pdf_creation_php_memory_limit: '2048M'
+```
+
+- Using static methods for [dynamic text labels](../../05_Objects/01_Object_Classes/03_Layout_Elements/01_Dynamic_Text_Labels.md) is now deprecated, use services instead.
+- Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::isRemoteOwner()`, as this method was only used for `ReverseManyToManyObjectRelation` internal check are now made using `instanceof` 
+- Data object inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
+- The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
+
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
 - Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`

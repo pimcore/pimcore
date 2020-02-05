@@ -31,19 +31,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $fieldtype = 'reverseManyToManyObjectRelation';
 
     /**
-     * @var bool
-     */
-    public static $remoteOwner = true;
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /**
      * @var string
      */
     public $ownerClassName;
@@ -85,7 +72,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param  $lazyLoading
+     * @param  bool|int|null $lazyLoading
      *
      * @return $this
      */
@@ -166,7 +153,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * Checks if an object is an allowed relation
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      */
@@ -176,12 +163,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
         if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof DataObject\ClassDefinition\Data\Objects) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
                 return $fd->allowObjectRelation($object);
             }
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -227,10 +214,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * fills object field data values from CSV Import String
      *
-     * @abstract
-     *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data

@@ -71,6 +71,7 @@ class Pdf extends Model\Document\Tag
     {
         $pages = 0;
         if ($asset = Asset::getById($this->id)) {
+            /** @var Asset\Document $asset */
             $pages = $asset->getPageCount();
         }
 

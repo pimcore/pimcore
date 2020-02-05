@@ -399,6 +399,7 @@ class AssetHelperController extends AdminController
         $helperColumns = [];
         $newData = [];
         $data = json_decode($request->get('columns'));
+        /** @var \stdClass $item */
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();

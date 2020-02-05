@@ -191,7 +191,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param $data
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param $fieldData
      * @param $metaData
      * @param int $level
@@ -290,7 +290,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @see Data::getDataFromEditmode
      *
      * @param string $containerData
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -352,8 +352,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param mixed $data
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \stdClass
@@ -367,7 +367,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @see Data::getVersionPreview
      *
      * @param $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -384,7 +384,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -396,7 +396,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null
@@ -407,7 +407,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -457,7 +457,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object DataObject\AbstractObject
+     * @param DataObject\Concrete $object
      * @param array $params
      * @param array $result
      * @param int $level
@@ -585,7 +585,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -724,7 +724,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -737,7 +737,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return DataObject\Classificationstore
@@ -753,7 +753,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -770,7 +770,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the classification data
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      * @param array $params
      */
     public function classSaved($class, $params = [])
@@ -781,7 +781,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return DataObject\Localizedfield
@@ -806,7 +806,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -819,7 +819,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -832,7 +832,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $keyId
+     * @param int $keyId
      *
      * @return mixed
      */
@@ -845,7 +845,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $height
+     * @param string|int|null $height
      *
      * @return $this
      */
@@ -887,7 +887,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      */
     public function setName($name)
     {
@@ -905,7 +905,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $region
+     * @param string|null $region
      *
      * @return $this
      */
@@ -945,7 +945,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $width
+     * @param int $width
      *
      * @return $this
      */
@@ -1063,7 +1063,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

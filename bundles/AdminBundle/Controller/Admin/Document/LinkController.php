@@ -52,6 +52,7 @@ class LinkController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
+        /** @var Document\Link $link */
         $link = clone $link;
 
         $link->setObject(null);
@@ -204,6 +205,6 @@ class LinkController extends DocumentControllerBase
         }
 
         $this->addPropertiesToDocument($request, $link);
-        $this->addSchedulerToDocument($request, $link);
+        $this->applySchedulerDataToElement($request, $link);
     }
 }

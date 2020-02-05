@@ -235,8 +235,9 @@ class ClassDefinition extends Model\AbstractModel
                 return self::getById($id);
             }
         } catch (\Exception $e) {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -265,7 +266,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      */
     public static function cleanupForExport(&$data)
     {
@@ -422,8 +423,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') && $def->isRemoteOwner(
-                        )) && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -447,7 +447,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner()) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     continue;
                 }
 

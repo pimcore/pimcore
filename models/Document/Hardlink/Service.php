@@ -25,7 +25,7 @@ class Service
     /**
      * @param Document $doc
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      *
      * @throws \Exception
      */
@@ -33,6 +33,7 @@ class Service
     {
         if ($doc instanceof Document\Hardlink) {
             if ($sourceDoc = $doc->getSourceDocument()) {
+                /** @var Document\Hardlink\Wrapper\Hardlink $destDoc */
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
                 $destDoc->setPath($doc->getRealPath());
@@ -43,6 +44,7 @@ class Service
                 return $destDoc;
             }
         } else {
+            /** @var Document\Hardlink\Wrapper\WrapperInterface $destDoc */
             $destDoc = self::upperCastDocument($doc);
             $destDoc->initDao(get_class($doc), true);
             $destDoc->setSourceDocument($doc);

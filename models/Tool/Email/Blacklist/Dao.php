@@ -42,8 +42,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
-     *
      * @todo: $data could be undefined
      */
     public function save()
@@ -68,8 +66,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->insertOrUpdate('email_blacklist', $data);
-
-        return true;
     }
 
     /**

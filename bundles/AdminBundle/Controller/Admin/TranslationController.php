@@ -471,6 +471,8 @@ class TranslationController extends AdminController
 
             return $this->adminJson(['data' => $translations, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**

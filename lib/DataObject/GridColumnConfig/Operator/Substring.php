@@ -56,8 +56,9 @@ class Substring extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var string $childValue */
+            /** @var array $childValues */
             if (is_array($childValues)) {
+                /** @var string $childValue */
                 foreach ($childValues as $childValue) {
                     $showEllipses = false;
                     if ($childValue && $this->getEllipses()) {

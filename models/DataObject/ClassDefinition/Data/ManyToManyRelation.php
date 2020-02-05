@@ -547,7 +547,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -606,7 +606,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $data
+     * @param Element\AbstractElement[]|null $data
      *
      * @return array
      */
@@ -712,7 +712,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -775,7 +775,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $maxItems
+     * @param string|int|null $maxItems
      *
      * @return $this
      */
@@ -795,7 +795,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $assetUploadPath
+     * @param string $assetUploadPath
      *
      * @return $this
      */
@@ -815,7 +815,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -826,9 +826,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -874,7 +874,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -949,7 +949,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param $item
+     * @param array $item
      *
      * @return string
      */
@@ -1035,8 +1035,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed

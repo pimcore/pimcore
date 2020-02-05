@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool;
 use Pimcore\Model;
 
 /**
+ * @method \Pimcore\Model\Tool\Lock\Dao getById(string $key)
  * @method \Pimcore\Model\Tool\Lock\Dao getDao()
  */
 class Lock extends Model\AbstractModel

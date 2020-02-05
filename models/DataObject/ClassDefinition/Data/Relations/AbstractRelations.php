@@ -23,14 +23,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface, DataObject\ClassDefinition\PathFormatterAwareInterface
+abstract class AbstractRelations extends Data implements
+    CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface,
+    Data\LazyLoadingSupportInterface
 {
     const RELATION_ID_SEPARATOR = '$$';
-
-    /**
-     * @var bool
-     */
-    public static $remoteOwner = false;
 
     /**
      * @var bool
@@ -89,18 +87,10 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
     /** Enrich relation with type-specific data.
-     * @param $object
-     * @param $params
-     * @param $classId
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData|DataObject\Localizedfield $object
+     * @param array $params
+     * @param int $classId
      * @param array $relation
      */
     protected function enrichRelation($object, $params, &$classId, &$relation = [])
@@ -212,7 +202,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
@@ -403,7 +393,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $item
+     * @param Element\ElementInterface $item
      *
      * @return string
      */
@@ -416,8 +406,8 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $array1
-     * @param $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return bool
      */

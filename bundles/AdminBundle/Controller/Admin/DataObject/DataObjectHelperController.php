@@ -262,7 +262,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         if ($list) {
-            /** @var Config $config */
+            /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -1230,6 +1230,7 @@ class DataObjectHelperController extends AdminController
         }
 
         if ($field->getFieldType() == 'slider') {
+            /** @var DataObject\ClassDefinition\Data\Slider $field */
             $config['minValue'] = $field->getMinValue();
             $config['maxValue'] = $field->getMaxValue();
             $config['increment'] = $field->getIncrement();
@@ -2007,7 +2008,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param string $field
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param string $requestedLanguage
      * @param array $helperDefinitions
      *
@@ -2156,7 +2157,7 @@ class DataObjectHelperController extends AdminController
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!($value instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
+            if (!$value instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }

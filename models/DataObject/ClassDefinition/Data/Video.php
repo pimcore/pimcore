@@ -233,7 +233,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $video = null;
 
-        if ($data['type'] == 'asset') {
+        if (isset($data['type']) && $data['type'] === 'asset') {
             if ($asset = Asset::getByPath($data['data'])) {
                 $data['data'] = $asset;
             } else {
@@ -241,7 +241,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
         }
 
-        if ($data['poster']) {
+        if (!empty($data['poster'])) {
             if ($poster = Asset::getByPath($data['poster'])) {
                 $data['poster'] = $poster;
             } else {
@@ -340,8 +340,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null
@@ -371,7 +371,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -416,7 +416,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      *
      * @return array
      */
@@ -535,7 +535,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -546,9 +546,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -574,7 +574,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param $idMapping
      * @param array $params
      *

@@ -216,6 +216,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -318,6 +320,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -935,6 +939,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1073,6 +1079,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1836,6 +1844,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
