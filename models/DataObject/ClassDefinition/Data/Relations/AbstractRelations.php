@@ -127,19 +127,7 @@ abstract class AbstractRelations extends Data implements
             foreach ($relations as $relation) {
                 $this->enrichDataRow($object, $params, $classId, $relation);
 
-                /*relation needs to be an array with src_id, dest_id, type, fieldname*/
-                try {
-                    $db->insert('object_relations_' . $classId, $relation);
-                } catch (\Exception $e) {
-                    Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
-                        . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
-                    Logger::error($e);
-
-                    // try it again with an update if the insert fails, shouldn't be the case, but it seems that
-                    // sometimes the insert throws an exception
-
-                    throw $e;
-                }
+                $db->insertOrUpdate('object_relations_' . $classId, $relation);
             }
         }
     }
