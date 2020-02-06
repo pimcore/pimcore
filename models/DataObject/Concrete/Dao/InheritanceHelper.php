@@ -29,8 +29,6 @@ class InheritanceHelper
 
     const RELATION_TABLE = 'object_relations_';
 
-    const OBJECTS_TABLE = 'objects';
-
     const ID_FIELD = 'oo_id';
 
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
