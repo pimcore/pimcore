@@ -1765,6 +1765,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             return $this->adminJson($result);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**

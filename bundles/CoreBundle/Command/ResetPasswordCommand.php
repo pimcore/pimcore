@@ -72,6 +72,8 @@ class ResetPasswordCommand extends AbstractCommand
         $user->save();
 
         $this->output->writeln('Password for user ' . $user->getName() . ' reset successfully.');
+
+        return 0;
     }
 
     protected function askForPassword(InputInterface $input, OutputInterface $output)

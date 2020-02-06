@@ -64,5 +64,7 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
 
         $mapFile = realpath(__DIR__ . '/../../../config/dao-classmap.php');
         File::putPhpFile($mapFile, to_php_data_file_format($map));
+
+        return 0;
     }
 }

@@ -54,6 +54,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function cleanUpCodes($filter = [])
     {
+        return true;
     }
 
     public function cleanupReservations($duration = 0, $seriesId = null)

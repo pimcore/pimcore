@@ -108,6 +108,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
 
         Model\Tool\TmpStore::delete($sendingId);
+
+        return 0;
     }
 
     /**

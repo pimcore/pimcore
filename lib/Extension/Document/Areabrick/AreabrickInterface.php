@@ -23,8 +23,6 @@ interface AreabrickInterface
      * The brick ID as registered on AreabrickManager
      *
      * @param string $id
-     *
-     * @return string
      */
     public function setId($id);
 

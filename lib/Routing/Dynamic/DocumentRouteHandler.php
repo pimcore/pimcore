@@ -315,6 +315,8 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
             return $route;
         }
+
+        return null;
     }
 
     /**

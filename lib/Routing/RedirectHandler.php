@@ -86,6 +86,8 @@ class RedirectHandler implements LoggerAwareInterface
                 return $response;
             }
         }
+
+        return null;
     }
 
     private function matchRedirect(

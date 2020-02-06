@@ -537,13 +537,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             return 'not supported';
         }
+
+        return '';
     }
 
     /**

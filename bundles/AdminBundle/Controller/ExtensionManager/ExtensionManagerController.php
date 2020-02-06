@@ -356,7 +356,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * @param string $bundleName
      *
-     * @return PimcoreBundleInterface
+     * @return PimcoreBundleInterface|null
      */
     private function buildBundleInstance($bundleName)
     {
@@ -372,6 +372,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'error' => $e->getMessage()
             ]);
         }
+
+        return null;
     }
 
     /**
@@ -445,6 +447,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 return $iframePath;
             }
         }
+
+        return null;
     }
 
     /**

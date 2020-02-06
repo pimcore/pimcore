@@ -131,5 +131,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
                 $output->writeln('------------');
             }
         }
+
+        return 0;
     }
 }
