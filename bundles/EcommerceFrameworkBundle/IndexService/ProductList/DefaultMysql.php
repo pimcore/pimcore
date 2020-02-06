@@ -656,7 +656,7 @@ class DefaultMysql implements ProductListInterface
             }
 
             // add sorting for primary id to prevent mysql paging problem...
-            $orderKeys[] = 'o_id';
+            $orderKeys[] = 'a.o_id';
 
             $directionOrderKeys = [];
             foreach ($orderKeys as $key) {
