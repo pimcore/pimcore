@@ -138,7 +138,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 ## Travis
 
 Pimcore uses [Travis CI](https://travis-ci.com/) for continuous integration.
-Open https://travis-ci.org/pimcore/pimcore for the current build status. 
+Open https://travis-ci.com/pimcore/pimcore for the current build status. 
 
 ### Test Matrix
 
