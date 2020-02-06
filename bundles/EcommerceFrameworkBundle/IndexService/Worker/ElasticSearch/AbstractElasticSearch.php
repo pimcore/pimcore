@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
+use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
@@ -22,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Tool\Lock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -33,6 +35,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
 
     const RELATION_FIELD = 'parentchildrelation';
+
+    const REINDEXING_LOCK_KEY = 'elasticsearch_reindexing_lock';
 
     /**
      * Default value for the mapping of custom attributes
@@ -835,5 +839,110 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $this->settingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
         $this->updateVersionFile();
+    }
+
+    /**
+     * Get the next index version, e.g. if currently 13, then 14 will be returned.
+     * @return int
+     */
+    private function getNextIndexVersion() : int {
+        return $this->getIndexVersion()+1;
+    }
+
+    /**
+     * Build the name of the index for a specific index number.
+     * @param int $id e.g. 13
+     * @return string the name of the index, such as at_de_elastic_13
+     */
+    private function buildIndexName(int $id) : string {
+        $currentIndexVersion = $this->getIndexVersion();
+        $this->indexVersion = $id;
+        $indexName = $this->getIndexNameVersion();
+        $this->indexVersion = $currentIndexVersion;
+        return $indexName;
+    }
+
+    /**
+     * Create an index with the given name (delete existing ones), and force a rebuild in ES.
+     * Does not perform an index switch.
+     * @param string $indexName
+     * @throws BadRequest400Exception
+     * @throws \Elasticsearch\Common\Exceptions\NoNodesAvailableException
+     */
+    private function buildIndexAndPerformEsRebuild(string $indexName) {
+        $indexName = strtolower($indexName);
+        $esClient = $this->getElasticSearchClient();
+        Logger::info('Index '.$indexName.' already existed. Delete and rebuild it...');
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Deleted '.$indexName.'.');
+            $esClient->indices()->delete(['index' => $indexName]);
+        }
+
+        $this->createEsIndex($indexName);
+
+        $body =
+            [
+                'source' => [
+                    'index' => $this->getIndexNameVersion(), //currently active ES index with data.
+                    /*
+                    "query" => [
+                        "term" => [
+                            "attributes.remoteId" => "12J928143"
+                        ]
+                    ] */
+                ],
+                'dest' => [
+                    // 'index' => 'mytestindex',
+                    'index' => $indexName, //target index name
+                ]
+            ];
+
+        try {
+
+
+            $startTime = time();
+            Logger::info('Start reindexing process in Elastic Search...', [
+                'method' => 'POST',
+                'uri' => '/_reindex',
+                'body' => $body
+            ]);
+            $result = $esClient->transport->performRequest('POST', '/_reindex', [], $body);
+            Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
+
+        } catch (BadRequest400Exception $e) {
+            //could not reindex.
+            throw $e;
+        }
+    }
+
+    public function performNativeReindexingForSynonyms() {
+        $hasReindexIndexingModeCompleted = false;
+        Lock::lock(self::REINDEXING_LOCK_KEY);
+        if ($this->isInReindexMode()) {
+            //stop reindexing process. If not yet finished, no alias switch will take place
+            $this->completeReindexMode();
+            $hasReindexIndexingModeCompleted = true;
+        }
+
+        $nextIndex = $this->getNextIndexVersion();
+        $nextIndexName = $this->buildIndexName($nextIndex);
+        $this->buildIndexAndPerformEsRebuild($nextIndexName);
+
+        $this->indexVersion = $nextIndex;
+        $this->switchIndexAlias();
+
+        //set the new version here so other processes write in the new index
+        $this->settingsHash  = md5(json_encode($this->tenantConfig->getIndexSettings()));
+        $result = $this->updateVersionFile();
+        if (!$result) {
+            throw new \Exception("Can't write version file: " . $this->getVersionFile());
+        }
+
+        Lock::release(self::REINDEXING_LOCK_KEY);
+
+        if ($hasReindexIndexingModeCompleted) {
+            //continue with rebuild, or reset queue...
+        }
     }
 }
