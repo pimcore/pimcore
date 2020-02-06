@@ -340,7 +340,7 @@ class UrlSlug implements OwnerAwareFieldInterface
             } elseif ($this->getOwnertype() === 'localizedfield') {
                 $ownerName = $this->getOwnername();
                 if (strpos($ownerName, '~') !== false) {
-                    // this is a localized field inside a field collection objectbrick
+                    // this is a localized field inside a field collection or objectbrick
                     $parts = explode('~', $this->getOwnername());
                     $type = trim($parts[0], '/');
                     $objectFieldnameParts = $this->getOwnername();
@@ -350,16 +350,16 @@ class UrlSlug implements OwnerAwareFieldInterface
                     $objectFieldname = $objectFieldname[0];
 
                     if ($type == 'objectbrick') {
-                        /** @var Objectbricks $objectFieldDef */
                         if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
+                            /** @var Objectbricks $objectFieldDef */
 
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
                                     /** @var Definition $brickDef */
                                     $brickDef = Definition::getByKey($allowedBrick);
-                                    /** @var Localizedfields $lfDef */
                                     if ($lfDef = $brickDef->getFieldDefinition('localizedfields')) {
+                                        /** @var Localizedfields $lfDef */
                                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                                         break;
                                     }

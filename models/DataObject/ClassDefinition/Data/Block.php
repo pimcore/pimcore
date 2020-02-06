@@ -482,7 +482,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

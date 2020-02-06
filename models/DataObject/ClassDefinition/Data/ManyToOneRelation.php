@@ -529,7 +529,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

@@ -1463,7 +1463,9 @@ class Service extends Model\Element\Service
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
-                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+                /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $lfDef */
+                $lfDef = $object->getClass()->getFieldDefinition('localizedfields');
+                $fd = $lfDef->getFieldDefinition($fieldname);
             }
         }
 
@@ -1514,7 +1516,9 @@ class Service extends Model\Element\Service
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
-                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+                /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $lfDef */
+                $lfDef = $object->getClass()->getFieldDefinition('localizedfields');
+                $fd = $lfDef->getFieldDefinition($fieldname);
             }
         }
 
