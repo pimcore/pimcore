@@ -309,6 +309,12 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     name: "prefix",
                     fieldLabel: t("import_file_prefix"),
                     value: this.config.resolverSettings.prefix
+                },
+                {
+                    xtype: "checkbox",
+                    name: "skipIfExists",
+                    fieldLabel: t("skipIfExists"),
+                    value: this.config.resolverSettings.skipIfExists
                 }
             ]
         );
@@ -337,6 +343,12 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     inputValue: true,
                     value: this.config.resolverSettings.createParents,
                     fieldLabel: t("create_parents")
+                },
+                {
+                    xtype: "checkbox",
+                    name: "skipIfExists",
+                    fieldLabel: t("skipIfExists"),
+                    value: this.config.resolverSettings.skipIfExists
                 }
             ]
         );
@@ -347,12 +359,25 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         this.addObjectTypeOptions();
 
         this.detailedSettingsPanel.add([
-                {
-                    xtype: "textfield",
-                    name: "attribute",
-                    fieldLabel: t("attribute"),
-                    value: this.config.resolverSettings.attribute
-                }
+            {
+                xtype: "textfield",
+                name: "attribute",
+                fieldLabel: t("attribute"),
+                value: this.config.resolverSettings.attribute
+            },
+            {
+                xtype: "checkbox",
+                name: "skipIfExists",
+                fieldLabel: t("skipIfExists"),
+                value: this.config.resolverSettings.skipIfExists
+            },
+            {
+                xtype: "textfield",
+                name: "phpClassOrService",
+                fieldLabel: t("phpClassOrService"),
+                width: 800,
+                value: this.config.resolverSettings.phpClassOrService
+            }
             ]
         );
     },

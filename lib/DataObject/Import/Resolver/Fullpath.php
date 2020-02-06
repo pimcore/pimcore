@@ -35,11 +35,16 @@ class Fullpath extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $createOnDemand = $config->resolverSettings->createOnDemand;
-        $createParents = $config->resolverSettings->createParents;
+        $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
+        $createParents = (bool)$config->resolverSettings->createParents;
+        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
 
         $fullpath = $rowData[$this->getIdColumn($config)];
         $object = DataObject::getByPath($fullpath);
+
+        if ($object && $skipIfExists) {
+            throw new \Exception('skipped object exists: ' . $object->getFullPath());
+        }
 
         if (!$object && $createOnDemand) {
             $keyParts = explode('/', $fullpath);

@@ -20,7 +20,9 @@ namespace Pimcore\DataObject\Import\Resolver;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
@@ -33,14 +35,19 @@ class GetBy extends AbstractResolver
      */
     private $modelFactory;
 
+    /** @var ImportClassResolver */
+    private $classResolver;
+
     /**
      * GetBy constructor.
      *
      * @param FactoryInterface $modelFactory
+     * @param ClassResolver $classResolver
      */
-    public function __construct(FactoryInterface $modelFactory)
+    public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
     {
         $this->modelFactory = $modelFactory;
+        $this->classResolver = $classResolver;
     }
 
     /**
@@ -54,7 +61,8 @@ class GetBy extends AbstractResolver
      */
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $attribute = $config->resolverSettings->attribute;
+        $attribute = (string)$config->resolverSettings->attribute;
+        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
 
         if (!$attribute) {
             throw new \InvalidArgumentException('Attribute is not set');
@@ -86,7 +94,18 @@ class GetBy extends AbstractResolver
                 }
             }
 
-            $this->setObjectType($config, $object, $rowData);
+            $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
+
+            if ($skipIfExists && $object && !($service instanceof ImportDataServiceInterface)) {
+                throw new \Exception('skipped row where '. $attribute . ' = ' . $cellData . ' ( existing object-id:' . $object->getId() . ' )');
+            }
+
+            if ($service instanceof ImportDataServiceInterface) {
+                $service->setObjectType($config, $object, $rowData, $skipIfExists);
+                $object->setParentId($parentId);
+            } else {
+                $this->setObjectType($config, $object, $rowData);
+            }
 
             return $object;
         }

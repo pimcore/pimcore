@@ -40,6 +40,7 @@ class Filename extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $overwrite = (bool)$config->resolverSettings->overwrite;
+        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
         $prefix = (string)$config->resolverSettings->prefix;
 
         $parent = AbstractObject::getById($parentId);
@@ -63,6 +64,10 @@ class Filename extends AbstractResolver
 
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
         $object = null;
+
+        if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
+            throw new \Exception('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+        }
 
         if ($overwrite) {
             $object = DataObject::getByPath($intendedPath);
