@@ -23,8 +23,6 @@ use Pimcore\Model\DataObject;
 class InheritanceHelper
 {
 
-    static $protectedFields = ['language', 'id', 'parentId', 'classId'];
-
     const STORE_TABLE = 'object_store_';
 
     const QUERY_TABLE = 'object_query_';
