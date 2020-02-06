@@ -906,6 +906,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($target instanceof Document) {
             if ($target->isAllowed('create')) {
                 if ($source != null) {
+                    if ($latestVersion = $source->getLatestVersion()) {
+                        $source = $latestVersion->loadData();
+                        $source->setPublished(false); //as latest version is used which is not published
+                    }
+
                     if ($request->get('type') == 'child') {
                         $enableInheritance = ($request->get('enableInheritance') == 'true') ? true : false;
 

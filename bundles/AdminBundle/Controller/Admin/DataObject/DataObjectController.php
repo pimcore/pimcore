@@ -1974,6 +1974,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($target->isAllowed('create')) {
             $source = DataObject::getById($sourceId);
             if ($source != null) {
+                if ($latestVersion = $source->getLatestVersion()) {
+                    $source = $latestVersion->loadData();
+                    $source->setPublished(false); //as latest version is used which is not published
+                }
+
                 if ($request->get('type') == 'child') {
                     $newObject = $this->_objectService->copyAsChild($target, $source);
 
