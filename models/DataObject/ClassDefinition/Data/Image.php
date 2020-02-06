@@ -355,7 +355,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

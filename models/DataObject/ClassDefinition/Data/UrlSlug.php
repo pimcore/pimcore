@@ -651,7 +651,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -688,8 +688,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
             if ($this->getLazyLoading() && $object->getObject()) {
-                /** @var Model\DataObject\Objectbrick $container */
                 $brickGetter = 'get' . ucfirst($object->getFieldname());
+                /** @var Model\DataObject\Objectbrick $container */
                 $container = $object->getObject()->$brickGetter();
                 if ($container) {
                     $container->loadLazyField($object->getType(), $object->getFieldname(), $this->getName());

@@ -57,7 +57,7 @@ class Service
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {

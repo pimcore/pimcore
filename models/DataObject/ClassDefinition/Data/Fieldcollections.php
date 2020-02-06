@@ -372,7 +372,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $allowedTypes
+     * @param string|array|null $allowedTypes
      *
      * @return $this
      */
@@ -503,6 +503,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollection);
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
@@ -654,7 +655,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param DataObject\Concrete $object
-     * @param $data
+     * @param DataObject\Fieldcollection|null $data
      * @param array $params
      *
      * @return array
@@ -671,7 +672,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -714,7 +715,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $maxItems
+     * @param int|string|null $maxItems
      *
      * @return $this
      */
@@ -744,11 +745,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param DataObject\Fieldcollection|null $data
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|string
@@ -787,8 +788,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param DataObject\Fieldcollection|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
@@ -853,7 +854,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      * @param array $params
      */
     public function classSaved($class, $params = [])

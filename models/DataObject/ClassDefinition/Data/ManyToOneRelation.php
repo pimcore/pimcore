@@ -273,15 +273,15 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Asset|Document|DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
+     * @param array|null $params
      *
      * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,8 +327,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param Element\AbstractElement|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
