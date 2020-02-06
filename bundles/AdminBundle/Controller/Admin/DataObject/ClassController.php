@@ -1760,8 +1760,12 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $classId = $request->get('classId');
 
-        $path = '/bundles/pimcoreadmin/img/object-icons';
-        $icons = rscandir(PIMCORE_WEB_ROOT . $path);
+        $iconDir = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img';
+        $classIcons = rscandir($iconDir . '/object-icons/');
+        $colorIcons = rscandir($iconDir . '/flat-color-icons/');
+        $twemoji = rscandir($iconDir . '/twemoji/');
+
+        $icons = array_merge($classIcons, $colorIcons, $twemoji);
 
         foreach ($icons as &$icon) {
             $icon = str_replace(PIMCORE_WEB_ROOT, '', $icon);

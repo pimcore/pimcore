@@ -29,6 +29,7 @@ use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\DataObject\AbstractObject\Dao getDao()
+ * @method array|null getPermissions($type, $user, $quote = true)
  * @method bool __isBasedOnLatestData()
  */
 class AbstractObject extends Model\Element\AbstractElement

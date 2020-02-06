@@ -416,7 +416,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
             $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
@@ -1976,6 +1976,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($target->isAllowed('create')) {
             $source = DataObject::getById($sourceId);
             if ($source != null) {
+                if ($latestVersion = $source->getLatestVersion()) {
+                    $source = $latestVersion->loadData();
+                    $source->setPublished(false); //as latest version is used which is not published
+                }
+
                 if ($request->get('type') == 'child') {
                     $newObject = $this->_objectService->copyAsChild($target, $source);
 

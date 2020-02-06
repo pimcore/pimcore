@@ -141,7 +141,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      * @param Model\DataObject\Concrete $object
      * @param array $params
      *
@@ -198,6 +198,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
+        /** @var ResourcePersistenceAwareInterface $fd */
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $this->decrypt($data, $object, $params);

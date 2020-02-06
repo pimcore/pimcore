@@ -37,8 +37,13 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 title: t("list"),
                 iconCls: "pimcore_material_icon_list pimcore_material_icon",
                 border: false,
-                layout: "fit"
+                layout: "border"
             });
+
+            var user = pimcore.globalmanager.get("user");
+            if(user.isAllowed("tags_search")) {
+                this.layout.add(this.getTagsPanel());
+            }
 
 
             this.layout.on("afterrender", this.getGrid.bind(this, false));
@@ -137,7 +142,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }
 
-        this.store.getProxy().extraParams = {
+        let extraParams = {
             folderId: this.element.data.id,
             "fields[]": fieldParam,
             language: this.gridLanguage,
@@ -145,6 +150,13 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             only_unreferenced: this.onlyUnreferenced
         };
 
+        //tags filter
+        if (this.tagsPanel) {
+            extraParams["tagIds[]"] = this.tagsTree.getCheckedTagIds();
+            extraParams["considerChildTags"] = this.considerChildTags;
+        }
+
+        this.store.getProxy().extraParams = extraParams;
         this.store.setPageSize(itemsPerPage);
 
         if (existingFilters) {
@@ -295,8 +307,16 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.updateGridHeaderContextMenu(grid);
         }.bind(this));
 
-        this.layout.removeAll();
-        this.layout.add(this.grid);
+        this.layout.remove("gridPanel_" + this.element.data.id);
+
+        this.gridPanel = new Ext.Panel({
+            id: "gridPanel_" + this.element.data.id,
+            region: "center",
+            layout: "fit",
+            items: [this.grid],
+        });
+
+        this.layout.add(this.gridPanel);
         this.layout.updateLayout();
 
         if (save) {

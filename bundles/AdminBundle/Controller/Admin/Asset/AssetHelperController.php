@@ -636,7 +636,7 @@ class AssetHelperController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
         $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
-        if (empty($ids = $allParams['ids'])) {
+        if (empty($ids = $allParams['ids'] ?? '')) {
             $ids = $list->loadIdList();
         }
 

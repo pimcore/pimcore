@@ -293,7 +293,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Model\Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

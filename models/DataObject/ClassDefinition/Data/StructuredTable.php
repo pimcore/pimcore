@@ -130,7 +130,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $labelFirstCell
+     * @param string $labelFirstCell
      *
      * @return $this
      */
@@ -188,7 +188,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $rows
+     * @param array $rows
      *
      * @return $this
      */
@@ -349,7 +349,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\StructuredTable|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -591,8 +591,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $type string text|number|bool
-     * @param $length int The length of the column, default is 255 for text
+     * @param string $type text|number|bool
+     * @param int $length The length of the column, default is 255 for text
      *
      * @return string|null
      */
@@ -608,7 +608,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\StructuredTable|null $data
      *
      * @return bool
      */

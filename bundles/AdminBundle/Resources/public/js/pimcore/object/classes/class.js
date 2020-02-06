@@ -672,6 +672,7 @@ pimcore.object.classes.klass = Class.create({
             },
             fields: ["text", "value"]
         });
+
         var iconField = new Ext.form.field.Text({
             id: "iconfield-" + this.getId(),
             name: "icon",

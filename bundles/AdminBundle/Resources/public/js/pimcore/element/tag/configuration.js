@@ -45,6 +45,8 @@ pimcore.element.tag.configuration = Class.create({
                 layout: "border",
                 closable: true
             });
+
+            tree.setFilterFieldWidth(340);
         }
 
         return this.layout;
