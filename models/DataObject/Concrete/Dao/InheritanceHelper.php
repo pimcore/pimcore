@@ -409,7 +409,7 @@ class InheritanceHelper
             }
         }
 
-        return $filteredResult;
+        return array_values($filteredResult);
     }
 
     /**
