@@ -298,11 +298,14 @@ class Thumbnail
         }
 
         $isLowQualityPreview = false;
-        if (
-            (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            && ($previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri())
-            && !Tool::isFrontendRequestByAdmin()
-        ) {
+        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
+
+            $previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri();
+            if(!$previewDataUri) {
+                // use a 1x1 transparent GIF as a fallback if no LQIP exists
+                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            }
+
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
