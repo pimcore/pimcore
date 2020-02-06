@@ -5,7 +5,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-
 class Version20200121095650 extends AbstractPimcoreMigration
 {
     /**
@@ -42,6 +41,5 @@ class Version20200121095650 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         $this->addSql('DROP TABLE `object_url_slugs`;');
-
     }
 }

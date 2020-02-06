@@ -23,9 +23,9 @@ use Pimcore\Model\DataObject\Localizedfield;
 
 trait ContextPersistenceTrait
 {
-
     /**
      * Enrich relation / slug with type-specific data.
+     *
      * @param Concrete|Localizedfield|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|AbstractData $object
      * @param array $params
      * @param string $classId
@@ -73,5 +73,4 @@ trait ContextPersistenceTrait
             $classId = $object->getObject()->getClassId();
         }
     }
-
 }

@@ -243,7 +243,7 @@ Ext.onReady(function () {
                     pimcore.viewport.add(pimcore.maintenanceWindow);
                     pimcore.maintenanceWindow.show();
                 }
-            } else if (response.status === 403) {
+            } else if (response.status === 422) {
                 if(jsonData && jsonData['type'] === 'ValidationException') {
                     pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
                 } else {

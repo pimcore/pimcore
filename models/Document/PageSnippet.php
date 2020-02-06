@@ -109,9 +109,8 @@ abstract class PageSnippet extends Model\Document
         $this->getProperties();
         $this->getElements();
 
-
         $this->checkMissingRequiredEditable();
-        if($this->getMissingRequiredEditable() && $this->getPublished()) {
+        if ($this->getMissingRequiredEditable() && $this->getPublished()) {
             throw new \Exception('Prevented publishing document - missing values for required editables');
         }
 
@@ -649,7 +648,8 @@ abstract class PageSnippet extends Model\Document
     /**
      * Validates if there is a missing value for required editable
      */
-    protected function checkMissingRequiredEditable() {
+    protected function checkMissingRequiredEditable()
+    {
         //Allowed tags for required check
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 

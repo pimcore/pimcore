@@ -47,6 +47,7 @@ class DataObjectRoute extends Route implements RouteObjectInterface
     public function setObject(Concrete $object): self
     {
         $this->object = $object;
+
         return $this;
     }
 
@@ -66,6 +67,7 @@ class DataObjectRoute extends Route implements RouteObjectInterface
     public function setSlug(UrlSlug $slug): self
     {
         $this->slug = $slug;
+
         return $this;
     }
 

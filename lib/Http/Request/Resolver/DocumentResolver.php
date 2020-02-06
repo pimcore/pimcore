@@ -33,7 +33,7 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
         }
 
         $content = $request->get(DynamicRouter::CONTENT_KEY, null);
-        if($content instanceof Document) {
+        if ($content instanceof Document) {
             return $content;
         }
 

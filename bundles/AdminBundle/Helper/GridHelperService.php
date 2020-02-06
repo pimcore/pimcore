@@ -121,7 +121,6 @@ class GridHelperService
 
                         $featureConditions[$mappedKey] = $featureCondition;
                     }
-
                 } elseif (count($keyParts) > 1) {
                     $brickType = $keyParts[0];
                     $brickKey = $keyParts[1];
@@ -135,7 +134,6 @@ class GridHelperService
                     if ($slugFd = $class->getFieldDefinition($filterField) instanceof ClassDefinition\Data\UrlSlug) {
                         $slugKey = $filterField;
                         $slugJoins[] = ['fieldname' => $filterField];
-
                     }
                 }
 
@@ -296,7 +294,7 @@ class GridHelperService
                                 ['brickType' => $brickType]);
                     }
                 } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
-                    $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . "." . $field->getFilterCondition($filter['value'], $operator);;
+                    $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
                     if (is_array($filter['value'])) {
@@ -445,7 +443,7 @@ class GridHelperService
                     $mappedKey = $fieldname;
                     $alreadyJoined[$mappedKey] = 1;
                     $table = $me->getDao()->getTableName();
-                    
+
                     $select->joinLeft(
                         [$mappedKey => 'object_url_slugs'],
                         '('
