@@ -12,15 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Event\Ecommerce;
 
-
-/**
- * Class AdminEvents
- * @package Pimcore\Event\Ecommerce
- */
-class AdminEvents
+final class AdminEvents
 {
     /**
      * Fired when values in filter definition get fetched
@@ -29,5 +23,5 @@ class AdminEvents
      *
      * @var string
      */
-    const GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA = 'pimcore.ecommerce.indexservice.getValuesForFilterFieldPreSendData';
+    const GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA = 'pimcore.admin.ecommerce.getValuesForFilterFieldPreSendData';
 }
