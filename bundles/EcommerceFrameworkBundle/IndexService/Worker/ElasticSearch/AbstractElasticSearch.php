@@ -916,7 +916,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
-    public function performNativeReindexingForSynonyms() {
+    public function performNativeReindexing() {
         $hasReindexIndexingModeCompleted = false;
         Lock::lock(self::REINDEXING_LOCK_KEY);
         if ($this->isInReindexMode()) {

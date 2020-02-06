@@ -14,11 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-use AppBundle\Ecommerce\IndexService\Worker\ElasticWorker;
-use AppBundle\EventListener\AbstractListener\AbstractListener;
-use AppBundle\EventListener\Asset\SynonymAssetListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 use Pimcore\Maintenance\ExecutorInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,7 +84,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
 
             $elasticWorker = $indexService->getTenantWorker($tenantName); //e.g., 'AT_de_elastic'
 
-            if (!$elasticWorker instanceof ElasticWorker) {
+            if (!$elasticWorker instanceof AbstractElasticSearch) {
                 $this->getLogger()->info("Skipping tenant [{$tenantName}] as it's not an elasticsearch tenant.");
                 continue;
             }
@@ -108,7 +105,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
 
                 //update syonyms by performaing a native index rebuild
                 //will interrupt current queue processing.
-                $elasticWorker->performNativeReindexingForSynonyms();
+                $elasticWorker->performNativeReindexing();
 
                 $this->getLogger()->info(sprintf('Created and rebuild test index for tenant "%s".', $tenantName));
 
