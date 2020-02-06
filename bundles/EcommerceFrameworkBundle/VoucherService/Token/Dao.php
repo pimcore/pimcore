@@ -42,6 +42,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
+
+            return true;
         } catch (\Exception $e) {
             //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;

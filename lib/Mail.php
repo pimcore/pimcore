@@ -343,6 +343,8 @@ class Mail extends \Swift_Message
         $this->getHeaders()->removeAll('cc');
         $this->getHeaders()->removeAll('bcc');
         $this->getHeaders()->removeAll('replyTo');
+
+        return $this;
     }
 
     /**
@@ -1005,6 +1007,8 @@ class Mail extends \Swift_Message
         } else {
             parent::addTo($address, $name);
         }
+
+        return $this;
     }
 
     /**

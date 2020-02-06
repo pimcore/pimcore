@@ -112,6 +112,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
                 }
             }
         }
+
+        return 0;
     }
 
     /**

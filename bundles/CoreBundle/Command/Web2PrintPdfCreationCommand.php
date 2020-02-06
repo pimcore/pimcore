@@ -57,5 +57,7 @@ class Web2PrintPdfCreationCommand extends AbstractCommand
         }
 
         Processor::getInstance()->startPdfGeneration($input->getOption('processId'));
+
+        return 0;
     }
 }

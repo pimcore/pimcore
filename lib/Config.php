@@ -868,7 +868,7 @@ class Config
                     $perspectives = $userOrRoleToCheck ? $userOrRoleToCheck->getPerspectives() : null;
                     if ($perspectives) {
                         foreach ($perspectives as $perspectiveName) {
-                            $masterDef = $masterConfig[$perspectiveName];
+                            $masterDef = $masterConfig[$perspectiveName] ?? null;
                             if ($masterDef) {
                                 $config[$perspectiveName] = $masterDef;
                             }

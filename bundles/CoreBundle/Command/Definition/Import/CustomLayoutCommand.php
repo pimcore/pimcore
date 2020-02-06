@@ -49,7 +49,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @param string $filename
      *
-     * @return string
+     * @return string|null
      */
     protected function getDefinitionName($filename)
     {
@@ -57,6 +57,8 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
         if (preg_match('/^custom_definition_(.*)_export\.json$/', $filename, $parts) === 1) {
             return $parts[1];
         }
+
+        return null;
     }
 
     /**

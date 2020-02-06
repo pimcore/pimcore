@@ -347,6 +347,8 @@ SUBQUERY
     public function addSelectField($field)
     {
         $this->getQuery()->columns($field);
+
+        return $this;
     }
 
     /**
@@ -358,6 +360,8 @@ SUBQUERY
     {
         $this->filter[] = $filter;
         $filter->apply($this);
+
+        return $this;
     }
 
     /**

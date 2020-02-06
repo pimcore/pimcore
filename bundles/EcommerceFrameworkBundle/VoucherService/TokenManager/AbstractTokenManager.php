@@ -56,7 +56,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     /**
      * @param array $filter
      *
-     * @return mixed
+     * @return bool
      */
     abstract public function cleanUpCodes($filter = []);
 

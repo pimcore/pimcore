@@ -270,6 +270,8 @@ class Rule extends AbstractModel implements RuleInterface
     public function setCondition(ConditionInterface $condition)
     {
         $this->condition = $condition;
+
+        return $this;
     }
 
     /**

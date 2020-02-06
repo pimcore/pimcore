@@ -1025,6 +1025,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

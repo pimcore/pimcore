@@ -828,5 +828,7 @@ XML;
 
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
         $orderListing->setOrder('DESC');
+
+        return $orderListing;
     }
 }

@@ -76,5 +76,7 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
                 $worker->resetIndexingQueue();
             }
         }
+
+        return 0;
     }
 }

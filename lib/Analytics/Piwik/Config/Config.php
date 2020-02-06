@@ -158,6 +158,8 @@ class Config
         if (null !== $config) {
             return $this->normalizePiwikSiteId($config);
         }
+
+        return null;
     }
 
     public function isIframeIntegrationConfigured(): bool
@@ -235,5 +237,7 @@ class Config
         if ($piwikSiteId > 0) {
             return $piwikSiteId;
         }
+
+        return null;
     }
 }

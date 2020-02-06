@@ -494,6 +494,7 @@ class DefaultMysql implements ProductListInterface
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         // not supported with mysql tables
+        return [];
     }
 
     /**

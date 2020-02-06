@@ -1868,6 +1868,8 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -1899,6 +1901,8 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

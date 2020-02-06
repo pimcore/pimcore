@@ -326,6 +326,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
             return $response;
         }
+
+        return null;
     }
 
     /**

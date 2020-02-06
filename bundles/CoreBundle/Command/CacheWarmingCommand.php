@@ -143,6 +143,8 @@ class CacheWarmingCommand extends AbstractCommand
             $this->writeWarmingMessage('object', $objectTypes);
             Warming::objects($objectTypes);
         }
+
+        return 0;
     }
 
     /**

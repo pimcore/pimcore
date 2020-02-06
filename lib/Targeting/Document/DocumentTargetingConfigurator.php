@@ -166,6 +166,8 @@ class DocumentTargetingConfigurator
         if (isset($this->targetGroupMapping[$document->getId()])) {
             return $this->targetGroupMapping[$document->getId()];
         }
+
+        return null;
     }
 
     public function getResolvedTargetGroupMapping(): array

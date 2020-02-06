@@ -556,12 +556,14 @@ class ElementController extends AdminController
 
                     return $this->adminJson(['versions' => $versions]);
                 } else {
-                    throw new \Exception('Permission denied, ' . $type . ' id [' . $id . ']');
+                    throw $this->createAccessDeniedException('Permission denied, ' . $type . ' id [' . $id . ']');
                 }
             } else {
-                throw new \Exception($type . ' with id [' . $id . "] doesn't exist");
+                throw $this->createNotFoundException($type . ' with id [' . $id . "] doesn't exist");
             }
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
