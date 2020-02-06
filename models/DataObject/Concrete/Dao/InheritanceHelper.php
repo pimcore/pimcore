@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject;
 
 class InheritanceHelper
 {
-
     const STORE_TABLE = 'object_store_';
 
     const QUERY_TABLE = 'object_query_';

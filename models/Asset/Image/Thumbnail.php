@@ -299,9 +299,8 @@ class Thumbnail
 
         $isLowQualityPreview = false;
         if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
-
             $previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri();
-            if(!$previewDataUri) {
+            if (!$previewDataUri) {
                 // use a 1x1 transparent GIF as a fallback if no LQIP exists
                 $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             }
