@@ -369,7 +369,6 @@ class UrlSlug implements OwnerAwareFieldInterface
                         if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
 
                             /** @var Objectbricks $objectFieldDef */
-
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {

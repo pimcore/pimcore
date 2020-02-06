@@ -31,6 +31,7 @@ use Pimcore\Model\Element;
  * @method \Pimcore\Model\DataObject\AbstractObject\Dao getDao()
  * @method array|null getPermissions($type, $user, $quote = true)
  * @method bool __isBasedOnLatestData()
+ * @method string getCurrentFullPath()
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
@@ -289,6 +290,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                     }
 
+                    /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
@@ -352,6 +354,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
+            /** @var Concrete $tmpObject */
             $tmpObject = new static();
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
         }

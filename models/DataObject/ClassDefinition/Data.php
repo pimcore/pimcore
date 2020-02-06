@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use ProxyManager\Proxy\LazyLoadingInterface;
 
 abstract class Data
 {
@@ -567,7 +568,7 @@ abstract class Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -753,7 +754,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -796,7 +797,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -846,7 +847,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -882,7 +883,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -932,7 +933,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -1063,7 +1064,7 @@ abstract class Data
     }
 
     /**
-     * @param $number
+     * @param mixed $number
      *
      * @return float
      */
@@ -1074,7 +1075,7 @@ abstract class Data
 
     /**
      * @param $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -1409,8 +1410,8 @@ abstract class Data
     }
 
     /**
-     * @param $existingData
-     * @param $removeData
+     * @param mixed $existingData
+     * @param mixed $removeData
      *
      * @return mixed
      */
@@ -1449,7 +1450,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param LazyLoadingInterface $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {

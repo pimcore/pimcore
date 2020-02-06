@@ -127,7 +127,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $getter
-     * @param $data
+     * @param Objectbrick\Data\AbstractData $data
      * @param array|null $params
      * @param string $allowedBrickType
      * @param int $level
@@ -198,12 +198,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * gets recursively attribute data from parent and fills objectData and metaData
      *
      * @param $item
-     * @param $key
-     * @param $fielddefinition
-     * @param $level
-     * @param $baseObject
+     * @param string $key
+     * @param Data $fielddefinition
+     * @param int $level
+     * @param DataObject\Concrete|null $baseObject
      * @param $getter
-     * @param $params
+     * @param array|null $params
      *
      * @return mixed
      */
@@ -220,7 +220,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         // Note that this is just for AbstractRelations, not for all LazyLoadingSupportInterface types.
         // It tries to optimize fetching the data needed for the editmode without loading the entire target element.
 
-        if (!$params['objectFromVersion']
+        if ((!isset($params['objectFromVersion']) || !$params['objectFromVersion'])
             && ($fielddefinition instanceof Data\Relations\AbstractRelations)
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof ManyToManyObjectRelation
@@ -467,7 +467,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $allowedTypes
+     * @param string|array|null $allowedTypes
      *
      * @return $this
      */
@@ -614,7 +614,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param DataObject\Concrete $object
-     * @param $value
+     * @param Objectbrick|null $value
      * @param array $params
      *
      * @return mixed
@@ -801,7 +801,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param $item
-     * @param $key
+     * @param string $key
      * @param Data $fielddefinition
      * @param int $level
      * @param DataObject\Concrete $baseObject
@@ -1059,7 +1059,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var $childDef DataObject\ClassDefinition\Data */
+            /** @var DataObject\ClassDefinition\Data $childDef */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
