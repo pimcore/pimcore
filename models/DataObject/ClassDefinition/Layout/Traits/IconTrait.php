@@ -14,19 +14,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
+namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 
-use Pimcore\Model;
-use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\IconTrait;
-
-class Region extends Model\DataObject\ClassDefinition\Layout
+trait IconTrait
 {
-    use IconTrait;
+    /**
+     * @var string|null
+     */
+    public $icon;
 
     /**
-     * Static type of this element
-     *
-     * @var string
+     * @return string
      */
-    public $fieldtype = 'region';
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon(?string $icon): void
+    {
+        $this->icon = $icon;
+    }
 }
