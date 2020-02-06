@@ -56,6 +56,12 @@ pimcore.element.tag.tree = Class.create({
         this.checkChangeCallback = callback;
     },
 
+    setFilterFieldWidth: function (size) {
+        if (this.filterField) {
+            this.filterField.width = size;
+        }
+    },
+
     getLayout: function () {
         if (!this.tree) {
 
@@ -92,7 +98,6 @@ pimcore.element.tag.tree = Class.create({
 
             this.filterField = new Ext.form.field.Text(
                 {
-                    width: 340,
                     hideLabel: true,
                     enableKeyEvents: true,
                     listeners: {
@@ -105,13 +110,11 @@ pimcore.element.tag.tree = Class.create({
                 }
             );
 
-            var tbarItems = [this.filterField,
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    text: t("filter"),
-                    handler: this.tagFilter.bind(this)
-                }];
+            this.filterButton = new Ext.Button({
+                iconCls: "pimcore_icon_search",
+                text: t("filter"),
+                handler: this.updateTagFilter.bind(this)
+            });
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 store: store,
@@ -119,7 +122,7 @@ pimcore.element.tag.tree = Class.create({
                 region: "center",
                 autoScroll: true,
                 animate: false,
-                tbar: tbarItems,
+                tbar: [this.filterField, this.filterButton],
                 viewConfig: {
                     plugins: treePlugins,
                     listeners: {
