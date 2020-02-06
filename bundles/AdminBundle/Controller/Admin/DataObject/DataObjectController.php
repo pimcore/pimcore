@@ -416,7 +416,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
             $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();

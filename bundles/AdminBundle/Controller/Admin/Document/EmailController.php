@@ -53,7 +53,7 @@ class EmailController extends DocumentControllerBase
         $email = $this->getLatestVersion($email);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
-        $email->setVersions(array_splice($versions, 0, 1));
+        $email->setVersions(array_splice($versions, -1, 1));
         $email->idPath = Element\Service::getIdPath($email);
         $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
