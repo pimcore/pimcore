@@ -447,6 +447,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
 
@@ -745,5 +746,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @return int
+     */
+    public function getObjectId(): int
+    {
+        return $this->objectId;
     }
 }

@@ -529,8 +529,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      * @param string $lineBreak
      *
@@ -592,9 +592,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  string $value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return string
      *
@@ -651,7 +651,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -733,9 +733,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @abstract
-     *
-     * @param DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -757,7 +755,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param string $importValue
-     * @param null|DataObject\Concrete $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

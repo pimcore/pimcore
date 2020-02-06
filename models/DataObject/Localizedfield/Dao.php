@@ -362,8 +362,7 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         } else {
                             Logger::debug(
-                                'Excluding untouchable query value for object [ '.$this->model->getId(
-                                )." ]  key [ $key ] because it has not been loaded"
+                                'Excluding untouchable query value for object [ '.$this->model->getObjectId() ." ]  key [ $key ] because it has not been loaded"
                             );
                         }
                     }
