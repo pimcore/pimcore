@@ -22,7 +22,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
-class Config
+class Config implements \ArrayAccess
 {
     /**
      * @var array
@@ -38,6 +38,64 @@ class Config
      * @var EnvironmentConfigInterface
      */
     private static $environmentConfig;
+
+
+    protected static $systemConfig = null;
+
+    /**
+     * @see    ArrayAccess::offsetExists()
+     *
+     * @param  mixed $offset
+     *
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return isset(static::$systemConfig[$offset]);
+    }
+
+    /**
+     * @see    ArrayAccess::offsetSet()
+     *
+     * @param  mixed $offset
+     * @param  mixed $value
+     *
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            static::$systemConfig[] = $value;
+        } else {
+            static::$systemConfig[$offset] = $value;
+        }
+    }
+
+    /**
+     * @see    ArrayAccess::offsetUnset()
+     *
+     * @param  mixed $offset
+     *
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset(static::$systemConfig[$offset]);
+    }
+
+    /**
+     * @param string $offset
+     *
+     * @return string
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            return self::getSystemConfiguration($offset);
+        }
+
+        return null;
+    }
 
     /**
      * @param string $name - name of configuration file. slash is allowed for subdirectories.
@@ -92,18 +150,23 @@ class Config
     /**
      * @internal
      *
+     * @param null|mixed $offset
+     *
      * @return null|array
      */
-    public static function getSystemConfiguration()
+    public static function getSystemConfiguration($offset = null)
     {
-        $config = null;
-        if ($container = \Pimcore::getContainer()) {
+        if (null === static::$systemConfig && $container = \Pimcore::getContainer()) {
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
-            $config = array_merge_recursive($config, $adminConfig);
+            static::$systemConfig = array_merge_recursive($config, $adminConfig);
         }
 
-        return $config;
+        if (null !== $offset) {
+            return static::$systemConfig[$offset] ?? null;
+        }
+
+        return static::$systemConfig;
     }
 
     /**
@@ -436,33 +499,8 @@ class Config
         return $systemConfig;
     }
 
-
     /**
-     * @param null $key
-     * @param null $default
-     *
-     * @return mixed|null
-     * @throws \Exception
-     */
-    public function getPimcoreConfig($key = null, $default = null)
-    {
-        $config = null;
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config');
-        } else if ($config = self::getSystemConfiguration()) {
-            self::setPimcoreConfig($config);
-        }
-
-        if (null !== $key) {
-            return $config[$key] ?? $default;
-        }
-
-        return $config;
-    }
-
-    /**
-     * @deprecated call getPimcoreConfig() from Pimcore\Config service instead
+     * @deprecated use Pimcore\Config service instead
      * @return mixed|null|\Pimcore\Config\Config
      *
      * @throws \Exception
@@ -475,7 +513,7 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system')) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
-            if ($config = self::getPimcoreConfig()) {
+            if ($config = self::getSystemConfiguration()) {
                 $container = \Pimcore::getContainer();
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
