@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\FactoryInterface;
 
@@ -42,14 +43,15 @@ class Filename extends AbstractResolver
         $overwrite = (bool)$config->resolverSettings->overwrite;
         $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
         $prefix = (string)$config->resolverSettings->prefix;
+        $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $parent = AbstractObject::getById($parentId);
         if (!$parent) {
-            throw new \Exception('parent not found');
+            throw new ImportErrorException('parent not found');
         }
 
         if (!$parent->isAllowed('create')) {
-            throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
+            throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
         if ($overwrite) {
@@ -66,10 +68,10 @@ class Filename extends AbstractResolver
         $object = null;
 
         if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
-            throw new \Exception('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+            throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
         }
 
-        if ($overwrite) {
+        if ($overwrite && !$service) {
             $object = DataObject::getByPath($intendedPath);
             if (!$object instanceof Concrete) {
                 //create new object
@@ -91,12 +93,28 @@ class Filename extends AbstractResolver
                 $object->setParent($parent);
                 $object->setKey($objectKey);
             }
+        } elseif($overwrite && $service){
+            $object = DataObject::getByPath($intendedPath);
+
+            $object = $service->populate($config, $object, $rowData, [
+                'override' => $overwrite
+            ]);
         } else {
-            $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+            if ($service instanceof ImportDataServiceInterface) {
+                $object = $service->populate($config, null, $rowData, [
+                    'parentId'     => $parentId,
+                    'prefix'       => $prefix,
+                    'intendedPath' => $intendedPath,
+                    'parent'       => $parent,
+                    'classname'    => $className,
+                ]);
+            } else {
+                $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+            }
         }
 
         if (!$object) {
-            throw new \Exception('failed to resolve object key ' . $objectKey);
+            throw new ImportErrorException('failed to resolve object key ' . $objectKey);
         }
 
         $this->setObjectType($config, $object, $rowData);

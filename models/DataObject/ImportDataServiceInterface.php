@@ -23,12 +23,12 @@ interface ImportDataServiceInterface
 {
     /**
      *
-     * @param stdClass $config
+     * @param stdClass $resolverConfig
      * @param Concrete $object
      * @param array $rowData
-     * @param bool $skip
+     * @param array $params
      *
      * @return Concrete
      */
-    public function setObjectType($config, $object, $rowData, $skip = false);
+    public function populate($resolverConfig, $object, $rowData, $params = []);
 }

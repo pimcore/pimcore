@@ -313,8 +313,15 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 {
                     xtype: "checkbox",
                     name: "skipIfExists",
-                    fieldLabel: t("skipIfExists"),
+                    fieldLabel: t("skip_if_exists"),
                     value: this.config.resolverSettings.skipIfExists
+                },
+                {
+                    xtype: "textfield",
+                    name: "phpClassOrService",
+                    fieldLabel: t("php_class_or_service"),
+                    width: 800,
+                    value: this.config.resolverSettings.phpClassOrService
                 }
             ]
         );
@@ -347,8 +354,15 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 {
                     xtype: "checkbox",
                     name: "skipIfExists",
-                    fieldLabel: t("skipIfExists"),
+                    fieldLabel: t("skip_if_exists"),
                     value: this.config.resolverSettings.skipIfExists
+                },
+                {
+                    xtype: "textfield",
+                    name: "phpClassOrService",
+                    fieldLabel: t("php_class_or_service"),
+                    width: 800,
+                    value: this.config.resolverSettings.phpClassOrService
                 }
             ]
         );
@@ -368,13 +382,19 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             {
                 xtype: "checkbox",
                 name: "skipIfExists",
-                fieldLabel: t("skipIfExists"),
+                fieldLabel: t("skip_if_exists"),
                 value: this.config.resolverSettings.skipIfExists
+            },
+            {
+                xtype: "checkbox",
+                name: "createOnDemand",
+                fieldLabel: t("create_on_demand"),
+                value: this.config.resolverSettings.createOnDemand
             },
             {
                 xtype: "textfield",
                 name: "phpClassOrService",
-                fieldLabel: t("phpClassOrService"),
+                fieldLabel: t("php_class_or_service"),
                 width: 800,
                 value: this.config.resolverSettings.phpClassOrService
             }

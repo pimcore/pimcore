@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
+use \Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
 
 class GetBy extends AbstractResolver
@@ -42,7 +43,7 @@ class GetBy extends AbstractResolver
      * GetBy constructor.
      *
      * @param FactoryInterface $modelFactory
-     * @param ClassResolver $classResolver
+     * @param ImportClassResolver $classResolver
      */
     public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
     {
@@ -63,6 +64,9 @@ class GetBy extends AbstractResolver
     {
         $attribute = (string)$config->resolverSettings->attribute;
         $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
+        $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
+
+        $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         if (!$attribute) {
             throw new \InvalidArgumentException('Attribute is not set');
@@ -90,26 +94,41 @@ class GetBy extends AbstractResolver
             if ($object) {
                 $parent = $object->getParent();
                 if (!$parent->isAllowed('create')) {
-                    throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
+                    throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
                 }
             }
 
-            $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
-
             if ($skipIfExists && $object && !($service instanceof ImportDataServiceInterface)) {
-                throw new \Exception('skipped row where '. $attribute . ' = ' . $cellData . ' ( existing object-id:' . $object->getId() . ' )');
+                throw new ImportWarningException('skipped row where '. $attribute . ' = ' . $cellData . ' ( existing object-id:' . $object->getId() . ' )');
             }
 
             if ($service instanceof ImportDataServiceInterface) {
-                $service->setObjectType($config, $object, $rowData, $skipIfExists);
-                $object->setParentId($parentId);
+                $object = $service->populate($config, $object, $rowData, ['parentId' => $parentId]);
             } else {
                 $this->setObjectType($config, $object, $rowData);
             }
 
             return $object;
+        } elseif ($createOnDemand) {
+
+            if ($service instanceof ImportDataServiceInterface) {
+                $object = $service->populate($config, null, $rowData,  ['parentId' => $parentId]);
+            } else {
+                $classId = $config->classId;
+                $classDefinition = ClassDefinition::getById($classId);
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+
+                $object = $this->modelFactory->build($className);
+                $object->setKey(Service::getValidKey($cellData, 'object'));
+                $object->setParent($parentId);
+                $object->setPublished(1);
+
+                $object = $this->setObjectType($config, $object, $rowData);
+            }
+
+            return $object;
         }
 
-        throw new \Exception('failed to resolve object where ' . $attribute . ' = ' . $cellData);
+        throw new ImportErrorException('failed to resolve object where ' . $attribute . ' = ' . $cellData);
     }
 }

@@ -743,6 +743,8 @@
   "import_errors": "Some errors occurred. Check the import report!",
   "import_is_done": "Import is done",
   "import_file_prefix": "Prefix for new files",
+  "skip_if_exists": "Skip row if exists",
+  "php_class_or_service": "Class or service name",
   "create_parents": "Create parents",
   "fullpath": "Full Path",
   "create_on_demand": "Create on demand",
