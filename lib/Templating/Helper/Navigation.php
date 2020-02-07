@@ -98,14 +98,13 @@ class Navigation extends Helper
 
     /**
      * Builds a navigation container by passing params
-     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth'
+     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth', 'active'
      *
-     * @param Document $activeDocument
      * @param array $params
      * @return Container
      * @throws \Exception
      */
-    public function build(Document $activeDocument, array $params): Container
+    public function build(array $params): Container
     {
         $optionsResolver = new OptionsResolver();
         $optionsResolver->setDefaults([
@@ -114,12 +113,13 @@ class Navigation extends Helper
            'pageCallback' => null,
            'cache' => true,
            'maxDepth' => null,
+           'active' => null,
         ]);
 
         $options = $optionsResolver->resolve($params);
 
         return $this->builder->getNavigation(
-            $activeDocument,
+            $options['active'],
             $options['root'],
             $options['htmlMenuPrefix'],
             $options['pageCallback'],

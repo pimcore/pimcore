@@ -57,7 +57,7 @@ class Builder
     }
 
     /**
-     * @param Document $activeDocument
+     * @param Document|null $activeDocument
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuIdPrefix
      * @param \Closure|null $pageCallback
@@ -68,7 +68,7 @@ class Builder
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null)
+    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null)
     {
         $cacheEnabled = $cache !== false;
 
@@ -128,14 +128,16 @@ class Builder
             $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
         }
 
-        if (empty($activePages)) {
-            // use the provided pimcore document
-            $activePages = $navigation->findAllBy('realFullPath', $activeDocument->getRealFullPath());
-        }
+        if($activeDocument instanceof Document) {
+            if (empty($activePages)) {
+                // use the provided pimcore document
+                $activePages = $navigation->findAllBy('realFullPath', $activeDocument->getRealFullPath());
+            }
 
-        if (empty($activePages)) {
-            // find by link target
-            $activePages = $navigation->findAllBy('uri', $activeDocument->getFullPath());
+            if (empty($activePages)) {
+                // find by link target
+                $activePages = $navigation->findAllBy('uri', $activeDocument->getFullPath());
+            }
         }
 
         // cleanup active pages from links
@@ -163,14 +165,17 @@ class Builder
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
-                if ($page->getUri() && strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
-                    $activeTrail = true;
-                }
+                if($activeDocument instanceof Document) {
+                    if ($page->getUri() && strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
+                        $activeTrail = true;
+                    }
 
-                if ($page instanceof DocumentPage) {
-                    if ($page->getDocumentType() == 'link') {
-                        if ($page->getUri() && strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0) {
-                            $activeTrail = true;
+                    if ($page instanceof DocumentPage) {
+                        if ($page->getDocumentType() == 'link') {
+                            if ($page->getUri() && strpos($activeDocument->getFullPath(),
+                                    $page->getUri() . '/') === 0) {
+                                $activeTrail = true;
+                            }
                         }
                     }
                 }

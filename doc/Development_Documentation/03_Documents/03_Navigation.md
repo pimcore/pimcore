@@ -5,7 +5,7 @@
 Pimcore comes with a standard navigation implementation in the form of a templating helper (`$this->navigation()`). 
 It builds a navigation container based on the existing document structure. The process of rendering is divided into 2 steps:
 
-1. Build the navigation: `$nav = $this->navigation()->build($activeDocument, ['root' => $navigationRootDocument])`
+1. Build the navigation: `$nav = $this->navigation()->build(['active' => $activeDocument, 'root' => $navigationRootDocument])`
 2. Render the navigation: `$this->navigation()->render($nav)` or `$this->navigation()->getRenderer('menu')->render($nav)`
 
 > The building step does not necessarily need to happen in the view script. In fact the view helper just forwards the
@@ -31,7 +31,7 @@ if(!$mainNavStartNode instanceof \Pimcore\Model\Document\Page) {
 }
 
 // this returns us the navigation container we can use to render the navigation
-$mainNavigation = $this->navigation()->build($document, ['root' => $mainNavStartNode]);
+$mainNavigation = $this->navigation()->build(['active' => $document, 'root' => $mainNavStartNode]);
 
 // later you can render the navigation
 echo $this->navigation()->render($mainNavigation);
@@ -49,7 +49,8 @@ echo $this->navigation()->render($mainNavigation);
     {% set navStartNode = pimcore_document(1) %}
 {% endif %}
 
-{% set mainNavigation = pimcore_build_nav(document, {
+{% set mainNavigation = pimcore_build_nav({
+    active: document,
     root: navStartNode
 }) %}
 
@@ -171,7 +172,7 @@ Having set up the navigation container as shown above, you can easily use it to 
 ```php
 <div class="my-sidebar-menu">
     <?php
-    $sideNav = $this->navigation()->build($this->document, ['root' => $navStartNode, 'htmlMenuPrefix' => 'my-nav-']);
+    $sideNav = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode, 'htmlMenuPrefix' => 'my-nav-']);
 
     echo $this->navigation()->menu()->renderMenu($sideNav, [
         'ulClass' => 'nav my-sidenav',
@@ -285,7 +286,7 @@ if(!$navStartNode instanceof Document\Page) {
     }
 }
 
-$navigation = $this->navigation()->build($this->document, ['root' => $navStartNode]);
+$navigation = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode]);
 echo $this->navigation()->menu()->renderMenu($navigation, [
     "maxDepth" => 1,
     "ulClass" => "nav navbar-nav"
@@ -309,7 +310,7 @@ if(!$navStartNode instanceof Document\Page) {
     }
 }
 
-$mainNavigation = $this->navigation()->build($this->document, ['root' => $navStartNode]);
+$mainNavigation = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode]);
 
 /** @var \Pimcore\Navigation\Renderer\Menu $menuRenderer */
 $menuRenderer = $this->navigation()->menu();
@@ -364,7 +365,8 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-$navigation = $this->navigation()->build($this->document, [
+$navigation = $this->navigation()->build([
+    'active' => $this->document,
     'root' => $navStartNode, 
     'pageCallback' => function($page, $document) {
         /** @var \Pimcore\Model\Document $document */
@@ -413,7 +415,8 @@ For that we've introduced a new parameter for the navigation view helper, which 
 
 ```php
 <?php
-$mainNavigation = $this->navigation()->build($this->document, [
+$mainNavigation = $this->navigation()->build([
+    'active' => $this->document,
     'root' => $mainNavStartNode, 
     'pageCallback' => function ($page, $document) {
         $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
@@ -450,7 +453,7 @@ Using this method will dramatically improve the performance of your navigation.
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
 ```php
-$this->navigation()->build($this->document, ['root' => $mainNavStartNode, 'cache' => 'yourindividualkey']);
+$this->navigation()->build(['active' => $this->document, 'root' => $mainNavStartNode, 'cache' => 'yourindividualkey']);
 ```
 
 ### Disabling the Navigation Cache
@@ -458,7 +461,7 @@ $this->navigation()->build($this->document, ['root' => $mainNavStartNode, 'cache
 You can disable the navigation cache by setting the 5th argument to `false`.
 
 ```php
-$this->navigation()->build($this->document, ['root' => $mainNavStartNode, 'cache' => false]);
+$this->navigation()->build(['active' => $this->document, 'root' => $mainNavStartNode, 'cache' => false]);
 ```
 
 ## FAQ
