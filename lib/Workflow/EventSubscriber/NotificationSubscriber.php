@@ -91,11 +91,9 @@ class NotificationSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /**
-         * @var AbstractElement $subject
-         * @var Transition $transition
-         */
+        /** @var AbstractElement $subject */
         $subject = $event->getSubject();
+        /** @var Transition $transition */
         $transition = $event->getTransition();
         $workflow = $this->workflowManager->getWorkflowByName($event->getWorkflowName());
 

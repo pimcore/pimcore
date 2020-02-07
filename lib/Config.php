@@ -622,7 +622,7 @@ class Config
                 'treeContextMenu' => [
                     'document' => [
                         'items' => [
-                            'addPrintPage' => self::getWeb2PrintConfig()->enableInDefaultView ? true : false // hide add print documents by default
+                            'addPrintPage' => self::getWeb2PrintConfig()->get('enableInDefaultView') ? true : false // hide add print documents by default
                         ]
                     ]
                 ]

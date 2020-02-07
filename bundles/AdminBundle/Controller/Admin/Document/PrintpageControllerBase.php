@@ -130,7 +130,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 //check, if to cleanup existing elements of document
                 $config = Config::getWeb2PrintConfig();
-                if ($config->generalDocumentSaveMode == 'cleanup') {
+                if ($config->get('generalDocumentSaveMode') == 'cleanup') {
                     $page->setElements([]);
                 }
 

@@ -32,6 +32,7 @@ use Pimcore\Model\Element;
  * @method array|null getPermissions($type, $user, $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
+ * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $user = null)
  */
 class AbstractObject extends Model\Element\AbstractElement
 {

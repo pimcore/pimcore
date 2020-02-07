@@ -1039,8 +1039,8 @@ class QueryBuilder
             throw new \Exception('You can only perform a joinUsing after specifying a FROM table');
         }
 
-        $join = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]), true);
-        $from = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($name), true);
+        $join = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]));
+        $from = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($name));
 
         $joinCond = [];
         foreach ((array)$cond as $fieldName) {
@@ -1203,7 +1203,7 @@ class QueryBuilder
             return null;
         }
 
-        return $this->_adapter->quoteIdentifier($schema, true) . '.';
+        return $this->_adapter->quoteIdentifier($schema) . '.';
     }
 
     /**
@@ -1216,7 +1216,7 @@ class QueryBuilder
      */
     protected function _getQuotedTable($tableName, $correlationName = null)
     {
-        return $this->_adapter->quoteTableAs($tableName, $correlationName, true);
+        return $this->_adapter->quoteTableAs($tableName, $correlationName);
     }
 
     /**
@@ -1252,16 +1252,16 @@ class QueryBuilder
         foreach ($this->_parts[self::COLUMNS] as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
             if ($column instanceof Expression) {
-                $columns[] = $this->_adapter->quoteColumnAs($column, $alias, true);
+                $columns[] = $this->_adapter->quoteColumnAs($column, $alias);
             } else {
                 if ($column == self::SQL_WILDCARD) {
                     $column = new Expression(self::SQL_WILDCARD);
                     $alias = null;
                 }
                 if (empty($correlationName)) {
-                    $columns[] = $this->_adapter->quoteColumnAs($column, $alias, true);
+                    $columns[] = $this->_adapter->quoteColumnAs($column, $alias);
                 } else {
-                    $columns[] = $this->_adapter->quoteColumnAs([$correlationName, $column], $alias, true);
+                    $columns[] = $this->_adapter->quoteColumnAs([$correlationName, $column], $alias);
                 }
             }
         }
@@ -1372,7 +1372,7 @@ class QueryBuilder
         if ($this->_parts[self::FROM] && $this->_parts[self::GROUP]) {
             $group = [];
             foreach ($this->_parts[self::GROUP] as $term) {
-                $group[] = $this->_adapter->quoteIdentifier($term, true);
+                $group[] = $this->_adapter->quoteIdentifier($term);
             }
             $sql .= ' ' . self::SQL_GROUP_BY . ' ' . implode(",\n\t", $group);
         }
@@ -1412,12 +1412,12 @@ class QueryBuilder
                     if (is_numeric($term[0]) && strval(intval($term[0])) == $term[0]) {
                         $order[] = (int)trim($term[0]) . ' ' . $term[1];
                     } else {
-                        $order[] = $this->_adapter->quoteIdentifier($term[0], true) . ' ' . $term[1];
+                        $order[] = $this->_adapter->quoteIdentifier($term[0]) . ' ' . $term[1];
                     }
                 } elseif (is_numeric($term) && strval(intval($term)) == $term) {
                     $order[] = (int)trim($term);
                 } else {
-                    $order[] = $this->_adapter->quoteIdentifier($term, true);
+                    $order[] = $this->_adapter->quoteIdentifier($term);
                 }
             }
             $sql .= ' ' . self::SQL_ORDER_BY . ' ' . implode(', ', $order);

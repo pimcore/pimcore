@@ -237,9 +237,9 @@ class FrontendRoutingListener implements EventSubscriberInterface
     {
         $hostRedirect = null;
 
-        $gc = $config->general;
+        $gc = $config->get('general');
         if ($gc->redirect_to_maindomain && $gc->domain && $gc->domain !== $request->getHost()) {
-            $hostRedirect = $config->general->domain;
+            $hostRedirect = $config->get('general')->domain;
         }
 
         return $hostRedirect;
