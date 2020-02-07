@@ -182,17 +182,6 @@ class Config implements \ArrayAccess
 
     /**
      * @internal
-     * @static
-     *
-     * @param $config
-     */
-    public static function setPimcoreConfig($config)
-    {
-        \Pimcore\Cache\Runtime::set('pimcore_config', $config);
-    }
-
-    /**
-     * @internal
      *
      * @param string|null $languange
      *
