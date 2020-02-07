@@ -58,7 +58,7 @@ class NavigationExtension extends AbstractExtension
      * view and just call render through the extension.
      *
      * @param Document $activeDocument
-     * @param Document|null $navigationRootDocument
+     * @param mixed $params
      * @param string|null $htmlMenuPrefix
      * @param bool|string $cache
      *
@@ -66,17 +66,24 @@ class NavigationExtension extends AbstractExtension
      */
     public function buildNavigation(
         Document $activeDocument,
-        Document $navigationRootDocument = null,
+        $params = null,
         string $htmlMenuPrefix = null,
         $cache = true
     ): Container {
-        return $this->navigationHelper->buildNavigation(
-            $activeDocument,
-            $navigationRootDocument,
-            $htmlMenuPrefix,
-            null,
-            $cache
-        );
+
+        if(is_array($params)) {
+            // using param configuration
+            return $this->navigationHelper->build($activeDocument, $params);
+        } else {
+            // using deprecated argument configuration ($params = navigation root document)
+            return $this->navigationHelper->buildNavigation(
+                $activeDocument,
+                $params,
+                $htmlMenuPrefix,
+                null,
+                $cache
+            );
+        }
     }
 
     /**

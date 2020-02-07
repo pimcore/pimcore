@@ -39,6 +39,11 @@ class Builder
     protected $pageClass = DocumentPage::class;
 
     /**
+     * @var int
+     */
+    private $currentLevel = 0;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
@@ -57,12 +62,13 @@ class Builder
      * @param string|null $htmlMenuIdPrefix
      * @param \Closure|null $pageCallback
      * @param bool|string $cache
+     * @param int|null $maxDepth
      *
      * @return mixed|\Pimcore\Navigation\Container
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
+    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null)
     {
         $cacheEnabled = $cache !== false;
 
@@ -88,6 +94,10 @@ class Builder
             $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
         }
 
+        if($maxDepth) {
+            $cacheKeys[] = 'maxDepth_' . $maxDepth;
+        }
+
         $cacheKey = 'nav_' . md5(serialize($cacheKeys));
         $navigation = CacheManager::load($cacheKey);
 
@@ -95,7 +105,8 @@ class Builder
             $navigation = new \Pimcore\Navigation\Container();
 
             if ($navigationRootDocument->hasChildren()) {
-                $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback);
+                $this->currentLevel = 0;
+                $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback, [], $maxDepth);
                 $navigation->addPages($rootPage);
             }
 
@@ -177,6 +188,7 @@ class Builder
     /**
      * @param Page $page
      * @param bool $isActive
+     * @throws \Exception
      */
     protected function addActiveCssClasses(Page $page, $isActive = false)
     {
@@ -243,11 +255,15 @@ class Builder
      * @param Document $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback
+     * @param array $parents
+     * @param int|null $maxDepth
      *
      * @return array
+     * @throws \Exception
      */
-    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [])
+    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [], $maxDepth = null)
     {
+        $this->currentLevel++;
         $pages = [];
         $childs = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
@@ -304,7 +320,7 @@ class Builder
 
                 $page->setClass($page->getClass() . $classes);
 
-                if ($child->hasChildren()) {
+                if ($child->hasChildren() && (!$maxDepth || $maxDepth > $this->currentLevel)) {
                     $childPages = $this->buildNextLevel($child, false, $pageCallback, $parents);
                     $page->setPages($childPages);
                 }
@@ -316,6 +332,8 @@ class Builder
                 $pages[] = $page;
             }
         }
+
+        $this->currentLevel--;
 
         return $pages;
     }
