@@ -125,6 +125,12 @@ class GridHelperService
                     $brickType = $keyParts[0];
                     $brickKey = $keyParts[1];
 
+                    if (strpos($brickType, '?') !== false) {
+                        $brickDescriptor = substr($brickType, 1);
+                        $brickDescriptor = json_decode($brickDescriptor, true);
+                        $brickType = $brickDescriptor['containerKey'];
+                    }
+
                     $brickDef = Objectbrick\Definition::getByKey($brickType);
                     if ($slugFd = $brickDef->getFieldDefinition($brickKey) instanceof ClassDefinition\Data\UrlSlug) {
                         $slugKey = $brickKey;
@@ -235,14 +241,14 @@ class GridHelperService
                         $brickType = $keyParts[0];
                         $brickKey = $keyParts[1];
 
-                        $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
-                        $field = $class->getFieldDefinition($key);
-
                         if (strpos($brickType, '?') !== false) {
                             $brickDescriptor = substr($brickType, 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
                             $brickType = $brickDescriptor['containerKey'];
                         }
+
+                        $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
+                        $field = $class->getFieldDefinition($key);
 
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
@@ -259,6 +265,12 @@ class GridHelperService
                 }
                 if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
                     // custom field
+                    if ($brickDescriptor) {
+                        $brickFilterField = $brickDescriptor['fieldname'];
+                    } else {
+                        $brickFilterField = $filterField;
+                    }
+
                     $db = \Pimcore\Db::get();
                     $brickPrefix = '';
 
@@ -284,14 +296,16 @@ class GridHelperService
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
+                            $brickCondition = '(' . $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
                                     ['brickType' => $brickType]
-                                );
+                                ) . " AND fieldname = " . $db->quote($brickFilterField) . ')';
+                            $fieldConditions[] = $brickCondition;
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
-                        $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
-                                ['brickType' => $brickType]);
+                        $brickCondition = '(' . $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
+                                ['brickType' => $brickType]) . " AND fieldname = " . $db->quote($brickFilterField) . ')';
+                        $conditionPartsFilters[] = $brickCondition;
                     }
                 } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
                     $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);
