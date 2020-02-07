@@ -166,7 +166,8 @@ class Dao extends Model\Dao\AbstractDao
                                 && $container instanceof DataObject\Fieldcollection\Definition
                                 && !$container instanceof DataObject\Objectbrick\Definition
                             )
-                            || ((!$container instanceof DataObject\Fieldcollection\Definition && $this->model->isLanguageDirty($language))
+                            || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
+                                    && $this->model->isLanguageDirty($language))
                                 || $params['saveRelationalData']['saveLocalizedRelations'])) {
                             $fd->save($this->model, $childParams);
                         }
