@@ -42,6 +42,7 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $progressBar = new ProgressBar($output, 50);
         if (!($tenant = $input->getOption('tenant'))) {
             throw new \Exception('No tenant given');
         }

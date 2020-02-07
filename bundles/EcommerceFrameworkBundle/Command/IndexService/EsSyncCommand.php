@@ -16,29 +16,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
-use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\Asset;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class EsSyncCommand extends AbstractIndexServiceCommand
 {
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger = null)
-    {
-        $this->logger = $logger;
-        parent::__construct();
-    }
+    const DEFAULT_ES_SYNONYM_CONFIG_DIR = '/etc/elasticsearch/pimcore_configs/';
 
     /**
      * @inheritDoc
@@ -49,17 +36,29 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         $this
             ->setName('ecommerce:indexservice:elasticsearch-sync')
             ->setDescription(
-                'Reindexes elastic search indices based on the ES native reindexing API.'.
-                    'This is particulary useful when index mappings change, or the synonym lexica has been updated.'
+                'Refresh elastic search (ES) index settings, mappings and synonyms based on native API.'
+            )
+            ->addArgument('mode', InputArgument::REQUIRED,
+                    'reindex: Reindexes ES indices based on the their native reindexing API.'.
+                        'This is particularly useful when index mappings change while development, 
+                        or when synonym settings / mappings have been updated.'.PHP_EOL.
+
+                    'refresh-synonyms: Activate changes in synonym files, by closing and reopening the ES index.'
             )
             ->addOption('tenant', null, InputOption::VALUE_OPTIONAL,
-                'If a tenant is provided, then a testindex will be built for it. Example: AT_de_elastic'
+                'If a tenant name is provided (e.g. assortment_de), then only that specific tenant will be synced. '.
+                'Otherwise all tenants will be synced.'
             )
-            ->addOption('only-copy-synonyms', null, InputOption::VALUE_OPTIONAL,
-                'Skip rebuilding index, just copy synonym files.'
+            ->addOption('synonymAssetSourceFolder', null, InputOption::VALUE_OPTIONAL,
+                'If set, then in mode "refresh-synonyms", all of the files that are part of that asset folder,
+                will be copied to a dedicated ES configuration directory, from where the synonyms can be used within your search indices. '.PHP_EOL.
+                'Example: /System/Synonyms (=asset folder)'.PHP_EOL.
+                'See https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-synonym-tokenfilter.html.'
             )
-            ->addOption('force-reindexing', null, InputOption::VALUE_OPTIONAL,
-                'If "true", then index rebuilt will be forced.'
+            ->addOption('synonymTargetFolder', null, InputOption::VALUE_OPTIONAL,
+                'Absolute server path. If set, then in mode "refresh-synonyms" the content of the (Pimcore) synonym files will be copied to '.
+                'that directory, which must reside within the Elastic search installation.'.
+                'Default: '.self::DEFAULT_ES_SYNONYM_CONFIG_DIR.'.'
             )
         ;
     }
@@ -69,56 +68,74 @@ class EsSyncCommand extends AbstractIndexServiceCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $mode = $input->getArgument('mode');
         $tenantName = $input->getOption('tenant');
-        $onlyCopy = filter_var($input->getOption("only-copy-synonyms"), FILTER_VALIDATE_BOOLEAN);
-        $forceReindexing = filter_var($input->getOption("force-reindexing"), FILTER_VALIDATE_BOOLEAN);
-    }
-
-    private function reindex(string $tenantName = null, bool $forceReindexing)
-    {
 
         $indexService = Factory::getInstance()->getIndexService();
-        $tenantList = $this->tenantName ? [$this->tenantName] : $indexService->getTenants();
+        $tenantList = $tenantName ? [$tenantName] : $indexService->getTenants();
+
+        $bar = new ProgressBar($output, count($tenantList));
 
         foreach ($tenantList as $tenantName) {
 
             $elasticWorker = $indexService->getTenantWorker($tenantName); //e.g., 'AT_de_elastic'
 
             if (!$elasticWorker instanceof AbstractElasticSearch) {
-                $this->getLogger()->info("Skipping tenant [{$tenantName}] as it's not an elasticsearch tenant.");
+                $output->writeln("<info>Skipping tenant \"{$tenantName}\" as it's not an elasticsearch tenant.</info>");
                 continue;
             }
 
+            $output->writeln("<info>Process tenant \"{$tenantName}\" (mode \"{$mode}\")...</info>");
 
-            /*
-            $tenantNameWithoutElastic = str_replace('_elastic', '', $tenantName);
-            $syonynmFileName = sprintf('/System/Webshop/Search/synonyms_%s.txt', $tenantNameWithoutElastic);
-
-            $synonymAsset = \Pimcore\Model\Asset::getByPath($syonynmFileName);
-            if (!$synonymAsset) {
-                throw new ErrorException(sprintf('Synonym file "%s" does not exist.', $syonynmFileName));
-            }
-            */
-
-
-            if ($forceReindexing || $synonymAsset->getMetadata(self::ASSET_SYNCED_PROPERTY_NAME) === true) {
-
+            if ('reindex' == $mode) {
                 //update syonyms by performaing a native index rebuild
                 //will interrupt current queue processing.
                 $elasticWorker->performNativeReindexing();
 
-                $this->getLogger()->info(sprintf('Created and rebuild test index for tenant "%s".', $tenantName));
+            } elseif ('refresh-synonyms' == $mode) {
 
-                //find asset and update state...
-                AbstractListener::disableEventListeners([SynonymAssetListener::class]);
+                $synonymAssetSourceFolderPath = $input->getOption('synonymAssetSourceFolder');
+                $synonymTargetFolderPath = $input->getOption('synonymTargetFolder') ? : self::DEFAULT_ES_SYNONYM_CONFIG_DIR;
 
-                $synonymAsset->setProperty(self::ASSET_SYNCED_PROPERTY_NAME, 'bool', true);
-                $synonymAsset->save(['versionNote' => 'Saved in ' . self::class]);
+                if ($synonymAssetSourceFolderPath) {
 
-            } else {
-                $this->getLogger()->info(sprintf('Did not reindex for tenant "%s", as synonym file did not change.', $tenantName));
+                    $synonymAssetSourceFolder  = Asset::getByPath($synonymAssetSourceFolderPath);
+                    if (!($synonymAssetSourceFolder instanceof Asset\Folder)) {
+                        throw new \Exception(
+                            "Synonym assset source folder \"{$synonymAssetSourceFolderPath}\" does not exist or is not a folder."
+                        );
+                    }
+
+                    if (!is_dir($synonymTargetFolderPath)) {
+                        throw new \Exception(
+                            "The synonym target folder does not exist: \"{$synonymTargetFolderPath}\""
+                        );
+                    }
+
+                    if (!is_writable($synonymTargetFolderPath)) {
+                        throw new \Exception(
+                            "The synonym target folder \"{$synonymTargetFolderPath}\" is not writable."
+                        );
+                    }
+
+                    foreach ($synonymAssetSourceFolder->getChildren() as $synonymFile) {
+                        if ($synonymFile instanceof Asset\Folder) {
+                            $output->writeln("<error>Skip folder \"{$synonymFile}\".</error>");
+                        } else {
+                            $sourcePath = PIMCORE_PUBLIC_VAR.'/assets'.$synonymFile->getFullPath();
+                            $targetPath = $synonymTargetFolderPath.$synonymFile->getFullPath();
+                            $output->writeln("<info>Copy \"{$sourcePath}\" to \"{$targetPath}\".</info>");
+                            copy($sourcePath, $synonymTargetFolderPath);
+                        }
+                    }
+                }
+
+                $elasticWorker->refreshSynonymsInIndex();
             }
 
+            $bar->advance(1);
         }
+
+        $bar->finish();
     }
 }

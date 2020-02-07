@@ -916,6 +916,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
+    /**
+     * Perform a native reindexing via the ES reindexing API.
+     * This is typically much faster than reindexing single records.
+     * @throws \Exception
+     */
     public function performNativeReindexing() {
         $hasReindexIndexingModeCompleted = false;
         Lock::lock(self::REINDEXING_LOCK_KEY);
@@ -944,5 +949,17 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if ($hasReindexIndexingModeCompleted) {
             //continue with rebuild, or reset queue...
         }
+    }
+
+    /**
+     * Refresh the index if a synonym file has been edited by closing and reopening
+     * the index. See https://www.elastic.co/guide/en/elasticsearch/reference/6.8/indices-open-close.html
+     * for details.
+     */
+    public function refreshSynonymsInIndex() {
+        $aliasName = $this->indexName;
+        $client = $this->getElasticSearchClient();
+        $client->indices()->close(['index' => $aliasName]);
+        $client->indices()->open(['index' => $aliasName]);
     }
 }
