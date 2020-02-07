@@ -212,11 +212,18 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
         return false;
     }
 
-    public function expandFilterOperator($operator) {
+    /**
+     * @param string $field database column to use for WHERE condition
+     * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     *
+     * @return static
+     */
+    public function filterByField($field, $operator, $data) {
         if(strpos($operator, '?') === false) {
             $operator .= ' ?';
         }
 
-        return $operator;
+        return $this->addConditionParam('`'.$field.'` '.$operator, $data);
     }
 }
