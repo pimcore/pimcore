@@ -379,7 +379,7 @@ class Service extends Model\Element\Service
                     $context['outerFieldname'] = $key;
 
                     if ($brickDescriptor) {
-                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        $innerContainer = $brickDescriptor['innerContainer'] ??  'localizedfields';
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
@@ -686,7 +686,7 @@ class Service extends Model\Element\Service
             $value = $value->$getBrickType();
             if (!empty($value) && !empty($brickKey)) {
                 if ($brickDescriptor) {
-                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                     $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
                     $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
                     /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
