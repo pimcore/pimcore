@@ -391,6 +391,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $indexAttributeData = [];
             $indexRelationData = [];
 
+            $data = $this->doPreIndexDataModification($data);
+            
             //add system and index attributes
             foreach ($data['data'] as $dataKey => $dataEntry) {
                 if (array_key_exists($dataKey, $systemAttributeKeys)) {
@@ -410,8 +412,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             foreach ($data['relations'] as $relation) {
                 $indexRelationData[$relation['fieldname']][] = $relation['dest'];
             }
-
-            $data = $this->doPreIndexDataModification($data);
 
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
