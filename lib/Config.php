@@ -119,6 +119,17 @@ class Config
 
     /**
      * @internal
+     * @static
+     *
+     * @param $config
+     */
+    public static function setPimcoreConfig($config)
+    {
+        \Pimcore\Cache\Runtime::set('pimcore_config', $config);
+    }
+
+    /**
+     * @internal
      *
      * @param string|null $languange
      *
@@ -425,7 +436,33 @@ class Config
         return $systemConfig;
     }
 
+
     /**
+     * @param null $key
+     * @param null $default
+     *
+     * @return mixed|null
+     * @throws \Exception
+     */
+    public function getPimcoreConfig($key = null, $default = null)
+    {
+        $config = null;
+
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config');
+        } else if ($config = self::getSystemConfiguration()) {
+            self::setPimcoreConfig($config);
+        }
+
+        if (null !== $key) {
+            return $config[$key] ?? $default;
+        }
+
+        return $config;
+    }
+
+    /**
+     * @deprecated call getPimcoreConfig() from Pimcore\Config service instead
      * @return mixed|null|\Pimcore\Config\Config
      *
      * @throws \Exception
@@ -438,7 +475,7 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system')) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
-            if ($config = self::getSystemConfiguration()) {
+            if ($config = self::getPimcoreConfig()) {
                 $container = \Pimcore::getContainer();
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
