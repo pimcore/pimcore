@@ -439,7 +439,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return ElementInterface
+     * @return AbstractElement|null
      */
     public static function getElementById($type, $id, $force = false)
     {
