@@ -274,8 +274,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Element\ElementInterface[]|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

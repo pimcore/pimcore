@@ -216,7 +216,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getVersionPreview
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

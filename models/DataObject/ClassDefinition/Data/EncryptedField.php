@@ -384,8 +384,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Data\EncryptedField|null $data
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

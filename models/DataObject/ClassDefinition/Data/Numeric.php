@@ -451,7 +451,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getVersionPreview
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string

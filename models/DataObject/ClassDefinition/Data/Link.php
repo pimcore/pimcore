@@ -205,8 +205,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Link|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string

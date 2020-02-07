@@ -150,7 +150,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param DataObject\Data\Geopoint[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *

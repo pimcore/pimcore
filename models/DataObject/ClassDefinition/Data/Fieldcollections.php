@@ -238,7 +238,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

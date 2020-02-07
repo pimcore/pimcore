@@ -328,8 +328,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
-     * @param null|DataObject\AbstractObject $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
