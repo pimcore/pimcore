@@ -1248,6 +1248,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setGroup($group)
     {
         $this->group = $group;
+
         return $this;
     }
 
