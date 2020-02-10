@@ -388,6 +388,12 @@ class Service
     }
 
 
+    /**
+     * @param array $useParts
+     * @param string $newTraits
+     * @return string
+     * @throws \Exception
+     */
     public static function buildUseTraits($useParts = [], string $newTraits) {
 
         if ($newTraits) {
