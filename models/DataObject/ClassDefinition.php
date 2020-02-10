@@ -25,7 +25,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -411,38 +410,19 @@ class ClassDefinition extends Model\AbstractModel
             $implementsParts[] = '\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
         }
 
-        if ($this->getImplementsInterfaces()) {
-            $customParts = $this->getImplementsInterfaces();
-            $customParts = explode(',', $customParts);
-            foreach ($customParts as $interface) {
-                $interface = trim($interface);
-                if (Tool::interfaceExists($interface)) {
-                    $customParts[]= $interface;
-                } else {
-                    throw new \Exception("interface '" . $interface . "' does not exist");
-                }
-            }
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
 
-            $implementsParts[] = $this->getImplementsInterfaces();
-        }
-
-        $implementsParts = implode(', ', $implementsParts);
-
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsParts . ' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
-        $cd .= "\n\n";
-
+        $useParts = [
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
+        ];
         if ($this->getCacheRawRelationData()) {
-            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
-            $cd .= "\n\n";
+            $useParts[] = '\Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait';
         }
 
-        if ($this->getUseTraits()) {
-            $cd .= 'use '.$this->getUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, $this->getUseTraits());
 
         $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
@@ -520,10 +500,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
 
-        if ($this->getListingUseTraits()) {
-            $cd .= 'use '.$this->getListingUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraits([], $this->getListingUseTraits());
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";

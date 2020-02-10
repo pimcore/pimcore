@@ -20,6 +20,7 @@ use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
+use Pimcore\Tool;
 
 /**
  * Class Service
@@ -359,4 +360,57 @@ class Service
 
         return false;
     }
+
+    /**
+     * @param array $implementsParts
+     * @param string $newInterfaces
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildImplementsInterfaces($implementsParts = [], string $newInterfaces) {
+
+        if ($newInterfaces) {
+            $customParts = explode(',', $newInterfaces);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $implementsParts[]= $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+        }
+
+        if ($implementsParts) {
+            return ' implements ' . implode(', ', $implementsParts);
+        }
+        return '';
+    }
+
+
+    public static function buildUseTraits($useParts = [], string $newTraits) {
+
+        if ($newTraits) {
+            $customParts = explode(',', $newTraits);
+            foreach ($customParts as $trait) {
+                $trait = trim($trait);
+                if (Tool::classInterfaceExists($trait, 'trait')) {
+                    $useParts[]= $trait;
+                } else {
+                    throw new \Exception("trait '" . $trait . "' does not exist");
+                }
+            }
+        }
+
+        if ($useParts) {
+            $result = '';
+            foreach ($useParts as $part) {
+                $result .= 'use ' . $part . ";\r\n";
+            }
+            $result .= "\n";
+            return $result;
+        }
+        return '';
+    }
+
 }

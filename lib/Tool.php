@@ -659,11 +659,11 @@ class Tool
 
     /**
      * @param string $class
-     * @param string $type
+     * @param string $type (e.g. 'class', 'interface', 'trait')
      *
      * @return bool
      */
-    protected static function classInterfaceExists($class, $type)
+    public static function classInterfaceExists($class, $type)
     {
         $functionName = $type . '_exists';
 

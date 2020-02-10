@@ -20,7 +20,6 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -349,23 +348,7 @@ class Definition extends Model\AbstractModel
 
         $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
-        if ($this->getImplementsInterfaces()) {
-            $customParts = $this->getImplementsInterfaces();
-            $customParts = explode(',', $customParts);
-            foreach ($customParts as $interface) {
-                $interface = trim($interface);
-                if (Tool::interfaceExists($interface)) {
-                    $customParts[]= $interface;
-                } else {
-                    throw new \Exception("interface '" . $interface . "' does not exist");
-                }
-            }
-
-            $implementsParts[] = $this->getImplementsInterfaces();
-        }
-
-        $implements = ' implements ' . implode(', ', $implementsParts);
-
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
 
