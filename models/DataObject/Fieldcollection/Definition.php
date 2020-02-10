@@ -111,10 +111,14 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $title
+     *
+     * @return $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 
     /**
@@ -495,9 +499,13 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $group
+     *
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
+        return $this;
     }
 }

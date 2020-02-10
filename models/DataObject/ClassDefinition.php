@@ -1242,10 +1242,13 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $group
+     *
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+        return $this;
     }
 
     /**
@@ -1270,10 +1273,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showVariants
+     *
+     * return $this;
      */
     public function setShowVariants($showVariants)
     {
         $this->showVariants = (bool)$showVariants;
+
+        return $this;
     }
 
     /**
@@ -1294,10 +1301,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showAppLoggerTab
+     *
+     * @return $this
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+
+        return $this;
     }
 
     /**
@@ -1310,10 +1321,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $linkGeneratorReference
+     *
+     * @return $this;
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
+
+        return $this;
     }
 
     /**
