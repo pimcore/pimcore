@@ -68,6 +68,7 @@ class Navigation extends Helper
      * Builds a navigation container by passing arguments
      *
      * @deprecated
+     *
      * @param Document $activeDocument
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuPrefix
@@ -76,6 +77,7 @@ class Navigation extends Helper
      * @param int|null $maxDepth
      *
      * @return Container
+     *
      * @throws \Exception
      */
     public function buildNavigation(
@@ -101,7 +103,9 @@ class Navigation extends Helper
      * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth', 'active'
      *
      * @param array $params
+     *
      * @return Container
+     *
      * @throws \Exception
      */
     public function build(array $params): Container

@@ -94,7 +94,7 @@ class Builder
             $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
         }
 
-        if($maxDepth) {
+        if ($maxDepth) {
             $cacheKeys[] = 'maxDepth_' . $maxDepth;
         }
 
@@ -128,7 +128,7 @@ class Builder
             $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
         }
 
-        if($activeDocument instanceof Document) {
+        if ($activeDocument instanceof Document) {
             if (empty($activePages)) {
                 // use the provided pimcore document
                 $activePages = $navigation->findAllBy('realFullPath', $activeDocument->getRealFullPath());
@@ -165,7 +165,7 @@ class Builder
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
-                if($activeDocument instanceof Document) {
+                if ($activeDocument instanceof Document) {
                     if ($page->getUri() && strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
                         $activeTrail = true;
                     }
@@ -193,6 +193,7 @@ class Builder
     /**
      * @param Page $page
      * @param bool $isActive
+     *
      * @throws \Exception
      */
     protected function addActiveCssClasses(Page $page, $isActive = false)
@@ -264,6 +265,7 @@ class Builder
      * @param int|null $maxDepth
      *
      * @return array
+     *
      * @throws \Exception
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [], $maxDepth = null)

@@ -63,6 +63,7 @@ class NavigationExtension extends AbstractExtension
      * @param bool|string $cache
      *
      * @return Container
+     *
      * @throws \Exception
      */
     public function buildNavigation(
@@ -71,8 +72,7 @@ class NavigationExtension extends AbstractExtension
         string $htmlMenuPrefix = null,
         $cache = true
     ): Container {
-
-        if(is_array($params)) {
+        if (is_array($params)) {
             // using param configuration
             return $this->navigationHelper->build($params);
         } else {

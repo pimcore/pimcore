@@ -379,7 +379,7 @@ class Service extends Model\Element\Service
                     $context['outerFieldname'] = $key;
 
                     if ($brickDescriptor) {
-                        $innerContainer = $brickDescriptor['innerContainer'] ??  'localizedfields';
+                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
