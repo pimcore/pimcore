@@ -682,9 +682,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param string $title
+     *
+     * @return $this;
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 }
