@@ -358,7 +358,7 @@ class Ffmpeg extends Adapter
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('scaleByWidth', '-vf "scale='.$width.':trunc(ow/a/vsub)*vsub"');
+        $this->addArgument('scaleByWidth', '-vf "scale='.$width.':trunc(ow/a/2)*2"');
     }
 
     /**
@@ -368,6 +368,6 @@ class Ffmpeg extends Adapter
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('scaleByHeight', '-vf "scale=trunc(oh/(ih/iw)/hsub)*hsub:'.$height.'"');
+        $this->addArgument('scaleByHeight', '-vf "scale=trunc(oh/(ih/iw)/2)*2:'.$height.'"');
     }
 }
