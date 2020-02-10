@@ -43,3 +43,9 @@ namespace Pimcore\Model\DataObject {
 
     }
 }
+
+namespace Pimcore\Model\DataObject\Traits {
+    trait CacheRawRelationDataTrait {
+
+    }
+}

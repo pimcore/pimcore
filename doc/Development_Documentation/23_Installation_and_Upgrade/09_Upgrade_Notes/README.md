@@ -3,7 +3,7 @@
 
 ## 6.5.0
 - Relation Types DB Caching Layer is always turned on now. Removed support for non-cached alternative. 
-  All rows of the affected `object_relation_` table will be fetched in on go and cached together we with the obejct. 
+  All rows of the affected `object_relation_` table will be fetched in on go and cached together we with the object. 
   see https://github.com/pimcore/pimcore/issues/5427
 - If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`, implement the `LazyLoadingSupportInterface`
   The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.
