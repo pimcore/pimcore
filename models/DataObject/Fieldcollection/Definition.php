@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -40,6 +41,12 @@ class Definition extends Model\AbstractModel
      * @var string
      */
     public $parentClass;
+
+    /**
+     * Comma separated list of interfaces
+     * @var string|null
+     */
+    public $implementsInterfaces;
 
     /**
      * @var string
@@ -340,7 +347,27 @@ class Definition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
+        if ($this->getImplementsInterfaces()) {
+            $customParts = $this->getImplementsInterfaces();
+            $customParts = explode(',', $customParts);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $customParts[]= $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+
+            $implementsParts[] = $this->getImplementsInterfaces();
+        }
+
+        $implements = ' implements ' . implode(', ', $implementsParts);
+
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
 
         $cd .= "\n\n";
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
@@ -499,5 +526,24 @@ class Definition extends Model\AbstractModel
     public function setGroup($group)
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImplementsInterfaces(): ?string
+    {
+        return $this->implementsInterfaces;
+    }
+
+
+    /**
+     * @param string|null $implementsInterfaces
+     * @return $this
+     */
+    public function setImplementsInterfaces(?string $implementsInterfaces)
+    {
+        $this->implementsInterfaces = $implementsInterfaces;
+        return $this;
     }
 }

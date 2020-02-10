@@ -25,6 +25,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -74,6 +75,13 @@ class ClassDefinition extends Model\AbstractModel
      * @var string
      */
     public $parentClass;
+
+    /**
+     * Comma separated list of interfaces
+     * @var string|null
+     */
+    public $implementsInterfaces;
+
 
     /**
      * Name of the listing parent class if set
@@ -397,12 +405,30 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
         if ($this->getCacheRawRelationData()) {
-            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
+            $implementsParts[] = '\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
         }
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
+        if ($this->getImplementsInterfaces()) {
+            $customParts = $this->getImplementsInterfaces();
+            $customParts = explode(',', $customParts);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $customParts[]= $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+
+            $implementsParts[] = $this->getImplementsInterfaces();
+        }
+
+        $implementsParts = implode(', ', $implementsParts);
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsParts . ' {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
@@ -1343,6 +1369,25 @@ class ClassDefinition extends Model\AbstractModel
     {
         $this->cacheRawRelationData = (bool) $cacheRawRelationData;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImplementsInterfaces(): ?string
+    {
+        return $this->implementsInterfaces;
+    }
+
+
+    /**
+     * @param string|null $implementsInterfaces
+     * @return $this
+     */
+    public function setImplementsInterfaces(?string $implementsInterfaces)
+    {
+        $this->implementsInterfaces = $implementsInterfaces;
         return $this;
     }
 }

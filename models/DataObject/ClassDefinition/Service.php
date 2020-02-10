@@ -106,7 +106,7 @@ class Service
         $class->setUserModification($userId);
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'cacheRawRelationData', 'showVariants', 'parentClass',
-                    'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
+                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
@@ -149,7 +149,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -228,6 +228,7 @@ class Service
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
+        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }

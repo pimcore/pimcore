@@ -41,7 +41,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         this.groupField = new Ext.form.field.Text(
             {
-                width: 400,
+                width: 600,
                 name: "group",
                 fieldLabel: t("group"),
                 value: this.data.group
@@ -53,19 +53,28 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             defaults: {
                 labelWidth: 200
             },
-            items: [{
-                xtype: "textfield",
-                width: 400,
-                name: "parentClass",
-                fieldLabel: t("parent_php_class"),
-                value: this.data.parentClass
-            }, {
-                xtype: "textfield",
-                width: 400,
-                name: "title",
-                fieldLabel: t("title"),
-                value: this.data.title
-            },
+            items: [
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "parentClass",
+                    fieldLabel: t("parent_php_class"),
+                    value: this.data.parentClass
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "implementsInterfaces",
+                    fieldLabel: t("implements_interfaces"),
+                    value: this.data.implementsInterfaces
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "title",
+                    fieldLabel: t("title"),
+                    value: this.data.title
+                },
                 this.groupField,
                 this.getClassDefinitionPanel()
             ]
@@ -171,7 +180,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     },
 
     removeFromOthers: function (name, store) {
-        delete(this.baseStore[name]);
+        delete (this.baseStore[name]);
     },
 
     getClassDefinitionElements: function (currentData) {
@@ -336,7 +345,11 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             }
             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
         } else {
-            pimcore.helpers.showNotification(t("saving_failed"), rdata.message, "error");
+            if (rdata && rdata.message) {
+                pimcore.helpers.showNotification(t("error"), rdata.message, "error");
+            } else {
+                throw "save was not successful, see log files in /var/logs";
+            }
         }
 
     },

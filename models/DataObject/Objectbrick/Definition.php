@@ -232,7 +232,26 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
+        if ($this->getImplementsInterfaces()) {
+            $customParts = $this->getImplementsInterfaces();
+            $customParts = explode(',', $customParts);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $customParts[]= $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+
+            $implementsParts[] = $this->getImplementsInterfaces();
+        }
+
+        $implements = ' implements ' . implode(', ', $implementsParts);
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
         $cd .= "\n\n";
 
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';

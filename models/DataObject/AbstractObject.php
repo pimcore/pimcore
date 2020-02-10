@@ -300,7 +300,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
-                    if ($object instanceof CacheRawRelationDataInterface) {
+                    if ($object instanceof Concrete) {
                         // force loading of relation data
                         $object->__getRawRelationData();
                     }
