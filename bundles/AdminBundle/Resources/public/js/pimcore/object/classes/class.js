@@ -842,13 +842,6 @@ pimcore.object.classes.klass = Class.create({
                     style: 'margin-bottom:10px'
                 },
                 {
-                    xtype: "checkbox",
-                    fieldLabel: t("cache_raw_relation_data"),
-                    name: "cacheRawRelationData",
-                    style: 'margin: 0',
-                    checked: this.data.cacheRawRelationData
-                },
-                {
                     xtype: "displayfield",
                     hideLabel: true,
                     width: 600,
