@@ -190,8 +190,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\CalculatedValue|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return float
@@ -204,7 +204,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param DataObject\Data\CalculatedValue|null $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception

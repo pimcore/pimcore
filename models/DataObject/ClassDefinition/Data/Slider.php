@@ -333,7 +333,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getVersionPreview
      *
      * @param float|null $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|null

@@ -1074,7 +1074,7 @@ abstract class Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

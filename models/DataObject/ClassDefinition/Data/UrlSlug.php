@@ -124,7 +124,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\UrlSlug|null
+     * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -558,7 +558,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param null|array $data
+     * @param Model\DataObject\Data\UrlSlug[]|null $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *

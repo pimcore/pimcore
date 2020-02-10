@@ -368,8 +368,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\ImageGallery|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

@@ -370,7 +370,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see Data::getVersionPreview
      *
      * @param DataObject\Data\StructuredTable $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

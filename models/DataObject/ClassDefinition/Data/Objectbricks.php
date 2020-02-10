@@ -290,7 +290,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return Objectbrick\Data\AbstractData
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -347,8 +347,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Objectbrick\Data\AbstractData|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string

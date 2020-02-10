@@ -424,9 +424,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
      */
