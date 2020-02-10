@@ -339,11 +339,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     inputValue: true,
                     value: this.config.resolverSettings.createOnDemand,
                     fieldLabel: t("create_on_demand")
-                }
-            ]
-        );
-
-        this.detailedSettingsPanel.add([
+                },
                 {
                     xtype: "checkbox",
                     name: "createParents",

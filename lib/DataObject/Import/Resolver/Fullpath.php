@@ -19,6 +19,7 @@ namespace Pimcore\DataObject\Import\Resolver;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\FactoryInterface;
 
@@ -29,9 +30,15 @@ class Fullpath extends AbstractResolver
      */
     private $modelFactory;
 
-    public function __construct(FactoryInterface $modelFactory)
+    /**
+     * @var ImportClassResolver
+     */
+    private $classResolver;
+
+    public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
     {
         $this->modelFactory = $modelFactory;
+        $this->classResolver = $classResolver;
     }
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
