@@ -34,6 +34,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
+    /** @var array|null */
+    protected $__rawRelationData = null;
+
     /**
      * @var array
      */
@@ -950,40 +953,52 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function retrieveRelationData($descriptor)
     {
         $descriptor['src_id'] = $this->getId();
-        if ($this instanceof CacheRawRelationDataInterface) {
-            $unfilteredData = $this->__getRawRelationData();
 
-            $likes = [];
+        $unfilteredData = $this->__getRawRelationData();
+
+        $likes = [];
+        foreach ($descriptor as $column => $expectedValue) {
+            if (is_string($expectedValue)) {
+                $trimmed = rtrim($expectedValue, '%');
+                if (strlen($trimmed) < strlen($expectedValue)) {
+                    $likes[$column] = $trimmed;
+                }
+            }
+        }
+
+        $filterFn = static function ($row) use ($descriptor, $likes) {
             foreach ($descriptor as $column => $expectedValue) {
-                if (is_string($expectedValue)) {
-                    $trimmed = rtrim($expectedValue, '%');
-                    if (strlen($trimmed) < strlen($expectedValue)) {
-                        $likes[$column] = $trimmed;
+                $actualValue = $row[$column];
+                if (isset($likes[$column])) {
+                    $expectedValue = $likes[$column];
+                    if (strpos($actualValue, $expectedValue) !== 0) {
+                        return false;
                     }
+                } elseif ($actualValue != $expectedValue) {
+                    return false;
                 }
             }
 
-            $filterFn = static function ($row) use ($descriptor, $likes) {
-                foreach ($descriptor as $column => $expectedValue) {
-                    $actualValue = $row[$column];
-                    if (isset($likes[$column])) {
-                        $expectedValue = $likes[$column];
-                        if (strpos($actualValue, $expectedValue) !== 0) {
-                            return false;
-                        }
-                    } elseif ($actualValue != $expectedValue) {
-                        return false;
-                    }
-                }
+            return true;
+        };
 
-                return true;
-            };
+        $filteredData = array_filter($unfilteredData, $filterFn);
 
-            $filteredData = array_filter($unfilteredData, $filterFn);
+        return $filteredData;
+    }
 
-            return $filteredData;
-        } else {
-            return $this->doRetrieveData($descriptor, 'object_relations_' . $this->getClassId());
+    /**
+     * @internal
+     * @return array
+     */
+    public function __getRawRelationData(): array
+    {
+        if ($this->__rawRelationData === null) {
+            $db = Db::get();
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+            $this->__rawRelationData = $relations ?? [];
         }
+
+        return $this->__rawRelationData;
     }
 }
