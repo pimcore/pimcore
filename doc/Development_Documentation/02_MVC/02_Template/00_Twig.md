@@ -202,7 +202,10 @@ editable, we introduced a function called `pimcore_iterate_block` to allow walki
 Used to interact with navigations. See [Navigation](../../03_Documents/03_Navigation.md) for details. Simplified example:
 
 ```twig
-{% set navigation = pimcore_build_nav(document) %}
+{% set navigation = pimcore_build_nav({
+    active: document,
+    root: navRootDocument
+}) %}
 {{ pimcore_render_nav(navigation) }}
 
 {# you can also fetch the renderer instance and call custom render methods #}
