@@ -1472,6 +1472,6 @@ abstract class Data
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
-        return $listing->filterByField($this->getName(), $operator, $data);
+        return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 }
