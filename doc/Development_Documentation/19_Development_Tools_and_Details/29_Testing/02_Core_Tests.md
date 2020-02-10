@@ -77,7 +77,6 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | PIMCORE_PHP_ERROR_REPORTING               | 32767            | Should be set to E_ALL because Travis uses the same setting.                                                                   |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_CACHE_RAW_RELATION_DATA           | 1                | Will execute relation tests with caching enabled (off by default)                                                              |
 | PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |
 | PIMCORE_TEST_CACHE_REDIS_PORT             | defaults to 6379 | Redis port                                                                                                                     |
 | PIMCORE_TEST_CACHE_REDIS_PERSISTENT       |                  |                                                                                                                                |
