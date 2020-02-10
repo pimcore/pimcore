@@ -1310,11 +1310,4 @@ class ClassDefinition extends Model\AbstractModel
 
         return $generator;
     }
-
-    /**
-     * @return bool
-     */
-    public function getCacheRawRelationData() {
-        return true;
-    }
 }

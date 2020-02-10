@@ -985,10 +985,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $filteredData = array_filter($unfilteredData, $filterFn);
 
         return $filteredData;
-
     }
 
     /**
+     * @internal
      * @return array
      */
     public function __getRawRelationData(): array

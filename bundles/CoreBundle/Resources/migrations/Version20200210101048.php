@@ -1,42 +1,45 @@
 <?php
 
-namespace Pimcore\Bundle\CoreBundle\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations {
 
-use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\DataObject\ClassDefinition;
+    use Doctrine\DBAL\Schema\Schema;
+    use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
+    use Pimcore\Model\DataObject\ClassDefinition;
 
-class Version20200210101048 extends AbstractPimcoreMigration
-{
-    public function doesSqlMigrations(): bool
+    class Version20200210101048 extends AbstractPimcoreMigration
     {
-        return false;
-    }
+        public function doesSqlMigrations(): bool
+        {
+            return false;
+        }
 
 
-    /**
-     * @param Schema $schema
-     * @throws \Exception
-     */
-    public function up(Schema $schema)
-    {
-        $list = new ClassDefinition\Listing();
-        $list = $list->load();
+        /**
+         * @param Schema $schema
+         * @throws \Exception
+         */
+        public function up(Schema $schema)
+        {
+            $list = new ClassDefinition\Listing();
+            $list = $list->load();
 
-        foreach ($list as $class) {
-            if ($class->getCacheRawRelationData()) {
-                // get rid of the CacheRawRelationDataInterface
+            foreach ($list as $class) {
                 $class->save();
             }
+        }
 
+        /**
+         * @param Schema $schema
+         */
+        public function down(Schema $schema)
+        {
+            $this->writeMessage('Please execute bin/console pimcore:deployment:classes-rebuild afterwards.');
         }
     }
+}
 
-    /**
-     * @param Schema $schema
-     */
-    public function down(Schema $schema)
-    {
-        $this->writeMessage('Please execute bin/console pimcore:deployment:classes-rebuild afterwards.');
+namespace Pimcore\Model\DataObject {
+    interface CacheRawRelationDataInterface {
+
     }
 }
