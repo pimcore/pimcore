@@ -390,7 +390,7 @@ class Service
 
     /**
      * @param array $useParts
-     * @param string $newTraits
+     * @param string $newTraits A comma separated list of traits
      * @return string
      * @throws \Exception
      */
