@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = null;
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id]);
             }
         } catch (\Exception $e) {
         }
@@ -58,14 +58,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getIdByName($name)
     {
         $id = null;
         try {
             if (!empty($name)) {
-                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
         }
