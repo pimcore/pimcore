@@ -363,7 +363,7 @@ class Service
 
     /**
      * @param array $implementsParts
-     * @param string $newInterfaces
+     * @param string $newInterfaces A comma separated list of interfaces
      * @return string|null
      * @throws \Exception
      */
