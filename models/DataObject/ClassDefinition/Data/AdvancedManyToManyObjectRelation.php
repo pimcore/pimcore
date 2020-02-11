@@ -314,7 +314,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param array|null$data
+     * @param array|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
