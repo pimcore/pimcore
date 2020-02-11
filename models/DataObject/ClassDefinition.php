@@ -1366,6 +1366,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
         return $this;
     }
 }
