@@ -364,10 +364,10 @@ class Service
     /**
      * @param array $implementsParts
      * @param string $newInterfaces
-     * @return string
+     * @return string|null
      * @throws \Exception
      */
-    public static function buildImplementsInterfaces($implementsParts = [], string $newInterfaces) {
+    public static function buildImplementsInterfaces($implementsParts = [], ?string $newInterfaces) {
 
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -391,10 +391,10 @@ class Service
     /**
      * @param array $useParts
      * @param string $newTraits
-     * @return string
+     * @return string|null
      * @throws \Exception
      */
-    public static function buildUseTraits($useParts = [], string $newTraits) {
+    public static function buildUseTraits($useParts = [], ?string $newTraits) {
 
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
