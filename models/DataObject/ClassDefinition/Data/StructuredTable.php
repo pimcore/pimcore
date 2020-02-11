@@ -350,7 +350,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * @param DataObject\Data\StructuredTable|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -504,7 +504,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -634,7 +634,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null

@@ -489,7 +489,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param DataObject\Data\Link|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string|null

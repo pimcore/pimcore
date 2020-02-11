@@ -172,7 +172,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // check for inherited
-        return $this->getDao()->isLocked();
+        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
+        $dao = $this->getDao();
+        return $dao->isLocked();
     }
 
     /**
@@ -222,20 +224,27 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         //everything is allowed for admin
+        /** @var Model\User $user */
         if ($user->isAdmin()) {
             return true;
         }
 
-        return $this->getDao()->isAllowed($type, $user);
+        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
+        $dao = $this->getDao();
+        return $dao->isAllowed($type, $user);
     }
 
     public function unlockPropagate()
     {
         $type = Service::getType($this);
-        $ids = $this->getDao()->unlockPropagate();
+
+        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
+        $dao = $this->getDao();
+        $ids = $dao->unlockPropagate();
 
         // invalidate cache items
         foreach ($ids as $id) {
+            /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $element */
             $element = Service::getElementById($type, $id);
             if ($element) {
                 $element->clearDependentCache();
@@ -279,7 +288,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function __isBasedOnLatestData()
     {
-        return $this->getDao()->__isBasedOnLatestData();
+        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
+        $dao = $this->getDao();
+        return $dao->__isBasedOnLatestData();
     }
 
     /**

@@ -389,7 +389,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null

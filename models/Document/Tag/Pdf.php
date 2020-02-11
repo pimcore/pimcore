@@ -70,8 +70,8 @@ class Pdf extends Model\Document\Tag
     public function getDataEditmode()
     {
         $pages = 0;
-        if ($asset = Asset::getById($this->id)) {
-            /** @var Asset\Document $asset */
+
+        if (/** @var Asset\Document $asset */ $asset = Asset::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 

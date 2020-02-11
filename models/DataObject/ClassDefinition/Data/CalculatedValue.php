@@ -550,7 +550,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * @param \DateTime $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null

@@ -373,7 +373,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /** See parent class.
      *
      * @param array $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|Date
@@ -390,7 +390,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null

@@ -396,8 +396,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -829,7 +829,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param array|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
