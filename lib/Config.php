@@ -88,7 +88,7 @@ class Config implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        if ($this->offsetExists($offset)) {
+        if (null === static::$systemConfig || $this->offsetExists($offset)) {
             return self::getSystemConfiguration($offset);
         }
 

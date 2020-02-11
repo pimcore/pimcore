@@ -77,7 +77,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
      */
     protected function logUsageStatistics(Request $request)
     {
-        if ($this->config['general']['disable_usage_statistics']) {
+        if (!empty($this->config['general']['disable_usage_statistics'])) {
             return;
         }
 
