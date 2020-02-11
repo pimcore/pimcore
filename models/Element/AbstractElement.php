@@ -20,7 +20,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Dao getDao()
+ * @method Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao getDao()
  */
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
@@ -172,9 +172,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // check for inherited
-        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
-        $dao = $this->getDao();
-        return $dao->isLocked();
+        return $this->getDao()->isLocked();
     }
 
     /**
@@ -205,11 +203,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
      * @param string $type
-     * @param null|Model\User\AbstractUser $user
+     * @param null|Model\User $user
      *
      * @return bool
      */
-    public function isAllowed($type, ?Model\User\AbstractUser $user = null)
+    public function isAllowed($type, ?Model\User $user = null)
     {
         if (null === $user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -224,23 +222,18 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         //everything is allowed for admin
-        /** @var Model\User $user */
         if ($user->isAdmin()) {
             return true;
         }
 
-        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
-        $dao = $this->getDao();
-        return $dao->isAllowed($type, $user);
+        return $this->getDao()->isAllowed($type, $user);
     }
 
     public function unlockPropagate()
     {
         $type = Service::getType($this);
 
-        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
-        $dao = $this->getDao();
-        $ids = $dao->unlockPropagate();
+        $ids = $this->getDao()->unlockPropagate();
 
         // invalidate cache items
         foreach ($ids as $id) {
@@ -288,9 +281,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function __isBasedOnLatestData()
     {
-        /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $dao */
-        $dao = $this->getDao();
-        return $dao->__isBasedOnLatestData();
+        return $this->getDao()->__isBasedOnLatestData();
     }
 
     /**
