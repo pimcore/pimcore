@@ -130,22 +130,16 @@ class Dao extends Model\Dao\AbstractDao
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
-          `src_id` int(11) NOT NULL DEFAULT '0',
-          `dest_id` int(11) NOT NULL DEFAULT '0',
-          `type` varchar(50) NOT NULL DEFAULT '',
-          `fieldname` varchar(70) NOT NULL DEFAULT '0',
-          `index` int(11) unsigned NOT NULL DEFAULT '0',
-          `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-          `ownername` varchar(70) NOT NULL DEFAULT '',
-          `position` varchar(70) NOT NULL DEFAULT '0',
-          PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`, `index`),
-          KEY `index` (`index`),
-          KEY `dest_id` (`dest_id`),
-          KEY `fieldname` (`fieldname`),
-          KEY `position` (`position`),
-          KEY `ownertype` (`ownertype`),
-          KEY `type` (`type`),
-          KEY `ownername` (`ownername`)
+              `src_id` int(11) NOT NULL DEFAULT '0',
+              `dest_id` int(11) NOT NULL DEFAULT '0',
+              `type` varchar(50) NOT NULL DEFAULT '',
+              `fieldname` varchar(70) NOT NULL DEFAULT '0',
+              `index` int(11) unsigned NOT NULL DEFAULT '0',
+              `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+              `ownername` varchar(70) NOT NULL DEFAULT '',
+              `position` varchar(70) NOT NULL DEFAULT '0',
+              INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
+              INDEX `reverse_lookup` (`dest_id`, `type`)
         ) DEFAULT CHARSET=utf8mb4;");
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
