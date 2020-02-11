@@ -84,12 +84,16 @@ class Fullpath extends AbstractResolver
             }
         }
 
-        if (!$parent->isAllowed('create')) {
-            throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
-        }
-
         if (!$object) {
             throw new ImportErrorException('failed to resolve object ' . $fullpath);
+        }
+
+        if (empty($parent)) {
+            $parent = $object->getParent();
+        }
+
+        if (!$parent->isAllowed('create')) {
+            throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
         $this->setObjectType($config, $object, $rowData);
