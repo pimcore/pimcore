@@ -761,6 +761,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" possible
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -778,7 +780,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
 
-            return;
+            return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }

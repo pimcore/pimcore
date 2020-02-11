@@ -1000,6 +1000,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Listing      $listing
      * @param DataObject\Concrete|int $data     object or object ID
      * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -1010,10 +1012,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
 
-            return;
+            return $listing;
         }
 
-        parent::addListingFilter($listing, $data, $operator);
+        return parent::addListingFilter($listing, $data, $operator);
     }
 }
 
