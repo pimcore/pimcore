@@ -60,15 +60,11 @@ class Config implements \ArrayAccess
      * @param  mixed $offset
      * @param  mixed $value
      *
-     * @return void
+     * @throws \Exception
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            static::$systemConfig[] = $value;
-        } else {
-            static::$systemConfig[$offset] = $value;
-        }
+        throw new \Exception("modifying the config isn't allowed");
     }
 
     /**
@@ -76,11 +72,11 @@ class Config implements \ArrayAccess
      *
      * @param  mixed $offset
      *
-     * @return void
+     * @throws \Exception
      */
     public function offsetUnset($offset)
     {
-        unset(static::$systemConfig[$offset]);
+        throw new \Exception("modifying the config isn't allowed");
     }
 
     /**
