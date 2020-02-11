@@ -28,6 +28,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use \Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
+use const FILTER_VALIDATE_BOOLEAN;
 
 class GetBy extends AbstractResolver
 {
@@ -58,8 +59,8 @@ class GetBy extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $attribute = (string)$config->resolverSettings->attribute;
-        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
-        $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
+        $createOnDemand = filter_var($config->resolverSettings->createOnDemand, FILTER_VALIDATE_BOOLEAN);
 
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 

@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\FactoryInterface;
+use const FILTER_VALIDATE_BOOLEAN;
 
 class Filename extends AbstractResolver
 {
@@ -41,8 +42,8 @@ class Filename extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $overwrite = (bool)$config->resolverSettings->overwrite;
-        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
+        $overwrite = filter_var($config->resolverSettings->overwrite, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
         $prefix = (string)$config->resolverSettings->prefix;
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
