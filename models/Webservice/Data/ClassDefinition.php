@@ -105,7 +105,7 @@ class ClassDefinition extends Model\Webservice\Data
     /**
      * @var string
      */
-    public $implementsInterfaces = false;
+    public $implementsInterfaces;
 
     /**
      * @var array
