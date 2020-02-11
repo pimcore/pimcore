@@ -4,6 +4,11 @@ notifications:
   email:
     - travis-ci@pimcore.org
 
+branches:
+  only:
+    - master
+    - /^v\d+\..*/
+
 sudo: false
 language: php
 
