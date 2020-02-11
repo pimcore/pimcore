@@ -1026,9 +1026,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         // create general filters and queries
         $toExcludeFieldnames = [];
+        /** @var ElasticSearch $tenantConfig */
+        $tenantConfig = $this->getTenantConfig();
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
             if ($config['fieldnameShouldBeExcluded']) {
-                $toExcludeFieldnames[$this->getTenantConfig()->getReverseMappedFieldName($fieldname)] = $fieldname;
+                $toExcludeFieldnames[$tenantConfig->getReverseMappedFieldName($fieldname)] = $fieldname;
             }
         }
 

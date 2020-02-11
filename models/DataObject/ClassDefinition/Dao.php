@@ -89,7 +89,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @throws \Exception
-     * @throws \Exception
      */
     public function update()
     {

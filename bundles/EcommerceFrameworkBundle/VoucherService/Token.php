@@ -18,6 +18,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Token extends AbstractModel
 {
     /**
