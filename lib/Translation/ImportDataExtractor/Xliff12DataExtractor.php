@@ -64,7 +64,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
         if (empty($translationItem)) {
-            throw new ElementNotFoundException('Could not resolve element ' . $file['original']);
+            return null;
         }
 
         $attributeSet = new AttributeSet($translationItem);

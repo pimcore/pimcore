@@ -896,13 +896,14 @@ class TranslationController extends AdminController
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
-            $importerService->import($attributeSet);
+            if($attributeSet) {
+                $importerService->import($attributeSet);
+            }
         } catch (\Exception $e) {
             Logger::err($e->getMessage());
-            $success = $e instanceof Element\Exception\ElementNotFoundException;
 
             return $this->adminJson([
-                'success' => $success,
+                'success' => false,
                 'message' => $e->getMessage()
             ]);
         }
