@@ -88,5 +88,7 @@ class SearchBackendReindexCommand extends AbstractCommand
         }
 
         $db->query('OPTIMIZE TABLE search_backend_data;');
+
+        return 0;
     }
 }

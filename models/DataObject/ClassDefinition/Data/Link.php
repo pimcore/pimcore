@@ -205,8 +205,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Link|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -246,7 +246,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Link|null $data
      *
      * @return array
      */
@@ -353,7 +353,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -400,7 +400,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -485,10 +485,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param DataObject\Data\Link|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -496,11 +496,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        if ($data) {
-            if ($data->text) {
-                return $data->text;
-            } elseif ($data->direct) {
-                return $data->direct;
+        if ($data instanceof DataObject\Data\Link) {
+            if ($data->getText()) {
+                return $data->getText();
+            } elseif ($data->getDirect()) {
+                return $data->getDirect();
             }
         }
 

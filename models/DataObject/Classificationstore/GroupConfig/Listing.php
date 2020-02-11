@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\GroupConfig[] load()
  * @method Model\DataObject\Classificationstore\GroupConfig current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -9,18 +9,33 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Element
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject;
+namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 
-interface CacheRawRelationDataInterface
+trait IconTrait
 {
     /**
-     * @return array
+     * @var string|null
      */
-    public function __getRawRelationData(): array;
+    public $icon;
+
+    /**
+     * @return string
+     */
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon(?string $icon): void
+    {
+        $this->icon = $icon;
+    }
 }

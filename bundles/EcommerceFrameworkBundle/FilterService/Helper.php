@@ -166,7 +166,7 @@ class Helper
     /**
      * @param array $conditions
      *
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public static function getFirstFilteredCategory($conditions)
     {
@@ -177,5 +177,7 @@ class Helper
                 }
             }
         }
+
+        return null;
     }
 }

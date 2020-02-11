@@ -676,7 +676,7 @@ pimcore.settings.system = Class.create({
                                 }
                             }, {
                                 xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice"),
+                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
                                 name: "general.show_cookie_notice",
                                 checked: this.getValue("general.show_cookie_notice")
                             }

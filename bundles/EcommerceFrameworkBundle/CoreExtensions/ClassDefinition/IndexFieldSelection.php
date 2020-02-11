@@ -228,8 +228,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param IndexFieldSelection|null $data
+     * @param Concrete|null $object
      * @param mixed $params
      *
      * @return float

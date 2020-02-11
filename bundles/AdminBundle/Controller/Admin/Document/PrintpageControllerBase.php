@@ -130,7 +130,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 //check, if to cleanup existing elements of document
                 $config = Config::getWeb2PrintConfig();
-                if ($config->generalDocumentSaveMode == 'cleanup') {
+                if ($config->get('generalDocumentSaveMode') == 'cleanup') {
                     $page->setElements([]);
                 }
 
@@ -221,6 +221,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function pdfDownloadAction(Request $request)
     {
+        /** @var Document\PrintAbstract $document */
         $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');

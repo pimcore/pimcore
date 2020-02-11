@@ -629,6 +629,15 @@ pimcore.element.helpers.gridColumnConfig = {
             batch: true // to avoid limit for export
         };
 
+        //tags filter
+        if(this.tagsTree) {
+            params["tagIds[]"] = this.tagsTree.getCheckedTagIds();
+
+            if(this.tagsPanel) {
+                params["considerChildTags"] = this.tagsPanel.considerChildTags;
+            }
+        }
+
         Ext.Ajax.request({
             url: this.exportPrepareUrl,
             params: params,

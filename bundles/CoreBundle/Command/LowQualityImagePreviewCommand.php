@@ -105,5 +105,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         }
 
         $progressBar->finish();
+
+        return 0;
     }
 }

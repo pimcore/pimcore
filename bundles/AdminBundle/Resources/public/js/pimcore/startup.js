@@ -243,12 +243,10 @@ Ext.onReady(function () {
                     pimcore.viewport.add(pimcore.maintenanceWindow);
                     pimcore.maintenanceWindow.show();
                 }
+            } else if(jsonData && jsonData['type'] === 'ValidationException') {
+                pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
             } else if (response.status === 403) {
-                if(jsonData && jsonData['type'] === 'ValidationException') {
-                    pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
-                } else {
-                    pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
-                }
+                pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
             } else {
                 var message = t("error_general");
                 if(jsonData && jsonData['message']) {

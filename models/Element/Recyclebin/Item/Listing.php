@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Element\Recyclebin\Item\Listing\Dao getDao()
  * @method Model\Element\Recyclebin\Item[] load()
  * @method Model\Element\Recyclebin\Item current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -230,6 +230,8 @@ pimcore.object.helpers.classTree = Class.create({
                 isLeaf = false;
                 draggable = false;
 
+                // create a copy because we have to pop this state
+                brickDescriptor = Ext.clone(brickDescriptor);
                 Ext.apply(brickDescriptor, {
                     insideLocalizedFields: true
                 });

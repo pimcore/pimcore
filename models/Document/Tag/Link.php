@@ -279,17 +279,19 @@ class Link extends Model\Document\Tag
                     if ($editmode) {
                         $this->data['path'] = $object->getFullPath();
                     } else {
-                        if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-                            if ($realPath) {
-                                $this->data['path'] = $object->getFullPath();
-                            } else {
-                                $this->data['path'] = $linkGenerator->generate(
-                                    $object,
-                                    [
-                                        'document' => $this->getDocument(),
-                                        'context' => $this,
-                                    ]
-                                );
+                        if ($object instanceof Model\DataObject\Concrete) {
+                            if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                                if ($realPath) {
+                                    $this->data['path'] = $object->getFullPath();
+                                } else {
+                                    $this->data['path'] = $linkGenerator->generate(
+                                        $object,
+                                        [
+                                            'document' => $this->getDocument(),
+                                            'context' => $this,
+                                        ]
+                                    );
+                                }
                             }
                         }
                     }
@@ -624,7 +626,7 @@ class Link extends Model\Document\Tag
      */
     public function rewriteIds($idMapping)
     {
-        if ($this->data['internal']) {
+        if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];
             $id = (int)$this->data['internalId'];
 

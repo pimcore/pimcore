@@ -401,7 +401,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $this->db->delete('object_store_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
         $this->db->delete('object_relations_' . $this->model->getClassId(), ['src_id' => $this->model->getId()]);
 
-        // delete fields wich have their own delete algorithm
+        // delete fields which have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
             if ($fd instanceof CustomResourcePersistingInterface) {
                 $fd->delete($this->model);

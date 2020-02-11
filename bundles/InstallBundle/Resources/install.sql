@@ -151,6 +151,7 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -169,6 +170,7 @@ CREATE TABLE `documents_newsletter` (
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
   `plaintext` LONGTEXT NULL DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -205,6 +207,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -217,6 +220,7 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -240,6 +244,7 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -761,8 +766,7 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
-  KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `binaryFileId` (`binaryFileId`)
+  KEY `binaryFileHash` (`binaryFileHash`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
@@ -964,3 +968,26 @@ CREATE TABLE `notifications` (
 )
 DEFAULT CHARSET=utf8mb4;
 ;
+
+DROP TABLE IF EXISTS `object_url_slugs`;
+CREATE TABLE `object_url_slugs` (
+      `objectId` INT(11) NOT NULL DEFAULT '0',
+	    `classId` VARCHAR(50) NOT NULL DEFAULT '0',
+      `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
+      `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+      `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+      `ownername` VARCHAR(70) NOT NULL DEFAULT '',
+      `position` VARCHAR(70) NOT NULL DEFAULT '0',
+      `slug` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* slug in utf8 (3-byte) using the full key length of 3072 bytes */
+      `siteId` INT(11) NOT NULL DEFAULT '0',
+      PRIMARY KEY (`slug`, `siteId`),
+      INDEX `index` (`index`),
+      INDEX `objectId` (`objectId`),
+      INDEX `classId` (`classId`),
+      INDEX `fieldname` (`fieldname`),
+      INDEX `position` (`position`),
+      INDEX `ownertype` (`ownertype`),
+      INDEX `ownername` (`ownername`),
+      INDEX `slug` (`slug`),
+      INDEX `siteId` (`siteId`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

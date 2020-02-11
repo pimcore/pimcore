@@ -451,7 +451,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getVersionPreview
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -549,7 +549,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      *
      * @return bool
      */
@@ -559,7 +559,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
      * @return float|int|string
      */
@@ -600,7 +600,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return null|int

@@ -622,7 +622,7 @@ class Config
                 'treeContextMenu' => [
                     'document' => [
                         'items' => [
-                            'addPrintPage' => self::getWeb2PrintConfig()->enableInDefaultView ? true : false // hide add print documents by default
+                            'addPrintPage' => self::getWeb2PrintConfig()->get('enableInDefaultView') ? true : false // hide add print documents by default
                         ]
                     ]
                 ]
@@ -868,7 +868,7 @@ class Config
                     $perspectives = $userOrRoleToCheck ? $userOrRoleToCheck->getPerspectives() : null;
                     if ($perspectives) {
                         foreach ($perspectives as $perspectiveName) {
-                            $masterDef = $masterConfig[$perspectiveName];
+                            $masterDef = $masterConfig[$perspectiveName] ?? null;
                             if ($masterDef) {
                                 $config[$perspectiveName] = $masterDef;
                             }

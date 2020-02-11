@@ -84,6 +84,11 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_query_'.$this->model->getClass()->getId();
     }
 
+    /**
+     * @param array $params
+     *
+     * @throws \Exception
+     */
     public function save($params = [])
     {
         $context = $this->model->getContext();
@@ -93,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
-            $this->delete(false);
+            $this->delete(false, true);
         }
 
         $object = $this->model->getObject();
@@ -156,11 +161,14 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ((isset($params['saveRelationalData'])
+                                && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
                                 && !$container instanceof DataObject\Objectbrick\Definition
                             )
-                            || ($this->model->isLanguageDirty($language) || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                            || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
+                                    && $this->model->isLanguageDirty($language))
+                                || $params['saveRelationalData']['saveLocalizedRelations'])) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -357,8 +365,7 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         } else {
                             Logger::debug(
-                                'Excluding untouchable query value for object [ '.$this->model->getId(
-                                )." ]  key [ $key ] because it has not been loaded"
+                                'Excluding untouchable query value for object [ '.$this->model->getObjectId() ." ]  key [ $key ] because it has not been loaded"
                             );
                         }
                     }
@@ -442,8 +449,10 @@ class Dao extends Model\Dao\AbstractDao
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
-                        $params = [];
-                        $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
+                        $params = [
+                            'context' => $this->model->getContext() ? $this->model->getContext() : [],
+                            'isUpdate' => $isUpdate
+                        ];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }
@@ -508,7 +517,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function load($object, $params = [])
@@ -712,6 +721,11 @@ QUERY;
         }
     }
 
+    /**
+     * @param array $params
+     *
+     * @throws \Exception
+     */
     public function createUpdateTable($params = [])
     {
         $table = $this->getTableName();
@@ -765,6 +779,7 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                /** @var ResourcePersistenceAwareInterface $value */
                 if ($value->getColumnType()) {
                     $key = $value->getName();
 

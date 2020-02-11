@@ -60,6 +60,7 @@ class DefaultValue extends AbstractValue
             $fieldDefinition = $object->getClass()->getFieldDefinition($key);
 
             if (!$fieldDefinition && ($localizedFields = $object->getClass()->getFieldDefinition('localizedfields'))) {
+                /** @var Data\Localizedfields $localizedFields */
                 $fieldDefinition = $localizedFields->getFieldDefinition($key);
             }
         }

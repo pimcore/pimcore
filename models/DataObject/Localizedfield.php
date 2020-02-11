@@ -23,9 +23,10 @@ use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method Localizedfield\Dao delete()
- * @method Localizedfield\Dao load()
- * @method Localizedfield\Dao save()
+ * @method void delete($deleteQuery = true, $isUpdate = true)
+ * @method void load($object, $params = [])
+ * @method void save($params = [])
+ * @method void createUpdateTable($params = [])
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
@@ -446,6 +447,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
 
@@ -744,5 +746,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @return int
+     */
+    public function getObjectId(): int
+    {
+        return $this->objectId;
     }
 }

@@ -424,9 +424,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
      */
@@ -634,7 +634,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -691,7 +691,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -738,7 +738,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
-        $this->enrichRelation($object, $params, $classId, $relation);
+        $this->enrichDataRow($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
         $context = $params['context'] ?? null;
@@ -1013,7 +1013,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\ElementMetadata[]|null $data
      *
      * @return array
      */

@@ -52,6 +52,7 @@ class LinkController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
+        /** @var Document\Link $link */
         $link = clone $link;
 
         $link->setObject(null);

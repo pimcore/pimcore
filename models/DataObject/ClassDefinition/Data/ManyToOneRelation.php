@@ -273,15 +273,15 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Asset|Document|DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
+     * @param array|null $params
      *
      * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,8 +327,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param Element\AbstractElement|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
@@ -341,15 +341,15 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Document | Asset | DataObject\AbstractObject $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
     }
@@ -482,7 +482,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $data
+     * @param Element\AbstractElement|null $data
      *
      * @return array
      */
@@ -529,7 +529,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @deprecated
      *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

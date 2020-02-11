@@ -136,6 +136,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                 $select->order(new Expression(implode(', ', $parts)));
             }
         }
+
+        return $this;
     }
 
     /**

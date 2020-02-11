@@ -197,7 +197,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -393,7 +393,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *

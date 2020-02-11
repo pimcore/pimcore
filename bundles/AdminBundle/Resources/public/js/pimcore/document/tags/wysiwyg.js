@@ -66,6 +66,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.startCKeditor();
 
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
         this.checkValue();
     },
 
@@ -108,7 +112,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
-            this.ckeditor.on('change', this.checkValue.bind(this));
+            this.ckeditor.on('change', this.checkValue.bind(this, true));
 
                 // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
@@ -253,7 +257,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     },
 
-    checkValue: function () {
+    checkValue: function (mark) {
 
         var value = this.getValue();
 
@@ -261,6 +265,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             Ext.get(this.textarea).addCls("empty");
         } else {
             Ext.get(this.textarea).removeCls("empty");
+        }
+
+
+        if (this.required) {
+            this.validateRequiredValue(value, Ext.get(this.textarea), this, mark);
         }
     },
 

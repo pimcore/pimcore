@@ -274,6 +274,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
                 ->booleanNode('show_cookie_notice')
+                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {

@@ -343,8 +343,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Data\QuantityValue|null $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -444,7 +444,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * display the quantity value field data in the grid
      *
-     * @param $data
+     * @param Model\DataObject\Data\QuantityValue|null $data
      * @param null $object
      * @param array $params
      *
@@ -641,7 +641,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return Model\DataObject\Data\QuantityValue|null
@@ -656,7 +656,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */

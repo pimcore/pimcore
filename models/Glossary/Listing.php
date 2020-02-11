@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Glossary\Listing\Dao getDao()
  * @method Model\Glossary[] load()
  * @method Model\Glossary current()
+ * @method int getTotalCount()
+ * @method array getDataArray()
  */
 class Listing extends Model\Listing\AbstractListing
 {

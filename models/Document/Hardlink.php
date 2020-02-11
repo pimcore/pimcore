@@ -200,18 +200,19 @@ class Hardlink extends Document
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return Document[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
-            $children = parent::getChildren($unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+        if (!isset($this->children[$cacheKey])) {
+            $children = parent::getChildren($includingUnpublished);
 
             $sourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren($unpublished);
+                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished);
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
@@ -220,10 +221,10 @@ class Hardlink extends Document
             }
 
             $children = array_merge($sourceChildren, $children);
-            $this->setChildren($children);
+            $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children;
+        return $this->children[$cacheKey] ?? [];
     }
 
     /**
@@ -231,7 +232,7 @@ class Hardlink extends Document
      */
     public function hasChildren($unpublished = false)
     {
-        return count($this->getChildren()) > 0;
+        return count($this->getChildren($unpublished)) > 0;
     }
 
     /**

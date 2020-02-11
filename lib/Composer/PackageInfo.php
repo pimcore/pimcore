@@ -94,5 +94,7 @@ class PackageInfo
 
             return $json;
         }
+
+        return null;
     }
 }

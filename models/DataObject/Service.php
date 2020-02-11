@@ -21,6 +21,7 @@ use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -230,10 +231,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $target
-     * @param AbstractObject $source
+     * @param Concrete $target
+     * @param Concrete $source
      *
-     * @return AbstractObject
+     * @return Concrete
      *
      * @throws \Exception
      */
@@ -248,7 +249,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         /**
-         * @var AbstractObject $new
+         * @var Concrete $new
          */
         $new = Element\Service::cloneMe($source);
         $new->setChildren($target->getChildren());
@@ -262,7 +263,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        $target = AbstractObject::getById($new->getId());
+        $target = Concrete::getById($new->getId());
 
         return $target;
     }
@@ -378,7 +379,7 @@ class Service extends Model\Element\Service
                     $context['outerFieldname'] = $key;
 
                     if ($brickDescriptor) {
-                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
@@ -685,7 +686,7 @@ class Service extends Model\Element\Service
             $value = $value->$getBrickType();
             if (!empty($value) && !empty($brickKey)) {
                 if ($brickDescriptor) {
-                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                     $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
                     $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
                     /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
@@ -1462,7 +1463,9 @@ class Service extends Model\Element\Service
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
-                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+                /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $lfDef */
+                $lfDef = $object->getClass()->getFieldDefinition('localizedfields');
+                $fd = $lfDef->getFieldDefinition($fieldname);
             }
         }
 
@@ -1513,7 +1516,9 @@ class Service extends Model\Element\Service
             if ($ownerType === 'object') {
                 $fd = $object->getClass()->getFieldDefinition($fieldname);
             } elseif ($ownerType === 'localizedfield') {
-                $fd = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+                /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $lfDef */
+                $lfDef = $object->getClass()->getFieldDefinition('localizedfields');
+                $fd = $lfDef->getFieldDefinition($fieldname);
             }
         }
 
@@ -1617,5 +1622,28 @@ class Service extends Model\Element\Service
     public static function removeObjectFromSession($objectId)
     {
         self::removeElementFromSession('object', $objectId);
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $descriptor
+     *
+     * @return array
+     */
+    public static function buildConditionPartsFromDescriptor($descriptor)
+    {
+        $db = Db::get();
+        $conditionParts = [];
+        foreach ($descriptor as $key => $value) {
+            $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
+            if ($lastChar === '%') {
+                $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
+            } else {
+                $conditionParts[] = $key . ' = ' . $db->quote($value);
+            }
+        }
+
+        return $conditionParts;
     }
 }

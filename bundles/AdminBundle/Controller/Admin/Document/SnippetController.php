@@ -54,7 +54,7 @@ class SnippetController extends DocumentControllerBase
         $snippet = $this->getLatestVersion($snippet);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
-        $snippet->setVersions(array_splice($versions, 0, 1));
+        $snippet->setVersions(array_splice($versions, -1, 1));
         $snippet->getScheduledTasks();
         $snippet->idPath = Element\Service::getIdPath($snippet);
         $snippet->setUserPermissions($snippet->getUserPermissions());

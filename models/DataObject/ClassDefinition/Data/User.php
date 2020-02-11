@@ -136,7 +136,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

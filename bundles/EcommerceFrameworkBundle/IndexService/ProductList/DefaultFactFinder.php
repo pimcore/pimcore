@@ -729,6 +729,7 @@ class DefaultFactFinder implements ProductListInterface
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         // TODO: Implement getGroupBySystemValues() method.
+        return [];
     }
 
     /**

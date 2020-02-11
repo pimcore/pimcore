@@ -259,9 +259,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        $adminStyle = Element\Service::getElementAdminStyle($child, ElementAdminStyleEvent::CONTEXT_TREE);
-
         if ($child->getType() != 'folder') {
+            /** @var DataObject\Concrete $child */
             $tmpObject['published'] = $child->isPublished();
             $tmpObject['className'] = $child->getClass()->getName();
 
@@ -357,7 +356,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $objectFromDatabase = DataObject::getById((int)$request->get('id'));
+        $objectFromDatabase = DataObject\Concrete::getById((int)$request->get('id'));
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -417,7 +416,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
             $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['versions'] = array_splice($objectVersions, -1, 1);
             $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
 
             $objectData['childdata']['id'] = $objectFromDatabase->getId();
@@ -554,7 +553,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
 
-        // Optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
+        // Editmode optimization for lazy loaded relations (note that this is just for AbstractRelations, not for all
         // LazyLoadingSupportInterface types. It tries to optimize fetching the data needed for the editmode without
         // loading the entire target element.
         // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
@@ -818,10 +817,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
             if (!DataObject\Service::pathExists($intendedPath)) {
+                /** @var DataObject\Concrete $object */
                 $object = $this->get('pimcore.model.factory')->build($className);
-                if ($object instanceof DataObject\Concrete) {
-                    $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-                }
+                $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
                     $parentId = $request->get('parentId');
@@ -974,7 +972,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function changeChildrenSortByAction(Request $request)
     {
-        /** @var Model\Object $object */
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
@@ -1158,7 +1155,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     [$updatedObject->getParentId(), $updatedObject->getId()]
                 );
                 $index = 0;
-                /** @var DataObject\AbstractObject $child */
+
                 foreach ($siblings as $sibling) {
                     if ($index == $newIndex) {
                         $index++;
@@ -1202,8 +1199,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function saveAction(Request $request)
     {
-        /** @var DataObject\Concrete $object */
-        $object = DataObject::getById($request->get('id'));
+        $object = DataObject\Concrete::getById($request->get('id'));
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode
@@ -1504,10 +1500,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object->isAllowed('versions')) {
                 return ['object' => $object];
             } else {
-                throw new \Exception('Permission denied, version id [' . $id . ']');
+                throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
         } else {
-            throw new \Exception('Version with id [' . $id . "] doesn't exist");
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
     }
 
@@ -1545,10 +1541,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'object2' => $object2
                 ];
             } else {
-                throw new \Exception('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+                throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
         } else {
-            throw new \Exception('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+            throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
         }
     }
 
@@ -1590,11 +1586,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     // save
                     $object = DataObject::getById($data['id']);
-                    /** @var DataObject\ClassDefinition $class */
+
+                    if (!$object instanceof DataObject\Concrete) {
+                        throw $this->createNotFoundException('Object not found');
+                    }
+
                     $class = $object->getClass();
 
                     if (!$object->isAllowed('publish')) {
-                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                        throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this object.");
                     }
 
                     $user = Tool\Admin::getCurrentUser();
@@ -1768,6 +1768,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             return $this->adminJson($result);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1977,6 +1979,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($target->isAllowed('create')) {
             $source = DataObject::getById($sourceId);
             if ($source != null) {
+                if ($source instanceof DataObject\Concrete && $latestVersion = $source->getLatestVersion()) {
+                    $source = $latestVersion->loadData();
+                    $source->setPublished(false); //as latest version is used which is not published
+                }
+
                 if ($request->get('type') == 'child') {
                     $newObject = $this->_objectService->copyAsChild($target, $source);
 
@@ -2014,8 +2021,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function previewAction(Request $request)
     {
         $id = $request->get('id');
+        $object = DataObject\Service::getElementFromSession('object', $id);
 
-        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
+        if ($object instanceof DataObject\Concrete) {
             $url = $object->getClass()->getPreviewUrl();
             if ($url) {
                 // replace named variables

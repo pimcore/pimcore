@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = null;
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id]);
             }
         } catch (\Exception $e) {
         }
@@ -58,14 +58,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getIdByName($name)
     {
         $id = null;
         try {
             if (!empty($name)) {
-                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
         }
@@ -163,6 +163,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
                 if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
+                    /** @var Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -281,6 +282,9 @@ class Dao extends Model\Dao\AbstractDao
             $brickTable = current($table);
             $this->db->query('DROP TABLE `'.$brickTable.'`');
         }
+
+        // clean slug table
+        DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
     }
 
     /**

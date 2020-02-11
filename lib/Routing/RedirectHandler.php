@@ -86,6 +86,8 @@ class RedirectHandler implements LoggerAwareInterface
                 return $response;
             }
         }
+
+        return null;
     }
 
     private function matchRedirect(
@@ -158,9 +160,9 @@ class RedirectHandler implements LoggerAwareInterface
 
                 return null;
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $config->general->domain) {
+        } elseif (!preg_match('@http(s)?://@i', $url) && $config->get('general')->domain) {
             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
-            $url = $request->getScheme() . '://' . $config->general->domain . $url;
+            $url = $request->getScheme() . '://' . $config->get('general')->domain . $url;
         }
 
         // pass-through parameters if specified

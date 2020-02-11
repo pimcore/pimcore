@@ -328,8 +328,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
-     * @param null|DataObject\AbstractObject $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -361,6 +361,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             return implode('<br />', $items);
         }
+
+        return '';
     }
 
     /**
@@ -482,7 +484,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\ObjectMetadata[]|null $data
      *
      * @return array
      */
@@ -601,7 +603,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -648,7 +650,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
-        $this->enrichRelation($object, $params, $classId, $relation);
+        $this->enrichDataRow($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
         $context = $params['context'] ?? null;

@@ -262,7 +262,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         if ($list) {
-            /** @var Config $config */
+            /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
@@ -546,7 +546,7 @@ class DataObjectHelperController extends AdminController
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
                             if ($brickDescriptor) {
-                                $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                 /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                                 $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
@@ -1230,6 +1230,7 @@ class DataObjectHelperController extends AdminController
         }
 
         if ($field->getFieldType() == 'slider') {
+            /** @var DataObject\ClassDefinition\Data\Slider $field */
             $config['minValue'] = $field->getMinValue();
             $config['maxValue'] = $field->getMaxValue();
             $config['increment'] = $field->getIncrement();
@@ -1867,6 +1868,8 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -1898,6 +1901,8 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -2007,7 +2012,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param string $field
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param string $requestedLanguage
      * @param array $helperDefinitions
      *
@@ -2087,7 +2092,7 @@ class DataObjectHelperController extends AdminController
                     if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                         $brickType = $brickDescriptor['containerKey'];
                     }
                     $brickKey = $fieldParts[1];
@@ -2121,7 +2126,7 @@ class DataObjectHelperController extends AdminController
                                 $value = $brick;
 
                                 if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
                                 }
 

@@ -34,6 +34,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
+    /** @var array|null */
+    protected $__rawRelationData = null;
+
     /**
      * @var array
      */
@@ -594,9 +597,19 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getNextParentForInheritance()
     {
+        return $this->getClosestParentOfClass($this->getClassId());
+    }
+
+    /**
+     * @param string $classId
+     *
+     * @return AbstractObject|null
+     */
+    public function getClosestParentOfClass(string $classId)
+    {
         if ($this->getParent() instanceof AbstractObject) {
             $parent = $this->getParent();
-            while ($parent && $parent->getType() === self::OBJECT_TYPE_FOLDER) {
+            while ($parent && ($parent->getType() === self::OBJECT_TYPE_FOLDER || $parent->getClassId() !== $classId)) {
                 $parent = $parent->getParent();
             }
 
@@ -898,60 +911,95 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
+     *
+     * @param array $descriptor
+     * @param string $table
+     *
+     * @return array
+     */
+    protected function doRetrieveData(array $descriptor, string $table)
+    {
+        $db = Db::get();
+        $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
+
+        $query = 'SELECT * FROM ' . $table . ' WHERE ' . implode(' AND ', $conditionParts);
+        $result = $db->fetchAll($query);
+
+        return $result;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $descriptor
+     *
+     * @return array
+     */
+    public function retrieveSlugData($descriptor)
+    {
+        $descriptor['objectId'] = $this->getId();
+
+        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+    }
+
+    /**
+     * @internal
+     *
      * @param array $descriptor
      *
      * @return array
      */
     public function retrieveRelationData($descriptor)
     {
-        if ($this instanceof CacheRawRelationDataInterface) {
-            $unfilteredData = $this->__getRawRelationData();
+        $descriptor['src_id'] = $this->getId();
 
-            $likes = [];
-            foreach ($descriptor as $column => $expectedValue) {
-                if (is_string($expectedValue)) {
-                    $trimmed = rtrim($expectedValue, '%');
-                    if (strlen($trimmed) < strlen($expectedValue)) {
-                        $likes[$column] = $trimmed;
-                    }
+        $unfilteredData = $this->__getRawRelationData();
+
+        $likes = [];
+        foreach ($descriptor as $column => $expectedValue) {
+            if (is_string($expectedValue)) {
+                $trimmed = rtrim($expectedValue, '%');
+                if (strlen($trimmed) < strlen($expectedValue)) {
+                    $likes[$column] = $trimmed;
                 }
             }
+        }
 
-            $filterFn = static function ($row) use ($descriptor, $likes) {
-                foreach ($descriptor as $column => $expectedValue) {
-                    $actualValue = $row[$column];
-                    if (isset($likes[$column])) {
-                        $expectedValue = $likes[$column];
-                        if (strpos($actualValue, $expectedValue) !== 0) {
-                            return false;
-                        }
-                    } elseif ($actualValue != $expectedValue) {
+        $filterFn = static function ($row) use ($descriptor, $likes) {
+            foreach ($descriptor as $column => $expectedValue) {
+                $actualValue = $row[$column];
+                if (isset($likes[$column])) {
+                    $expectedValue = $likes[$column];
+                    if (strpos($actualValue, $expectedValue) !== 0) {
                         return false;
                     }
-                }
-
-                return true;
-            };
-
-            $filteredData = array_filter($unfilteredData, $filterFn);
-
-            return $filteredData;
-        } else {
-            $db = Db::get();
-            $conditionParts = ['src_id = ' . $this->getId()];
-            foreach ($descriptor as $key => $value) {
-                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-                if ($lastChar === '%') {
-                    $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
-                } else {
-                    $conditionParts[] = $key . ' = ' . $db->quote($value);
+                } elseif ($actualValue != $expectedValue) {
+                    return false;
                 }
             }
 
-            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ', $conditionParts);
-            $result = $db->fetchAll($query);
+            return true;
+        };
 
-            return $result;
+        $filteredData = array_filter($unfilteredData, $filterFn);
+
+        return $filteredData;
+    }
+
+    /**
+     * @internal
+     *
+     * @return array
+     */
+    public function __getRawRelationData(): array
+    {
+        if ($this->__rawRelationData === null) {
+            $db = Db::get();
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+            $this->__rawRelationData = $relations ?? [];
         }
+
+        return $this->__rawRelationData;
     }
 }

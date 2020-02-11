@@ -58,7 +58,7 @@ class PageController extends DocumentControllerBase
         $page = $this->getLatestVersion($page);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
-        $page->setVersions(array_splice($pageVersions, 0, 1));
+        $page->setVersions(array_splice($pageVersions, -1, 1));
         $page->getScheduledTasks();
         $page->idPath = Element\Service::getIdPath($page);
         $page->setUserPermissions($page->getUserPermissions());
@@ -133,6 +133,10 @@ class PageController extends DocumentControllerBase
             }
             if ($request->get('task') == 'publish') {
                 $page->setPublished(true);
+            }
+
+            if ($request->get('missingRequiredEditable') !== null) {
+                $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
             }
 
             $settings = [];
@@ -235,6 +239,8 @@ class PageController extends DocumentControllerBase
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

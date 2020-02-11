@@ -63,10 +63,11 @@ class NewsletterController extends DocumentControllerBase
         }
 
         $email = clone $email;
+        /** @var Document\Newsletter $email */
         $email = $this->getLatestVersion($email);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
-        $email->setVersions(array_splice($versions, 0, 1));
+        $email->setVersions(array_splice($versions, -1, 1));
         $email->idPath = Element\Service::getIdPath($email);
         $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
@@ -193,7 +194,7 @@ class NewsletterController extends DocumentControllerBase
 
         try {
             $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($request->get('class')) . '\\Listing';
-            /** @var Pimcore\Model\Listing\AbstractListing $list */
+            /** @var Pimcore\Model\DataObject\Listing $list */
             $list = new $className();
 
             $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
@@ -290,6 +291,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getSendStatusAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
@@ -308,6 +310,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function stopSendAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
@@ -327,12 +330,14 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new RuntimeException('Newsletter sending already in progress, need to finish first.');
         }
 
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
 
         Tool\TmpStore::add($document->getTmpStoreId(), [

@@ -27,6 +27,7 @@ use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
+ * @method string getTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
@@ -681,9 +682,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param string $title
+     *
+     * @return $this;
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 }

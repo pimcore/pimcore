@@ -21,6 +21,9 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+/**
+ * @deprecated
+ */
 class CookiePolicyNoticeListener
 {
     use ResponseInjectionTrait;

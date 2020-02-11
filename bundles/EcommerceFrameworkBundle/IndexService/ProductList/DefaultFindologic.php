@@ -715,9 +715,6 @@ class DefaultFindologic implements ProductListInterface
         return $relations;
     }
 
-    /**
-     * @return IndexableInterface[]
-     */
     protected function doLoadGroupByValues()
     {
         // init

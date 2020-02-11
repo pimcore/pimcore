@@ -159,10 +159,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data DataObject\Localizedfield
-     * @param $object
-     * @param $fieldData
-     * @param $metaData
+     * @param DataObject\Localizedfield $data
+     * @param DataObject\Concrete $object
+     * @param array $fieldData
+     * @param array $metaData
      * @param int $level
      *
      * @return array
@@ -230,7 +230,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $fieldDefinitions = $this->getFieldDefinitions();
                     foreach ($fieldDefinitions as $fd) {
                         $key = $fd->getName();
-                        if ($fd->isEmpty($fieldData[$language][$key])) {
+
+                        if ($fd->isEmpty($fieldData[$language][$key] ?? null)) {
                             $foundEmptyValue = true;
                             $inherited = true;
                             $metaData[$language][$key] = ['inherited' => true, 'objectid' => $parent->getId()];
@@ -346,8 +347,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Localizedfield|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -387,7 +388,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -668,7 +669,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -716,7 +717,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -974,7 +975,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param DataObject\Localizedfield|null $data
      *
      * @return array
      */
@@ -998,7 +999,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $height
+     * @param int|string|null $height
      *
      * @return $this
      */
@@ -1018,7 +1019,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $layout
+     * @param mixed $layout
      *
      * @return $this
      */
@@ -1092,7 +1093,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $width
+     * @param int|string|null $width
      *
      * @return $this
      */
@@ -1230,7 +1231,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /** See parent class.
-     * @param $data
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *

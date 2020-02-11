@@ -603,7 +603,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getIsBookable()
     {
         foreach ($this->getItems() as $item) {
-            if (!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
+            if (!$item->getProduct()->getOSIsBookable($item->getCount())) {
                 return false;
             }
         }
@@ -842,10 +842,11 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @param callable $value_compare_func
      *
-     * @return CartItemInterface[]
+     * @return $this
      */
     public function sortItems(callable $value_compare_func)
     {
+        return $this;
     }
 
     /**
@@ -929,6 +930,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         } else {
             throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
+
+        return false;
     }
 
     /**

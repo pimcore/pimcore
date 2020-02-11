@@ -61,7 +61,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
             strip_tags($allParams['email']),
             intval($allParams['start']),
             intval($allParams['limit']),
-            $allParams['sort']
+            $allParams['sort'] ?? null
         );
 
         return $this->adminJson($result);

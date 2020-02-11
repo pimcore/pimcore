@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
+ * @method void delete()
  */
 class Tag extends Model\AbstractModel
 {

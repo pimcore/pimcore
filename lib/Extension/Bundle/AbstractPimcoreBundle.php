@@ -47,6 +47,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
      */
     public function getInstaller()
     {
+        return null;
     }
 
     /**
@@ -54,6 +55,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
      */
     public function getAdminIframePath()
     {
+        return null;
     }
 
     /**

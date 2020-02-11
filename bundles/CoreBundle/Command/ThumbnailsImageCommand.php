@@ -196,5 +196,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         $progress->finish();
 
         $output->writeln('');
+
+        return 0;
     }
 }

@@ -103,11 +103,6 @@ class ClassDefinition extends Model\Webservice\Data
     public $showVariants = false;
 
     /**
-     * @var bool
-     */
-    public $cacheRawRelationData = false;
-
-    /**
      * @var array
      */
     public $fieldDefinitions;

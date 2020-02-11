@@ -14,6 +14,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required`      | boolean | set to true to make field value required for publish                               |
 
 ## Methods
 

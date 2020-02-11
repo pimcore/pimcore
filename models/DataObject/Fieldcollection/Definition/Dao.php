@@ -88,6 +88,9 @@ class Dao extends Model\Dao\AbstractDao
             $key = $value->getName();
 
             if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                /** @var DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value
+                 * note that method_exists is only used for BC reasons
+                 */
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {

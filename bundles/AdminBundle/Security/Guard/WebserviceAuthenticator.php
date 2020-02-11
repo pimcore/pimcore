@@ -109,6 +109,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
         if ($user && Authentication::isValidUser($user->getUser())) {
             return $user;
         }
+
+        return null;
     }
 
     /**
@@ -134,6 +136,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
 
             return $users[0];
         }
+
+        return null;
     }
 
     /**
@@ -170,6 +174,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             'user' => $token->getUser()->getUsername(),
             'path' => $request->getPathInfo()
         ]);
+
+        return null;
     }
 
     /**

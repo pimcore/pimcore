@@ -494,6 +494,7 @@ class DefaultMysql implements ProductListInterface
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         // not supported with mysql tables
+        return [];
     }
 
     /**
@@ -656,7 +657,7 @@ class DefaultMysql implements ProductListInterface
             }
 
             // add sorting for primary id to prevent mysql paging problem...
-            $orderKeys[] = 'o_id';
+            $orderKeys[] = 'a.o_id';
 
             $directionOrderKeys = [];
             foreach ($orderKeys as $key) {

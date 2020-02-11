@@ -431,9 +431,10 @@ pimcore.settings.targeting.conditions = (function () {
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
-                        fieldLabel: t('referrer'),
+                        fieldLabel: t('referrer') + ' (' + t("regex") + ')',
                         name: "referrer",
                         value: data.referrer,
+                        labelWidth: 170,
                         width: 450
                     }, {
                         xtype: "hidden",

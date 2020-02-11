@@ -852,6 +852,8 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
                 return $cart;
             }
         }
+
+        return null;
     }
 
     protected function encodeOrderIdent($orderIdent)
