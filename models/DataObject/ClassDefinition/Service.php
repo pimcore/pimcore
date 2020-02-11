@@ -367,7 +367,7 @@ class Service
      * @return string
      * @throws \Exception
      */
-    public static function buildImplementsInterfaces($implementsParts = [], string $newInterfaces) {
+    public static function buildImplementsInterfaces(array $implementsParts, string $newInterfaces) {
 
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
