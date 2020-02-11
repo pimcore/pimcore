@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+/**
+ * @method Statistic\Dao getDao()
+ */
 class Statistic extends \Pimcore\Model\AbstractModel
 {
     /**
@@ -38,12 +41,11 @@ class Statistic extends \Pimcore\Model\AbstractModel
     {
         try {
             $config = new self();
-            /** @var Statistic\Dao $dao */
-            $dao = $config->getDao();
-            $dao->getById($id);
+            $config->getDao()->getById($id);
 
             return $config;
         } catch (\Exception $ex) {
+            //            Logger::debug($ex->getMessageN());
             return false;
         }
     }

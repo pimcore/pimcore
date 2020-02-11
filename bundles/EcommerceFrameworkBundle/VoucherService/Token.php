@@ -18,6 +18,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Token extends AbstractModel
 {
     /**
@@ -58,9 +61,7 @@ class Token extends AbstractModel
     {
         try {
             $config = new self();
-            /** @var Dao $dao */
-            $dao = $config->getDao();
-            $dao->getByCode($code);
+            $config->getDao()->getByCode($code);
 
             return $config;
         } catch (\Exception $ex) {
@@ -122,9 +123,7 @@ class Token extends AbstractModel
      */
     public function isReserved()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-        return $dao->isReserved();
+        return $this->getDao()->isReserved();
     }
 
     /**
@@ -150,15 +149,9 @@ class Token extends AbstractModel
         return Reservation::releaseToken($this, $cart);
     }
 
-    /**
-     * @return bool
-     */
     public function apply()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-
-        if ($dao->apply()) {
+        if ($this->getDao()->apply()) {
             Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
 
             return true;
@@ -167,15 +160,9 @@ class Token extends AbstractModel
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function unuse()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-
-        if ($dao->unuse()) {
+        if ($this->getDao()->unuse()) {
             return true;
         }
 

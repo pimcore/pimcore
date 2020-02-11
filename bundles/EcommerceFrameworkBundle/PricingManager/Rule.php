@@ -22,6 +22,9 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Rule extends AbstractModel implements RuleInterface
 {
     /**
@@ -327,9 +330,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function save()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-        $dao->save();
+        $this->getDao()->save();
 
         return $this;
     }
@@ -339,9 +340,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function delete()
     {
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-        $dao->delete();
+        $this->getDao()->delete();
     }
 
     /**

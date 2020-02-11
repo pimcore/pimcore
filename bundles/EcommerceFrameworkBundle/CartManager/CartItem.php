@@ -14,11 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao;
 
+/**
+ * @method Dao getDao()
+ */
 class CartItem extends AbstractCartItem implements CartItemInterface
 {
     /**
@@ -60,9 +63,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
                 $item->save();
             }
         }
-        /** @var Dao $dao */
-        $dao = $this->getDao();
-        $dao->save();
+        $this->getDao()->save();
     }
 
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
@@ -73,10 +74,8 @@ class CartItem extends AbstractCartItem implements CartItemInterface
             $cartItem = Runtime::get($cacheKey);
         } catch (\Exception $e) {
             try {
-                /** @var Dao $dao */
                 $cartItem = new static();
-                $dao = $cartItem->getDao();
-                $dao->getByCartIdItemKey($cartId, $itemKey, $parentKey);
+                $cartItem->getDao()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
                 $cartItem->getSubItems();
                 Runtime::set($cacheKey, $cartItem);
             } catch (\Exception $ex) {
@@ -89,15 +88,10 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         return $cartItem;
     }
 
-    /**
-     * @param int $cartId
-     */
     public static function removeAllFromCart($cartId)
     {
         $cartItem = new static();
-        $cartItem->getDao();
-        $dao = $cartItem->getDao();
-        $dao->removeAllFromCart($cartId);
+        $cartItem->getDao()->removeAllFromCart($cartId);
     }
 
     /**
