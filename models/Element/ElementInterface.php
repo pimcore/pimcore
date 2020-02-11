@@ -178,4 +178,16 @@ interface ElementInterface
     public function save();
 
     public function delete();
+
+    /**
+     * @param array $additionalTags
+     */
+    public function clearDependentCache($additionalTags = []);
+
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id);
 }

@@ -237,7 +237,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         // invalidate cache items
         foreach ($ids as $id) {
-            /** @var Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao $element */
             $element = Service::getElementById($type, $id);
             if ($element) {
                 $element->clearDependentCache();

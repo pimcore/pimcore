@@ -301,9 +301,8 @@ class Document extends Element\AbstractElement
                 /** @var Document $document */
                 $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
-                /** @var Document\Dao $dao */
-                $dao = $document->getDao();
-                $dao->getById($id);
+
+                $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
                 \Pimcore\Cache::save($document, $cacheKey);
