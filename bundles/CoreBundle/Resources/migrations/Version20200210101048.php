@@ -13,9 +13,9 @@ namespace Pimcore\Bundle\CoreBundle\Migrations {
             return false;
         }
 
-
         /**
          * @param Schema $schema
+         *
          * @throws \Exception
          */
         public function up(Schema $schema)
@@ -39,13 +39,13 @@ namespace Pimcore\Bundle\CoreBundle\Migrations {
 }
 
 namespace Pimcore\Model\DataObject {
-    interface CacheRawRelationDataInterface {
-
+    interface CacheRawRelationDataInterface
+    {
     }
 }
 
 namespace Pimcore\Model\DataObject\Traits {
-    trait CacheRawRelationDataTrait {
-
+    trait CacheRawRelationDataTrait
+    {
     }
 }
