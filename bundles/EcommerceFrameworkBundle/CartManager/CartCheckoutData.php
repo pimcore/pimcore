@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
@@ -21,7 +22,9 @@ class CartCheckoutData extends AbstractCartCheckoutData
 {
     public function save()
     {
-        $this->getDao()->save();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        $dao->save();
     }
 
     public static function getByKeyCartId($key, $cartId)
@@ -33,7 +36,9 @@ class CartCheckoutData extends AbstractCartCheckoutData
         } catch (\Exception $e) {
             try {
                 $checkoutDataItem = new self();
-                $checkoutDataItem->getDao()->getByKeyCartId($key, $cartId);
+                /** @var Dao $dao */
+                $dao = $checkoutDataItem->getDao();
+                $dao->getByKeyCartId($key, $cartId);
                 Runtime::set($cacheKey, $checkoutDataItem);
             } catch (\Exception $ex) {
                 Logger::debug($ex->getMessage());
@@ -48,6 +53,8 @@ class CartCheckoutData extends AbstractCartCheckoutData
     public static function removeAllFromCart($cartId)
     {
         $checkoutDataItem = new self();
-        $checkoutDataItem->getDao()->removeAllFromCart($cartId);
+        /** @var Dao $dao */
+        $dao = $checkoutDataItem->getDao();
+        $dao->removeAllFromCart($cartId);
     }
 }

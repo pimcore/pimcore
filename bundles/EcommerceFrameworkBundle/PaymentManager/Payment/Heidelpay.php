@@ -131,10 +131,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
         // a customerBirthdate attribute is needed if invoice should be used as payment method
         if (method_exists($order, 'getCustomerBirthdate')) {
-            /**
-             * @var Carbon $birthdate
-             */
             if ($birthdate = $order->getCustomerBirthdate()) {
+                /** @var Carbon $birthdate */
                 $customer->setBirthDate($birthdate->format('Y-m-d'));
             }
         }

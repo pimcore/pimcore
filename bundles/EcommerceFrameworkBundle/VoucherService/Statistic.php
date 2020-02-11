@@ -38,11 +38,12 @@ class Statistic extends \Pimcore\Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getById($id);
+            /** @var Statistic\Dao $dao */
+            $dao = $config->getDao();
+            $dao->getById($id);
 
             return $config;
         } catch (\Exception $ex) {
-            //            Logger::debug($ex->getMessageN());
             return false;
         }
     }

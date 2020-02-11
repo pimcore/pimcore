@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Elast
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
@@ -26,6 +27,14 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
     }
 
+    /**
+     * @param FilterMultiSelect $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);

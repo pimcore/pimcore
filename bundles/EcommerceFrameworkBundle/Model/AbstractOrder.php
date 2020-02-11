@@ -133,7 +133,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * Should return an array
      *
-     * @return void
+     * @return array
      */
     public function getTaxInfo()
     {

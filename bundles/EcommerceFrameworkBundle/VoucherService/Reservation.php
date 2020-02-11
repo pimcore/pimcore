@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao;
 use Pimcore\Model\AbstractModel;
 
 class Reservation extends AbstractModel
@@ -34,7 +35,9 @@ class Reservation extends AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->get($code, $cart);
+            /** @var Dao $dao */
+            $dao = $config->getDao();
+            $dao->get($code, $cart);
 
             return $config;
         } catch (\Exception $ex) {
@@ -62,7 +65,9 @@ class Reservation extends AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->create($code, $cart_id);
+            /** @var Dao $dao */
+            $dao = $config->getDao();
+            $dao->create($code, $cart_id);
 
             return $config;
         } catch (\Exception $ex) {
@@ -103,7 +108,9 @@ class Reservation extends AbstractModel
      */
     public function remove()
     {
-        return $this->getDao()->remove();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        return $dao->remove();
     }
 
     /**

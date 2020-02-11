@@ -14,6 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing;
+
+/**
+ * @property Listing $model
+ */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
     /**

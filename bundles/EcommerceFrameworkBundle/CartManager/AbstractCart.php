@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\Concrete;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
@@ -211,7 +212,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param string|null $itemKey
      * @param bool $replace
@@ -238,7 +239,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * @param string $itemKey
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param bool $replace
      * @param array $params
@@ -321,7 +322,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param string|null $itemKey
      * @param bool $replace
@@ -348,7 +349,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * @param string $itemKey
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param bool $replace
      * @param array $params

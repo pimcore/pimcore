@@ -92,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
      * @throws \Exception
      */
     public function update()
-    {
+    {    // here
         $class = $this->model->getObjectVars();
         $data = [];
 

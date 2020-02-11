@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findo
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
 {
@@ -25,6 +26,13 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
+    /**
+     * @param FilterNumberRangeSelection $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $ranges = $filterDefinition->getRanges();
@@ -75,6 +83,14 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         ]);
     }
 
+    /**
+     * @param FilterNumberRangeSelection $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $filterDefinition->getField();

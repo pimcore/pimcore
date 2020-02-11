@@ -327,7 +327,9 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function save()
     {
-        $this->getDao()->save();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        $dao->save();
 
         return $this;
     }
@@ -337,7 +339,9 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function delete()
     {
-        $this->getDao()->delete();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        $dao->delete();
     }
 
     /**

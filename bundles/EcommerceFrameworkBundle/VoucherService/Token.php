@@ -58,7 +58,9 @@ class Token extends AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getByCode($code);
+            /** @var Dao $dao */
+            $dao = $config->getDao();
+            $dao->getByCode($code);
 
             return $config;
         } catch (\Exception $ex) {
@@ -120,7 +122,9 @@ class Token extends AbstractModel
      */
     public function isReserved()
     {
-        return $this->getDao()->isReserved();
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+        return $dao->isReserved();
     }
 
     /**
@@ -146,9 +150,15 @@ class Token extends AbstractModel
         return Reservation::releaseToken($this, $cart);
     }
 
+    /**
+     * @return bool
+     */
     public function apply()
     {
-        if ($this->getDao()->apply()) {
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+
+        if ($dao->apply()) {
             Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
 
             return true;
@@ -157,9 +167,15 @@ class Token extends AbstractModel
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function unuse()
     {
-        if ($this->getDao()->unuse()) {
+        /** @var Dao $dao */
+        $dao = $this->getDao();
+
+        if ($dao->unuse()) {
             return true;
         }
 
