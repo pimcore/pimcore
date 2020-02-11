@@ -20,7 +20,9 @@ class Version20200211115044 extends AbstractPimcoreMigration
         foreach ($relationTables as $table) {
             try {
                 $relationTable = current($table);
+
                 $this->addSql('ALTER TABLE `' . $relationTable . '`
+                        DROP PRIMARY KEY,
                         DROP INDEX `index`,
                         DROP INDEX `dest_id`,
                         DROP INDEX `fieldname`,
@@ -48,9 +50,11 @@ class Version20200211115044 extends AbstractPimcoreMigration
         foreach ($relationTables as $table) {
             try {
                 $relationTable = current($table);
+
                 $this->addSql('ALTER TABLE `' . $relationTable . '`
                     DROP INDEX `forward_lookup`,
                     DROP INDEX `reverse_lookup`,
+                    ADD PRIMARY KEY (`src_id`, `dest_id`, `ownertype`, `ownername`, `fieldname`, `type`, `position`, `index`),
                     ADD INDEX `index` (`index`),
                     ADD INDEX `dest_id` (`dest_id`),
                     ADD INDEX `fieldname` (`fieldname`),

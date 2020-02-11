@@ -138,7 +138,6 @@ class Dao extends Model\Dao\AbstractDao
               `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` varchar(70) NOT NULL DEFAULT '',
               `position` varchar(70) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`src_id`, `dest_id`, `ownertype`, `ownername`, `fieldname`, `type`, `position`, `index`),
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
               INDEX `reverse_lookup` (`dest_id`, `type`)
         ) DEFAULT CHARSET=utf8mb4;");
