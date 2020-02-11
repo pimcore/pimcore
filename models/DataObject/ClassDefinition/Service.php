@@ -394,7 +394,7 @@ class Service
      * @return string
      * @throws \Exception
      */
-    public static function buildUseTraits($useParts = [], string $newTraits) {
+    public static function buildUseTraits(array $useParts, string $newTraits) {
 
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
