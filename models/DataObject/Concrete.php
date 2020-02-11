@@ -854,39 +854,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @var bool
-     */
-    protected static $disableLazyLoading = false;
-
-    /**
-     * @internal
-     * Disables lazy loading
-     */
-    public static function disableLazyLoading()
-    {
-        self::$disableLazyLoading = true;
-    }
-
-    /**
-     * @internal
-     * Enables the lazy loading
-     */
-    public static function enableLazyloading()
-    {
-        self::$disableLazyLoading = false;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool
-     */
-    public static function isLazyLoadingDisabled()
-    {
-        return self::$disableLazyLoading;
-    }
-
-    /**
      * @internal
      *
      * @param int $objectId

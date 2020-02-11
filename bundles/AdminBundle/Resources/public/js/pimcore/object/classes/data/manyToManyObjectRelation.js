@@ -86,27 +86,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 minValue: 0
             },
             {
-                xtype: "checkbox",
-                fieldLabel: t("lazy_loading"),
-                name: "lazyLoading",
-                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
-                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_description'),
-                cls: "pimcore_extra_label_bottom",
-                style: "padding-bottom:0;"
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_warning_block'),
-                cls: "pimcore_extra_label_bottom",
-                style: "color:red; font-weight: bold;"
-            },
-            {
                 xtype: 'textfield',
                 width: 600,
                 fieldLabel: t("path_formatter_service"),
