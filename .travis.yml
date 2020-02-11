@@ -1,4 +1,4 @@
-# see https://docs.travis-ci.com/user/customizing-the-build/
+# see https://docs.travis-ci.com/user/customizing-the-build/ - just a test
 
 notifications:
   email:
