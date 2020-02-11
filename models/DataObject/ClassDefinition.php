@@ -1326,7 +1326,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $linkGeneratorReference
      *
-     * @param $this
+     * @return $this
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
