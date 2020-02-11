@@ -14,6 +14,7 @@
 
 namespace Pimcore\Translation\ImportDataExtractor;
 
+use Pimcore\Model\Element\Exception\ElementNotFoundException;
 use Pimcore\Tool;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\Escaper\Xliff12Escaper;
@@ -63,7 +64,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
         if (empty($translationItem)) {
-            throw new \Exception('Could not resolve element ' . $file['original']);
+            throw new ElementNotFoundException('Could not resolve element ' . $file['original']);
         }
 
         $attributeSet = new AttributeSet($translationItem);
