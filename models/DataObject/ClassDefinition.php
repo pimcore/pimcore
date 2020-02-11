@@ -399,7 +399,7 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface', '\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface'];
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
 
@@ -407,8 +407,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
 
         $useParts = [
-            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait',
-            '\Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait'
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
         ];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, $this->getUseTraits());

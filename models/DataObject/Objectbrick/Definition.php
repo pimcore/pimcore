@@ -225,12 +225,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
+
+        $useParts = [
+            'Pimcore\Model\DataObject',
+            'Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException',
+            'Pimcore\Model\DataObject\PreGetValueHookInterface'
+        ];
+
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, null);
+
         $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
 
         $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
