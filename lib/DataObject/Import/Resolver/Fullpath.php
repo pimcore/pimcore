@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\FactoryInterface;
+use const FILTER_VALIDATE_BOOLEAN;
 
 class Fullpath extends AbstractResolver
 {
@@ -37,9 +38,9 @@ class Fullpath extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
-        $createParents = (bool)$config->resolverSettings->createParents;
-        $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
+        $createOnDemand = filter_var($config->resolverSettings->createOnDemand, FILTER_VALIDATE_BOOLEAN);
+        $createParents = filter_var($config->resolverSettings->createParents, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $fullpath = $rowData[$this->getIdColumn($config)];
