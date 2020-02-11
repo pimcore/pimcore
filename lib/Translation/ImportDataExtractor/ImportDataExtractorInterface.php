@@ -22,7 +22,7 @@ interface ImportDataExtractorInterface
      * @param string $importId
      * @param int $stepId
      *
-     * @return AttributeSet
+     * @return AttributeSet|null
      *
      * @throws \Exception
      */
