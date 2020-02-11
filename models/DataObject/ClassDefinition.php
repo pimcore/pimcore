@@ -125,11 +125,6 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var bool
-     */
-    public $cacheRawRelationData = false;
-
-    /**
      * @var array
      */
     public $fieldDefinitions = [];
@@ -404,11 +399,7 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
-
-        if ($this->getCacheRawRelationData()) {
-            $implementsParts[] = '\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
-        }
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface', '\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface'];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
 
@@ -416,11 +407,9 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
 
         $useParts = [
-            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait',
+            '\Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait'
         ];
-        if ($this->getCacheRawRelationData()) {
-            $useParts[] = '\Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait';
-        }
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, $this->getUseTraits());
 
@@ -1343,26 +1332,6 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getCacheRawRelationData(): bool
-    {
-        return $this->cacheRawRelationData;
-    }
-
-    /**
-     * @param bool $cacheRawRelationData
-     *
-     * @return $this
-     */
-    public function setCacheRawRelationData($cacheRawRelationData)
-    {
-        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
-
-        return $this;
     }
 
     /**
