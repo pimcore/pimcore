@@ -980,7 +980,7 @@ class Video extends Model\Document\Tag
      */
     public function getImageThumbnail($config)
     {
-        if ($this->poster && (/** @var Asset\Image $poster */ $poster = Asset::getById($this->poster))) {
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
         }
 
