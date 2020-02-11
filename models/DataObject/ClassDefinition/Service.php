@@ -363,11 +363,11 @@ class Service
 
     /**
      * @param array $implementsParts
-     * @param string $newInterfaces A comma separated list of interfaces
-     * @return string|null
+     * @param string|null $newInterfaces A comma separated list of interfaces
+     * @return string
      * @throws \Exception
      */
-    public static function buildImplementsInterfaces($implementsParts = [], ?string $newInterfaces) {
+    public static function buildImplementsInterfaces($implementsParts, ?string $newInterfaces) {
 
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -390,11 +390,11 @@ class Service
 
     /**
      * @param array $useParts
-     * @param string $newTraits
-     * @return string|null
+     * @param string|null $newTraits
+     * @return string
      * @throws \Exception
      */
-    public static function buildUseTraits($useParts = [], ?string $newTraits) {
+    public static function buildUseTraits($useParts, ?string $newTraits) {
 
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
