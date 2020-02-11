@@ -392,7 +392,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $indexRelationData = [];
 
             $data = $this->doPreIndexDataModification($data);
-            
+
             //add system and index attributes
             foreach ($data['data'] as $dataKey => $dataEntry) {
                 if (array_key_exists($dataKey, $systemAttributeKeys)) {
