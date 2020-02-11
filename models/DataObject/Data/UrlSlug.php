@@ -41,7 +41,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $objectId;
 
     /**
-     * @var string
+     * @var int
      */
     protected $classId;
 
@@ -266,7 +266,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $classId
+     * @param int $classId
      *
      * @return $this
      */
@@ -467,11 +467,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $classId
+     * @param int $classId
      *
      * @throws \Exception
      */
-    public static function handleClassDeleted(string $classId)
+    public static function handleClassDeleted(int $classId)
     {
         $db = Db::get();
         $db->delete('object_url_slugs', ['classId' => $classId]);

@@ -989,7 +989,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     *
      * @return array
      */
     public function __getRawRelationData(): array
