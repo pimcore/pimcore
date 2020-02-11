@@ -489,37 +489,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= "\n\n";
 
-        $systemFieldDataParamDoc = 'mixed $data';
-        $reflectionMethod = new \ReflectionMethod(DataObject\ClassDefinition\Data::class, 'addListingFilter');
-        if(preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
-            $systemFieldDataParamDoc = $dataParam[1].' $data '.$dataParam[2];
-        }
-        $systemFieldOperatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
-        if(preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
-            $systemFieldOperatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
-        }
-
-        foreach(Service::getSystemFields() as $systemField) {
-            if($systemField === 'o_fullpath') {
-                continue;
-            }
-
-            $fieldName = str_replace('o_', '', $systemField);
-
-            $cd .= '/**' . "\n";
-            $cd .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $fieldName) . " (system field)\n";
-            $cd .= '* @param '.$systemFieldDataParamDoc."\n";
-            $cd .= '* @param '.$systemFieldOperatorParamDoc."\n";
-            $cd .= '* @return static'."\n";
-            $cd .= '*/' . "\n";
-
-            $cd .= 'public function filterBy' . ucfirst($fieldName) .' ($data, $operator = \'=\') {'."\n";
-            $cd .="\t" . '$this->addFilterByField(\''.$systemField.'\', $operator, $data);' . "\n";
-            $cd .= "\treturn " . '$this' . ";\n";
-            $cd .= "}\n\n";
-        }
-
-
         if (\is_array($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
