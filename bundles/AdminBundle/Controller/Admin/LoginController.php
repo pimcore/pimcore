@@ -68,7 +68,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      *
      * @TemplatePhp()
      */
-    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener)
+    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
@@ -81,7 +81,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             return $this->redirectToRoute('pimcore_admin_index');
         }
 
-        $view = $this->buildLoginPageViewModel();
+        $view = $this->buildLoginPageViewModel($config);
 
         if ($request->get('auth_failed')) {
             $view->error = 'error_auth_failed';
@@ -118,9 +118,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/lostpassword")
      * @TemplatePhp()
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
-        $view = $this->buildLoginPageViewModel();
+        $view = $this->buildLoginPageViewModel($config);
         $error = null;
 
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
@@ -216,12 +216,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @return ViewModel
      */
-    protected function buildLoginPageViewModel()
+    protected function buildLoginPageViewModel(Config $config)
     {
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
         $view = new ViewModel([
-            'config' => Config::getSystemConfig(),
+            'config' => $config,
             'pluginCssPaths' => $bundleManager->getCssPaths()
         ]);
 
@@ -232,9 +232,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/2fa", name="pimcore_admin_2fa")
      * @TemplatePhp()
      */
-    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
+    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, Config $config)
     {
-        $view = $this->buildLoginPageViewModel();
+        $view = $this->buildLoginPageViewModel($config);
 
         if ($request->hasSession()) {
 

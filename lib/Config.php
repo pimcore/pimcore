@@ -39,7 +39,9 @@ class Config implements \ArrayAccess
      */
     private static $environmentConfig;
 
-
+    /**
+     * @var array|null
+     */
     protected static $systemConfig = null;
 
     /**

@@ -56,14 +56,8 @@
 
 <?php } ?>
 
-<?php
-    // CUSTOM BRANDING
-    $systemConfig = \Pimcore\Config::getSystemConfig();
-?>
-<?php if($systemConfig->branding) { ?>
-    <?php if($systemConfig->branding->color_admin_interface) {
-        $interfaceColor = $systemConfig->branding->color_admin_interface;
-    ?>
+<?php // CUSTOM BRANDING ?>
+<?php if ($this->config instanceof Pimcore\Config && !empty($interfaceColor = $this->config['branding']['color_admin_interface'])) { ?>
         #pimcore_signet {
             background-color: <?= $interfaceColor ?> !important;
         }
@@ -75,6 +69,4 @@
         #pimcore_navigation li:hover:after {
             background-color: <?= $interfaceColor ?> !important;
         }
-
-    <?php } ?>
 <?php } ?>

@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -395,12 +396,13 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/get", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request, Config $config)
     {
         if (intval($request->get('id')) < 1) {
             return $this->adminJson(['success' => false]);
@@ -469,11 +471,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        $conf = \Pimcore\Config::getSystemConfig();
-
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $conf->webservice->enabled,
+            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
