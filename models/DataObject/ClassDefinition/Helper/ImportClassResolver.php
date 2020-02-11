@@ -18,6 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 class ImportClassResolver extends ClassResolver
 {
+    /**
+     * @param $importServiceOrClass
+     *
+     * @return mixed|null
+     */
     public static function resolveClassOrService($importServiceOrClass)
     {
         return self::resolve($importServiceOrClass);

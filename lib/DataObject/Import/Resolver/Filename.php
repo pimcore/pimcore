@@ -34,15 +34,9 @@ class Filename extends AbstractResolver
      */
     private $modelFactory;
 
-    /**
-     * @var ImportClassResolver
-     */
-    private $classResolver;
-
-    public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
+    public function __construct(FactoryInterface $modelFactory)
     {
         $this->modelFactory = $modelFactory;
-        $this->classResolver = $classResolver;
     }
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
@@ -50,7 +44,7 @@ class Filename extends AbstractResolver
         $overwrite = (bool)$config->resolverSettings->overwrite;
         $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
         $prefix = (string)$config->resolverSettings->prefix;
-        $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
+        $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $parent = AbstractObject::getById($parentId);
         if (!$parent) {

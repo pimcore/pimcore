@@ -30,15 +30,9 @@ class Fullpath extends AbstractResolver
      */
     private $modelFactory;
 
-    /**
-     * @var ImportClassResolver
-     */
-    private $classResolver;
-
-    public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
+    public function __construct(FactoryInterface $modelFactory)
     {
         $this->modelFactory = $modelFactory;
-        $this->classResolver = $classResolver;
     }
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
@@ -46,7 +40,7 @@ class Fullpath extends AbstractResolver
         $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
         $createParents = (bool)$config->resolverSettings->createParents;
         $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
-        $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
+        $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $fullpath = $rowData[$this->getIdColumn($config)];
         $object = DataObject::getByPath($fullpath);

@@ -36,19 +36,14 @@ class GetBy extends AbstractResolver
      */
     private $modelFactory;
 
-    /** @var ImportClassResolver */
-    private $classResolver;
-
     /**
      * GetBy constructor.
      *
      * @param FactoryInterface $modelFactory
-     * @param ImportClassResolver $classResolver
      */
-    public function __construct(FactoryInterface $modelFactory, ImportClassResolver $classResolver)
+    public function __construct(FactoryInterface $modelFactory)
     {
         $this->modelFactory = $modelFactory;
-        $this->classResolver = $classResolver;
     }
 
     /**
@@ -66,7 +61,7 @@ class GetBy extends AbstractResolver
         $skipIfExists = (bool)$config->resolverSettings->skipIfExists;
         $createOnDemand = (bool)$config->resolverSettings->createOnDemand;
 
-        $service = $this->classResolver->resolveClassOrService($config->resolverSettings->phpClassOrService);
+        $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         if (!$attribute) {
             throw new \InvalidArgumentException('Attribute is not set');
