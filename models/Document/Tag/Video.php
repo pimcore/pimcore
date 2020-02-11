@@ -382,11 +382,11 @@ class Video extends Model\Document\Tag
                     $imageThumbnailConf['format'] = 'JPEG';
                 }
 
-                if ($this->poster && (/** @var Asset\Image $poster */ $poster = Asset::getById($this->poster))) {
+                if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
                     if ($asset->getCustomSetting('image_thumbnail_asset')
-                        && (/** @var Asset\Image $customPreviewAsset */ $customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                        && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
                         $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
