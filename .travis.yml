@@ -56,16 +56,6 @@ jobs:
       sudo: required
       php: 7.2
 
-    # Symfony 4.* all tests
-    - name: "All Tests - PHP 7.2 Symfony 4 - Relation Cache"
-      os: linux
-      sudo: required
-      php: 7.2
-      env:
-        - PIMCORE_TEST_SUITE=cache
-        - PIMCORE_TEST_GROUP=cache.core.redis
-        - PIMCORE_CACHE_RAW_RELATION_DATA=1
-
     - name: "All Tests - PHP 7.3 Symfony 4"
       os: linux
       sudo: required
@@ -75,15 +65,6 @@ jobs:
       os: linux
       sudo: required
       php: 7.4
-
-    - name: "All Tests - PHP 7.4 Symfony 4 - Relation Cache"
-      os: linux
-      sudo: required
-      php: 7.4
-      env:
-        - PIMCORE_TEST_SUITE=cache
-        - PIMCORE_TEST_GROUP=cache.core.redis
-        - PIMCORE_CACHE_RAW_RELATION_DATA=1
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 Symfony 3.4"

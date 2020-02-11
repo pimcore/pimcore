@@ -766,8 +766,7 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
-  KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `binaryFileId` (`binaryFileId`)
+  KEY `binaryFileHash` (`binaryFileHash`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;

@@ -367,7 +367,7 @@ class Service
      * @return string
      * @throws \Exception
      */
-    public static function buildImplementsInterfaces(array $implementsParts, string $newInterfaces) {
+    public static function buildImplementsInterfaces($implementsParts = [], string $newInterfaces) {
 
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -390,11 +390,11 @@ class Service
 
     /**
      * @param array $useParts
-     * @param string $newTraits A comma separated list of traits
+     * @param string $newTraits
      * @return string
      * @throws \Exception
      */
-    public static function buildUseTraits(array $useParts, string $newTraits) {
+    public static function buildUseTraits($useParts = [], string $newTraits) {
 
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
@@ -411,7 +411,7 @@ class Service
         if ($useParts) {
             $result = '';
             foreach ($useParts as $part) {
-                $result .= 'use ' . $part . ";\n";
+                $result .= 'use ' . $part . ";\r\n";
             }
             $result .= "\n";
             return $result;
