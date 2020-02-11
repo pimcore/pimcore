@@ -1360,6 +1360,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string|null $implementsInterfaces
+     *
      * @return $this
      */
     public function setImplementsInterfaces(?string $implementsInterfaces)
