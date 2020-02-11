@@ -14,7 +14,6 @@
 
 namespace Pimcore\Translation\ImportDataExtractor;
 
-use Pimcore\Model\Element\Exception\ElementNotFoundException;
 use Pimcore\Tool;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\Escaper\Xliff12Escaper;
