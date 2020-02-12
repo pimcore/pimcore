@@ -26,7 +26,7 @@ interface ImportDataExtractorInterface
      *
      * @throws \Exception
      */
-    public function extractElement(string $importId, int $stepId): AttributeSet;
+    public function extractElement(string $importId, int $stepId): ?AttributeSet;
 
     /**
      * @param string $importId

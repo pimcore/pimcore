@@ -41,7 +41,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     /**
      * @inheritdoc
      */
-    public function extractElement(string $importId, int $stepId): AttributeSet
+    public function extractElement(string $importId, int $stepId): ?AttributeSet
     {
         $xliff = $this->loadFile($importId);
 
