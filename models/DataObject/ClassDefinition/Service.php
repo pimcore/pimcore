@@ -388,7 +388,7 @@ class Service
     }
 
     /**
-     * @param $useParts
+     * @param array $useParts
      * @param string|null $newTraits
      * @return string
      * @throws \Exception
