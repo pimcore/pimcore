@@ -96,6 +96,16 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
 }
 
+
+
+
+
+.................... overlay-error.svg
+
+
+
+
+
 .pimcore_icon_overlay_reading:before {
     position: absolute;
     width: 14px;
@@ -852,6 +862,10 @@
 
 .pimcore_icon_warning {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/warning.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_import_warning {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_view {

@@ -20,6 +20,8 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
+use Pimcore\DataObject\Import\Resolver\ImportErrorException;
+use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
@@ -1717,8 +1719,12 @@ class DataObjectHelperController extends AdminController
             } else {
                 throw new \Exception('empty row');
             }
+        } catch (ImportWarningException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'warning']);
+        } catch (ImportErrorException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         } catch (\Exception $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         }
     }
 
