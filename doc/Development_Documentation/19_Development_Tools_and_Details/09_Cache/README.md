@@ -115,7 +115,7 @@ $uri = "http://www.pimcore.org/...";
 $cacheKey = md5($uri);
 if(!$data = \Pimcore\Cache::load($cacheKey)) {
  
-    $httpClient = \Pimcore\Tool::getHttpClient();
+    $httpClient = \Pimcore::getContainer()->get('pimcore.http_client');
     $httpClient->setUri($uri);
  
     try {
