@@ -71,4 +71,26 @@ abstract class Adapter
      * @throws \Exception
      */
     abstract public function getPdf($path = null);
+
+    /**
+     * @param string $fileType
+     *
+     * @return bool
+     */
+    abstract public function isFileTypeSupported($fileType);
+
+    /**
+     * @return int
+     *
+     * @throws \Exception
+     */
+    abstract public function getPageCount();
+
+    /**
+     * @param int|null $page
+     * @param string|null $path
+     *
+     * @return bool|string
+     */
+    abstract public function getText($page, $path);
 }
