@@ -98,7 +98,7 @@ class RedirectsController extends AdminController
                     }
                 }
 
-                if (!$data['regex'] && $data['source']) {
+                if (isset($data['regex']) && !$data['regex'] && isset($data['source']) && $data['source']) {
                     $data['source'] = str_replace('+', ' ', $data['source']);
                 }
 
