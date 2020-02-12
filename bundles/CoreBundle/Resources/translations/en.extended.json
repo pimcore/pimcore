@@ -299,6 +299,7 @@
   "objects": "Objects",
   "allow_inherit": "Allow inheritance",
   "parent_php_class": "Parent PHP Class",
+  "implements_interfaces": "Implements interface(s)",
   "use_traits": "Use (traits)",
   "general_settings": "General Settings",
   "layout_settings": "Layout Settings (Pimcore Admin)",

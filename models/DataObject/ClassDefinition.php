@@ -76,6 +76,13 @@ class ClassDefinition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * Comma separated list of interfaces
+     * @var string|null
+     */
+    public $implementsInterfaces;
+
+
+    /**
      * Name of the listing parent class if set
      *
      * @var string
@@ -392,16 +399,18 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
-        $cd .= "\n\n";
+        $useParts = [
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
+        ];
 
-        if ($this->getUseTraits()) {
-            $cd .= 'use '.$this->getUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
         $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
@@ -479,10 +488,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
 
-        if ($this->getListingUseTraits()) {
-            $cd .= 'use '.$this->getListingUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
@@ -1260,7 +1266,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param bool $showVariants
      *
-     * return $this;
+     * @return $this
      */
     public function setShowVariants($showVariants)
     {
@@ -1308,7 +1314,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $linkGeneratorReference
      *
-     * @return $this;
+     * @return $this
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
@@ -1325,5 +1331,26 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImplementsInterfaces(): ?string
+    {
+        return $this->implementsInterfaces;
+    }
+
+
+    /**
+     * @param string|null $implementsInterfaces
+     *
+     * @return $this
+     */
+    public function setImplementsInterfaces(?string $implementsInterfaces)
+    {
+        $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
     }
 }

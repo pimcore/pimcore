@@ -103,6 +103,11 @@ class ClassDefinition extends Model\Webservice\Data
     public $showVariants = false;
 
     /**
+     * @var string
+     */
+    public $implementsInterfaces;
+
+    /**
      * @var array
      */
     public $fieldDefinitions;

@@ -737,6 +737,13 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    width: 600,
+                    name: "implementsInterfaces",
+                    fieldLabel: t("implements_interfaces"),
+                    value: this.data.implementsInterfaces
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("use_traits"),
                     name: "useTraits",
                     width: 600,
@@ -1292,12 +1299,16 @@ pimcore.object.classes.klass = Class.create({
                 pimcore.globalmanager.get("object_types_store").load();
                 pimcore.globalmanager.get("object_types_store_create").load();
 
-                // set the current modification date, to detect modifcations on the class which are not made here
+                // set the current modification date, to detect modifications on the class which are not made here
                 this.data.modificationDate = res['class'].modificationDate;
 
                 pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
-                throw "save was not successful, see log files in /var/logs";
+                if (res.message) {
+                    pimcore.helpers.showNotification(t("error"), res.message, "error");
+                } else {
+                    throw "save was not successful, see log files in /var/logs";
+                }
             }
         } catch (e) {
             this.saveOnError();

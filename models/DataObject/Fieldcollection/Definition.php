@@ -42,6 +42,12 @@ class Definition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * Comma separated list of interfaces
+     * @var string|null
+     */
+    public $implementsInterfaces;
+
+    /**
      * @var string
      */
     public $title;
@@ -344,7 +350,11 @@ class Definition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
 
         $cd .= "\n\n";
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
@@ -506,6 +516,25 @@ class Definition extends Model\AbstractModel
     {
         $this->group = $group;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImplementsInterfaces(): ?string
+    {
+        return $this->implementsInterfaces;
+    }
+
+
+    /**
+     * @param string|null $implementsInterfaces
+     * @return $this
+     */
+    public function setImplementsInterfaces(?string $implementsInterfaces)
+    {
+        $this->implementsInterfaces = $implementsInterfaces;
         return $this;
     }
 }

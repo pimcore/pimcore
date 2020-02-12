@@ -20,6 +20,7 @@ use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
+use Pimcore\Tool;
 
 /**
  * Class Service
@@ -106,7 +107,7 @@ class Service
         $class->setUserModification($userId);
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
-                    'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
+                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
@@ -149,7 +150,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -228,6 +229,7 @@ class Service
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
+        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }
@@ -358,4 +360,78 @@ class Service
 
         return false;
     }
+
+    /**
+     * @param array $implementsParts
+     * @param string|null $newInterfaces A comma separated list of interfaces
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces) {
+
+        if ($newInterfaces) {
+            $customParts = explode(',', $newInterfaces);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $implementsParts[]= $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+        }
+
+        if ($implementsParts) {
+            return ' implements ' . implode(', ', $implementsParts);
+        }
+        return '';
+    }
+
+    /**
+     * @param array $useParts
+     * @param string|null $newTraits
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    {
+        if(!is_array($useParts)) {
+            $useParts = [];
+        }
+
+        if ($newTraits) {
+            $customParts = explode(',', $newTraits);
+            foreach ($customParts as $trait) {
+                $trait = trim($trait);
+                if (Tool::traitExists($trait)) {
+                    $useParts[]= $trait;
+                } else {
+                    throw new \Exception("trait '" . $trait . "' does not exist");
+                }
+            }
+        }
+
+        return self::buildUseCode($useParts);
+    }
+
+
+    /**
+     * @param array $useParts
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildUseCode($useParts)
+    {
+        if ($useParts) {
+            $result = '';
+            foreach ($useParts as $part) {
+                $result .= 'use ' . $part . ";\r\n";
+            }
+            $result .= "\n";
+            return $result;
+        }
+
+        return '';
+    }
+
 }
