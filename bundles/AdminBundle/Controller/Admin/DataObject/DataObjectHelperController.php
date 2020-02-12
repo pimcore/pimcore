@@ -1437,7 +1437,6 @@ class DataObjectHelperController extends AdminController
 
             $attributes = $selectedGridColumn->attributes;
 
-            /** @var ConfigElementInterface $config */
             $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;

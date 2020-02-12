@@ -87,13 +87,11 @@ class Service
      * @param \stdClass[] $jsonConfigs
      * @param mixed|null $context
      *
-     * @return array
+     * @return ConfigElementInterface[]
      */
     public function buildInputDataConfig(array $jsonConfigs, $context = null): array
     {
-        $config = $this->doBuildConfig($jsonConfigs, [], $context);
-
-        return $config;
+        return $this->doBuildConfig($jsonConfigs, [], $context);
     }
 
     /**
