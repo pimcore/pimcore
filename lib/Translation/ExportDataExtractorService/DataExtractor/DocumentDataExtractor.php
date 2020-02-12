@@ -87,7 +87,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
         foreach ($elements as $tag) {
             if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
-                if (in_array($tag->getType(), ['image', 'link'])) {
+                if ($tag instanceof Document\Tag\Image || $tag instanceof Document\Tag\Link) {
                     $content = $tag->getText();
                 } else {
                     $content = $tag->getData();
@@ -100,7 +100,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
                         if ($targetDocument instanceof  Document\PageSnippet) {
                             $targetTag = $targetDocument->getElement($tag->getName());
-                            if (in_array($targetTag->getType(), ['image', 'link'])) {
+                            if ($targetTag instanceof Document\Tag\Image || $targetTag instanceof Document\Tag\Link) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
                             } else {
                                 $targetContent[$targetLanguage] = $targetTag->getData();
