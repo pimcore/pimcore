@@ -224,7 +224,7 @@ class Service
         $importConfigData = new \stdClass();
         $exportConfigData = json_decode($gridConfig->getConfig(), true);
 
-        $importConfigData->classId = $exportConfigData->classId;
+        $importConfigData->classId = $exportConfigData['classId'] ?? null;
         $class = ClassDefinition::getById($exportConfigData['classId']);
 
         $importConfigData->selectedGridColumns = [];
@@ -260,10 +260,10 @@ class Service
         $importColumn->attributes->class = 'Ignore';
 
         $fieldConfig = $exportColumn['fieldConfig'];
-        if ($fieldConfig['isOperator'] || (isset($fieldConfig['key'])
+        if ($fieldConfig['isOperator'] ?? null || (isset($fieldConfig['key'])
                 && (in_array($fieldConfig['key'], self::FORBIDDEN_KEYS) || strpos($fieldConfig['key'], '~') !== false))) {
             $importColumn->attributes->type = 'operator';
-            $importColumn->attributes->label = $fieldConfig['attributes']['label'];
+            $importColumn->attributes->label = $fieldConfig['attributes']['label'] ?? null;
             $importColumn->attributes->childs = [];
 
             $keyParts = explode('~', $fieldConfig['key']);
@@ -276,7 +276,6 @@ class Service
                 $importColumn->attributes->class = 'ObjectBrickSetter';
                 $importColumn->attributes->brickType = $bricktype;
                 $importColumn->attributes->attr = $fieldname;
-//                $importColumn->attributes->label = $fieldname;
 
                 $bricksetter = new \stdClass();
                 $bricksetter->type = 'value';
@@ -286,7 +285,9 @@ class Service
                 $bricksetter->dataType = $fieldConfig['type'];
                 $bricksetter->childs = [];
                 $importColumn->attributes->childs[] = $bricksetter;
-            } elseif ($fieldConfig['attributes']['type'] == 'operator' && $fieldConfig['attributes']['class'] == 'LFExpander') {
+            } elseif (isset($fieldConfig['attributes'])
+                    && $fieldConfig['attributes']['type'] == 'operator'
+                    && $fieldConfig['attributes']['class'] == 'LFExpander') {
                 $childs = $fieldConfig['attributes']['childs'];
                 if (count($childs) == 1) {
                     $importColumns = [];
