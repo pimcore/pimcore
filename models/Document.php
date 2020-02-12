@@ -1089,7 +1089,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the document key.
      *
-     * @param int $key
+     * @param string $key
      *
      * @return Document
      */

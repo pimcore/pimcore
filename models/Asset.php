@@ -1209,6 +1209,18 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Alias for setFilename()
+     *
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        return $this->setFilename($key);
+    }
+
+    /**
      * @param int $modificationDate
      *
      * @return $this
