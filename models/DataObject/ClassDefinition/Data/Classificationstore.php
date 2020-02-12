@@ -1004,7 +1004,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
                                 DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
                             } else {
-                                $value = $items[$activeGroupId][$keyId][$validLanguage];
+                                $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
 
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
