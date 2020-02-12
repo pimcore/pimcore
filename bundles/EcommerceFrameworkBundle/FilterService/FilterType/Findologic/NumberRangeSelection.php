@@ -30,7 +30,9 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      * @param FilterNumberRangeSelection $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
@@ -89,6 +91,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      * @param array $currentFilter
      * @param array $params
      * @param bool $isPrecondition
+     *
      * @return array
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)

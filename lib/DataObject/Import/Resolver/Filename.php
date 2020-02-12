@@ -17,6 +17,7 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -26,7 +27,6 @@ use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\FactoryInterface;
-use const FILTER_VALIDATE_BOOLEAN;
 
 class Filename extends AbstractResolver
 {
@@ -95,7 +95,7 @@ class Filename extends AbstractResolver
                 $object->setParent($parent);
                 $object->setKey($objectKey);
             }
-        } elseif($overwrite && $service){
+        } elseif ($overwrite && $service) {
             $object = DataObject::getByPath($intendedPath);
 
             $object = $service->populate($config, $object, $rowData, [
@@ -104,11 +104,11 @@ class Filename extends AbstractResolver
         } else {
             if ($service instanceof ImportDataServiceInterface) {
                 $object = $service->populate($config, null, $rowData, [
-                    'parentId'     => $parentId,
-                    'prefix'       => $prefix,
+                    'parentId' => $parentId,
+                    'prefix' => $prefix,
                     'intendedPath' => $intendedPath,
-                    'parent'       => $parent,
-                    'classname'    => $className,
+                    'parent' => $parent,
+                    'classname' => $className,
                 ]);
             } else {
                 $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);

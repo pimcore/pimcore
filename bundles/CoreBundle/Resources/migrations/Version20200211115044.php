@@ -13,7 +13,6 @@ class Version20200211115044 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-
         $db = Db::get();
         // remove index from primary key in relations tables
         $relationTables = $db->fetchAll("SHOW TABLES LIKE 'object\_relations\_%'");
@@ -43,7 +42,6 @@ class Version20200211115044 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-
         $db = Db::get();
         // remove index from primary key in relations tables
         $relationTables = $db->fetchAll("SHOW TABLES LIKE 'object\_relations\_%'");
@@ -62,7 +60,6 @@ class Version20200211115044 extends AbstractPimcoreMigration
                     ADD INDEX `ownertype` (`ownertype`),
                     ADD INDEX `type` (`type`),
                     ADD INDEX `ownername` (`ownername`);');
-
             } catch (\Exception $e) {
                 $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
             }

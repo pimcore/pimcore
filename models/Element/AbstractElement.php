@@ -322,5 +322,5 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return Model\Dependency
      */
-    public abstract function getDependencies();
+    abstract public function getDependencies();
 }

@@ -17,6 +17,7 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -26,9 +27,8 @@ use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
-use \Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
-use const FILTER_VALIDATE_BOOLEAN;
 
 class GetBy extends AbstractResolver
 {
@@ -106,9 +106,8 @@ class GetBy extends AbstractResolver
 
             return $object;
         } elseif ($createOnDemand) {
-
             if ($service instanceof ImportDataServiceInterface) {
-                $object = $service->populate($config, null, $rowData,  ['parentId' => $parentId]);
+                $object = $service->populate($config, null, $rowData, ['parentId' => $parentId]);
             } else {
                 $classId = $config->classId;
                 $classDefinition = ClassDefinition::getById($classId);

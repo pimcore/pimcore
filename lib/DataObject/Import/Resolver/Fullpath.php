@@ -17,12 +17,12 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\FactoryInterface;
-use const FILTER_VALIDATE_BOOLEAN;
 
 class Fullpath extends AbstractResolver
 {
@@ -51,7 +51,6 @@ class Fullpath extends AbstractResolver
         }
 
         if (!$object && $createOnDemand) {
-
             if ($service instanceof ImportDataServiceInterface) {
                 $object = $service->populate($config, null, $rowData, ['parentId' => $parentId]);
             } else {
@@ -78,7 +77,7 @@ class Fullpath extends AbstractResolver
         } else {
             if ($object && !$service) {
                 $parent = $object->getParent();
-            } elseif($object && $service){
+            } elseif ($object && $service) {
                 $object = $service->populate($config, $object, $rowData, ['parentId' => $parentId]);
             } else {
                 throw new ImportErrorException('failed to resolve object ' . $fullpath);
