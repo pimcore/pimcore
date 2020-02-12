@@ -32,10 +32,6 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
 
         this.initData(initData);
 
-        if (typeof this.datax.lazyLoading == "undefined") {
-            this.datax.lazyLoading = true;
-        }
-
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");

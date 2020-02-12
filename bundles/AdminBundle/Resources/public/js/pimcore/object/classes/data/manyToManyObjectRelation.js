@@ -32,10 +32,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
 
         this.initData(initData);
 
-        if (typeof this.datax.lazyLoading == "undefined") {
-            this.datax.lazyLoading = true;
-        }
-
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
 
         // overwrite default settings
