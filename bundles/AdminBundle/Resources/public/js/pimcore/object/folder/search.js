@@ -375,6 +375,20 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.store.load();
         }
 
+        var toolbar = new Ext.Toolbar({
+            scrollable: "x",
+            items: [this.searchField, "-",
+                this.languageInfo, "-",
+                this.toolbarFilterInfo,
+                this.clearFilterButton, "->",
+                this.checkboxOnlyDirectChildren, "-",
+                this.sqlEditor, this.sqlButton, "-",
+                this.exportButton, "-",
+                this.columnConfigButton,
+                this.saveColumnConfigButton
+            ]
+        });
+
         // grid
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -403,16 +417,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             },
             cls: 'pimcore_object_grid_panel',
-            tbar: [this.searchField, "-",
-                this.languageInfo, "-",
-                this.toolbarFilterInfo,
-                this.clearFilterButton, "->",
-                this.checkboxOnlyDirectChildren, "-",
-                this.sqlEditor, this.sqlButton, "-",
-                this.exportButton, "-",
-                this.columnConfigButton,
-                this.saveColumnConfigButton
-            ]
+            tbar: toolbar
         });
 
         this.grid.on("columnmove", function () {
