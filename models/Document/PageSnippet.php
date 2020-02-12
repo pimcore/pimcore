@@ -153,8 +153,9 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->documents->versions->steps
-                || Config::getSystemConfig()->documents->versions->days
+            $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            if (!empty($documentsConfig['versions']['steps'])
+                || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -602,7 +603,7 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
+            if (!empty($hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'])) {
                 if (!$hostname = \Pimcore\Tool::getHostname()) {
                     throw new \Exception('No hostname available');
                 }
