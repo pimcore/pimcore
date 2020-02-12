@@ -366,16 +366,17 @@ class UrlSlug implements OwnerAwareFieldInterface
                     $objectFieldname = $objectFieldname[0];
 
                     if ($type == 'objectbrick') {
-                        if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
-
-                            /** @var Objectbricks $objectFieldDef */
+                        /** @var Objectbricks|null $objectFieldDef */
+                        $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
+                        if ($objectFieldDef) {
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
                                     /** @var Definition $brickDef */
                                     $brickDef = Definition::getByKey($allowedBrick);
-                                    if ($lfDef = $brickDef->getFieldDefinition('localizedfields')) {
-                                        /** @var Localizedfields $lfDef */
+                                    /** @var Localizedfields|null $lfDef */
+                                    $lfDef = $brickDef->getFieldDefinition('localizedfields');
+                                    if ($lfDef) {
                                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                                         break;
                                     }
@@ -405,8 +406,9 @@ class UrlSlug implements OwnerAwareFieldInterface
                         }
                     }
                 } else {
-                    /** @var Localizedfields $lfDef */
-                    if ($lfDef = $classDefinition->getFieldDefinition('localizedfields')) {
+                    /** @var Localizedfields|null $lfDef */
+                    $lfDef = $classDefinition->getFieldDefinition('localizedfields');
+                    if ($lfDef) {
                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                     }
                 }
