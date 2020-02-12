@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
                 (source = :sourcePath AND `type` = :typePath) OR
                 (source = :sourcePathQuery AND `type` = :typePathQuery) OR
                 (source = :sourceEntireUri AND `type` = :typeEntireUri)
-            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL ORDER BY `priority` DESC)";
+            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)";
 
         if($siteId) {
             $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
@@ -74,6 +74,8 @@ class Dao extends Model\Dao\AbstractDao
         if($override) {
             $sql .= ' AND priority = 99';
         }
+
+        $sql .= ' ORDER BY `priority` DESC';
 
         $data = $this->db->fetchRow($sql, [
             'sourcePath' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH),
