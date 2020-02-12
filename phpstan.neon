@@ -1,3 +1,6 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
 
     #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
