@@ -400,7 +400,7 @@ class Service
             $customParts = explode(',', $newTraits);
             foreach ($customParts as $trait) {
                 $trait = trim($trait);
-                if (Tool::classInterfaceExists($trait, 'trait')) {
+                if (Tool::traitExists($trait)) {
                     $useParts[]= $trait;
                 } else {
                     throw new \Exception("trait '" . $trait . "' does not exist");

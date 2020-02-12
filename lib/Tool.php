@@ -634,10 +634,7 @@ class Tool
     }
 
     /**
-     * @static
-     *
      * @param string $class
-     *
      * @return bool
      */
     public static function classExists($class)
@@ -646,10 +643,7 @@ class Tool
     }
 
     /**
-     * @static
-     *
      * @param string $class
-     *
      * @return bool
      */
     public static function interfaceExists($class)
@@ -658,12 +652,21 @@ class Tool
     }
 
     /**
+     * @param $class
+     * @return bool
+     */
+    public static function traitExists($class)
+    {
+        return self::classInterfaceExists($class, 'trait');
+    }
+
+    /**
      * @param string $class
      * @param string $type (e.g. 'class', 'interface', 'trait')
      *
      * @return bool
      */
-    public static function classInterfaceExists($class, $type)
+    protected static function classInterfaceExists($class, $type)
     {
         $functionName = $type . '_exists';
 
