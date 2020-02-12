@@ -363,7 +363,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * display the quantity value field data in the grid
      *
      * @param mixed $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array

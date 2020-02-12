@@ -320,7 +320,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return \stdClass
@@ -480,7 +480,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -1182,7 +1182,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -1232,7 +1232,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** See parent class.
      * @param array $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return DataObject\Localizedfield

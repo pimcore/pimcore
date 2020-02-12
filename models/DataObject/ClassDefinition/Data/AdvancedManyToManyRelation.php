@@ -410,7 +410,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
+     * @param array|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
@@ -1175,7 +1175,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /** See parent class.
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed

@@ -260,7 +260,7 @@ class Asset extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video|null
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {

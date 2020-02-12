@@ -1040,7 +1040,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -1052,7 +1052,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @throws \Exception

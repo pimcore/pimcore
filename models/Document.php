@@ -34,6 +34,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method \Pimcore\Model\Document\Dao getDao()
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
+ * @method string getCurrentFullPath()
  */
 class Document extends Element\AbstractElement
 {
@@ -297,8 +298,10 @@ class Document extends Element\AbstractElement
                     }
                 }
 
+                /** @var Document $document */
                 $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
+
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 

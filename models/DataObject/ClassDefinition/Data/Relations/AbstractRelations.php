@@ -90,7 +90,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @throws \Exception
@@ -145,7 +145,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return null
@@ -218,7 +218,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -274,7 +274,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
