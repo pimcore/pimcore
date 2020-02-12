@@ -110,9 +110,9 @@ pimcore.settings.redirects = Class.create({
         var redirectTypesStore = Ext.create('Ext.data.ArrayStore', {
             fields: ['type', 'name'],
             data : [
-                ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/test?key=value'],
-                ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
-                ["path", t('redirects_type_path') + ': /test']
+                ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/foo?key=value'],
+                ["path_query", t('redirects_type_path_query') + ': /foo?key=value'],
+                ["path", t('redirects_type_path') + ': /foo']
             ]
         });
 
@@ -144,8 +144,22 @@ pimcore.settings.redirects = Class.create({
                     return redirectType;
                 }
             },
+            {text: t("source_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "sourceSite",
+                editor: new Ext.form.ComboBox({
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                editable: false,
+                triggerAction: "all"
+            }), renderer: function (siteId) {
+                var store = pimcore.globalmanager.get("sites");
+                var pos = store.findExact("id", siteId);
+                if(pos >= 0) {
+                    return store.getAt(pos).get("domain");
+                }
+            }},
             {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            {text: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
+            {text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "targetSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -163,21 +177,7 @@ pimcore.settings.redirects = Class.create({
                 editor: new Ext.form.TextField({}),
                 tdCls: "input_drop_target"
             },
-            {text: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
-                editor: new Ext.form.ComboBox({
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                editable: false,
-                triggerAction: "all"
-            }), renderer: function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if(pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
-            {text: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {text: t("status"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -229,7 +229,7 @@ pimcore.settings.redirects = Class.create({
                 width: 70
             }),
             {
-                text: t("expiry"),
+                text: t("expiry") + ' (' + t('optional') + ')',
                 width: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
@@ -530,13 +530,12 @@ pimcore.settings.redirects = Class.create({
     openWizard: function () {
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
-            layout: 'hbox',
             items: [{
                 xtype: "combo",
                 name: "mode",
                 store: [
-                    ["begin", t("beginning_with")],
                     ["exact", t("matching_exact")],
+                    ["begin", t("beginning_with")],
                     ["contain", t("contain")],
                     ["begin_end_slash", t("short_url")],
                     ["domain", t("domain")]
@@ -544,16 +543,22 @@ pimcore.settings.redirects = Class.create({
                 mode: "local",
                 typeAhead: false,
                 editable: false,
+                value: 'exact',
                 forceSelection: true,
                 triggerAction: "all",
-                fieldLabel: t("pattern"),
-                emptyText: t("select")
+                fieldLabel: t("type")
             }, {
                 xtype: "textfield",
                 name: "pattern",
-                margin: "0 0 0 20",
-                width: 330,
-                emptyText: "/some/example/path"
+                width: 600,
+                emptyText: "/some/example/path",
+                fieldLabel: t("source")
+            }, {
+                xtype: "textfield",
+                name: "target",
+                width: 600,
+                emptyText: "/some/example/path",
+                fieldLabel: t("target")
             }]
         });
 
@@ -622,6 +627,8 @@ pimcore.settings.redirects = Class.create({
             record.regex = true;
             record.priority = 99;
         }
+
+        record.target = values['target'];
 
         this.grid.store.insert(0, record);
         this.updateRows();

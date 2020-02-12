@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
@@ -141,6 +142,24 @@ class Redirect extends AbstractModel
         try {
             $redirect = new self();
             $redirect->getDao()->getById($id);
+
+            return $redirect;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Site|null $site
+     * @param bool $override
+     * @return static|null
+     */
+    public static function getByExactMatch(Request $request, ?Site $site=null, bool $override = false): ?self
+    {
+        try {
+            $redirect = new self();
+            $redirect->getDao()->getByExactMatch($request, $site, $override);
 
             return $redirect;
         } catch (\Exception $e) {
