@@ -1426,26 +1426,6 @@ parameters:
 			path: lib/Cache/Pool/Redis.php
 
 		-
-			message: "#^Method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:clear\\(\\) invoked with 1 parameter, 0 required\\.$#"
-			count: 1
-			path: lib/Cache/Pool/SymfonyAdapterProxy.php
-
-		-
-			message: "#^Access to protected property Symfony\\\\Component\\\\Cache\\\\CacheItem\\:\\:\\$value\\.$#"
-			count: 1
-			path: lib/Cache/Pool/SymfonyAdapterProxy.php
-
-		-
-			message: "#^Access to protected property Symfony\\\\Component\\\\Cache\\\\CacheItem\\:\\:\\$expiry\\.$#"
-			count: 1
-			path: lib/Cache/Pool/SymfonyAdapterProxy.php
-
-		-
-			message: "#^Access to an undefined property Symfony\\\\Component\\\\Cache\\\\CacheItem\\:\\:\\$tags\\.$#"
-			count: 1
-			path: lib/Cache/Pool/SymfonyAdapterProxy.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:getPerspectives\\(\\)\\.$#"
 			count: 1
 			path: lib/Config.php
