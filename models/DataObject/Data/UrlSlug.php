@@ -41,7 +41,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $objectId;
 
     /**
-     * @var int
+     * @var string
      */
     protected $classId;
 
@@ -266,7 +266,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
@@ -369,7 +369,6 @@ class UrlSlug implements OwnerAwareFieldInterface
                         if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
 
                             /** @var Objectbricks $objectFieldDef */
-
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
@@ -468,11 +467,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @throws \Exception
      */
-    public static function handleClassDeleted(int $classId)
+    public static function handleClassDeleted(string $classId)
     {
         $db = Db::get();
         $db->delete('object_url_slugs', ['classId' => $classId]);

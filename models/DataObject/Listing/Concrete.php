@@ -21,9 +21,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
- * @method \Pimcore\Model\DataObject\Listing\Concrete\Dao getDao()
- * @method Model\Webservice\Data\DataObject\Concrete[] load()
- * @method Model\Webservice\Data\DataObject\Concrete current()
+ * @method DataObject\Listing\Concrete\Dao getDao()
+ * @method DataObject\Concrete[] load()
+ * @method DataObject\Concrete current()
  */
 abstract class Concrete extends Model\DataObject\Listing
 {
@@ -273,5 +273,73 @@ abstract class Concrete extends Model\DataObject\Listing
         }
 
         return false;
+    }
+
+    /**
+     * Filter by path (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterByPath ($data, $operator = '=') {
+        $this->addFilterByField('o_path', $operator, $data);
+        return $this;
+    }
+
+    /**
+     * Filter by key (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterByKey ($data, $operator = '=') {
+        $this->addFilterByField('o_key', $operator, $data);
+
+        return $this;
+    }
+
+    /**
+     * Filter by id (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterById ($data, $operator = '=') {
+        $this->addFilterByField('o_id', $operator, $data);
+        return $this;
+    }
+
+    /**
+     * Filter by published (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterByPublished ($data, $operator = '=') {
+        $this->addFilterByField('o_published', $operator, $data);
+        return $this;
+    }
+
+    /**
+     * Filter by creationDate (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterByCreationDate ($data, $operator = '=') {
+        $this->addFilterByField('o_creationDate', $operator, $data);
+        return $this;
+    }
+
+    /**
+     * Filter by modificationDate (system field)
+     * @param string|int|float|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @return static
+     */
+    public function filterByModificationDate ($data, $operator = '=') {
+        $this->addFilterByField('o_modificationDate', $operator, $data);
+
+        return $this;
     }
 }

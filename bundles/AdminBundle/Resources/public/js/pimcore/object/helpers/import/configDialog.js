@@ -738,7 +738,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata) {
-                        this.reportPanel.logData(rdata.rowId, rdata.message, rdata.success, rdata.objectId);
+                        this.reportPanel.logData(rdata);
                         if (!rdata.success) {
                             this.importErrors.push({
                                 job: rdata.message

@@ -127,8 +127,8 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Data\Geopoint[]|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geopoint[]|null

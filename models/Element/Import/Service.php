@@ -76,7 +76,7 @@ class Service
      * @param Element\ElementInterface $rootElement
      * @param string $apiKey
      * @param string $path
-     * @param Model\Webservice\Data $apiElement
+     * @param Webservice\Data\Document|Webservice\Data\Asset|Webservice\Data\DataObject\Concrete|Webservice\Data\DataObject\Folder $apiElement
      * @param bool $overwrite
      * @param string $elementCounter
      *
@@ -125,6 +125,7 @@ class Service
             return $existingElement;
         }
 
+        /** @var Asset|Model\Document|DataObject\AbstractObject $element */
         $element = new $className();
         $element->setId(null);
         $element->setCreationDate(time());
@@ -216,14 +217,14 @@ class Service
 
         $element->save();
 
-        //todo save type and id for later rollback
+        //TODO save type and id for later rollback
         $this->importInfo[Element\Service::getType($element) . '_' . $element->getId()] = ['id' => $element->getId(), 'type' => Element\Service::getType($element), 'fullpath' => $element->getRealFullPath()];
 
         return $element;
     }
 
     /**
-     * @param Webservice\Data $apiElement
+     * @param Webservice\Data\Document|Webservice\Data\Asset|Webservice\Data\DataObject $apiElement
      * @param string $type
      * @param array $idMapping
      */

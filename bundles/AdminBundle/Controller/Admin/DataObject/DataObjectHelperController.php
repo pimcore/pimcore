@@ -20,6 +20,8 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
+use Pimcore\DataObject\Import\Resolver\ImportErrorException;
+use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
@@ -549,7 +551,7 @@ class DataObjectHelperController extends AdminController
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
                             if ($brickDescriptor) {
-                                $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                 /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                                 $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
@@ -1719,8 +1721,12 @@ class DataObjectHelperController extends AdminController
             } else {
                 throw new \Exception('empty row');
             }
+        } catch (ImportWarningException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'warning']);
+        } catch (ImportErrorException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         } catch (\Exception $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         }
     }
 
@@ -2094,7 +2100,7 @@ class DataObjectHelperController extends AdminController
                     if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                         $brickType = $brickDescriptor['containerKey'];
                     }
                     $brickKey = $fieldParts[1];
@@ -2128,7 +2134,7 @@ class DataObjectHelperController extends AdminController
                                 $value = $brick;
 
                                 if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
                                 }
 

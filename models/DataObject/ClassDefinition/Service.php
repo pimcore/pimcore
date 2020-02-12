@@ -57,7 +57,7 @@ class Service
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
@@ -105,7 +105,7 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'cacheRawRelationData', 'showVariants', 'parentClass',
+        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {

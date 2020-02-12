@@ -17,10 +17,18 @@
 
 namespace Pimcore\Model\DataObject;
 
-interface CacheRawRelationDataInterface
+use stdClass;
+
+interface ImportDataServiceInterface
 {
     /**
-     * @return array
+     *
+     * @param stdClass $resolverConfig
+     * @param Concrete $object
+     * @param array $rowData
+     * @param array $params
+     *
+     * @return Concrete
      */
-    public function __getRawRelationData(): array;
+    public function populate($resolverConfig, $object, $rowData, $params = []);
 }

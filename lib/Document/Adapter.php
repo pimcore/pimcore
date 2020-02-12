@@ -61,5 +61,5 @@ abstract class Adapter
 
     abstract public function load($path);
 
-    abstract public function saveImage($path, $page, $resolution);
+    abstract public function saveImage($path, $page = 1, $resolution = 200);
 }

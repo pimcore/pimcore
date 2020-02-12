@@ -16,9 +16,17 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends AbstractFilterType
 {
+    /**
+     * @param FilterNumberRange $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         return $this->render($this->getTemplate($filterDefinition), [
@@ -33,6 +41,14 @@ class NumberRange extends AbstractFilterType
          ]);
     }
 
+    /**
+     * @param FilterNumberRange $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);

@@ -343,8 +343,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Hotspotimage|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

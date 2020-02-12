@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\UUID\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class UUID extends Model\AbstractModel
 {

@@ -16,11 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactF
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
     /**
-     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param FilterCategory $filterDefinition
      * @param ProductListInterface                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
@@ -65,6 +66,13 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         return $currentFilter;
     }
 
+    /**
+     * @param FilterCategory $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $rawValues = $productList->getGroupByValues('CategoryPath', true);

@@ -16,9 +16,17 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
 
 class SelectCategory extends AbstractFilterType
 {
+    /**
+     * @param FilterCategory $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
@@ -63,6 +71,14 @@ class SelectCategory extends AbstractFilterType
         return $this->render($this->getTemplate($filterDefinition), $parameters);
     }
 
+    /**
+     * @param FilterCategory $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $value = $params[$filterDefinition->getField()] ?? null;

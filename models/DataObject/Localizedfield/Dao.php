@@ -161,11 +161,14 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ((isset($params['saveRelationalData'])
+                                && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
                                 && !$container instanceof DataObject\Objectbrick\Definition
                             )
-                            || ($this->model->isLanguageDirty($language) || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                            || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
+                                    && $this->model->isLanguageDirty($language))
+                                || $params['saveRelationalData']['saveLocalizedRelations'])) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {

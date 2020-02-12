@@ -31,6 +31,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
  * @method bool __isBasedOnLatestData()
+ * @method int getChildAmount($user = null)
  */
 class Asset extends Element\AbstractElement
 {

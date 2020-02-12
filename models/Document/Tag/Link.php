@@ -626,7 +626,7 @@ class Link extends Model\Document\Tag
      */
     public function rewriteIds($idMapping)
     {
-        if ($this->data['internal']) {
+        if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];
             $id = (int)$this->data['internalId'];
 

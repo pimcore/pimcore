@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 /**
  * @method Dependency\Dao getDao()
+ * @method void save()
  */
 class Dependency extends AbstractModel
 {

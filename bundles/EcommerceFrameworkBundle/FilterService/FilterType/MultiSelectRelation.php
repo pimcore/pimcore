@@ -18,10 +18,18 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation;
 use Pimcore\Model\DataObject\Folder;
 
 class MultiSelectRelation extends AbstractFilterType
 {
+    /**
+     * @param FilterMultiRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @return string
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
@@ -66,6 +74,14 @@ class MultiSelectRelation extends AbstractFilterType
         return $availableRelationsArray;
     }
 
+    /**
+     * @param FilterMultiRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);

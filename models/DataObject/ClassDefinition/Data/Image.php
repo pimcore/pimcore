@@ -228,8 +228,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Asset\Image|null $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -355,7 +355,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

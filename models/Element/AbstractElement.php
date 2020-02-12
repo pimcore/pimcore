@@ -31,6 +31,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected $__dataVersionTimestamp = null;
 
+    /**
+     * @internal
+     */
     protected function updateModificationInfos()
     {
         $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
@@ -315,4 +318,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $version;
     }
+
+    /**
+     * @return Model\Dependency
+     */
+    public abstract function getDependencies();
 }

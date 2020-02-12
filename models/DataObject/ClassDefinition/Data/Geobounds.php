@@ -192,7 +192,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see Data::getVersionPreview
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

@@ -14,8 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Model\Dao\AbstractDao;
 
+/**
+ * @property Rule $model
+ */
 class Dao extends AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_pricing_rule';

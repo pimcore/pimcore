@@ -118,11 +118,6 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var bool
-     */
-    public $cacheRawRelationData = false;
-
-    /**
      * @var array
      */
     public $fieldDefinitions = [];
@@ -397,21 +392,11 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
-        if ($this->getCacheRawRelationData()) {
-            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
-        }
-
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
         $cd .= "\n\n";
 
         $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
         $cd .= "\n\n";
-
-        if ($this->getCacheRawRelationData()) {
-            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
-            $cd .= "\n\n";
-        }
 
         if ($this->getUseTraits()) {
             $cd .= 'use '.$this->getUseTraits().";\n";
@@ -1242,10 +1227,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $group
+     *
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
+        return $this;
     }
 
     /**
@@ -1270,10 +1259,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showVariants
+     *
+     * return $this;
      */
     public function setShowVariants($showVariants)
     {
         $this->showVariants = (bool)$showVariants;
+
+        return $this;
     }
 
     /**
@@ -1294,10 +1287,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showAppLoggerTab
+     *
+     * @return $this
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+
+        return $this;
     }
 
     /**
@@ -1310,10 +1307,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $linkGeneratorReference
+     *
+     * @return $this;
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
+
+        return $this;
     }
 
     /**
@@ -1324,25 +1325,5 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getCacheRawRelationData(): bool
-    {
-        return $this->cacheRawRelationData;
-    }
-
-    /**
-     * @param bool $cacheRawRelationData
-     *
-     * @return $this
-     */
-    public function setCacheRawRelationData($cacheRawRelationData)
-    {
-        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
-
-        return $this;
     }
 }

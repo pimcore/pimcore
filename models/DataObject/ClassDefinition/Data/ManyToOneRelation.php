@@ -273,15 +273,15 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Asset|Document|DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
+     * @param array|null $params
      *
      * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,8 +327,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param Element\AbstractElement|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
@@ -341,15 +341,15 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Document | Asset | DataObject\AbstractObject $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
     }
@@ -761,6 +761,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" possible
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -778,7 +780,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
 
-            return;
+            return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
