@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
  * @method Model\Version[] load()
  * @method Model\Version current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
