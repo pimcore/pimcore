@@ -401,7 +401,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
-        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
@@ -410,7 +410,7 @@ class ClassDefinition extends Model\AbstractModel
             '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
         ];
 
-        $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, $this->getUseTraits());
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
         $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
@@ -488,7 +488,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
 
-        $cd .= DataObject\ClassDefinition\Service::buildUseTraits([], $this->getListingUseTraits());
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";

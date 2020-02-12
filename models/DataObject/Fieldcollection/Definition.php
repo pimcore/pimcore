@@ -352,7 +352,7 @@ class Definition extends Model\AbstractModel
 
         $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
-        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfaces($implementsParts, $this->getImplementsInterfaces());
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
 

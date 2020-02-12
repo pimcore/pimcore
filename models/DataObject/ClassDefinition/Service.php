@@ -367,7 +367,7 @@ class Service
      * @return string
      * @throws \Exception
      */
-    public static function buildImplementsInterfaces($implementsParts, ?string $newInterfaces) {
+    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces) {
 
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -387,14 +387,17 @@ class Service
         return '';
     }
 
-
     /**
-     * @param array $useParts
+     * @param $useParts
      * @param string|null $newTraits
      * @return string
      * @throws \Exception
      */
-    public static function buildUseTraits($useParts, ?string $newTraits) {
+    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    {
+        if(!is_array($useParts)) {
+            $useParts = [];
+        }
 
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
@@ -408,6 +411,17 @@ class Service
             }
         }
 
+        return self::buildUseCode($useParts);
+    }
+
+
+    /**
+     * @param array $useParts
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildUseCode($useParts)
+    {
         if ($useParts) {
             $result = '';
             foreach ($useParts as $part) {
@@ -416,6 +430,7 @@ class Service
             $result .= "\n";
             return $result;
         }
+
         return '';
     }
 

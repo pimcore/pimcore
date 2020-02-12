@@ -232,28 +232,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             'Pimcore\Model\DataObject\PreGetValueHookInterface'
         ];
 
-        $cd .= DataObject\ClassDefinition\Service::buildUseTraits($useParts, null);
+        $cd .= DataObject\ClassDefinition\Service::buildUseCode($useParts);
 
         $cd .= "\n";
 
         $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
-
-        if ($this->getImplementsInterfaces()) {
-            $customParts = $this->getImplementsInterfaces();
-            $customParts = explode(',', $customParts);
-            foreach ($customParts as $interface) {
-                $interface = trim($interface);
-                if (Tool::interfaceExists($interface)) {
-                    $customParts[]= $interface;
-                } else {
-                    throw new \Exception("interface '" . $interface . "' does not exist");
-                }
-            }
-
-            $implementsParts[] = $this->getImplementsInterfaces();
-        }
-
-        $implements = ' implements ' . implode(', ', $implementsParts);
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
         $cd .= "\n\n";
