@@ -14,7 +14,7 @@ class Version20200212130011 extends AbstractPimcoreMigration
     {
         $this->addSql('ALTER TABLE `redirects` ROW_FORMAT=DYNAMIC');
         $this->addSql('ALTER TABLE `redirects` DROP INDEX `active`');
-        $this->addSql('ALTER TABLE `redirects` ADD INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`)');
+        $this->addSql('ALTER TABLE `redirects` ADD INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`)');
     }
 
     /**

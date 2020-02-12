@@ -432,7 +432,7 @@ CREATE TABLE `redirects` (
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
-  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`)
+  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sanitycheck`;
