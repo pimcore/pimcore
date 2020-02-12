@@ -360,7 +360,6 @@ class DataObjectHelperController extends AdminController
         $class = null;
         $fields = null;
 
-        /** @var DataObject\ClassDefinition $class */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
@@ -2336,9 +2335,8 @@ class DataObjectHelperController extends AdminController
                         } else {
                             // check if it is a localized field
                             if ($params['language']) {
-                                /** @var DataObject\Localizedfield $localizedField */
                                 $localizedField = $class->getFieldDefinition('localizedfields');
-                                if ($localizedField) {
+                                if ($localizedField instanceof DataObject\Localizedfield) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
@@ -2440,9 +2438,8 @@ class DataObjectHelperController extends AdminController
                 $fds = $class->getFieldDefinitions();
 
                 $additionalFieldNames = array_keys($fds);
-                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
                 $localizedFields = $class->getFieldDefinition('localizedfields');
-                if ($localizedFields) {
+                if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $lfNames = array_keys($localizedFields->getFieldDefinitions());
                     $additionalFieldNames = array_merge($additionalFieldNames, $lfNames);
                 }
