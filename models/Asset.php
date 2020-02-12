@@ -221,7 +221,7 @@ class Asset extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {

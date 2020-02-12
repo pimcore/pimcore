@@ -44,6 +44,10 @@ class LinkController extends DocumentControllerBase
     {
         $link = Document\Link::getById($request->get('id'));
 
+        if (!$link) {
+            $this->createNotFoundException();
+        }
+
         // check for lock
         if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -52,7 +56,6 @@ class LinkController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /** @var Document\Link $link */
         $link = clone $link;
 
         $link->setObject(null);
@@ -152,7 +155,6 @@ class LinkController extends DocumentControllerBase
      */
     protected function setValuesToDocument(Request $request, Document $link)
     {
-
         // data
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));

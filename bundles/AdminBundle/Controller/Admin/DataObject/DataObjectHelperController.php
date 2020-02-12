@@ -1231,8 +1231,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        if ($field->getFieldType() == 'slider') {
-            /** @var DataObject\ClassDefinition\Data\Slider $field */
+        if ($field instanceof DataObject\ClassDefinition\Data\Slider) {
             $config['minValue'] = $field->getMinValue();
             $config['maxValue'] = $field->getMaxValue();
             $config['increment'] = $field->getIncrement();
@@ -2139,25 +2138,29 @@ class DataObjectHelperController extends AdminController
                             }
                         }
                     }
-                } elseif ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
-
+                } else {
                     // if the definition is not set try to get the definition from localized fields
-                    $fieldDefinition = $locFields->getFieldDefinition($field);
-                    if ($fieldDefinition) {
-                        $needLocalizedPermissions = true;
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
+                    $locFields = $object->getClass()->getFieldDefinition('localizedfields');
 
-                        return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ['language' => $request->get('language')]);
+                    if ($locFields) {
+                        $fieldDefinition = $locFields->getFieldDefinition($field);
+                        if ($fieldDefinition) {
+                            return $fieldDefinition->getForCsvExport($object->get('localizedFields'), ['language' => $request->get('language')]);
+                        }
                     }
                 }
             }
         }
+
+        return null;
     }
 
     /**
      * Flattens object data to an array with key=>value where
      * value is simply a string representation of the value (for objects, hrefs and assets the full path is used)
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return array
      */
@@ -2215,7 +2218,7 @@ class DataObjectHelperController extends AdminController
         try {
             if ($request->get('data')) {
                 $params = $this->decodeJson($request->get('data'), true);
-                $object = DataObject::getById($params['job']);
+                $object = DataObject\Concrete::getById($params['job']);
 
                 if ($object) {
                     $name = $params['name'];
