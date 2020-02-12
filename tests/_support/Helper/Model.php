@@ -72,22 +72,18 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
                 );
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'relations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'advancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -95,7 +91,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -106,22 +101,18 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('manyToManyRelation', 'lrelations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'ladvancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -129,7 +120,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -137,7 +127,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
@@ -145,22 +134,18 @@ class Model extends AbstractDefinitionHelper
             $block->setName('testblock');
 
             $block->addChild($this->createDataChild('manyToManyObjectRelation', 'blockobjects')
-                ->setLazyLoading(false)
                 ->setClasses(['RelationTest'])
             );
 
             $block->addChild($this->createDataChild('manyToOneRelation', 'blockrelation')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $block->addChild($this->createDataChild('manyToManyRelation', 'blockrelations')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $block->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'blockadvancedObjects')
-                ->setLazyLoading(false)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -168,7 +153,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
-                ->setLazyLoading(false)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -180,22 +164,18 @@ class Model extends AbstractDefinitionHelper
             $blockLazyLoaded->setLazyLoading(true);
 
             $blockLazyLoaded->addChild($this->createDataChild('manyToManyObjectRelation', 'blockobjectsLazyLoaded')
-                ->setLazyLoading(false)
                 ->setClasses(['RelationTest'])
             );
 
             $blockLazyLoaded->addChild($this->createDataChild('manyToOneRelation', 'blockrelationLazyLoaded')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $blockLazyLoaded->addChild($this->createDataChild('manyToManyRelation', 'blockrelationsLazyLoaded')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $blockLazyLoaded->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'blockadvancedObjectsLazyLoaded')
-                ->setLazyLoading(false)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -203,7 +183,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $blockLazyLoaded->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelationsLazyLoaded')
-                ->setLazyLoading(false)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -293,7 +272,6 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'onlyOneManyToMany')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
@@ -301,7 +279,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'multipleManyToMany')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
@@ -309,7 +286,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'onlyOneManyToManyObject')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -317,7 +293,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'multipleManyToManyObject')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(true)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -355,35 +330,28 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'lazyMultihref')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'lazyObjects')
-                ->setLazyLoading(true)
                 ->setClasses([]));
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'href')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'multihref')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
-                ->setLazyLoading(false)
                 ->setClasses([]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
-                ->setLazyLoading(false)
                 ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
@@ -468,11 +436,9 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('checkbox', 'lcheckbox'));
             $lFields->addChild($this->createDataChild('link', 'llink'));
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
-                ->setLazyLoading(false)
                 ->setClasses([]));
 
             $lFields->addChild($this->createDataChild('manyToManyRelation', 'lmultihrefLazy')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
@@ -521,7 +487,6 @@ class Model extends AbstractDefinitionHelper
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
-                ->setLazyLoading(false)
                 ->setClasses([]));
 
             $panel->addChild($lFields);
@@ -585,12 +550,10 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('input', 'fieldinput2'));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldRelation')
-                ->setLazyLoading(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
@@ -623,22 +586,18 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'relations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'advancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -646,7 +605,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -685,22 +643,18 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('manyToManyRelation', 'lrelations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'ladvancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -708,7 +662,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -746,22 +699,18 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'relations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'advancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -769,7 +718,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -811,22 +759,18 @@ class Model extends AbstractDefinitionHelper
             $lFields->setName('localizedfields');
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
-                ->setLazyLoading(true)
                 ->setClasses(['RelationTest'])
             );
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('manyToManyRelation', 'lrelations')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'ladvancedObjects')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
@@ -834,7 +778,6 @@ class Model extends AbstractDefinitionHelper
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
-                ->setLazyLoading(true)
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
@@ -874,13 +817,8 @@ class Model extends AbstractDefinitionHelper
             $rootPanel->addChild($panel);
 
             $panel->addChild($this->createDataChild('input', 'brickinput'));
-            $panel->addChild($this->createDataChild('manyToManyRelation', 'brickRelation')
-                ->setLazyLoading(false)
-                ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
-                ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
-                ->setLazyLoading(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
