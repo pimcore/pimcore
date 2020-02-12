@@ -95,7 +95,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return array
+     * @return Fieldcollection\Definition[]
      */
     public function getItemDefinitions()
     {
