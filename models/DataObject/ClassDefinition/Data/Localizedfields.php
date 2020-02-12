@@ -809,7 +809,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getGetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= parent::getGetterCode($class);
         }
 
@@ -833,7 +833,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getSetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= parent::getSetterCode($class);
         }
 

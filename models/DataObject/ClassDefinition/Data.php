@@ -948,7 +948,7 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -974,7 +974,7 @@ abstract class Data
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
