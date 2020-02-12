@@ -126,16 +126,17 @@ class RedirectHandler implements LoggerAwareInterface
             }
         }
 
-        return $this->buildRedirectResponse($redirect, $request);
+        return $this->buildRedirectResponse($redirect, $request, $matches);
     }
 
     /**
      * @param Redirect $redirect
      * @param Request $request
+     * @param array $matches
      * @return RedirectResponse|null
      * @throws \Exception
      */
-    protected function buildRedirectResponse(Redirect $redirect, Request $request)
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
     {
         $config = Config::getSystemConfig();
         $target = $redirect->getTarget();
