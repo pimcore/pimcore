@@ -31,31 +31,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/AssetController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getImageThumbnail\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/AssetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getPageCount\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/AssetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Document\\\\Adapter\\:\\:getPdf\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/AssetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getThumbnail\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/AssetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:detectFaces\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/AssetController.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/AssetController.php
@@ -76,134 +51,9 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/DataObject/ClassController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:isPublished\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClass\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setOmitMandatoryCheck\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:saveScheduledTasks\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:saveVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:setScheduledTasks\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
-
-		-
 			message: "#^Access to an undefined property object\\:\\:\\$key\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getMinValue\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getLocalizedFields\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClass\\(\\)\\.$#"
-			count: 3
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:isPublished\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClassName\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setOmitMandatoryCheck\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getTemplate\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getController\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getAction\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getModule\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setTitle\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Service\\:\\:removeTranslationLink\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:getPrettyUrl\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getElements\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setRawElement\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
 
 		-
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$translations\\.$#"
@@ -216,11 +66,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLatestVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
@@ -231,42 +76,27 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Email\\:\\:\\$idPath\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/EmailController.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Email\\:\\:\\$url\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/EmailController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:saveVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/EmailController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$idPath\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Folder\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/FolderController.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$idPath\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Hardlink\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getSourceDocument\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$sourcePath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getScheduledTasks\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Hardlink\\:\\:\\$sourcePath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
 
@@ -276,202 +106,52 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/Document/LinkController.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:\\$idPath\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/NewsletterController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:saveVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/NewsletterController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getVersions\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setVersions\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getScheduledTasks\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$idPath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getContentMasterDocument\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$contentMasterDocumentPath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$url\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getUrl\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setElements\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setMissingRequiredEditable\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setMetaData\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:saveVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Listing\\:\\:loadIdPathList\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getElements\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document&Pimcore\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface\\:\\:removeElement\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:removeElement\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getVersions\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getScheduledTasks\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$idPath\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
 
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$url\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getUrl\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getContentMasterDocument\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$contentMasterDocumentPath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setElements\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:saveVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getPdfFileName\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:generatePdf\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:pdfIsDirty\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getVersions\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setVersions\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getScheduledTasks\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$idPath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$url\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getUrl\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getContentMasterDocument\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$contentMasterDocumentPath\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:setElements\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:saveVersion\\(\\)\\.$#"
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
 
@@ -564,6 +244,16 @@ parameters:
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\:\\:\\$parentId\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:setScheduledTasks\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
 
 		-
 			message: "#^Cannot call method getUser\\(\\) on object\\|string\\.$#"
@@ -1451,11 +1141,6 @@ parameters:
 			path: lib/Db/ZendCompatibility/QueryBuilder.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Document\\\\Adapter\\:\\:isFileTypeSupported\\(\\)\\.$#"
-			count: 1
-			path: lib/Document.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getEmail\\(\\)\\.$#"
 			count: 2
 			path: lib/Document/Newsletter/AddressSourceAdapter/DefaultAdapter.php
@@ -1499,11 +1184,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
 			count: 3
 			path: lib/Maintenance/Tasks/ScheduledTasksTask.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Version\\\\Listing\\:\\:getTotalCount\\(\\)\\.$#"
-			count: 1
-			path: lib/Maintenance/Tasks/VersionsCompressTask.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabasePlatform\\(\\)\\.$#"
@@ -1621,11 +1301,6 @@ parameters:
 			path: lib/Templating/Helper/HeadStyle.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$class\\)\\: Unexpected token \"\\$class\", expected type at offset 18$#"
-			count: 1
-			path: lib/Tool.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\:\\:setLastLoginDate\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Authentication.php
@@ -1691,21 +1366,6 @@ parameters:
 			path: lib/Tool/Newsletter.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\:\\:getLocalizedfields\\(\\)\\.$#"
-			count: 1
-			path: lib/Translation/ExportDataExtractorService/DataExtractor/DataObjectDataExtractor.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Tag\\:\\:getText\\(\\)\\.$#"
-			count: 2
-			path: lib/Translation/ExportDataExtractorService/DataExtractor/DocumentDataExtractor.php
-
-		-
-			message: "#^Variable \\$localizedFields in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: lib/Translation/ImporterService/Importer/DataObjectImporter.php
-
-		-
 			message: "#^Call to an undefined method \\(Pimcore\\\\Model\\\\DataObject\\\\Concrete\\)\\|\\(Pimcore\\\\Model\\\\Document\\)\\:\\:setElement\\(\\)\\.$#"
 			count: 1
 			path: lib/Translation/ImporterService/Importer/DocumentImporter.php
@@ -1719,11 +1379,6 @@ parameters:
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Translation\\\\TranslatorBagInterface\\|Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
 			count: 1
 			path: lib/Translation/Translator.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLockKey\\(\\)\\.$#"
-			count: 2
-			path: lib/Web2Print/Processor.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Security\\\\Core\\\\Role\\\\RoleHierarchyInterface\\:\\:getReachableRoles\\(\\)\\.$#"
@@ -1756,16 +1411,6 @@ parameters:
 			path: models/Asset.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Document\\\\Adapter\\:\\:getPageCount\\(\\)\\.$#"
-			count: 1
-			path: models/Asset/Document.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Document\\\\Adapter\\:\\:getText\\(\\)\\.$#"
-			count: 1
-			path: models/Asset/Document.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getLowQualityPreviewDataUri\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Image/Thumbnail.php
@@ -1776,27 +1421,12 @@ parameters:
 			path: models/Asset/Image/Thumbnail.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Video\\\\Adapter\\:\\:getDuration\\(\\)\\.$#"
-			count: 1
-			path: models/Asset/Video.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Video\\\\Adapter\\:\\:getDimensions\\(\\)\\.$#"
-			count: 1
-			path: models/Asset/Video.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getDuration\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$class\\)\\: Unexpected token \"\\$class\", expected type at offset 146$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 348$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data.php
 
@@ -1881,11 +1511,6 @@ parameters:
 			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 36$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 18$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
@@ -1904,61 +1529,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:setLazyLoading\\(\\)\\.$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Block.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 18$#"
-			count: 2
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$fieldData\\)\\: Unexpected token \"\\$fieldData\", expected type at offset 80$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$metaData\\)\\: Unexpected token \"\\$metaData\", expected type at offset 105$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 61$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getDataForResource\\(\\)\\.$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$field\\)\\: Unexpected token \"\\$field\", expected type at offset 18$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$layout\\)\\: Unexpected token \"\\$layout\", expected type at offset 18$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object DataObject\\\\Concrete\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object DataObject\\\\Concrete\\)\\: Unexpected token \"\\$object\", expected type at offset 123$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$hideEmptyData bool\\)\\: Unexpected token \"\\$hideEmptyData\", expected type at offset 18$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
 
 		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
@@ -2121,11 +1691,6 @@ parameters:
 			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 50$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$renderingClass\\)\\: Unexpected token \"\\$renderingClass\", expected type at offset 18$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Helper/DynamicTextResolver.php
@@ -2169,21 +1734,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClassId\\(\\)\\.$#"
 			count: 1
 			path: models/DataObject/Concrete.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getAllowedTypes\\(\\)\\.$#"
-			count: 1
-			path: models/DataObject/Data/UrlSlug.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
-			count: 2
-			path: models/DataObject/Data/UrlSlug.php
-
-		-
-			message: "#^Variable \\$lfDef in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: models/DataObject/Data/UrlSlug.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getAllowedTypes\\(\\)\\.$#"
@@ -2244,116 +1794,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getSourceDocument\\(\\)\\.$#"
 			count: 1
 			path: models/Document.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 1
-			path: models/Document/Hardlink.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 1
-			path: models/Document/Hardlink.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:initDao\\(\\)\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Service.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Service.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Email.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Email.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Folder.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Folder.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Hardlink.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Hardlink.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 4
-			path: models/Document/Hardlink/Wrapper/Link.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 3
-			path: models/Document/Hardlink/Wrapper/Link.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealFullPath\\(\\)\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Link.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setKey\\(\\)\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Link.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Page.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Page.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Printcontainer.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Printcontainer.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Printpage.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Printpage.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:setPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Snippet.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\:\\:getRealPath\\(\\)\\.$#"
-			count: 2
-			path: models/Document/Hardlink/Wrapper/Snippet.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Listing\\\\AbstractListing\\:\\:loadIdList\\(\\)\\.$#"
