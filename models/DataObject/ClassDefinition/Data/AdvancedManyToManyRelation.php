@@ -186,7 +186,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param Element\ElementInterface[]|null $data
+     * @param Element\ElementMetadata[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -196,7 +196,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -205,7 +204,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $d = [];
 
         if (is_array($data) && count($data) > 0) {
-            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
