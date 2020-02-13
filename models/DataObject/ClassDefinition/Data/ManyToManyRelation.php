@@ -590,19 +590,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $element) {
-                if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {
-                    $tags = $element->getCacheTags($tags);
-                }
-            }
-        }
-
         return $tags;
+
     }
 
     /**
@@ -722,7 +711,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
+            if (!$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
