@@ -19,7 +19,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\Import\Resolver\ImportErrorException;
 use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;

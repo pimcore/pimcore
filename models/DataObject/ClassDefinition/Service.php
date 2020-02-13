@@ -364,17 +364,19 @@ class Service
     /**
      * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
+     *
      * @return string
+     *
      * @throws \Exception
      */
-    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces) {
-
+    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces)
+    {
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
             foreach ($customParts as $interface) {
                 $interface = trim($interface);
                 if (Tool::interfaceExists($interface)) {
-                    $implementsParts[]= $interface;
+                    $implementsParts[] = $interface;
                 } else {
                     throw new \Exception("interface '" . $interface . "' does not exist");
                 }
@@ -384,18 +386,21 @@ class Service
         if ($implementsParts) {
             return ' implements ' . implode(', ', $implementsParts);
         }
+
         return '';
     }
 
     /**
      * @param array $useParts
      * @param string|null $newTraits
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function buildUseTraitsCode($useParts, ?string $newTraits)
     {
-        if(!is_array($useParts)) {
+        if (!is_array($useParts)) {
             $useParts = [];
         }
 
@@ -404,7 +409,7 @@ class Service
             foreach ($customParts as $trait) {
                 $trait = trim($trait);
                 if (Tool::traitExists($trait)) {
-                    $useParts[]= $trait;
+                    $useParts[] = $trait;
                 } else {
                     throw new \Exception("trait '" . $trait . "' does not exist");
                 }
@@ -414,10 +419,11 @@ class Service
         return self::buildUseCode($useParts);
     }
 
-
     /**
      * @param array $useParts
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function buildUseCode($useParts)
@@ -428,10 +434,10 @@ class Service
                 $result .= 'use ' . $part . ";\r\n";
             }
             $result .= "\n";
+
             return $result;
         }
 
         return '';
     }
-
 }

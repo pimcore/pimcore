@@ -51,7 +51,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
      */
     protected $config;
 
-
     /**
      * @var ConnectionInterface
      */

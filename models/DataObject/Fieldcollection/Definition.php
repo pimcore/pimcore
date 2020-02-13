@@ -43,6 +43,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * Comma separated list of interfaces
+     *
      * @var string|null
      */
     public $implementsInterfaces;
@@ -527,14 +528,15 @@ class Definition extends Model\AbstractModel
         return $this->implementsInterfaces;
     }
 
-
     /**
      * @param string|null $implementsInterfaces
+     *
      * @return $this
      */
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
         return $this;
     }
 }

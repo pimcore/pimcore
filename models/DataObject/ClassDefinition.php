@@ -77,10 +77,10 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * Comma separated list of interfaces
+     *
      * @var string|null
      */
     public $implementsInterfaces;
-
 
     /**
      * Name of the listing parent class if set
@@ -1340,7 +1340,6 @@ class ClassDefinition extends Model\AbstractModel
     {
         return $this->implementsInterfaces;
     }
-
 
     /**
      * @param string|null $implementsInterfaces
