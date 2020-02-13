@@ -909,7 +909,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * See parent class.
      *
-     * @param $data
+     * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
