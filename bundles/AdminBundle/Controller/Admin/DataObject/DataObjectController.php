@@ -259,8 +259,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        if ($child->getType() != 'folder') {
-            /** @var DataObject\Concrete $child */
+        if ($child instanceof DataObject\Concrete) {
             $tmpObject['published'] = $child->isPublished();
             $tmpObject['className'] = $child->getClass()->getName();
 
@@ -823,7 +822,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($request->get('variantViaTree')) {
                     $parentId = $request->get('parentId');
-                    $parent = DataObject::getById($parentId);
+                    $parent = DataObject\Concrete::getById($parentId);
                     $object->setClassId($parent->getClass()->getId());
                 } else {
                     $object->setClassId($request->get('classId'));
@@ -1259,7 +1258,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         }
 
-        $object = $this->assignPropertiesFromEditmode($request, $object);
+        $this->assignPropertiesFromEditmode($request, $object);
         $this->applySchedulerDataToElement($request, $object);
 
         if ($request->get('task') == 'unpublish') {
@@ -1376,16 +1375,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $object = DataObject::getById($request->get('id'));
 
+        if (!$object) {
+            throw $this->createNotFoundException('Object not found');
+        }
+
         if ($object->isAllowed('publish')) {
             try {
-                $classId = $request->get('class_id');
-
                 // general settings
                 $general = $this->decodeJson($request->get('general'));
                 $object->setValues($general);
                 $object->setUserModification($this->getAdminUser()->getId());
 
-                $object = $this->assignPropertiesFromEditmode($request, $object);
+                $this->assignPropertiesFromEditmode($request, $object);
 
                 $object->save();
 
@@ -1401,8 +1402,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param Request $request
      * @param DataObject\AbstractObject $object
-     *
-     * @return DataObject\AbstractObject
      */
     protected function assignPropertiesFromEditmode(Request $request, $object)
     {
@@ -1437,8 +1436,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             $object->setProperties($properties);
         }
-
-        return $object;
     }
 
     /**

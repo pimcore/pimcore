@@ -335,6 +335,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
+        //TODO use Pimcore\Config service when legacy mapping is removed
         $values = Config::getSystemConfig();
 
         $timezones = \DateTimeZone::listIdentifiers();

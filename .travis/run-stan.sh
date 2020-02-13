@@ -1,9 +1,5 @@
 #!/bin/bash
 
-
-# install suggested packages first
-composer require "heidelpay/heidelpay-php:^1.2.5.1" "klarna/checkout:^3.0.0" "elasticsearch/elasticsearch:2.0.0" "paypal/paypal-checkout-sdk:^1" "mpay24/mpay24-php:^4.2" "composer/composer:*"
-
 if [ $PHPSTAN_BASELINE == 0 ]; then sed -e "s?- phpstan-baseline.neon?#- phpstan-baseline.neon?g" -i phpstan.neon; fi
 
 if [ $SYMFONY_VERSION = "^3.4" ]

@@ -67,6 +67,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
      * @param CsrfProtectionListener $csrfProtectionListener
+     * @param Config $config
      *
      * @return ViewModel
      *
@@ -77,11 +78,12 @@ class IndexController extends AdminController implements EventedControllerInterf
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
-        CsrfProtectionListener $csrfProtectionListener
+        CsrfProtectionListener $csrfProtectionListener,
+        Config $config
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
-            'config' => Config::getSystemConfig()
+            'config' => $config
         ]);
 
         $this
@@ -255,7 +257,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'language' => $request->getLocale(),
             'websiteLanguages' => Admin::reorderWebsiteLanguages(
                 $this->getAdminUser(),
-                $config->general->validLanguages,
+                $config['general']['valid_languages'],
                 true
             )
         ]);
@@ -263,26 +265,24 @@ class IndexController extends AdminController implements EventedControllerInterf
         // flags
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
 
-        // config
-        $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
-            'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
-            'document_generatepreviews' => (bool)$config->documents->generate_preview,
+            'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
+            'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'document_naming_strategy' => $namingStrategy->getName(),
-            'asset_disable_tree_preview' => (bool)$config->assets->disable_tree_preview,
+            'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
-            'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
-            'main_domain' => $config->general->domain,
-            'timezone' => $config->general->timezone,
-            'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
-            'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
-            'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
-            'asset_tree_paging_limit' => $pimcoreSymfonyConfig['assets']['tree_paging_limit'],
-            'document_tree_paging_limit' => $pimcoreSymfonyConfig['documents']['tree_paging_limit'],
-            'object_tree_paging_limit' => $pimcoreSymfonyConfig['objects']['tree_paging_limit'],
+            'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
+            'main_domain' => $config['general']['domain'],
+            'timezone' => $config['general']['timezone'],
+            'tile_layer_url_template' => $config['maps']['tile_layer_url_template'],
+            'geocoding_url_template' => $config['maps']['geocoding_url_template'],
+            'reverse_geocoding_url_template' => $config['maps']['reverse_geocoding_url_template'],
+            'asset_tree_paging_limit' => $config['assets']['tree_paging_limit'],
+            'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
+            'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file')
         ]);
 
@@ -386,7 +386,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @param ViewModel $settings
-     * @param \stdClass $config
+     * @param Config $config
      *
      * @return $this
      */
@@ -394,20 +394,20 @@ class IndexController extends AdminController implements EventedControllerInterf
     {
         //mail settings
         $mailIncomplete = false;
-        if ($config->email) {
-            if (!$config->email->debug->emailaddresses) {
+        if (isset($config['email'])) {
+            if (!empty($config['email']['debug']['email_addresses'])) {
                 $mailIncomplete = true;
             }
-            if (!$config->email->sender->email) {
+            if (!empty($config['email']['sender']['email'])) {
                 $mailIncomplete = true;
             }
-            if ($config->email->method == 'smtp' && !$config->email->smtp->host) {
+            if (($config['email']['method'] ?? '') == 'smtp' && !empty($config['email']['smtpy']['host'])) {
                 $mailIncomplete = true;
             }
         }
 
         $settings->mail = !$mailIncomplete;
-        $settings->mailDefaultAddress = $config->email->sender->email ?: null;
+        $settings->mailDefaultAddress = $config['email']['sender']['email'] ?? null;
 
         return $this;
     }

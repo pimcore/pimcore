@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
+ * @method removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {

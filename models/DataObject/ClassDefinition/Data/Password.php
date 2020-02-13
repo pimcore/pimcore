@@ -398,7 +398,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** See parent class.
-     * @param string $data
+     * @param array $data
      * @param DataObject\Concrete $object
      * @param mixed $params
      *

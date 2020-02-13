@@ -101,9 +101,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Request $request
-     * @param Model\Document|Model\Document\PageSnippet $document
+     * @param Model\Document\PageSnippet $document
      */
-    protected function addDataToDocument(Request $request, Model\Document $document)
+    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
@@ -238,11 +238,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param Model\Document $document
+     * @param Model\Document\PageSnippet $document
      *
-     * @return Model\Document
+     * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {

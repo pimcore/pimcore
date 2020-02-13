@@ -62,6 +62,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
+
+        if (!$document) {
+            throw $this->createNotFoundException('Document not found');
+        }
+
         $document = clone $document;
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -232,7 +237,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $docType->getAction();
                     $createValues['module'] = $docType->getModule();
                 } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                    $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
                     $createValues['template'] = $translationsBaseDocument->getTemplate();
                     $createValues['controller'] = $translationsBaseDocument->getController();
                     $createValues['action'] = $translationsBaseDocument->getAction();
@@ -1026,7 +1031,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Version diff file not found');
     }
 
     /**
@@ -1038,6 +1043,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $site = null;
         $childDocument = $element;
+        $config = $this->get(Config::class);
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
@@ -1087,7 +1093,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
-        if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
+        if ($childDocument instanceof Document\Page && isset($config['documents']['generate_preview'])) {
             $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
@@ -1162,7 +1168,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $this->checkPermission('seo_document_editor');
 
-        $root = Document::getById(1);
+        /** @var Document\Page $root */
+        $root = Document\Page::getById(1);
         if ($root->isAllowed('list')) {
             // make sure document routes are also built for unpublished documents
             $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
@@ -1522,7 +1529,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document\PageSnippet|Document\Page $document
+     * @param Document\Page $document
      *
      * @return array
      */

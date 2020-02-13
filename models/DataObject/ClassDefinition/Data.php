@@ -1116,7 +1116,7 @@ abstract class Data
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param $data
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *

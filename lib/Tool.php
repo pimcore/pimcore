@@ -652,7 +652,7 @@ class Tool
     }
 
     /**
-     * @param $class
+     * @param string $class
      * @return bool
      */
     public static function traitExists($class)
