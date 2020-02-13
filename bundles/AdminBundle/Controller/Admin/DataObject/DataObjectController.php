@@ -142,10 +142,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $condition .= ' AND (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    OR
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                )';
             }
 
             if (!is_null($filter)) {
