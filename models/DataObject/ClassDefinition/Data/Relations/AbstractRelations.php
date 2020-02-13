@@ -139,7 +139,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
+            if (array_key_exists('force', $params) && $params['force']) {
                 $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
@@ -390,7 +390,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -409,7 +409,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
