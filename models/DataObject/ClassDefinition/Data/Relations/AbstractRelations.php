@@ -33,6 +33,11 @@ abstract class AbstractRelations extends Data implements
     const RELATION_ID_SEPARATOR = '$$';
 
     /**
+     * @var bool
+     */
+    public $lazyLoading;
+
+    /**
      * Set of allowed classes
      *
      * @var array
@@ -69,9 +74,20 @@ abstract class AbstractRelations extends Data implements
      */
     public function getLazyLoading()
     {
-        return true;
+        return $this->lazyLoading;
     }
 
+    /**
+     * @param bool $lazyLoading
+     *
+     * @return $this
+     */
+    public function setLazyLoading($lazyLoading)
+    {
+        $this->lazyLoading = $lazyLoading;
+
+        return $this;
+    }
 
     /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
@@ -140,7 +156,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (array_key_exists('force', $params) && $params['force']) {
+            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
                 $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
             } else {
                 return null;
@@ -391,7 +407,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($item->getObject()) {
+        if ($this->getLazyLoading() && $item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -410,7 +426,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
-        if ($item->getObject()) {
+        if ($this->getLazyLoading() && $item->getObject()) {
             /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {

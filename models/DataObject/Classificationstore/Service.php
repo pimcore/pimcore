@@ -24,7 +24,7 @@ class Service
     /**
      * @param KeyConfig $keyConfig
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data & DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
      */
     public static function getFieldDefinitionFromKeyConfig($keyConfig)
     {

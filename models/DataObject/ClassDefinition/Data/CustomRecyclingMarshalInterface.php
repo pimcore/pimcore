@@ -21,13 +21,13 @@ interface CustomRecyclingMarshalInterface
 {
     /**
      * @param $object
-     * @param $data
+     * @param mixed $data
      */
     public function marshalRecycleData($object, $data);
 
     /**
      * @param $object
-     * @param $data
+     * @param mixed $data
      */
     public function unmarshalRecycleData($object, $data);
 }

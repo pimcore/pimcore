@@ -16,12 +16,14 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use Pimcore\Model\DataObject\ImportDataServiceInterface;
+
 class ImportClassResolver extends ClassResolver
 {
     /**
-     * @param $importServiceOrClass
+     * @param string $importServiceOrClass
      *
-     * @return mixed|null
+     * @return ImportDataServiceInterface|null
      */
     public static function resolveClassOrService($importServiceOrClass)
     {

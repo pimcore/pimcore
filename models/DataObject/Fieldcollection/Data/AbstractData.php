@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 /**
  * @method Dao getDao()
+ * @method void save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {

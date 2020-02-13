@@ -78,4 +78,12 @@ abstract class AbstractOperator implements OperatorInterface
     {
         $this->label = $label;
     }
+
+    /**
+     * @return string[]
+     */
+    public function getValidLanguages()
+    {
+        return Tool::getValidLanguages();
+    }
 }

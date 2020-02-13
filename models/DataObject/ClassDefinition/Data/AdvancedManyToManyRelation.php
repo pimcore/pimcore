@@ -186,7 +186,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
+     * @param Element\ElementInterface[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -205,6 +205,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $d = [];
 
         if (is_array($data) && count($data) > 0) {
+            /** @var DataObject\Data\ElementMetadata $metaObject */
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
@@ -881,7 +882,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -940,10 +941,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      */
     public function classSaved($class)
     {
+        /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build(
                 'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -1004,7 +1006,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1200,7 +1202,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $item
+     * @param DataObject\Data\ElementMetadata $item
      *
      * @return string
      */

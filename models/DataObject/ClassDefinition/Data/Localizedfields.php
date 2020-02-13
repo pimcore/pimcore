@@ -319,7 +319,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param DataObject\Localizedfield|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -625,7 +625,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param array $referencedFields
+     * @param Data[] $referencedFields
      */
     public function setReferencedFields($referencedFields)
     {
@@ -633,7 +633,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @return array
+     * @return Data[]
      */
     public function getReferencedFields()
     {
@@ -641,7 +641,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $field
+     * @param Data $field
      */
     public function addReferencedField($field)
     {
