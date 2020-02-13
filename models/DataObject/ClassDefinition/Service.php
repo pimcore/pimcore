@@ -257,7 +257,6 @@ class Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
-                /** @var Layout|Data $item */
                 $item = $loader->build($array['fieldtype']);
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
