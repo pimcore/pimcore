@@ -33,11 +33,6 @@ abstract class AbstractRelations extends Data implements
     const RELATION_ID_SEPARATOR = '$$';
 
     /**
-     * @var bool
-     */
-    public $lazyLoading;
-
-    /**
      * Set of allowed classes
      *
      * @var array
@@ -75,18 +70,6 @@ abstract class AbstractRelations extends Data implements
     public function getLazyLoading()
     {
         return true;
-    }
-
-    /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        $this->lazyLoading = $lazyLoading;
-
-        return $this;
     }
 
     /**
