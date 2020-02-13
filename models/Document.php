@@ -895,7 +895,7 @@ class Document extends Element\AbstractElement
             }
 
             if (!$link) {
-                $config = \Pimcore\Config::getSystemConfiguration();
+                $config = \Pimcore\Config::getSystemConfiguration('general');
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
                 if ($request) {
@@ -915,7 +915,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['general']['doamin'])) {
+                if (!$link && !empty($config['doamin'])) {
                     $link = $scheme . $config['general']['doamin'] . $this->getRealFullPath();
                 }
             }
