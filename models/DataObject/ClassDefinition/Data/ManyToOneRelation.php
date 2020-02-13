@@ -352,6 +352,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
+        return '';
     }
 
     /**
@@ -609,8 +610,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return mixed

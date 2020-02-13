@@ -21,6 +21,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
+/**
+ * @method DataObject\Data\ObjectMetadata\Dao getDao()
+ */
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
@@ -440,6 +443,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $value = [];
         foreach ($values as $element) {
             if ($el = DataObject::getByPath($element)) {
+                /** @var DataObject\Data\ObjectMetadata $metaObject */
                 $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
                     ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                         'fieldname' => $this->getName(),
@@ -573,6 +577,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 }
 
                 if ($dest instanceof DataObject\AbstractObject) {
+                    /** @var DataObject\Data\ObjectMetadata $metaObject */
                     $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -742,7 +747,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param Element\AbstractElement $object
+     * @param DataObject\Concrete $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -802,7 +807,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $allowedClassId
+     * @param string $allowedClassId
      *
      * @return $this
      */
@@ -814,7 +819,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAllowedClassId()
     {
@@ -852,7 +857,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -1213,7 +1218,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $item
+     * @param DataObject\Data\ObjectMetadata $item
      *
      * @return string
      */

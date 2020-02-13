@@ -967,7 +967,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -1197,7 +1197,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return mixed
@@ -1294,8 +1294,6 @@ abstract class Data
                         if ($brickData) {
                             /** @var DataObject\Localizedfield $data */
                             $data = $brickData->getLocalizedFields();
-                            // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
-
                             return $data;
                         }
                     }
@@ -1439,8 +1437,8 @@ abstract class Data
     }
 
     /**
-     * @param $oldValue
-     * @param $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      *
      * @return bool
      */

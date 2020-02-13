@@ -117,7 +117,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
-        $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
+        /** @var Model\DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
+        $fieldDef = $object->getClass()->getFieldDefinition($this->getFieldname());
+        $allowedTypes = $fieldDef->getAllowedTypes();
 
         $collectionItems = $this->getItems();
         if (is_array($collectionItems)) {

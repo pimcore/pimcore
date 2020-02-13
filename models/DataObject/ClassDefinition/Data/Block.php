@@ -533,7 +533,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -1031,7 +1031,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])

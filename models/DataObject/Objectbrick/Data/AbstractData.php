@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 /**
  * @method Dao getDao()
  * @method void save(Concrete $object, $params = [])
+ * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {

@@ -197,12 +197,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param $item
+     * @param Objectbrick\Data\AbstractData $item
      * @param string $key
      * @param Data $fielddefinition
      * @param int $level
      * @param DataObject\Concrete|null $baseObject
-     * @param $getter
+     * @param string $getter
      * @param array|null $params
      *
      * @return mixed
@@ -788,7 +788,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param Objectbrick|null $data
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -800,7 +800,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $item
+     * @param Objectbrick\Data\AbstractData $item
      * @param string $key
      * @param Data $fielddefinition
      * @param int $level
@@ -820,7 +820,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param Objectbrick\Data\AbstractData $data
      * @param string $getter
      * @param array $params
      * @param int $level

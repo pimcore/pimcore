@@ -17,17 +17,19 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface CustomVersionMarshalInterface
 {
     /**
-     * @param $object
-     * @param $data
+     * @param Concrete $object
+     * @param mixed $data
      */
     public function marshalVersion($object, $data);
 
     /**
-     * @param $object
-     * @param $data
+     * @param Concrete $object
+     * @param mixed $data
      */
     public function unmarshalVersion($object, $data);
 }
