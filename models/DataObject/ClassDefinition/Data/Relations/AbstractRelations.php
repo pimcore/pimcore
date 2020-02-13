@@ -65,8 +65,6 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @deprecated
-     *
      * @return bool
      */
     public function getLazyLoading()
