@@ -153,9 +153,10 @@ class Redirect extends AbstractModel
      * @param Request $request
      * @param Site|null $site
      * @param bool $override
+     *
      * @return static|null
      */
-    public static function getByExactMatch(Request $request, ?Site $site=null, bool $override = false): ?self
+    public static function getByExactMatch(Request $request, ?Site $site = null, bool $override = false): ?self
     {
         try {
             $redirect = new self();

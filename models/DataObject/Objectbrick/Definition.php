@@ -33,6 +33,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
+    use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
+
     /**
      * @var array
      */
@@ -42,16 +44,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @var array
      */
     private $oldClassDefinitions = [];
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $group;
 
     /**
      * @param array $classDefinitions
@@ -679,23 +671,4 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $classFile;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return $this;
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
 }

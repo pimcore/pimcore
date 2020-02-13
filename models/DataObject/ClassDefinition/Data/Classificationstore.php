@@ -426,7 +426,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    /** @var ResourcePersistenceAwareInterface  $fieldDefinition */
+                    /** @var ResourcePersistenceAwareInterface $fieldDefinition */
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                     foreach ($values as $language => $value) {

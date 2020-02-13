@@ -51,6 +51,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Request $request
      * @param Site|null $site
      * @param bool $override
+     *
      * @throws \Exception
      */
     public function getByExactMatch(Request $request, ?Site $site = null, bool $override = false)
@@ -58,20 +59,20 @@ class Dao extends Model\Dao\AbstractDao
         $partResolver = new RedirectUrlPartResolver($request);
         $siteId = $site ? $site->getId() : null;
 
-        $sql = "SELECT * FROM redirects WHERE
+        $sql = 'SELECT * FROM redirects WHERE
             (
                 (source = :sourcePath AND `type` = :typePath) OR
                 (source = :sourcePathQuery AND `type` = :typePathQuery) OR
                 (source = :sourceEntireUri AND `type` = :typeEntireUri)
-            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)";
+            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
-        if($siteId) {
+        if ($siteId) {
             $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
         } else {
             $sql .= ' AND sourceSite IS NULL';
         }
 
-        if($override) {
+        if ($override) {
             $sql .= ' AND priority = 99';
         }
 

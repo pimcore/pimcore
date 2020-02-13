@@ -62,7 +62,9 @@ class RedirectHandler implements LoggerAwareInterface
     /**
      * @param Request $request
      * @param bool $override
+     *
      * @return RedirectResponse|null
+     *
      * @throws \Exception
      */
     public function checkForRedirect(Request $request, $override = false)
@@ -78,7 +80,7 @@ class RedirectHandler implements LoggerAwareInterface
             $sourceSite = $this->siteResolver->getSite($request);
         }
 
-        if($redirect = Redirect::getByExactMatch($request, $sourceSite, $override)) {
+        if ($redirect = Redirect::getByExactMatch($request, $sourceSite, $override)) {
             if (null !== $response = $this->buildRedirectResponse($redirect, $request)) {
                 return $response;
             }
@@ -133,7 +135,9 @@ class RedirectHandler implements LoggerAwareInterface
      * @param Redirect $redirect
      * @param Request $request
      * @param array $matches
+     *
      * @return RedirectResponse|null
+     *
      * @throws \Exception
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])

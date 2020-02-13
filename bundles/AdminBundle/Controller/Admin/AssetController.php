@@ -348,7 +348,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function addAsset(Request $request, Config $config)
     {
         $success = false;
-        $defaultUploadPath = $config['assets']['default_upload_path'] ?? "/";
+        $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];

@@ -265,7 +265,6 @@ class IndexController extends AdminController implements EventedControllerInterf
         // flags
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
 
-
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],

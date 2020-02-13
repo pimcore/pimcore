@@ -164,7 +164,6 @@ class Dao extends Model\Dao\AbstractDao
                                 && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
-                                && !$container instanceof DataObject\Objectbrick\Definition
                             )
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
@@ -477,8 +476,7 @@ class Dao extends Model\Dao\AbstractDao
         $dirtyLanguageCondition = null;
 
         if ($this->model->allLanguagesAreDirty() ||
-            ($container instanceof DataObject\Fieldcollection\Definition
-            && !$container instanceof DataObject\Objectbrick\Definition)
+            ($container instanceof DataObject\Fieldcollection\Definition)
             ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
@@ -587,7 +585,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params['context']['object'] = $object;
 
-                        if ($fd instanceof LazyLoadingSupportInterface && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                        if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
                             $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                         } else {
                             $value = $fd->load($this->model, $params);

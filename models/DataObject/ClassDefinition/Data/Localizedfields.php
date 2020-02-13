@@ -176,7 +176,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $dataItems = $data->getInternalData(true);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof LazyLoadingSupportInterface && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
                     $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
                     if (!$data->isLazyKeyLoaded($lazyKey)) {
                         $params['language'] = $language;
@@ -809,7 +809,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getGetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= parent::getGetterCode($class);
         }
 
@@ -833,7 +833,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getSetterCode($class)
     {
         $code = '';
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= parent::getSetterCode($class);
         }
 

@@ -635,6 +635,7 @@ class Tool
 
     /**
      * @param string $class
+     *
      * @return bool
      */
     public static function classExists($class)
@@ -644,6 +645,7 @@ class Tool
 
     /**
      * @param string $class
+     *
      * @return bool
      */
     public static function interfaceExists($class)
@@ -653,6 +655,7 @@ class Tool
 
     /**
      * @param string $class
+     *
      * @return bool
      */
     public static function traitExists($class)

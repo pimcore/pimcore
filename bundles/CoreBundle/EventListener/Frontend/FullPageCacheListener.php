@@ -206,7 +206,6 @@ class FullPageCacheListener
 
         try {
             if ($conf = $this->config['full_page_cache']) {
-
                 if (!$conf['enabled']) {
                     return $this->disable();
                 }
