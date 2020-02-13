@@ -957,7 +957,7 @@ class Service extends Model\Element\Service
     /**
      * Returns the fields of a datatype container (e.g. block or localized fields)
      *
-     * @param ClassDefinition\Data $layout
+     * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      * @param string $targetClass
      * @param ClassDefinition\Data[] $targetList
      * @param bool $insideDataType
@@ -999,7 +999,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param ClassDefinition\Data $layout
+     * @param ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      */
     public static function createSuperLayout(&$layout)
     {
@@ -1014,8 +1014,8 @@ class Service extends Model\Element\Service
             $layout->layoutId = -1;
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::createSuperLayout($child);
@@ -1026,7 +1026,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param ClassDefinition\Data[] $masterDefinition
-     * @param ClassDefinition\Data $layout
+     * @param ClassDefinition\Data|ClassDefinition\Layout $layout
      *
      * @return bool
      */
@@ -1045,8 +1045,8 @@ class Service extends Model\Element\Service
             }
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 $count = count($children);
                 for ($i = $count - 1; $i >= 0; $i--) {
@@ -1054,7 +1054,7 @@ class Service extends Model\Element\Service
                     if (!self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $child)) {
                         unset($children[$i]);
                     }
-                    $layout->setChilds($children);
+                    $layout->setChildren($children);
                 }
             }
         }
@@ -1230,7 +1230,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param ClassDefinition\Data $layout
+     * @param ClassDefinition\Data|ClassDefinition\Layout $layout
      * @param ClassDefinition\Data[] $fieldDefinitions
      *
      * @return bool
@@ -1246,8 +1246,8 @@ class Service extends Model\Element\Service
             $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 $count = count($children);
                 for ($i = $count - 1; $i >= 0; $i--) {
@@ -1256,7 +1256,7 @@ class Service extends Model\Element\Service
                         unset($children[$i]);
                     }
                 }
-                $layout->setChilds(array_values($children));
+                $layout->setChildren(array_values($children));
             }
         }
 
@@ -1349,7 +1349,7 @@ class Service extends Model\Element\Service
     /**
      * Enriches the layout definition before it is returned to the admin interface.
      *
-     * @param Model\DataObject\ClassDefinition\Data $layout
+     * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
      * @param Concrete $object
      * @param array $context additional contextual data
      */
@@ -1379,7 +1379,7 @@ class Service extends Model\Element\Service
             $context['ownerName'] = 'localizedfields';
         }
 
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
@@ -1431,7 +1431,7 @@ class Service extends Model\Element\Service
                 }
             }
         } else {
-            if (method_exists($layout, 'getChilds')) {
+            if (method_exists($layout, 'getChildren')) {
                 $children = $layout->getChildren();
                 if (is_array($children)) {
                     foreach ($children as $child) {
@@ -1560,14 +1560,17 @@ class Service extends Model\Element\Service
 
     /**
      * @param Concrete $container
-     * @param ClassDefinition\Data $fd
+     * @param ClassDefinition|ClassDefinition\Data $fd
      */
     public static function doResetDirtyMap($container, $fd)
     {
+        if (!method_exists($fd, 'getFieldDefinitions')) {
+            return;
+        }
+
         $fieldDefinitions = $fd->getFieldDefinitions();
 
         if (is_array($fieldDefinitions)) {
-            /** @var Model\DataObject\ClassDefinition\Data $fieldDefinition */
             foreach ($fieldDefinitions as $fieldDefinition) {
                 $value = $container->getObjectVar($fieldDefinition->getName());
 
@@ -1577,11 +1580,6 @@ class Service extends Model\Element\Service
 
                 if ($value instanceof DirtyIndicatorInterface) {
                     $value->resetDirtyMap();
-
-                    if (!method_exists($value, 'getFieldDefinitions')) {
-                        continue;
-                    }
-
                     self::doResetDirtyMap($value, $fieldDefinitions[$fieldDefinition->getName()]);
                 }
             }

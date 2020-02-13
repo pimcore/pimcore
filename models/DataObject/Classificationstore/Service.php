@@ -24,7 +24,7 @@ class Service
     /**
      * @param KeyConfig $keyConfig
      *
-     * @return DataObject\ClassDefinition\Data & DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+     * @return DataObject\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromKeyConfig($keyConfig)
     {
@@ -54,7 +54,7 @@ class Service
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
 
-        /** @var \Pimcore\Model\DataObject\ClassDefinition\Data $dataDefinition */
+        /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
         $dataDefinition->setValues($definition);
@@ -64,7 +64,7 @@ class Service
             $dataDefinition = $className::__set_state($dataDefinition);
         }
 
-        if (method_exists($dataDefinition, 'getDelegate')) {
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
             $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);

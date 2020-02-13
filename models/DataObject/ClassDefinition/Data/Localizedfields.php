@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
@@ -164,6 +165,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @param array $fieldData
      * @param array $metaData
      * @param int $level
+     * @param array $params
      *
      * @return array
      */
@@ -178,7 +180,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             foreach ($this->getFieldDefinitions() as $fd) {
                 if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
                     $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-                    if (!$data->isLazyKeyLoaded($lazyKey)) {
+                    if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
                         $params['object'] = $object;
                         if (!isset($params['context'])) {
@@ -479,12 +481,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param mixed $value
+     * @param array $value
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|null|DataObject\Localizedfield
+     * @return null|DataObject\Localizedfield
      *
      * @throws \Exception
      */
@@ -505,9 +507,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 $localizedFields = new DataObject\Localizedfield();
                 $localizedFields->setContext($params['context']);
             } else {
-                $localizedFields = $object->getLocalizedFields();
+                $localizedFields = $object->get('localizedfields');
 
-                if (!$localizedFields) {
+                if (!$localizedFields instanceof DataObject\Localizedfield) {
                     $localizedFields = new DataObject\Localizedfield();
                 }
             }
@@ -616,7 +618,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -646,26 +648,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues($data = [], $blockedKeys = [])
-    {
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set'.$key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**

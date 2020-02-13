@@ -246,7 +246,7 @@ class Service
      * @param bool $throwException
      * @param bool $insideLocalizedField
      *
-     * @return mixed
+     * @return Data|Layout|false
      *
      * @throws \Exception
      */
@@ -257,6 +257,7 @@ class Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
+                /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;

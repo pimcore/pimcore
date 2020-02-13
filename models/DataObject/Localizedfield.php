@@ -370,10 +370,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return $container->getFieldDefinitions($params);
     }
 
+    /**
+     * @param ClassDefinition\Data $fieldDefinition
+     * @param string $name
+     * @param string $language
+     */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        if (!$this->isLazyKeyLoaded($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();

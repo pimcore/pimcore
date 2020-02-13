@@ -540,12 +540,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param mixed $data
-     * @param Model\Element\AbstractElement $relatedObject
-     * @param mixed $params
+     * @param array $data
+     * @param DataObject\Concrete $relatedObject
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed
+     * @return Objectbrick|null
      *
      * @throws \Exception
      */

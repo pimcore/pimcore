@@ -169,6 +169,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             ]);
 
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
@@ -1224,6 +1225,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();

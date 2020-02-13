@@ -504,7 +504,8 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param ClassDefinition\Layout $layout
      * @param string $filename
-     * @param $inheritanceAllowed
+     * @param bool $inheritanceAllowed
+     * @param string|null $id
      *
      * @return ClassDefinition
      */
@@ -855,7 +856,7 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param ClassDefinition\Layout $layout
      * @param string $filename
-     * @param $classDefinitions
+     * @param array $classDefinitions
      *
      * @return \Pimcore\Model\DataObject\Objectbrick\Definition
      */

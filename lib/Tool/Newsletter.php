@@ -425,8 +425,8 @@ class Newsletter
         $token = str_replace('~', '=', $token); // base64 can contain = which isn't safe in URL's
 
         $data = json_decode(base64_decode($token), true);
-        /** @var DataObject\Concrete $object */
-        if ($data && $object = DataObject::getById($data['id'])) {
+
+        if ($data && $object = DataObject\Concrete::getById($data['id'])) {
             if ($version = $object->getLatestVersion()) {
                 $object = $version->getData();
             }

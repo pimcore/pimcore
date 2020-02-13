@@ -582,23 +582,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setValues($data = [])
-    {
-        foreach ($data as $key => $value) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
-                $this->$method($value);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Model\DataObject\ClassDefinition\Data
      */
     public function getDelegate()

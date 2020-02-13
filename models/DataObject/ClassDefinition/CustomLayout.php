@@ -72,7 +72,7 @@ class CustomLayout extends Model\AbstractModel
     public $classId;
 
     /**
-     * @var array
+     * @var Layout
      */
     public $layoutDefinitions;
 
@@ -263,7 +263,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $data
+     * @param Data|Layout $data
      */
     public static function cleanupForExport(&$data)
     {
@@ -271,8 +271,8 @@ class CustomLayout extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
-        if (method_exists($data, 'getChilds')) {
-            $children = $data->getChilds();
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::cleanupForExport($child);
@@ -522,7 +522,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param Layout $layoutDefinitions
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
@@ -530,7 +530,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return Layout
      */
     public function getLayoutDefinitions()
     {

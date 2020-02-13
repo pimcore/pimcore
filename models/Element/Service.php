@@ -120,7 +120,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param array|\Pimcore\Model\Listing\AbstractListing $list
+     * @param array|Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
@@ -138,7 +138,7 @@ class Service extends Model\AbstractModel
             }
         }
 
-        if ($list instanceof \Pimcore\Model\Listing\AbstractListing) {
+        if ($list instanceof Model\Listing\AbstractListing && method_exists($list, 'loadIdList')) {
             $ids = $list->loadIdList();
         }
         $ids = array_unique($ids);
