@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+
 trait FieldcollectionObjectbrickDefinitionTrait
 {
     /**
@@ -51,7 +53,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $layoutDefinitions;
 
     /**
-     * @var DataObject\ClassDefinition\Data[]
+     * @var Data[]
      */
     protected $fieldDefinitions;
 
@@ -142,7 +144,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data[]
+     * @return Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -175,7 +177,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
     /**
      * @param string $key
-     * @param DataObject\ClassDefinition\Data $data
+     * @param Data $data
      *
      * @return $this
      */
@@ -190,7 +192,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      * @param string $key
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data|null
+     * @return Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -199,11 +201,10 @@ trait FieldcollectionObjectbrickDefinitionTrait
                 return $this->fieldDefinitions[$key];
             }
 
-            $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
-
-            return $fieldDefinition;
+            return $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
         }
 
+        return null;
     }
 
     /**

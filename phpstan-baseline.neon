@@ -1,0 +1,1812 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\:\\:\\$userPermissions\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\\\Text\\:\\:\\$data\\.$#"
+			count: 2
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\\\Document\\:\\:\\$pdfPreviewAvailable\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\\\Video\\:\\:\\$videoInfo\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Asset\\\\Image\\:\\:\\$imageInfo\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:setScheduledTasks\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/AssetController.php
+
+		-
+			message: "#^Cannot call method getChilds\\(\\) on array\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/ClassController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\CustomLayout\\:\\:\\$className\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/ClassController.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$key\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$translations\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$unlinkTranslations\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:setScheduledTasks\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/EmailController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/EmailController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Folder\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/FolderController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Hardlink\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Hardlink\\:\\:\\$sourcePath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/HardlinkController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\Link\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/LinkController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/NewsletterController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PageController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/PrintpageControllerBase.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$idPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$url\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:\\$contentMasterDocumentPath\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getScheduledTasks\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/ElementController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getVersions\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/ElementController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
+			count: 2
+			path: bundles/AdminBundle/Controller/Admin/ElementController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:hasChildren\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/ElementControllerBase.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabase\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/IndexController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/IndexController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:getEmail\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/LoginController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Translation\\\\Admin\\\\Listing\\|Pimcore\\\\Model\\\\Translation\\\\Website\\\\Listing\\:\\:getTotalCount\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/TranslationController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Translation\\\\AbstractTranslation\\:\\:onCreateQuery\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/TranslationController.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Workflow\\\\Transition\\:\\:getNotesCommentRequired\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/WorkflowController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLatestVersion\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/WorkflowController.php
+
+		-
+			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_accounts\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
+
+		-
+			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_profiles\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
+
+		-
+			message: "#^Access to an undefined property Google_Client\\:\\:\\$data_ga\\.$#"
+			count: 4
+			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
+
+		-
+			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_segments\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
+
+		-
+			message: "#^Cannot access property \\$thumbnail on array\\|string\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
+
+		-
+			message: "#^Cannot access property \\$checksum on array\\|string\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\:\\:\\$parentId\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:isAllowed\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\ElementInterface\\:\\:setScheduledTasks\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
+
+		-
+			message: "#^Cannot call method getUser\\(\\) on object\\|string\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
+
+		-
+			message: "#^Cannot call method getUsername\\(\\) on object\\|string\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\HttpFoundation\\\\Response\\:\\:getTargetUrl\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Translation/AdminUserTranslator.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Translation/AdminUserTranslator.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setLayoutDefinitions\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setDescription\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setUserModification\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setUserOwner\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getThumbnail\\(\\)\\.$#"
+			count: 4
+			path: bundles/CoreBundle/Command/ThumbnailsVideoCommand.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Event\\\\Model\\\\ElementEventInterface\\:\\:getArgument\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/ElementTagsListener.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLatestVersion\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/Frontend/ElementListener.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\EngineInterface\\:\\:stream\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/LegacyTemplateListener.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\EngineInterface\\:\\:renderResponse\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/EventListener/LegacyTemplateListener.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:isPublished\\(\\)\\.$#"
+			count: 1
+			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 4
+			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:getProductId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setParentItemKey\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setSortIndex\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\Cart\\\\Listing\\:\\:setCartClass\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Listing\\:\\:setCarts\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/Cart/Listing/Dao.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartCheckoutData\\:\\:\\$cartId\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartCheckoutData/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartCheckoutData\\:\\:getProductId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartCheckoutData/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Listing\\:\\:setCartCheckoutDataItems\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartCheckoutData/Listing/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Listing\\:\\:setCartItems\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartItem/Listing/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartInterface\\:\\:setItems\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCartItem.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderManagerInterface\\:\\:isValidOrderForRecurringPayment\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/CheckoutManager/CheckoutManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:joinPriceModifications\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/Input.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelect.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelect.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\MultiSelect\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:getTenantConfig\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelectFromMultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\MultiSelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/MultiSelectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRange.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\NumberRange\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRange.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRangeSelection.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\NumberRangeSelection\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRootCategory\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/SelectCategory.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\SelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/MultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableCategories\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/SelectCategory.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelect.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelect\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelect.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelect\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelect.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableRelations\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRange\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRange\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRangeFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRangeTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRangeSelection\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRanges\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUnit\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRangeSelection\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRootCategory\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectCategory.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\SelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableRelations\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\SelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Input.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableCategories\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectFromMultiSelect.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectFromMultiSelect.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\MultiSelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableRelations\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\MultiSelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRange\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRange\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 4
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRangeSelection\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRanges\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUnit\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 4
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Select.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableCategories\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getRootCategory\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectCategory.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectFromMultiSelect.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\SelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableRelations\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
+
+		-
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\SelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:quote\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\:\\:getTenants\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultElasticSearchSubTenantConfig.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\:\\:getTenants\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php
+
+		-
+			message: "#^Cannot access property \\$attributes on string\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
+
+		-
+			message: "#^Cannot access property \\$items on string\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ElasticSearchConfigInterface\\:\\:getReverseMappedFieldName\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ElasticSearchConfigInterface\\:\\:getReverseMappedFieldName\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/DefaultElasticSearch5.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ElasticSearchConfigInterface\\:\\:getClientConfig\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ConfigInterface\\:\\:getElasticSearchClientParams\\(\\)\\.$#"
+			count: 4
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getTaxInfo\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Model/AbstractOrder.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getPaymentProvider\\(\\)\\.$#"
+			count: 3
+			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Agent.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\ModificatedPriceInterface\\:\\:getRule\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setComment\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:setCartHash\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getCartHash\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:setSuccessorOrder\\(\\)\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
+
+		-
+			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface to string\\.$#"
+			count: 3
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/Datatrans.php
+
+		-
+			message: "#^Variable \\$order in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/Heidelpay.php
+
+		-
+			message: "#^Call to an undefined method heidelpayPHP\\\\Resources\\\\AbstractHeidelpayResource\\:\\:getMessage\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/Heidelpay.php
+
+		-
+			message: "#^Variable \\$heidelpayBrick in PHPDoc tag @var does not exist\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/Heidelpay.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$paymentInfo contains unknown class OnlineShop\\\\Framework\\\\Model\\\\AbstractPaymentInformation\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/OGone.php
+
+		-
+			message: "#^Call to an undefined method SoapClient\\:\\:SetExpressCheckout\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
+
+		-
+			message: "#^Call to an undefined method SoapClient\\:\\:DoExpressCheckoutPayment\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
+
+		-
+			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface\\|null to string\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPal.php
+
+		-
+			message: "#^Cannot access property \\$payer on array\\|string\\.$#"
+			count: 3
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPalSmartPaymentButton.php
+
+		-
+			message: "#^Cannot access property \\$purchase_units on array\\|string\\.$#"
+			count: 3
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPalSmartPaymentButton.php
+
+		-
+			message: "#^Cannot access property \\$status on array\\|string\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayPalSmartPaymentButton.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$product contains unknown class Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\Payment\\\\ProductECommerce\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayU.php
+
+		-
+			message: "#^Call to method getName\\(\\) on an unknown class Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\Payment\\\\ProductECommerce\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayU.php
+
+		-
+			message: "#^Call to method getOSPrice\\(\\) on an unknown class Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\Payment\\\\ProductECommerce\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayU.php
+
+		-
+			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface\\|null to string\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/PayU.php
+
+		-
+			message: "#^Cannot cast Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface to string\\.$#"
+			count: 4
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/QPay.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getPaymentProvider\\(\\)\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PaymentManager/Payment/QPay.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(\\\\JsonSerializable\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 88$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/AbstractData.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(IProductImpression\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 80$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(ProductInterfaceView\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 123$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(CheckoutCompleteInterface\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 99$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(CheckoutCompleteInterface\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 86$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(CheckoutStepInterface\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 78$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(IExportableTokenManager\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 137$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
+
+		-
+			message: "#^PHPDoc tag @implements has invalid value \\(IExportableTokenManager\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 149$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
+
+		-
+			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
+			count: 2
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
+			count: 1
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
+			count: 1
+			path: lib/Cache/Pool/CacheItem.php
+
+		-
+			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
+			count: 1
+			path: lib/Cache/Pool/Redis.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:getPerspectives\\(\\)\\.$#"
+			count: 1
+			path: lib/Config.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Templating\\\\Model\\\\ViewModelInterface\\:\\:getAllParameters\\(\\)\\.$#"
+			count: 1
+			path: lib/Controller/FrontendController.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between int and \\(array\\|float\\|int\\) results in an error\\.$#"
+			count: 1
+			path: lib/DataObject/GridColumnConfig/Operator/Substring.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
+			count: 1
+			path: lib/DataObject/GridColumnConfig/Value/DefaultValue.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getExpressionBuilder\\(\\)\\.$#"
+			count: 1
+			path: lib/Db/ZendCompatibility/QueryBuilder.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getEmail\\(\\)\\.$#"
+			count: 2
+			path: lib/Document/Newsletter/AddressSourceAdapter/DefaultAdapter.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\Model\\\\ViewModelInterface\\:\\:\\$editmode\\.$#"
+			count: 3
+			path: lib/Document/Tag/TagHandler.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Config\\\\Config\\:\\:\\$bundle\\.$#"
+			count: 1
+			path: lib/Extension/Bundle/Config/StateConfig.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getSchemaManager\\(\\)\\.$#"
+			count: 1
+			path: lib/Extension/Bundle/Installer/MigrationInstaller.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Output\\\\Output\\:\\:fetch\\(\\)\\.$#"
+			count: 1
+			path: lib/Extension/Bundle/Installer/OutputWriter.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Config\\\\Config\\:\\:\\$areabrick\\.$#"
+			count: 1
+			path: lib/Extension/Document/Areabrick/AreabrickManager.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between \\(array\\|float\\|int\\) and int results in an error\\.$#"
+			count: 1
+			path: lib/Google/Api.php
+
+		-
+			message: "#^Variable \\$latestVersion in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: lib/Maintenance/Tasks/SanitizeElementsTask.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
+			count: 3
+			path: lib/Maintenance/Tasks/ScheduledTasksTask.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabasePlatform\\(\\)\\.$#"
+			count: 1
+			path: lib/Migrations/Version.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:load\\(\\)\\.$#"
+			count: 1
+			path: lib/Model/Listing/AbstractListing.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Navigation\\\\Page\\:\\:getUri\\(\\)\\.$#"
+			count: 2
+			path: lib/Navigation/Builder.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\:\\:getServiceIds\\(\\)\\.$#"
+			count: 1
+			path: lib/Pimcore.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: lib/Targeting/Document/DocumentTargetingConfigurator.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document&Pimcore\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface\\:\\:getElements\\(\\)\\.$#"
+			count: 1
+			path: lib/Targeting/Document/DocumentTargetingConfigurator.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Targeting\\\\ActionHandler\\\\ActionHandlerInterface\\:\\:getActionHandler\\(\\)\\.$#"
+			count: 2
+			path: lib/Targeting/EventListener/TargetingListener.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:append\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadLink.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:offsetSet\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadLink.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:prepend\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadLink.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:set\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadLink.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:append\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadMeta.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:offsetUnset\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadMeta.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:prepend\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadMeta.php
+
+		-
+			message: "#^Cannot access property \\$type on string\\.$#"
+			count: 2
+			path: lib/Templating/Helper/HeadMeta.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:append\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadScript.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:prepend\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadScript.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:set\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadScript.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:offsetSet\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadScript.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:append\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadStyle.php
+
+		-
+			message: "#^Result of method ArrayObject\\<mixed,mixed\\>\\:\\:offsetSet\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadStyle.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:prepend\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadStyle.php
+
+		-
+			message: "#^Result of method Pimcore\\\\Templating\\\\Helper\\\\Placeholder\\\\Container\\:\\:set\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: lib/Templating/Helper/HeadStyle.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\:\\:setLastLoginDate\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Authentication.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:isAdmin\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Authentication.php
+
+		-
+			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Console.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getGender\\(\\)\\.$#"
+			count: 2
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getFirstname\\(\\)\\.$#"
+			count: 2
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getLastname\\(\\)\\.$#"
+			count: 2
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getEmail\\(\\)\\.$#"
+			count: 4
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getDocument\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getGoogleAnalytics\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getName\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Variable \\$object in PHPDoc tag @var does not exist\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getLatestVersion\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setNewsletterActive\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Newsletter.php
+
+		-
+			message: "#^Call to an undefined method \\(Pimcore\\\\Model\\\\DataObject\\\\Concrete\\)\\|\\(Pimcore\\\\Model\\\\Document\\)\\:\\:setElement\\(\\)\\.$#"
+			count: 1
+			path: lib/Translation/ImporterService/Importer/DocumentImporter.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Translation\\\\TranslatorBagInterface\\|Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
+			count: 1
+			path: lib/Translation/Translator.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Translation\\\\TranslatorBagInterface\\|Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
+			count: 1
+			path: lib/Translation/Translator.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Security\\\\Core\\\\Role\\\\RoleHierarchyInterface\\:\\:getReachableRoles\\(\\)\\.$#"
+			count: 1
+			path: lib/Workflow/ExpressionService.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
+			count: 1
+			path: lib/Workflow/Notification/NotificationEmailService.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
+			count: 2
+			path: lib/Workflow/Notification/NotificationEmailService.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
+			count: 1
+			path: lib/Workflow/Place/OptionsProvider.php
+
+		-
+			message: "#^Call to an undefined method RecursiveIteratorIterator\\:\\:getSubPathName\\(\\)\\.$#"
+			count: 2
+			path: lib/helper-functions.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getCurrentFullPath\\(\\)\\.$#"
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getLowQualityPreviewDataUri\\(\\)\\.$#"
+			count: 1
+			path: models/Asset/Image/Thumbnail.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getThumbnail\\(\\)\\.$#"
+			count: 1
+			path: models/Asset/Image/Thumbnail.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getDuration\\(\\)\\.$#"
+			count: 1
+			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$class\\)\\: Unexpected token \"\\$class\", expected type at offset 146$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\\\Data\\\\AbstractData\\:\\:getLocalizedFields\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$newValue\\)\\: Unexpected token \"\\$newValue\", expected type at offset 42$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$oldValue\\)\\: Unexpected token \"\\$oldValue\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClassName\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setOwner\\(\\)\\.$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getClassId\\(\\)\\.$#"
+			count: 4
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$allowedClassId\\)\\: Unexpected token \"\\$allowedClassId\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$columns\\)\\: Unexpected token \"\\$columns\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:createOrUpdateTable\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$columns\\)\\: Unexpected token \"\\$columns\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$class\\)\\: Unexpected token \"\\$class\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:createOrUpdateTable\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object DataObject\\\\Concrete\\)\\: Unexpected token \"\\$object\", expected type at offset 123$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/AdvancedManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 215$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:setLazyLoading\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Block.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/CustomRecyclingMarshalInterface.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/CustomRecyclingMarshalInterface.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/CustomVersionMarshalInterface.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/CustomVersionMarshalInterface.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$operator\\)\\: Unexpected token \"\\$operator\", expected type at offset 131$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/EncryptedField.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$params\\)\\: Unexpected token \"\\$params\", expected type at offset 156$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/EncryptedField.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$value\\)\\: Unexpected token \"\\$value\", expected type at offset 109$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/EncryptedField.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/EncryptedField.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\:\\:load\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Fieldcollections.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data&Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\LazyLoadingSupportInterface\\:\\:load\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Localizedfields.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Localizedfields.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getLocalizedFields\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Localizedfields.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$field\\)\\: Unexpected token \"\\$field\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Localizedfields.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$importValue\\)\\: Unexpected token \"\\$importValue\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$maxItems\\)\\: Unexpected token \"\\$maxItems\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 215$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 87$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyObjectRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToManyRelation.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\ManyToOneRelation\\:\\:getVersionPreview\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$assetUploadPath\\)\\: Unexpected token \"\\$assetUploadPath\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 40$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Numeric.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Numeric.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$getter\\)\\: Unexpected token \"\\$getter\", expected type at offset 268$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 110$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getClass\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$data\\)\\: Unexpected token \"\\$data\", expected type at offset 18$#"
+			count: 2
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$item\\)\\: Unexpected token \"\\$item\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Objectbricks.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$renderingClass\\)\\: Unexpected token \"\\$renderingClass\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Helper/DynamicTextResolver.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$importServiceOrClass\\)\\: Unexpected token \"\\$importServiceOrClass\", expected type at offset 18$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Helper/ImportClassResolver.php
+
+		-
+			message: "#^Parameter \\$object of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Layout\\\\DynamicTextLabelInterface\\:\\:renderLayoutText\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Layout\\\\Concrete\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Layout/DynamicTextLabelInterface.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:setValues\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/ClassDefinition/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\ResourcePersistenceAwareInterface\\:\\:marshal\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getDataFromResource\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Dao.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:getDelegateDatatype\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Service.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:setDelegate\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Classificationstore/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getClassId\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Concrete.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getAllowedTypes\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Fieldcollection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Fieldcollection.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:load\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Localizedfield.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\ResourcePersistenceAwareInterface\\:\\:getName\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Localizedfield/Dao.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Operator\\\\AbstractOperator\\:\\:getValidLanguages\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Fieldcollections\\:\\:\\$layoutId\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:setChilds\\(\\)\\.$#"
+			count: 2
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:getChildPermissions\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:getChildren\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getChildren\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinitions\\(\\)\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getSourceDocument\\(\\)\\.$#"
+			count: 1
+			path: models/Document.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Listing\\\\AbstractListing\\:\\:loadIdList\\(\\)\\.$#"
+			count: 1
+			path: models/Element/Service.php
+
+		-
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Translation\\\\AbstractTranslation\\\\Listing\\:\\:getObjects\\(\\)\\.$#"
+			count: 2
+			path: models/Translation/AbstractTranslation/Listing/Dao.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\\\DataObject\\\\Element\\:\\:\\$fieldcollection\\.$#"
+			count: 1
+			path: models/Webservice/Data/DataObject/Concrete.php
+
