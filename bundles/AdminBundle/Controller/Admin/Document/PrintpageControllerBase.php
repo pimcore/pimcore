@@ -244,12 +244,13 @@ class PrintpageControllerBase extends DocumentControllerBase
      * @Route("/start-pdf-generation", methods={"POST"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function startPdfGenerationAction(Request $request)
+    public function startPdfGenerationAction(Request $request, Config $config)
     {
         $allParams = json_decode($request->getContent(), true);
 
@@ -258,9 +259,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             throw new \Exception('Document with id ' . $allParams['id'] . ' not found.');
         }
 
-        if (\Pimcore\Config::getSystemConfig()->general->domain) {
-            $allParams['hostName'] = \Pimcore\Config::getSystemConfig()->general->domain;
-        } else {
+        if (empty($allParams['hostName'] = $config['general']['domain'])) {
             $allParams['hostName'] = $_SERVER['HTTP_HOST'];
         }
 

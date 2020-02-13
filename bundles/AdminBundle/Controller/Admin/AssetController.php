@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
@@ -288,12 +289,13 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/add-asset", methods={"POST"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function addAssetAction(Request $request)
+    public function addAssetAction(Request $request, Config $config)
     {
-        $res = $this->addAsset($request);
+        $res = $this->addAsset($request, $config);
 
         $response = [
             'success' => $res['success'],
@@ -314,13 +316,14 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/add-asset-compatibility", methods={"POST"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function addAssetCompatibilityAction(Request $request)
+    public function addAssetCompatibilityAction(Request $request, Config $config)
     {
         // this is a special action for the compatibility mode upload (without flash)
-        $res = $this->addAsset($request);
+        $res = $this->addAsset($request, $config);
 
         $response = $this->adminJson([
             'success' => $res['success'],
@@ -336,15 +339,16 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Request $request
+     * @param Config $config
      *
      * @return array
      *
      * @throws \Exception
      */
-    protected function addAsset(Request $request)
+    protected function addAsset(Request $request, Config $config)
     {
         $success = false;
-        $defaultUploadPath = $this->getParameter('pimcore.config')['assets']['default_upload_path'];
+        $defaultUploadPath = $config['assets']['default_upload_path'] ?? "/";
 
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];

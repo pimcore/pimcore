@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
@@ -229,15 +230,16 @@ class MiscController extends AdminController
      * @Route("/admin-css", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return Response
      */
-    public function adminCssAction(Request $request)
+    public function adminCssAction(Request $request, Config $config)
     {
         // customviews config
         $cvData = Tool::getCustomViewConfig();
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData]);
+        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData, 'config' => $config]);
         $response->headers->set('Content-Type', 'text/css; charset=UTF-8');
 
         return $response;

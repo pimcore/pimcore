@@ -223,7 +223,6 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function buildHeadHtml(Document $document, $language)
     {
-        $config = Config::getSystemConfig();
         $libraries = $this->getEditmodeLibraries();
         $scripts = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();

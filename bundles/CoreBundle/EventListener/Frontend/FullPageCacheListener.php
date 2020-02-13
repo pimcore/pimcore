@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
@@ -81,14 +82,21 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
+    /**
+     * @var Config
+     */
+    protected $config;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
         SessionStatus $sessionStatus,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Config $config
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->sessionStatus = $sessionStatus;
         $this->eventDispatcher = $eventDispatcher;
+        $this->config = $config;
     }
 
     /**
@@ -197,11 +205,9 @@ class FullPageCacheListener
         }
 
         try {
-            $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->full_page_cache) {
-                $conf = $conf->full_page_cache;
+            if ($conf = $this->config['full_page_cache']) {
 
-                if (!$conf->enabled) {
+                if (!$conf['enabled']) {
                     return $this->disable();
                 }
 
@@ -209,19 +215,19 @@ class FullPageCacheListener
                     return $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
                 }
 
-                if ($conf->lifetime) {
-                    $this->setLifetime((int) $conf->lifetime);
+                if ($conf['lifetime']) {
+                    $this->setLifetime((int) $conf['lifetime']);
                 }
 
-                if ($conf->excludePatterns) {
-                    $confExcludePatterns = explode(',', $conf->excludePatterns);
+                if ($conf['excludePatterns']) {
+                    $confExcludePatterns = explode(',', $conf['excludePatterns']);
                     if (!empty($confExcludePatterns)) {
                         $excludePatterns = $confExcludePatterns;
                     }
                 }
 
-                if ($conf->excludeCookie) {
-                    $cookies = explode(',', strval($conf->excludeCookie));
+                if ($conf['excludeCookie']) {
+                    $cookies = explode(',', strval($conf['excludeCookie']));
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {

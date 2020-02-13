@@ -1038,6 +1038,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $site = null;
         $childDocument = $element;
+        $config = $this->get(Config::class);
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
@@ -1087,7 +1088,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
-        if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
+        if ($childDocument instanceof Document\Page && isset($config['documents']['generate_preview'])) {
             $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {

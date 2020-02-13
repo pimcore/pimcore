@@ -308,10 +308,11 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-delete-column-config", methods={"DELETE"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request)
+    public function gridDeleteColumnConfigAction(Request $request, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
@@ -329,7 +330,7 @@ class DataObjectHelperController extends AdminController
             $success = true;
         }
 
-        $newGridConfig = $this->doGetGridColumnConfig($request, true);
+        $newGridConfig = $this->doGetGridColumnConfig($request, $config, true);
         $newGridConfig['deleteSuccess'] = $success;
 
         return $this->adminJson($newGridConfig);
@@ -339,23 +340,25 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-get-column-config", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridGetColumnConfigAction(Request $request)
+    public function gridGetColumnConfigAction(Request $request, Config $config)
     {
-        $result = $this->doGetGridColumnConfig($request);
+        $result = $this->doGetGridColumnConfig($request, $config);
 
         return $this->adminJson($result);
     }
 
     /**
      * @param Request $request
+     * @param Config $config
      * @param bool $isDelete
      *
      * @return array
      */
-    public function doGetGridColumnConfig(Request $request, $isDelete = false)
+    public function doGetGridColumnConfig(Request $request, Config $config, $isDelete = false)
     {
         $class = null;
         $fields = null;
@@ -607,8 +610,7 @@ class DataObjectHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $config = \Pimcore\Config::getSystemConfig();
-        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config->general->validLanguages);
+        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config['general']['valid_languages']);
         if ($frontendLanguages) {
             $language = explode(',', $frontendLanguages)[0];
         } else {
