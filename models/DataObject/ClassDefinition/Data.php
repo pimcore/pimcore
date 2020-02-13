@@ -206,7 +206,7 @@ abstract class Data
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -1116,7 +1116,7 @@ abstract class Data
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param $data
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *

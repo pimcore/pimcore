@@ -18,8 +18,9 @@
 namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 
-interface WrapperInterface
+interface WrapperInterface extends ElementInterface
 {
     /**
      * @param Document $hardLinkSource

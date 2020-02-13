@@ -40,7 +40,6 @@ class EmailController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->getEditLockResponse($request->get('id'), 'document');
@@ -48,8 +47,12 @@ class EmailController extends DocumentControllerBase
         Element\Editlock::lock($request->get('id'), 'document');
 
         $email = Document\Email::getById($request->get('id'));
+
+        if (!$email) {
+            throw $this->createNotFoundException('Email not found');
+        }
+
         $email = clone $email;
-        /** @var Document\Email $email */
         $email = $this->getLatestVersion($email);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
@@ -104,48 +107,48 @@ class EmailController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $page = Document\Email::getById($request->get('id'));
+        $page = Document\Email::getById($request->get('id'));
 
-            $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $page->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $page->setPublished(true);
-            }
-            // only save when publish or unpublish
-            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-                $this->setValuesToDocument($request, $page);
-
-                $page->save();
-                $this->saveToSession($page);
-
-                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $page->getModificationDate(),
-                        'versionCount' => $page->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } elseif ($page->isAllowed('save')) {
-                $this->setValuesToDocument($request, $page);
-
-                $page->saveVersion();
-                $this->saveToSession($page);
-
-                return $this->adminJson(['success' => true]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$page) {
+            throw $this->createNotFoundException('Email not found');
         }
 
-        throw $this->createNotFoundException();
+        $page = $this->getLatestVersion($page);
+        $page->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $page->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $page->setPublished(true);
+        }
+        // only save when publish or unpublish
+        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+            $this->setValuesToDocument($request, $page);
+
+            $page->save();
+            $this->saveToSession($page);
+
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $page->getModificationDate(),
+                    'versionCount' => $page->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } elseif ($page->isAllowed('save')) {
+            $this->setValuesToDocument($request, $page);
+
+            $page->saveVersion();
+            $this->saveToSession($page);
+
+            return $this->adminJson(['success' => true]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**

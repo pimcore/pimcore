@@ -56,6 +56,11 @@ class FrontendRoutingListener implements EventSubscriberInterface
     protected $siteResolver;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param RedirectHandler $redirectHandler
      * @param SiteResolver $siteResolver
@@ -63,11 +68,13 @@ class FrontendRoutingListener implements EventSubscriberInterface
     public function __construct(
         RequestHelper $requestHelper,
         RedirectHandler $redirectHandler,
-        SiteResolver $siteResolver
+        SiteResolver $siteResolver,
+        Config $config
     ) {
         $this->requestHelper = $requestHelper;
         $this->redirectHandler = $redirectHandler;
         $this->siteResolver = $siteResolver;
+        $this->config = $config;
     }
 
     /**
@@ -198,12 +205,11 @@ class FrontendRoutingListener implements EventSubscriberInterface
     protected function handleMainDomainRedirect(GetResponseEvent $event, bool $adminContext = false)
     {
         $request = $event->getRequest();
-        $config = Config::getSystemConfig();
 
         $hostRedirect = null;
 
         if ($adminContext) {
-            $hostRedirect = $this->resolveConfigDomainRedirectHost($config, $request);
+            $hostRedirect = $this->resolveConfigDomainRedirectHost($request);
         } else {
             if (Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
@@ -212,7 +218,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
                 }
             } else {
                 if (!$this->requestHelper->isFrontendRequestByAdmin()) {
-                    $hostRedirect = $this->resolveConfigDomainRedirectHost($config, $request);
+                    $hostRedirect = $this->resolveConfigDomainRedirectHost($request);
                 }
             }
         }
@@ -233,13 +239,13 @@ class FrontendRoutingListener implements EventSubscriberInterface
         }
     }
 
-    private function resolveConfigDomainRedirectHost(Config\Config $config, Request $request)
+    private function resolveConfigDomainRedirectHost(Request $request)
     {
         $hostRedirect = null;
 
-        $gc = $config->get('general');
-        if ($gc->redirect_to_maindomain && $gc->domain && $gc->domain !== $request->getHost()) {
-            $hostRedirect = $config->get('general')->domain;
+        $gc = $this->config['general'];
+        if (isset($gc['redirect_to_maindomain']) && isset($gc['domain']) && $gc['domain'] !== $request->getHost()) {
+            $hostRedirect = $gc['domain'];
         }
 
         return $hostRedirect;

@@ -17,12 +17,13 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
 
-interface ElementInterface
+interface ElementInterface extends ModelInterface
 {
     /**
-     * @return int $id
+     * @return int
      */
     public function getId();
 
@@ -32,9 +33,23 @@ interface ElementInterface
     public function getKey();
 
     /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key);
+
+    /**
      * @return string
      */
     public function getPath();
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setPath($path);
 
     /**
      * @return string
@@ -178,4 +193,16 @@ interface ElementInterface
     public function save();
 
     public function delete();
+
+    /**
+     * @param array $additionalTags
+     */
+    public function clearDependentCache($additionalTags = []);
+
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id);
 }

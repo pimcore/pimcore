@@ -278,7 +278,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * display the quantity value field data in the grid
      *
      * @param Model\DataObject\Data\RgbaColor|null $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -428,7 +428,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
@@ -440,7 +440,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return mixed

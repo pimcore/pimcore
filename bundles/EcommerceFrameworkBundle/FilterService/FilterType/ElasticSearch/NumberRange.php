@@ -31,6 +31,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      * @param array $currentFilter
      * @param array $params
      * @param bool $isPrecondition
+     *
      * @return array
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)

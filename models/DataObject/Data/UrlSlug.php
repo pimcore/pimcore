@@ -366,18 +366,18 @@ class UrlSlug implements OwnerAwareFieldInterface
                     $objectFieldname = $objectFieldname[0];
 
                     if ($type == 'objectbrick') {
-                        if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
-
-                            /** @var Objectbricks $objectFieldDef */
+                        $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
+                        if ($objectFieldDef instanceof Objectbricks) {
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
-                                    /** @var Definition $brickDef */
                                     $brickDef = Definition::getByKey($allowedBrick);
-                                    if ($lfDef = $brickDef->getFieldDefinition('localizedfields')) {
-                                        /** @var Localizedfields $lfDef */
-                                        $fd = $lfDef->getFieldDefinition($this->getFieldname());
-                                        break;
+                                    if ($brickDef instanceof Definition) {
+                                        $lfDef = $brickDef->getFieldDefinition('localizedfields');
+                                        if ($lfDef instanceof Localizedfields) {
+                                            $fd = $lfDef->getFieldDefinition($this->getFieldname());
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -405,8 +405,8 @@ class UrlSlug implements OwnerAwareFieldInterface
                         }
                     }
                 } else {
-                    /** @var Localizedfields $lfDef */
-                    if ($lfDef = $classDefinition->getFieldDefinition('localizedfields')) {
+                    $lfDef = $classDefinition->getFieldDefinition('localizedfields');
+                    if ($lfDef instanceof Localizedfields) {
                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                     }
                 }

@@ -788,7 +788,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Fieldcollection|null $data
+     * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
      *

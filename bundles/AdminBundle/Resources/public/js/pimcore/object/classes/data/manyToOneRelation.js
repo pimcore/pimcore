@@ -32,10 +32,6 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
 
         this.initData(initData);
 
-        if (typeof this.datax.lazyLoading == "undefined") {
-            this.datax.lazyLoading = true;
-        }
-
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");
@@ -163,27 +159,6 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         name: "width",
                         value: this.datax.width
                     } ,
-                    {
-                        xtype: "checkbox",
-                        fieldLabel: t("lazy_loading"),
-                        name: "lazyLoading",
-                        disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible(),
-                        checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible()
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('lazy_loading_description'),
-                        cls: "pimcore_extra_label_bottom",
-                        style: "padding-bottom:0;"
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('lazy_loading_warning_block'),
-                        cls: "pimcore_extra_label_bottom",
-                        style: "color:red; font-weight: bold; padding-bottom:0;"
-                    },
                     {
                         xtype: 'textfield',
                         width: 600,
@@ -367,7 +342,6 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
                     classes: source.datax.classes,
                     objectsAllowed: source.datax.objectsAllowed,
                     assetsAllowed: source.datax.assetsAllowed,

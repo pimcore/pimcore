@@ -896,7 +896,7 @@ class TranslationController extends AdminController
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
-            if($attributeSet) {
+            if ($attributeSet) {
                 $importerService->import($attributeSet);
             } else {
                 Logger::warning(sprintf('Could not resolve element %s', $id));

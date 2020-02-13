@@ -1170,7 +1170,6 @@ class TestDataHelper extends Module
 
         $emptyObjects = TestHelper::createEmptyObjects('myBrickPrefix', true, 10);
         $emptyLazyObjects = TestHelper::createEmptyObjects('myLazyBrickPrefix', true, 15);
-        $brick->setBrickRelation($emptyObjects);
         $brick->setBrickLazyRelation($emptyLazyObjects);
 
         /** @var DataObject\Unittest\Mybricks $objectbricks */
@@ -1199,9 +1198,6 @@ class TestDataHelper extends Module
 
         $this->assertEquals($expectedInputValue, $inputValue);
 
-        $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
-
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
@@ -1213,8 +1209,6 @@ class TestDataHelper extends Module
 
         /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
-        $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');

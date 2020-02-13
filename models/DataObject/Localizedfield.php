@@ -416,7 +416,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 

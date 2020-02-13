@@ -34,6 +34,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method \Pimcore\Model\Document\Dao getDao()
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
+ * @method string getCurrentFullPath()
  */
 class Document extends Element\AbstractElement
 {
@@ -214,7 +215,7 @@ class Document extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
@@ -263,7 +264,7 @@ class Document extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter|null
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {
@@ -297,8 +298,10 @@ class Document extends Element\AbstractElement
                     }
                 }
 
+                /** @var Document $document */
                 $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
+
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
@@ -324,7 +327,7 @@ class Document extends Element\AbstractElement
      * @param array $data
      * @param bool $save
      *
-     * @return Document
+     * @return static
      */
     public static function create($parentId, $data = [], $save = true)
     {
@@ -1086,7 +1089,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the document key.
      *
-     * @param int $key
+     * @param string $key
      *
      * @return Document
      */

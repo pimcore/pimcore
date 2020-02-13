@@ -70,7 +70,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         this.detailedSettingsPanel = new Ext.panel.Panel({
             width: '100%',
             defaults: {
-                labelWidth: 150,
+                labelWidth: 200,
                 width: 400
             }
         });
@@ -109,7 +109,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         var resolverStore = new Ext.data.ArrayStore({
             data: resolverOptions,
-            // sorters: 'name',
             fields: ['type', 'name']
         });
 

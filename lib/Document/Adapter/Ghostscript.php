@@ -135,7 +135,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
+     * @return int
      *
      * @throws \Exception
      */
@@ -148,7 +148,7 @@ class Ghostscript extends Adapter
             throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
-        return $pages;
+        return (int)$pages;
     }
 
     /**

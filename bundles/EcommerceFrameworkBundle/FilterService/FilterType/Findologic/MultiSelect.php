@@ -25,7 +25,9 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      * @param FilterMultiSelect $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)

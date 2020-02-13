@@ -76,7 +76,7 @@ class Service
      * @param Element\ElementInterface $rootElement
      * @param string $apiKey
      * @param string $path
-     * @param Webservice\Data\Document|Webservice\Data\Asset|Webservice\Data\DataObject\Concrete|Webservice\Data\DataObject\Folder $apiElement
+     * @param Webservice\Data\Document|Webservice\Data\Asset\Folder|Webservice\Data\Asset\File|Webservice\Data\DataObject\Concrete|Webservice\Data\DataObject\Folder $apiElement
      * @param bool $overwrite
      * @param string $elementCounter
      *

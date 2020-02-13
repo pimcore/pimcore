@@ -121,7 +121,7 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 2 - PHP 7.3 Symfony 4"
+    - name: "PHPStan Level 2 - PHP 7.4 Symfony 4"
       os: linux
       php: 7.4
       env:

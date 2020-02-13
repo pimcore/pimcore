@@ -424,7 +424,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param Asset\Image|null $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
