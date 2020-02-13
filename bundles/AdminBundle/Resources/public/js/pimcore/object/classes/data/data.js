@@ -338,10 +338,6 @@ pimcore.object.classes.data.data = Class.create({
         return this.inCustomLayoutEditor;
     },
 
-    lazyLoadingNotPossible: function() {
-        return false;
-    },
-
     setInClassificationStoreEditor: function(inClassificationStoreEditor) {
         this.inClassificationStoreEditor = inClassificationStoreEditor;
     },

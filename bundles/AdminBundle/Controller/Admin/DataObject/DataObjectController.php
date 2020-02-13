@@ -558,11 +558,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
         // so that the values can be loaded.
         if (
-            (
-                !$objectFromVersion
-                && $fielddefinition instanceof AbstractRelations
-                && $fielddefinition->getLazyLoading()
-            )
+            (!$objectFromVersion && $fielddefinition instanceof AbstractRelations)
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
             $refId = null;
