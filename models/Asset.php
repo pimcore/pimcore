@@ -844,9 +844,9 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $config = \Pimcore\Config::getSystemConfiguration();
-            if (!empty($config['assets']['versions']['steps'])
-                || !empty($config['assets']['versions']['days'])
+            $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
+            if (!empty($assetsConfig['versions']['steps'])
+                || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
