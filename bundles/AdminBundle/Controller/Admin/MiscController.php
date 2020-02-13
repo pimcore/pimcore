@@ -221,7 +221,7 @@ class MiscController extends AdminController
 
             return $response;
         } else {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Scripts not found');
         }
     }
 

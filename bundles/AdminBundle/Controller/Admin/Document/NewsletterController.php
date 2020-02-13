@@ -54,7 +54,7 @@ class NewsletterController extends DocumentControllerBase
         $email = Document\Newsletter::getById($request->get('id'));
 
         if (!$email) {
-            $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         // check for lock
@@ -123,7 +123,7 @@ class NewsletterController extends DocumentControllerBase
         $page = Document\Newsletter::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         $page = $this->getLatestVersion($page);

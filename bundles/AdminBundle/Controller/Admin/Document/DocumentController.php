@@ -64,7 +64,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $document = Document::getById($request->get('id'));
 
         if (!$document) {
-            $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         $document = clone $document;
@@ -1031,7 +1031,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Version diff file not found');
     }
 
     /**

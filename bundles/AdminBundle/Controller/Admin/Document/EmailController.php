@@ -49,7 +49,7 @@ class EmailController extends DocumentControllerBase
         $email = Document\Email::getById($request->get('id'));
 
         if (!$email) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Email not found');
         }
 
         $email = clone $email;
@@ -110,7 +110,7 @@ class EmailController extends DocumentControllerBase
         $page = Document\Email::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Email not found');
         }
 
         $page = $this->getLatestVersion($page);

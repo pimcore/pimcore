@@ -810,7 +810,7 @@ class AssetHelperController extends AdminController
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -843,7 +843,7 @@ class AssetHelperController extends AdminController
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('XLSX file not found');
     }
 
     /**

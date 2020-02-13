@@ -43,7 +43,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page = Document\PrintAbstract::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         // check for lock
@@ -114,7 +114,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page = Document\PrintAbstract::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         $page = $this->getLatestVersion($page);

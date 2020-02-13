@@ -46,7 +46,7 @@ class PageController extends DocumentControllerBase
         $page = Document\Page::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Page not found');
         }
 
         // check for lock
@@ -121,7 +121,7 @@ class PageController extends DocumentControllerBase
         $page = Document\Page::getById($request->get('id'));
 
         if (!$page) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Page not found');
         }
 
         /** @var Document\Page|null $pageSession */
@@ -240,12 +240,12 @@ class PageController extends DocumentControllerBase
      */
     public function displayPreviewImageAction(Request $request)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document\Page::getById($request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Page not found');
     }
 
     /**
@@ -319,7 +319,7 @@ class PageController extends DocumentControllerBase
         $doc = Document\PageSnippet::getById($docId);
 
         if (!$doc) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Document not found');
         }
 
         foreach ($doc->getElements() as $element) {

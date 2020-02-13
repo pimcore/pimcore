@@ -43,7 +43,7 @@ class FolderController extends DocumentControllerBase
         $folder = Document\Folder::getById($request->get('id'));
 
         if (!$folder) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Folder not found');
         }
 
         // check for lock
@@ -103,7 +103,7 @@ class FolderController extends DocumentControllerBase
         $folder = Document\Folder::getById($request->get('id'));
 
         if (!$folder) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Folder not found');
         }
 
         $folder->setModificationDate(time());

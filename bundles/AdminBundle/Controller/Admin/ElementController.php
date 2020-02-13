@@ -563,7 +563,7 @@ class ElementController extends AdminController
             }
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Element type not found');
     }
 
     /**

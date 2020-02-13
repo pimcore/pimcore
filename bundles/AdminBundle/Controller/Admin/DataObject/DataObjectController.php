@@ -1376,7 +1376,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = DataObject::getById($request->get('id'));
 
         if (!$object) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Object not found');
         }
 
         if ($object->isAllowed('publish')) {

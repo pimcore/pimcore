@@ -43,7 +43,7 @@ class SnippetController extends DocumentControllerBase
         $snippet = Document\Snippet::getById($request->get('id'));
 
         if (!$snippet) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Snippet not found');
         }
 
         // check for lock
@@ -116,7 +116,7 @@ class SnippetController extends DocumentControllerBase
         $snippet = Document\Snippet::getById($request->get('id'));
 
         if (!$snippet) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Snippet not found');
         }
 
         /** @var Document\Snippet|null $snippetSession */

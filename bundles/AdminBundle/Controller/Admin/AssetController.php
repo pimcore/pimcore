@@ -875,86 +875,86 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $asset = Asset::getById($request->get('id'));
-            if ($asset->isAllowed('publish')) {
+        $asset = Asset::getById($request->get('id'));
 
-                // metadata
-                if ($request->get('metadata')) {
-                    $metadata = $this->decodeJson($request->get('metadata'));
-                    $metadata = Asset\Service::minimizeMetadata($metadata);
-                    $asset->setMetadata($metadata);
-                }
-
-                // properties
-                if ($request->get('properties')) {
-                    $properties = [];
-                    $propertiesData = $this->decodeJson($request->get('properties'));
-
-                    if (is_array($propertiesData)) {
-                        foreach ($propertiesData as $propertyName => $propertyData) {
-                            $value = $propertyData['data'];
-
-                            try {
-                                $property = new Model\Property();
-                                $property->setType($propertyData['type']);
-                                $property->setName($propertyName);
-                                $property->setCtype('asset');
-                                $property->setDataFromEditmode($value);
-                                $property->setInheritable($propertyData['inheritable']);
-
-                                $properties[$propertyName] = $property;
-                            } catch (\Exception $e) {
-                                Logger::err("Can't add " . $propertyName . ' to asset ' . $asset->getRealFullPath());
-                            }
-                        }
-
-                        $asset->setProperties($properties);
-                    }
-                }
-
-                $this->applySchedulerDataToElement($request, $asset);
-
-                if ($request->get('data')) {
-                    $asset->setData($request->get('data'));
-                }
-
-                // image specific data
-                if ($asset instanceof Asset\Image) {
-                    if ($request->get('image')) {
-                        $imageData = $this->decodeJson($request->get('image'));
-                        if (isset($imageData['focalPoint'])) {
-                            $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
-                            $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
-                            $asset->removeCustomSetting('disableFocalPointDetection');
-                        }
-                    } else {
-                        // wipe all data
-                        $asset->removeCustomSetting('focalPointX');
-                        $asset->removeCustomSetting('focalPointY');
-                        $asset->setCustomSetting('disableFocalPointDetection', true);
-                    }
-                }
-
-                $asset->setUserModification($this->getAdminUser()->getId());
-                $asset->save();
-
-                $treeData = $this->getTreeNodeConfig($asset);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $asset->getModificationDate(),
-                        'versionCount' => $asset->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
         }
 
-        throw $this->createNotFoundException();
+        if ($asset->isAllowed('publish')) {
+            // metadata
+            if ($request->get('metadata')) {
+                $metadata = $this->decodeJson($request->get('metadata'));
+                $metadata = Asset\Service::minimizeMetadata($metadata);
+                $asset->setMetadata($metadata);
+            }
+
+            // properties
+            if ($request->get('properties')) {
+                $properties = [];
+                $propertiesData = $this->decodeJson($request->get('properties'));
+
+                if (is_array($propertiesData)) {
+                    foreach ($propertiesData as $propertyName => $propertyData) {
+                        $value = $propertyData['data'];
+
+                        try {
+                            $property = new Model\Property();
+                            $property->setType($propertyData['type']);
+                            $property->setName($propertyName);
+                            $property->setCtype('asset');
+                            $property->setDataFromEditmode($value);
+                            $property->setInheritable($propertyData['inheritable']);
+
+                            $properties[$propertyName] = $property;
+                        } catch (\Exception $e) {
+                            Logger::err("Can't add " . $propertyName . ' to asset ' . $asset->getRealFullPath());
+                        }
+                    }
+
+                    $asset->setProperties($properties);
+                }
+            }
+
+            $this->applySchedulerDataToElement($request, $asset);
+
+            if ($request->get('data')) {
+                $asset->setData($request->get('data'));
+            }
+
+            // image specific data
+            if ($asset instanceof Asset\Image) {
+                if ($request->get('image')) {
+                    $imageData = $this->decodeJson($request->get('image'));
+                    if (isset($imageData['focalPoint'])) {
+                        $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                        $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                        $asset->removeCustomSetting('disableFocalPointDetection');
+                    }
+                } else {
+                    // wipe all data
+                    $asset->removeCustomSetting('focalPointX');
+                    $asset->removeCustomSetting('focalPointY');
+                    $asset->setCustomSetting('disableFocalPointDetection', true);
+                }
+            }
+
+            $asset->setUserModification($this->getAdminUser()->getId());
+            $asset->save();
+
+            $treeData = $this->getTreeNodeConfig($asset);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $asset->getModificationDate(),
+                    'versionCount' => $asset->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -1154,7 +1154,7 @@ class AssetController extends ElementControllerBase implements EventedController
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Thumbnail not found');
     }
 
     /**
@@ -1526,7 +1526,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($request->get('id'));
 
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Asset not found');
         }
 
         if (!$asset->isAllowed('publish')) {
@@ -1663,7 +1663,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $asset = Asset::getById($request->get('sourceId'));
 
             if (!$asset) {
-                throw $this->createNotFoundException();
+                throw $this->createNotFoundException('Source not found');
             }
 
             // first of all the new parent
@@ -1756,7 +1756,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if (!$target) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Target not found');
         }
 
         if ($target->isAllowed('create')) {
@@ -1805,7 +1805,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($request->get('id'));
 
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Asset not found');
         }
 
         if ($asset->isAllowed('view')) {
@@ -1881,7 +1881,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $success = false;
 
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Asset not found');
         }
 
         if ($asset->isAllowed('view')) {
@@ -1959,7 +1959,7 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Asset not found');
         }
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
         $suggestedFilename = $asset->getFilename();
@@ -1989,7 +1989,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $jobs = [];
         $asset = Asset::getById($request->get('parentId'));
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Parent asset not found');
         }
 
         if (!$asset->isAllowed('create')) {
@@ -2159,7 +2159,7 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $assetFolder = Asset::getById($request->get('parentId'));
         if (!$assetFolder) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Parent asset not found');
         }
         $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
         $files = explode('::', $request->get('files'));
@@ -2220,7 +2220,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $parentAsset = Asset::getById(intval($parentId));
 
         if (!$parentAsset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Parent asset not found');
         }
 
         $filename = Element\Service::getValidKey($filename, 'asset');
@@ -2305,7 +2305,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     $asset = Asset::getById($data['id']);
 
                     if (!$asset) {
-                        throw $this->createNotFoundException();
+                        throw $this->createNotFoundException('Asset not found');
                     }
 
                     if (!$asset->isAllowed('publish')) {
@@ -2420,7 +2420,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($request->get('id'));
 
         if (!$asset) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Asset not found');
         }
 
         if (!$asset->isAllowed('view')) {

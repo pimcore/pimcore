@@ -45,7 +45,7 @@ class LinkController extends DocumentControllerBase
         $link = Document\Link::getById($request->get('id'));
 
         if (!$link) {
-            $this->createNotFoundException();
+            throw $this->createNotFoundException('Link not found');
         }
 
         // check for lock
@@ -109,44 +109,45 @@ class LinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $link = Document\Link::getById($request->get('id'));
-            $this->setValuesToDocument($request, $link);
+        $link = Document\Link::getById($request->get('id'));
 
-            $link->setModificationDate(time());
-            $link->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $link->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $link->setPublished(true);
-            }
-
-            $task = $request->get('task');
-            // only save when publish or unpublish
-            if (($task == 'publish' && $link->isAllowed('publish'))
-                || ($task == 'unpublish' && $link->isAllowed('unpublish'))
-                || $task == 'scheduler' && $link->isAllowed('settings')
-            ) {
-                $link->save();
-
-                $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $link->getModificationDate(),
-                        'versionCount' => $link->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$link) {
+            throw $this->createNotFoundException('Link not found');
         }
 
-        throw $this->createNotFoundException();
+        $this->setValuesToDocument($request, $link);
+
+        $link->setModificationDate(time());
+        $link->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $link->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $link->setPublished(true);
+        }
+
+        $task = $request->get('task');
+        // only save when publish or unpublish
+        if (($task == 'publish' && $link->isAllowed('publish'))
+            || ($task == 'unpublish' && $link->isAllowed('unpublish'))
+            || $task == 'scheduler' && $link->isAllowed('settings')
+        ) {
+            $link->save();
+
+            $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $link->getModificationDate(),
+                    'versionCount' => $link->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**

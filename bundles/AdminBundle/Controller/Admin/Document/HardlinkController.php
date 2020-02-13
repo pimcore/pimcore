@@ -43,7 +43,7 @@ class HardlinkController extends DocumentControllerBase
         $link = Document\Hardlink::getById($request->get('id'));
 
         if (!$link) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Hardlink not found');
         }
 
         // check for lock
@@ -109,7 +109,7 @@ class HardlinkController extends DocumentControllerBase
         $link = Document\Hardlink::getById($request->get('id'));
 
         if (!$link) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Hardlink not found');
         }
 
         $this->setValuesToDocument($request, $link);
