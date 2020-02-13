@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Config;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -415,10 +416,12 @@ class SearchController extends AdminController
      * @Route("/quicksearch", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $query = $this->filterQueryParam($request->get('query'));
         if (!preg_match('/[\+\-\*"]/', $query)) {
@@ -478,7 +481,8 @@ class SearchController extends AdminController
 
                 $data['preview'] = $this->renderView('PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:' . $hit->getId()->getType() . '.html.php', [
                     'element' => $element,
-                    'iconCls' => $data['iconCls']
+                    'iconCls' => $data['iconCls'],
+                    'config' => $config
                 ]);
 
                 $elements[] = $data;

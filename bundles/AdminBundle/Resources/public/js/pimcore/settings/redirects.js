@@ -87,6 +87,7 @@ pimcore.settings.redirects = Class.create({
         );
 
         this.store.getProxy().setBatchActions(false);
+        var redirectStore = this.store;
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
@@ -107,14 +108,7 @@ pimcore.settings.redirects = Class.create({
             }
         });
 
-        var redirectTypesStore = Ext.create('Ext.data.ArrayStore', {
-            fields: ['type', 'name'],
-            data : [
-                ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/test?key=value'],
-                ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
-                ["path", t('redirects_type_path') + ': /test']
-            ]
-        });
+        var getRedirectTypeCombo = this.getRedirectTypeCombo();
 
         var typesColumns = [
             {
@@ -122,30 +116,32 @@ pimcore.settings.redirects = Class.create({
                 width: 200,
                 sortable: true,
                 dataIndex: 'type',
-                editor: new Ext.form.ComboBox({
-                    store: redirectTypesStore,
-                    mode: "local",
-                    queryMode: "local",
-                    typeAhead: false,
-                    editable: false,
-                    displayField: 'name',
-                    valueField: 'type',
-                    listConfig: {
-                        minWidth: 350
-                    },
-                    forceSelection: true,
-                    triggerAction: "all"
-                }),
+                editor: getRedirectTypeCombo,
                 renderer: function (redirectType) {
-                    var pos = redirectTypesStore.findExact("type", redirectType);
+                    var store = getRedirectTypeCombo.getStore();
+                    var pos = store.findExact("type", redirectType);
                     if(pos >= 0) {
-                        return redirectTypesStore.getAt(pos).get("name");
+                        return store.getAt(pos).get("name");
                     }
                     return redirectType;
                 }
             },
+            {text: t("source_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "sourceSite",
+                editor: new Ext.form.ComboBox({
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                editable: false,
+                triggerAction: "all"
+            }), renderer: function (siteId) {
+                var store = pimcore.globalmanager.get("sites");
+                var pos = store.findExact("id", siteId);
+                if(pos >= 0) {
+                    return store.getAt(pos).get("domain");
+                }
+            }},
             {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            {text: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
+            {text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "targetSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -163,21 +159,7 @@ pimcore.settings.redirects = Class.create({
                 editor: new Ext.form.TextField({}),
                 tdCls: "input_drop_target"
             },
-            {text: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
-                editor: new Ext.form.ComboBox({
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                editable: false,
-                triggerAction: "all"
-            }), renderer: function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if(pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
-            {text: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {text: t("status"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -192,31 +174,51 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {text: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
-                store: [
-                    [1, "1 - " + t("lowest")],
-                    [2, 2],
-                    [3, 3],
-                    [4, 4],
-                    [5, 5],
-                    [6, 6],
-                    [7, 7],
-                    [8, 8],
-                    [9, 9],
-                    [10, "10 - " + t("highest")],
-                    [99, "99 - " + t("override_all")]
-                ],
-                mode: "local",
-                typeAhead: false,
-                listConfig: {minWidth: 200},
-                editable: false,
-                forceSelection: true,
-                triggerAction: "all"
+            {text: t("priority"), width: 60, sortable: true, dataIndex: 'priority',
+                editor: new Ext.form.ComboBox({
+                    store: [
+                        [1, "1 - " + t("lowest")],
+                        [2, 2],
+                        [3, 3],
+                        [4, 4],
+                        [5, 5],
+                        [6, 6],
+                        [7, 7],
+                        [8, 8],
+                        [9, 9],
+                        [10, "10 - " + t("highest")],
+                        [99, "99 - " + t("override_all")]
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    listConfig: {minWidth: 200},
+                    editable: false,
+                    forceSelection: true,
+                    triggerAction: "all"
             })},
             new Ext.grid.column.Check({
                 text: t("regex"),
                 dataIndex: "regex",
-                width: 70
+                width: 70,
+                listeners: {
+                    beforecheckchange: function (column, rowIndex, checked, eOpts) {
+                        if(checked) {
+                            Ext.MessageBox.show({
+                                title: t("warning"),
+                                msg: t("redirect_performance_warning"),
+                                buttons: Ext.MessageBox.YESNO,
+                                fn: function (result) {
+                                    if (result === 'yes') {
+                                        var record = redirectStore.getAt(rowIndex);
+                                        record.set('regex', true);
+                                    }
+                                }
+                            });
+                        }
+
+                        return false;
+                    }
+                }
             }),
             new Ext.grid.column.Check({
                 text: t("pass_through_params"),
@@ -229,7 +231,7 @@ pimcore.settings.redirects = Class.create({
                 width: 70
             }),
             {
-                text: t("expiry"),
+                text: t("expiry") + ' (' + t('optional') + ')',
                 width: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
@@ -442,7 +444,23 @@ pimcore.settings.redirects = Class.create({
 
         this.store.on("update", this.updateRows.bind(this));
         this.grid.on("viewready", this.updateRows.bind(this));
+        this.grid.on('validateedit', function (editor, context) {
 
+            if(context["field"] == 'priority' && context['value'] == 99) {
+                Ext.MessageBox.show({
+                    title: t("warning"),
+                    msg: t("redirect_performance_warning"),
+                    buttons: Ext.MessageBox.YESNO,
+                    fn: function (result) {
+                        if (result === 'yes') {
+                            context['record'].set('priority', 99);
+                        }
+                    }
+                });
+
+                return false;
+            }
+        });
 
         return this.grid;
     },
@@ -528,32 +546,26 @@ pimcore.settings.redirects = Class.create({
     },
 
     openWizard: function () {
+        var typeCombo = this.getRedirectTypeCombo({
+            name: 'type',
+            fieldLabel: t("type"),
+            value: 'path'
+        });
+
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
-            layout: 'hbox',
-            items: [{
-                xtype: "combo",
-                name: "mode",
-                store: [
-                    ["begin", t("beginning_with")],
-                    ["exact", t("matching_exact")],
-                    ["contain", t("contain")],
-                    ["begin_end_slash", t("short_url")],
-                    ["domain", t("domain")]
-                ],
-                mode: "local",
-                typeAhead: false,
-                editable: false,
-                forceSelection: true,
-                triggerAction: "all",
-                fieldLabel: t("pattern"),
-                emptyText: t("select")
-            }, {
+            items: [typeCombo, {
                 xtype: "textfield",
                 name: "pattern",
-                margin: "0 0 0 20",
-                width: 330,
-                emptyText: "/some/example/path"
+                width: 600,
+                emptyText: "/some/example/path",
+                fieldLabel: t("source")
+            }, {
+                xtype: "textfield",
+                name: "target",
+                width: 600,
+                emptyText: "/some/example/path",
+                fieldLabel: t("target")
             }]
         });
 
@@ -576,56 +588,50 @@ pimcore.settings.redirects = Class.create({
         var pattern = values.pattern;
 
         var record = {
-            type: 'entire_uri',
-            source: '',
+            type: values['type'],
             priority: 1,
             regex: false,
-            active: true
+            active: true,
+            source: pattern.replace('+', ' '),
+            target: values['target']
         };
-
-        var escapeRegex = function(pattern) {
-            pattern = preg_quote(pattern);
-            pattern = str_replace("@", "\\@", pattern);
-
-            return pattern;
-        };
-
-        if (values.mode === "begin") {
-            record.type = 'path';
-            record.source = "@^" + escapeRegex(pattern) + "@";
-            record.regex = true;
-        } else if (values.mode === "exact") {
-            record.type = 'path';
-            record.source = pattern.replace('+', ' ');
-        } else if (values.mode === "contain") {
-            record.type = 'path_query';
-            record.source = "@" + escapeRegex(pattern) + "@i";
-            record.regex = true;
-        } else if (values.mode === "begin_end_slash") {
-            if (pattern.charAt(0) !== "/") {
-                pattern = "/" + pattern;
-            }
-
-            record.type = 'path';
-            record.source = "@^" + escapeRegex(pattern) + "[\\/]?$@i";
-            record.regex = true;
-        } else if (values.mode === "domain") {
-            if (values.pattern.indexOf("http") >= 0) {
-                pattern = parse_url(values.pattern, "host");
-            } else {
-                pattern = values.pattern;
-            }
-            pattern = preg_quote(pattern);
-
-            record.type = 'entire_uri';
-            record.source = "@https?://" + pattern + "@";
-            record.regex = true;
-            record.priority = 99;
-        }
 
         this.grid.store.insert(0, record);
         this.updateRows();
 
         this.wizardWindow.close();
+    },
+
+    getRedirectTypeCombo: function (config) {
+
+        var redirectTypesStore = Ext.create('Ext.data.ArrayStore', {
+            fields: ['type', 'name'],
+            data : [
+                ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/foo?key=value'],
+                ["path_query", t('redirects_type_path_query') + ': /foo?key=value'],
+                ["path", t('redirects_type_path') + ': /foo']
+            ]
+        });
+
+        if(!config) {
+            config = {};
+        }
+
+        config = Ext.merge({
+            store: redirectTypesStore,
+            mode: "local",
+            queryMode: "local",
+            typeAhead: false,
+            editable: false,
+            displayField: 'name',
+            valueField: 'type',
+            listConfig: {
+                minWidth: 350
+            },
+            forceSelection: true,
+            triggerAction: "all"
+        }, config);
+
+        return new Ext.form.ComboBox(config)
     }
 });

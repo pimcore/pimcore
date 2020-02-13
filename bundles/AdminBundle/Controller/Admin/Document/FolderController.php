@@ -42,6 +42,10 @@ class FolderController extends DocumentControllerBase
     {
         $folder = Document\Folder::getById($request->get('id'));
 
+        if (!$folder) {
+            throw $this->createNotFoundException('Folder not found');
+        }
+
         // check for lock
         if ($folder->isAllowed('save') || $folder->isAllowed('publish') || $folder->isAllowed('unpublish') || $folder->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -96,24 +100,25 @@ class FolderController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $folder = Document\Folder::getById($request->get('id'));
-            $folder->setModificationDate(time());
-            $folder->setUserModification($this->getAdminUser()->getId());
+        $folder = Document\Folder::getById($request->get('id'));
 
-            if ($folder->isAllowed('publish')) {
-                $this->setValuesToDocument($request, $folder);
-                $folder->save();
-
-                $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$folder) {
+            throw $this->createNotFoundException('Folder not found');
         }
 
-        throw $this->createNotFoundException();
+        $folder->setModificationDate(time());
+        $folder->setUserModification($this->getAdminUser()->getId());
+
+        if ($folder->isAllowed('publish')) {
+            $this->setValuesToDocument($request, $folder);
+            $folder->save();
+
+            $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**

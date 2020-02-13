@@ -44,6 +44,10 @@ class LinkController extends DocumentControllerBase
     {
         $link = Document\Link::getById($request->get('id'));
 
+        if (!$link) {
+            throw $this->createNotFoundException('Link not found');
+        }
+
         // check for lock
         if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -52,7 +56,6 @@ class LinkController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /** @var Document\Link $link */
         $link = clone $link;
 
         $link->setObject(null);
@@ -106,44 +109,45 @@ class LinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $link = Document\Link::getById($request->get('id'));
-            $this->setValuesToDocument($request, $link);
+        $link = Document\Link::getById($request->get('id'));
 
-            $link->setModificationDate(time());
-            $link->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $link->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $link->setPublished(true);
-            }
-
-            $task = $request->get('task');
-            // only save when publish or unpublish
-            if (($task == 'publish' && $link->isAllowed('publish'))
-                || ($task == 'unpublish' && $link->isAllowed('unpublish'))
-                || $task == 'scheduler' && $link->isAllowed('settings')
-            ) {
-                $link->save();
-
-                $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $link->getModificationDate(),
-                        'versionCount' => $link->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$link) {
+            throw $this->createNotFoundException('Link not found');
         }
 
-        throw $this->createNotFoundException();
+        $this->setValuesToDocument($request, $link);
+
+        $link->setModificationDate(time());
+        $link->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $link->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $link->setPublished(true);
+        }
+
+        $task = $request->get('task');
+        // only save when publish or unpublish
+        if (($task == 'publish' && $link->isAllowed('publish'))
+            || ($task == 'unpublish' && $link->isAllowed('unpublish'))
+            || $task == 'scheduler' && $link->isAllowed('settings')
+        ) {
+            $link->save();
+
+            $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $link->getModificationDate(),
+                    'versionCount' => $link->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -152,7 +156,6 @@ class LinkController extends DocumentControllerBase
      */
     protected function setValuesToDocument(Request $request, Document $link)
     {
-
         // data
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));

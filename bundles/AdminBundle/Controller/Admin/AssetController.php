@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
@@ -288,12 +289,13 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/add-asset", methods={"POST"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function addAssetAction(Request $request)
+    public function addAssetAction(Request $request, Config $config)
     {
-        $res = $this->addAsset($request);
+        $res = $this->addAsset($request, $config);
 
         $response = [
             'success' => $res['success'],
@@ -314,13 +316,14 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/add-asset-compatibility", methods={"POST"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function addAssetCompatibilityAction(Request $request)
+    public function addAssetCompatibilityAction(Request $request, Config $config)
     {
         // this is a special action for the compatibility mode upload (without flash)
-        $res = $this->addAsset($request);
+        $res = $this->addAsset($request, $config);
 
         $response = $this->adminJson([
             'success' => $res['success'],
@@ -336,15 +339,16 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Request $request
+     * @param Config $config
      *
      * @return array
      *
      * @throws \Exception
      */
-    protected function addAsset(Request $request)
+    protected function addAsset(Request $request, Config $config)
     {
         $success = false;
-        $defaultUploadPath = $this->getParameter('pimcore.config')['assets']['default_upload_path'];
+        $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];
@@ -875,86 +879,86 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $asset = Asset::getById($request->get('id'));
-            if ($asset->isAllowed('publish')) {
+        $asset = Asset::getById($request->get('id'));
 
-                // metadata
-                if ($request->get('metadata')) {
-                    $metadata = $this->decodeJson($request->get('metadata'));
-                    $metadata = Asset\Service::minimizeMetadata($metadata);
-                    $asset->setMetadata($metadata);
-                }
-
-                // properties
-                if ($request->get('properties')) {
-                    $properties = [];
-                    $propertiesData = $this->decodeJson($request->get('properties'));
-
-                    if (is_array($propertiesData)) {
-                        foreach ($propertiesData as $propertyName => $propertyData) {
-                            $value = $propertyData['data'];
-
-                            try {
-                                $property = new Model\Property();
-                                $property->setType($propertyData['type']);
-                                $property->setName($propertyName);
-                                $property->setCtype('asset');
-                                $property->setDataFromEditmode($value);
-                                $property->setInheritable($propertyData['inheritable']);
-
-                                $properties[$propertyName] = $property;
-                            } catch (\Exception $e) {
-                                Logger::err("Can't add " . $propertyName . ' to asset ' . $asset->getRealFullPath());
-                            }
-                        }
-
-                        $asset->setProperties($properties);
-                    }
-                }
-
-                $this->applySchedulerDataToElement($request, $asset);
-
-                if ($request->get('data')) {
-                    $asset->setData($request->get('data'));
-                }
-
-                // image specific data
-                if ($asset instanceof Asset\Image) {
-                    if ($request->get('image')) {
-                        $imageData = $this->decodeJson($request->get('image'));
-                        if (isset($imageData['focalPoint'])) {
-                            $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
-                            $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
-                            $asset->removeCustomSetting('disableFocalPointDetection');
-                        }
-                    } else {
-                        // wipe all data
-                        $asset->removeCustomSetting('focalPointX');
-                        $asset->removeCustomSetting('focalPointY');
-                        $asset->setCustomSetting('disableFocalPointDetection', true);
-                    }
-                }
-
-                $asset->setUserModification($this->getAdminUser()->getId());
-                $asset->save();
-
-                $treeData = $this->getTreeNodeConfig($asset);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $asset->getModificationDate(),
-                        'versionCount' => $asset->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
         }
 
-        throw $this->createNotFoundException();
+        if ($asset->isAllowed('publish')) {
+            // metadata
+            if ($request->get('metadata')) {
+                $metadata = $this->decodeJson($request->get('metadata'));
+                $metadata = Asset\Service::minimizeMetadata($metadata);
+                $asset->setMetadata($metadata);
+            }
+
+            // properties
+            if ($request->get('properties')) {
+                $properties = [];
+                $propertiesData = $this->decodeJson($request->get('properties'));
+
+                if (is_array($propertiesData)) {
+                    foreach ($propertiesData as $propertyName => $propertyData) {
+                        $value = $propertyData['data'];
+
+                        try {
+                            $property = new Model\Property();
+                            $property->setType($propertyData['type']);
+                            $property->setName($propertyName);
+                            $property->setCtype('asset');
+                            $property->setDataFromEditmode($value);
+                            $property->setInheritable($propertyData['inheritable']);
+
+                            $properties[$propertyName] = $property;
+                        } catch (\Exception $e) {
+                            Logger::err("Can't add " . $propertyName . ' to asset ' . $asset->getRealFullPath());
+                        }
+                    }
+
+                    $asset->setProperties($properties);
+                }
+            }
+
+            $this->applySchedulerDataToElement($request, $asset);
+
+            if ($request->get('data')) {
+                $asset->setData($request->get('data'));
+            }
+
+            // image specific data
+            if ($asset instanceof Asset\Image) {
+                if ($request->get('image')) {
+                    $imageData = $this->decodeJson($request->get('image'));
+                    if (isset($imageData['focalPoint'])) {
+                        $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                        $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                        $asset->removeCustomSetting('disableFocalPointDetection');
+                    }
+                } else {
+                    // wipe all data
+                    $asset->removeCustomSetting('focalPointX');
+                    $asset->removeCustomSetting('focalPointY');
+                    $asset->setCustomSetting('disableFocalPointDetection', true);
+                }
+            }
+
+            $asset->setUserModification($this->getAdminUser()->getId());
+            $asset->save();
+
+            $treeData = $this->getTreeNodeConfig($asset);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $asset->getModificationDate(),
+                    'versionCount' => $asset->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -1154,7 +1158,7 @@ class AssetController extends ElementControllerBase implements EventedController
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Thumbnail not found');
     }
 
     /**
@@ -1245,11 +1249,15 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getVideoThumbnailAction(Request $request)
     {
+        $video = null;
+
         if ($request->get('id')) {
-            $video = Asset::getById(intval($request->get('id')));
+            $video = Asset\Video::getById(intval($request->get('id')));
         } elseif ($request->get('path')) {
-            $video = Asset::getByPath($request->get('path'));
-        } else {
+            $video = Asset\Video::getByPath($request->get('path'));
+        }
+
+        if (!$video) {
             throw $this->createNotFoundException('could not load video asset');
         }
 
@@ -1305,7 +1313,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getDocumentThumbnailAction(Request $request)
     {
-        $document = Asset::getById(intval($request->get('id')));
+        $document = Asset\Document::getById(intval($request->get('id')));
 
         if (!$document) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1365,7 +1373,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getPreviewDocumentAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset\Document::getById($request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1387,11 +1395,11 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param Asset $asset
+     * @param Asset\Document $asset
      *
      * @return string|null
      */
-    protected function getDocumentPreviewPdf(Asset $asset)
+    protected function getDocumentPreviewPdf(Asset\Document $asset)
     {
         $pdfFsPath = null;
 
@@ -1421,7 +1429,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getPreviewVideoAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset\Video::getById($request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1467,7 +1475,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function serveVideoPreviewAction(Request $request)
     {
-        $asset = Asset::getById($request->get('id'));
+        $asset = Asset\Video::getById($request->get('id'));
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1521,8 +1529,12 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
         if (!$asset->isAllowed('publish')) {
-            throw new \Exception('not allowed to publish');
+            throw $this->createAccessDeniedException('not allowed to publish');
         }
 
         $data = $request->get('dataUri');
@@ -1591,6 +1603,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'context' => $allParams
         ]);
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        /** @var Asset\Listing $list */
         $list = $beforeListLoadEvent->getArgument('list');
 
         $list->load();
@@ -1652,6 +1665,10 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($request->get('type') == 'recursive') {
             $asset = Asset::getById($request->get('sourceId'));
+
+            if (!$asset) {
+                throw $this->createNotFoundException('Source not found');
+            }
 
             // first of all the new parent
             $pasteJobs[] = [[
@@ -1742,6 +1759,10 @@ class AssetController extends ElementControllerBase implements EventedController
             $target = Asset::getById($targetId);
         }
 
+        if (!$target) {
+            throw $this->createNotFoundException('Target not found');
+        }
+
         if ($target->isAllowed('create')) {
             $source = Asset::getById($sourceId);
             if ($source != null) {
@@ -1786,6 +1807,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($request->get('id'));
+
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
 
         if ($asset->isAllowed('view')) {
             $parentPath = $asset->getRealFullPath();
@@ -1858,6 +1883,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
         $asset = Asset::getById($request->get('id'));
         $success = false;
+
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
 
         if ($asset->isAllowed('view')) {
             $zip = new \ZipArchive();
@@ -1933,6 +1962,9 @@ class AssetController extends ElementControllerBase implements EventedController
     public function downloadAsZipAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
         $suggestedFilename = $asset->getFilename();
         if (empty($suggestedFilename)) {
@@ -1960,9 +1992,12 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($request->get('parentId'));
+        if (!$asset) {
+            throw $this->createNotFoundException('Parent asset not found');
+        }
 
         if (!$asset->isAllowed('create')) {
-            throw new \Exception('not allowed to create');
+            throw $this->createAccessDeniedException('not allowed to create');
         }
 
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $jobId . '.zip';
@@ -2127,6 +2162,9 @@ class AssetController extends ElementControllerBase implements EventedController
     public function importServerFilesAction(Request $request)
     {
         $assetFolder = Asset::getById($request->get('parentId'));
+        if (!$assetFolder) {
+            throw $this->createNotFoundException('Parent asset not found');
+        }
         $serverPath = PIMCORE_PROJECT_ROOT . $request->get('serverPath');
         $files = explode('::', $request->get('files'));
 
@@ -2163,7 +2201,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function checkForPharStreamWrapper($path)
     {
         if (stripos($path, 'phar://') !== false) {
-            throw new \Exception('Using PHAR files is not allowed!');
+            throw $this->createAccessDeniedException('Using PHAR files is not allowed!');
         }
     }
 
@@ -2184,6 +2222,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $filename = basename($request->get('url'));
         $parentId = $request->get('id');
         $parentAsset = Asset::getById(intval($parentId));
+
+        if (!$parentAsset) {
+            throw $this->createNotFoundException('Parent asset not found');
+        }
 
         $filename = Element\Service::getValidKey($filename, 'asset');
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
@@ -2224,7 +2266,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset = Asset::getById($request->get('id'))) {
             if (method_exists($asset, 'clearThumbnails')) {
                 if (!$asset->isAllowed('publish')) {
-                    throw new \Exception('not allowed to publish');
+                    throw $this->createAccessDeniedException('not allowed to publish');
                 }
 
                 $asset->clearThumbnails(true); // force clear
@@ -2266,8 +2308,12 @@ class AssetController extends ElementControllerBase implements EventedController
                     // save
                     $asset = Asset::getById($data['id']);
 
+                    if (!$asset) {
+                        throw $this->createNotFoundException('Asset not found');
+                    }
+
                     if (!$asset->isAllowed('publish')) {
-                        throw new \Exception("Permission denied. You don't have the rights to save this asset.");
+                        throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this asset.");
                     }
 
                     $metadata = $asset->getMetadata();
@@ -2336,6 +2382,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Asset\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $list->load();
@@ -2376,8 +2423,12 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
         if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to view');
+            throw $this->createAccessDeniedException('not allowed to view');
         }
 
         $page = $request->get('page');
@@ -2398,7 +2449,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function detectImageFeaturesAction(Request $request)
     {
-        $asset = Asset::getById((int)$request->get('id'));
+        $asset = Asset\Image::getById((int)$request->get('id'));
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }

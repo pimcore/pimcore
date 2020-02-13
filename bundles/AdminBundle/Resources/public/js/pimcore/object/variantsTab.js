@@ -150,63 +150,12 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
-        });
-
-        this.toolbarFilterInfo =  new Ext.Button({
-            iconCls: "pimcore_icon_filter_condition",
-            hidden: true,
-            text: '<b>' + t("filter_active") + '</b>',
-            tooltip: t("filter_condition"),
-            handler: function (button) {
-                Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
-            }.bind(this)
-        });
-
-        this.clearFilterButton =  new Ext.Button({
-            iconCls: "pimcore_icon_clear_filters",
-            hidden: true,
-            text: t("clear_filters"),
-            tooltip: t("clear_filters"),
-            handler: function (button) {
-                this.grid.filters.clearFilters();
-                this.toolbarFilterInfo.hide();
-                this.clearFilterButton.hide();
-            }.bind(this)
-        });
-
-
-        this.createSqlEditor();
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
 
         var plugins = [this.cellEditing, 'gridfilters'];
-
-        var hideSaveColumnConfig = !fromConfig;
-
-        this.saveColumnConfigButton = new Ext.Button({
-            tooltip: t('save_grid_options'),
-            iconCls: "pimcore_icon_publish",
-            hidden: hideSaveColumnConfig,
-            handler: function () {
-                var asCopy = !(this.settings.gridConfigId > 0);
-                this.saveConfig(asCopy)
-            }.bind(this)
-        });
-
-        this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_options'),
-            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
-            handler: function () {
-                this.openColumnConfig();
-            }.bind(this),
-            menu: []
-        });
-
-        this.buildColumnConfigMenu();
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -226,26 +175,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                },
-                '-', this.languageInfo, '-', this.toolbarFilterInfo, this.clearFilterButton, '->'
-                ,"-",this.sqlEditor
-                ,this.sqlButton,"-",{
-                    text: t("export_csv"),
-                    iconCls: "pimcore_icon_export",
-                    handler: function(){
-                        pimcore.helpers.csvExportWarning(function(settings) {
-                            this.exportPrepare(settings);
-                        }.bind(this));
-                    }.bind(this)
-                }, "-",
-                this.columnConfigButton,
-                this.saveColumnConfigButton
-            ],
+            tbar: this.getToolbar(fromConfig, save),
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
 

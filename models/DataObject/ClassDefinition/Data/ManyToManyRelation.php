@@ -1035,7 +1035,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** See parent class.
-     * @param array|null $data
+     * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
