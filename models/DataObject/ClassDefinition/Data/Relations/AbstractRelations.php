@@ -74,7 +74,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function getLazyLoading()
     {
-        return $this->lazyLoading;
+        return true;
     }
 
     /**
