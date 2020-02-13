@@ -62,8 +62,8 @@ class RedirectHandler implements LoggerAwareInterface
     /**
      * @param Request $request
      * @param bool $override
-     *
-     * @return null|Response
+     * @return RedirectResponse|null
+     * @throws \Exception
      */
     public function checkForRedirect(Request $request, $override = false)
     {
@@ -78,11 +78,15 @@ class RedirectHandler implements LoggerAwareInterface
             $sourceSite = $this->siteResolver->getSite($request);
         }
 
-        $config = Config::getSystemConfig();
-        $partResolver = new RedirectUrlPartResolver($request);
+        if($redirect = Redirect::getByExactMatch($request, $sourceSite, $override)) {
+            if (null !== $response = $this->buildRedirectResponse($redirect, $request)) {
+                return $response;
+            }
+        }
 
-        foreach ($this->getFilteredRedirects($override) as $redirect) {
-            if (null !== $response = $this->matchRedirect($redirect, $request, $partResolver, $config, $sourceSite)) {
+        $partResolver = new RedirectUrlPartResolver($request);
+        foreach ($this->getRegexFilteredRedirects($override) as $redirect) {
+            if (null !== $response = $this->matchRegexRedirect($redirect, $request, $partResolver, $sourceSite)) {
                 return $response;
             }
         }
@@ -90,11 +94,10 @@ class RedirectHandler implements LoggerAwareInterface
         return null;
     }
 
-    private function matchRedirect(
+    private function matchRegexRedirect(
         Redirect $redirect,
         Request $request,
         RedirectUrlPartResolver $partResolver,
-        Config\Config $config,
         Site $sourceSite = null
     ) {
         if (empty($redirect->getType())) {
@@ -123,6 +126,19 @@ class RedirectHandler implements LoggerAwareInterface
             }
         }
 
+        return $this->buildRedirectResponse($redirect, $request, $matches);
+    }
+
+    /**
+     * @param Redirect $redirect
+     * @param Request $request
+     * @param array $matches
+     * @return RedirectResponse|null
+     * @throws \Exception
+     */
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
+    {
+        $config = Config::getSystemConfig();
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
             $d = Document::getById($target);
@@ -193,7 +209,7 @@ class RedirectHandler implements LoggerAwareInterface
     /**
      * @return Redirect[]
      */
-    private function getRedirects()
+    private function getRegexRedirects()
     {
         if (null !== $this->redirects && is_array($this->redirects)) {
             return $this->redirects;
@@ -208,7 +224,7 @@ class RedirectHandler implements LoggerAwareInterface
             if (($this->redirects = Cache::load($cacheKey)) === false) {
                 try {
                     $list = new Redirect\Listing();
-                    $list->setCondition('active = 1');
+                    $list->setCondition('active = 1 AND regex = 1');
                     $list->setOrder('DESC');
                     $list->setOrderKey('priority');
 
@@ -239,11 +255,11 @@ class RedirectHandler implements LoggerAwareInterface
      *
      * @return Redirect[]
      */
-    private function getFilteredRedirects($override = false)
+    private function getRegexFilteredRedirects($override = false)
     {
         $now = time();
 
-        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override, $now) {
+        return array_filter($this->getRegexRedirects(), function (Redirect $redirect) use ($override, $now) {
             // this is the case when maintenance did't deactivate the redirect yet but it is already expired
             if (!empty($redirect->getExpiry()) && $redirect->getExpiry() < $now) {
                 return false;

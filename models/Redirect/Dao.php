@@ -18,6 +18,10 @@
 namespace Pimcore\Model\Redirect;
 
 use Pimcore\Model;
+use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
+use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @property \Pimcore\Model\Redirect $model
@@ -36,9 +40,54 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $data = $this->db->fetchRow('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
-
-        if (!$data['id']) {
+        if (!$data) {
             throw new \Exception(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
+        }
+
+        $this->assignVariablesToModel($data);
+    }
+
+    /**
+     * @param Request $request
+     * @param Site|null $site
+     * @param bool $override
+     * @throws \Exception
+     */
+    public function getByExactMatch(Request $request, ?Site $site = null, bool $override = false)
+    {
+        $partResolver = new RedirectUrlPartResolver($request);
+        $siteId = $site ? $site->getId() : null;
+
+        $sql = "SELECT * FROM redirects WHERE
+            (
+                (source = :sourcePath AND `type` = :typePath) OR
+                (source = :sourcePathQuery AND `type` = :typePathQuery) OR
+                (source = :sourceEntireUri AND `type` = :typeEntireUri)
+            ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)";
+
+        if($siteId) {
+            $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
+        } else {
+            $sql .= ' AND sourceSite IS NULL';
+        }
+
+        if($override) {
+            $sql .= ' AND priority = 99';
+        }
+
+        $sql .= ' ORDER BY `priority` DESC';
+
+        $data = $this->db->fetchRow($sql, [
+            'sourcePath' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH),
+            'sourcePathQuery' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH_QUERY),
+            'sourceEntireUri' => $partResolver->getRequestUriPart(Redirect::TYPE_ENTIRE_URI),
+            'typePath' => Redirect::TYPE_PATH,
+            'typePathQuery' => Redirect::TYPE_PATH_QUERY,
+            'typeEntireUri' => Redirect::TYPE_ENTIRE_URI,
+        ]);
+
+        if (!$data) {
+            throw new \Exception('No matching redirect found for the given request');
         }
 
         $this->assignVariablesToModel($data);
