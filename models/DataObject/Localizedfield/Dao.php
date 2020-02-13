@@ -164,7 +164,6 @@ class Dao extends Model\Dao\AbstractDao
                                 && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
-                                && !$container instanceof DataObject\Objectbrick\Definition
                             )
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
@@ -477,8 +476,7 @@ class Dao extends Model\Dao\AbstractDao
         $dirtyLanguageCondition = null;
 
         if ($this->model->allLanguagesAreDirty() ||
-            ($container instanceof DataObject\Fieldcollection\Definition
-            && !$container instanceof DataObject\Objectbrick\Definition)
+            ($container instanceof DataObject\Fieldcollection\Definition)
             ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
