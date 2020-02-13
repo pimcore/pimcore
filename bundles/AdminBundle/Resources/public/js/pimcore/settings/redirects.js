@@ -215,8 +215,6 @@ pimcore.settings.redirects = Class.create({
                                 }
                             });
                         }
-
-                        return false;
                     }
                 }
             }),
