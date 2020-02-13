@@ -37,13 +37,6 @@ interface ModelInterface
     public function initDao($key = null, $forceDetection = false);
 
     /**
-     * @param string $modelClass
-     *
-     * @return string|null
-     */
-    public static function locateDaoClass($modelClass);
-
-    /**
      * @param array $data
      *
      * @return $this
