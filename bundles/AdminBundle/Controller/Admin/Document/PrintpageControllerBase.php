@@ -42,6 +42,10 @@ class PrintpageControllerBase extends DocumentControllerBase
     {
         $page = Document\PrintAbstract::getById($request->get('id'));
 
+        if (!$page) {
+            throw $this->createNotFoundException('Document not found');
+        }
+
         // check for lock
         if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
             if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -107,58 +111,58 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $page = Document\PrintAbstract::getById($request->get('id'));
+        $page = Document\PrintAbstract::getById($request->get('id'));
 
-            $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getAdminUser()->getId());
-
-            // save to session
-            $key = 'document_' . $request->get('id');
-
-            Document\Service::saveElementToSession($page);
-
-            if ($request->get('task') == 'unpublish') {
-                $page->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $page->setPublished(true);
-            }
-
-            // only save when publish or unpublish
-            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-
-                //check, if to cleanup existing elements of document
-                $config = Config::getWeb2PrintConfig();
-                if ($config->get('generalDocumentSaveMode') == 'cleanup') {
-                    $page->setElements([]);
-                }
-
-                $this->setValuesToDocument($request, $page);
-
-                $page->save();
-
-                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $page->getModificationDate(),
-                        'versionCount' => $page->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } elseif ($page->isAllowed('save')) {
-                $this->setValuesToDocument($request, $page);
-                $page->saveVersion();
-
-                return $this->adminJson(['success' => true]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$page) {
+            throw $this->createNotFoundException('Document not found');
         }
 
-        throw $this->createNotFoundException();
+        $page = $this->getLatestVersion($page);
+        $page->setUserModification($this->getAdminUser()->getId());
+
+        // save to session
+        $key = 'document_' . $request->get('id');
+
+        Document\Service::saveElementToSession($page);
+
+        if ($request->get('task') == 'unpublish') {
+            $page->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $page->setPublished(true);
+        }
+
+        // only save when publish or unpublish
+        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+
+            //check, if to cleanup existing elements of document
+            $config = Config::getWeb2PrintConfig();
+            if ($config->get('generalDocumentSaveMode') == 'cleanup') {
+                $page->setElements([]);
+            }
+
+            $this->setValuesToDocument($request, $page);
+
+            $page->save();
+
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $page->getModificationDate(),
+                    'versionCount' => $page->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } elseif ($page->isAllowed('save')) {
+            $this->setValuesToDocument($request, $page);
+            $page->saveVersion();
+
+            return $this->adminJson(['success' => true]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -183,10 +187,10 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function activeGenerateProcessAction(Request $request)
     {
-        /** @var Document\Printpage $document */
         $document = Document\PrintAbstract::getById(intval($request->get('id')));
-        if (empty($document)) {
-            throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
+
+        if (!$document) {
+            throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
         }
 
         $date = $document->getLastGeneratedDate();
@@ -221,10 +225,10 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function pdfDownloadAction(Request $request)
     {
-        /** @var Document\PrintAbstract $document */
         $document = Document\PrintAbstract::getById(intval($request->get('id')));
-        if (empty($document)) {
-            throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
+
+        if (!$document) {
+            throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
         }
 
         if (file_exists($document->getPdfFileName())) {
@@ -236,7 +240,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
             return $response;
         } else {
-            throw new \Exception('File does not exist');
+            throw $this->createNotFoundException('File does not exist');
         }
     }
 
@@ -255,8 +259,9 @@ class PrintpageControllerBase extends DocumentControllerBase
         $allParams = json_decode($request->getContent(), true);
 
         $document = Document\PrintAbstract::getById($allParams['id']);
-        if (empty($document)) {
-            throw new \Exception('Document with id ' . $allParams['id'] . ' not found.');
+
+        if (!$document) {
+            throw $this->createNotFoundException('Document with id ' . $allParams['id'] . ' not found.');
         }
 
         if (empty($allParams['hostName'] = $config['general']['domain'])) {

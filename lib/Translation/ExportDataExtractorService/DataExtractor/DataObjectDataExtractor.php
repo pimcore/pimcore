@@ -339,13 +339,14 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                     $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
 
-                    /** @var Localizedfields|null $localizedFieldsDefinition */
                     $localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields');
-                    if (!$localizedFieldsDefinition) {
+                    if (!$localizedFieldsDefinition instanceof Localizedfields) {
                         continue;
                     }
 
-                    if (!$localizedFields = $brick->getLocalizedfields()) {
+                    $localizedFields = $brick->get('localizedfields');
+
+                    if (!$localizedFields instanceof DataObject\Localizedfield) {
                         continue;
                     }
 
@@ -399,9 +400,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 }
 
                 $getter = 'get' . ucfirst($fieldDefinition->getName());
+                $fieldCollection = $object->$getter();
 
-                /** @var DataObject\Fieldcollection $fieldCollection */
-                if (!$fieldCollection = $object->$getter()) {
+                if (!$fieldCollection instanceof DataObject\Fieldcollection) {
                     continue;
                 }
 
@@ -413,24 +414,22 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 $items = $fieldCollection->getItems();
                 $items = $items ?: [];
 
-                /** @var DataObject\Fieldcollection\Data\AbstractData $item */
                 foreach ($items as $item) {
                     $type = $item->getType();
 
-                    /** @var DataObject\Fieldcollection\Definition $definition */
                     $definition = $itemFieldDefinitions[$type] ?: null;
-                    if (is_null($definition)) {
+                    if (!$definition instanceof DataObject\Fieldcollection\Definition) {
                         continue;
                     }
 
-                    /** @var Localizedfields $localizedFieldsDefinition */
                     $localizedFieldsDefinition = $definition->getFieldDefinition('localizedfields');
-                    if (!$localizedFieldsDefinition) {
+                    if (!$localizedFieldsDefinition instanceof Localizedfields) {
                         continue;
                     }
 
-                    /** @var DataObject\Localizedfield $localizedFields */
-                    if (!$localizedFields = $item->getLocalizedfields()) {
+                    $localizedFields = $item->get('localizedfields');
+
+                    if (!$localizedFields instanceof DataObject\Localizedfield) {
                         continue;
                     }
 

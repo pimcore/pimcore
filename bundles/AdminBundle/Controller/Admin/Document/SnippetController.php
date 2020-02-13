@@ -42,6 +42,10 @@ class SnippetController extends DocumentControllerBase
     {
         $snippet = Document\Snippet::getById($request->get('id'));
 
+        if (!$snippet) {
+            throw $this->createNotFoundException('Snippet not found');
+        }
+
         // check for lock
         if ($snippet->isAllowed('save') || $snippet->isAllowed('publish') || $snippet->isAllowed('unpublish') || $snippet->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -109,55 +113,56 @@ class SnippetController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $snippet = Document\Snippet::getById($request->get('id'));
+        $snippet = Document\Snippet::getById($request->get('id'));
 
-            $snippetSession = $this->getFromSession($snippet);
-
-            if ($snippetSession) {
-                $snippet = $snippetSession;
-            } else {
-                $snippet = $this->getLatestVersion($snippet);
-            }
-
-            $snippet->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $snippet->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $snippet->setPublished(true);
-            }
-
-            if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
-                $this->setValuesToDocument($request, $snippet);
-
-                $snippet->save();
-                $this->saveToSession($snippet);
-
-                $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $snippet->getModificationDate(),
-                        'versionCount' => $snippet->getVersionCount()
-                    ],
-                    'treeData' => $treeData
-                ]);
-            } elseif ($snippet->isAllowed('save')) {
-                $this->setValuesToDocument($request, $snippet);
-
-                $snippet->saveVersion();
-                $this->saveToSession($snippet);
-
-                return $this->adminJson(['success' => true]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$snippet) {
+            throw $this->createNotFoundException('Snippet not found');
         }
 
-        throw $this->createNotFoundException();
+        /** @var Document\Snippet|null $snippetSession */
+        $snippetSession = $this->getFromSession($snippet);
+
+        if ($snippetSession) {
+            $snippet = $snippetSession;
+        } else {
+            $snippet = $this->getLatestVersion($snippet);
+        }
+
+        $snippet->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $snippet->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $snippet->setPublished(true);
+        }
+
+        if (($request->get('task') == 'publish' && $snippet->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $snippet->isAllowed('unpublish'))) {
+            $this->setValuesToDocument($request, $snippet);
+
+            $snippet->save();
+            $this->saveToSession($snippet);
+
+            $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $snippet->getModificationDate(),
+                    'versionCount' => $snippet->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } elseif ($snippet->isAllowed('save')) {
+            $this->setValuesToDocument($request, $snippet);
+
+            $snippet->saveVersion();
+            $this->saveToSession($snippet);
+
+            return $this->adminJson(['success' => true]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**

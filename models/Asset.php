@@ -221,7 +221,7 @@ class Asset extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
@@ -1206,6 +1206,18 @@ class Asset extends Element\AbstractElement
         $this->filename = (string) $filename;
 
         return $this;
+    }
+
+    /**
+     * Alias for setFilename()
+     *
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        return $this->setFilename($key);
     }
 
     /**
