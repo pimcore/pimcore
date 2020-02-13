@@ -71,5 +71,3 @@ $item = new DataObject\Fieldcollection\Data\MyCollection();
 $item->setObject($object)
 
 ```
-
-**Warning:** Inheritance is not supported by this datatype.
