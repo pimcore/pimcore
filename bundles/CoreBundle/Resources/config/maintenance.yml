@@ -42,6 +42,12 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: runSanityCheck }
 
+    Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupBrickTables }
+
     Pimcore\Maintenance\Tasks\VersionsCleanupTask:
         arguments:
             - '@logger'
