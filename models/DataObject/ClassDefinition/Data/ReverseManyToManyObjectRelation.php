@@ -64,25 +64,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return bool
-     */
-    public function getLazyLoading()
-    {
-        return true;
-    }
-
-    /**
-     * @param  bool|int|null $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        //dummy, non owner objects must be lazy loading
-        return $this;
-    }
-
-    /**
      * @param string $ownerClassName
      *
      * @return $this
