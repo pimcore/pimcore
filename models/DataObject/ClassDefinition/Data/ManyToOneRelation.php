@@ -457,31 +457,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if ($data instanceof Element\ElementInterface) {
-            if (!array_key_exists($data->getCacheTag(), $tags)) {
-                $tags = $data->getCacheTags($tags);
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @param Element\AbstractElement|null $data
      *
      * @return array
@@ -583,7 +558,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
+            if (!$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
