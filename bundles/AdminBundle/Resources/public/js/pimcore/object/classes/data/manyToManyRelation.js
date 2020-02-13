@@ -362,7 +362,6 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                     documentsAllowed: source.datax.documentsAllowed,
                     documentTypes: source.datax.documentTypes,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
                     classes: source.datax.classes
                 });
         }

@@ -342,7 +342,6 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
                     classes: source.datax.classes,
                     objectsAllowed: source.datax.objectsAllowed,
                     assetsAllowed: source.datax.assetsAllowed,

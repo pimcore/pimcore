@@ -1183,8 +1183,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($blockDefinitions as $field) {
                 if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
                                                         && $field->getLazyLoading()) {
-                    // Lazy loading inside blocks isn't supported
-                    if (!$field instanceof Data\Relations\AbstractRelations) {
+
+                    // Lazy loading inside blocks isn't supported, turn it off if possible
+                    if (method_exists($field, 'setLazyLoading')) {
                         $field->setLazyLoading(false);
                     }
                 }

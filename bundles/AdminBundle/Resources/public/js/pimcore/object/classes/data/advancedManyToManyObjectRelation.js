@@ -376,7 +376,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     visibleFields: source.datax.visibleFields,
                     columns: source.datax.columns,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
                     classes: source.datax.classes,
                     enableBatchEdit: source.datax.enableBatchEdit,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,

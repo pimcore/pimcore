@@ -568,7 +568,6 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                     maxItems: source.datax.maxItems,
                     columns: source.datax.columns,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
                     objectsAllowed: source.datax.objectsAllowed,
