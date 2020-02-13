@@ -701,15 +701,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $key = $this->getName();
         $code = '';
 
+        $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
+
         $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";
-
-        $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
 
         $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
