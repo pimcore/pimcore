@@ -186,7 +186,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param Element\ElementMetadata[]|null $data
+     * @param DataObject\Data\ElementMetadata[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
