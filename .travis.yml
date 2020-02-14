@@ -25,6 +25,7 @@ addons:
       #      - app/config
       - var/logs
       - tests/_output/var/classes
+      - phpstan-baseline.neon
   hosts:
     - pimcore-test.dev
 
