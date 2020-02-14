@@ -23,7 +23,7 @@ Menus and buttons may vary depending on the current GUI version
     * **s_api_key** > `[Restrict key]`
       * Name: **s_api_key**
       * IP addresses (web servers, ...)
-      * Add an item: **80.241.220.152**
+      * Add an item: **80.241.1.1**
     * **b_api_key** > `[Restrict key]`
       * Name: **b_api_key**
       * HTTP referrers (web sites)
