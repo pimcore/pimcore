@@ -380,7 +380,6 @@
     "user_apikey_description": "È richiesta una chiave API di accesso ai web services per questo utente",
     "apikey": "Chiave API",
     "lazy_loading": "caricamento su richiesta",
-    "lazy_loading_description": "Attivando il caricamento su richiesta gli oggetti collegati non sono caricati automaticamente. Quando si modifica un oggetto possono essere caricati premendo il bottone Carica Relazioni. Quando si accede all'oggetto le relazioni sono caricate solo quando viene invocato il relativo metodo get.",
     "non_owner_description": "Gli oggetti non proprietari hanno relazioni con altri oggetti nello stesso modo degli oggetti veri e propri. La differenza è che un campo oggetto non proprietario non è il proprietario dei dati della relazione, è solo una vista dei dati memorizzati in altri oggetti. Vi preghiamo di selezionare il proprietario ed il nome del campo dove i dati originali sono memorizzati.",
     "allow_variants": "Consenti varianti",
     "show_variants": "Mostra le differenze nell'abero",
@@ -696,7 +695,6 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
     "provide_split_view": "Provide Split View",
@@ -715,7 +713,10 @@
     "geopolyline": "Geographic Polyline",
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
-    "cache_raw_relation_data": "Cache Raw Relation Data",
     "allow_to_create_new_object": "Allow to create a new object in relation field",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Controller & Action",
+    "implements_interfaces": "Implements interface(s)"
 }
