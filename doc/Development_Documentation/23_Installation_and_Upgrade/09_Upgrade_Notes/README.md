@@ -2,6 +2,26 @@
 
 
 ## 6.5.0
+
+> **IMPORTANT!**  
+> If you are using the config option 'Cache Raw Relation Data' on your class definition, please run the following script
+> prior to the update, or disable the option manual in your class definitions
+
+```php
+use Pimcore\Model\DataObject\ClassDefinition;
+
+$list = new ClassDefinition\Listing();
+$list = $list->load();
+
+foreach ($list as $class) {
+    if (method_exists($class, 'getCacheRawRelationData') && $class->getCacheRawRelationData()) {
+        $class->setCacheRawRelationData(false);
+        // get rid of the CacheRawRelationDataInterface & CacheRawRelationDataTrait
+        $class->save();
+    }
+}
+```
+
 - [Data Objects] Relations are always lazy-loaded from now on
   see https://github.com/pimcore/pimcore/issues/5772
 - [Data Objects] Relation Types DB Caching Layer is always turned on now. Removed support for non-cached alternative. 
