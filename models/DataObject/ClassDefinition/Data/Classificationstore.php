@@ -398,13 +398,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**

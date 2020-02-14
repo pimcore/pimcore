@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnalyticsController extends ReportsControllerBase implements EventedControllerInterface
 {
     /**
-     * @var \Google_Client
+     * @var \Google_Service_Analytics
      */
     protected $service;
 

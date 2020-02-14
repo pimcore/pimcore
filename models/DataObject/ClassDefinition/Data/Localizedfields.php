@@ -380,13 +380,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**

@@ -19,7 +19,9 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
+use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
+use Pimcore\Model\Version;
 
 interface ElementInterface extends ModelInterface
 {
@@ -216,4 +218,14 @@ interface ElementInterface extends ModelInterface
      * @return bool
      */
     public function isAllowed($type, ?User $user = null);
+
+    /**
+     * @return Task[]
+     */
+    public function getScheduledTasks();
+
+    /**
+     * @return Version[]
+     */
+    public function getVersions();
 }

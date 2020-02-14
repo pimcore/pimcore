@@ -131,21 +131,6 @@ parameters:
 			path: bundles/AdminBundle/Controller/Admin/Document/SnippetController.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getScheduledTasks\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/ElementController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:getVersions\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/ElementController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
-			count: 2
-			path: bundles/AdminBundle/Controller/Admin/ElementController.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Element\\\\AbstractElement\\:\\:hasChildren\\(\\)\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/ElementControllerBase.php
@@ -154,51 +139,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabase\\(\\)\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Admin/IndexController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:getEmail\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/LoginController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Translation\\\\Admin\\\\Listing\\|Pimcore\\\\Model\\\\Translation\\\\Website\\\\Listing\\:\\:getTotalCount\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/TranslationController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Translation\\\\AbstractTranslation\\:\\:onCreateQuery\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/TranslationController.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Workflow\\\\Transition\\:\\:getNotesCommentRequired\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/WorkflowController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLatestVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/WorkflowController.php
-
-		-
-			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_accounts\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
-
-		-
-			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_profiles\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
-
-		-
-			message: "#^Access to an undefined property Google_Client\\:\\:\\$data_ga\\.$#"
-			count: 4
-			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
-
-		-
-			message: "#^Access to an undefined property Google_Client\\:\\:\\$management_segments\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Reports/AnalyticsController.php
 
 		-
 			message: "#^Cannot access property \\$thumbnail on array\\|string\\.$#"
@@ -1061,44 +1001,14 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
 
 		-
-			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
-			count: 2
-			path: lib/Cache/Pool/AbstractCacheItemPool.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
 
 		-
-			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
-			count: 1
-			path: lib/Cache/Pool/CacheItem.php
-
-		-
-			message: "#^PHPDoc tag @throws with type Psr\\\\Cache\\\\InvalidArgumentException is not subtype of Throwable$#"
-			count: 1
-			path: lib/Cache/Pool/Redis.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\\\AbstractUser\\:\\:getPerspectives\\(\\)\\.$#"
-			count: 1
-			path: lib/Config.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Templating\\\\Model\\\\ViewModelInterface\\:\\:getAllParameters\\(\\)\\.$#"
 			count: 1
 			path: lib/Controller/FrontendController.php
-
-		-
-			message: "#^Comparison operation \"\\>\" between int and \\(array\\|float\\|int\\) results in an error\\.$#"
-			count: 1
-			path: lib/DataObject/GridColumnConfig/Operator/Substring.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\:\\:getFieldDefinition\\(\\)\\.$#"
-			count: 1
-			path: lib/DataObject/GridColumnConfig/Value/DefaultValue.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getExpressionBuilder\\(\\)\\.$#"
@@ -1139,11 +1049,6 @@ parameters:
 			message: "#^Comparison operation \"\\>\" between \\(array\\|float\\|int\\) and int results in an error\\.$#"
 			count: 1
 			path: lib/Google/Api.php
-
-		-
-			message: "#^Variable \\$latestVersion in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: lib/Maintenance/Tasks/SanitizeElementsTask.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
@@ -1359,11 +1264,6 @@ parameters:
 			message: "#^Call to an undefined method RecursiveIteratorIterator\\:\\:getSubPathName\\(\\)\\.$#"
 			count: 2
 			path: lib/helper-functions.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getCurrentFullPath\\(\\)\\.$#"
-			count: 1
-			path: models/Asset.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getLowQualityPreviewDataUri\\(\\)\\.$#"

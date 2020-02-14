@@ -376,13 +376,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**
@@ -430,7 +430,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return null
+     * @return Objectbrick|null
      */
     public function load($object, $params = [])
     {
@@ -441,9 +441,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             $container->load($object);
 
             return $container;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

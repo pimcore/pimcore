@@ -593,9 +593,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @param DataObject\Data\Hotspotimage|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {

@@ -120,10 +120,8 @@ class Image extends Model\Asset
                 $yPoints[] = ($fc['y'] + $fc['y'] + $fc['height']) / 2;
             }
 
-            if (!$this->getCustomSetting('focalPointX')) {
-                $focalPointX = array_sum($xPoints) / count($xPoints);
-                $focalPointY = array_sum($yPoints) / count($yPoints);
-            }
+            $focalPointX = array_sum($xPoints) / count($xPoints);
+            $focalPointY = array_sum($yPoints) / count($yPoints);
 
             $this->setCustomSetting('focalPointX', $focalPointX);
             $this->setCustomSetting('focalPointY', $focalPointY);
@@ -139,7 +137,7 @@ class Image extends Model\Asset
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
 
         if (!$config['enabled']) {
-            return false;
+            return;
         }
 
         $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');

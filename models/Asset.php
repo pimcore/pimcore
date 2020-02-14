@@ -1569,7 +1569,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $key
      *
-     * @return null
+     * @return mixed
      */
     public function getCustomSetting($key)
     {
@@ -1770,7 +1770,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
+     * @return Schedule\Task[]
      */
     public function getScheduledTasks()
     {
