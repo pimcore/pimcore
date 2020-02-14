@@ -72,12 +72,10 @@ class VersionTest extends TestCase
         $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), true);
 
         $targetObjects = $sourceObject->getMultihref();
-        $this->assertEquals(1, count($targetObjects), "expected one target");
+        $this->assertEquals(1, count($targetObjects), 'expected one target');
 
         $targetObject = $targetObjects[0];
-        $this->assertEquals($randomText, $targetObject->getInput(), "random text does not match");
-
-
+        $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
         $content = file_get_contents($latestVersion1->getFilePath());

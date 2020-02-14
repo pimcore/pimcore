@@ -33,6 +33,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
     /**
      * Comma separated list of interfaces
+     *
      * @var string|null
      */
     public $implementsInterfaces;
@@ -56,7 +57,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
      * @var Data[]
      */
     protected $fieldDefinitions;
-
 
     /**
      * @return string
@@ -235,14 +235,15 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->implementsInterfaces;
     }
 
-
     /**
      * @param string|null $implementsInterfaces
+     *
      * @return $this
      */
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
         return $this;
     }
 }

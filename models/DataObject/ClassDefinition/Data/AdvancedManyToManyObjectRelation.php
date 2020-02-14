@@ -459,7 +459,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $value;
     }
 
-
     /**
      * @param DataObject\Data\ObjectMetadata[]|null $data
      *

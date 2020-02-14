@@ -421,7 +421,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $value;
     }
 
-
     /**
      * @param DataObject\AbstractObject[]|null $data
      *

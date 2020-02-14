@@ -591,7 +591,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $tags = is_array($tags) ? $tags : [];
 
         return $tags;
-
     }
 
     /**

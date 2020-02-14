@@ -1294,6 +1294,7 @@ abstract class Data
                         if ($brickData) {
                             /** @var DataObject\Localizedfield $data */
                             $data = $brickData->getLocalizedFields();
+
                             return $data;
                         }
                     }

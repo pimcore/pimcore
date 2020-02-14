@@ -352,6 +352,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
+
         return '';
     }
 
