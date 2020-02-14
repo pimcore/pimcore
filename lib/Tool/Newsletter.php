@@ -55,8 +55,9 @@ class Newsletter
     ): Mail {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
+        $config = Config::getSystemConfiguration('newsletter');
 
-        if (Config::getSystemConfig()->newsletter->usespecific) {
+        if ($config['use_specific']) {
             $mail->init('newsletter');
         }
 
@@ -135,6 +136,7 @@ class Newsletter
     public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer): void
     {
         $mailAddress = $sendingContainer->getEmail();
+        $config = Config::getSystemConfiguration('newsletter');
 
         if (!self::to_domain_exists($mailAddress)) {
             Logger::err('E-Mail address invalid: ' . self::obfuscateEmail($mailAddress));
@@ -146,7 +148,7 @@ class Newsletter
 
             $mailer = null;
             // check if newsletter specific mailer is needed
-            if (Config::getSystemConfig()->newsletter->usespecific) {
+            if ($config['use_specific']) {
                 $mailer = Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
             }
 
@@ -213,6 +215,9 @@ class Newsletter
             E_USER_DEPRECATED
         );
 
+
+        $config = Config::getSystemConfiguration('newsletter');
+
         $params = [
             'gender' => $object->getGender(),
             'firstname' => $object->getFirstname(),
@@ -225,7 +230,7 @@ class Newsletter
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
-        if (Config::getSystemConfig()->newsletter->usespecific) {
+        if ($config['use_specific']) {
             $mail->init('newsletter');
         }
 

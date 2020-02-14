@@ -386,7 +386,7 @@ class Imagick extends Adapter
     public static function getCMYKColorProfile()
     {
         if (!self::$CMYKColorProfile) {
-            $path = Config::getSystemConfig()->assets->icc_cmyk_profile;
+            $path = Config::getSystemConfiguration('assets')['icc_cmyk_profile'] ?? null;
             if (!$path || !file_exists($path)) {
                 $path = __DIR__ . '/../icc-profiles/ISOcoated_v2_eci.icc'; // default profile
             }
@@ -413,7 +413,7 @@ class Imagick extends Adapter
     public static function getRGBColorProfile()
     {
         if (!self::$RGBColorProfile) {
-            $path = Config::getSystemConfig()->assets->icc_rgb_profile;
+            $path = Config::getSystemConfiguration('assets')['icc_rgb_profile'] ?? null;
             if (!$path || !file_exists($path)) {
                 $path = __DIR__ . '/../icc-profiles/sRGB_IEC61966-2-1_black_scaled.icc'; // default profile
             }
