@@ -232,9 +232,12 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
         this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
-        if (existingFilters) {
+
+        if (existingFilters && this.classId == this.previousClassId) {
             this.store.setFilters(existingFilters.items);
         }
+
+        this.previousClassId = this.classId;
 
         var gridColumns = gridHelper.getGridColumns();
 
