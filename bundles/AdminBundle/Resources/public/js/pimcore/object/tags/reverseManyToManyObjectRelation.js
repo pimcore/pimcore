@@ -122,7 +122,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
         // no class for nonowner is specified
         if(!record) {
             this.component = new Ext.Panel({
-                title: ts(this.fieldConfig.title),
+                title: t(this.fieldConfig.title),
                 cls: cls,
                 html: "There's no class specified in the field-configuration"
             });
@@ -189,8 +189,8 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
                 items: [{
                     xtype: "tbtext",
                     text: ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class')
-                                    + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>'
-                                    + ts(this.fieldConfig.ownerFieldName) + '</b></span>'
+                                    + ':<b>' + t(className) + "</b> " + t('owner_field') + ': <b>'
+                                    + t(this.fieldConfig.ownerFieldName) + '</b></span>'
                 }],
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"

@@ -133,7 +133,7 @@ pimcore.object.helpers.edit = {
 
         // translate title
         if(typeof l.title != "undefined") {
-            l.title = ts(l.title);
+            l.title = t(l.title);
         }
 
         if (l.datatype == "layout") {
@@ -215,7 +215,7 @@ pimcore.object.helpers.edit = {
                     if(l[configKeys[u]]) {
                         //if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
-                            newConfig[configKeys[u]] = l["renderingClass"] ? l[configKeys[u]] : ts(l[configKeys[u]]);
+                            newConfig[configKeys[u]] = l["renderingClass"] ? l[configKeys[u]] : t(l[configKeys[u]]);
                         } else {
                             newConfig[configKeys[u]] = l[configKeys[u]];
                         }

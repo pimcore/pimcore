@@ -44,7 +44,7 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
         if (fieldConfig.value) {
             var selectDataRaw = fieldConfig.value.split(";");
             for (var j = 0; j < selectDataRaw.length; j++) {
-                selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
             }
         }
 

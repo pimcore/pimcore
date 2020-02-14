@@ -47,7 +47,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 var data = [];
                 for (i = 0; i < this.object.data.classes.length; i++) {
                     var klass = this.object.data.classes[i];
-                    data.push([klass.id, klass.name, ts(klass.name), klass.inheritance]);
+                    data.push([klass.id, klass.name, t(klass.name), klass.inheritance]);
 
                 }
 

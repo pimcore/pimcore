@@ -127,7 +127,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 if (this.fieldConfig.columns[i].value) {
                     var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
                     for (var j = 0; j < selectDataRaw.length; j++) {
-                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                        selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
                     }
                 }
 
@@ -169,7 +169,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
-                        text: ts(this.fieldConfig.columns[i].label),
+                        text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -204,12 +204,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
             if (this.fieldConfig.columns[i].type == "select") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    return ts(value);
+                    return t(value);
                 }
             }
 
             var columnConfig = {
-                text: ts(this.fieldConfig.columns[i].label),
+                text: t(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -907,7 +907,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path")
         };

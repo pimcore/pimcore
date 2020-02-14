@@ -243,7 +243,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 var data = [];
                 for (var i = 0; i < nrOfLanguages; i++) {
                     var language = this.frontendLanguages[i];
-                    data.push([language, ts(pimcore.available_languages[language])]);
+                    data.push([language, t(pimcore.available_languages[language])]);
                 }
 
                 var store = new Ext.data.ArrayStore({
@@ -788,7 +788,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     dataIndex: 'language',
                     flex: 5,
                     renderer: function (value, metaData, record, row, col, store, gridView) {
-                        return ts(pimcore.available_languages[value]);
+                        return t(pimcore.available_languages[value]);
                     }
                 }, {
                     xtype: 'checkcolumn',

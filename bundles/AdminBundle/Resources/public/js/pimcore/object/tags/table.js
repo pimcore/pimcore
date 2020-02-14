@@ -63,7 +63,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -146,7 +146,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         if (data.items[0]) {
             for (var i = 0; i < fields.length; i++) {
                 columns.push({
-                    text: this.fieldConfig.columnConfigActivated && this.fieldConfig.columnConfig[i] ? ts(this.fieldConfig.columnConfig[i].label) : '',
+                    text: this.fieldConfig.columnConfigActivated && this.fieldConfig.columnConfig[i] ? t(this.fieldConfig.columnConfig[i].label) : '',
                     dataIndex: fields[i].name,
                     editor: new Ext.form.TextField(),
                     sortable: false,

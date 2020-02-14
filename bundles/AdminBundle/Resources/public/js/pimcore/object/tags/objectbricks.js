@@ -110,7 +110,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 var menuItem = {
-                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    text: elementData.title ? t(elementData.title) : t(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
@@ -168,7 +168,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             items.push({
                 xtype: "tbtext",
-                text: ts(this.fieldConfig.title)
+                text: t(this.fieldConfig.title)
             });
 
             var toolbar = new Ext.Toolbar({
@@ -270,7 +270,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 closable: !this.fieldConfig.noteditable,
                 autoHeight: true,
                 border: false,
-                title: title ? ts(title) : ts(type),
+                title: title ? t(title) : t(type),
                 // items: items
                 items: [],
                 listeners: {

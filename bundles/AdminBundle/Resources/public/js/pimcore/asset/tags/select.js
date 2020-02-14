@@ -119,7 +119,7 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             options = options.split(',');
             for (var i = 0; i < options.length; i++) {
 
-                var key = ts(options[i]);
+                var key = t(options[i]);
                 if(key.indexOf('<') >= 0) {
                     key = replace_html_event_attributes(strip_tags(key, "div,span,b,strong,em,i,small,sup,sub"));
                 }
