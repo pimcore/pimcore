@@ -380,7 +380,6 @@
     "user_apikey_description": "La clé API est nécessaire pour accéder au service web pour cet utilisateur",
     "apikey": "Clé API",
     "lazy_loading": "chargement paresseux",
-    "lazy_loading_description": "Chargement paresseux signifie que les objects en relation ne sont pas chargés à l'instanciation de l'object. Lors de l'accès par programmation, les relations ne sont chargé qu'à l'appel de la méthode get",
     "non_owner_description": "Objets propriétaire non représenter des relations d'un objet autre que de la même manière que les objets ne. La différence est que, d'un champ non propriétaire objet n'est pas le propriétaire des données concernant, il s'agit simplement d'une vue sur les données stockées dans d'autres objets. S'il vous plaît choisir le nom du propriétaire et sur le terrain où les données sont initialement stockées.",
     "allow_variants": "Permettre des déclinaisons",
     "show_variants": "Montrer les déclinaisons dans l'arborescence",
@@ -696,7 +695,6 @@
     "encrypt_data": "Crypter les données",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données",
     "reports_config": "Rapports Config",
-    "lazy_loading_warning_block": "AVERTISSEMENT: le chargement paresseux n'est PAS possible dans les Blocs",
     "left": "gauche",
     "right": "droite",
     "provide_split_view": "Fournir une vue partagée",
@@ -715,7 +713,10 @@
     "geopolyline": "Polyligne géographique",
     "classificationstore_error_group_exists_msg": "Un groupe avec ce nom existe déjà",
     "classificationstore_group_by_key": "Grouper par clé",
-    "cache_raw_relation_data": "Mettre en cache les données de relation brutes",
-    "allow_to_create_new_object": "Allow to create a new object in relation field",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "allow_to_create_new_object": "Permettre de créer un nouvel objet dans le champ relation",
+    "inherited_default_value_warning": "La valeur par défaut est utilisée si l'héritage est désactivé ou si la valeur parent est vide",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Controller & Action",
+    "implements_interfaces": "Implements interface(s)"
 }
