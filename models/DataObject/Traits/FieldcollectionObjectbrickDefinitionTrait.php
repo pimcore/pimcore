@@ -171,7 +171,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
 
         return $this;
     }
