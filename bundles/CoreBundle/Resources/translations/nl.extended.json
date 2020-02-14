@@ -380,7 +380,6 @@
     "user_apikey_description": "API key is verplicht voor webservices-toegang door deze gebruiker",
     "apikey": "API key",
     "lazy_loading": "Gepland laden",
-    "lazy_loading_description": "Lazy loading betekent dat gerelateerde objecten niet direct worden geladen. Bij het aanpassen van een object worden deze pas geladen bij het klikken op de knop. Wanneer het object in programmacode wordt benaderd zal eerst de get-method moet worden aangeroepen",
     "non_owner_description": "Non-owner objecten vertegenwoordigen relaties naar een ander object, zoals objecten dat ook doen. Het verschil is dat een non-owner objectveld niet de eigenaar is van de relatie-gegevens, maar slechts een view van de gegevens van andere objecten. Kies aub de eigenaar en veldnaam waar de gegevens oorspronkelijk zijn opgeslagen.",
     "allow_variants": "Varianten toestaan",
     "show_variants": "Variants tonen in boom",
@@ -696,7 +695,6 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
     "provide_split_view": "Provide Split View",
@@ -715,7 +713,10 @@
     "geopolyline": "Geographic Polyline",
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
-    "cache_raw_relation_data": "Cache Raw Relation Data",
     "allow_to_create_new_object": "Allow to create a new object in relation field",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Controller & Action",
+    "implements_interfaces": "Implements interface(s)"
 }
