@@ -185,7 +185,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return Image
+     * @return Asset
      */
     public function getAsset()
     {
