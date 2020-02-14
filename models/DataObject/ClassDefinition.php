@@ -872,7 +872,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return DataObject\ClassDefinition\Layout
+     * @return DataObject\ClassDefinition\Layout|null
      */
     public function getLayoutDefinitions()
     {

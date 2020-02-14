@@ -120,7 +120,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return Layout
+     * @return Layout|null
      */
     public function getLayoutDefinitions()
     {
