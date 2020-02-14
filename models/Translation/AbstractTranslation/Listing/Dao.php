@@ -59,8 +59,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
      */
     public function getCount()
     {
-        if (count($this->model->getObjects()) > 0) {
-            return count($this->model->getObjects());
+        if (count($this->model->load()) > 0) {
+            return count($this->model->load());
         }
 
         $select = $this->db->select();

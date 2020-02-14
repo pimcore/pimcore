@@ -17,16 +17,18 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface CustomRecyclingMarshalInterface
 {
     /**
-     * @param $object
+     * @param Concrete $object
      * @param mixed $data
      */
     public function marshalRecycleData($object, $data);
 
     /**
-     * @param $object
+     * @param Concrete $object
      * @param mixed $data
      */
     public function unmarshalRecycleData($object, $data);

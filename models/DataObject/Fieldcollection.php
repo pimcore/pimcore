@@ -20,8 +20,9 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model;
 
 /**
- * @method array delete(DataObject\Concrete $object, $saveMode = false)
- * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
+ * @method array delete(Concrete $object, $saveMode = false)
+ * @method Fieldcollection\Dao getDao()
+ * @method array load(Concrete $object)
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {

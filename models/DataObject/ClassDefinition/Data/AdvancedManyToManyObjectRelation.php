@@ -271,7 +271,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $relationsMetadata = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $relation) {
-                $o = DataObject::getById($relation['id']);
+                $o = DataObject\Concrete::getById($relation['id']);
                 if ($o && $o->getClassName() == $this->getAllowedClassId()) {
                     /** @var DataObject\Data\ObjectMetadata $metaData */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -909,6 +909,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function classSaved($class, $params = [])
     {
+        /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                 'fieldname' => null

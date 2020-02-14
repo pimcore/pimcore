@@ -125,12 +125,12 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var array
+     * @var DataObject\ClassDefinition\Data[]
      */
     public $fieldDefinitions = [];
 
     /**
-     * @var array
+     * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
@@ -268,7 +268,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
      */
     public static function cleanupForExport(&$data)
     {
@@ -276,8 +276,8 @@ class ClassDefinition extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
-        if (method_exists($data, 'getChilds')) {
-            $children = $data->getChilds();
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::cleanupForExport($child);
@@ -840,7 +840,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|mixed $context
+     * @param array $context
      *
      * @return DataObject\ClassDefinition\Data[]
      */
@@ -872,7 +872,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return DataObject\ClassDefinition\Layout|null
      */
     public function getLayoutDefinitions()
     {
@@ -880,13 +880,13 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $fieldDefinitions
+     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
      *
      * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
 
         return $this;
     }
@@ -925,7 +925,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param DataObject\ClassDefinition\Layout|null $layoutDefinitions
      *
      * @return $this
      */
@@ -940,7 +940,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     public function extractDataDefinitions($def)
     {

@@ -600,7 +600,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $assetUploadPath
+     * @param string $assetUploadPath
      *
      * @return $this
      */
