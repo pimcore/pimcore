@@ -14,21 +14,19 @@ class ClassResolver
             if (isset(self::$cache[$class])) {
                 return self::$cache[$class];
             }
-            if (strpos($class, '@') === 0) {
-                $serviceName = substr($class, 1);
-                try {
+            try {
+                if (strpos($class, '@') === 0) {
+                    $serviceName = substr($class, 1);
                     $service = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                    self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
-
-                    return self::$cache[$class];
-                } catch (\Exception $e) {
-                    Logger::error($e);
+                } else {
+                    $service = new $class;
                 }
-            } else {
-                $service = new $class;
+
                 self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
 
                 return self::$cache[$class];
+            } catch (\Throwable $e) {
+                Logger::error($e);
             }
         }
 
