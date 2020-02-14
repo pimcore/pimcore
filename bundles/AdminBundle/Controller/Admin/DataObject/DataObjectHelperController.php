@@ -1796,7 +1796,7 @@ class DataObjectHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ?: ';';
+        $delimiter = $settings['delimiter'] ?? ';';
 
         $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
@@ -2227,8 +2227,8 @@ class DataObjectHelperController extends AdminController
                         throw new \Exception("Permission denied. You don't have the rights to save this object.");
                     }
 
-                    $append = $params['append'];
-                    $remove = $params['remove'];
+                    $append = $params['append'] ?? null;
+                    $remove = $params['remove'] ?? null;
 
                     $className = $object->getClassName();
                     $class = DataObject\ClassDefinition::getByName($className);
