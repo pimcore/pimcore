@@ -4,7 +4,7 @@ Menus and buttons may vary depending on the current GUI version
 ## Console - APIs
 * <https://console.developers.google.com/project>
 * *Menu:* `[+ Create project]`
-  * Project name: **jaks-sk**
+  * Project name: **project-sk**
 * *Menu:* `Select project`
 * *Menu:* `IAM & admin` / `Service accounts`
   * `[+ Create service account]`
@@ -27,7 +27,7 @@ Menus and buttons may vary depending on the current GUI version
     * **b_api_key** > `[Restrict key]`
       * Name: **b_api_key**
       * HTTP referrers (web sites)
-      * Add an item: **\*.l-jaks**, **\*.jaks.sk**
+      * Add an item: **\*.l-project**, **\*.project.sk**
 * *Menu:* `APIs & services` / `Library`
     - **Google Analytics API** > `[Enable]`
     - **Custom Search API** > `[Enable]`
@@ -39,10 +39,10 @@ Menus and buttons may vary depending on the current GUI version
 * <https://analytics.google.com/>
 * *Menu:* `Administrator`
   * `[Create new account]`
-    * Account name: **jaks**
+    * Account name: **project**
     * Web
-    * Website name: **jaks.sk**
-    * Website URL: **https://www.jaks.sk/**
+    * Website name: **project.sk**
+    * Website URL: **https://www.project.sk/**
     * Industry category:
     * Reporting Time Zone:
     * `Get Tracking ID`: **track_id**
@@ -61,28 +61,28 @@ Menus and buttons may vary depending on the current GUI version
 ## CSE - Custom Search Engine
 * <https://cse.google.com/cse/all>, <http://support.google.com/customsearch/>
 * `[Add]`
-  * Sites to search: **www.jaks.sk/sk/***
+  * Sites to search: **www.project.sk/sk/***
   * Language: **slovak**
-  * Name: **jaks.sk/sk**
+  * Name: **project.sk/sk**
 * *Menu:* `Setup`
   * Search engine ID: **cse_id**
   * Image search: OK
 * *Menu:* `Statistics & logs`
   * *Tab:* `Google analytics`
-    * Select profile: **jaks: All website data**
+    * Select profile: **project: All website data**
 
 ## Search Console
 * <https://search.google.com/search-console>
 * *Menu:* `Add property`
-  * Web : **https://www.jaks.sk**
+  * Web : **https://www.project.sk**
   * `Get`: **html_ver**
 
 ## reCAPTCHA
 * <https://www.google.com/recaptcha/admin#list>
 * *Menu:* `[+ Create]`
-  * Label: **jaks.sk**
+  * Label: **project.sk**
   * reCAPTCHA v2
-  * Domains: **jaks.sk**
+  * Domains: **project.sk**
   * `Copy site key`: **site_key**
   * `Copy secret key`: **secret**
 
