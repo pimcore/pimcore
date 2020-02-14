@@ -5,7 +5,7 @@
 
 > **IMPORTANT!**  
 > If you are using the config option 'Cache Raw Relation Data' on your class definition, please run the following script
-> prior to the update, or disable the option manual in your class definitions
+> prior to the update, or disable the option manually in your class definitions
 
 ```php
 use Pimcore\Model\DataObject\ClassDefinition;
