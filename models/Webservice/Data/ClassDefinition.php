@@ -108,9 +108,9 @@ class ClassDefinition extends Model\Webservice\Data
     public $implementsInterfaces;
 
     /**
-     * @var Model\DataObject\ClassDefinition\Data[]|null
+     * @var Model\DataObject\ClassDefinition\Data[]
      */
-    public $fieldDefinitions;
+    public $fieldDefinitions = [];
 
     /**
      * @var Model\DataObject\ClassDefinition\Layout|null

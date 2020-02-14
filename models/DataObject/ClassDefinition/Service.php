@@ -127,11 +127,9 @@ class Service
     public static function generateFieldCollectionJson($fieldCollection)
     {
         $fieldCollection->setKey(null);
-        $fieldCollection->setFieldDefinitions(null);
+        $fieldCollection->setFieldDefinitions([]);
 
-        $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -169,7 +167,7 @@ class Service
     public static function generateObjectBrickJson($objectBrick)
     {
         $objectBrick->setKey(null);
-        $objectBrick->setFieldDefinitions(null);
+        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -187,9 +185,7 @@ class Service
             }
         }
 
-        $json = json_encode($objectBrick, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($objectBrick, JSON_PRETTY_PRINT);
     }
 
     /**

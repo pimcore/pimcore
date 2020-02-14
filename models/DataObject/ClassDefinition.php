@@ -125,9 +125,9 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var DataObject\ClassDefinition\Data[]|null
+     * @var DataObject\ClassDefinition\Data[]
      */
-    public $fieldDefinitions;
+    public $fieldDefinitions = [];
 
     /**
      * @var DataObject\ClassDefinition\Layout|null
@@ -840,9 +840,9 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|mixed $context
+     * @param array $context
      *
-     * @return DataObject\ClassDefinition\Data[]|null
+     * @return DataObject\ClassDefinition\Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -880,7 +880,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data[]|null $fieldDefinitions
+     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
      *
      * @return $this
      */

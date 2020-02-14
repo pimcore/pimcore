@@ -55,9 +55,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $layoutDefinitions;
 
     /**
-     * @var Data[]|null
+     * @var Data[]
      */
-    protected $fieldDefinitions;
+    protected $fieldDefinitions = [];
 
     /**
      * @return string
@@ -165,7 +165,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param Data[]|null $fieldDefinitions
+     * @param Data[] $fieldDefinitions
      *
      * @return $this
      */
