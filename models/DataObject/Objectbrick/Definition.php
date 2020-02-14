@@ -670,5 +670,4 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         return $classFile;
     }
-
 }

@@ -40,7 +40,6 @@ use Pimcore\Tool\Serialize;
  */
 class Version extends AbstractModel
 {
-
     /**
      * @var int
      */

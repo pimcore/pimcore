@@ -43,8 +43,7 @@ final class CleanupBrickTablesTask implements TaskInterface
         $db = Db::get();
         $tableTypes = ['store', 'query'];
         foreach ($tableTypes as $tableType) {
-
-            $prefix = "object_brick_" . $tableType . "_";
+            $prefix = 'object_brick_' . $tableType . '_';
             $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
@@ -66,13 +65,12 @@ final class CleanupBrickTablesTask implements TaskInterface
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
                 }
 
-                $fieldsQuery = "SELECT fieldname FROM " . $tableName . " GROUP BY fieldname";
+                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
                 $fieldNames = $db->fetchCol($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
                     if (!$fieldDef) {
-
                         $lfDef = $classDefinition->getFieldDefinition('localizedfields');
                         if ($lfDef instanceof ClassDefinition\Data\Localizedfields) {
                             $fieldDef = $lfDef->getFieldDefinition($fieldName);

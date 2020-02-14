@@ -14,6 +14,8 @@
 pimcore.registerNS("pimcore.object.tags.reverseManyToManyObjectRelation");
 pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
+    pathProperty: "path",
+
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
@@ -198,7 +200,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
             viewConfig: {
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
+                    afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }

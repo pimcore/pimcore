@@ -33,7 +33,6 @@ class Definition extends Model\AbstractModel
 
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
-
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
@@ -314,5 +313,4 @@ class Definition extends Model\AbstractModel
 
         return $text;
     }
-
 }

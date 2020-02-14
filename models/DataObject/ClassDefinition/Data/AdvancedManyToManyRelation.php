@@ -567,7 +567,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         return $value;
     }
 
-
     /**
      * @deprecated
      *
