@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
     /**
      * Static type of this element
@@ -60,7 +60,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public $disallowAddRemove;
 
     /**
-     * @var bool
      */
     public $disallowReorder;
 
@@ -339,18 +338,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
-            $container = new DataObject\Fieldcollection(null, $this->getName());
-            $container->load($object);
+        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container->load($object);
 
-            if ($container->isEmpty()) {
-                return null;
-            }
-
-            return $container;
+        if ($container->isEmpty()) {
+            return null;
         }
 
-        return null;
+        return $container;
     }
 
     /**
@@ -638,7 +633,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-            $data = $this->load($object, ['force' => true]);
+            $data = $this->load($object);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }

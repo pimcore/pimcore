@@ -662,7 +662,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if ($object instanceof Model\DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
