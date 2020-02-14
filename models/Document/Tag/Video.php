@@ -538,7 +538,7 @@ class Video extends Model\Document\Tag
             'end',
             'fs',
             'playsinline',
-            'hl',                    
+            'hl',
             'iv_load_policy',
             'list',
             'listType',
