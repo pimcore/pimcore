@@ -537,6 +537,8 @@ class Video extends Model\Document\Tag
             'enablejsapi',
             'end',
             'fs',
+            'playsinline',
+            'hl',                    
             'iv_load_policy',
             'list',
             'listType',
