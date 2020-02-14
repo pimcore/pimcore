@@ -49,15 +49,14 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $group;
 
     /**
-     * @var Layout
+     * @var Layout|null
      */
     public $layoutDefinitions;
 
     /**
-     * @var Data[]
+     * @var Data[]|null
      */
     protected $fieldDefinitions;
-
 
     /**
      * @return string
@@ -128,7 +127,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param Layout $layoutDefinitions
+     * @param Layout|null $layoutDefinitions
      *
      * @return $this
      */
@@ -165,7 +164,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param Data[] $fieldDefinitions
+     * @param Data[]|null $fieldDefinitions
      *
      * @return $this
      */

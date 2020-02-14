@@ -72,7 +72,7 @@ class CustomLayout extends Model\AbstractModel
     public $classId;
 
     /**
-     * @var Layout
+     * @var Layout|null
      */
     public $layoutDefinitions;
 
@@ -145,23 +145,24 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @param string $field
      *
-     * @return \Pimcore\Model\DataObject\ClassDefinition\Data | null
+     * @return Data|null
      */
     public function getFieldDefinition($field)
     {
-        $findElement = function ($key, $definition) use (&$findElement) {
-            if ($definition->getName() == $key) {
+        /**
+         * @param string $key
+         * @param Data|Layout $definition
+         *
+         * @return Data|null
+         */
+        $findElement = static function ($key, $definition) use (&$findElement) {
+            if ($definition->getName() === $key) {
                 return $definition;
-            } else {
-                if (method_exists($definition, 'getChilds')) {
-                    foreach ($definition->getChilds() as $definition) {
-                        if ($definition = $findElement($key, $definition)) {
-                            return $definition;
-                        }
-                    }
-                } else {
-                    if ($definition->getName() == $key) {
-                        return $definition;
+            }
+            if (method_exists($definition, 'getChildren')) {
+                foreach ($definition->getChildren() as $child) {
+                    if ($childDefinition = $findElement($key, $child)) {
+                        return $childDefinition;
                     }
                 }
             }
@@ -522,7 +523,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param Layout $layoutDefinitions
+     * @param Layout|null $layoutDefinitions
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
@@ -530,7 +531,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return Layout
+     * @return Layout|null
      */
     public function getLayoutDefinitions()
     {

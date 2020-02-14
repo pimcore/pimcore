@@ -130,7 +130,7 @@ class ClassDefinition extends Model\AbstractModel
     public $fieldDefinitions = [];
 
     /**
-     * @var DataObject\ClassDefinition\Layout
+     * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
@@ -880,7 +880,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
+     * @param DataObject\ClassDefinition\Data[]|null $fieldDefinitions
      *
      * @return $this
      */
@@ -925,7 +925,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param DataObject\ClassDefinition\Layout $layoutDefinitions
+     * @param DataObject\ClassDefinition\Layout|null $layoutDefinitions
      *
      * @return $this
      */
