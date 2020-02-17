@@ -186,7 +186,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\ElementMetadata[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -196,7 +196,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -569,34 +568,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $metaObject) {
-                $element = $metaObject->getElement();
-                if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {
-                    $tags = $element->getCacheTags($tags);
-                }
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @deprecated
      *
      * @param DataObject\AbstractObject $object
@@ -808,7 +779,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
+            if (!$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -881,7 +852,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -940,10 +911,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      */
     public function classSaved($class)
     {
+        /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build(
                 'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -1004,7 +976,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1200,7 +1172,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $item
+     * @param DataObject\Data\ElementMetadata $item
      *
      * @return string
      */

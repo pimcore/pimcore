@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
+use Pimcore\Model\User;
 
 interface ElementInterface extends ModelInterface
 {
@@ -205,4 +206,14 @@ interface ElementInterface extends ModelInterface
      * @return $this
      */
     public function setId($id);
+
+    /**
+     * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
+     *
+     * @param string $type
+     * @param null|User $user
+     *
+     * @return bool
+     */
+    public function isAllowed($type, ?User $user = null);
 }

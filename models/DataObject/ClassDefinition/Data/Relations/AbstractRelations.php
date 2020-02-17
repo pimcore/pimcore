@@ -72,7 +72,6 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-
     /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params

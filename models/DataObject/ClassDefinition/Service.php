@@ -127,11 +127,9 @@ class Service
     public static function generateFieldCollectionJson($fieldCollection)
     {
         $fieldCollection->setKey(null);
-        $fieldCollection->setFieldDefinitions(null);
+        $fieldCollection->setFieldDefinitions([]);
 
-        $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -169,7 +167,7 @@ class Service
     public static function generateObjectBrickJson($objectBrick)
     {
         $objectBrick->setKey(null);
-        $objectBrick->setFieldDefinitions(null);
+        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -187,9 +185,7 @@ class Service
             }
         }
 
-        $json = json_encode($objectBrick, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($objectBrick, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -246,7 +242,7 @@ class Service
      * @param bool $throwException
      * @param bool $insideLocalizedField
      *
-     * @return mixed
+     * @return Data|Layout|false
      *
      * @throws \Exception
      */
@@ -257,6 +253,7 @@ class Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
+                /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;

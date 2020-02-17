@@ -54,7 +54,7 @@ class Service
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
 
-        /** @var \Pimcore\Model\DataObject\ClassDefinition\Data $dataDefinition */
+        /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
         $dataDefinition->setValues($definition);
@@ -64,7 +64,7 @@ class Service
             $dataDefinition = $className::__set_state($dataDefinition);
         }
 
-        if (method_exists($dataDefinition, 'getDelegate')) {
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
             $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);

@@ -283,7 +283,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return string retrieves the current full set path from DB
+     * @return string|null retrieves the current full set path from DB
      */
     public function getCurrentFullPath()
     {

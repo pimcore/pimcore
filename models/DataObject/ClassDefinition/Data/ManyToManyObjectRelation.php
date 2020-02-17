@@ -401,7 +401,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $importValue
+     * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -419,33 +419,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return $value;
-    }
-
-    /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof Element\ElementInterface && !array_key_exists($object->getCacheTag(), $tags)) {
-                    $tags = $object->getCacheTags($tags);
-                }
-            }
-        }
-
-        return $tags;
     }
 
     /**
@@ -558,7 +531,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
+            if (!$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -589,8 +562,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return array|null
@@ -607,7 +580,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $maxItems
+     * @param int|string|null $maxItems
      *
      * @return $this
      */
@@ -640,7 +613,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param Element\ElementInterface[]|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -833,7 +806,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param $item
+     * @param array $item
      *
      * @return string
      */

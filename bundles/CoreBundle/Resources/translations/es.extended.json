@@ -380,7 +380,6 @@
     "user_apikey_description": "Clave de la API requerida para el acceso al servicio web por parte de este usuario",
     "apikey": "Clave API",
     "lazy_loading": "Carga diferida",
-    "lazy_loading_description": "lazy_loading_description",
     "non_owner_description": "non_owner_description",
     "allow_variants": "Permitir variantes",
     "show_variants": "Mostrar Variaciones en Árbol",
@@ -696,7 +695,6 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
     "provide_split_view": "Provide Split View",
@@ -715,7 +713,10 @@
     "geopolyline": "Geographic Polyline",
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
-    "cache_raw_relation_data": "Cache Raw Relation Data",
     "allow_to_create_new_object": "Allow to create a new object in relation field",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Controller & Action",
+    "implements_interfaces": "Implements interface(s)"
 }

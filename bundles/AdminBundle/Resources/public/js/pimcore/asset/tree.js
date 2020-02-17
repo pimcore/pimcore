@@ -919,6 +919,12 @@ pimcore.asset.tree = Class.create({
     addFolderCreate: function (tree, record, button, value, object) {
 
         if (button == "ok") {
+
+            // check for identical folder name in current level
+            if (pimcore.elementservice.isKeyExistingInLevel(record, value)) {
+                return;
+            }
+
             Ext.Ajax.request({
                 url: "/admin/asset/add-folder",
                 method: "POST",

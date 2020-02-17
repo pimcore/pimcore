@@ -630,7 +630,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             viewConfig: {
             enableTextSelection: true,
                 listeners: {
-                    refresh: function (gridview) {
+                    afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
@@ -831,7 +831,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
-        pimcore.helpers.requestNicePathData(
+
+        var nicePathRequested = pimcore.helpers.requestNicePathData(
             {
                 type: "object",
                 id: this.object.id
@@ -857,9 +858,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         // - https://github.com/pimcore/pimcore/pull/4337
         // - https://github.com/pimcore/pimcore/pull/4909
         // - https://github.com/pimcore/pimcore/pull/5367
-        window.setTimeout(function() {
-            this.component.getView().refresh();
-        }.bind(this), 500);
+        if (nicePathRequested) {
+            window.setTimeout(function () {
+                this.component.getView().refresh();
+            }.bind(this), 500);
+        }
     },
 
     normalizeTargetData: function (targets) {

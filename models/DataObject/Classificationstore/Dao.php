@@ -96,8 +96,7 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } else {
-                        /** @var DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $fd */
+                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                         $value = $fd->getDataForResource($value, $this->model->getObject());
                     }
                     $value = $fd->marshal($value, $object);
@@ -192,7 +191,9 @@ class Dao extends Model\Dao\AbstractDao
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
-            $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            }
 
             $language = $item['language'];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);

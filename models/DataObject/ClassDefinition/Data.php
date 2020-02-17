@@ -331,15 +331,18 @@ abstract class Data
 
     /**
      * @param array $data
+     * @param array $blockedKeys
      *
      * @return $this
      */
-    public function setValues($data = [])
+    public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
-                $this->$method($value);
+            if (!in_array($key, $blockedKeys)) {
+                $method = 'set' . $key;
+                if (method_exists($this, $method)) {
+                    $this->$method($value);
+                }
             }
         }
 
@@ -948,7 +951,7 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -967,14 +970,14 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
@@ -1197,7 +1200,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return mixed
@@ -1288,15 +1291,10 @@ abstract class Data
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            /** @var DataObject\Localizedfield $data */
-                            $data = $brickData->getLocalizedFields();
-                            // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
-
-                            return $data;
+                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
+                            return $brickData->get('localizedfields');
                         }
                     }
 
@@ -1439,8 +1437,8 @@ abstract class Data
     }
 
     /**
-     * @param $oldValue
-     * @param $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      *
      * @return bool
      */

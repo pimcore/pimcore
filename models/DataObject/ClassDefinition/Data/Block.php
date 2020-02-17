@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
@@ -533,7 +534,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -607,7 +608,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -633,26 +634,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function getLayout()
     {
         return $this->layout;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues($data = [], $blockedKeys = [])
-    {
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -1031,7 +1012,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])

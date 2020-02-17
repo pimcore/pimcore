@@ -501,9 +501,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  mixed $value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return null
      *
@@ -546,7 +546,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      */
     public function setupDelegate($data)
     {
@@ -579,23 +579,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public static function setStrictMode($strictMode)
     {
         self::$strictMode = $strictMode;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setValues($data = [])
-    {
-        foreach ($data as $key => $value) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
-                $this->$method($value);
-            }
-        }
-
-        return $this;
     }
 
     /**

@@ -209,7 +209,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function getAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
-        $class->setFieldDefinitions(null);
+        $class->setFieldDefinitions([]);
 
         return $this->adminJson($class);
     }
@@ -426,8 +426,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $class->save();
 
-            // set the fielddefinitions to null because we don't need them in the response
-            $class->setFieldDefinitions(null);
+            // set the fielddefinitions to [] because we don't need them in the response
+            $class->setFieldDefinitions([]);
 
             return $this->adminJson(['success' => true, 'class' => $class]);
         } catch (\Exception $e) {
@@ -970,7 +970,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $layoutDefinitions = isset($filteredDefinitions['layoutDefinition']) ? $filteredDefinitions['layoutDefinition'] : false;
         $filteredFieldDefinition = isset($filteredDefinitions['fieldDefinition']) ? $filteredDefinitions['fieldDefinition'] : false;
 
-        $class->setFieldDefinitions(null);
+        $class->setFieldDefinitions([]);
 
         $result = [];
 
@@ -1006,7 +1006,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                         $result[$key]['nodeLabel'] = $key;
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
-                        $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
+                        $result[$key]['childs'] = $brickDefinition->getLayoutDefinitions()->getChildren();
                         break;
                     }
                 }

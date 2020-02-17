@@ -251,6 +251,7 @@ class SearchController extends AdminController
             'context' => $allParams
         ]);
         $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        /** @var Data\Listing $searcherList */
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         if (in_array('asset', $types)) {
@@ -260,6 +261,7 @@ class SearchController extends AdminController
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -270,6 +272,7 @@ class SearchController extends AdminController
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -280,6 +283,7 @@ class SearchController extends AdminController
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 

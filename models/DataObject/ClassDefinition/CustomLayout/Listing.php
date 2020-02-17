@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
      *
      * @return self
      */

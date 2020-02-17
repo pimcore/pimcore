@@ -164,7 +164,6 @@ class Dao extends Model\Dao\AbstractDao
                                 && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
-                                && !$container instanceof DataObject\Objectbrick\Definition
                             )
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
@@ -477,8 +476,7 @@ class Dao extends Model\Dao\AbstractDao
         $dirtyLanguageCondition = null;
 
         if ($this->model->allLanguagesAreDirty() ||
-            ($container instanceof DataObject\Fieldcollection\Definition
-            && !$container instanceof DataObject\Objectbrick\Definition)
+            ($container instanceof DataObject\Fieldcollection\Definition)
             ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
@@ -779,12 +777,12 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
-                /** @var ResourcePersistenceAwareInterface $value */
+                /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
                 if ($value->getColumnType()) {
                     $key = $value->getName();
 
                     if (is_array($value->getColumnType())) {
-                        // if a datafield requires more than one field
+                        // if a datafield requires more than one column
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedColumns[] = $key . '__' . $fkey;
