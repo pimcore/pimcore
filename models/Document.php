@@ -915,8 +915,8 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && !empty($config['doamin'])) {
-                    $link = $scheme . $config['general']['doamin'] . $this->getRealFullPath();
+                if (!$link && !empty($config['domain'])) {
+                    $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
         }
