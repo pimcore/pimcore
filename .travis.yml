@@ -8,6 +8,7 @@ branches:
   only:
     - master
     - /^v\d+\..*/
+    - /.*_travis$/
 
 sudo: false
 language: php
