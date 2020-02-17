@@ -324,4 +324,20 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @return Model\Dependency
      */
     abstract public function getDependencies();
+
+    /**
+     * @return Model\Schedule\Task[]
+     */
+    public function getScheduledTasks()
+    {
+        return [];
+    }
+
+    /**
+     * @return Model\Version[]
+     */
+    public function getVersions()
+    {
+        return [];
+    }
 }

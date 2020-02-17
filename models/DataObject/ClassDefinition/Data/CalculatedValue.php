@@ -219,16 +219,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
@@ -236,9 +234,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return float
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -251,16 +249,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
      *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
@@ -549,11 +545,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param \DateTime $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return null
+     * @return mixed
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {

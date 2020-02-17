@@ -544,7 +544,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * @return Model\Schedule\Task[]
      */
     public function getScheduledTasks()
     {

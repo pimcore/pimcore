@@ -84,7 +84,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     public function getAllTranslations()
     {

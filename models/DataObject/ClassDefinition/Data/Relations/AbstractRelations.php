@@ -131,7 +131,7 @@ abstract class AbstractRelations extends Data implements
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($object, $params = [])
     {

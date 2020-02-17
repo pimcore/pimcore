@@ -574,7 +574,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {

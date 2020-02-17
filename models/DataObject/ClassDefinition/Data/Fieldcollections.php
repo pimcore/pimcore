@@ -272,7 +272,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**

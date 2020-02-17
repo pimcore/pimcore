@@ -958,7 +958,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($container, $params = [])
     {
