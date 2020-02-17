@@ -2471,6 +2471,10 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
+    if (context && context['containerType'] == "batch") {
+        return;
+    }
+
     if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
