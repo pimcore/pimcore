@@ -318,8 +318,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->objects->versions->steps
-                || Config::getSystemConfig()->objects->versions->days
+            $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
+            if (!empty($objectsConfig['versions']['steps'])
+                || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }

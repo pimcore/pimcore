@@ -25,8 +25,8 @@ trait RedirectHelperTrait
 {
     protected function createRedirectForFormerPath(string $oldPath, ?Document $oldDocument)
     {
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+        if ($oldPath && !empty($documentsConfig['create_redirect_when_moved']) && $oldPath != $this->getRealFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setType(Redirect::TYPE_PATH);
