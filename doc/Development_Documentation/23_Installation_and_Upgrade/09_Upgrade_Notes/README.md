@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 
+## 6.6.0
+- Javascript function `ts(key)` (alias of `t(key)`) is marked as deprecated and will be removed in v7. Please use `t(key)` instead. 
+
 ## 6.5.0
 
 > **IMPORTANT!**  
