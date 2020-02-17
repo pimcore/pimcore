@@ -488,7 +488,8 @@ class Config implements \ArrayAccess
     }
 
     /**
-     * @deprecated use Pimcore\Config service instead
+     * @deprecated use getSystemConfiguration()/Pimcore\Config service instead
+     * to be removed in v7.0
      *
      * @return mixed|null|\Pimcore\Config\Config
      *

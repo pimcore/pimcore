@@ -50,13 +50,20 @@ class RedirectHandler implements LoggerAwareInterface
     private $redirects;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param SiteResolver $siteResolver
+     * @param Config $config
      */
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
+        $this->config = $config;
     }
 
     /**
@@ -142,7 +149,6 @@ class RedirectHandler implements LoggerAwareInterface
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
     {
-        $config = Config::getSystemConfig();
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
             $d = Document::getById($target);
@@ -180,9 +186,9 @@ class RedirectHandler implements LoggerAwareInterface
 
                 return null;
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $config->get('general')->domain) {
+        } elseif (!preg_match('@http(s)?://@i', $url) && $this->config['general']['domain']) {
             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
-            $url = $request->getScheme() . '://' . $config->get('general')->domain . $url;
+            $url = $request->getScheme() . '://' . $this->config['general']['domain'] . $url;
         }
 
         // pass-through parameters if specified
