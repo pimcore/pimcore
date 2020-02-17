@@ -621,4 +621,13 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     {
         return $this->delegate ? $this->delegate->getPhpdocType() : null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        // encrypted data shouldn't be in search index
+        return '';
+    }
 }
