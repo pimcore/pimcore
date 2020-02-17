@@ -42,6 +42,7 @@ pimcore:
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::isRemoteOwner()`, as this method was only used for `ReverseManyToManyObjectRelation` internal check are now made using `instanceof` 
 - [Data Objects] inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
 - The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
+- `\Pimcore\Config::getSystemConfig()` is now marked as deprecated and will be removed in Pimcore 7. 
 
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
