@@ -237,28 +237,31 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
         });
 
-        this.toolbarFilterInfo = new Ext.Button({
-            iconCls: "pimcore_icon_filter_condition",
-            hidden: true,
-            text: '<b>' + t("filter_active") + '</b>',
-            tooltip: t("filter_condition"),
-            handler: function (button) {
-                Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
-            }.bind(this)
-        });
+        if (!fromConfig) {
+            this.toolbarFilterInfo = new Ext.Button({
+                iconCls: "pimcore_icon_filter_condition",
+                hidden: true,
+                text: '<b>' + t("filter_active") + '</b>',
+                tooltip: t("filter_condition"),
+                handler: function (button) {
+                    Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
+                }.bind(this)
+            });
+        }
 
-        this.clearFilterButton = new Ext.Button({
-            iconCls: "pimcore_icon_clear_filters",
-            hidden: true,
-            text: t("clear_filters"),
-            tooltip: t("clear_filters"),
-            handler: function (button) {
-                this.grid.filters.clearFilters();
-                this.toolbarFilterInfo.hide();
-                this.clearFilterButton.hide();
-            }.bind(this)
-        });
-
+        if (!fromConfig) {
+            this.clearFilterButton = new Ext.Button({
+                iconCls: "pimcore_icon_clear_filters",
+                hidden: true,
+                text: t("clear_filters"),
+                tooltip: t("clear_filters"),
+                handler: function (button) {
+                    this.grid.filters.clearFilters();
+                    this.toolbarFilterInfo.hide();
+                    this.clearFilterButton.hide();
+                }.bind(this)
+            });
+        }
 
         this.createSqlEditor();
 

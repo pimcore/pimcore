@@ -218,9 +218,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         gridHelper.enableEditor = true;
         gridHelper.limit = itemsPerPage;
 
-
-        var propertyVisibility = klass.get("propertyVisibility");
-
         var existingFilters;
         if (this.store) {
             existingFilters = this.store.getFilters();
@@ -233,11 +230,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
 
-        if (existingFilters && this.classId == this.previousClassId) {
+        if (existingFilters && fromConfig) {
             this.store.setFilters(existingFilters.items);
         }
-
-        this.previousClassId = this.classId;
 
         var gridColumns = gridHelper.getGridColumns();
 
