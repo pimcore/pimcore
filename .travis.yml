@@ -8,6 +8,7 @@ branches:
   only:
     - master
     - /^v\d+\..*/
+    - /.*_travis$/
 
 sudo: false
 language: php
@@ -47,6 +48,13 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
+    - os: linux
+      php: 7.4
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - PHPSTAN_BASELINE=0
+        - PHPSTAN_BASELINE_GENERATE=1
 
   include:
     # Symfony 3.4 all tests
@@ -133,6 +141,15 @@ jobs:
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
 
+    - name: "PHPStan Level 2 - PHP 7.4 Symfony 4 - Generate baseline"
+      os: linux
+      php: 7.4
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - PHPSTAN_BASELINE=0
+        - PHPSTAN_BASELINE_GENERATE=1
+
     # Test Docs
     - name: "Documentation"
       os: linux
@@ -157,6 +174,7 @@ env:
     - TASK_DOCS=0
     - PHPSTAN_LEVEL=2
     - PHPSTAN_BASELINE=1
+    - PHPSTAN_BASELINE_GENERATE=0
     - PIMCORE_ENVIRONMENT=test
     - PIMCORE_TEST=1
     - PIMCORE_TEST_URL=http://pimcore-test.dev

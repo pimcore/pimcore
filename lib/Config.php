@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
+use Pimcore\Model\User\UserRole;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -928,12 +929,14 @@ class Config implements \ArrayAccess
                     } else {
                         $userOrRoleToCheck = Model\User::getById($userId);
                     }
-                    $perspectives = $userOrRoleToCheck ? $userOrRoleToCheck->getPerspectives() : null;
-                    if ($perspectives) {
-                        foreach ($perspectives as $perspectiveName) {
-                            $masterDef = $masterConfig[$perspectiveName] ?? null;
-                            if ($masterDef) {
-                                $config[$perspectiveName] = $masterDef;
+                    if ($userOrRoleToCheck instanceof UserRole) {
+                        $perspectives = $userOrRoleToCheck->getPerspectives();
+                        if ($perspectives) {
+                            foreach ($perspectives as $perspectiveName) {
+                                $masterDef = $masterConfig[$perspectiveName] ?? null;
+                                if ($masterDef) {
+                                    $config[$perspectiveName] = $masterDef;
+                                }
                             }
                         }
                     }
