@@ -141,7 +141,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function setParentId($parentId)
     {
-        $this->parentId = $parentId;
+        $this->parentId = (int)$parentId;
 
         return $this;
     }
