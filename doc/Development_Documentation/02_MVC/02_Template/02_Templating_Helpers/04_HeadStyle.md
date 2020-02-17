@@ -86,6 +86,6 @@ The following assumptions are made:
 The style declarations will be appended to the stack. If you wish for them to replace the stack or be added to the top, 
 you will need to pass `SET` or `PREPEND`, respectively, as the first argument to `captureStart()`.
 
-If you wish to specify any additional attributes for the <style> tag, pass them in an array as the second argument to 
+If you wish to specify any additional attributes for the `<style>` tag, pass them in an array as the second argument to 
 `captureStart()`.
 
