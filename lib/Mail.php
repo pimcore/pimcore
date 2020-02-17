@@ -215,18 +215,17 @@ class Mail extends \Swift_Message
      */
     public function init($type = 'email')
     {
-        $systemConfig = \Pimcore\Config::getSystemConfig()->toArray();
-        $emailSettings = & $systemConfig[$type];
+        $config = \Pimcore\Config::getSystemConfiguration($type);
 
-        if ($emailSettings['sender']['email']) {
+        if (!empty($config['sender']['email'])) {
             if (empty($this->getFrom())) {
-                $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+                $this->setFrom($config['sender']['email'], $config['sender']['name']);
             }
         }
 
-        if ($emailSettings['return']['email']) {
+        if (!empty($config['return']['email'])) {
             if (empty($this->getReplyTo())) {
-                $this->setReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+                $this->setReplyTo($config['return']['email'], $config['return']['name']);
             }
         }
 
