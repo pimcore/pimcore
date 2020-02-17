@@ -31,9 +31,6 @@ Menus and buttons may vary depending on the current GUI version
 * *Menu:* `APIs & services` / `Library`
     - **Google Analytics API** > `[Enable]`
     - **Custom Search API** > `[Enable]`
-    - **Maps Static API** > `[Enable]`
-    - **Maps JavaScript API** > `[Enable]`
-    - **Geocoding API** > `[Enable]`
 
 ## Analytics
 * <https://analytics.google.com/>
@@ -61,9 +58,9 @@ Menus and buttons may vary depending on the current GUI version
 ## CSE - Custom Search Engine
 * <https://cse.google.com/cse/all>, <http://support.google.com/customsearch/>
 * `[Add]`
-  * Sites to search: **www.project.sk/sk/***
+  * Sites to search: **www.project.example/***
   * Language: **slovak**
-  * Name: **project.sk/sk**
+  * Name: **project.example/**
 * *Menu:* `Setup`
   * Search engine ID: **cse_id**
   * Image search: OK
@@ -71,25 +68,10 @@ Menus and buttons may vary depending on the current GUI version
   * *Tab:* `Google analytics`
     * Select profile: **project: All website data**
 
-## Search Console
-* <https://search.google.com/search-console>
-* *Menu:* `Add property`
-  * Web : **https://www.project.sk**
-  * `Get`: **html_ver**
-
-## reCAPTCHA
-* <https://www.google.com/recaptcha/admin#list>
-* *Menu:* `[+ Create]`
-  * Label: **project.sk**
-  * reCAPTCHA v2
-  * Domains: **project.sk**
-  * `Copy site key`: **site_key**
-  * `Copy secret key`: **secret**
-
-## Joining with Pimcore
+## Configuring Google Services in Pimcore
 **APIs**
 * copy **JSON** to `/app/config/pimcore/google-api-private-key.json`
-* edit `/var/config/system.yml`
+* edit `/var/config/system.yml` or use System Settings in admin interface
   * services/google/client_id = **api_id**
   * services/google/email = **api_email**
   * services/google/simple_api_key = **s_api_key**
@@ -98,11 +80,6 @@ Menus and buttons may vary depending on the current GUI version
 **CSE**
 * edit `www/app/config/parameters.yml`
   * search.google.cse_cx = **cse_id**
-
-**reCAPTCHA**
-* edit `www/app/config/local/bundles_prod.yml`
-  * beelab_recaptcha2/site_key = **site_key**
-  * beelab_recaptcha2/secret = **secret**
 
 **Analytics**
 * *Pimcore admin menu:* `Marketing` / `Marketing settings`
