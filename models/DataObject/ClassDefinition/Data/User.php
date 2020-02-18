@@ -28,6 +28,11 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public $fieldtype = 'user';
 
     /**
+     * @var bool
+     */
+    public $unique;
+
+    /**
      * @return User
      */
     protected function init()
@@ -157,5 +162,21 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return $this->unique;
+    }
+
+    /**
+     * @param bool $unique
+     */
+    public function setUnique($unique)
+    {
+        $this->unique = $unique;
     }
 }
