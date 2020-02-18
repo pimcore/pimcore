@@ -27,8 +27,8 @@ On Debian/Ubuntu you can install it with: `apt-get install html2text`
 | Method | Description |
 | ------ | ----------- |
 | disableLogging() | Disables email logging - by default it is enabled |
-| setParams(array) | Sets the parameters for the email view and the Placeholders |
-| setParam($key, $value) | Sets a single parameter for the email view and the Placeholders |
+| setParams(array) | Sets the parameters to the request object and the Placeholders |
+| setParam($key, $value) | Sets a single parameter to the request object and the Placeholders |
 | isValidEmailAddress(emailAddress) | Static helper to validate a email address |
 | setDocument(Document_Email) | Sets the email document |
 | getDocument() | Returns the Document |

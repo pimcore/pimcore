@@ -381,7 +381,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets the parameters for the email view and the Placeholders
+     * Sets the parameters to the request object and the Placeholders
      *
      * @param array $params
      *
@@ -397,7 +397,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets a single parameter for the email view and the Placeholders
+     * Sets a single parameter to the request object and the Placeholders
      *
      * @param string | int $key
      * @param mixed $value
