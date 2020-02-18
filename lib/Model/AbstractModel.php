@@ -284,6 +284,7 @@ abstract class AbstractModel implements ModelInterface
         if(\method_exists($this, $getter)) {
             return $this->$getter();
         }
+        return null;
     }
 
     /**
