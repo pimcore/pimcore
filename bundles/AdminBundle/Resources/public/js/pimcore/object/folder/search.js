@@ -202,26 +202,26 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
+        var baseParams = {
+            language: this.gridLanguage,
+        };
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
+            baseParams = this.store.getProxy().getExtraParams();
+        }
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
             "/admin/object/grid-proxy?classId=" + this.classId + "&folderId=" + this.object.id,
-            {
-                language: this.gridLanguage,
-                // limit: itemsPerPage
-            },
+            baseParams,
             false
         );
 
         gridHelper.showSubtype = false;
         gridHelper.enableEditor = true;
         gridHelper.limit = itemsPerPage;
-
-        var existingFilters;
-        if (this.store) {
-            existingFilters = this.store.getFilters();
-        }
 
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         if (this.sortinfo) {
