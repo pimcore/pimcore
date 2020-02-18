@@ -49,7 +49,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return AbstractUser|null
+     * @return static|null
      */
     public static function getById($id)
     {
@@ -92,7 +92,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self|null
+     * @return static|null
      */
     public static function getByName($name)
     {
