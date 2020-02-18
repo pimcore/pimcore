@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;

@@ -61,7 +61,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer'];
 
-
     /**
      * @var Config
      */
@@ -301,11 +300,10 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // use $originalPath because of the sites
         // only do redirecting with GET requests
         if ($context->getRequest()->getMethod() === 'GET') {
-
             if (($this->config['documents']['allow_trailing_slash'] ?? null) === 'no') {
-                    if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
-                        $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
-                    }
+                if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
+                    $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
+                }
             }
 
             // only allow the original key of a document to be the URL (lowercase/uppercase)

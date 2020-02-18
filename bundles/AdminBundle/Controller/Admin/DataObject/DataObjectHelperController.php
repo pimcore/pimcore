@@ -2227,8 +2227,8 @@ class DataObjectHelperController extends AdminController
                         throw new \Exception("Permission denied. You don't have the rights to save this object.");
                     }
 
-                    $append = $params['append'];
-                    $remove = $params['remove'];
+                    $append = $params['append'] ?? false;
+                    $remove = $params['remove'] ?? false;
 
                     $className = $object->getClassName();
                     $class = DataObject\ClassDefinition::getByName($className);

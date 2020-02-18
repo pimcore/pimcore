@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Config;
 use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;

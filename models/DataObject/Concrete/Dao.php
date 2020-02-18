@@ -139,7 +139,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     }
 
     /**
-     * Get the data-elements for the object from database for the given path
+     * Get all data-elements for all fields that are not lazy-loaded.
      */
     public function getData()
     {
@@ -148,15 +148,17 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
             if ($value instanceof CustomResourcePersistingInterface) {
-                // datafield has it's own loader
-                $params = [
-                    'context' => [
-                        'object' => $this->model
-                    ]
-                ];
-                $value = $value->load($this->model, $params);
-                if ($value === 0 || !empty($value)) {
-                    $this->model->setValue($key, $value);
+                if (!$value instanceof LazyLoadingSupportInterface || !$value->getLazyLoading()) {
+                    // datafield has it's own loader
+                    $params = [
+                        'context' => [
+                            'object' => $this->model
+                        ]
+                    ];
+                    $value = $value->load($this->model, $params);
+                    if ($value === 0 || !empty($value)) {
+                        $this->model->setValue($key, $value);
+                    }
                 }
             }
             if ($value instanceof ResourcePersistenceAwareInterface) {

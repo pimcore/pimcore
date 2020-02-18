@@ -215,7 +215,6 @@ class Newsletter
             E_USER_DEPRECATED
         );
 
-
         $config = Config::getSystemConfiguration('newsletter');
 
         $params = [
