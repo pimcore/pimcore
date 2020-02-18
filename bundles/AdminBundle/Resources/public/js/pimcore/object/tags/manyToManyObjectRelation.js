@@ -431,8 +431,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
-                        var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
