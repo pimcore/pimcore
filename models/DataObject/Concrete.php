@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -318,8 +317,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->objects->versions->steps
-                || Config::getSystemConfig()->objects->versions->days
+            $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
+            if (!empty($objectsConfig['versions']['steps'])
+                || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -544,7 +544,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * @return Model\Schedule\Task[]
      */
     public function getScheduledTasks()
     {
@@ -609,7 +609,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         if ($this->getParent() instanceof AbstractObject) {
             $parent = $this->getParent();
-            while ($parent && ($parent->getType() === self::OBJECT_TYPE_FOLDER || $parent->getClassId() !== $classId)) {
+            while ($parent && (!$parent instanceof Concrete || $parent->getClassId() !== $classId)) {
                 $parent = $parent->getParent();
             }
 

@@ -131,7 +131,7 @@ abstract class AbstractRelations extends Data implements
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($object, $params = [])
     {
@@ -139,11 +139,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (array_key_exists('force', $params) && $params['force']) {
-                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
-            } else {
-                return null;
-            }
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {

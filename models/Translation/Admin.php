@@ -57,8 +57,8 @@ class Admin extends AbstractTranslation
         }
 
         if (!in_array($language, Tool\Admin::getLanguages())) {
-            $config = \Pimcore\Config::getSystemConfig();
-            $language = $config->general->language;
+            $config = \Pimcore\Config::getSystemConfiguration('general');
+            $language = $config['language'] ?? null;
         }
 
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);

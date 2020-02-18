@@ -496,7 +496,7 @@ class TranslationController extends AdminController
 
     /**
      * @param array $joins
-     * @param Translation\AbstractTranslation $list
+     * @param Translation\AbstractTranslation\Listing $list
      * @param string $tableName
      * @param array $filters
      */

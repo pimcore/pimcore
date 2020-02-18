@@ -263,9 +263,7 @@ class Item extends Model\AbstractModel
 
         // for all
         $element->getProperties();
-        if (method_exists($element, 'getScheduledTasks')) {
-            $element->getScheduledTasks();
-        }
+        $element->getScheduledTasks();
 
         if ($element instanceof Element\ElementDumpStateInterface) {
             $element->setInDumpState(true);

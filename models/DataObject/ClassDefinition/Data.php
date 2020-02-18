@@ -183,7 +183,7 @@ abstract class Data
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
@@ -331,15 +331,18 @@ abstract class Data
 
     /**
      * @param array $data
+     * @param array $blockedKeys
      *
      * @return $this
      */
-    public function setValues($data = [])
+    public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
-                $this->$method($value);
+            if (!in_array($key, $blockedKeys)) {
+                $method = 'set' . $key;
+                if (method_exists($this, $method)) {
+                    $this->$method($value);
+                }
             }
         }
 
@@ -1288,14 +1291,10 @@ abstract class Data
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData $brickData */
                         $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            /** @var DataObject\Localizedfield $data */
-                            $data = $brickData->getLocalizedFields();
-
-                            return $data;
+                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
+                            return $brickData->get('localizedfields');
                         }
                     }
 

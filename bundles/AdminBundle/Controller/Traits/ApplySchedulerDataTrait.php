@@ -47,7 +47,7 @@ trait ApplySchedulerDataTrait
                 }
             }
 
-            if ($element->isAllowed('settings')) {
+            if ($element->isAllowed('settings') && method_exists($element, 'setScheduledTasks')) {
                 $element->setScheduledTasks($tasks);
             }
         }

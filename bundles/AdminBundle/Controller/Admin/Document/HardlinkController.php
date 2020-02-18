@@ -154,7 +154,7 @@ class HardlinkController extends DocumentControllerBase
             $data = $this->decodeJson($request->get('data'));
 
             $sourceId = null;
-            if ($sourceDocument = Document\Hardlink::getByPath($data['sourcePath'])) {
+            if ($sourceDocument = Document::getByPath($data['sourcePath'])) {
                 $sourceId = $sourceDocument->getId();
             }
             $link->setSourceId($sourceId);

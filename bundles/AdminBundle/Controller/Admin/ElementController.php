@@ -756,12 +756,18 @@ class ElementController extends AdminController
             $subContainerType = isset($context['subContainerType']) ? $context['subContainerType'] : null;
             if ($subContainerType) {
                 $subContainerKey = $context['subContainerKey'];
-                $fd = $source->getClass()->getFieldDefinition($subContainerKey)->getFieldDefinition($fieldname);
+                $subContainer = $source->getClass()->getFieldDefinition($subContainerKey);
+                if (method_exists($subContainer, 'getFieldDefinition')) {
+                    $fd = $subContainer->getFieldDefinition($fieldname);
+                }
             } else {
                 $fd = $source->getClass()->getFieldDefinition($fieldname);
             }
         } elseif ($ownerType == 'localizedfield') {
-            $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+            $localizedfields = $source->getClass()->getFieldDefinition('localizedfields');
+            if ($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                $fd = $localizedfields->getFieldDefinition($fieldname);
+            }
         } elseif ($ownerType == 'objectbrick') {
             $fdBrick = DataObject\Objectbrick\Definition::getByKey($context['containerKey']);
             $fd = $fdBrick->getFieldDefinition($fieldname);

@@ -56,6 +56,7 @@ final class CleanupBrickTablesTask implements TaskInterface
                 $brickDef = Definition::getByKey($brickType);
                 if (!$brickDef) {
                     $this->logger->error("Brick '" . $brickType . "' not found. Please check table " . $tableName);
+                    continue;
                 }
 
                 $classId = substr($fieldDescriptor, $idx + 1);

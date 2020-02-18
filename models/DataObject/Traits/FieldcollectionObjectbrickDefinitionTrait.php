@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject\Traits;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 trait FieldcollectionObjectbrickDefinitionTrait
 {
@@ -49,14 +50,14 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $group;
 
     /**
-     * @var array
+     * @var Layout|null
      */
     public $layoutDefinitions;
 
     /**
      * @var Data[]
      */
-    protected $fieldDefinitions;
+    protected $fieldDefinitions = [];
 
     /**
      * @return string
@@ -119,7 +120,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return array
+     * @return Layout|null
      */
     public function getLayoutDefinitions()
     {
@@ -127,7 +128,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param Layout|null $layoutDefinitions
      *
      * @return $this
      */
@@ -164,13 +165,13 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param array $fieldDefinitions
+     * @param Data[] $fieldDefinitions
      *
      * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
 
         return $this;
     }

@@ -117,14 +117,13 @@ class Tool
     public static function getValidLanguages()
     {
         if (empty(self::$validLanguages)) {
-            $config = Config::getSystemConfig();
-            $validLanguages = strval($config->general->validLanguages);
+            $config = Config::getSystemConfiguration('general');
 
-            if (empty($validLanguages)) {
+            if (empty($config['valid_languages'])) {
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', $validLanguages);
+            $validLanguages = str_replace(' ', '', strval($config['valid_languages']));
             $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
@@ -146,9 +145,9 @@ class Tool
     {
         $languages = [];
 
-        $conf = Config::getSystemConfig();
-        if ($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
-            $fallbackLanguages = explode(',', $conf->general->fallbackLanguages->$language);
+        $config = Config::getSystemConfiguration('general');
+        if (!empty($config['fallback_languages'][$language])) {
+            $fallbackLanguages = explode(',', $config['fallback_languages'][$language]);
             foreach ($fallbackLanguages as $l) {
                 if (self::isValidLanguage($l)) {
                     $languages[] = trim($l);
@@ -168,8 +167,8 @@ class Tool
      */
     public static function getDefaultLanguage()
     {
-        $config = Config::getSystemConfig();
-        $defaultLanguage = $config->general->defaultLanguage;
+        $config = Config::getSystemConfiguration('general');
+        $defaultLanguage = $config['default_language'] ?? null;
         $languages = self::getValidLanguages();
 
         if (!empty($languages) && in_array($defaultLanguage, $languages)) {
@@ -455,8 +454,8 @@ class Tool
 
         // get it from System settings
         if (!$hostname || $hostname == 'localhost') {
-            $systemConfig = Config::getSystemConfig()->toArray();
-            $hostname = $systemConfig['general']['domain'];
+            $systemConfig = Config::getSystemConfiguration('general');
+            $hostname = $systemConfig['domain'] ?? null;
 
             if (!$hostname) {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');

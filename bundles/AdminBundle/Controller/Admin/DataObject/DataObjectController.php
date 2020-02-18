@@ -173,6 +173,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var DataObject\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
@@ -1737,6 +1738,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var DataObject\Listing\Concrete $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $list->load();

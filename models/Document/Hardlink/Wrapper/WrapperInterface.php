@@ -28,7 +28,7 @@ interface WrapperInterface extends ElementInterface
     public function setHardLinkSource($hardLinkSource);
 
     /**
-     * @return Document
+     * @return Document\Hardlink
      */
     public function getHardLinkSource();
 

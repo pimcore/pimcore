@@ -383,6 +383,16 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         return $newMigrations;
     }
 
+    public function getAvailableVersions()
+    {
+        $migrations = parent::getAvailableVersions();
+        if ($this->installer !== null) {
+            $migrations[] = $this->installer->getMigrationVersion();
+        }
+
+        return $migrations;
+    }
+
     /**
      * Handles simple placeholder handling in query. Makes queries more readable as we need to replace the configurable
      * columns in every query.
