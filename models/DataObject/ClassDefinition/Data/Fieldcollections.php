@@ -684,6 +684,37 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
+     *
+     * @return string
+     */
+    public function getGetterCode($class)
+    {
+        // getter, no inheritance here, that's the only difference
+
+        $key = $this->getName();
+        $code = '';
+
+        $code .= '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . " () {\n";
+
+        $code .= $this->getPreGetValueHookCode($key);
+
+        if (method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t return " . '$data' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
      * @param int|string|null $maxItems
      *
      * @return $this
@@ -949,5 +980,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
             }
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function supportsInheritance()
+    {
+        return false;
     }
 }
