@@ -33,7 +33,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 

@@ -276,7 +276,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), sortable: false, dataIndex: field.key,
+            text: t(field.label), sortable: false, dataIndex: field.key,
             editor: this.getGridColumnEditor(field)
         };
     },

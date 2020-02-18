@@ -63,7 +63,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
@@ -257,7 +257,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         if (allowedClasses && allowedClasses.length > 0) {
             for (i = 0; i < allowedClasses.length; i++) {
                 collectionMenu.push({
-                    text: ts(allowedClasses[i]),
+                    text: t(allowedClasses[i]),
                     handler: this.create.bind(this, allowedClasses[i]),
                     iconCls: "pimcore_icon_fieldcollection"
                 });

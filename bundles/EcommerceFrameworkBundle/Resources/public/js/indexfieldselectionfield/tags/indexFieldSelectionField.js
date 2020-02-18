@@ -50,7 +50,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                             if(store.find('key', values[i]) < 0) {
                                 var defaultData = {
                                     'key': values[i],
-                                    'name': ts(values[i])
+                                    'name': t(values[i])
                                 };
                                 store.add(defaultData);
                             }

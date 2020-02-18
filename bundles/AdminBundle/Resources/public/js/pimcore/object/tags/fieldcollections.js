@@ -39,7 +39,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
 
     getGridColumnConfig: function(field) {
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
                 renderer: function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
@@ -144,7 +144,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 var elementData = data[i];
 
                 var menuItem = {
-                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    text: elementData.title ? t(elementData.title) : t(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
@@ -254,7 +254,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             if (title) {
                 items.push({
                     xtype: "tbtext",
-                    text: ts(title)
+                    text: t(title)
                 });
             }
         }

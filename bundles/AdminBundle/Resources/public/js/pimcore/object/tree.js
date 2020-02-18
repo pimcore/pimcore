@@ -941,7 +941,7 @@ pimcore.object.tree = Class.create({
         var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
 
         if (dialogTitle == "object_add_dialog_custom_title" + "." + className) {
-            dialogTitle =  sprintf(t('add_object_mbx_title'), ts(className));
+            dialogTitle =  sprintf(t('add_object_mbx_title'), t(className));
         }
 
         Ext.MessageBox.prompt(dialogTitle, dialogText,

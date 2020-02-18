@@ -34,7 +34,7 @@ pimcore.element.properties = Class.create({
                     {
                         name:"translatedName",
                         convert: function(v, rec){
-                            return ts(rec.data.name);
+                            return t(rec.data.name);
                         },
                         depends : ['name']
                     }

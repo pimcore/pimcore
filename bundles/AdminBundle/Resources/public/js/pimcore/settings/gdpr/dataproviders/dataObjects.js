@@ -59,7 +59,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                 extraParams: this.searchParams
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return ts(rec.data.classname);
+                return t(rec.data.classname);
             }},"published"]
         });
 
