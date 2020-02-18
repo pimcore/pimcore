@@ -79,7 +79,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                     if(field.layout.columnConfigActivated && field.layout.columnConfig) {
                         table += '<tr>';
                         for (var i = 0; i < value[0].length; i++) {
-                            table += '<th>' + Ext.util.Format.htmlEncode(ts(field.layout.columnConfig[i].label)) + '</th>';
+                            table += '<th>' + Ext.util.Format.htmlEncode(t(field.layout.columnConfig[i].label)) + '</th>';
                         }
                         table += '</tr>';
                     }
