@@ -115,41 +115,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         foreach ($fieldDefintions as $fd) {
             try {
                 $getter = 'get' . ucfirst($fd->getName());
-                $setter = 'set' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
-
-                    //To make sure, inherited values are not set again
-                    $inheritedValues = AbstractObject::doGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(false);
-
-                    $value = $this->$getter();
-
-                    if (is_array($value) && ($fd instanceof ClassDefinition\Data\ManyToManyRelation || $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
-                        //don't save relations twice, if multiple assignments not allowed
-                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $relationItems = [];
-                            foreach ($value as $item) {
-                                $elementHash = null;
-                                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
-                                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
-                                    }
-                                } elseif ($item instanceof Model\Element\ElementInterface) {
-                                    $elementHash = Model\Element\Service::getElementHash($item);
-                                }
-
-                                if ($elementHash && !isset($relationItems[$elementHash])) {
-                                    $relationItems[$elementHash] = $item;
-                                }
-                            }
-
-                            $value = array_values($relationItems);
-                        }
-                        $this->$setter($value);
-                    }
-                    AbstractObject::setGetInheritedValues($inheritedValues);
-
                     $value = $this->$getter();
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 

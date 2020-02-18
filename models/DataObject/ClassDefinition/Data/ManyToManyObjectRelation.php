@@ -351,11 +351,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if (is_array($data)) {
+            $relationItems = [];
             foreach ($data as $o) {
                 if (empty($o)) {
                     continue;
                 }
-
+                $objectHash = null;
                 $allowClass = $this->allowObjectRelation($o);
                 if (!$allowClass or !($o instanceof DataObject\Concrete)) {
                     if (!$allowClass && $o instanceof DataObject\Concrete) {
@@ -365,6 +366,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     }
                     throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId(), null, null);
                 }
+
+                $objectHash = "object-" . $o->getId();
+                if (isset($relationItems[$objectHash])) {
+                    throw new Element\ValidationException('Expected unique object relations in field ' . $this->getName() . ' , tried to assign object id:' . $o->getId() . ' multiple times.', null, null);
+                }
+                $relationItems[$objectHash] = $objectHash;
             }
 
             if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {

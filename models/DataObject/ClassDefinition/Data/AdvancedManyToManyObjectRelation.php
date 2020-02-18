@@ -383,11 +383,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         if (is_array($data)) {
+            $relationItems = [];
             foreach ($data as $objectMetadata) {
                 if (!($objectMetadata instanceof DataObject\Data\ObjectMetadata)) {
                     throw new Element\ValidationException('Expected DataObject\\Data\\ObjectMetadata');
                 }
-
+                $objectHash = null;
                 $o = $objectMetadata->getObject();
                 if ($o->getClassName() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
                     if ($o instanceof DataObject\Concrete) {
@@ -397,6 +398,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     }
                     throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId(), null, null);
                 }
+
+                $objectHash = "object-" . $o->getId();
+                if (!$this->getAllowMultipleAssignments() && isset($relationItems[$objectHash])) {
+                    throw new Element\ValidationException('Expected unique object relations in field ' . $this->getName() . ' , tried to assign object id:' . $o->getId() . ' multiple times.', null, null);
+                }
+                $relationItems[$objectHash] = $objectHash;
             }
         }
     }
