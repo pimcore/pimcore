@@ -61,6 +61,9 @@ function t(key, defaultValue) {
     }
 }
 
+/**
+ * @deprecated
+ */
 function ts(key) {
     return t(key);
 }

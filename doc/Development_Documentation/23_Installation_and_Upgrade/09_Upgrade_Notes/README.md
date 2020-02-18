@@ -43,6 +43,7 @@ pimcore:
 - [Data Objects] inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
 - The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
 - `\Pimcore\Config::getSystemConfig()` is now marked as deprecated and will be removed in Pimcore 7. Use `Pimcore\Config` service or `\Pimcore\Config::getSystemConfiguration()` method instead.
+- Javascript function `ts(key)` (alias of `t(key)`) is marked as deprecated and will be removed in v7. Please use `t(key)` instead. 
 
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) instead.
