@@ -34,6 +34,8 @@ class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
+
     /**
      * @var RequestHelper
      */
@@ -69,12 +71,13 @@ class RedirectHandler implements LoggerAwareInterface
     /**
      * @param Request $request
      * @param bool $override
+     * @param Site|null $sourceSite
      *
      * @return RedirectResponse|null
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, $override = false)
+    public function checkForRedirect(Request $request, $override = false, $sourceSite = null)
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -82,8 +85,7 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         // get current site if available
-        $sourceSite = null;
-        if ($this->siteResolver->isSiteRequest($request)) {
+        if (!$sourceSite && $this->siteResolver->isSiteRequest($request)) {
             $sourceSite = $this->siteResolver->getSite($request);
         }
 
@@ -205,7 +207,7 @@ class RedirectHandler implements LoggerAwareInterface
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
         $response = new RedirectResponse($url, $statusCode);
-        $response->headers->set('X-Pimcore-ID', $redirect->getId());
+        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, $redirect->getId());
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(
