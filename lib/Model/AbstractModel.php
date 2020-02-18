@@ -273,6 +273,19 @@ abstract class AbstractModel implements ModelInterface
         return $result;
     }
 
+    public function __isset($name)
+    {
+        return isset($this->$name);
+    }
+
+    public function __get($name)
+    {
+        $getter = 'get'.ucfirst($name);
+        if(\method_exists($this, $getter)) {
+            return $this->$getter();
+        }
+    }
+
     /**
      * @return Factory
      */
