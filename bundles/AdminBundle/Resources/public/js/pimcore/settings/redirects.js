@@ -93,7 +93,7 @@ pimcore.settings.redirects = Class.create({
 
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",
-            width: 200,
+            width: 400,
             style: "margin: 0 10px 0 0;",
             enableKeyEvents: true,
             listeners: {
@@ -408,7 +408,7 @@ pimcore.settings.redirects = Class.create({
                 },
                 "->",
                 {
-                    text: t("filter") + "/" + t("search"),
+                    text: t("search") + " / " + t("test_url"),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
                 },

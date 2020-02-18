@@ -437,6 +437,7 @@
   "initializing": "Initializing ...",
   "please_select_a_type": "Please select a type",
   "filter": "Filter",
+  "test_url": "Test URL",
   "field": "Field",
   "operator": "Operator",
   "apply": "Apply",
