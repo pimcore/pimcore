@@ -458,6 +458,10 @@ pimcore.settings.redirects = Class.create({
 
                 return false;
             }
+
+            if(context["field"] == 'type' && context['value'] == 'auto_create') {
+                return false;
+            }
         });
 
         return this.grid;
@@ -607,7 +611,8 @@ pimcore.settings.redirects = Class.create({
             data : [
                 ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/foo?key=value'],
                 ["path_query", t('redirects_type_path_query') + ': /foo?key=value'],
-                ["path", t('redirects_type_path') + ': /foo']
+                ["path", t('redirects_type_path') + ': /foo'],
+                ["auto_create", t('auto_create')],
             ]
         });
 

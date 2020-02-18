@@ -725,11 +725,6 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: "&nbsp;"
                             }, {
-                                fieldLabel: t('create_redirect_for_moved_renamed_page'),
-                                xtype: "checkbox",
-                                name: "documents.createredirectwhenmoved",
-                                checked: this.getValue("documents.createredirectwhenmoved")
-                            }, {
                                 fieldLabel: t("allow_trailing_slash_for_documents"),
                                 xtype: "combo",
                                 name: "documents.allowtrailingslash",

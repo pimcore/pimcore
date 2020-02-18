@@ -350,7 +350,10 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
-        pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
+        pimcore.elementservice.updateDocument(id, {
+            key: value,
+            create_redirects: options['create_redirects']
+        }, function (response) {
             var record, index;
             var rdata = Ext.decode(response.responseText);
             if (!rdata || !rdata.success) {
@@ -552,8 +555,70 @@ pimcore.elementservice.editElementKey = function(options) {
         throw new Error("type " + options.elementType + " not supported!");
     }
 
-    Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    if(
+        options['elementType'] === 'document' &&
+        (options['elementSubType'] === 'page' || options['elementSubType'] === 'hardlink') &&
+        pimcore.globalmanager.get("user").isAllowed('redirects')
+    ) {
+        // for document pages & hardlinks we need an additional checkbox for auto-redirects
+        var messageBox = null;
+        completeCallback = pimcore.elementservice.editDocumentKeyComplete.bind(this);
+        var submitFunction = function () {
+            options['create_redirects'] = messageBox.getComponent('create_redirects').getValue()
+            completeCallback(options, 'ok', messageBox.getComponent('key').getValue());
+            messageBox.close();
+        };
 
+        messageBox = new Ext.Window({
+            modal: true,
+            width: 500,
+            title: t('rename'),
+            items: [{
+                xtype: 'container',
+                html: t('please_enter_the_new_name')
+            }, {
+                xtype: "textfield",
+                width: "100%",
+                name: 'key',
+                itemId: 'key',
+                value: options.default,
+                listeners: {
+                    afterrender: function () {
+                        window.setTimeout(function () {
+                            this.focus(true);
+                        }.bind(this), 100);
+                    }
+                }
+            },{
+                xtype: "checkbox",
+                boxLabel: t('create_redirects'),
+                name: 'create_redirects',
+                itemId: 'create_redirects',
+                checked: true
+            }],
+            bodyStyle: 'padding: 10px 10px 0px 10px',
+            buttonAlign: 'center',
+            buttons: [{
+                text: t('OK'),
+                handler: submitFunction
+            },{
+                text: t('cancel'),
+                handler: function() {
+                    messageBox.close();
+                }
+            }]
+        });
+
+        messageBox.show();
+
+        var map = new Ext.util.KeyMap({
+            target: messageBox.getEl(),
+            key:  Ext.event.Event.ENTER,
+            fn: submitFunction
+        });
+    } else {
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    }
 };
 
 

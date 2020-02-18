@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $sql = 'SELECT * FROM redirects WHERE
             (
-                (source = :sourcePath AND `type` = :typePath) OR
+                (source = :sourcePath AND (`type` = :typePath OR `type` = :typeAuto)) OR
                 (source = :sourcePathQuery AND `type` = :typePathQuery) OR
                 (source = :sourceEntireUri AND `type` = :typeEntireUri)
             ) AND active = 1 AND regex IS NULL AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
@@ -85,6 +85,7 @@ class Dao extends Model\Dao\AbstractDao
             'typePath' => Redirect::TYPE_PATH,
             'typePathQuery' => Redirect::TYPE_PATH_QUERY,
             'typeEntireUri' => Redirect::TYPE_ENTIRE_URI,
+            'typeAuto' => Redirect::TYPE_AUTO_CREATE,
         ]);
 
         if (!$data) {

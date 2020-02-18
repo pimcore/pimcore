@@ -596,6 +596,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('create_redirect_when_moved')
+                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
