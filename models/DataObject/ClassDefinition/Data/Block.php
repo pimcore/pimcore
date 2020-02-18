@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -967,11 +967,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
 
         if ($container instanceof DataObject\Concrete) {
-            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
-                $data = $db->fetchOne($query);
-                $data = $this->getDataFromResource($data, $container, $params);
-            }
+            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
@@ -1031,7 +1029,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {

@@ -139,11 +139,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (array_key_exists('force', $params) && $params['force']) {
-                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
-            } else {
-                return null;
-            }
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {

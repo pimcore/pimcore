@@ -532,7 +532,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if (!$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
