@@ -409,7 +409,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
         } else {
-            Logger::warn('$key has to be a string - Param ignored!');
+            Logger::warn('$key has to be a string or integer - Param ignored!');
         }
 
         return $this;
@@ -475,7 +475,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
         } else {
-            Logger::warn('$key has to be a string - unsetParam ignored!');
+            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
         }
 
         return $this;
