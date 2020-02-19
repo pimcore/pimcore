@@ -491,9 +491,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $allow = true;
         if (is_array($data)) {
-            $relationItems = [];
             foreach ($data as $d) {
-                $elementHash = null;
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
                 } elseif ($d instanceof Asset) {
@@ -508,12 +506,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 if (!$allow) {
                     throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
                 }
-
-                $elementHash = Model\Element\Service::getElementHash($d);
-                if (isset($relationItems[$elementHash])) {
-                    throw new Element\ValidationException('Expected unique relations in field ' . $this->getName() . ' , tried to assign ' . $elementHash . ' multiple times.', null, null);
-                }
-                $relationItems[$elementHash] = $elementHash;
             }
 
             if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
@@ -748,6 +740,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $publishedList;
         }
+
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $data = Element\Service::filterMultipleElements($data);
 
         return is_array($data) ? $data : [];
     }

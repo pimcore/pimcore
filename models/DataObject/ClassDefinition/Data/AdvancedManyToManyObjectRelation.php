@@ -383,12 +383,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         if (is_array($data)) {
-            $relationItems = [];
             foreach ($data as $objectMetadata) {
                 if (!($objectMetadata instanceof DataObject\Data\ObjectMetadata)) {
                     throw new Element\ValidationException('Expected DataObject\\Data\\ObjectMetadata');
                 }
-                $objectHash = null;
+
                 $o = $objectMetadata->getObject();
                 if ($o->getClassName() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
                     if ($o instanceof DataObject\Concrete) {
@@ -398,12 +397,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     }
                     throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId(), null, null);
                 }
-
-                $objectHash = "object-" . $o->getId();
-                if (!$this->getAllowMultipleAssignments() && isset($relationItems[$objectHash])) {
-                    throw new Element\ValidationException('Expected unique object relations in field ' . $this->getName() . ' , tried to assign object id:' . $o->getId() . ' multiple times.', null, null);
-                }
-                $relationItems[$objectHash] = $objectHash;
             }
         }
     }
@@ -718,6 +711,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
+        }
+
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        if (!$this->getAllowMultipleAssignments()) {
+            $data = Element\Service::filterMultipleElements($data);
         }
 
         // note, in case of advanced many to many relations we don't want to force the loading of the element

@@ -337,6 +337,41 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     * @param array $data
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public static function filterMultipleElements($data)
+    {
+        $relationItems = [];
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                $elementHash = null;
+                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
+                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
+                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
+                    }
+                } elseif ($item instanceof Model\Element\ElementInterface) {
+                    $elementHash = Model\Element\Service::getElementHash($item);
+                }
+
+                if ($elementHash && isset($relationItems[$elementHash])) {
+                    @trigger_error(
+                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash .  ' multiple times.',
+                        E_USER_DEPRECATED
+                    );
+                }
+                $relationItems[$elementHash] = $item;
+            }
+        }
+
+        return array_values($relationItems);
+    }
+
+    /**
      * @static
      *
      * @param  string $type

@@ -475,12 +475,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         if (is_array($data)) {
-            $relationItems = [];
             foreach ($data as $elementMetadata) {
                 if (!($elementMetadata instanceof DataObject\Data\ElementMetadata)) {
                     throw new Element\ValidationException('Expected DataObject\\Data\\ElementMetadata');
                 }
-                $elementHash = null;
+
                 $d = $elementMetadata->getElement();
 
                 if ($d instanceof Document) {
@@ -497,12 +496,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 if (!$allow) {
                     throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
                 }
-
-                $elementHash = Model\Element\Service::getElementHash($d);
-                if (!$this->getAllowMultipleAssignments() && isset($relationItems[$elementHash])) {
-                    throw new Element\ValidationException('Expected unique relations in field ' . $this->getName() . ' , tried to assign ' . $elementHash .  ' multiple times.', null, null);
-                }
-                $relationItems[$elementHash] = $elementHash;
             }
         }
     }
@@ -800,6 +793,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
+        }
+
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        if (!$this->getAllowMultipleAssignments()) {
+            $data = Element\Service::filterMultipleElements($data);
         }
 
         // note, in case of advanced many to many relations we don't want to force the loading of the element
