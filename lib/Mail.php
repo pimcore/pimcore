@@ -381,7 +381,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets the parameters for the email view and the Placeholders
+     * Sets the parameters to the request object and the Placeholders
      *
      * @param array $params
      *
@@ -397,7 +397,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets a single parameter for the email view and the Placeholders
+     * Sets a single parameter to the request object and the Placeholders
      *
      * @param string | int $key
      * @param mixed $value
@@ -409,7 +409,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
         } else {
-            Logger::warn('$key has to be a string - Param ignored!');
+            Logger::warn('$key has to be a string or integer - Param ignored!');
         }
 
         return $this;
@@ -475,7 +475,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
         } else {
-            Logger::warn('$key has to be a string - unsetParam ignored!');
+            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
         }
 
         return $this;
