@@ -263,6 +263,7 @@ class Version extends AbstractModel
         $sourceId = $data->getId();
 
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {

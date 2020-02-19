@@ -342,6 +342,7 @@ class Item extends Model\AbstractModel
     {
         //for full dump of relation fields in container types
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {

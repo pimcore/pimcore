@@ -1281,6 +1281,7 @@ class Service extends Model\AbstractModel
     {
         if ($clone) {
             $copier = new DeepCopy();
+            $copier->skipUncloneable(true);
             $element = $copier->copy($element);
         }
 
