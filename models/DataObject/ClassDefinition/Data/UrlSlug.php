@@ -292,38 +292,42 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         // check for previous slugs and create redirects
-        if(is_array($data)) {
-            foreach($data as $slug) {
-                if($previousSlug = $slug->getPreviousSlug()) {
-                    if($previousSlug !== $slug->getSlug()) {
-                        $checkSql = "SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto";
-                        if ($slug->getSiteId()) {
-                            $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
-                        } else {
-                            $checkSql .= ' AND sourceSite IS NULL';
-                        }
+        if(!is_array($data)) {
+            return;
+        }
 
-                        $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
-                        if(!$existingCheck) {
-                            $redirect = new Redirect();
-                            $redirect->setType(Redirect::TYPE_AUTO_CREATE);
-                            $redirect->setRegex(false);
-                            $redirect->setTarget($slug->getSlug());
-                            $redirect->setSource($previousSlug);
-                            $redirect->setStatusCode(301);
-                            $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
-
-                            if ($slug->getSiteId()) {
-                                $redirect->setSourceSite($slug->getSiteId());
-                                $redirect->setTargetSite($slug->getSiteId());
-                            }
-
-                            $redirect->save();
-                        }
-
-                        $slug->setPreviousSlug(null);
-                    }
+        foreach($data as $slug) {
+            if($previousSlug = $slug->getPreviousSlug()) {
+                if($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
+                    continue;
                 }
+
+                $checkSql = "SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto";
+                if ($slug->getSiteId()) {
+                    $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
+                } else {
+                    $checkSql .= ' AND sourceSite IS NULL';
+                }
+
+                $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
+                if(!$existingCheck) {
+                    $redirect = new Redirect();
+                    $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                    $redirect->setRegex(false);
+                    $redirect->setTarget($slug->getSlug());
+                    $redirect->setSource($previousSlug);
+                    $redirect->setStatusCode(301);
+                    $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
+
+                    if ($slug->getSiteId()) {
+                        $redirect->setSourceSite($slug->getSiteId());
+                        $redirect->setTargetSite($slug->getSiteId());
+                    }
+
+                    $redirect->save();
+                }
+
+                $slug->setPreviousSlug(null);
             }
         }
     }
