@@ -1516,4 +1516,15 @@ class Document extends Element\AbstractElement
 
         return $cacheKey;
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->parent = null;
+        $this->hasChildren = [];
+        $this->children = [];
+        $this->hasSiblings = [];
+        $this->siblings = [];
+    }
+
 }

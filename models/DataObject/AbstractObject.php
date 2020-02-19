@@ -1449,4 +1449,18 @@ class AbstractObject extends Model\Element\AbstractElement
 
         return $cacheKey;
     }
+
+    /**
+     * load lazy loaded fields before cloning
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        $this->o_parent = null;
+        $this->o_hasChildren = [];
+        $this->o_children = [];
+        $this->o_hasSiblings = [];
+        $this->o_siblings = [];
+    }
+
 }
