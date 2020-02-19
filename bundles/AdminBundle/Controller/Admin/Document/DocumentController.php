@@ -511,15 +511,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson(['success' => $success]);
     }
 
-    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument) {
-        if($document instanceof Document\Page || $document instanceof Document\Hardlink) {
+    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument)
+    {
+        if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
                 if ($oldPath && $oldPath != $document->getRealFullPath()) {
                     $sourceSite = null;
                     if ($oldDocument) {
                         $sourceSite = Frontend::getSiteForDocument($oldDocument);
                         if ($sourceSite) {
-                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@','', $oldPath);
+                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
                         }
                     }
 
@@ -527,7 +528,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                     $this->doCreateRedirectForFormerPath($oldPath, $document->getId(), $sourceSite, $targetSite);
 
-                    if($document->hasChildren()) {
+                    if ($document->hasChildren()) {
                         $list = new Document\Listing();
                         $list->setCondition('path LIKE :path', [
                             'path' => $document->getRealFullPath() . '/%'
@@ -537,11 +538,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                         $count = 0;
 
-                        foreach($childrenList as $child) {
-
+                        foreach ($childrenList as $child) {
                             $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument, $child['path']);
                             if ($sourceSite) {
-                                $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@','', $source);
+                                $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
                             }
 
                             $target = $child['id'];
@@ -559,7 +559,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
     }
 
-    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite) {
+    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite)
+    {
         $redirect = new Redirect();
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
         $redirect->setRegex(false);
@@ -568,11 +569,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $redirect->setStatusCode(301);
         $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
 
-        if($sourceSite) {
+        if ($sourceSite) {
             $redirect->setSourceSite($sourceSite->getId());
         }
 
-        if($targetSite) {
+        if ($targetSite) {
             $redirect->setTargetSite($targetSite->getId());
         }
 

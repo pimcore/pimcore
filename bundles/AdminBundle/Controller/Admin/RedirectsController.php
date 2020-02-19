@@ -134,11 +134,11 @@ class RedirectsController extends AdminController
             if ($filterValue = $request->get('filter')) {
                 if (is_numeric($filterValue)) {
                     $list->setCondition('id = ?', [$filterValue]);
-                } elseif(preg_match('@^https?://@', $filterValue)) {
+                } elseif (preg_match('@^https?://@', $filterValue)) {
                     $dummyRequest = Request::create($filterValue);
                     $site = Site::getByDomain($dummyRequest->getHost());
                     $dummyResponse = $redirectHandler->checkForRedirect($dummyRequest, false, $site);
-                    if($dummyResponse && $redirectId = $dummyResponse->headers->get(RedirectHandler::RESPONSE_HEADER_NAME_ID)) {
+                    if ($dummyResponse && $redirectId = $dummyResponse->headers->get(RedirectHandler::RESPONSE_HEADER_NAME_ID)) {
                         $list->setCondition('id = ?', [$redirectId]);
                     } else {
                         // do not return any results

@@ -23,6 +23,6 @@ class Version20200218104052 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `redirects` CHANGE COLUMN `type` `type` VARCHAR(100) NOT NULL AFTER `id`;");
+        $this->addSql('ALTER TABLE `redirects` CHANGE COLUMN `type` `type` VARCHAR(100) NOT NULL AFTER `id`;');
     }
 }
