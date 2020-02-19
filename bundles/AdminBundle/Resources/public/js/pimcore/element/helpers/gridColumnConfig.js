@@ -364,33 +364,7 @@ pimcore.element.helpers.gridColumnConfig = {
             this.batchOpen(columnIndex, jobs, append, remove, true);
 
         } else {
-
-            var filters = "";
-            var condition = "";
-
-            if (this.sqlButton && this.sqlButton.pressed) {
-                condition = this.sqlEditor.getValue();
-            } else {
-                var filterData = this.store.getFilters().items;
-                if (filterData.length > 0) {
-                    filters = this.store.getProxy().encodeFilters(filterData);
-                }
-            }
-
-            var fields = this.getGridConfig().columns;
-            var fieldKeys = Object.keys(fields);
-
-            var params = {
-                filter: filters,
-                condition: condition,
-                classId: this.classId,
-                folderId: this.element.id,
-                objecttype: this.objecttype,
-                "fields[]": fieldKeys,
-                language: this.gridLanguage,
-                batch: true //to avoid limit on batch edit/append all
-            };
-
+            let params = this.getGridParams();
             Ext.Ajax.request({
                 url: this.batchPrepareUrl,
                 params: params,
@@ -589,55 +563,14 @@ pimcore.element.helpers.gridColumnConfig = {
     },
 
     exportPrepare: function (settings, exportType) {
-        var jobs = [];
-        var filters = "";
-        var condition = "";
-        var searchQuery = this.searchField ? this.searchField.getValue() : "";
-
-        if (this.sqlButton && this.sqlButton.pressed) {
-            condition = this.sqlEditor.getValue();
-        } else {
-            var filterData = this.store.getFilters().items;
-            if (filterData.length > 0) {
-                filters = this.store.getProxy().encodeFilters(filterData);
-            }
-        }
+        let params = this.getGridParams();
 
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
-
-        //create the ids array which contains chosen rows to export
-        ids = [];
-        var selectedRows = this.grid.getSelectionModel().getSelection();
-        for (var i = 0; i < selectedRows.length; i++) {
-            ids.push(selectedRows[i].data.id);
-        }
+        params["fields[]"] = fieldKeys;
 
         settings = Ext.encode(settings);
-
-        var params = {
-            filter: filters,
-            condition: condition,
-            classId: this.classId,
-            folderId: this.element.id,
-            objecttype: this.objecttype,
-            language: this.gridLanguage,
-            "ids[]": ids,
-            "fields[]": fieldKeys,
-            settings: settings,
-            query: searchQuery,
-            batch: true // to avoid limit for export
-        };
-
-        //tags filter
-        if(this.tagsTree) {
-            params["tagIds[]"] = this.tagsTree.getCheckedTagIds();
-
-            if(this.tagsPanel) {
-                params["considerChildTags"] = this.tagsPanel.considerChildTags;
-            }
-        }
-
+        params["settings"] = settings;
         Ext.Ajax.request({
             url: this.exportPrepareUrl,
             params: params,
@@ -734,5 +667,67 @@ pimcore.element.helpers.gridColumnConfig = {
         this.settings = rdata.settings;
         this.availableConfigs = rdata.availableConfigs;
         this.buildColumnConfigMenu();
+    },
+
+    getGridParams: function () {
+        var filters = "";
+        var condition = "";
+        var searchQuery = this.searchField ? this.searchField.getValue() : "";
+
+        if (this.sqlButton && this.sqlButton.pressed) {
+            condition = this.sqlEditor.getValue();
+        } else {
+            var filterData = this.store.getFilters().items;
+            if (filterData.length > 0) {
+                filters = this.store.getProxy().encodeFilters(filterData);
+            }
+        }
+
+        var params = {
+            filter: filters,
+            condition: condition,
+            classId: this.classId,
+            folderId: this.element.id,
+            objecttype: this.objecttype,
+            language: this.gridLanguage,
+            batch: true, // to avoid limit for export
+        };
+
+        if (searchQuery) {
+            params["query"] = searchQuery;
+        }
+
+        //create the ids array which contains chosen rows to export
+        ids = [];
+        var selectedRows = this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selectedRows.length; i++) {
+            ids.push(selectedRows[i].data.id);
+        }
+
+        if (ids.length > 0) {
+            params["ids[]"] = ids;
+        }
+
+        //tags filter
+        if(this.tagsTree) {
+            params["tagIds[]"] = this.tagsTree.getCheckedTagIds();
+
+            if(this.tagsPanel) {
+                params["considerChildTags"] = this.tagsPanel.considerChildTags;
+            }
+        }
+
+        //only direct children filter
+        if (this.checkboxOnlyDirectChildren) {
+            params["only_direct_children"] = this.checkboxOnlyDirectChildren.getValue();
+        }
+
+        //only unreferenced filter
+        if (this.checkboxOnlyUnreferenced) {
+            params["only_unreferenced"] = this.checkboxOnlyUnreferenced.getValue();
+        }
+
+        return params;
+
     }
 };
