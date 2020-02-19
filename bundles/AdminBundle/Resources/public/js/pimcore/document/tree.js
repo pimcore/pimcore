@@ -23,6 +23,9 @@ Ext.define('documentreemodel', {
     }]
 });
 
+const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
+const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------';
+const p = new RegExp(a.split('').join('|'), 'g');
 
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
@@ -1326,10 +1329,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    itemId: "title",
+                    fieldLabel: t('title'),
+                    name: 'title',
                     width: "100%",
-                    fieldLabel: t('key'),
-                    itemId: "key",
-                    name: 'key',
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -1338,21 +1341,21 @@ pimcore.document.tree = Class.create({
                             }.bind(this), 100);
                         },
                         keyup: function (el) {
-                            pageForm.getComponent("name").setValue(el.getValue());
-                        }
+                            this.setKeyAndNavigation(el.getValue(), pageForm);
+                        }.bind(this),
                     }
                 },{
                     xtype: "textfield",
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
-                    width: "100%"
+                    width: "100%",
                 },{
                     xtype: "textfield",
-                    itemId: "title",
-                    fieldLabel: t('title'),
-                    name: 'title',
-                    width: "100%"
+                    width: "100%",
+                    fieldLabel: t('key'),
+                    itemId: "key",
+                    name: 'key',
                 }]
             });
 
@@ -1416,6 +1419,18 @@ pimcore.document.tree = Class.create({
                 }
             }.bind(this, tree, record, type, docTypeId));
         }
+    },
+    
+    setKeyAndNavigation: function(title, pageForm) {
+        var urlFriendlyTitle = title.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(p, c => b.charAt(a.indexOf(c)))
+            .replace(/[^\w-]+/g, '')
+            .replace(/[-]{2,}/g, '-')
+            .replace(/^-+/, '')
+            .replace(/-+$/, '');
+        pageForm.getComponent("name").setValue(urlFriendlyTitle);
+        pageForm.getComponent("key").setValue(urlFriendlyTitle);
     },
 
     publishDocument: function (tree, record, task) {
