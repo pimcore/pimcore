@@ -95,7 +95,6 @@
   "pass_through_params": "Pass Through Params",
   "redirects_type_entire_uri": "Entire URI",
   "redirects_type_path_query": "Path and Query",
-  "auto_create": "Auto create",
   "redirects_csv_import": "Redirects CSV Import",
   "redirects_import_total": "Total",
   "redirects_import_created": "Created",
