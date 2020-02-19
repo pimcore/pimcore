@@ -202,15 +202,20 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
+        var baseParams = {
+            language: this.gridLanguage,
+        };
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
+            baseParams = this.store.getProxy().getExtraParams();
+        }
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
             "/admin/object/grid-proxy?classId=" + this.classId + "&folderId=" + this.object.id,
-            {
-                language: this.gridLanguage,
-                // limit: itemsPerPage
-            },
+            baseParams,
             false
         );
 
@@ -218,21 +223,14 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         gridHelper.enableEditor = true;
         gridHelper.limit = itemsPerPage;
 
-
-        var propertyVisibility = klass.get("propertyVisibility");
-
-        var existingFilters;
-        if (this.store) {
-            existingFilters = this.store.getFilters();
-        }
-
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         if (this.sortinfo) {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }
         this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
-        if (existingFilters) {
+
+        if (existingFilters && fromConfig) {
             this.store.setFilters(existingFilters.items);
         }
 

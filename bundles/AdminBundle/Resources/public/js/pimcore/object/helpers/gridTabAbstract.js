@@ -202,95 +202,96 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     },
 
     getToolbar: function (fromConfig, save) {
-        this.searchQuery = function(field) {
-            this.store.getProxy().setExtraParam("query", field.getValue());
-            this.pagingtoolbar.moveFirst();
-        }.bind(this);
+        if (!fromConfig) {
+            this.searchQuery = function(field) {
+                this.store.getProxy().setExtraParam("query", field.getValue());
+                this.pagingtoolbar.moveFirst();
+            }.bind(this);
 
-        this.searchField = new Ext.form.TextField(
-            {
-                name: "query",
-                width: 200,
-                hideLabel: true,
-                enableKeyEvents: true,
-                triggers: {
-                    search: {
-                        weight: 1,
-                        cls: 'x-form-search-trigger',
-                        scope: 'this',
-                        handler: function(field, trigger, e) {
-                            this.searchQuery(field);
+            this.searchField = new Ext.form.TextField(
+                {
+                    name: "query",
+                    width: 200,
+                    hideLabel: true,
+                    enableKeyEvents: true,
+                    triggers: {
+                        search: {
+                            weight: 1,
+                            cls: 'x-form-search-trigger',
+                            scope: 'this',
+                            handler: function(field, trigger, e) {
+                                this.searchQuery(field);
+                            }.bind(this)
+                        }
+                    },
+                    listeners: {
+                        "keydown" : function (field, key) {
+                            if (key.getKey() == key.ENTER) {
+                                this.searchQuery(field);
+                            }
                         }.bind(this)
                     }
-                },
+                }
+            );
+
+            this.languageInfo = new Ext.Toolbar.TextItem({
+                text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
+            });
+
+            this.toolbarFilterInfo = new Ext.Button({
+                iconCls: "pimcore_icon_filter_condition",
+                hidden: true,
+                text: '<b>' + t("filter_active") + '</b>',
+                tooltip: t("filter_condition"),
+                handler: function (button) {
+                    Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
+                }.bind(this)
+            });
+
+            this.clearFilterButton = new Ext.Button({
+                iconCls: "pimcore_icon_clear_filters",
+                hidden: true,
+                text: t("clear_filters"),
+                tooltip: t("clear_filters"),
+                handler: function (button) {
+                    this.grid.filters.clearFilters();
+                    this.toolbarFilterInfo.hide();
+                    this.clearFilterButton.hide();
+                }.bind(this)
+            });
+
+            this.createSqlEditor();
+
+            this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
+                name: "onlyDirectChildren",
+                style: "margin-bottom: 5px; margin-left: 5px",
+                checked: this.onlyDirectChildren,
+                boxLabel: t("only_children"),
                 listeners: {
-                    "keydown" : function (field, key) {
-                        if (key.getKey() == key.ENTER) {
-                            this.searchQuery(field);
-                        }
+                    "change": function (field, checked) {
+                        this.grid.getStore().setRemoteFilter(false);
+                        this.grid.filters.clearFilters();
+
+                        this.store.getProxy().setExtraParam("only_direct_children", checked);
+
+                        this.onlyDirectChildren = checked;
+                        this.pagingtoolbar.moveFirst();
+
+                        this.grid.getStore().setRemoteFilter(true);
                     }.bind(this)
                 }
-            }
-        );
+            });
 
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-        });
+            var exportButtons = this.getExportButtons();
+            var firstButton = exportButtons.pop();
 
-        this.toolbarFilterInfo = new Ext.Button({
-            iconCls: "pimcore_icon_filter_condition",
-            hidden: true,
-            text: '<b>' + t("filter_active") + '</b>',
-            tooltip: t("filter_condition"),
-            handler: function (button) {
-                Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
-            }.bind(this)
-        });
-
-        this.clearFilterButton = new Ext.Button({
-            iconCls: "pimcore_icon_clear_filters",
-            hidden: true,
-            text: t("clear_filters"),
-            tooltip: t("clear_filters"),
-            handler: function (button) {
-                this.grid.filters.clearFilters();
-                this.toolbarFilterInfo.hide();
-                this.clearFilterButton.hide();
-            }.bind(this)
-        });
-
-
-        this.createSqlEditor();
-
-        this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
-            name: "onlyDirectChildren",
-            style: "margin-bottom: 5px; margin-left: 5px",
-            checked: this.onlyDirectChildren,
-            boxLabel: t("only_children"),
-            listeners: {
-                "change": function (field, checked) {
-                    this.grid.getStore().setRemoteFilter(false);
-                    this.grid.filters.clearFilters();
-
-                    this.store.getProxy().setExtraParam("only_direct_children", checked);
-
-                    this.onlyDirectChildren = checked;
-                    this.pagingtoolbar.moveFirst();
-
-                    this.grid.getStore().setRemoteFilter(true);
-                }.bind(this)
-            }
-        });
-
-        var exportButtons = this.getExportButtons();
-        var firstButton = exportButtons.pop();
-
-        this.exportButton = new Ext.SplitButton({
-            text: firstButton.text,
-            iconCls: firstButton.iconCls,
-            handler: firstButton.handler,
-            menu: exportButtons,
-        });
+            this.exportButton = new Ext.SplitButton({
+                text: firstButton.text,
+                iconCls: firstButton.iconCls,
+                handler: firstButton.handler,
+                menu: exportButtons,
+            });
+        }
 
         var hideSaveColumnConfig = !fromConfig || save;
 

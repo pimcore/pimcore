@@ -88,14 +88,21 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.fieldObject[fields[i].key] = fields[i];
         }
 
+        var baseParams = {
+            language: this.gridLanguage,
+            objectId: this.element.id
+        };
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
+            baseParams = this.store.getProxy().getExtraParams();
+        }
+
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
             "/admin/variants/get-variants",
-            {
-                language: this.gridLanguage,
-                objectId: this.element.id
-            },
+            baseParams,
             false
         );
 
@@ -108,6 +115,10 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         this.store.setPageSize(itemsPerPage);
+
+        if (existingFilters && fromConfig) {
+            this.store.setFilters(existingFilters.items);
+        }
 
         var gridColumns = gridHelper.getGridColumns();
 
