@@ -2021,5 +2021,8 @@ class Asset extends Element\AbstractElement
         $this->versions = null;
         $this->hasSiblings = null;
         $this->siblings = null;
+        $this->dependencies = null;
+        $this->scheduledTasks = null;
+        $this->stream = null;
     }
 }

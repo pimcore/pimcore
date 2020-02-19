@@ -1460,6 +1460,7 @@ class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
+        $this->o_dependencies = null;
     }
 
 }

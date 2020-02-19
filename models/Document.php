@@ -1523,6 +1523,8 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->hasSiblings = [];
         $this->siblings = [];
+        $this->dependencies = null;
+        $this->fullPathCache = null;
     }
 
 }
