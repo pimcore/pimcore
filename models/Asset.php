@@ -2023,6 +2023,6 @@ class Asset extends Element\AbstractElement
         $this->siblings = null;
         $this->dependencies = null;
         $this->scheduledTasks = null;
-        $this->stream = null;
+        $this->closeStream();
     }
 }
