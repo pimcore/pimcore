@@ -261,6 +261,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDecimalPrecision($decimalPrecision)
     {
+        if(!is_numeric($decimalPrecision)) {
+            $decimalPrecision = null;
+        }
+
         $this->decimalPrecision = $decimalPrecision;
     }
 
