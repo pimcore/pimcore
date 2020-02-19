@@ -374,7 +374,6 @@ class Config implements \ArrayAccess
                         'steps' => self::getArrayValue(['documents', 'versions', 'steps'], $config)
                     ],
                     'error_pages' => self::getArrayValue(['documents', 'error_pages'], $config),
-                    'createredirectwhenmoved' => self::getArrayValue(['documents', 'create_redirect_when_moved'], $config),
                     'allowtrailingslash' => self::getArrayValue(['documents', 'allow_trailing_slash'], $config),
                     'generatepreview' => self::getArrayValue(['documents', 'generate_preview'], $config)
                 ],

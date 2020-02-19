@@ -158,7 +158,6 @@
   "group_by_path": "Group by path",
   "flush": "Flush",
   "errors_from_the_last_7_days": "Errors from the last 7 days",
-  "create_redirect_for_moved_renamed_page": "Create automatically a redirect when a page is moved or renamed",
   "show_close_warning": "Show close warning",
   "matching_text": "Matching Text",
   "any": "Any",

@@ -415,7 +415,7 @@ CREATE TABLE `recyclebin` (
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(100) NOT NULL,
+  `type` ENUM('entire_uri','path_query','path','auto_create') NOT NULL,
   `source` varchar(255) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,

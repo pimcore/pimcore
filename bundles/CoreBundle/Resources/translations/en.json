@@ -133,6 +133,8 @@
   "casesensitive": "case-sensitive",
   "path_aliases": "Path Aliases",
   "path": "Path",
+  "create_redirects": "Create redirects to keep URLs working (incl. children)?",
+  "auto_create": "Auto create",
   "pretty_url": "Pretty URL",
   "pretty_url_label": "Pretty URL (overrides path from tree-structure)",
   "search_engine_optimization": "Search Engine Optimization",

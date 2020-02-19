@@ -30,11 +30,13 @@ class Redirect extends AbstractModel
     const TYPE_ENTIRE_URI = 'entire_uri';
     const TYPE_PATH_QUERY = 'path_query';
     const TYPE_PATH = 'path';
+    const TYPE_AUTO_CREATE = 'auto_create';
 
     const TYPES = [
         self::TYPE_ENTIRE_URI,
         self::TYPE_PATH_QUERY,
-        self::TYPE_PATH
+        self::TYPE_PATH,
+        self::TYPE_AUTO_CREATE,
     ];
 
     /**

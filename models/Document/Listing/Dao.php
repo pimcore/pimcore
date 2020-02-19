@@ -100,7 +100,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = $this->getQuery(['id', 'CONCAT(path,`key`)']);
+        $select = $this->getQuery(['id', 'CONCAT(path,`key`) as path']);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
