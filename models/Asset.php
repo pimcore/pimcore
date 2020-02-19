@@ -2013,4 +2013,16 @@ class Asset extends Element\AbstractElement
 
         return $dependencies;
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->parent = null;
+        $this->versions = null;
+        $this->hasSiblings = null;
+        $this->siblings = null;
+        $this->dependencies = null;
+        $this->scheduledTasks = null;
+        $this->closeStream();
+    }
 }

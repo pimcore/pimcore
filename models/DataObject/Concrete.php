@@ -851,6 +851,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
+        $this->o_class = null;
+        $this->o_versions = null;
+        $this->scheduledTasks = null;
     }
 
     /**
