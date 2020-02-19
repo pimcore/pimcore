@@ -339,14 +339,31 @@ class Service extends Model\AbstractModel
     /**
      * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
      * @param array $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param string $fieldname
      *
      * @return array
      *
      * @throws \Exception
      */
-    public static function filterMultipleElements($data)
+    public static function filterMultipleElements($data, $object, $fieldname)
     {
         $relationItems = [];
+        $objectId = null;
+
+        if ($object instanceof DataObject\Concrete) {
+            $objectId = $object->getId();
+        } elseif (
+            $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
+            $object instanceof DataObject\Localizedfield ||
+            $object instanceof DataObject\Objectbrick\Data\AbstractData
+        ) {
+            $object = $object->getObject();
+            if ($object) {
+                $objectId = $object->getId();
+            }
+        }
+
         if (is_array($data)) {
             foreach ($data as $item) {
                 $elementHash = null;
@@ -358,13 +375,15 @@ class Service extends Model\AbstractModel
                     $elementHash = Model\Element\Service::getElementHash($item);
                 }
 
-                if ($elementHash && isset($relationItems[$elementHash])) {
+                if ($elementHash && !isset($relationItems[$elementHash])) {
+                    $relationItems[$elementHash] = $item;
+                } elseif (isset($relationItems[$elementHash])) {
                     @trigger_error(
-                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash .  ' multiple times.',
+                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
+                        .  ' multiple times in field' . $fieldname . ' of object id: ' . $objectId,
                         E_USER_DEPRECATED
                     );
                 }
-                $relationItems[$elementHash] = $item;
             }
         }
 
