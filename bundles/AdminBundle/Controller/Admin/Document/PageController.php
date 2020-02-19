@@ -63,14 +63,8 @@ class PageController extends DocumentControllerBase
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
         $page->getScheduledTasks();
-        $page->idPath = Element\Service::getIdPath($page);
-        $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
         $page->setParent(null);
-
-        if ($page->getContentMasterDocument()) {
-            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
-        }
 
         $page->url = $page->getUrl();
 
@@ -81,24 +75,13 @@ class PageController extends DocumentControllerBase
         $this->addTranslationsData($page);
         $this->minimizeProperties($page);
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
-        $data['versionDate'] = $page->getModificationDate();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
-            'interfaces' => array_values(class_implements($page))
-        ];
+        if ($page->getContentMasterDocument()) {
+            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        }
 
-        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $page
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $page);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);

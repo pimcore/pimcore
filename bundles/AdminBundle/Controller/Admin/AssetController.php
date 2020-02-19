@@ -81,10 +81,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset = clone $asset;
-        //$asset->getVersions();
         $asset->getScheduledTasks();
-        $asset->idPath = Element\Service::getIdPath($asset);
-        $asset->userPermissions = $asset->getUserPermissions();
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
@@ -153,6 +150,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
+        $data['idPath'] = Element\Service::getIdPath($asset);
+        $data['userPermissions'] = $asset->getUserPermissions();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

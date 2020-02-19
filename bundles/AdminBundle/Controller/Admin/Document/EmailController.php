@@ -57,11 +57,8 @@ class EmailController extends DocumentControllerBase
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
-        $email->idPath = Element\Service::getIdPath($email);
-        $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
         $email->setParent(null);
-        $email->url = $email->getUrl();
 
         // unset useless data
         $email->setElements(null);
@@ -70,24 +67,10 @@ class EmailController extends DocumentControllerBase
         $this->addTranslationsData($email);
         $this->minimizeProperties($email);
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $email->getObjectVars();
-        $data['versionDate'] = $email->getModificationDate();
+        $data['url'] = $email->getUrl();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($email)], array_values(class_parents($email))),
-            'interfaces' => array_values(class_implements($email))
-        ];
-
-        $this->addAdminStyle($email, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $email
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $email);
 
         if ($email->isAllowed('view')) {
             return $this->adminJson($data);

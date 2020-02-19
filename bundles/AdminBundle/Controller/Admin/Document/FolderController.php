@@ -55,32 +55,15 @@ class FolderController extends DocumentControllerBase
         }
 
         $folder = clone $folder;
-
-        $folder->idPath = Element\Service::getIdPath($folder);
-        $folder->setUserPermissions($folder->getUserPermissions());
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
         $this->addTranslationsData($folder);
         $this->minimizeProperties($folder);
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $folder->getObjectVars();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($folder)], array_values(class_parents($folder))),
-            'interfaces' => array_values(class_implements($folder))
-        ];
-
-        $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $folder
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $folder);
 
         if ($folder->isAllowed('view')) {
             return $this->adminJson($data);
