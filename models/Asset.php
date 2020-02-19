@@ -2019,8 +2019,6 @@ class Asset extends Element\AbstractElement
         parent::__clone();
         $this->parent = null;
         $this->versions = null;
-        $this->hasChildren = null;
-        $this->children = null;
         $this->hasSiblings = null;
         $this->siblings = null;
     }

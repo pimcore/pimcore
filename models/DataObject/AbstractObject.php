@@ -1457,8 +1457,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         parent::__clone();
         $this->o_parent = null;
-        $this->o_hasChildren = [];
-        $this->o_children = [];
+        // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
     }

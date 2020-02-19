@@ -1521,8 +1521,6 @@ class Document extends Element\AbstractElement
     {
         parent::__clone();
         $this->parent = null;
-        $this->hasChildren = [];
-        $this->children = [];
         $this->hasSiblings = [];
         $this->siblings = [];
     }
