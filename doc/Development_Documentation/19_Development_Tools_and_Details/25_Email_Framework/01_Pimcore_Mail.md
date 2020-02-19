@@ -24,19 +24,19 @@ On Debian/Ubuntu you can install it with: `apt-get install html2text`
 
 ## Useful Methods
 
-| Method | Description |
-| ------ | ----------- |
-| disableLogging() | Disables email logging - by default it is enabled |
-| setParams(array) | Sets the parameters to the request object and the Placeholders |
-| setParam($key, $value) | Sets a single parameter to the request object and the Placeholders |
-| isValidEmailAddress(emailAddress) | Static helper to validate a email address |
-| setDocument(Document_Email) | Sets the email document |
-| getDocument() | Returns the Document |
-| getSubjectRendered() | Replaces the placeholders with the content and returns the rendered Subject |
-| getBodyHtmlRendered() | Replaces the placeholders with the content and returns the rendered Html |
-| getBodyTextRendered() | Replaces the placeholders with the content and returns the rendered text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| enableHtml2textBinary() | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed! |
-| setHtml2TextOptions($options) | set options for html2text (only for binary version) |
+| Method                            | Description                                                                                                                                                                                                |
+|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| disableLogging()                  | Disables email logging - by default it is enabled                                                                                                                                                          |
+| setParams(array)                  | Sets the parameters to the request object and the Placeholders                                                                                                                                             |
+| setParam($key, $value)            | Sets a single parameter to the request object and the Placeholders                                                                                                                                         |
+| isValidEmailAddress(emailAddress) | Static helper to validate a email address                                                                                                                                                                  |
+| setDocument(Document_Email)       | Sets the email document                                                                                                                                                                                    |
+| getDocument()                     | Returns the Document                                                                                                                                                                                       |
+| getSubjectRendered()              | Replaces the placeholders with the content and returns the rendered Subject                                                                                                                                |
+| getBodyHtmlRendered()             | Replaces the placeholders with the content and returns the rendered Html                                                                                                                                   |
+| getBodyTextRendered()             | Replaces the placeholders with the content and returns the rendered text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
+| enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!                                                                            |
+| setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
 
 
 ## Usage Example
