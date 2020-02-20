@@ -179,7 +179,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function count()
     {
-        return $this->getTotalCount();
+        return $this->getDao()->getCount();
     }
 
     /**
