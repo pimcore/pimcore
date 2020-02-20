@@ -620,4 +620,10 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         return $list;
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->view = null;
+    }
 }
