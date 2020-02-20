@@ -98,6 +98,86 @@ php bin/console ecommerce:indexservice:reset-queue update-index
 php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure
 ```
 
+### Console Commands for Elastic Search
+In case that you are using Elastic Search (e.g., ``Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultELasticSearch6``),
+ there are two additional helper commands. Those 
+  1)  simplify the synchronisation of index mapping updates and eases the integration
+  2)  support the integration of a synonym search out-of-the-box.
+
+#### Case 1: Synchronization of Mapping Updates
+The following command performs a native index updated based on the [Reindex API](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html)
+of Elastic Search (ES).
+
+```bash
+php bin/console ecommerce:indexservice:elasticsearch-sync reindex
+```
+
+The native reindexing is faster than running the ecommerce process updating queue, and only one command needs to be executed.
+This is especially useful when a new search feature is under development. In the later case, changes in the ES index mapping
+often require a complete reindexing so that the new settings will be applied to the index
+(cf. [Product Index Configuration](../)).
+
+#### Case 2: Synonym Support
+Pimcore provides a simple solution for ES synonym search integration out of the box.
+
+Basic index configuration setup for synonyms (cf. [Product Index Configuration](../)):
+```yml
+pimcore_ecommerce_framework:
+    index_service:
+       example_tenant:
+            #...            
+            config_options: 
+                #...
+                index_settings:
+                    #...
+                    analysis:
+                        #...                        
+                        analyzer:
+                            app_synonyms_lowercase:
+                                tokenizer: keyword # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html
+                                filter:
+                                    - app_synonyms_filter
+                                    - lowercase
+                        filter:
+                            app_synonyms_filter:
+                                type: synonym
+                                synonyms_path: "pimcore_config/synonyms_example_tenant.txt" # must reside in /etc/elasticsearch/
+            attributes:
+                articleName:
+                    filtergroup: string
+                    type: 'text'
+                    locale: 'de'
+                    options:
+                        mapping:
+                            type: keyword
+                            store: true
+                            index: true
+                            fields:                                 
+                                analyzed_synonym:
+                                    type: text
+                                    analyzer: app_synonyms_lowercase             
+```
+
+In the example, the synonym file must be finally located in ``/etc/elasticsearch/pimcore_config/synonyms_example_tenant.txt`` at indexing time.
+You can create a text file based on ES's / Lucene's [synonym format](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-synonym-tokenfilter.html))
+within Pimcore's Asset Management system, e.g. in ``/System/Ecommerce/Search/Synonyms/synonyms_example_tenant``.
+
+Example synonym content: 
+```txt
+football, soccer
+volleyball, beachball
+pimcore, pim-core, pim
+```
+
+By executing
+
+```bash
+php bin/console ecommerce:indexservice:elasticsearch-sync refresh-synonyms --synonymAssetSourceFolder=/System/Ecommerce/Search/Synonyms
+```
+the txt file will be extracted from Pimcore's asset management system and copied to the Elastic Search target location. 
+Ensure that the directory ``/etc/elasticsearch/pimcore_config/`` exists.
+Afterwards the search index will be closed and re-openeds so that the updates in the synonym file are applied.
+
 > For further details see `--help` section of the commands. 
 
 
