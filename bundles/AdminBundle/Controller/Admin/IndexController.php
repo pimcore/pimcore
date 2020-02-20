@@ -400,7 +400,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             if (!empty($config['email']['sender']['email'])) {
                 $mailIncomplete = true;
             }
-            if (($config['email']['method'] ?? '') == 'smtp' && !empty($config['email']['smtpy']['host'])) {
+            if (($config['email']['method'] ?? '') == 'smtp' && !empty($config['email']['smtp']['host'])) {
                 $mailIncomplete = true;
             }
         }
