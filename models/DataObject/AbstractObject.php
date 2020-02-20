@@ -1462,5 +1462,4 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_siblings = [];
         $this->o_dependencies = null;
     }
-
 }

@@ -1526,5 +1526,4 @@ class Document extends Element\AbstractElement
         $this->dependencies = null;
         $this->fullPathCache = null;
     }
-
 }

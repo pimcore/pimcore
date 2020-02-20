@@ -253,7 +253,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDecimalSize($decimalSize)
     {
-        if(!is_numeric($decimalSize)) {
+        if (!is_numeric($decimalSize)) {
             $decimalSize = null;
         }
 
@@ -265,7 +265,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDecimalPrecision($decimalPrecision)
     {
-        if(!is_numeric($decimalPrecision)) {
+        if (!is_numeric($decimalPrecision)) {
             $decimalPrecision = null;
         }
 
