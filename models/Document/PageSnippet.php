@@ -657,12 +657,12 @@ abstract class PageSnippet extends Model\Document
             /** @var TagUsageResolver $tagUsageResolver */
             $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
             try {
-                $document = Document::getById($this->getId());
-                if ($document instanceof self) {
+                $documentCopy = Service::cloneMe($this);
+                if ($documentCopy instanceof self) {
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                    $tagNames = $tagUsageResolver->getUsedTagnames($document);
+                    $tagNames = $tagUsageResolver->getUsedTagnames($documentCopy);
                     foreach ($tagNames as $tagName) {
-                        $tag = $document->getElement($tagName);
+                        $tag = $documentCopy->getElement($tagName);
                         if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
                             $documentOptions = $tag->getOptions();
                             if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
