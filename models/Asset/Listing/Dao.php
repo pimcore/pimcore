@@ -99,11 +99,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        if (count($this->model->getAssets()) == 0) {
-            $this->load();
-        }
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
+        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
-        return count($this->model->getAssets());
+        return $amount;
     }
 
     /**

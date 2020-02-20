@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Model\Document;
+namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
