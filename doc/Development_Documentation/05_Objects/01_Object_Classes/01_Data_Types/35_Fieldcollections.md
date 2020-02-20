@@ -91,3 +91,5 @@ public function getFieldCollection () {
 ```
 
 Beware that only complete field collection containers can be inherited. As soon as you change the order of the field collection items or any field value in a child object, the whole field collection will get assigned to that child object.
+
+There could also be some UI quirks in the Pimcore backend.
