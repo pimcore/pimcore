@@ -158,6 +158,21 @@ class Config implements \ArrayAccess
         if (null === static::$systemConfig && $container = \Pimcore::getContainer()) {
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
+
+            //add email settings
+            foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
+                if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
+                    $config[$key]['smtp'] = [
+                        'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
+                        'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
+                        'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
+                        'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
+                        'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
+                        'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
+                    ];
+                }
+            }
+
             static::$systemConfig = array_merge_recursive($config, $adminConfig);
         }
 
@@ -503,21 +518,6 @@ class Config implements \ArrayAccess
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
             if ($config = self::getSystemConfiguration()) {
-                $container = \Pimcore::getContainer();
-                //add email settings
-                foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                    if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
-                        $config[$key]['smtp'] = [
-                            'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
-                            'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
-                            'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
-                            'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
-                            'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
-                            'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
-                        ];
-                    }
-                }
-
                 $systemConfig = self::mapLegacyConfiguration($config);
                 self::setSystemConfig($systemConfig);
             }
