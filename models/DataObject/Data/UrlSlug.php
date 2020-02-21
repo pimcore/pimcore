@@ -137,10 +137,6 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public function setSlug(?string $slug)
     {
-        if($this->slug && !$this->previousSlug && $slug !== $this->slug) {
-            $this->previousSlug = $this->slug;
-        }
-
         $this->slug = $slug;
 
         return $this;
@@ -319,6 +315,7 @@ class UrlSlug implements OwnerAwareFieldInterface
         $slug->setOwnertype($rawItem['ownertype']);
         $slug->setOwnername($rawItem['ownername']);
         $slug->setPosition($rawItem['position']);
+        $slug->setPreviousSlug($rawItem['slug']);
 
         return $slug;
     }
