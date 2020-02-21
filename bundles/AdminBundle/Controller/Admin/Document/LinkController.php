@@ -59,37 +59,19 @@ class LinkController extends DocumentControllerBase
         $link = clone $link;
 
         $link->setObject(null);
-        $link->idPath = Element\Service::getIdPath($link);
-        $link->setUserPermissions($link->getUserPermissions());
         $link->setLocked($link->isLocked());
         $link->setParent(null);
         $this->addTranslationsData($link);
         $this->minimizeProperties($link);
         $link->getScheduledTasks();
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $serializer = $this->get('pimcore_admin.serializer');
 
-        $data = $serializer->serialize($link->getObjectVars(), 'json', [
-        ]);
+        $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
-        $data['versionDate'] = $link->getModificationDate();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($link)], array_values(class_parents($link))),
-            'interfaces' => array_values(class_implements($link))
-        ];
-
-        $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $link
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $link);
 
         if ($link->isAllowed('view')) {
             return $this->adminJson($data);

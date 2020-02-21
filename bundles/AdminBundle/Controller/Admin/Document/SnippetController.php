@@ -60,15 +60,8 @@ class SnippetController extends DocumentControllerBase
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
         $snippet->getScheduledTasks();
-        $snippet->idPath = Element\Service::getIdPath($snippet);
-        $snippet->setUserPermissions($snippet->getUserPermissions());
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
-        $snippet->url = $snippet->getUrl();
-
-        if ($snippet->getContentMasterDocument()) {
-            $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
-        }
 
         $this->addTranslationsData($snippet);
         $this->minimizeProperties($snippet);
@@ -76,24 +69,13 @@ class SnippetController extends DocumentControllerBase
         // unset useless data
         $snippet->setElements(null);
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $snippet->getObjectVars();
-        $data['versionDate'] = $snippet->getModificationDate();
+        $data['url'] = $snippet->getUrl();
+        if ($snippet->getContentMasterDocument()) {
+            $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
+        }
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($snippet)], array_values(class_parents($snippet))),
-            'interfaces' => array_values(class_implements($snippet))
-        ];
-
-        $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $snippet
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $snippet);
 
         if ($snippet->isAllowed('view')) {
             return $this->adminJson($data);

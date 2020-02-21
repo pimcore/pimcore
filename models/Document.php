@@ -141,13 +141,6 @@ class Document extends Element\AbstractElement
     protected $userModification;
 
     /**
-     * Permissions for the user which requested this document in editmode*
-     *
-     * @var array
-     */
-    protected $userPermissions;
-
-    /**
      * Dependencies for this document
      *
      * @var Dependency
@@ -1377,7 +1370,7 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'userPermissions', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1479,14 +1472,6 @@ class Document extends Element\AbstractElement
     public static function doHideUnpublished()
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * @param array $userPermissions
-     */
-    public function setUserPermissions($userPermissions): void
-    {
-        $this->userPermissions = $userPermissions;
     }
 
     /**

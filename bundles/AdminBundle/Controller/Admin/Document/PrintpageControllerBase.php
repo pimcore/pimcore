@@ -58,14 +58,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         $page->getVersions();
         $page->getScheduledTasks();
-        $page->idPath = Service::getIdPath($page);
-        $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
-        $page->url = $page->getUrl();
-
-        if ($page->getContentMasterDocument()) {
-            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
-        }
 
         $this->addTranslationsData($page);
 
@@ -76,26 +69,15 @@ class PrintpageControllerBase extends DocumentControllerBase
         // cleanup properties
         $this->minimizeProperties($page);
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
+        $data['url'] = $page->getUrl();
+        if ($page->getContentMasterDocument()) {
+            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        }
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
-            'interfaces' => array_values(class_implements($page))
-        ];
-
-        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
-
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $page
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $this->preSendDataActions($data, $page);
 
         if ($page->isAllowed('view')) {
-            $data = $event->getArgument('data');
-
             return $this->adminJson($data);
         }
 

@@ -1241,7 +1241,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
