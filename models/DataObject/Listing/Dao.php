@@ -158,11 +158,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        if (count($this->model->getObjects()) == 0) {
-            $this->load();
+        if ($this->model->isLoaded()) {
+            return count($this->model->getObjects());
+        } else {
+            $idList = $this->loadIdList();
+            return count($idList);
         }
-
-        return count($this->model->getObjects());
     }
 
     /**
