@@ -396,8 +396,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -590,18 +590,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $element) {
-                if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {
-                    $tags = $element->getCacheTags($tags);
-                }
-            }
-        }
-
         return $tags;
     }
 
@@ -722,8 +710,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+            if (!$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
@@ -753,12 +741,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $publishedList;
         }
 
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
+
         return is_array($data) ? $data : [];
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return array|null
@@ -829,7 +820,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param array|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -1035,7 +1026,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /** See parent class.
-     * @param array|null $data
+     * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -1077,6 +1068,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" supported
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -1094,7 +1087,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data['type'].'|'.$data['id'].',%');
 
-            return;
+            return $listing;
         }
 
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');

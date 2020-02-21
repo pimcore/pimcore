@@ -275,7 +275,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param DataObject\Data\Video $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed

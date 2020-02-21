@@ -67,7 +67,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         $doLoad = true;
 
                         if ($fd instanceof LazyLoadingSupportInterface) {
-                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            if ($fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
                         }

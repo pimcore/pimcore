@@ -231,10 +231,7 @@ pimcore.document.tree = Class.create({
             index += newParent.pagingData.offset;
         }
 
-        pimcore.elementservice.updateDocument(node.data.id, {
-            parentId: newParent.data.id,
-            index: index
-        }, function (newParent, oldParent, tree, response) {
+        var moveCallback = function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
@@ -276,7 +273,28 @@ pimcore.document.tree = Class.create({
             }
             tree.loadMask.hide();
 
-        }.bind(this, newParent, oldParent, tree));
+        }.bind(this, newParent, oldParent, tree);
+
+        var params = {
+            parentId: newParent.data.id,
+            index: index
+        };
+
+        if(
+            newParent.data.id !== oldParent.data.id &&
+            (node.data.type === 'page' || node.data.type === 'hardlink') &&
+            pimcore.globalmanager.get("user").isAllowed('redirects')
+        ) {
+            // ask the user if redirects should be created, if node was moved to a new parent
+            Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
+                if (buttonValue == "yes") {
+                    params['create_redirects'] = 'true';
+                }
+                pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+            }.bind(this));
+        } else {
+            pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+        }
     },
 
 

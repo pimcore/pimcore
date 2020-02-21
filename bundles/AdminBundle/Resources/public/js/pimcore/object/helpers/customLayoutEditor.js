@@ -590,7 +590,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     var text = t(child.name);
                     if(child.nodeType == "objectbricks") {
-                        text = ts(child.title) + " " + t("columns");
+                        text = t(child.title) + " " + t("columns");
                         attributePrefix = child.title;
                     }
 
@@ -698,7 +698,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             key = attributePrefix + "~" + key;
         }
 
-        var text = ts(initData.title);
+        var text = t(initData.title);
         if(showFieldname) {
             text = text + " (" + key.replace("~", ".") + ")";
         }

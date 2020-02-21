@@ -27,7 +27,6 @@ use Pimcore\Model\Redirect;
 class Hardlink extends Document
 {
     use Document\Traits\ScheduledTasksTrait;
-    use Document\Traits\RedirectHelperTrait;
 
     /**
      * static type of this object
@@ -267,12 +266,7 @@ class Hardlink extends Document
      */
     protected function update($params = [])
     {
-        $oldPath = $this->getDao()->getCurrentFullPath();
-        $oldDocument = self::getById($this->getId(), true);
-
         parent::update($params);
-
-        $this->createRedirectForFormerPath($oldPath, $oldDocument);
         $this->saveScheduledTasks();
     }
 }

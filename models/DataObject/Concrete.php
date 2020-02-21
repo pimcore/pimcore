@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -116,41 +115,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         foreach ($fieldDefintions as $fd) {
             try {
                 $getter = 'get' . ucfirst($fd->getName());
-                $setter = 'set' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
-
-                    //To make sure, inherited values are not set again
-                    $inheritedValues = AbstractObject::doGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(false);
-
-                    $value = $this->$getter();
-
-                    if (is_array($value) && ($fd instanceof ClassDefinition\Data\ManyToManyRelation || $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
-                        //don't save relations twice, if multiple assignments not allowed
-                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $relationItems = [];
-                            foreach ($value as $item) {
-                                $elementHash = null;
-                                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
-                                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
-                                    }
-                                } elseif ($item instanceof Model\Element\ElementInterface) {
-                                    $elementHash = Model\Element\Service::getElementHash($item);
-                                }
-
-                                if ($elementHash && !isset($relationItems[$elementHash])) {
-                                    $relationItems[$elementHash] = $item;
-                                }
-                            }
-
-                            $value = array_values($relationItems);
-                        }
-                        $this->$setter($value);
-                    }
-                    AbstractObject::setGetInheritedValues($inheritedValues);
-
                     $value = $this->$getter();
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
@@ -318,8 +284,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->objects->versions->steps
-                || Config::getSystemConfig()->objects->versions->days
+            $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
+            if (!empty($objectsConfig['versions']['steps'])
+                || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -544,7 +511,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @return array
+     * @return Model\Schedule\Task[]
      */
     public function getScheduledTasks()
     {
@@ -609,7 +576,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         if ($this->getParent() instanceof AbstractObject) {
             $parent = $this->getParent();
-            while ($parent && ($parent->getType() === self::OBJECT_TYPE_FOLDER || $parent->getClassId() !== $classId)) {
+            while ($parent && (!$parent instanceof Concrete || $parent->getClassId() !== $classId)) {
                 $parent = $parent->getParent();
             }
 
@@ -851,39 +818,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
-    }
-
-    /**
-     * @var bool
-     */
-    protected static $disableLazyLoading = false;
-
-    /**
-     * @internal
-     * Disables lazy loading
-     */
-    public static function disableLazyLoading()
-    {
-        self::$disableLazyLoading = true;
-    }
-
-    /**
-     * @internal
-     * Enables the lazy loading
-     */
-    public static function enableLazyloading()
-    {
-        self::$disableLazyLoading = false;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool
-     */
-    public static function isLazyLoadingDisabled()
-    {
-        return self::$disableLazyLoading;
+        $this->o_class = null;
+        $this->o_versions = null;
+        $this->scheduledTasks = null;
     }
 
     /**

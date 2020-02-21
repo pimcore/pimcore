@@ -230,7 +230,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         return {
             getEditor:this.getWindowCellEditor.bind(this, field),
-            text:ts(field.label),
+            text: t(field.label),
             sortable:true,
             dataIndex:field.key,
             renderer:renderer

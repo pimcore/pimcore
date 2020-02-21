@@ -380,7 +380,6 @@
     "user_apikey_description": "Der API-Schlüssel wird für den Benutzerzugriff auf den Web-Service benötigt",
     "apikey": "API Schlüssel",
     "lazy_loading": "verzögertes Laden",
-    "lazy_loading_description": "Verzögertes Laden bedeutet, dass die von einem Objekt abhängigen Objekte nicht automatisch geladen werden, sobald dieses erzeugt bzw. instanziiert wird. Die abhängigen Objekte werden erst geladen, wenn die entsprechende get-Methode des referenzierenden Objekts aufgerufen wird.",
     "non_owner_description": "Die sogenannten fremde Eigentümer Relationen funktionieren eigentlich gleich wie die normalen Objektrelationen. Der Unterschied ist, dass hier das Objekte in dem es angezeigt ist nicht der Eigentümer der Relationen ist. Es ist eigentlich nur eine Ansicht von Relationen die ein anderes Objekt auf das aktuelle hat. Wenn hier Änderungen gemacht werden wird diese Relation auch im fremden Objekt gespeichert.",
     "allow_variants": "Varianten erlauben",
     "show_variants": "Zeige Varianten im Baum",
@@ -696,7 +695,6 @@
     "encrypt_data": "Verschlüssele Daten",
     "encrypt_data_description": "Die Data-at-Rest- / Tablespace-Verschlüsselung muss auf Ihrem Datenbankserver aktiviert sein",
     "reports_config": "Konfigurationsbericht",
-    "lazy_loading_warning_block": "WARNUNG: Lazy Loading ist innerhalb von Blocks NICHT möglich",
     "left": "links",
     "right": "rechts",
     "provide_split_view": "Geteilte Ansicht bereitstellen",
@@ -715,7 +713,10 @@
     "geopolyline": "Geografische Polylinie",
     "classificationstore_error_group_exists_msg": "Gruppe mit diesem Namen existiert bereits",
     "classificationstore_group_by_key": "Gruppieren nach Key",
-    "cache_raw_relation_data": "Roh-Beziehungsdaten zwischenspeichern",
     "allow_to_create_new_object": "Ermöglicht ein neues Objekt im Beziehungsfeld zu erstellen",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "inherited_default_value_warning": "Der Standardwert wird verwendet, wenn entweder die Vererbung deaktiviert ist oder der übergeordnete Wert leer ist",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Geben Sie den Controller und die Aktion in folgendem Format ein: \n<br>AppBundle\\Controller\\ProductController: slugAction",
+    "controller_action": "Controller & Aktion",
+    "implements_interfaces": "Implements interface(s)"
 }

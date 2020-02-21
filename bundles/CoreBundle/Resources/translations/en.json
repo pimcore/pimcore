@@ -133,6 +133,8 @@
   "casesensitive": "case-sensitive",
   "path_aliases": "Path Aliases",
   "path": "Path",
+  "create_redirects": "Create redirects to keep URLs working (incl. children)?",
+  "auto_create": "Auto create",
   "pretty_url": "Pretty URL",
   "pretty_url_label": "Pretty URL (overrides path from tree-structure)",
   "search_engine_optimization": "Search Engine Optimization",
@@ -437,6 +439,7 @@
   "initializing": "Initializing ...",
   "please_select_a_type": "Please select a type",
   "filter": "Filter",
+  "test_url": "Test URL",
   "field": "Field",
   "operator": "Operator",
   "apply": "Apply",
@@ -743,6 +746,8 @@
   "import_errors": "Some errors occurred. Check the import report!",
   "import_is_done": "Import is done",
   "import_file_prefix": "Prefix for new files",
+  "skip_if_exists": "Skip row if exists",
+  "php_class_or_service": "Class or service name",
   "create_parents": "Create parents",
   "fullpath": "Full Path",
   "create_on_demand": "Create on demand",
@@ -933,6 +938,7 @@
   "fallback": "Fallback",
   "add_site": "Add Site",
   "domain_label_width": "Domain label width",
-  "Uncategorized": "Uncategorized",
-  "enable_grid_locking": "Enable grid locking"
+  "enable_grid_locking": "Enable grid locking",
+  "redirect_performance_warning": "Using this feature has very bad effects on the performance of the entire application, do you really want to continue?",
+  "Uncategorized": "Uncategorized"
 }

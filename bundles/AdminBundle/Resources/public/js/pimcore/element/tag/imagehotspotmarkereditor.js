@@ -693,7 +693,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 }
                 menu.push(
                     {
-                        text: ts(templateMenuName),
+                        text: t(templateMenuName),
                         iconCls: "pimcore_icon_hotspotmarker_template",
                         handler: function (templateConfig) {
                             var elId = callbackFunction(templateConfig);

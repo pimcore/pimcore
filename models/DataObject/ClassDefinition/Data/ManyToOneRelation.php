@@ -352,6 +352,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
+
+        return '';
     }
 
     /**
@@ -457,31 +459,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if ($data instanceof Element\ElementInterface) {
-            if (!array_key_exists($data->getCacheTag(), $tags)) {
-                $tags = $data->getCacheTags($tags);
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @param Element\AbstractElement|null $data
      *
      * @return array
@@ -583,8 +560,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+            if (!$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
@@ -609,8 +586,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return mixed
@@ -623,7 +600,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $assetUploadPath
+     * @param string $assetUploadPath
      *
      * @return $this
      */
@@ -761,6 +738,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" possible
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -778,7 +757,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
 
-            return;
+            return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }

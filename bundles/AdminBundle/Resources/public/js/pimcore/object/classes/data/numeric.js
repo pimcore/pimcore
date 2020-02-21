@@ -148,6 +148,10 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                     decimalPrecision: source.datax.decimalPrecision
                 });
         }
+    },
+
+    supportsUnique: function() {
+        return true;
     }
 
 });

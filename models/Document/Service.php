@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
+ * @method removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
@@ -611,10 +612,10 @@ class Service extends Model\Element\Service
 
         $url = $hostUrl . $doc->getRealFullPath();
 
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($config->general->http_auth) {
-            $username = $config->general->http_auth->username;
-            $password = $config->general->http_auth->password;
+        $config = \Pimcore\Config::getSystemConfiguration('general');
+        if (isset($config['http_auth'])) {
+            $username = $config['http_auth']['username'] ?? null;
+            $password = $config['http_auth']['password'] ?? null;
             if ($username && $password) {
                 $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
             }

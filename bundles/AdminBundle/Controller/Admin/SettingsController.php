@@ -335,6 +335,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
+        //TODO use Pimcore\Config service when legacy mapping is removed
         $values = Config::getSystemConfig();
 
         $timezones = \DateTimeZone::listIdentifiers();
@@ -477,7 +478,6 @@ class SettingsController extends AdminController
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
-                'create_redirect_when_moved' => $values['documents.createredirectwhenmoved'],
                 'allow_trailing_slash' => $values['documents.allowtrailingslash'],
                 'generate_preview' => $values['documents.generatepreview']
             ],

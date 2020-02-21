@@ -53,7 +53,7 @@
     "target_group": "Cel grupy",
     "children": "Dzieci",
     "elements_to_export": "Elementy do eksportu",
-    "xliff_export_documents": "If you want to translate eg. the whole /en tree to a different language, first create a copy of /en, eg. /de then export /de for translation. When importing the translated XLIFF the English contents in /de will be overwritten by the German translation in the XLIFF file.",
+    "xliff_export_documents": "If you want to translate eg. the whole /en tree to a different language, first create a copy of the /en tree. Afterwards use the copied tree in the export and select the source language 'en' and the target language 'de'. When importing the translated XLIFF file, the contents of the exported documents (in this case the copied tree documents) will be overwritten by the German translations in the XLIFF file.",
     "xliff_export_objects": "Only fields inside a Localized Fields container are recognized. When importing the translated XLIFF the source language will be untouched, only the target language fields will be overwritten. Use Relations checkbox to include Objects & Documents from Dependencies e.g. Relation fields, Properties etc.",
     "xliff_export_notice": "Tutaj można wybrać dokumenty i przedmioty, które chcesz wyeksportować do tłumaczeń zewnętrznych",
     "important_notice": "Ważna uwaga",
@@ -380,7 +380,6 @@
     "user_apikey_description": "Klucz API wymagany do dostępu do usługi",
     "apikey": "Klucz API",
     "lazy_loading": "leniwe ładowanie",
-    "lazy_loading_description": "Leniwe ładowanie oznacza że powiązane obiekty nie są ładowane na początku gdy obiekt jest tworzony. Podczas dostępu do obiektu programowo, powiązania wczytywane są podczas wywołania metody get.",
     "non_owner_description": "Obiekty nie właściciele reprezentują relacje do innych obiektów w taki sam sposób jak obiekty. Różnica polega na tym, że obiekt nie właściciel nie jest właścicielem danych, jest tylko widokiem na dane zebrane w innych obiektach. Należy wybrać właściciela i pole danych, w którym dane są oryginalnie zapisane.",
     "allow_variants": "Zezwalaj na warianty",
     "show_variants": "Pokaż możliwości na drzewie",
@@ -696,7 +695,6 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
     "provide_split_view": "Provide Split View",
@@ -715,7 +713,10 @@
     "geopolyline": "Geographic Polyline",
     "classificationstore_error_group_exists_msg": "Group with this name already exists",
     "classificationstore_group_by_key": "Group by key",
-    "cache_raw_relation_data": "Cache Raw Relation Data",
     "allow_to_create_new_object": "Allow to create a new object in relation field",
-    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty"
+    "inherited_default_value_warning": "The default value is used if either inheritance is deactivated or if the parent value is empty",
+    "url_slug": "URL Slug",
+    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Controller & Action",
+    "implements_interfaces": "Implements interface(s)"
 }

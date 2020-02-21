@@ -28,7 +28,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
 
-        return {text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                                     this.applyPermissionStyle(key, value, metaData, record);

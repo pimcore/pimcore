@@ -33,11 +33,6 @@ abstract class AbstractRelations extends Data implements
     const RELATION_ID_SEPARATOR = '$$';
 
     /**
-     * @var bool
-     */
-    public $lazyLoading;
-
-    /**
      * Set of allowed classes
      *
      * @var array
@@ -74,23 +69,11 @@ abstract class AbstractRelations extends Data implements
      */
     public function getLazyLoading()
     {
-        return $this->lazyLoading;
+        return true;
     }
 
     /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        $this->lazyLoading = $lazyLoading;
-
-        return $this;
-    }
-
-    /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @throws \Exception
@@ -145,10 +128,10 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($object, $params = [])
     {
@@ -156,11 +139,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
-                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
-            } else {
-                return null;
-            }
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
@@ -218,7 +197,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -274,7 +253,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -407,7 +386,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -426,7 +405,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {

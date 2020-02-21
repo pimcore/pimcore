@@ -198,17 +198,17 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param \DateTime $data
      * @param Model\DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return null
+     * @return int|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -373,7 +373,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /** See parent class.
      *
      * @param array $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|Date
@@ -390,7 +390,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null

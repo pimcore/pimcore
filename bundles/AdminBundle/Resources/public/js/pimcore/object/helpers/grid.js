@@ -245,7 +245,7 @@ pimcore.object.helpers.grid = Class.create({
                     dataIndex: 'key', hidden: !showKey, filter: 'string', locked: this.getColumnLock(field)});
             } else if(field.key == "classname") {
                 gridColumns.push({text: t("class"), width: this.getColumnWidth(field, 200), sortable: true,
-                    dataIndex: 'classname', locked: this.getColumnLock(field),renderer: function(v){return ts(v);}/*, hidden: true*/});
+                    dataIndex: 'classname', locked: this.getColumnLock(field), renderer: function(v){return t(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
                 gridColumns.push({text: t("creationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "creationDate", filter: 'date', editable: false, locked: this.getColumnLock(field), renderer: function(d) {
@@ -423,7 +423,7 @@ pimcore.object.helpers.grid = Class.create({
 
                 result += '<tr><td>&nbsp;</td>';
                 for (let i = 0; i < columnKeys.length; i++) {
-                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + ts(columnKeys[i]) + '</td>';
+                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + t(columnKeys[i]) + '</td>';
                 }
                 result += '</tr>';
 

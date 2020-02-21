@@ -143,7 +143,7 @@ pimcore.object.helpers.classTree = Class.create({
                             brickField: data[keys[i]].brickField
                         };
 
-                        text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
+                        text = t(data[keys[i]].nodeLabel) + " " + t("columns");
 
                     }
                     var baseNode = {
@@ -253,7 +253,7 @@ pimcore.object.helpers.classTree = Class.create({
                 }
             }
 
-            var text = ts(initData.title);
+            var text = t(initData.title);
             if (showFieldname) {
                 if (brickDescriptor && brickDescriptor.insideBrick && brickDescriptor.insideLocalizedFields) {
                     text = text + "(" + brickDescriptor.brickType + "." + initData.name + ")";

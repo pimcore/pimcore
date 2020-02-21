@@ -445,7 +445,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * display the quantity value field data in the grid
      *
      * @param Model\DataObject\Data\QuantityValue|null $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array

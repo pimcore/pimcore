@@ -40,9 +40,6 @@ use Pimcore\Tool\Serialize;
  */
 class Version extends AbstractModel
 {
-    /** @var bool for now&testing, make it possible to disable it */
-    protected static $condenseVersion = true;
-
     /**
      * @var int
      */
@@ -262,14 +259,11 @@ class Version extends AbstractModel
      */
     public function marshalData($data)
     {
-        if (!self::isCondenseVersionEnabled()) {
-            return $data;
-        }
-
         $sourceType = Service::getType($data);
         $sourceId = $data->getId();
 
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
@@ -756,21 +750,5 @@ class Version extends AbstractModel
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isCondenseVersionEnabled()
-    {
-        return self::$condenseVersion;
-    }
-
-    /**
-     * @param bool $condenseVersion
-     */
-    public static function setCondenseVersion($condenseVersion)
-    {
-        self::$condenseVersion = $condenseVersion;
     }
 }

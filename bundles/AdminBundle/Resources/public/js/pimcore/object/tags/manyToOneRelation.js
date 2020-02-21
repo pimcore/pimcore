@@ -54,7 +54,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
+            text: t(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },

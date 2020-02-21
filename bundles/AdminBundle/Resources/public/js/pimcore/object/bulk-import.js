@@ -203,7 +203,7 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
                 });
             }
 
-            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + ts(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
+            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + t(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
 
             Ext.Ajax.request({
                 url: "/admin/class/bulk-commit",

@@ -139,8 +139,6 @@ class ApplicationLogger implements LoggerInterface
      * @param mixed $level
      * @param string $message
      * @param array $context
-     *
-     * @return null
      */
     public function log($level, $message, array $context = [])
     {
@@ -185,8 +183,6 @@ class ApplicationLogger implements LoggerInterface
                 $logger->log($level, $message, $context);
             }
         }
-
-        return null;
     }
 
     /**

@@ -74,7 +74,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -194,6 +194,13 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     draggroup: 'element'
                 },
                 listeners: {
+                    drop: function (node, data, dropRec, dropPosition) {
+                        // this is necessary to avoid endless recursion when long lists are sorted via d&d
+                        // TODO: investigate if there this is already fixed 6.2
+                        if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
+                            this.object.toolbar.items.items[0].focus();
+                        }
+                    }.bind(this),
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)

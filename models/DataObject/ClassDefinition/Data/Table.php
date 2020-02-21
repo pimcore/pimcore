@@ -567,7 +567,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param array|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -619,7 +619,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

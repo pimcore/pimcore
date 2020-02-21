@@ -496,7 +496,7 @@ class TranslationController extends AdminController
 
     /**
      * @param array $joins
-     * @param Translation\AbstractTranslation $list
+     * @param Translation\AbstractTranslation\Listing $list
      * @param string $tableName
      * @param array $filters
      */
@@ -896,12 +896,17 @@ class TranslationController extends AdminController
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
-            $importerService->import($attributeSet);
+            if ($attributeSet) {
+                $importerService->import($attributeSet);
+            } else {
+                Logger::warning(sprintf('Could not resolve element %s', $id));
+            }
         } catch (\Exception $e) {
             Logger::err($e->getMessage());
 
             return $this->adminJson([
-                'success' => false
+                'success' => false,
+                'message' => $e->getMessage()
             ]);
         }
 

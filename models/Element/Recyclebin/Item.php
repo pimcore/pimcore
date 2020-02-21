@@ -263,9 +263,7 @@ class Item extends Model\AbstractModel
 
         // for all
         $element->getProperties();
-        if (method_exists($element, 'getScheduledTasks')) {
-            $element->getScheduledTasks();
-        }
+        $element->getScheduledTasks();
 
         if ($element instanceof Element\ElementDumpStateInterface) {
             $element->setInDumpState(true);
@@ -344,6 +342,7 @@ class Item extends Model\AbstractModel
     {
         //for full dump of relation fields in container types
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {

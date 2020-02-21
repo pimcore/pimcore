@@ -39,7 +39,6 @@ class ConfigWriter
                 'error_pages' => [
                     'default' => '/'
                 ],
-                'create_redirect_when_moved' => false,
                 'allow_trailing_slash' => 'no',
                 'generate_preview' => false
             ],

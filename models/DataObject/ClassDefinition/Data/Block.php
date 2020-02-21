@@ -21,10 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -196,6 +197,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'containerKey' => $this->getName(),
                                 'classId' => $object ? $object->getClassId() : null]);
                             $blockElementRaw['data'] = $data;
+                        }
+                    } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation && is_array($blockElementRaw['data'])) {
+                        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                            $blockElementRaw['data'] = Element\Service::filterMultipleElements($blockElementRaw['data'], $object, $elementName);
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
@@ -533,7 +539,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param array|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -607,7 +613,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -633,26 +639,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function getLayout()
     {
         return $this->layout;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues($data = [], $blockedKeys = [])
-    {
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -977,7 +963,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($container, $params = [])
     {
@@ -986,11 +972,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
 
         if ($container instanceof DataObject\Concrete) {
-            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
-                $data = $db->fetchOne($query);
-                $data = $this->getDataFromResource($data, $container, $params);
-            }
+            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
@@ -1031,7 +1015,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -1050,7 +1034,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -1183,7 +1167,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($blockDefinitions as $field) {
                 if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
                                                         && $field->getLazyLoading()) {
-                    $field->setLazyLoading(false);
+
+                    // Lazy loading inside blocks isn't supported, turn it off if possible
+                    if (method_exists($field, 'setLazyLoading')) {
+                        $field->setLazyLoading(false);
+                    }
                 }
             }
         }

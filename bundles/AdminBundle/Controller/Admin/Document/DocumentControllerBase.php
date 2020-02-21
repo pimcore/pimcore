@@ -18,10 +18,14 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Property;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -32,6 +36,26 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 {
     use AdminStyleTrait;
     use ApplySchedulerDataTrait;
+
+    protected function preSendDataActions(&$data, Model\Document $document) {
+        $data['versionDate'] = $document->getModificationDate();
+        $data['userPermissions'] = $document->getUserPermissions();
+        $data['idPath'] = Element\Service::getIdPath($document);
+
+        $data['php'] = [
+            'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
+            'interfaces' => array_values(class_implements($document))
+        ];
+
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
+        $event = new GenericEvent($this, [
+            'data' => $data,
+            'document' => $document
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument('data');
+    }
 
     /**
      * @param Request $request
@@ -101,9 +125,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Request $request
-     * @param Model\Document|Model\Document\PageSnippet $document
+     * @param Model\Document\PageSnippet $document
      */
-    protected function addDataToDocument(Request $request, Model\Document $document)
+    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
         if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
@@ -238,11 +262,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param Model\Document $document
+     * @param Model\Document\PageSnippet $document
      *
-     * @return Model\Document
+     * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {

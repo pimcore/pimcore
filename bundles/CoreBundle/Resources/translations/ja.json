@@ -727,7 +727,6 @@
     "setup_two_factor": "setup_two_factor",
     "2fa_setup_message": "2fa_setup_message",
     "set_focal_point": "set_focal_point",
-    "toggle_image_features": "toggle_image_features",
     "quicksearch": "クイックサーチ",
     "standard_preview": "standard_preview",
     "upload_new_version": "upload_new_version",
@@ -924,5 +923,18 @@
     "batch_remove_selected": "Batch remove from selected",
     "batch_remove_from": "Remove data from all",
     "batch_remove_selected_from": "Remove data from selected",
-    "force_picture_html_tag": "Force &lt;picture&gt; HTML tag"
+    "force_picture_html_tag": "Force &lt;picture&gt; HTML tag",
+    "unit_tooltip": "Alternative units tooltip",
+    "toggle_image_features_visibility": "Toggle Image Feature Visibility",
+    "detect_image_features": "Detect Image Features",
+    "remove_image_features": "Remove Image Features",
+    "available_sites": "Available Sites",
+    "fallback": "Fallback",
+    "add_site": "Add Site",
+    "domain_label_width": "Domain label width",
+    "complete_required_fields": "Please complete following required fields to publish the document:",
+    "Uncategorized": "Uncategorized",
+    "skip_if_exists": "Skip row if exists",
+    "php_class_or_service": "Class or service name",
+    "redirect_performance_warning": "Using this feature has very bad effects on the performance of the entire application, do you really want to continue?"
 }

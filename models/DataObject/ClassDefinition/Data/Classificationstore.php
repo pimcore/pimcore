@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
@@ -190,10 +191,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $data
+     * @param DataObject\Classificationstore $data
      * @param DataObject\Concrete $object
-     * @param $fieldData
-     * @param $metaData
+     * @param array $fieldData structure: [language][groupId][keyId] = field data
+     * @param array $metaData structure: [language][groupId][keyId] = array with meta info
      * @param int $level
      *
      * @return array
@@ -366,7 +367,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param $data
+     * @param DataObject\Classificationstore|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -397,13 +398,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**
@@ -426,6 +427,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
+                    /** @var ResourcePersistenceAwareInterface $fieldDefinition */
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                     foreach ($values as $language => $value) {
@@ -671,7 +673,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -696,31 +698,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $field
+     * @param Data $field
      */
     public function addReferencedField($field)
     {
         $this->referencedFields[] = $field;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues($data = [], $blockedKeys = [])
-    {
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -865,7 +847,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $layout
+     * @param mixed $layout
      *
      * @return $this
      */
@@ -1004,7 +986,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $value = $data->getLocalizedKeyValue($activeGroupId, $keyId, $validLanguage, true);
                                 DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
                             } else {
-                                $value = $items[$activeGroupId][$keyId][$validLanguage];
+                                $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
 
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
@@ -1040,7 +1022,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -1051,8 +1033,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -1134,7 +1116,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|null $object
      * @param array $mergedMapping
      *
      * @return array|null
@@ -1174,7 +1156,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $activeGroups
      *
      * @return array|bool
@@ -1214,7 +1196,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1393,7 +1375,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param $hideEmptyData bool
+     * @param bool $hideEmptyData
      *
      * @return $this
      */

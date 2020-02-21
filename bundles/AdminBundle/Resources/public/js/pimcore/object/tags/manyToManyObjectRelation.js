@@ -63,7 +63,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
@@ -257,7 +257,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         if (allowedClasses && allowedClasses.length > 0) {
             for (i = 0; i < allowedClasses.length; i++) {
                 collectionMenu.push({
-                    text: ts(allowedClasses[i]),
+                    text: t(allowedClasses[i]),
                     handler: this.create.bind(this, allowedClasses[i]),
                     iconCls: "pimcore_icon_fieldcollection"
                 });
@@ -431,8 +431,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
-                        var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -630,7 +628,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             viewConfig: {
             enableTextSelection: true,
                 listeners: {
-                    refresh: function (gridview) {
+                    afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
@@ -831,7 +829,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
-        pimcore.helpers.requestNicePathData(
+
+        var nicePathRequested = pimcore.helpers.requestNicePathData(
             {
                 type: "object",
                 id: this.object.id
@@ -857,9 +856,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         // - https://github.com/pimcore/pimcore/pull/4337
         // - https://github.com/pimcore/pimcore/pull/4909
         // - https://github.com/pimcore/pimcore/pull/5367
-        window.setTimeout(function() {
-            this.component.getView().refresh();
-        }.bind(this), 500);
+        if (nicePathRequested) {
+            window.setTimeout(function () {
+                this.component.getView().refresh();
+            }.bind(this), 500);
+        }
     },
 
     normalizeTargetData: function (targets) {

@@ -309,7 +309,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @param string $language
      * @param Model\DataObject\ClassDefinition\Data $fielddefinition
      *
-     * @return null
+     * @return mixed
      */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {

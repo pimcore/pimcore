@@ -289,7 +289,7 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return ts(rec.data.name);
+                    return t(rec.data.name);
                 },
                 depends : ['name']
             },
@@ -348,7 +348,7 @@ Ext.onReady(function () {
         {name: 'text', allowBlank: false},
         {
             name: "translatedText", convert: function (v, rec) {
-                return ts(rec.data.text);
+                return t(rec.data.text);
             }
         },
         {name: 'icon'},
@@ -769,7 +769,7 @@ Ext.onReady(function () {
                                 rootVisible: treeConfig.showroot,
                                 treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
                                 treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " pimcore_icon_material",
-                                treeTitle: ts(treeConfig.name),
+                                treeTitle: t(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}
                             }, treeConfig);

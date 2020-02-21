@@ -472,6 +472,14 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
+     * @return bool
+     */
+    public function isLoaded()
+    {
+        return $this->data !== null;
+    }
+
+    /**
      * @return array
      */
     public function getData()

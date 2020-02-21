@@ -32,6 +32,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method \Pimcore\Model\Asset\Dao getDao()
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
+ * @method string|null getCurrentFullPath()
  */
 class Asset extends Element\AbstractElement
 {
@@ -221,7 +222,7 @@ class Asset extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
@@ -260,7 +261,7 @@ class Asset extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video|null
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {
@@ -844,8 +845,9 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            if (Config::getSystemConfig()->assets->versions->steps
-                || Config::getSystemConfig()->assets->versions->days
+            $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
+            if (!empty($assetsConfig['versions']['steps'])
+                || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -1209,6 +1211,18 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Alias for setFilename()
+     *
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        return $this->setFilename($key);
+    }
+
+    /**
      * @param int $modificationDate
      *
      * @return $this
@@ -1556,7 +1570,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $key
      *
-     * @return null
+     * @return mixed
      */
     public function getCustomSetting($key)
     {
@@ -1757,7 +1771,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
+     * @return Schedule\Task[]
      */
     public function getScheduledTasks()
     {
@@ -1873,7 +1887,7 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -1998,5 +2012,17 @@ class Asset extends Element\AbstractElement
         }
 
         return $dependencies;
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->parent = null;
+        $this->versions = null;
+        $this->hasSiblings = null;
+        $this->siblings = null;
+        $this->dependencies = null;
+        $this->scheduledTasks = null;
+        $this->closeStream();
     }
 }

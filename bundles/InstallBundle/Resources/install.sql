@@ -415,7 +415,7 @@ CREATE TABLE `recyclebin` (
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(100) NOT NULL,
+  `type` ENUM('entire_uri','path_query','path','auto_create') NOT NULL,
   `source` varchar(255) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
@@ -432,8 +432,8 @@ CREATE TABLE `redirects` (
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
-  KEY `active` (`active`)
-) DEFAULT CHARSET=utf8mb4;
+  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sanitycheck`;
 CREATE TABLE `sanitycheck` (
@@ -978,7 +978,7 @@ CREATE TABLE `object_url_slugs` (
       `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
       `ownername` VARCHAR(70) NOT NULL DEFAULT '',
       `position` VARCHAR(70) NOT NULL DEFAULT '0',
-      `slug` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* slug in utf8 (3-byte) using the full key length of 3072 bytes */
+      `slug` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, /* slug in utf8 (3-byte) using the full key length of 3072 bytes */
       `siteId` INT(11) NOT NULL DEFAULT '0',
       PRIMARY KEY (`slug`, `siteId`),
       INDEX `index` (`index`),

@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Controller\Config\ConfigNormalizer;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
@@ -50,29 +49,21 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     private $configNormalizer;
 
     /**
-     * @var ConnectionInterface
-     */
-    private $db;
-
-    /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
      * @param ConfigNormalizer $configNormalizer
-     * @param ConnectionInterface $db
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        ConfigNormalizer $configNormalizer,
-        ConnectionInterface $db
+        ConfigNormalizer $configNormalizer
     ) {
         $this->documentService = $documentService;
         $this->siteResolver = $siteResolver;
         $this->requestHelper = $requestHelper;
         $this->configNormalizer = $configNormalizer;
-        $this->db = $db;
     }
 
     /**

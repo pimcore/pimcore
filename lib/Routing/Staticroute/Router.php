@@ -65,10 +65,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $localeParams = [];
 
-    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer, Config $config)
     {
         $this->context = $context;
         $this->configNormalizer = $configNormalizer;
+        $this->config = $config;
     }
 
     /**
@@ -147,7 +153,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
         if (isset($parameters['site'])) {
-            $config = Config::getSystemConfig();
             $site = $parameters['site'];
 
             if (!empty($site)) {
@@ -166,8 +171,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                     ]);
                 }
             } else {
-                if ($needsHostname && !empty($config->general->domain)) {
-                    $hostname = $config->general->domain;
+                if ($needsHostname && !empty($this->config['general']['domain'])) {
+                    $hostname = $this->config['general']['domain'];
                 }
             }
         }
