@@ -136,33 +136,32 @@ class ListingTest extends ModelTestCase
         $db = Db::get();
 
         // prepare data creates 7 objects + 1 root => 8
-        $count = $db->fetchOne("SELECT count(*) from objects");
-        $this->assertEquals(8, $count, "expected 8 objects");
+        $count = $db->fetchOne('SELECT count(*) from objects');
+        $this->assertEquals(8, $count, 'expected 8 objects');
 
         $list = new DataObject\Listing();
         $totalCount = $list->getTotalCount();
-        $this->assertEquals(8, $totalCount, "expected 8 objects");
+        $this->assertEquals(8, $totalCount, 'expected 8 objects');
 
         $list = new DataObject\Listing();
         $list->setLimit(3);
         $list->setOffset(1);
         $count = $list->getCount();
-        $this->assertEquals(3, $count, "expected 3 objects");
+        $this->assertEquals(3, $count, 'expected 3 objects');
 
         $list = new DataObject\Listing();
         $list->setLimit(10);
         $list->setOffset(1);
         $count = $list->getCount();
-        $this->assertEquals(7, $count, "expected 7 objects");
+        $this->assertEquals(7, $count, 'expected 7 objects');
 
         $list = new DataObject\Listing();
         $list->setLimit(10);
         $list->setOffset(1);
         $list->load();                      // with load
         $count = $list->getCount();
-        $this->assertEquals(7, $count, "expected 7 objects");
+        $this->assertEquals(7, $count, 'expected 7 objects');
         $totalCount = $list->getTotalCount();
-        $this->assertEquals(8, $totalCount, "expected 8 objects");
+        $this->assertEquals(8, $totalCount, 'expected 8 objects');
     }
-
 }

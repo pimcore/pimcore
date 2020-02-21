@@ -103,6 +103,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return count($this->model->getAssets());
         } else {
             $idList = $this->loadIdList();
+
             return count($idList);
         }
     }

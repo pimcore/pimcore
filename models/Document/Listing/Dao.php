@@ -115,6 +115,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return count($this->model->getDocuments());
         } else {
             $idList = $this->loadIdList();
+
             return count($idList);
         }
     }
