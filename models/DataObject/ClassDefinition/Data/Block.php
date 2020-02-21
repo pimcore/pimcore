@@ -200,7 +200,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         }
                     } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation && is_array($blockElementRaw['data'])) {
                         //TODO: move validation to checkValidity & throw exception in Pimcore 7
-                        if (!$fd->getAllowMultipleAssignments()) {
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
                             $blockElementRaw['data'] = Element\Service::filterMultipleElements($blockElementRaw['data'], $object, $elementName);
                         }
                     }
