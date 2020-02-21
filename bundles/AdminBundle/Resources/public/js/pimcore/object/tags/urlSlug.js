@@ -110,20 +110,24 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         });
 
 
-        var domain;
+        var domain = '';
         this.usedSiteIds.push(siteData['siteId']);
 
         if (siteData['siteId'] > 0) {
             domain = siteData['domain'];
-        } else {
+        } else if (pimcore.globalmanager.get("sites").getCount() > 1) {
             domain = t('fallback');
+        }
+
+        if(domain) {
+            domain = " (" + domain + ")";
         }
 
         var title = this.fieldConfig.title ? this.fieldConfig.title : this.fieldConfig.name;
 
         var textConfig = {
             xtype: "textfield",
-            fieldLabel: title + " (" + domain + ")",
+            fieldLabel: title + domain,
             name: "slug",
             labelWidth: 100,
             value: siteData['slug'],
@@ -263,7 +267,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         for (key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
-                value.push([key, textfield.getValue()]);
+                value.push([key, textfield.getValue(), textfield.originalValue]);
             }
         }
 

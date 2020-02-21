@@ -81,6 +81,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $position;
 
     /**
+     * @var null|string
+     */
+    protected $previousSlug;
+
+    /**
      * @var array
      */
     protected static $cache = [];
@@ -135,6 +140,24 @@ class UrlSlug implements OwnerAwareFieldInterface
         $this->slug = $slug;
 
         return $this;
+    }
+
+    /**
+     * @internal
+     * @return string|null
+     */
+    public function getPreviousSlug(): ?string
+    {
+        return $this->previousSlug;
+    }
+
+    /**
+     * @internal
+     * @param string|null $previousSlug
+     */
+    public function setPreviousSlug(?string $previousSlug): void
+    {
+        $this->previousSlug = $previousSlug;
     }
 
     /**
@@ -292,6 +315,7 @@ class UrlSlug implements OwnerAwareFieldInterface
         $slug->setOwnertype($rawItem['ownertype']);
         $slug->setOwnername($rawItem['ownername']);
         $slug->setPosition($rawItem['position']);
+        $slug->setPreviousSlug($rawItem['slug']);
 
         return $slug;
     }

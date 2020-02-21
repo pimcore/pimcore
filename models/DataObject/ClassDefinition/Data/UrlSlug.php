@@ -21,6 +21,7 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\Redirect;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
@@ -91,8 +92,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         $result = [];
-
-        // for now we don't support sites (=> there is just a plain input field in the UI)
         if (is_array($data)) {
             foreach ($data as $slug) {
                 if ($slug instanceof Model\DataObject\Data\UrlSlug) {
@@ -134,6 +133,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $siteId = $item[0];
                 $slug = $item[1];
                 $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
+
+                if($item[2]) {
+                    $slug->setPreviousSlug($item[2]);
+                }
+
                 $result[] = $slug;
             }
         }
@@ -284,6 +288,46 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     }
                     throw $e;
                 }
+            }
+        }
+
+        // check for previous slugs and create redirects
+        if(!is_array($data)) {
+            return;
+        }
+
+        foreach($data as $slug) {
+            if($previousSlug = $slug->getPreviousSlug()) {
+                if($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
+                    continue;
+                }
+
+                $checkSql = "SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto";
+                if ($slug->getSiteId()) {
+                    $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
+                } else {
+                    $checkSql .= ' AND sourceSite IS NULL';
+                }
+
+                $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
+                if(!$existingCheck) {
+                    $redirect = new Redirect();
+                    $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                    $redirect->setRegex(false);
+                    $redirect->setTarget($slug->getSlug());
+                    $redirect->setSource($previousSlug);
+                    $redirect->setStatusCode(301);
+                    $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
+
+                    if ($slug->getSiteId()) {
+                        $redirect->setSourceSite($slug->getSiteId());
+                        $redirect->setTargetSite($slug->getSiteId());
+                    }
+
+                    $redirect->save();
+                }
+
+                $slug->setPreviousSlug(null);
             }
         }
     }
