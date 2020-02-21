@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 6.5.2
+- Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
 
 ## 6.5.0
 

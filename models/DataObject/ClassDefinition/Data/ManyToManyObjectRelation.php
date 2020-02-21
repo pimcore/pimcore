@@ -558,6 +558,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return $publishedList;
         }
 
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
+
         return is_array($data) ? $data : [];
     }
 
