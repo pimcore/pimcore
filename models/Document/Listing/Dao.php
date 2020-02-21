@@ -62,7 +62,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
-    public function getQuery($columns)
+    public function getQuery($columns = '*')
     {
         $select = $this->db->select();
         $select->from(
