@@ -1339,20 +1339,20 @@ pimcore.document.tree = Class.create({
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
                             pageForm.getComponent("key").setValue(el.getValue());
-                        }.bind(this),
+                        }.bind(this)
                     }
                 },{
                     xtype: "textfield",
                     itemId: "name",
                     fieldLabel: t('navigation'),
                     name: 'name',
-                    width: "100%",
+                    width: "100%"
                 },{
                     xtype: "textfield",
                     width: "100%",
                     fieldLabel: t('key'),
                     itemId: "key",
-                    name: 'key',
+                    name: 'key'
                 }]
             });
 
