@@ -500,6 +500,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         return $finalVars;
     }
 
+    public function __clone()
+    {
+        parent::__clone();
+        $this->view = null;
+        $this->document = null;
+    }
+
     /**
      * direct output to the frontend
      *
