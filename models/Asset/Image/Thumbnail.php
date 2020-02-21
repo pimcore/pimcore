@@ -350,6 +350,12 @@ class Thumbnail
                     if (!$fallBackImageThumb) {
                         $fallBackImageThumb = $thumb;
                     }
+
+                    if($isAutoFormat) {
+                        $thumbConfigWebP = clone $thumbConfigRes;
+                        $thumbConfigWebP->setFormat('webp');
+                        $thumb = $image->getThumbnail($thumbConfigWebP, true);
+                    }
                 }
 
                 $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
