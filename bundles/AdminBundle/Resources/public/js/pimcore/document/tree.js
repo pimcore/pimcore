@@ -23,10 +23,6 @@ Ext.define('documentreemodel', {
     }]
 });
 
-const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
-const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------';
-const p = new RegExp(a.split('').join('|'), 'g');
-
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
@@ -1341,7 +1337,8 @@ pimcore.document.tree = Class.create({
                             }.bind(this), 100);
                         },
                         keyup: function (el) {
-                            this.setKeyAndNavigation(el.getValue(), pageForm);
+                            pageForm.getComponent("name").setValue(el.getValue());
+                            pageForm.getComponent("key").setValue(el.getValue());
                         }.bind(this),
                     }
                 },{
@@ -1419,18 +1416,6 @@ pimcore.document.tree = Class.create({
                 }
             }.bind(this, tree, record, type, docTypeId));
         }
-    },
-    
-    setKeyAndNavigation: function(title, pageForm) {
-        var urlFriendlyTitle = title.toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(p, c => b.charAt(a.indexOf(c)))
-            .replace(/[^\w-]+/g, '')
-            .replace(/[-]{2,}/g, '-')
-            .replace(/^-+/, '')
-            .replace(/-+$/, '');
-        pageForm.getComponent("name").setValue(urlFriendlyTitle);
-        pageForm.getComponent("key").setValue(urlFriendlyTitle);
     },
 
     publishDocument: function (tree, record, task) {
