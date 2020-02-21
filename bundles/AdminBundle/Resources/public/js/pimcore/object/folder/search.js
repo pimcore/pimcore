@@ -220,6 +220,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
         var propertyVisibility = klass.get("propertyVisibility");
+        var enableGridLocking = klass.get("enableGridLocking");
 
         var existingFilters;
         if (this.store) {
@@ -381,6 +382,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             store: this.store,
             columns: gridColumns,
             columnLines: true,
+            enableLocking: enableGridLocking,
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             border: true,
@@ -421,11 +423,24 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.grid.on("columnresize", function () {
             this.saveColumnConfigButton.show()
         }.bind(this));
+        this.grid.on("lockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("unlockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
+            if (grid.enableLocking) {
+                var grids = grid.items.items;
+                for (var i = 0; i < grids.length; i++) {
+                    this.updateGridHeaderContextMenu(grids[i]);
+                }
+            } else {
+                this.updateGridHeaderContextMenu(grid);
+            }
         }.bind(this));
 
         this.grid.on("sortchange", function (ct, column, direction, eOpts) {

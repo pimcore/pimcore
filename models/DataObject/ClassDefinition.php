@@ -173,6 +173,11 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
+     * @var bool
+     */
+    public $enableGridLocking = true;
+
+    /**
      * @param string $id
      *
      * @return null|ClassDefinition
@@ -1326,4 +1331,21 @@ class ClassDefinition extends Model\AbstractModel
 
         return $generator;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
+    }
+    
 }

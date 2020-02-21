@@ -933,5 +933,6 @@
   "fallback": "Fallback",
   "add_site": "Add Site",
   "domain_label_width": "Domain label width",
-  "Uncategorized": "Uncategorized"
+  "Uncategorized": "Uncategorized",
+  "enable_grid_locking": "Enable grid locking"
 }

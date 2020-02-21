@@ -498,6 +498,7 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
+                            'locked' => $sc['locked'],
                             'position' => $sc['position']];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
@@ -588,6 +589,7 @@ class DataObjectHelperController extends AdminController
                                             $fieldConfig['width'] = $sc['width'];
                                         }
 
+                                        $fieldConfig['locked'] = $sc['locked'];
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
