@@ -338,6 +338,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     *
      * @param array $data
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param string $fieldname

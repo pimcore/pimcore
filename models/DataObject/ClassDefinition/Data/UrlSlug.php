@@ -134,7 +134,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $slug = $item[1];
                 $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
 
-                if($item[2]) {
+                if ($item[2]) {
                     $slug->setPreviousSlug($item[2]);
                 }
 
@@ -292,17 +292,17 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         // check for previous slugs and create redirects
-        if(!is_array($data)) {
+        if (!is_array($data)) {
             return;
         }
 
-        foreach($data as $slug) {
-            if($previousSlug = $slug->getPreviousSlug()) {
-                if($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
+        foreach ($data as $slug) {
+            if ($previousSlug = $slug->getPreviousSlug()) {
+                if ($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
                     continue;
                 }
 
-                $checkSql = "SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto";
+                $checkSql = 'SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto';
                 if ($slug->getSiteId()) {
                     $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
                 } else {
@@ -310,7 +310,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 }
 
                 $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
-                if(!$existingCheck) {
+                if (!$existingCheck) {
                     $redirect = new Redirect();
                     $redirect->setType(Redirect::TYPE_AUTO_CREATE);
                     $redirect->setRegex(false);

@@ -351,7 +351,7 @@ class Thumbnail
                         $fallBackImageThumb = $thumb;
                     }
 
-                    if($isAutoFormat) {
+                    if ($isAutoFormat) {
                         $thumbConfigWebP = clone $thumbConfigRes;
                         $thumbConfigWebP->setFormat('webp');
                         $thumb = $image->getThumbnail($thumbConfigWebP, true);
