@@ -602,7 +602,8 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            if (!empty($hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'])) {
+            $hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'];
+            if (empty($hostname)) {
                 if (!$hostname = \Pimcore\Tool::getHostname()) {
                     throw new \Exception('No hostname available');
                 }
