@@ -141,7 +141,6 @@
     "mobile": "Mobil",
     "group_by_path": "Nach Pfad gruppieren",
     "flush": "Ausgabepuffer leeren (flush)",
-    "create_redirect_for_moved_renamed_page": "Weiterleitung automatisch erzeugen, wenn eine Seite verschoben oder umbenannt wird.",
     "show_close_warning": "Warnung beim schließen anzeigen",
     "matching_text": "Textübereinstimmung",
     "any": "irgend",
@@ -718,5 +717,5 @@
     "url_slug": "URL Slug",
     "url_slug_datatype_info": "Geben Sie den Controller und die Aktion in folgendem Format ein: \n<br>AppBundle\\Controller\\ProductController: slugAction",
     "controller_action": "Controller & Aktion",
-    "implements_interfaces": "Implements interface(s)"
+    "implements_interfaces": "Implementiert(e) Schnittstelle(n)"
 }
