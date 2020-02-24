@@ -307,7 +307,7 @@ class Thumbnail
 
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
-            if(isset($attributes['srcset'])) {
+            if (isset($attributes['srcset'])) {
                 $attributes['data-srcset'] = $attributes['srcset'];
             }
             $attributes['src'] = $previewDataUri;
@@ -362,7 +362,7 @@ class Thumbnail
                     }
                 }
 
-                if($thumb) {
+                if ($thumb) {
                     $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                     if ($mediaQuery) {
                         // currently only max-width is supported, so we replace the width indicator (400w) out of the name
