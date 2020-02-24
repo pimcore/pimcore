@@ -23,7 +23,6 @@ Ext.define('documentreemodel', {
     }]
 });
 
-
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
@@ -1326,10 +1325,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    itemId: "title",
+                    fieldLabel: t('title'),
+                    name: 'title',
                     width: "100%",
-                    fieldLabel: t('key'),
-                    itemId: "key",
-                    name: 'key',
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -1339,7 +1338,8 @@ pimcore.document.tree = Class.create({
                         },
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
-                        }
+                            pageForm.getComponent("key").setValue(el.getValue());
+                        }.bind(this)
                     }
                 },{
                     xtype: "textfield",
@@ -1349,10 +1349,10 @@ pimcore.document.tree = Class.create({
                     width: "100%"
                 },{
                     xtype: "textfield",
-                    itemId: "title",
-                    fieldLabel: t('title'),
-                    name: 'title',
-                    width: "100%"
+                    width: "100%",
+                    fieldLabel: t('key'),
+                    itemId: "key",
+                    name: 'key'
                 }]
             });
 
