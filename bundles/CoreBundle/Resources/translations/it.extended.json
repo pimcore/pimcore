@@ -141,7 +141,6 @@
     "mobile": "Mobile",
     "group_by_path": "Raggruppa per percorso",
     "flush": "Svuota",
-    "create_redirect_for_moved_renamed_page": "Crea automaticamente una redirezione quando la pagina viene spostata o rinominata",
     "show_close_warning": "Mostra avvisi di chiusura",
     "matching_text": "Testo corrispondente",
     "any": "Qualunque",
