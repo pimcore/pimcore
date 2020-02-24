@@ -83,9 +83,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     if (child.data.width) {
                         obj.width = child.data.width;
                     }
-                    if (child.data.locked) {
-                        obj.locked = child.data.locked;
-                    }
+                }
+
+                if (child.data.locked) {
+                    obj.locked = child.data.locked;
                 }
 
                 this.data.columns.push(obj);
@@ -204,6 +205,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                         continue;
                     }
                     child = child[0];
+
                 } else {
                     var text = t(nodeConf.label);
 
@@ -223,10 +225,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     if (nodeConf.width) {
                         child.width = nodeConf.width;
                     }
-                    if (nodeConf.locked) {
-                        child.locked = nodeConf.locked;
-                    }
                 }
+
+                if (nodeConf.locked) {
+                    child.locked = nodeConf.locked;
+                }
+
                 childs.push(child);
             }
 

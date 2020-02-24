@@ -259,7 +259,7 @@ pimcore.object.helpers.grid = Class.create({
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
                 if (fields[i].isOperator) {
-                    var operatorColumnConfig = {text: field.attributes.label ? field.attributes.label : field.attributes.key, width: field.width ? field.width : 200, sortable: false,
+                    var operatorColumnConfig = {text: field.attributes.label ? field.attributes.label : field.attributes.key, width: field.width ? field.width : 200, locked: this.getColumnLock(field), sortable: false,
                         dataIndex: fields[i].key, editable: false};
 
                     if (field.attributes.renderer && pimcore.object.tags[field.attributes.renderer]) {
