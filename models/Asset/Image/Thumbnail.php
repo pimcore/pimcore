@@ -307,7 +307,9 @@ class Thumbnail
 
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
-            $attributes['data-srcset'] = $attributes['srcset'];
+            if(isset($attributes['srcset'])) {
+                $attributes['data-srcset'] = $attributes['srcset'];
+            }
             $attributes['src'] = $previewDataUri;
             unset($attributes['srcset']);
         }
@@ -340,6 +342,8 @@ class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $srcSetValues = [];
                 $sourceTagAttributes = [];
+                $thumb = null;
+
                 foreach ([1, 2] as $highRes) {
                     $thumbConfigRes = clone $thumbConfig;
                     $thumbConfigRes->selectMedia($mediaQuery);
@@ -354,32 +358,34 @@ class Thumbnail
                     if ($isAutoFormat) {
                         $thumbConfigWebP = clone $thumbConfigRes;
                         $thumbConfigWebP->setFormat('webp');
-                        $thumb = $image->getThumbnail($thumbConfigWebP, true);
+                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
                     }
                 }
 
-                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                if ($mediaQuery) {
-                    // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                    $maxWidth = str_replace('w', '', $mediaQuery);
-                    $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
-                    $thumb->reset();
+                if($thumb) {
+                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+                    if ($mediaQuery) {
+                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
+                        $maxWidth = str_replace('w', '', $mediaQuery);
+                        $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        $thumb->reset();
+                    }
+
+                    if ($isLowQualityPreview) {
+                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                        unset($sourceTagAttributes['srcset']);
+                    }
+
+                    $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                    $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                    if ($isAutoFormat) {
+                        $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
+                        $html .= "\t" . $sourceHtmlWebP . "\n";
+                    }
+
+                    $html .= "\t" . $sourceHtml . "\n";
                 }
-
-                if ($isLowQualityPreview) {
-                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                    unset($sourceTagAttributes['srcset']);
-                }
-
-                $sourceTagAttributes['type'] = $thumb->getMimeType();
-
-                $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
-                if ($isAutoFormat) {
-                    $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
-                    $html .= "\t" . $sourceHtmlWebP . "\n";
-                }
-
-                $html .= "\t" . $sourceHtml . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
