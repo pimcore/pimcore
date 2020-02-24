@@ -141,7 +141,6 @@
     "mobile": "Mobilné zariadenie",
     "group_by_path": "Zoskupiť podľa cesty",
     "flush": "Vyprázdniť (flush)",
-    "create_redirect_for_moved_renamed_page": "Automaticky vytvoriť presmerovanie (redirect) keď bude dokument premenovaný alebo presunutý",
     "show_close_warning": "Zobraziť upozornenie pred zatvorením",
     "matching_text": "Odpovedajúci (matching) text",
     "any": "Každý (any)",
