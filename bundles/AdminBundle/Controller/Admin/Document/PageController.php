@@ -64,8 +64,6 @@ class PageController extends DocumentControllerBase
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
-        $page->url = $page->getUrl();
-
         // unset useless data
         $page->setElements(null);
         $page->setChildren(null);
@@ -78,6 +76,8 @@ class PageController extends DocumentControllerBase
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
+
+        $data['url'] = $page->getUrl();
 
         $this->preSendDataActions($data, $page);
 
