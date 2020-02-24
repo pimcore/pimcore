@@ -582,7 +582,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             if ($parent && in_array($parent->getType(), [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT], true)) {
                 /** @var Concrete $parent */
-                if ($parent->getClassId() === $this->getClassId()) {
+                if ($parent->getClassId() === $this->getClassId() || $parent->getClassId() === $classId) {
                     return $parent;
                 }
             }
