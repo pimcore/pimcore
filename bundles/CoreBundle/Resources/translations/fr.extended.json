@@ -141,7 +141,6 @@
     "mobile": "Téléphone portable",
     "group_by_path": "Grouper par chemin",
     "flush": "Vider",
-    "create_redirect_for_moved_renamed_page": "Créer automatiquement une redirection lorsqu'une page est déplacée ou renommée",
     "show_close_warning": "Montrer la notification de fermeture",
     "matching_text": "Texte correspondant",
     "any": "Tout",
@@ -715,8 +714,8 @@
     "classificationstore_group_by_key": "Grouper par clé",
     "allow_to_create_new_object": "Permettre de créer un nouvel objet dans le champ relation",
     "inherited_default_value_warning": "La valeur par défaut est utilisée si l'héritage est désactivé ou si la valeur parent est vide",
-    "url_slug": "URL Slug",
-    "url_slug_datatype_info": "Enter the controller & action in the following format:<br>AppBundle\\Controller\\ProductController:slugAction",
-    "controller_action": "Controller & Action",
-    "implements_interfaces": "Implements interface(s)"
+    "url_slug": "Slug URL",
+    "url_slug_datatype_info": "Entrez le contrôleur et l'action au format suivant : <br>AppBundle\\Controller\\ProductController:slugAction",
+    "controller_action": "Contrôleur et action",
+    "implements_interfaces": "Implémente interface(s)"
 }
