@@ -182,7 +182,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $enableGridLocking = true;
+    public $enableGridLocking = false;
 
     /**
      * @param string $id
