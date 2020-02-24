@@ -65,10 +65,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getQuery($columns = '*')
     {
         $select = $this->db->select();
-        $select->from(
-            [ 'documents' ],
-            $columns
-        );
+        $select->from([ 'documents' ], $columns);
         $this->addConditions($select);
         $this->addOrder($select);
         $this->addLimit($select);

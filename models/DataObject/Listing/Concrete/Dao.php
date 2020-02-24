@@ -62,10 +62,7 @@ class Dao extends Model\DataObject\Listing\Dao
         // init
         $select = $this->db->select();
 
-        $select->from(
-            [$this->getTableName()],
-            [$columns]
-        );
+        $select->from([$this->getTableName()], $columns);
 
         // add joins
         $this->addJoins($select);

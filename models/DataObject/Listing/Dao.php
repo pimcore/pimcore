@@ -53,7 +53,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->db->select();
 
         // create base
-        $select->from([ $this->getTableName() ], $columns);
+        $select->from([$this->getTableName()], $columns);
 
         // add joins
         $this->addJoins($select);
