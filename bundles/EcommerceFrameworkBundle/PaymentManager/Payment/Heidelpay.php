@@ -131,10 +131,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
         // a customerBirthdate attribute is needed if invoice should be used as payment method
         if (method_exists($order, 'getCustomerBirthdate')) {
-            /**
-             * @var Carbon $birthdate
-             */
             if ($birthdate = $order->getCustomerBirthdate()) {
+                /** @var Carbon $birthdate */
                 $customer->setBirthDate($birthdate->format('Y-m-d'));
             }
         }
@@ -202,8 +200,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     public function handleResponse($response)
     {
-        /** @var OnlineShopOrder $order */
-        if (!$order = $response['order']) {
+        $order = $response['order'];
+        if (!$order instanceof OnlineShopOrder) {
             throw new \InvalidArgumentException('no order sent');
         }
 
@@ -341,11 +339,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     public function cancelCharge(OnlineShopOrder $order, PriceInterface $price)
     {
         $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
+        $heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay();
 
-        /**
-         * @var PaymentProviderHeidelPay $heidelpayBrick
-         */
-        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick instanceof PaymentProviderHeidelPay) {
             $result = $heidelpay->cancelChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId(), $price->getAmount()->asNumeric());
 
             return $result->isSuccess();
@@ -364,11 +360,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     public function getMaxCancelAmount(OnlineShopOrder $order)
     {
         $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
+        $heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay();
 
-        /**
-         * @var PaymentProviderHeidelPay $heidelpayBrick
-         */
-        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick instanceof PaymentProviderHeidelPay) {
             $charge = $heidelpay->fetchChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId());
             $totalAmount = $charge->getAmount();
 
@@ -401,7 +395,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
             return null;
         }
 
-        if(empty($paymentInfo->getPaymentReference())) {
+        if (empty($paymentInfo->getPaymentReference())) {
             return null;
         }
 

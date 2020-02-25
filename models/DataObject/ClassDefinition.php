@@ -76,6 +76,13 @@ class ClassDefinition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * Comma separated list of interfaces
+     *
+     * @var string|null
+     */
+    public $implementsInterfaces;
+
+    /**
      * Name of the listing parent class if set
      *
      * @var string
@@ -118,12 +125,12 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var array
+     * @var DataObject\ClassDefinition\Data[]
      */
     public $fieldDefinitions = [];
 
     /**
-     * @var array
+     * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
@@ -173,7 +180,7 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
-     * @param $id
+     * @param string $id
      *
      * @return null|ClassDefinition
      *
@@ -230,8 +237,9 @@ class ClassDefinition extends Model\AbstractModel
                 return self::getById($id);
             }
         } catch (\Exception $e) {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -260,7 +268,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
      */
     public static function cleanupForExport(&$data)
     {
@@ -268,8 +276,8 @@ class ClassDefinition extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
-        if (method_exists($data, 'getChilds')) {
-            $children = $data->getChilds();
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::cleanupForExport($child);
@@ -362,41 +370,54 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner())) {
-                    if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst(
+                            $def->getName()
+                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst(
-                                $def->getName()
-                            ).' ($field, $value, $locale = null, $limit = 0) '."\n";
-                    } else {
-                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
-                            ).'\Listing getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                            ).' getBy'.ucfirst(
+                                $localizedFieldDefinition->getName()
+                            ).' ($value, $locale = null, $limit = 0) '."\n";
                     }
+                } elseif ($def->isFilterable()) {
+                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
+                            $this->getName()
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
                 }
             }
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
-        $cd .= "\n\n";
+        $useParts = [
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
+        ];
 
-        if ($this->getUseTraits()) {
-            $cd .= 'use '.$this->getUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
         $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') && $def->isRemoteOwner(
-                        )) && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -420,7 +441,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner()) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     continue;
                 }
 
@@ -467,13 +488,24 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
 
-        if ($this->getListingUseTraits()) {
-            $cd .= 'use '.$this->getListingUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
+
+        $cd .= "\n\n";
+
+        if (\is_array($this->getFieldDefinitions())) {
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
+                        $cd .= $localizedFieldDefinition->getFilterCode();
+                    }
+                } elseif ($def->isFilterable()) {
+                    $cd .= $def->getFilterCode();
+                }
+            }
+        }
 
         $cd .= "\n\n";
         $cd .= "}\n";
@@ -574,9 +606,9 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $definition
-     * @param $text
-     * @param $level
+     * @param ClassDefinition|ClassDefinition\Data $definition
+     * @param string $text
+     * @param int $level
      *
      * @return string
      */
@@ -632,7 +664,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var $brickDefinition DataObject\Objectbrick\Definition */
+        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 
@@ -672,7 +704,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @return string
      */
@@ -808,7 +840,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|mixed $context
+     * @param array $context
      *
      * @return DataObject\ClassDefinition\Data[]
      */
@@ -840,7 +872,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return DataObject\ClassDefinition\Layout|null
      */
     public function getLayoutDefinitions()
     {
@@ -848,13 +880,13 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $fieldDefinitions
+     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
      *
      * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
 
         return $this;
     }
@@ -873,9 +905,10 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
+     * @param array $context
      *
-     * @return DataObject\ClassDefinition\Data|bool
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinition($key, $context = [])
     {
@@ -888,11 +921,11 @@ class ClassDefinition extends Model\AbstractModel
             return $fieldDefinition;
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param DataObject\ClassDefinition\Layout|null $layoutDefinitions
      *
      * @return $this
      */
@@ -907,7 +940,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     public function extractDataDefinitions($def)
     {
@@ -1137,7 +1170,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $icon
+     * @param string $icon
      *
      * @return $this
      */
@@ -1157,7 +1190,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $propertyVisibility
+     * @param array $propertyVisibility
      *
      * @return $this
      */
@@ -1171,7 +1204,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $previewUrl
+     * @param string $previewUrl
      *
      * @return $this
      */
@@ -1200,14 +1233,18 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $group
+     *
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
+        return $this;
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -1228,10 +1265,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showVariants
+     *
+     * @return $this
      */
     public function setShowVariants($showVariants)
     {
         $this->showVariants = (bool)$showVariants;
+
+        return $this;
     }
 
     /**
@@ -1252,10 +1293,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showAppLoggerTab
+     *
+     * @return $this
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+
+        return $this;
     }
 
     /**
@@ -1268,10 +1313,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $linkGeneratorReference
+     *
+     * @return $this
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
+
+        return $this;
     }
 
     /**
@@ -1282,5 +1331,25 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImplementsInterfaces(): ?string
+    {
+        return $this->implementsInterfaces;
+    }
+
+    /**
+     * @param string|null $implementsInterfaces
+     *
+     * @return $this
+     */
+    public function setImplementsInterfaces(?string $implementsInterfaces)
+    {
+        $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
     }
 }

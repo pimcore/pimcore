@@ -182,7 +182,7 @@ class PhpEngine extends BasePhpEngine
     /**
      * Renders template with current parameters
      *
-     * @param $name
+     * @param string $name
      * @param array $parameters
      *
      * @return string
@@ -200,7 +200,7 @@ class PhpEngine extends BasePhpEngine
     /**
      * Get the current view model
      *
-     * @return ViewModelInterface
+     * @return ViewModelInterface|null
      */
     public function getViewModel()
     {
@@ -208,13 +208,15 @@ class PhpEngine extends BasePhpEngine
         if ($count > 0) {
             return $this->viewModels[$count - 1];
         }
+
+        return null;
     }
 
     /**
      * Get a view model parameter
      *
-     * @param $name
-     * @param null $default
+     * @param string $name
+     * @param mixed|null $default
      *
      * @return mixed|null
      */

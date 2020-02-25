@@ -31,11 +31,18 @@ final class VersionsCleanupTask implements TaskInterface
     private $logger;
 
     /**
-     * @param LoggerInterface $logger
+     * @var Config
      */
-    public function __construct(LoggerInterface $logger)
+    private $config;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param Config $config
+     */
+    public function __construct(LoggerInterface $logger, Config $config)
     {
         $this->logger = $logger;
+        $this->config = $config;
     }
 
     /**
@@ -43,19 +50,19 @@ final class VersionsCleanupTask implements TaskInterface
      */
     public function execute()
     {
-        $conf['document'] = Config::getSystemConfig()->documents->versions;
-        $conf['asset'] = Config::getSystemConfig()->assets->versions;
-        $conf['object'] = Config::getSystemConfig()->objects->versions;
+        $conf['document'] = $this->config['documents']['versions'] ?? null;
+        $conf['asset'] = $this->config['assets']['versions'] ?? null;
+        $conf['object'] = $this->config['objects']['versions'] ?? null;
 
         $elementTypes = [];
 
         foreach ($conf as $elementType => $tConf) {
-            if (((int)$tConf->days) > 0) {
+            $versioningType = 'steps';
+            $value = $tConf['steps'] ?? 0;
+
+            if (isset($tConf['days']) && (int)$tConf['days'] > 0) {
                 $versioningType = 'days';
-                $value = (int)$tConf->days;
-            } else {
-                $versioningType = 'steps';
-                $value = (int)$tConf->steps;
+                $value = (int)$tConf['days'];
             }
 
             if ($versioningType) {

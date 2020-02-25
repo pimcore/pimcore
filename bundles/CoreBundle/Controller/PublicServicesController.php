@@ -78,9 +78,9 @@ class PublicServicesController extends Controller
                     throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
                 }
 
-                if(strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+                if (strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
                     $formatOverride = $requestedFileExtension;
-                    if(in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
+                    if (in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
                         $formatOverride = 'pjpeg';
                     }
                     $thumbnailConfig->setFormat($formatOverride);
@@ -132,7 +132,7 @@ class PublicServicesController extends Controller
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
                         $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
-                        $linked = symlink($thumbnailFile, $requestedFile);
+                        $linked = is_link($requestedFile) || symlink($thumbnailFile, $requestedFile);
                         if (false === $linked) {
                             // create a hard copy
                             copy($thumbnailFile, $requestedFile);
@@ -152,7 +152,7 @@ class PublicServicesController extends Controller
                     // in certain cases where an event listener starts a session (e.g. when there's a firewall
                     // configured for the entire site /*) the session event listener shouldn't modify the
                     // cache control headers of this response
-                    if(defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
+                    if (defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
                         // this method of bypassing the session listener was introduced in Symfony 4, so we need
                         // to check for the constant first
                         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
@@ -177,7 +177,7 @@ class PublicServicesController extends Controller
     }
 
     /**
-     * @param $request
+     * @param Request $request
      *
      * @return Response
      */

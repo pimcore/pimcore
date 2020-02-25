@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
-pimcore.asset.helpers.gridTabAbstract = Class.create({
+pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gridTabAbstract, {
 
     objecttype: 'asset',
     batchPrepareUrl: "/admin/asset-helper/get-batch-jobs",

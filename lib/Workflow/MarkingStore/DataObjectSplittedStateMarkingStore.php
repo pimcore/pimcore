@@ -152,7 +152,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Concrete
      */

@@ -405,6 +405,34 @@ pimcore.document.edit = Class.create({
         }
 
         return values;
+    },
+
+    getEmptyRequiredEditables: function () {
+        var emptyRequiredEditables = [];
+
+        if (!this.frame || !this.frame.editablesReady) {
+            throw "edit not available";
+        }
+
+        try {
+            var requiredEditables = this.frame.requiredEditables;
+            var editableName = "";
+
+            for (var i = 0; i < requiredEditables.length; i++) {
+                try {
+                    if(requiredEditables[i].requiredError) {
+                        editableName = requiredEditables[i].getName();
+                        requiredEditables[i].checkValue(true);
+                        emptyRequiredEditables.push(editableName);
+                    }
+                } catch (e) {
+                }
+            }
+        }
+        catch (e2) {
+        }
+
+        return emptyRequiredEditables;
     }
 
 });

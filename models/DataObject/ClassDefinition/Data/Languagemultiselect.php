@@ -64,7 +64,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
     }
 
     /**
-     * @param $value
+     * @param int|bool|null $value
      *
      * @return $this
      */
@@ -76,7 +76,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */

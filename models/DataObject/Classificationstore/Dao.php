@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 
@@ -49,6 +49,9 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
@@ -93,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } else {
+                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                         $value = $fd->getDataForResource($value, $this->model->getObject());
                     }
                     $value = $fd->marshal($value, $object);
@@ -136,9 +139,12 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($groupsTable, ['o_id' => $objectId]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load()
     {
-        /** @var $classificationStore DataObject\Classificationstore */
+        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
@@ -185,7 +191,9 @@ class Dao extends Model\Dao\AbstractDao
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
-            $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            }
 
             $language = $item['language'];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);

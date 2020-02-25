@@ -14,6 +14,8 @@
 
 namespace Pimcore\Translation\TranslationItemCollection;
 
+use Pimcore\Model\Element\ElementInterface;
+
 class TranslationItem
 {
     /**
@@ -27,7 +29,7 @@ class TranslationItem
     private $id;
 
     /**
-     * @var
+     * @var ElementInterface
      */
     private $element;
 
@@ -36,7 +38,7 @@ class TranslationItem
      *
      * @param string $type
      * @param string $id
-     * @param object $element
+     * @param ElementInterface $element
      */
     public function __construct(string $type, string $id, $element)
     {
@@ -62,7 +64,7 @@ class TranslationItem
     }
 
     /**
-     * @return object
+     * @return ElementInterface
      */
     public function getElement()
     {

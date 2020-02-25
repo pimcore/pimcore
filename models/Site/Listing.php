@@ -27,14 +27,15 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Site[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $sites = null;
 
     public function __construct()
     {
-        $this->sites =& $this->data;
+        $this->sites = & $this->data;
     }
 
     /**
@@ -46,7 +47,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $sites
+     * @param Model\Site[]|null $sites
      *
      * @return $this
      */

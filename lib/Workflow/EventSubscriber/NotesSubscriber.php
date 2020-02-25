@@ -60,11 +60,9 @@ class NotesSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /**
-         * @var AbstractElement $subject
-         * @var Transition $transition
-         */
+        /** @var AbstractElement $subject */
         $subject = $event->getSubject();
+        /** @var Transition $transition */
         $transition = $event->getTransition();
 
         $this->handleNotesPreWorkflow($transition, $subject);
@@ -81,11 +79,9 @@ class NotesSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /**
-         * @var AbstractElement $subject
-         * @var Transition $transition
-         */
+        /** @var AbstractElement $subject */
         $subject = $event->getSubject();
+        /** @var Transition $transition */
         $transition = $event->getTransition();
 
         $this->handleNotesPostWorkflow($transition, $subject);
@@ -232,15 +228,15 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public function getAdditionalData(): ?array
+    public function getAdditionalData(): array
     {
         return $this->additionalData;
     }
 
     /**
-     * @param array|null $additionalData
+     * @param array $additionalData
      */
     public function setAdditionalData(array $additionalData = []): void
     {

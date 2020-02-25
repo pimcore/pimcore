@@ -47,7 +47,7 @@ interface RendererInterface
     public function getRenderInvisible();
 
     /**
-     * @param  bool
+     * @param bool $renderInvisible
      *
      * @return AbstractRenderer
      */

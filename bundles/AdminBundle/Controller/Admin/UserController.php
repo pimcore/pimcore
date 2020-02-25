@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -61,7 +62,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $user
+     * @param User $user
      *
      * @return array
      */
@@ -190,9 +191,9 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $node
-     * @param $currentList
-     * @param $roleMode
+     * @param User $node
+     * @param array $currentList
+     * @param bool $roleMode
      *
      * @return array
      *
@@ -259,7 +260,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                         $userRoleRelationListing->setCondition('FIND_IN_SET(' . $user->getId() . ',roles)');
                         $userRoleRelationListing = $userRoleRelationListing->load();
                         if ($userRoleRelationListing) {
-                            /** @var $relatedUser User */
+                            /** @var User $relatedUser */
                             foreach ($userRoleRelationListing as $relatedUser) {
                                 $userRoles = $relatedUser->getRoles();
                                 if (is_array($userRoles)) {
@@ -293,6 +294,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateAction(Request $request)
     {
+        /** @var User|User\Role $user */
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -319,7 +321,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
-            if (isset($values['2fa_required'])) {
+            if ($user instanceof User && isset($values['2fa_required'])) {
                 $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
             }
 
@@ -394,20 +396,19 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @Route("/user/get", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request, Config $config)
     {
         if (intval($request->get('id')) < 1) {
             return $this->adminJson(['success' => false]);
         }
 
-        /**
-         * @var $user User
-         */
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -470,11 +471,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        $conf = \Pimcore\Config::getSystemConfig();
-
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $conf->webservice->enabled,
+            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
@@ -497,6 +496,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getMinimalAction(Request $request)
     {
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
         $user->setPassword(null);
 
@@ -677,7 +677,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @param $role
+     * @param User\Role $role
      *
      * @return array
      */
@@ -722,6 +722,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function roleGetAction(Request $request)
     {
+        /** @var User\UserRole $role */
         $role = User\Role::getById(intval($request->get('id')));
 
         // workspaces
@@ -775,6 +776,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             $id = $this->getAdminUser()->getId();
         }
 
+        /** @var User $userObj */
         $userObj = User::getById($id);
 
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -866,7 +868,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function reset2FaSecretAction(Request $request)
     {
         /**
-         * @var $user User
+         * @var User $user
          */
         $user = User::getById(intval($request->get('id')));
         $success = true;
@@ -1100,7 +1102,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var $role User\Role */
+        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
@@ -1142,6 +1144,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $message = '';
 
         if ($username = $request->get('username')) {
+            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {

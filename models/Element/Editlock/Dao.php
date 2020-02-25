@@ -25,8 +25,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @throws \Exception
      */
@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $sessionId
+     * @param string $sessionId
      */
     public function clearSession($sessionId)
     {

@@ -13,9 +13,6 @@ pimcore:
         disable_usage_statistics: false
         debug: true
         debug_ip: ''
-        http_auth:
-            username: ''
-            password: ''
         debug_admin_translations: false
         devmode: false
         instance_identifier: ''
@@ -47,7 +44,7 @@ pimcore:
             email: ''
             simple_api_key: ''
             browser_api_key: ''
-    cache:
+    full_page_cache:
         enabled: false
         lifetime: null
         exclude_patterns: ''

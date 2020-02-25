@@ -62,7 +62,7 @@ interface PricingManagerInterface
     /**
      * Factory
      *
-     * @param $type
+     * @param string $type
      *
      * @return ActionInterface
      */

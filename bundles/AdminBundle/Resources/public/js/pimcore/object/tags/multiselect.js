@@ -29,11 +29,11 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         var displayValues = {};
         if (field.layout.options) {
             for (var i = 0; i < field.layout.options.length; i++) {
-                displayValues[field.layout.options[i].value] = ts(field.layout.options[i].key);
+                displayValues[field.layout.options[i].value] = t(field.layout.options[i].key);
             }
         }
 
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, displayValues, value, metaData, record) {
                 try {
@@ -105,7 +105,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                var label = ts(fieldConfig.options[i].key);
+                var label = t(fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
                 }

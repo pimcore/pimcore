@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject;
 class Service
 {
     /**
-     * @param $keyConfig
+     * @param KeyConfig $keyConfig
      *
      * @return DataObject\ClassDefinition\Data
      */
@@ -37,10 +37,10 @@ class Service
     }
 
     /**
-     * @param $definition
-     * @param $type
+     * @param array $definition
+     * @param string $type
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\ClassDefinition\Data|null
      */
     public static function getFieldDefinitionFromJson($definition, $type)
     {
@@ -54,7 +54,7 @@ class Service
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
 
-        /** @var $dataDefinition \Pimcore\Model\DataObject\ClassDefinition\Data */
+        /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
         $dataDefinition->setValues($definition);
@@ -64,7 +64,7 @@ class Service
             $dataDefinition = $className::__set_state($dataDefinition);
         }
 
-        if (method_exists($dataDefinition, 'getDelegate')) {
+        if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
             $delegateDataType = $dataDefinition->getDelegateDatatype();
             $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);

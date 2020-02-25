@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $address
+     * @param string $address
      *
      * @throws \Exception
      */
@@ -41,8 +41,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save object to database
-     *
-     * @return bool
      *
      * @todo: $data could be undefined
      */
@@ -68,8 +66,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->insertOrUpdate('email_blacklist', $data);
-
-        return true;
     }
 
     /**

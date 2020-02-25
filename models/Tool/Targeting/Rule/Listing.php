@@ -29,13 +29,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var Rule[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $targets = null;
 
     public function __construct()
     {
-        $this->targets =& $this->data;
+        $this->targets = & $this->data;
     }
 
     /**

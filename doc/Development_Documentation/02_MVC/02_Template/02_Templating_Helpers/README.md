@@ -182,11 +182,11 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
 ```
 
 ```twig
-{% if pimcore_device()->isPhone() %}
+{% if pimcore_device().isPhone() %}
     This is my phone content
-{% elseif pimcore_device()->isTablet() %}
+{% elseif pimcore_device().isTablet() %}
     This text is shown on a tablet
-{% elseif pimcore_device()->isDesktop() %}
+{% elseif pimcore_device().isDesktop() %}
     This is for default desktop Browser
 {% endif %}
 ```

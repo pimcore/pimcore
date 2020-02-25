@@ -42,10 +42,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
 
         var fields = [];
-        if (typeof this.fieldConfig.visibleFields != "string") {
-            this.fieldConfig.visibleFields = "";
-        }
-
         var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
         this.visibleFields = visibleFields;
 
@@ -105,10 +101,16 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var cls = 'object_field';
         var i;
 
-        var visibleFields = this.visibleFields;
+        var visibleFields = this.visibleFields || [];
 
         var columns = [];
-        columns.push({text: 'ID', dataIndex: 'id', width: 50});
+
+        if(visibleFields.length === 0) {
+            columns.push(
+                {text: 'ID', dataIndex: 'id', width: 50},
+                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)}
+            );
+        }
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
@@ -161,7 +163,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
 
                     for (var j = 0; j < selectDataRaw.length; j++) {
-                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                        selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
                     }
                 }
 
@@ -207,7 +209,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
-                        text: ts(this.fieldConfig.columns[i].label),
+                        text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -219,12 +221,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
             if(this.fieldConfig.columns[i].type == "select") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    return ts(value);
+                    return t(value);
                 }
             }
 
             var columnConfig = {
-                text: ts(this.fieldConfig.columns[i].label),
+                text: t(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -244,6 +246,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('up'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('up'),
@@ -262,6 +265,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('down'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('down'),
@@ -282,6 +286,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('open'),
@@ -299,6 +304,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: 'actioncolumn',
                 menuText: t('remove'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('remove'),
@@ -396,7 +402,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ]
+            ],
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
+            }
         });
 
         if (!readOnly) {
@@ -567,7 +576,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "fullpath")
         };

@@ -40,9 +40,6 @@ use Pimcore\Tool\Serialize;
  */
 class Version extends AbstractModel
 {
-    /** @var bool for now&testing, make it possible to disable it */
-    protected static $condenseVersion = true;
-
     /**
      * @var int
      */
@@ -262,14 +259,11 @@ class Version extends AbstractModel
      */
     public function marshalData($data)
     {
-        if (!self::isCondenseVersionEnabled()) {
-            return $data;
-        }
-
         $sourceType = Service::getType($data);
         $sourceId = $data->getId();
 
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
@@ -297,7 +291,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
@@ -311,7 +305,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $data
+     * @param ElementInterface $data
      *
      * @return mixed
      */
@@ -344,7 +338,7 @@ class Version extends AbstractModel
                         return $currentValue;
                     }
                 ),
-                new PimcoreClassDefinitionMatcher()
+                new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
             );
         }
 
@@ -380,7 +374,7 @@ class Version extends AbstractModel
     /**
      * Object
      *
-     * @param $renewReferences
+     * @param bool $renewReferences
      *
      * @return mixed
      */
@@ -433,11 +427,11 @@ class Version extends AbstractModel
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
-            $binaryHandle = fopen($this->getBinaryFilePath(), 'r+', false, File::getContext());
+            $binaryHandle = fopen($this->getBinaryFilePath(), 'rb', false, File::getContext());
             $data->setStream($binaryHandle);
-        } elseif ($data instanceof Asset && $data->data) {
+        } elseif ($data instanceof Asset && $data->getObjectVar('data')) {
             // this is for backward compatibility
-            $data->setData($data->data);
+            $data->setData($data->getObjectVar('data'));
         }
 
         if ($renewReferences) {
@@ -534,7 +528,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param $cid
+     * @param int $cid
      *
      * @return $this
      */
@@ -756,21 +750,5 @@ class Version extends AbstractModel
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isCondenseVersionEnabled()
-    {
-        return self::$condenseVersion;
-    }
-
-    /**
-     * @param bool $condenseVersion
-     */
-    public static function setCondenseVersion($condenseVersion)
-    {
-        self::$condenseVersion = $condenseVersion;
     }
 }

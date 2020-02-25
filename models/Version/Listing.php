@@ -23,18 +23,20 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
  * @method Model\Version[] load()
  * @method Model\Version current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Version[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $versions = null;
 
     public function __construct()
     {
-        $this->versions =& $this->data;
+        $this->versions = & $this->data;
     }
 
     /**
@@ -46,7 +48,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $versions
+     * @param Model\Version[]|null $versions
      *
      * @return $this
      */

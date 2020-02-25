@@ -44,12 +44,12 @@ class Dao extends Model\Dao\AbstractDao
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('StoreConfig with id: ' . $this->model->getd() . ' does not exist');
+            throw new \Exception('StoreConfig with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @throws \Exception
      */

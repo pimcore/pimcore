@@ -56,7 +56,7 @@ class Console
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param bool $throwException
      *
      * @return bool|mixed|string
@@ -85,16 +85,11 @@ class Console
             return $value;
         }
 
-        $systemConfig = Config::getSystemConfig();
-
-        $pathVariable = null;
-        if ($systemConfig) {
-            $pathVariable = Config::getSystemConfig()->general->path_variable;
-        }
+        $systemConfig = Config::getSystemConfiguration('general');
 
         $paths = [];
-        if ($pathVariable) {
-            $paths = explode(PATH_SEPARATOR, $pathVariable);
+        if (!empty($systemConfig['path_variable'])) {
+            $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
         }
 
         array_push($paths, '');
@@ -202,7 +197,7 @@ class Console
     }
 
     /**
-     * @param $process
+     * @param string $process
      *
      * @return bool
      */
@@ -250,8 +245,8 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
+     * @param string $script
+     * @param string $arguments
      *
      * @return string
      */
@@ -273,10 +268,10 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
-     * @param $outputFile
-     * @param $timeout
+     * @param string $script
+     * @param string $arguments
+     * @param string|null $outputFile
+     * @param int|null $timeout
      *
      * @return string
      */
@@ -289,9 +284,9 @@ class Console
     }
 
     /**
-     * @param $script
-     * @param $arguments
-     * @param $outputFile
+     * @param string $script
+     * @param string $arguments
+     * @param string|null $outputFile
      *
      * @return string
      */
@@ -304,9 +299,9 @@ class Console
     }
 
     /**
-     * @param $cmd
-     * @param null $outputFile
-     * @param null $timeout
+     * @param string $cmd
+     * @param string|null $outputFile
+     * @param int|null $timeout
      *
      * @return string
      */
@@ -469,7 +464,7 @@ class Console
     }
 
     /**
-     * @param $options
+     * @param array $options
      * @param string $concatenator
      * @param string $arrayConcatenator
      *

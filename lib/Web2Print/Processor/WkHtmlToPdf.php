@@ -17,7 +17,6 @@ namespace Pimcore\Web2Print\Processor;
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
-use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
@@ -46,15 +45,15 @@ class WkHtmlToPdf extends Processor
 
         if (!empty($wkhtmltopdfBin)) {
             $this->wkhtmltopdfBin = $wkhtmltopdfBin;
-        } elseif ($web2printConfig->wkhtmltopdfBin) {
-            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
+        } elseif ($web2printConfig->get('wkhtmltopdfBin')) {
+            $this->wkhtmltopdfBin = $web2printConfig->get('wkhtmltopdfBin');
         } elseif ($determined = Console::getExecutable('wkhtmltopdf')) {
             $this->wkhtmltopdfBin = $determined;
         }
 
         if (empty($options)) {
-            if ($web2printConfig->wkhtml2pdfOptions) {
-                $options = $web2printConfig->wkhtml2pdfOptions->toArray();
+            if ($web2printConfig->get('wkhtml2pdfOptions')) {
+                $options = $web2printConfig->get('wkhtml2pdfOptions')->toArray();
             }
         }
 
@@ -72,7 +71,7 @@ class WkHtmlToPdf extends Processor
 
     /**
      * @param Document\PrintAbstract $document
-     * @param $config
+     * @param object $config
      *
      * @return string
      *
@@ -88,26 +87,18 @@ class WkHtmlToPdf extends Processor
         $html = $document->renderDocument($params);
 
         $params['hostUrl'] = $config->protocol . '://' . $config->hostName;
-        if ($web2printConfig->wkhtml2pdfHostname) {
-            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->wkhtml2pdfHostname;
+        if ($web2printConfig->get('wkhtml2pdfHostname')) {
+            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->get('wkhtml2pdfHostname');
         }
 
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        try {
-            $this->updateStatus($document->getId(), 50, 'pdf_conversion');
+        $this->updateStatus($document->getId(), 50, 'pdf_conversion');
 
-            $pdf = $this->fromStringToStream($html);
+        $pdf = $this->fromStringToStream($html);
 
-            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception('Error during REST-Request:' . $e->getMessage());
-        }
-
-        $document->setLastGenerateMessage('');
+        $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
 
         return $pdf;
     }
@@ -227,17 +218,16 @@ class WkHtmlToPdf extends Processor
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
 
         $params = $event->getArguments();
+        $cmd = $params['cmd'] ?? null;
 
-        if ($params['cmd']) {
-            $cmd = $params['cmd'];
-        } else {
+        if (!$cmd) {
             $cmd = $params['wkhtmltopdfBin'] . ' ' . $params['options'] . ' ' . escapeshellarg($params['srcUrl']) . ' ' . escapeshellarg($params['dstFile']);
         }
 
         exec($cmd, $output, $retVal);
 
         if ($retVal != 0 && $retVal != 1) {
-            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . $output . "\ncommand was:" . $cmd);
+            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . implode("\n", $output) . "\ncommand was: " . $cmd);
         }
 
         return $dstFile;

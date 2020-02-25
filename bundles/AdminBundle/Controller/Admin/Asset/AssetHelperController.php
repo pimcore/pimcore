@@ -30,7 +30,6 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,11 +43,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetHelperController extends AdminController
 {
     /**
-     * @param $userId
-     * @param $classId
-     * @param $searchType
+     * @param int $userId
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -72,22 +71,15 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $user User
-     * @param $classId
-     * @param $searchType
+     * @param User $user
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
         $db = Db::get();
-        $configListingConditionParts = [];
-        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
-
-        if ($searchType) {
-            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-        }
 
         $configListing = [];
 
@@ -96,7 +88,7 @@ class AssetHelperController extends AdminController
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
 
-        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
@@ -306,11 +298,11 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $field
-     * @param $language
-     * @param null $keyPrefix
+     * @param array $field
+     * @param string $language
+     * @param string|null $keyPrefix
      *
-     * @return array|null
+     * @return array
      */
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
@@ -367,10 +359,10 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $noSystemColumns
-     * @param $fields
-     * @param $context
-     * @param $types
+     * @param bool $noSystemColumns
+     * @param array $fields
+     * @param array $context
+     * @param array $types
      *
      * @return array
      */
@@ -392,9 +384,6 @@ class AssetHelperController extends AdminController
             }
         }
 
-        if (is_array($fields)) { //TODO required?
-        }
-
         return $availableFields;
     }
 
@@ -410,8 +399,9 @@ class AssetHelperController extends AdminController
         $helperColumns = [];
         $newData = [];
         $data = json_decode($request->get('columns'));
+        /** @var \stdClass $item */
         foreach ($data as $item) {
-            if ($item->isOperator) {
+            if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
 
                 $item->key = $itemKey;
@@ -475,7 +465,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfigId
+     * @param int $gridConfigId
      *
      * @return array
      */
@@ -487,7 +477,7 @@ class AssetHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -593,8 +583,8 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfig GridConfig
-     * @param $metadata
+     * @param GridConfig $gridConfig
+     * @param array $metadata
      *
      * @throws \Exception
      */
@@ -637,7 +627,7 @@ class AssetHelperController extends AdminController
      * @Route("/get-export-jobs", methods={"GET"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -646,7 +636,7 @@ class AssetHelperController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
         $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
-        if (empty($ids = $allParams['ids'])) {
+        if (empty($ids = $allParams['ids'] ?? '')) {
             $ids = $list->loadIdList();
         }
 
@@ -675,9 +665,7 @@ class AssetHelperController extends AdminController
         $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
         $language = str_replace('default', '', $request->get('language'));
 
-        /**
-         * @var $list \Pimcore\Model\Asset\Listing
-         */
+        /** @var \Pimcore\Model\Asset\Listing $list */
         $list = new Asset\Listing();
 
         $quotedIds = [];
@@ -721,12 +709,12 @@ class AssetHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param string $language
+     * @param Asset\Listing $list
+     * @param array $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, $language, $list, $fields, $addTitles = true)
     {
@@ -793,7 +781,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $fileHandle
+     * @param string $fileHandle
      *
      * @return string
      */
@@ -821,6 +809,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -852,6 +842,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('XLSX file not found');
     }
 
     /**
@@ -878,12 +870,12 @@ class AssetHelperController extends AdminController
         $list = Metadata\Predefined\Listing::getByTargetType('asset', null);
         $metadataItems = [];
         $tmp = [];
+        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
             //only allow unique metadata columns with subtypes
             $uniqueKey = $item->getName().'_'.$item->getTargetSubtype();
             if (!in_array($uniqueKey, $tmp) && !in_array($item->getName(), $defaultMetadataNames)) {
                 $tmp[] = $uniqueKey;
-                /** @var $item Metadata\Predefined */
                 $item->expand();
                 $metadataItems[] = [
                     'title' => $item->getName(),

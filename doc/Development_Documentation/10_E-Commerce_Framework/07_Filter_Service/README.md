@@ -154,32 +154,33 @@ sample:
 
 ```php 
 <?php 
+$ecommerceFactory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
 
-$factory = Factory::getInstance();
-
+$viewModel = new ViewModel();
 $params = array_merge($request->query->all(), $request->attributes->all());
 
-//get filter definition from document, category or global settings
-$this->view->filterDefinitionObject = $filterDefinition;
+$indexService = $ecommerceFactory->getIndexService();
+$productListing = $indexService->getProductListForCurrentTenant();
+$viewModel->productListing = $productListing;
 
-// create product list
-$products = $factory->getIndexService()->getProductListForCurrentTenant();
-$this->view->products = $products;
+//get filter definition from document, category or global settings
+$filterDefinition = //TODO ...get from somewhere;
 
 // create and init filter service
-$filterService = $factory->getFilterService();
-
-\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
-$this->view->filterService = $filterService;
-
+$filterService = $ecommerceFactory->getFilterService();
+\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $productListing, $params, $viewModel, $filterService, true);
+$viewModel->filterService = $filterService;
+$viewModel->filterDefinition = $filterDefinition;
 
 // init pagination
-$paginator = new Paginator($products);
-$paginator->setCurrentPageNumber( $this->getParam('page') );
-$paginator->setItemCountPerPage( $filterDefinition->getPageLimit() );
-$paginator->setPageRange(10);
-$this->view->paginator = $paginator;
+$paginator = new Paginator($productListing);
+$paginator->setCurrentPageNumber($request->get('page'));
+$paginator->setItemCountPerPage(18);
+$paginator->setPageRange(5);
+$viewModel->results = $paginator;
+$viewModel->paginationVariables = $paginator->getPages('Sliding');
 
+return $viewModel->getAllParameters();
 ```
 
 For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/AppBundle/Controller/ProductController.php#L118). 
@@ -188,6 +189,8 @@ For a sample of a controller see our demo [here](https://github.com/pimcore/demo
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 
 to get the parameter of changed filters delivered back to the controller. 
 
+
+<div class="code-section">
 ```php
 <?php if($this->filterDefinitionObject->getFilters()): ?>
 	<div class="widget">
@@ -197,3 +200,14 @@ to get the parameter of changed filters delivered back to the controller.
 	</div>
 <?php endif; ?>
 ```
+
+```twig
+{% if(filterDefinition.filters|length > 0) %}
+    {% for filter in filterDefinition.filters %}
+        {% set filterMarkup = filterService.filterFrontend(filter, productListing, currentFilter) %}
+        {{ filterMarkup | raw  }}
+    {% endfor %}
+{% endif %}
+```
+
+</div>

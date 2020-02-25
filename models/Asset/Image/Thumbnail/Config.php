@@ -75,7 +75,7 @@ class Config extends Model\AbstractModel
     public $format = 'SOURCE';
 
     /**
-     * @var mixed
+     * @var int
      */
     public $quality = 85;
 
@@ -120,9 +120,14 @@ class Config extends Model\AbstractModel
     public $filenameSuffix;
 
     /**
-     * @param $config
+     * @var bool
+     */
+    public $forcePictureTag = false;
+
+    /**
+     * @param string|array|self $config
      *
-     * @return self|bool
+     * @return self|null
      */
     public static function getByAutoDetect($config)
     {
@@ -151,7 +156,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Config
      */
@@ -159,7 +164,7 @@ class Config extends Model\AbstractModel
     {
         $cacheKey = self::getCacheKey($name);
 
-        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
             return self::getPreviewConfig();
         }
 
@@ -190,6 +195,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return string
      */
     protected static function getCacheKey(string $name): string
@@ -199,20 +205,22 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public static function exists(string $name): bool
     {
         $cacheKey = self::getCacheKey($name);
-        if(\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             return true;
         }
 
-        if($name === self::PREVIEW_THUMBNAIL_NAME) {
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
             return true;
         }
 
         $thumbnail = new self();
+
         return $thumbnail->getDao()->exists($name);
     }
 
@@ -253,6 +261,8 @@ class Config extends Model\AbstractModel
 
     /**
      * Returns thumbnail config for webservice export.
+     *
+     * @deprecated
      */
     public function getForWebserviceExport()
     {
@@ -274,9 +284,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -299,10 +309,10 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $position
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param int $position
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -330,7 +340,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -433,7 +443,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $quality
+     * @param int $quality
      *
      * @return self
      */
@@ -447,7 +457,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getQuality()
     {
@@ -513,7 +523,7 @@ class Config extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -548,7 +558,7 @@ class Config extends Model\AbstractModel
      * @deprecated
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -631,7 +641,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $asset
+     * @param Model\Asset\Image $asset
      *
      * @return array
      */
@@ -720,6 +730,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @deprecated
+     *
      * @param string $colorspace
      */
     public function setColorspace($colorspace)
@@ -728,7 +740,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @deprecated
      */
     public function getColorspace()
     {
@@ -844,6 +856,22 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForcePictureTag(): bool
+    {
+        return $this->forcePictureTag;
+    }
+
+    /**
+     * @param bool $forcePictureTag
+     */
+    public function setForcePictureTag(bool $forcePictureTag): void
+    {
+        $this->forcePictureTag = $forcePictureTag;
     }
 
     /**

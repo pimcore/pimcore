@@ -33,6 +33,8 @@ class ProductType implements OrderListFilterInterface
     {
         $orderList->joinOrderItemObjects();
         $orderList->getQuery()->where('orderItemObjects.o_className IN (?)', $this->getTypes());
+
+        return $this;
     }
 
     /**

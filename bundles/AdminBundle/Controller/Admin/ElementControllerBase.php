@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ElementControllerBase extends AdminController
 {
     /**
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return array
      */
@@ -62,6 +62,7 @@ class ElementControllerBase extends AdminController
         }
 
         if (in_array($type, $allowedTypes)) {
+            /** @var Document|Asset|AbstractObject $root */
             $root = Service::getElementById($type, $id);
             if ($root->isAllowed('list')) {
                 return $this->adminJson($this->getTreeNodeConfig($root));
@@ -98,7 +99,10 @@ class ElementControllerBase extends AdminController
                 if (!$element) {
                     continue;
                 }
-                $hasDependency = $element->getDependencies()->isRequired();
+
+                if (!$hasDependency) {
+                    $hasDependency = $element->getDependencies()->isRequired();
+                }
             } catch (\Exception $e) {
                 Logger::err('failed to access element with id: ' . $id);
                 continue;

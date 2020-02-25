@@ -27,8 +27,8 @@ class Dao extends Model\Dao\AbstractDao
     const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
-     * @param null $colId
-     * @param null $groupId
+     * @param int|null $colId
+     * @param int|null $groupId
      */
     public function getById($colId = null, $groupId = null)
     {

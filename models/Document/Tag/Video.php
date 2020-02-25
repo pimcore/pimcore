@@ -30,7 +30,7 @@ class Video extends Model\Document\Tag
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
-     * @var mixed
+     * @var int|string
      */
     public $id;
 
@@ -59,7 +59,7 @@ class Video extends Model\Document\Tag
     public $description = '';
 
     /**
-     * @param $title
+     * @param string $title
      *
      * @return $this
      */
@@ -84,7 +84,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -142,6 +142,9 @@ class Video extends Model\Document\Tag
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getDataForResource()
     {
         return [
@@ -379,10 +382,11 @@ class Video extends Model\Document\Tag
                     $imageThumbnailConf['format'] = 'JPEG';
                 }
 
-                if ($this->poster && ($poster = Asset::getById($this->poster))) {
+                if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                    if ($asset->getCustomSetting('image_thumbnail_asset')
+                        && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
                         $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
@@ -433,7 +437,7 @@ class Video extends Model\Document\Tag
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
-            $width = ($this->getWidth() - 1) . 'px';
+            $width = ((int)$this->getWidth() - 1) . 'px';
         }
 
         // only display error message in debug mode
@@ -533,6 +537,8 @@ class Video extends Model\Document\Tag
             'enablejsapi',
             'end',
             'fs',
+            'playsinline',
+            'hl',
             'iv_load_policy',
             'list',
             'listType',
@@ -741,7 +747,7 @@ class Video extends Model\Document\Tag
 
     /**
      * @param array $urls
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -783,7 +789,7 @@ class Video extends Model\Document\Tag
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
                 'duration' => $durationString,
-                'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
+                //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
@@ -792,7 +798,13 @@ class Video extends Model\Document\Tag
                 $thumbnail = $video->getImageThumbnail([]);
             }
 
-            if (!preg_match('@https?://@', $thumbnail)) {
+            $jsonLd['contentUrl'] = $urls['mp4'];
+            if (!preg_match('@https?://@', $urls['mp4'])) {
+                $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
+            }
+
+            $jsonLd['thumbnailUrl'] = (string)$thumbnail;
+            if (!preg_match('@https?://@', (string)$thumbnail)) {
                 $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
             }
 
@@ -848,7 +860,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -906,10 +918,12 @@ class Video extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -942,17 +956,19 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset
+     * @return Asset\Video|null
      */
     public function getVideoAsset()
     {
         if ($this->getVideoType() == 'asset') {
             return Asset::getById($this->id);
         }
+
+        return null;
     }
 
     /**
-     * @return Asset
+     * @return Asset\Image
      */
     public function getPosterAsset()
     {
@@ -960,13 +976,13 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return string
      */
     public function getImageThumbnail($config)
     {
-        if ($this->poster && ($poster = Asset::getById($this->poster))) {
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
         }
 
@@ -978,7 +994,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return array
      */
@@ -992,7 +1008,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param mixed $id
+     * @param int|string $id
      *
      * @return Video
      */
@@ -1004,11 +1020,11 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
     public function getId()
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**

@@ -87,7 +87,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                                     <td>
                                         <?php
                                         if ($brickValue) {
-                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            /** @var DataObject\Localizedfield $localizedBrickValues */
                                             $localizedBrickValues = $brickValue->getLocalizedFields();
                                             $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
                                             $versionPreview = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
@@ -119,7 +119,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                 } ?>
             <?php } ?>
         <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
-            /** @var $storedata DataObject\Classificationstore */
+            /** @var DataObject\Classificationstore $storedata */
             $storedata = $definition->getVersionPreview($this->object->getValueForFieldName($fieldName));
 
             if (!$storedata) {
@@ -140,15 +140,15 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                 if (!$enabled) {
                     continue;
                 }
-                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                /** @var DataObject\Classificationstore\GroupConfig $groupDefinition */
                 $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
                 if (!$groupDefinition) {
                     continue;
                 }
 
-                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
+                /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
                     $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());

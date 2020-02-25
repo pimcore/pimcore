@@ -17,25 +17,25 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     type:"datetime",
 
     initialize:function (data, fieldConfig) {
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
 
-        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
-            this.defaultValue = fieldConfig.defaultValue;
-        } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
+    applyDefaultValue: function() {
+        if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.defaultValue) {
+            this.defaultValue = this.fieldConfig.defaultValue;
+        } else if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.useCurrentDate) {
             this.defaultValue = (new Date().getTime()) / 1000;
         }
 
         if (this.defaultValue) {
-            data = this.defaultValue;
+            this.data = this.defaultValue;
         }
-
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
     },
 
     getGridColumnConfig:function (field) {
         return {
-            text:ts(field.label),
+            text: t(field.label),
             width:150,
             sortable:true,
             dataIndex:field.key,

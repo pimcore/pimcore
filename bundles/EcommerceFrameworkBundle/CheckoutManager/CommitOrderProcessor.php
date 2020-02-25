@@ -90,7 +90,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     protected $lastPaymentStatus = null;
 
     /**
-     * @param $paymentResponseParams
+     * @param array|StatusInterface $paymentResponseParams
      * @param PaymentInterface $paymentProvider
      *
      * @return Status|StatusInterface
@@ -317,7 +317,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
         $list->addFieldCollection('PaymentInfo', 'paymentinfo');
         $list->setCondition('`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
-        /** @var AbstractOrder[] $list */
+        /** @var AbstractOrder $order */
         foreach ($list as $order) {
             $payments = $order->getPaymentInfo();
 

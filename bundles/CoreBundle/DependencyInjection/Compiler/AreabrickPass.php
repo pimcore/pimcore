@@ -252,9 +252,9 @@ class AreabrickPass implements CompilerPassInterface
      *  - AppBundle\Document\Areabrick\Foo         -> app.area.brick.foo
      *  - AppBundle\Document\Areabrick\Foo\Bar\Baz -> app.area.brick.foo.bar.baz
      *
-     * @param $bundleName
-     * @param $subNamespace
-     * @param $className
+     * @param string $bundleName
+     * @param string $subNamespace
+     * @param string $className
      *
      * @return string
      */

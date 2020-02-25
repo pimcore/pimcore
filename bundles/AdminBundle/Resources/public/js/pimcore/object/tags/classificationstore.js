@@ -421,7 +421,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
 
         var config = {
-            title: ts(groupTitle),
+            title: t(groupTitle),
             items: groupedChildItems,
             collapsible: true
         };

@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $gridconfigFavourites = null;
 
     public function __construct()
     {
-        $this->gridconfigFavourites =& $this->data;
+        $this->gridconfigFavourites = & $this->data;
     }
 
     /**

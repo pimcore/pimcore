@@ -14,12 +14,12 @@
 
 namespace Pimcore\Event\Model\Ecommerce\IndexService;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 class PreprocessErrorEvent extends Event
 {
     /**
-     * @var \Exception
+     * @var \Throwable
      */
     protected $exception;
 
@@ -29,23 +29,38 @@ class PreprocessErrorEvent extends Event
     protected $throwException;
 
     /**
+     * @var int
+     */
+    protected $subObjectId;
+
+    /**
      * PreprocessErrorEvent constructor.
      *
-     * @param \Exception $exception
+     * @param \Throwable $exception
      * @param bool $throwException
+     * @param int $subObjectId
      */
-    public function __construct(\Exception $exception, bool $throwException = true)
+    public function __construct(\Throwable $exception, bool $throwException = true, int $subObjectId = 0)
     {
         $this->exception = $exception;
         $this->throwException = $throwException;
+        $this->subObjectId = $subObjectId;
     }
 
     /**
-     * @return \Exception
+     * @return \Throwable
      */
-    public function getException(): \Exception
+    public function getException(): \Throwable
     {
         return $this->exception;
+    }
+
+    /**
+     * @param bool $throwException
+     */
+    public function setThrowException(bool $throwException): void
+    {
+        $this->throwException = $throwException;
     }
 
     /**
@@ -54,5 +69,21 @@ class PreprocessErrorEvent extends Event
     public function doThrowException(): bool
     {
         return $this->throwException;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSubObjectId(): int
+    {
+        return $this->subObjectId;
+    }
+
+    /**
+     * @param int $subObjectId
+     */
+    public function setSubObjectId(int $subObjectId): void
+    {
+        $this->subObjectId = $subObjectId;
     }
 }

@@ -65,6 +65,8 @@ class CacheClearCommand extends AbstractCommand
             Cache::clearAll();
             $io->success('Pimcore data cache cleared successfully');
         }
+
+        return 0;
     }
 
     private function prepareTags(array $tags): array
