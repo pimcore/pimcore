@@ -21,7 +21,7 @@ use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -146,7 +146,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelController(ControllerEvent $event) {
+    public function onKernelController(FilterControllerEvent $event) {
         // no document found yet - try to find the nearest document by request path
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
