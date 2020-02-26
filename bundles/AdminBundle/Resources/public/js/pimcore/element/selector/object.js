@@ -591,6 +591,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         if (this.parent.config && this.parent.config.context) {
             proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
         }
+
+        this.updateTabTitle(formValues.query);
     },
 
     search: function () {
