@@ -440,7 +440,7 @@ EOT;
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
             $imageSize = getimagesize($path);
-            if ($imageSize[0] && $imageSize[1]) {
+            if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
                     'height' => $imageSize[1]

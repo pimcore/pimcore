@@ -333,6 +333,10 @@ pimcore.document.tree = Class.create({
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
 
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("document", record.data.id)) {
+            return;
+        }
+
         var menu = new Ext.menu.Menu();
         var perspectiveCfg = this.perspectiveCfg;
 

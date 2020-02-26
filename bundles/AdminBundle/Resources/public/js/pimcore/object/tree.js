@@ -303,6 +303,11 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("object", record.data.id)) {
+            return;
+        }
+
         tree.select();
 
         var menu = new Ext.menu.Menu();

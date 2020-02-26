@@ -1068,12 +1068,12 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
             that.downloadProgressWin = new Ext.Window({
                 title: t("download_as_zip"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [that.downloadProgressBar]
+                items: [that.downloadProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             that.downloadProgressWin.show();

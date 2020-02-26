@@ -420,6 +420,18 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     }
 };
 
+pimcore.helpers.hasTreeNodeLoadingIndicator = function (type, id) {
+    var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
+    for (var index = 0; index < iconEls.length; index++) {
+        var iconEl = iconEls[index];
+        if (iconEl) {
+            return iconEl.hasCls("pimcore_tree_node_loading_indicator");
+        }
+    }
+
+    return false;
+};
+
 
 pimcore.helpers.openSeemode = function () {
     if (pimcore.globalmanager.exists("pimcore_seemode")) {
@@ -3089,3 +3101,25 @@ pimcore.helpers.treeToolTipHide = function () {
     Ext.get('pimcore_tooltip').hide();
 };
 
+pimcore.helpers.progressWindowOffsets = [-20];
+
+pimcore.helpers.getProgressWindowListeners = function () {
+    return {
+        show: function(win) {
+            let winY = pimcore.helpers.progressWindowOffsets.reduce(function(a, b) {
+                return Math.min(a, b);
+            });
+
+            win.alignTo(Ext.getBody(), "br-br", [-40, winY]);
+            let newOffset = winY - (win.getHeight()+20);
+            pimcore.helpers.progressWindowOffsets.push(newOffset);
+            win.myProgressWinOffset = newOffset;
+        },
+        destroy: function(win) {
+            let index = pimcore.helpers.progressWindowOffsets.indexOf(win.myProgressWinOffset);
+            if (index !== -1) {
+                pimcore.helpers.progressWindowOffsets.splice(index, 1);
+            }
+        }
+    };
+};
