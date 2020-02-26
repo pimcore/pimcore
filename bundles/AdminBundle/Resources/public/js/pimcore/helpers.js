@@ -1385,7 +1385,11 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     // these wrappers simulate the jQuery behavior
     var successWrapper = function (ev) {
         var data = JSON.parse(request.responseText);
-        callbackSuccess(data, request.statusText, request);
+        if(ev.currentTarget.status < 400) {
+            callbackSuccess(data, request.statusText, request);
+        } else {
+            callbackFailure(request, request.statusText, ev);
+        }
     };
 
     var errorWrapper = function (ev) {
