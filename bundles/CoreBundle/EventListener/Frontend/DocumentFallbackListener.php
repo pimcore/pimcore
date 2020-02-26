@@ -99,7 +99,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // -> Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()
             // -> Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener::onKernelRequest()
             KernelEvents::REQUEST => ['onKernelRequest', 20],
-            KernelEvents::CONTROLLER => 'onKernelController',
+            KernelEvents::CONTROLLER => ['onKernelController', 20],
         ];
     }
 
