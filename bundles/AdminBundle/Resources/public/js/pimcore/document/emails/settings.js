@@ -79,18 +79,6 @@ pimcore.document.emails.settings = Class.create(pimcore.document.settings_abstra
         }
 
         return this.layout;
-    },
-
-    getValues: function () {
-
-        if (!this.layout.rendered) {
-            throw "settings not available";
-        }
-
-        // get values
-        var settings = this.getLayout().getForm().getFieldValues();
-
-        return settings;
     }
 
 });

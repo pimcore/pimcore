@@ -97,18 +97,6 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
         }
 
         return this.layout;
-    },
-
-    getValues: function () {
-
-        if (!this.layout.rendered) {
-            throw "settings not available";
-        }
-
-        // get values
-        var settings = this.getLayout().getForm().getFieldValues();
-
-        return settings;
     }
 
 });

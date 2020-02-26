@@ -395,5 +395,14 @@ pimcore.document.settings_abstract = Class.create({
         });
 
         return fieldSet;
+    },
+
+    getValues: function () {
+
+        if (!this.layout.rendered) {
+            throw "settings not available";
+        }
+
+        return this.getLayout().getForm().getFieldValues();
     }
 });
