@@ -392,7 +392,11 @@ pimcore.helpers.getTreeNodeLoadingIndicatorElements = function (type, id) {
 
 pimcore.helpers.treeNodeLoadingIndicatorTimeouts = {};
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id, disableExpander) {
+
+    if(disableExpander !== false) {
+        disableExpander = true;
+    }
 
     pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id] = window.setTimeout(function () {
         // display loading indicator on treenode
@@ -401,6 +405,9 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
             var iconEl = iconEls[index];
             if (iconEl) {
                 iconEl.addCls("pimcore_tree_node_loading_indicator");
+                if(disableExpander) {
+                    iconEl.up('.x-grid-cell').addCls('pimcore_treenode_hide_plus_button');
+                }
             }
         }
     }, 200);
@@ -416,6 +423,7 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
         var iconEl = iconEls[index];
         if (iconEl) {
             iconEl.removeCls("pimcore_tree_node_loading_indicator");
+            iconEl.up('.x-grid-cell').removeCls('pimcore_treenode_hide_plus_button');
         }
     }
 };

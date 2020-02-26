@@ -198,7 +198,7 @@ pimcore.asset.tree = Class.create({
         }
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -1001,7 +1001,6 @@ pimcore.asset.tree = Class.create({
                     this.downloadProgressBar = null;
                     this.downloadProgressWin = null;
 
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("asset", record.get("id"));
                     pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                 }.bind(this, res.jobId),
                 update: function (currentStep, steps, percent) {
@@ -1012,7 +1011,7 @@ pimcore.asset.tree = Class.create({
                 }.bind(this),
                 failure: function (message) {
                     this.downloadProgressWin.close();
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("asset", record.get("id"));
+                    pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                     pimcore.helpers.showNotification(t("error"), t("error"),
                         "error", t(message));
                 }.bind(this),
@@ -1168,7 +1167,6 @@ pimcore.asset.tree = Class.create({
                                         this.downloadProgressBar = null;
                                         this.downloadProgressWin = null;
 
-                                        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", record.get("id"));
                                         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                                     }.bind(this),
                                     update: function (currentStep, steps, percent) {
@@ -1179,7 +1177,7 @@ pimcore.asset.tree = Class.create({
                                     }.bind(this),
                                     failure: function (message) {
                                         this.downloadProgressWin.close();
-                                        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", record.get("id"));
+                                        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
 
                                         pimcore.helpers.showNotification(t("error"), t("error"),
                                             "error", t(message));
