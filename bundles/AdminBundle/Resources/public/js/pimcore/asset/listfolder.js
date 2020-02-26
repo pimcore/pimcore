@@ -261,6 +261,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             columns : gridColumns,
+            enableLocking: true,
             bufferedRenderer: false,
             plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
@@ -300,11 +301,20 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.grid.on("columnresize", function () {
             this.saveColumnConfigButton.show();
         }.bind(this));
+        this.grid.on("lockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("unlockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
+            var grids = grid.items.items;
+            for (var i = 0; i < grids.length; i++) {
+                this.updateGridHeaderContextMenu(grids[i]);
+            }
         }.bind(this));
 
         this.layout.remove("gridPanel_" + this.element.data.id);
