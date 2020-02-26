@@ -120,7 +120,6 @@ pimcore.object.classificationstore.storeTree = Class.create({
         try {
             if (storeConfig.id != this.activeStoreId) {
                 this.editContainer.removeAll();
-                //this.editPanel = null;
 
                 this.editContainer.setTitle(storeConfig.text + " (ID: " + storeConfig.id + ")");
                 var propertiesPanel = new pimcore.object.classificationstore.propertiespanel(storeConfig, this.editContainer);

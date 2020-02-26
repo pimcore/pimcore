@@ -217,6 +217,7 @@ pimcore.report.panel = Class.create({
     getReportCount: function () {
         var group;
         var reportCount = 0;
+        var reportClass;
 
         for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
 
