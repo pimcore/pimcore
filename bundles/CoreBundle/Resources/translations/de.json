@@ -924,8 +924,8 @@
     "batch_remove_from": "Daten von allen Elementen entfernen",
     "batch_remove_selected_from": "Daten von ausgewählten Elementen entfernen",
     "force_picture_html_tag": "Erzwinge &lt;picture&gt; HTML tag",
-    "unit_tooltip": "Alternative units tooltip",
-    "toggle_image_features_visibility": "Toggle Image Feature Visibility",
+    "unit_tooltip": "Tooltip für alternative Einheiten",
+    "toggle_image_features_visibility": "Schaltet die Sichtbarkeit der Bildfunktionen um",
     "detect_image_features": "Bildmerkmale erkennen",
     "remove_image_features": "Bildmerkmale entfernen",
     "available_sites": "Verfügbare Seiten",
@@ -934,7 +934,10 @@
     "domain_label_width": "Domain Label Breite",
     "complete_required_fields": "Bitte füllen Sie die folgenden erforderlichen Felder aus, um das Dokument zu veröffentlichen:",
     "Uncategorized": "Nicht kategorisiert",
-    "skip_if_exists": "Skip row if exists",
-    "php_class_or_service": "Class or service name",
-    "redirect_performance_warning": "Using this feature has very bad effects on the performance of the entire application, do you really want to continue?"
+    "skip_if_exists": "Zeile überspringen, falls vorhanden",
+    "php_class_or_service": "Klassen- oder Dienstname",
+    "redirect_performance_warning": "Die Verwendung dieser Funktion hat sehr negative Auswirkungen auf die Leistung der gesamten Anwendung. Möchten Sie wirklich fortfahren?",
+    "test_url": "Test URL",
+    "create_redirects": "Weiterleitungen erstellen, damit URLs funktionieren (einschließlich Kinder)?",
+    "auto_create": "Automatisch erstellen"
 }

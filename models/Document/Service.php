@@ -611,16 +611,6 @@ class Service extends Model\Element\Service
         }
 
         $url = $hostUrl . $doc->getRealFullPath();
-
-        $config = \Pimcore\Config::getSystemConfiguration('general');
-        if (isset($config['http_auth'])) {
-            $username = $config['http_auth']['username'] ?? null;
-            $password = $config['http_auth']['password'] ?? null;
-            if ($username && $password) {
-                $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-            }
-        }
-
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 

@@ -198,7 +198,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
-                $oldData = $this->items[$groupId][$keyId][$language];
+                $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object);
                 $oldData = serialize($oldData);
 

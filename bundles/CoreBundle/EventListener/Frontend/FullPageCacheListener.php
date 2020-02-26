@@ -218,15 +218,15 @@ class FullPageCacheListener
                     $this->setLifetime((int) $conf['lifetime']);
                 }
 
-                if ($conf['excludePatterns']) {
-                    $confExcludePatterns = explode(',', $conf['excludePatterns']);
+                if ($conf['exclude_patterns']) {
+                    $confExcludePatterns = explode(',', $conf['exclude_patterns']);
                     if (!empty($confExcludePatterns)) {
                         $excludePatterns = $confExcludePatterns;
                     }
                 }
 
-                if ($conf['excludeCookie']) {
-                    $cookies = explode(',', strval($conf['excludeCookie']));
+                if ($conf['exclude_cookie']) {
+                    $cookies = explode(',', strval($conf['exclude_cookie']));
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {

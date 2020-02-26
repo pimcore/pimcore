@@ -81,7 +81,7 @@ class UUIDListener implements EventSubscriberInterface
     protected function isEnabled()
     {
         $config = Config::getSystemConfiguration('general');
-        if (!empty($config['instanceIdentifier'])) {
+        if (!empty($config['instance_identifier'])) {
             return true;
         }
 

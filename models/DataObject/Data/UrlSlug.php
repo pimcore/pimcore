@@ -144,6 +144,7 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     /**
      * @internal
+     *
      * @return string|null
      */
     public function getPreviousSlug(): ?string
@@ -153,6 +154,7 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     /**
      * @internal
+     *
      * @param string|null $previousSlug
      */
     public function setPreviousSlug(?string $previousSlug): void

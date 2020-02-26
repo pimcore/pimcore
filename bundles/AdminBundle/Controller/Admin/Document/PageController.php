@@ -16,12 +16,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,8 +64,6 @@ class PageController extends DocumentControllerBase
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
-        $page->url = $page->getUrl();
-
         // unset useless data
         $page->setElements(null);
         $page->setChildren(null);
@@ -80,6 +76,8 @@ class PageController extends DocumentControllerBase
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }
+
+        $data['url'] = $page->getUrl();
 
         $this->preSendDataActions($data, $page);
 

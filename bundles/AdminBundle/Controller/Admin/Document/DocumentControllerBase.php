@@ -22,8 +22,8 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,7 +37,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     use AdminStyleTrait;
     use ApplySchedulerDataTrait;
 
-    protected function preSendDataActions(&$data, Model\Document $document) {
+    protected function preSendDataActions(&$data, Model\Document $document)
+    {
         $data['versionDate'] = $document->getModificationDate();
         $data['userPermissions'] = $document->getUserPermissions();
         $data['idPath'] = Element\Service::getIdPath($document);
