@@ -85,11 +85,11 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'child',
                 null,
                 InputOption::VALUE_NONE,
-                'Set on child processes'
+                'For internal use only'
             )->addArgument(
                 'item',
                 InputArgument::OPTIONAL,
-                'The item to process'
+                'For internal use only'
             );
     }
 
@@ -169,20 +169,22 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions));
+        $idsList = $list->loadIdList();
 
         $items = [];
-        foreach ($list as $image) {
+        foreach ($idsList as $imageId) {
             $clearedThumbnails = [];
             foreach ($thumbnailsToGenerate as $thumbnailConfig) {
+                $item = [
+                    'image_id' => $imageId,
+                    'thumbnail' => $thumbnailConfig
+                ];
                 if ($input->getOption('force') && !isset($clearedThumbnails[$thumbnailConfig->getName()])) {
-                    $image->clearThumbnail($thumbnailConfig->getName());
+                    $item['clear_thumbnail'] = true;
                     $clearedThumbnails[$thumbnailConfig->getName()] = true;
                 }
 
-                $items[] = serialize([
-                    'image_id' => $image->getId(),
-                    'thumbnail' => $thumbnailConfig
-                ]);
+                $items[] = serialize($item);
             }
         }
         return $items;
@@ -204,6 +206,10 @@ class ThumbnailsImageCommand extends AbstractCommand
         $thumbnail = $item['thumbnail'] ?? null;
         if(!$thumbnail instanceof Asset\Image\Thumbnail\Config) {
             return;
+        }
+
+        if (isset($item['clear_thumbnail'])) {
+            $image->clearThumbnail($thumbnail->getName());
         }
 
         $thumbnail = $image->getThumbnail($thumbnail);
@@ -243,7 +249,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     /**
      * @return \Symfony\Component\DependencyInjection\ContainerInterface
      */
-    private function getContainer()
+    protected function getContainer()
     {
         return \Pimcore::getContainer();
     }
