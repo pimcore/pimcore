@@ -35,10 +35,10 @@ class Service
     {
         if ($keyConfig instanceof KeyConfig) {
             $cacheId = $keyConfig->getId();
-        }
-
-        if ($keyConfig instanceof KeyGroupRelation) {
+        } else if ($keyConfig instanceof KeyGroupRelation) {
             $cacheId = $keyConfig->getKeyId();
+        } else {
+            throw new \Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
         }
 
         if (array_key_exists($cacheId, self::$definitionsCache)) {
