@@ -1208,7 +1208,7 @@ abstract class Data
      */
     protected function setDataToObject($data, $object, $params = [])
     {
-        $this->getSetDataObjectParam($object,  $params, $data, 'set');
+        $this->getSetData($object,  $params, $data, 'set');
     }
 
     /**
@@ -1221,7 +1221,7 @@ abstract class Data
      */
     protected function getDataFromObjectParam($object, $params = [])
     {
-        return $this->getSetDataObjectParam($object, $params);
+        return $this->getSetData($object, $params);
     }
 
     /**
@@ -1234,7 +1234,7 @@ abstract class Data
      *
      * @throws \Exception
      */
-    protected function getSetDataObjectParam($object,  $params = [], $setData = null, $method = 'get')
+    protected function getSetData($object,  $params = [], $setData = null, $method = 'get')
     {
         $data = null;
 
