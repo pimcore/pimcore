@@ -611,4 +611,25 @@ trait PimcoreExtensionsTrait
     {
         $this->autoQuoteIdentifiers = $autoQuoteIdentifiers;
     }
+
+    /**
+     * @param $table
+     * @param string $idColumn
+     * @param string $where
+     */
+    public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '')
+    {
+        $sql = 'SELECT ' . $idColumn . '  FROM ' . $table;
+
+        if ($where) {
+            $sql .= ' WHERE ' . $where;
+        }
+
+        $idsForDeletion = $this->fetchCol($sql);
+
+        if (!empty($idsForDeletion)) {
+            $idString = implode(",", $idsForDeletion);
+            $this->deleteWhere($table, $idColumn . ' IN (' . $idString . ')');
+        }
+    }
 }
