@@ -27,7 +27,7 @@ class Service
     protected static $definitionsCache = [];
 
     /**
-     * @param KeyConfig $keyConfig
+     * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return DataObject\ClassDefinition\Data
      */
