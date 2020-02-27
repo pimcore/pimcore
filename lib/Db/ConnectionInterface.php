@@ -249,7 +249,7 @@ interface ConnectionInterface extends Connection
     public function close();
 
     /**
-     * @param $table
+     * @param string $table
      * @param string $idColumn
      * @param string $where
      */

@@ -613,7 +613,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @param $table
+     * @param string $table
      * @param string $idColumn
      * @param string $where
      */
