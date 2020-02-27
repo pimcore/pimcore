@@ -27,6 +27,14 @@ class Service
     protected static $definitionsCache = [];
 
     /**
+     * Clears the cache for the definitions
+     */
+    public static function clearDefinitionsCache()
+    {
+        self::$definitionsCache = [];
+    }
+    
+    /**
      * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return DataObject\ClassDefinition\Data
