@@ -38,7 +38,7 @@ class Service
         }
 
         if ($keyConfig instanceof KeyGroupRelation) {
-            $cacheId = $keyConfig->getGroupId() . "_" . $keyConfig->getKeyId();
+            $cacheId = $keyConfig->getKeyId();
         }
 
         if (array_key_exists($cacheId, self::$definitionsCache)) {
