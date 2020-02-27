@@ -305,7 +305,7 @@ class Link extends Model\Document\Tag
      */
     public function getText()
     {
-        return $this->data['text'];
+        return $this->data['text'] ?? '';
     }
 
     /**
