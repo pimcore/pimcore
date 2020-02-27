@@ -1201,6 +1201,18 @@ abstract class Data
 
     /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param mixed $data
+     * @param array $params
+     *
+     * @throws \Exception
+     */
+    protected function setDataToObject($data, $object, $params = [])
+    {
+        $this->getSetDataObjectParam($object,  $params, $data, 'set');
+    }
+
+    /**
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return mixed
@@ -1208,6 +1220,21 @@ abstract class Data
      * @throws \Exception
      */
     protected function getDataFromObjectParam($object, $params = [])
+    {
+        return $this->getSetDataObjectParam($object, $params);
+    }
+
+    /**
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     * @param mixed|null $setData
+     * @param string|null method
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    protected function getSetDataObjectParam($object,  $params = [], $setData = null, $method = 'get')
     {
         $data = null;
 
@@ -1226,7 +1253,7 @@ abstract class Data
                     if ($object instanceof DataObject\Concrete) {
                         $containerGetter = 'get' . ucfirst($fieldname);
                         $container = $object->$containerGetter();
-                        if (!$container && $context['containerType'] === 'block') {
+                        if ($method === 'get' && !$container && $context['containerType'] === 'block') {
                             // no data, so check if inheritance is enabled + there is parent value
                             if ($object->getClass()->getAllowInherit()) {
                                 try {
@@ -1254,33 +1281,50 @@ abstract class Data
                                     if ($context['containerType'] === 'block') {
                                         $data = $item[$this->getName()] ?? null;
                                         if ($data instanceof DataObject\Data\BlockElement) {
-                                            $data = $data->getData();
+                                            if($method === 'get') {
+                                                $data = $data->getData();
 
-                                            return $data;
+                                                return $data;
+                                            } elseif ($method === 'set'){
+                                                $data->setData($setData);
+                                            }
                                         }
                                     } else {
-                                        $getter = 'get' . ucfirst($this->getName());
-                                        $data = $item->$getter();
+                                        if ($method === 'get') {
+                                            $getter = 'get' . ucfirst($this->getName());
+                                            $data = $item->$getter();
 
-                                        if ($object instanceof DataObject\Localizedfield) {
-                                            $data = $data->getLocalizedValue($this->getName(), $params['language'], true);
+                                            if ($object instanceof DataObject\Localizedfield) {
+                                                $data = $data->getLocalizedValue($this->getName(), $params['language'], true);
+                                            }
+                                        } elseif ($method === 'set') {
+                                            if ($object instanceof DataObject\Localizedfield) {
+                                                $item->setLocalizedValue($this->getName(), $setData, $params['language']);
+                                            } else {
+                                                $setter = 'set' . ucfirst($this->getName());
+                                                $item->$setter($setData);
+                                            }
                                         }
                                     }
 
                                     return $data;
-                                } else {
+                                } elseif ($method === 'get') {
                                     throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                                 }
-                            } else {
+                            } elseif ($method === 'get') {
                                 return null;
                             }
-                        } else {
+                        } elseif ($method === 'get') {
                             return null;
                         }
                     } elseif ($object instanceof DataObject\Localizedfield) {
-                        $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
+                        if($method === 'get') {
+                            $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
 
-                        return $data;
+                            return $data;
+                        } elseif ($method === 'set') {
+                            $object->setLocalizedValue($this->getName(), $setData, $params['language']);
+                        }
                     }
                 }
             } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
@@ -1294,15 +1338,25 @@ abstract class Data
                         $brickData = $container->$brickGetter();
 
                         if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
-                            return $brickData->get('localizedfields');
+                            if($method === 'get') {
+                                return $brickData->get('localizedfields');
+                            } elseif($method === 'set') {
+                                $brickData->set('localizedfields', $setData);
+                            }
                         }
                     }
 
-                    return null;
+                    if ($method === 'get') {
+                        return null;
+                    }
                 } elseif ($object instanceof DataObject\Localizedfield) {
-                    $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
+                    if($method === 'get') {
+                        $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
 
-                    return $data;
+                        return $data;
+                    } elseif ($method === 'set') {
+                        $object->setLocalizedValue($this->getName(), $setData, $params['language']);
+                    }
                 }
             } elseif ($context['containerType'] === 'classificationstore') {
                 $fieldname = $context['fieldname'];
@@ -1314,23 +1368,37 @@ abstract class Data
 
                     /** @var DataObject\Classificationstore $classificationStoreData */
                     $classificationStoreData = $object->$getter();
-                    $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+                    if ($method === 'get') {
+                        $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
 
-                    return $data;
+                        return $data;
+                    } elseif ($method === 'set') {
+                        $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $setData, $language);
+                    }
+
                 }
             }
         }
 
         $container = $object;
 
-        $getter = 'get' . ucfirst($this->getName());
-        if (method_exists($container, $getter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
-            $data = $container->$getter();
-        } elseif ($object instanceof DataObject\Localizedfield) {
-            $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
-        }
+        if($method === 'get') {
+            $getter = 'get' . ucfirst($this->getName());
+            if (method_exists($container, $getter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
+                $data = $container->$getter();
+            } elseif ($object instanceof DataObject\Localizedfield) {
+                $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
+            }
 
-        return $data;
+            return $data;
+        } elseif ($method === 'set') {
+            $setter = 'set' . ucfirst($this->getName());
+            if (method_exists($object, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
+                $object->$setter($setData);
+            } elseif ($object instanceof DataObject\Localizedfield) {
+                $object->setLocalizedValue($this->getName(), $setData, $params['language']);
+            }
+        }
     }
 
     /**

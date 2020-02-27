@@ -415,4 +415,71 @@ abstract class AbstractRelations extends Data implements
             }
         }
     }
+
+    /**
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     *
+     * @param array|null $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function filterMultipleAssignments($data, $object, $params)
+    {
+        if(!is_array($data) || count($data) < 2) {
+            return $data;
+        }
+
+        if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
+                $relationItems = [];
+                $objectId = null;
+                $fieldName = $this->getName();
+
+                if ($object instanceof DataObject\Concrete) {
+                    $objectId = $object->getId();
+                } elseif (
+                    $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
+                    $object instanceof DataObject\Localizedfield ||
+                    $object instanceof DataObject\Objectbrick\Data\AbstractData
+                ) {
+                    $objectFromContainer = $object->getObject();
+                    if ($objectFromContainer) {
+                        $objectId = $objectFromContainer->getId();
+                    }
+                }
+
+                foreach ($data as $item) {
+                    $elementHash = null;
+                    if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
+                        if ($item->getElement() instanceof Element\ElementInterface) {
+                            $elementHash = Element\Service::getElementHash($item->getElement());
+                        }
+                    } elseif ($item instanceof Element\ElementInterface) {
+                        $elementHash = Element\Service::getElementHash($item);
+                    }
+
+                    if($elementHash === null) {
+                        $relationItems[] = $item; //do not filter if element hash fails
+                    } elseif (!isset($relationItems[$elementHash])) {
+                        $relationItems[$elementHash] = $item;
+                    } elseif (isset($relationItems[$elementHash])) {
+                        @trigger_error(
+                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
+                            . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
+                            E_USER_DEPRECATED
+                        );
+                    }
+                }
+
+                if(count($relationItems) !== count($data)) {
+                    $this->setDataToObject($relationItems, $object, $params);
+                    return array_values($relationItems);
+                }
+        }
+
+        return $data;
+    }
 }

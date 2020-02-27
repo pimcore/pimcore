@@ -700,6 +700,38 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
+     * TODO: move validation to checkValidity & throw exception in Pimcore 7
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     */
+    public function save($object, $params = [])
+    {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
+
+        if ($object->isFieldDirty($this->getName()) || $object->isFieldDirty('_self')) {
+            $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
+        }
+
+        parent::save($object, $params);
+    }
+
+    /**
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
@@ -740,9 +772,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $publishedList;
         }
-
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
 
         return is_array($data) ? $data : [];
     }
