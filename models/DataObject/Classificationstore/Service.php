@@ -41,7 +41,7 @@ class Service
             $cacheId = $keyConfig->getGroupId() . "_" . $keyConfig->getKeyId();
         }
 
-        if (array_key_exists($keyConfigId, self::$definitionsCache)) {
+        if (array_key_exists($cacheId, self::$definitionsCache)) {
             return self::$definitionsCache[$cacheId];
         }
 
