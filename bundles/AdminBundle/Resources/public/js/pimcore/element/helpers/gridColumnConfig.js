@@ -486,11 +486,16 @@ pimcore.element.helpers.gridColumnConfig = {
             });
 
             this.batchProgressWin = new Ext.Window({
+                title: t('batch_operation'),
                 items: [this.batchProgressBar],
-                modal: true,
-                bodyStyle: "background: #fff;",
-                closable: false
+                layout: 'fit',
+                width: 200,
+                bodyStyle: "padding: 10px;",
+                closable: false,
+                plain: true,
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
+
             this.batchProgressWin.show();
 
         }
@@ -601,10 +606,14 @@ pimcore.element.helpers.gridColumnConfig = {
             });
 
             this.exportProgressWin = new Ext.Window({
+                title: t("export"),
                 items: [this.exportProgressBar],
-                modal: true,
-                bodyStyle: "background: #fff;",
-                closable: false
+                layout: 'fit',
+                width: 200,
+                bodyStyle: "padding: 10px;",
+                closable: false,
+                plain: true,
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
             this.exportProgressWin.show();
         }

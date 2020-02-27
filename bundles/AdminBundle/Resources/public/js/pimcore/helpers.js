@@ -1474,13 +1474,14 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         });
 
         this.addChildWindow = new Ext.Window({
+            title: t("move"),
             layout: 'fit',
-            width: 500,
+            width: 200,
             bodyStyle: "padding: 10px;",
             closable: false,
             plain: true,
-            modal: true,
-            items: [this.addChildProgressBar]
+            items: [this.addChildProgressBar],
+            listeners: pimcore.helpers.getProgressWindowListeners()
         });
 
         this.addChildWindow.show();
@@ -3109,7 +3110,7 @@ pimcore.helpers.treeToolTipHide = function () {
     Ext.get('pimcore_tooltip').hide();
 };
 
-pimcore.helpers.progressWindowOffsets = [-20];
+pimcore.helpers.progressWindowOffsets = [-50];
 
 pimcore.helpers.getProgressWindowListeners = function () {
     return {
