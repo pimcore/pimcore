@@ -62,6 +62,11 @@ class DocumentFallbackListener implements EventSubscriberInterface
      */
     protected $options;
 
+    /**
+     * @var bool
+     */
+    protected $isRequestContextDefault = true;
+
     public function __construct(
         RequestStack $requestStack,
         DocumentResolver $documentResolver,
@@ -111,36 +116,33 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
+
+        if (!$this->isRequestContextDefault) {
             return;
         }
 
-        if ($this->documentResolver->getDocument($request)) {
-            // we already have a document (e.g. set through the document router)
-            return;
-        } else {
+        if (!$event->isMasterRequest() && !$this->documentResolver->getDocument($request)) {
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
-            if (!$event->isMasterRequest()) {
-                $parentRequest = $this->requestStack->getParentRequest();
-                $masterRequest = $this->requestStack->getMasterRequest();
+            $parentRequest = $this->requestStack->getParentRequest();
+            $masterRequest = $this->requestStack->getMasterRequest();
 
-                $eligibleRequests = [];
+            $eligibleRequests = [];
 
-                if (null !== $parentRequest) {
-                    $eligibleRequests[] = $parentRequest;
-                }
+            if (null !== $parentRequest) {
+                $eligibleRequests[] = $parentRequest;
+            }
 
-                if ($masterRequest !== $parentRequest) {
-                    $eligibleRequests[] = $masterRequest;
-                }
+            if ($masterRequest !== $parentRequest) {
+                $eligibleRequests[] = $masterRequest;
+            }
 
-                foreach ($eligibleRequests as $eligibleRequest) {
-                    if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
-                        $this->documentResolver->setDocument($request, $document);
+            foreach ($eligibleRequests as $eligibleRequest) {
+                if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
+                    $this->documentResolver->setDocument($request, $document);
 
-                        return;
-                    }
+                    return;
                 }
             }
         }
@@ -150,8 +152,8 @@ class DocumentFallbackListener implements EventSubscriberInterface
         // no document found yet - try to find the nearest document by request path
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
-        if ($event->isMasterRequest()) {
-            $request = $event->getRequest();
+        $request = $event->getRequest();
+        if ($event->isMasterRequest() && $this->isRequestContextDefault && !$this->documentResolver->getDocument($request)) {
             $path = null;
             if ($this->siteResolver->isSiteRequest($request)) {
                 $path = $this->siteResolver->getSitePath($request);
