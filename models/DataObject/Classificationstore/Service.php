@@ -22,17 +22,42 @@ use Pimcore\Model\DataObject;
 class Service
 {
     /**
-     * @param KeyConfig $keyConfig
+     * @var array Used for storing definitions
+     */
+    protected static $definitionsCache = [];
+
+    /**
+     * Clears the cache for the definitions
+     */
+    public static function clearDefinitionsCache()
+    {
+        self::$definitionsCache = [];
+    }
+    
+    /**
+     * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return DataObject\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromKeyConfig($keyConfig)
     {
+        if ($keyConfig instanceof KeyConfig) {
+            $cacheId = $keyConfig->getId();
+        } else if ($keyConfig instanceof KeyGroupRelation) {
+            $cacheId = $keyConfig->getKeyId();
+        } else {
+            throw new \Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
+        }
+
+        if (array_key_exists($cacheId, self::$definitionsCache)) {
+            return self::$definitionsCache[$cacheId];
+        }
+
         $definition = $keyConfig->getDefinition();
         $definition = json_decode($definition, true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
-
+        self::$definitionsCache[$cacheId] = $fd;
         return $fd;
     }
 
