@@ -20,6 +20,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -63,9 +64,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
     protected $options;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    protected $isRequestContextDefault = true;
+    protected $isRequestContextDefault = null;
 
     public function __construct(
         RequestStack $requestStack,
@@ -116,9 +117,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
-
-        if (!$this->isRequestContextDefault) {
+        if (!$this->isRequestContextDefault($request)) {
             return;
         }
 
@@ -153,7 +152,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
         $request = $event->getRequest();
-        if ($event->isMasterRequest() && $this->isRequestContextDefault && !$this->documentResolver->getDocument($request)) {
+        if ($event->isMasterRequest() && $this->isRequestContextDefault($request) && !$this->documentResolver->getDocument($request)) {
             $path = null;
             if ($this->siteResolver->isSiteRequest($request)) {
                 $path = $this->siteResolver->getSitePath($request);
@@ -166,5 +165,18 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 $this->documentResolver->setDocument($request, $document);
             }
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    private function isRequestContextDefault(Request $request): bool
+    {
+        if($this->isRequestContextDefault === null) {
+            $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
+        }
+
+        return $this->isRequestContextDefault;
     }
 }
