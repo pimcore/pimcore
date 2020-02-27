@@ -54,7 +54,7 @@ class Config implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset(static::$systemConfig[$offset]);
+        return self::getSystemConfiguration($offset) !== null;
     }
 
     /**
@@ -89,11 +89,7 @@ class Config implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        if (null === static::$systemConfig || $this->offsetExists($offset)) {
-            return self::getSystemConfiguration($offset);
-        }
-
-        return null;
+        return self::getSystemConfiguration($offset);
     }
 
     /**
