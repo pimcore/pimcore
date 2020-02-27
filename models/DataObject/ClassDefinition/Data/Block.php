@@ -138,6 +138,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     if($elementData instanceof DataObject\Localizedfield) {
                         foreach ($elementData->getInternalData() as $language => $fields) {
                             foreach ($fields as $fieldName => $values) {
+                                /** @var DataObject\ClassDefinition\Data\Localizedfields $fd */
                                 $lfd = $fd->getFieldDefinition($fieldName);
                                 if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
                                     if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {

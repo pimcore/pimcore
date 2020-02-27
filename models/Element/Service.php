@@ -484,7 +484,7 @@ class Service extends Model\AbstractModel
      *
      * @return string|null
      */
-    public static function getElementHash(ElementInterface $element): string
+    public static function getElementHash(ElementInterface $element): ?string
     {
         $elementType = self::getElementType($element);
         if ($element->getId() === null || $elementType === null) {
