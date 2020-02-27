@@ -20,11 +20,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Webmozarts\Console\Parallelization\Parallelization;
 
-class ThumbnailsImageCommand extends AbstractCommand
+class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareInterface
 {
     use Parallelization;
+    use ContainerAwareTrait;
 
     protected static $defaultName = 'pimcore:thumbnails:image';
 
@@ -251,6 +254,6 @@ class ThumbnailsImageCommand extends AbstractCommand
      */
     protected function getContainer()
     {
-        return \Pimcore::getContainer();
+        return $this->container;
     }
 }
