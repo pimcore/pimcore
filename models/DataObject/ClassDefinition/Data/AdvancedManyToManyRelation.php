@@ -685,7 +685,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
         //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        if ($object->isFieldDirty($this->getName()) || $object->isFieldDirty('_self')) {
+        if (!$object instanceof DataObject\DirtyIndicatorInterface || $object->isFieldDirty($this->getName()) || $object->isFieldDirty('_self')) {
             $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
         }
 
