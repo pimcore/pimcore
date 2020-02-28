@@ -33,7 +33,7 @@ class Service
     {
         self::$definitionsCache = [];
     }
-    
+
     /**
      * @param KeyConfig|KeyGroupRelation $keyConfig
      *
@@ -43,7 +43,7 @@ class Service
     {
         if ($keyConfig instanceof KeyConfig) {
             $cacheId = $keyConfig->getId();
-        } else if ($keyConfig instanceof KeyGroupRelation) {
+        } elseif ($keyConfig instanceof KeyGroupRelation) {
             $cacheId = $keyConfig->getKeyId();
         } else {
             throw new \Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
@@ -58,6 +58,7 @@ class Service
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
         self::$definitionsCache[$cacheId] = $fd;
+
         return $fd;
     }
 
