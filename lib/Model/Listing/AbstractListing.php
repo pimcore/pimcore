@@ -15,6 +15,7 @@
 namespace Pimcore\Model\Listing;
 
 use Pimcore\Db;
+use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model\AbstractModel;
 
 /**
@@ -214,11 +215,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
     /**
      * @param string|array $orderKey
-     * @param bool $quote
+     * @param bool $backticks
      *
      * @return $this
      */
-    public function setOrderKey($orderKey, $quote = true)
+    public function setOrderKey($orderKey, $backticks = true)
     {
         $this->setData(null);
 
@@ -230,15 +231,40 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
         if (is_array($orderKey)) {
             foreach ($orderKey as $o) {
-                if ($quote === false) {
+                if (!$backticks || $this->checkIfValueContainBackticks($o)) {
                     $this->orderKey[] = $o;
                 } elseif ($this->isValidOrderKey($o)) {
-                    if (strpos($o, '`') !== false) {
-                        $this->orderKey[] = $o;
-                    } else {
-                        $this->orderKey[] = '`' . $o . '`';
-                    }
+                    $this->orderKey[] = '`' . $o . '`';
                 }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupBy()
+    {
+        return $this->groupBy;
+    }
+
+    /**
+     * @param string $groupBy
+     * @param bool $backticks
+     *
+     * @return $this
+     */
+    public function setGroupBy($groupBy, $backticks = true)
+    {
+        $this->setData(null);
+
+        if ($groupBy) {
+            $this->groupBy = $groupBy;
+
+            if (!$backticks || $this->checkIfValueContainBackticks($groupBy)) {
+                $this->groupBy = new Expression($groupBy);
             }
         }
 
@@ -369,40 +395,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @return string
-     */
-    public function getGroupBy()
-    {
-        return $this->groupBy;
-    }
-
-    /**
      * @return array
      */
     public function getValidOrders()
     {
         return $this->validOrders;
-    }
-
-    /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if ($qoute && strpos($groupBy, '`') !== 0) {
-                $this->groupBy = '`' . $this->groupBy . '`';
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -513,6 +510,19 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
         $this->data = $data;
 
         return $this;
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    public function checkIfValueContainBackticks(string $value): bool
+    {
+        if (strpos($value, '`') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

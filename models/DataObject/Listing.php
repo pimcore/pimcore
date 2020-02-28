@@ -149,27 +149,6 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
-     * @return $this
-     */
-    public function setGroupBy($groupBy, $qoute = true)
-    {
-        $this->setData(null);
-
-        if ($groupBy) {
-            $this->groupBy = $groupBy;
-
-            if (!$qoute) {
-                $this->groupBy = new Expression($groupBy);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      *
      * Methods for AdapterInterface
      */
