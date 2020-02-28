@@ -81,6 +81,7 @@ class Dao extends Model\Element\Dao
     {
         $this->db->insert('documents', [
             'key' => $this->model->getKey(),
+            'type' => $this->model->getType(),
             'path' => $this->model->getRealPath(),
             'parentId' => $this->model->getParentId(),
             'index' => 0
