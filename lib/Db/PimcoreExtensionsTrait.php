@@ -628,8 +628,11 @@ trait PimcoreExtensionsTrait
         $idsForDeletion = $this->fetchCol($sql);
 
         if (!empty($idsForDeletion)) {
-            $idString = implode(",", $idsForDeletion);
-            $this->deleteWhere($table, $idColumn . ' IN (' . $idString . ')');
+            $chunks = array_chunk($idsForDeletion, 1000);
+            foreach ($chunks as $chunk) {
+                $idString = implode(',', array_map([$this, 'quote'], $chunk));
+                $this->deleteWhere($table, $idColumn . ' IN (' . $idString . ')');
+            }
         }
     }
 }
