@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
