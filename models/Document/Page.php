@@ -53,7 +53,7 @@ class Page extends TargetingDocument
     protected $type = 'page';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $prettyUrl;
 

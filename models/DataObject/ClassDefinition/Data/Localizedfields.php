@@ -115,7 +115,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     protected $referencedFields = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     public $fieldDefinitionsCache;
 

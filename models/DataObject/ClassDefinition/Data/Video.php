@@ -114,7 +114,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -188,7 +188,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -202,7 +202,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Video
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -223,7 +223,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -322,7 +322,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -334,9 +334,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
 
             return $data->getType() . '~' . $value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -446,10 +446,10 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -457,6 +457,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             return $this->getDataForResource($data, $object, $params);
         }
+
+        return null;
     }
 
     /**

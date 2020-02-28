@@ -525,7 +525,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return string
+     * @return int
      */
     public function getNextIndex()
     {

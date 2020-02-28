@@ -36,7 +36,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $ownerClassName;
 
     /**
-     * @var number
+     * @var string
      */
     public $ownerClassId;
 
@@ -94,7 +94,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return number
+     * @return string
      */
     public function getOwnerClassId()
     {
@@ -199,7 +199,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

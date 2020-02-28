@@ -53,12 +53,12 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public $labelFirstCell;
 
     /**
-     * @var object
+     * @var array
      */
     public $cols;
 
     /**
-     * @var object
+     * @var array
      */
     public $rows;
 
@@ -150,7 +150,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return object
+     * @return array
      */
     public function getCols()
     {
@@ -180,7 +180,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return object
+     * @return array
      */
     public function getRows()
     {
@@ -254,7 +254,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -424,7 +424,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -440,9 +440,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             }
 
             return $string;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -475,10 +475,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -495,9 +495,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             }
 
             return $webserviceArray;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

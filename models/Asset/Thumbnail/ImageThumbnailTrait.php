@@ -33,27 +33,27 @@ trait ImageThumbnailTrait
     protected $config;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $filesystemPath;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $width;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $height;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $realWidth;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $realHeight;
 
@@ -173,8 +173,8 @@ trait ImageThumbnailTrait
             $this->realWidth = $this->width;
 
             if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = floor($this->width * $config->getHighResolution());
-                $this->realHeight = floor($this->height * $config->getHighResolution());
+                $this->realWidth = (int)floor($this->width * $config->getHighResolution());
+                $this->realHeight = (int)floor($this->height * $config->getHighResolution());
             }
         }
 

@@ -137,7 +137,7 @@ class Staticroute extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Staticroute
+     * @return Staticroute|null
      */
     public static function getById($id)
     {

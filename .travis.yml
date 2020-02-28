@@ -33,7 +33,7 @@ addons:
 # see https://docs.travis-ci.com/user/build-matrix/
 jobs:
   allow_failures:
-    # Run PHPStan level 2 without baseline, but allow them to fail
+    # Run PHPStan level 3 without baseline, but allow them to fail
     -
       os: linux
       php: 7.4
@@ -108,7 +108,7 @@ jobs:
         - PIMCORE_TEST_ENV=http
 
     # Test Stan - see https://github.com/phpstan/phpstan
-    - name: "PHPStan Level 2 - PHP 7.4 Symfony 3.4 baseline"
+    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4 baseline"
       os: linux
       php: 7.4
       env:
@@ -116,7 +116,7 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 2 - PHP 7.4 Symfony 3.4"
+    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4"
       os: linux
       php: 7.4
       env:
@@ -126,14 +126,14 @@ jobs:
         - PHPSTAN_BASELINE=0
 
     # Test Stan Symfony ^4.0
-    - name: "PHPStan Level 2 - PHP 7.4 Symfony 4 baseline"
+    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 baseline"
       os: linux
       php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 2 - PHP 7.4 Symfony 4"
+    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4"
       os: linux
       php: 7.4
       env:
@@ -141,7 +141,7 @@ jobs:
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
 
-    - name: "PHPStan Level 2 - PHP 7.4 Symfony 4 - Generate baseline"
+    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 - Generate baseline"
       os: linux
       php: 7.4
       env:
@@ -172,7 +172,7 @@ env:
     - TASK_TESTS=1
     - TASK_STAN=0
     - TASK_DOCS=0
-    - PHPSTAN_LEVEL=2
+    - PHPSTAN_LEVEL=3
     - PHPSTAN_BASELINE=1
     - PHPSTAN_BASELINE_GENERATE=0
     - PIMCORE_ENVIRONMENT=test

@@ -105,7 +105,7 @@ class Rule extends Model\AbstractModel
      *
      * @param int $id
      *
-     * @return Tool\Targeting\Rule
+     * @return Tool\Targeting\Rule|null
      */
     public static function getById($id)
     {

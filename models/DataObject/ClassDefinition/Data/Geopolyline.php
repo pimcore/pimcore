@@ -127,7 +127,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\Geopoint[]|null $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -169,7 +169,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {

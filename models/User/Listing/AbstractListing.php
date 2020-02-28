@@ -56,7 +56,7 @@ class AbstractListing extends Model\Listing\AbstractListing
     /**
      * @param array $items
      *
-     * @return $this
+     * @return static
      */
     public function setItems($items)
     {

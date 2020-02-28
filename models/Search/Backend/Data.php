@@ -96,7 +96,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public $userModification;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $data;
 

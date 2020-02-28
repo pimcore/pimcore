@@ -47,7 +47,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_published;
 
     /**
-     * @var ClassDefinition
+     * @var ClassDefinition|null
      */
     protected $o_class;
 
@@ -62,14 +62,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_className;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $o_versions = null;
 
     /**
      * Contains all scheduled tasks
      *
-     * @var array
+     * @var array|null
      */
     protected $scheduledTasks = null;
 

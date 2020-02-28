@@ -51,7 +51,7 @@ class Hardlink extends Document
     protected $childrenFromSource;
 
     /**
-     * @return Document\PageSnippet
+     * @return Document|null
      */
     public function getSourceDocument()
     {
@@ -253,10 +253,6 @@ class Hardlink extends Document
         }
 
         parent::delete($isNested);
-
-        // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
-        $this->children = null;
     }
 
     /**

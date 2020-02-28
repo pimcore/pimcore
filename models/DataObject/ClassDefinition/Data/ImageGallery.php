@@ -38,14 +38,14 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
@@ -391,16 +391,16 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -480,8 +480,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\AbstractObject $object
+     * @param array $params
      *
      * @return array
      */

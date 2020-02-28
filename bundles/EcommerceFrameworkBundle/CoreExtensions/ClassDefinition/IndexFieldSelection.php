@@ -35,7 +35,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = [
         'tenant' => 'varchar(100)',
@@ -46,7 +46,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = [
         'tenant' => 'varchar(100)',
@@ -126,9 +126,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param float $data
+     * @param ObjectData\IndexFieldSelection|null $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -152,7 +152,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param float $data
+     * @param array $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -170,7 +170,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param float $data
+     * @param ObjectData\IndexFieldSelection|null $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -184,11 +184,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
+     * @param ObjectData\IndexFieldSelection|null $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -206,11 +206,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param float $data
+     * @param array $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed
+     * @return ObjectData\IndexFieldSelection|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -232,7 +232,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param Concrete|null $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -267,7 +267,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param \Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -280,9 +280,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             }
 
             return $object->$getter()->getTenant() . '%%%%' . $object->$getter()->getField() . '%%%%' . $preSelect ;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

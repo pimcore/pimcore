@@ -259,7 +259,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -409,7 +409,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -424,9 +424,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -938,7 +938,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ObjectMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

@@ -112,7 +112,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     protected $referencedFields = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     public $fieldDefinitionsCache;
 
@@ -133,7 +133,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -290,11 +290,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $containerData
+     * @param array $containerData
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Classificationstore
      */
     public function getDataFromEditmode($containerData, $object = null, $params = [])
     {
@@ -357,7 +357,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return \stdClass
+     * @return string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -1126,7 +1126,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
         if (!$object) {
-            return;
+            return null;
         }
 
         $getter = 'get' . ucfirst($this->getName());
@@ -1159,14 +1159,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\Concrete $object
      * @param array $activeGroups
      *
-     * @return array|bool
+     * @return array|null
      *
      * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
         if (!$object) {
-            return;
+            return null;
         }
 
         $getter = 'get' . ucfirst($this->getName());

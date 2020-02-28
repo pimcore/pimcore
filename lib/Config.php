@@ -85,7 +85,7 @@ class Config implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string
+     * @return array
      */
     public function offsetGet($offset)
     {

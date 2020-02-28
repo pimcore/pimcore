@@ -44,7 +44,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     const STRICT_ENABLED = 1;
 
     /**
-     * @var bool
+     * @var int
      */
     private static $strictMode = self::STRICT_ENABLED;
 
@@ -61,14 +61,14 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public $delegateDatatype;
 
     /**
-     * @var Model\DataObject\ClassDefinition\Data
+     * @var Model\DataObject\ClassDefinition\Data|null
      */
     public $delegate;
 
     /**
      * Type for the column
      *
-     * @var array
+     * @var string
      */
     public $columnType = 'LONGBLOB';
 
@@ -160,7 +160,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
                     if (!self::isStrictMode()) {
                         Logger::error('failed to load key');
 
-                        return;
+                        return null;
                     }
                     throw new \Exception('could not load key');
                 }
@@ -223,7 +223,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -234,6 +234,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -243,7 +245,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
+     * @return Model\DataObject\Data\EncryptedField|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -322,10 +324,10 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param Model\DataObject\AbstractObject $object
+     * @param array $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -334,9 +336,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -505,12 +507,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @param  string $operator
      * @param  array $params
      *
-     * @return null
+     * @return string
      *
      */
     public function getFilterCondition($value, $operator, $params = [])
     {
-        return null;
+        return '';
     }
 
     /**
@@ -566,7 +568,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @return bool
+     * @return int
      */
     public static function isStrictMode()
     {
@@ -574,7 +576,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param bool $strictMode
+     * @param int $strictMode
      */
     public static function setStrictMode($strictMode)
     {

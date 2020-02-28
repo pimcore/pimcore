@@ -150,7 +150,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -352,7 +352,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return string
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -375,10 +375,10 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return null
      */
     public function getForWebserviceExport($object, $params = [])
     {

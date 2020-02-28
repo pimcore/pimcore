@@ -66,7 +66,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Default data
      *
-     * @var int
+     * @var string
      */
     public $data;
 
@@ -222,7 +222,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getData()
     {
@@ -318,7 +318,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -382,11 +382,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -399,11 +399,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -413,11 +413,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -440,11 +440,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -497,38 +497,38 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed|null
+     * @return array|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if (is_array($value)) {
             return $value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */

@@ -169,7 +169,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {

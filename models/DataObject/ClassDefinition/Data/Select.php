@@ -38,7 +38,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Available options to select
      *
-     * @var array
+     * @var array|null
      */
     public $options;
 
@@ -471,7 +471,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return array|string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -498,9 +498,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $result;
-        } else {
-            return $data;
         }
+
+        return $data;
     }
 
     /**
@@ -510,7 +510,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
+     * @return string|null
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {

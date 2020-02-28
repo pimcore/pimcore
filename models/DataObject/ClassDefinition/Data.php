@@ -66,7 +66,7 @@ abstract class Data
     public $locked;
 
     /**
-     * @var bool
+     * @var string
      */
     public $style;
 
@@ -427,7 +427,7 @@ abstract class Data
 
     /**
      *
-     * @return bool
+     * @return string
      */
     public function getStyle()
     {
@@ -1353,7 +1353,8 @@ abstract class Data
                 unset($this->$name);
             }
         }
-        foreach ($masterDefinition as $name => $value) {
+        $vars = get_object_vars($masterDefinition);
+        foreach ($vars as $name => $value) {
             if (!in_array($name, $protectedFields)) {
                 $this->$name = $value;
             }

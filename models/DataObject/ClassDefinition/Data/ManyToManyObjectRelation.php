@@ -223,7 +223,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -381,7 +381,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -395,9 +395,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -651,7 +651,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return array
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

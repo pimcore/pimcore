@@ -43,7 +43,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Element\Tag[]|null $tags
      *
-     * @return $this
+     * @return static
      */
     public function setTags($tags)
     {

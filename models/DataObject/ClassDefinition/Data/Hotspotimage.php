@@ -38,14 +38,14 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
@@ -124,7 +124,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -289,7 +289,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *

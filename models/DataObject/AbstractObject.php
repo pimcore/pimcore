@@ -82,7 +82,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_parentId;
 
     /**
-     * @var self
+     * @var self|null
      */
     protected $o_parent;
 
@@ -151,7 +151,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency[]
+     * @var Model\Dependency|null
      */
     protected $o_dependencies;
 
@@ -368,6 +368,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if ($className) {
                 $listClass = $className . '\\Listing';
+                /** @var DataObject\Listing $list */
                 $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
@@ -502,7 +503,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $o_locked
+     * @param string $o_locked
      *
      * @return $this
      */

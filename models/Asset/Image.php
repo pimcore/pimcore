@@ -413,7 +413,7 @@ EOT;
      * @param string|null $path
      * @param bool $force
      *
-     * @return array
+     * @return array|null
      *
      * @throws \Exception
      */
@@ -453,7 +453,7 @@ EOT;
 
             $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
-                return;
+                return null;
             }
 
             $dimensions = [

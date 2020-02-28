@@ -100,7 +100,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string|void
+     * @return string|null
      */
     public function frontend()
     {
@@ -178,7 +178,7 @@ class Snippet extends Model\Document\Tag
             }
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -297,7 +297,7 @@ class Snippet extends Model\Document\Tag
     public function load()
     {
         if (!$this->snippet && $this->id) {
-            $this->snippet = Document::getById($this->id);
+            $this->snippet = Document\Snippet::getById($this->id);
         }
     }
 

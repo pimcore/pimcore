@@ -28,7 +28,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -349,7 +349,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -508,7 +508,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -523,9 +523,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -880,7 +880,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getColumns()
     {
@@ -947,7 +947,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ElementMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
