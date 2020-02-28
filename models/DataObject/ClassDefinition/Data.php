@@ -1200,38 +1200,36 @@ abstract class Data
     }
 
     /**
+     *  @internal
+     *
      * @param mixed $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
      * @throws \Exception
      */
-    protected function setDataToObject($data, $object, $params = [])
+    protected function setDataToObject($data, $container, $params = [])
     {
-        if (isset($params['injectedData'])) {
-            return $params['injectedData'];
-        }
-
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'])) {
             if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
-                if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield) {
+                if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield) {
                     $fieldname = $context['fieldname'];
 
-                    if ($object instanceof DataObject\Concrete) {
+                    if ($container instanceof DataObject\Concrete) {
                         $containerGetter = 'get' . ucfirst($fieldname);
-                        $container = $object->$containerGetter();
+                        $parentContainer = $container->$containerGetter();
 
-                        if ($container) {
+                        if ($parentContainer) {
                             $originalIndex = $context['oIndex'] ?? null;
 
                             // field collection or block items
                             if ($originalIndex !== null) {
                                 if ($context['containerType'] === 'block') {
-                                    $items = $container;
+                                    $items = $parentContainer;
                                 } else {
-                                    $items = $container->getItems();
+                                    $items = $parentContainer->getItems();
                                 }
 
                                 if ($items && count($items) > $originalIndex) {
@@ -1243,7 +1241,7 @@ abstract class Data
                                             $data->setData($data);
                                         }
                                     } else {
-                                        if ($object instanceof DataObject\Localizedfield) {
+                                        if ($container instanceof DataObject\Localizedfield) {
                                             $item->setLocalizedValue($this->getName(), $data, $params['language']);
                                         } else {
                                             $setter = 'set' . ucfirst($this->getName());
@@ -1253,47 +1251,47 @@ abstract class Data
                                 }
                             }
                         }
-                    } elseif ($object instanceof DataObject\Localizedfield) {
-                        $object->setLocalizedValue($this->getName(), $data, $params['language']);
+                    } elseif ($container instanceof DataObject\Localizedfield) {
+                        $container->setLocalizedValue($this->getName(), $data, $params['language']);
                     }
                 }
-            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
+            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield)) {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
+                if ($container instanceof DataObject\Concrete) {
                     $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
+                    $parentContainer = $container->$containerGetter();
+                    if ($parentContainer) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        $brickData = $container->$brickGetter();
+                        $brickData = $parentContainer->$brickGetter();
 
                         if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
                             $brickData->set('localizedfields', $data);
                         }
                     }
-                } elseif ($object instanceof DataObject\Localizedfield) {
-                    $object->setLocalizedValue($this->getName(), $data, $params['language']);
+                } elseif ($container instanceof DataObject\Localizedfield) {
+                    $container->setLocalizedValue($this->getName(), $data, $params['language']);
                 }
             } elseif ($context['containerType'] === 'classificationstore') {
                 $fieldname = $context['fieldname'];
                 $getter = 'get' . ucfirst($fieldname);
-                if (method_exists($object, $getter)) {
+                if (method_exists($container, $getter)) {
                     $groupId = $context['groupId'];
                     $keyId = $context['keyId'];
                     $language = $context['language'];
 
                     /** @var DataObject\Classificationstore $classificationStoreData */
-                    $classificationStoreData = $object->$getter();
+                    $classificationStoreData = $container->$getter();
                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $data, $language);
                 }
             }
         }
 
         $setter = 'set' . ucfirst($this->getName());
-        if (method_exists($object, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
-            $object->$setter($data);
-        } elseif ($object instanceof DataObject\Localizedfield) {
-            $object->setLocalizedValue($this->getName(), $data, $params['language']);
+        if (method_exists($container, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
+            $container->$setter($data);
+        } elseif ($container instanceof DataObject\Localizedfield) {
+            $container->setLocalizedValue($this->getName(), $data, $params['language']);
         }
     }
 

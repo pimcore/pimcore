@@ -3,38 +3,37 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 
 trait ManyToManyRelationTrait
 {
     /**
      * TODO: move validation to checkValidity & throw exception in Pimcore 7
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      */
-    public function save($object, $params = [])
+    public function save($container, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
-            if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
-                    if (!$object->hasDirtyFields()) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DataObject\DirtyIndicatorInterface) {
+            if ($container instanceof DataObject\Localizedfield) {
+                if ($container->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                    if (!$container->hasDirtyFields()) {
                         return;
                     }
                 }
             } else {
                 if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName())) {
+                    if (!$container->isFieldDirty($this->getName())) {
                         return;
                     }
                 }
             }
         }
 
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($container, $params);
+        $this->filterMultipleAssignments($data, $container, $params);
 
-        if (!$object instanceof DataObject\DirtyIndicatorInterface || $object->isFieldDirty($this->getName()) || $object->isFieldDirty('_self')) {
-            $this->filterMultipleAssignments($data, $object, $params);
-        }
-
-        parent::save($object, $params);
+        parent::save($container, $params);
     }
 }

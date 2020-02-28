@@ -420,16 +420,24 @@ abstract class AbstractRelations extends Data implements
      * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
      *
      * @param array|null $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function filterMultipleAssignments($data, $object, $params)
+    public function filterMultipleAssignments($data, $container, $params)
     {
-        if(!is_array($data) || count($data) < 2) {
+        if (
+            (!is_array($data) || count($data) < 2)
+            || !$container instanceof DataObject\DirtyIndicatorInterface
+            || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
+            || ((  $container instanceof DataObject\Fieldcollection\Data\AbstractData
+                || $container instanceof DataObject\Localizedfield
+                || $container instanceof DataObject\Objectbrick\Data\AbstractData )
+                && !$container->isFieldDirty('_self'))
+        ) {
             return $data;
         }
 
@@ -438,14 +446,14 @@ abstract class AbstractRelations extends Data implements
                 $objectId = null;
                 $fieldName = $this->getName();
 
-                if ($object instanceof DataObject\Concrete) {
-                    $objectId = $object->getId();
+                if ($container instanceof DataObject\Concrete) {
+                    $objectId = $container->getId();
                 } elseif (
-                    $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
-                    $object instanceof DataObject\Localizedfield ||
-                    $object instanceof DataObject\Objectbrick\Data\AbstractData
+                    $container instanceof DataObject\Fieldcollection\Data\AbstractData ||
+                    $container instanceof DataObject\Localizedfield ||
+                    $container instanceof DataObject\Objectbrick\Data\AbstractData
                 ) {
-                    $objectFromContainer = $object->getObject();
+                    $objectFromContainer = $container->getObject();
                     if ($objectFromContainer) {
                         $objectId = $objectFromContainer->getId();
                     }
@@ -465,7 +473,7 @@ abstract class AbstractRelations extends Data implements
                         $relationItems[] = $item; //do not filter if element hash fails
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
-                    } elseif (isset($relationItems[$elementHash])) {
+                    } else {
                         @trigger_error(
                             'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
                             . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
@@ -475,7 +483,7 @@ abstract class AbstractRelations extends Data implements
                 }
 
                 if(count($relationItems) !== count($data)) {
-                    $this->setDataToObject($relationItems, $object, $params);
+                    $this->setDataToObject(array_values($relationItems), $container, $params);
                     return array_values($relationItems);
                 }
         }
