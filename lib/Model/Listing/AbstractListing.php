@@ -233,7 +233,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                 if ($quote === false) {
                     $this->orderKey[] = $o;
                 } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = '`' . $o . '`';
+                    if (strpos($o, '`') !== false) {
+                        $this->orderKey[] = $o;
+                    } else {
+                        $this->orderKey[] = '`' . $o . '`';
+                    }
                 }
             }
         }
