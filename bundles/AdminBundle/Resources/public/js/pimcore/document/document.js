@@ -89,6 +89,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
+            if(this.data.missingRequiredEditable !== null) {
+                saveData.missingRequiredEditable = this.data.missingRequiredEditable;
+            }
+
             // check for version notification
             if (this.newerVersionNotification) {
                 if (task == "publish" || task == "unpublish") {
@@ -139,7 +143,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this),
                 failure: function () {
                     this.tab.unmask();
-                }
+                }.bind(this),
             });
         } else {
             this.tab.unmask();

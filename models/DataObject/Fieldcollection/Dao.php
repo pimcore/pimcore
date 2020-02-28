@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
@@ -46,6 +47,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load(DataObject\Concrete $object)
     {
+        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $values = [];
 
@@ -67,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
             $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
                 $collection = $modelFactory->build($collectionClass);
                 $collection->setIndex($result['index']);
                 $collection->setFieldname($result['fieldname']);
@@ -75,8 +78,8 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                        if ($fd instanceof LazyLoadingSupportInterface) {
+                            if ($fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
                         }
@@ -142,6 +145,8 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // empty or create all relevant tables
+
+        /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
 
@@ -195,6 +200,7 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->delete(
                             $object,
                             [
+                                'isUpdate' => $saveMode,
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,

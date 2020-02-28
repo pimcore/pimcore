@@ -156,5 +156,9 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     unique: source.datax.unique
                 });
         }
+    },
+
+    supportsUnique: function() {
+        return true;
     }
 });

@@ -22,6 +22,9 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Rule extends AbstractModel implements RuleInterface
 {
     /**
@@ -270,6 +273,8 @@ class Rule extends AbstractModel implements RuleInterface
     public function setCondition(ConditionInterface $condition)
     {
         $this->condition = $condition;
+
+        return $this;
     }
 
     /**

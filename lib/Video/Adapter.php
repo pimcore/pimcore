@@ -189,4 +189,16 @@ abstract class Adapter
     {
         $this->storageFile = $storageFile;
     }
+
+    /**
+     * @return int
+     *
+     * @throws \Exception
+     */
+    abstract public function getDuration();
+
+    /**
+     * @return array
+     */
+    abstract public function getDimensions();
 }

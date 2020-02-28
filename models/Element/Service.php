@@ -120,7 +120,7 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @param array|\Pimcore\Model\Listing\AbstractListing $list
+     * @param array|Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
@@ -138,7 +138,7 @@ class Service extends Model\AbstractModel
             }
         }
 
-        if ($list instanceof \Pimcore\Model\Listing\AbstractListing) {
+        if ($list instanceof Model\Listing\AbstractListing && method_exists($list, 'loadIdList')) {
             $ids = $list->loadIdList();
         }
         $ids = array_unique($ids);
@@ -337,6 +337,61 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     *
+     * @param array $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param string $fieldname
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public static function filterMultipleElements($data, $object, $fieldname)
+    {
+        $relationItems = [];
+        $objectId = null;
+
+        if ($object instanceof DataObject\Concrete) {
+            $objectId = $object->getId();
+        } elseif (
+            $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
+            $object instanceof DataObject\Localizedfield ||
+            $object instanceof DataObject\Objectbrick\Data\AbstractData
+        ) {
+            $object = $object->getObject();
+            if ($object) {
+                $objectId = $object->getId();
+            }
+        }
+
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                $elementHash = null;
+                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
+                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
+                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
+                    }
+                } elseif ($item instanceof Model\Element\ElementInterface) {
+                    $elementHash = Model\Element\Service::getElementHash($item);
+                }
+
+                if ($elementHash && !isset($relationItems[$elementHash])) {
+                    $relationItems[$elementHash] = $item;
+                } elseif (isset($relationItems[$elementHash])) {
+                    @trigger_error(
+                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
+                        .  ' multiple times in field' . $fieldname . ' of object id: ' . $objectId,
+                        E_USER_DEPRECATED
+                    );
+                }
+            }
+        }
+
+        return array_values($relationItems);
+    }
+
+    /**
      * @static
      *
      * @param  string $type
@@ -400,7 +455,7 @@ class Service extends Model\AbstractModel
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
-                $sourceKey = str_replace('.' . $fileExtension, '_copy.' . $fileExtension, $sourceKey);
+                $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
             } else {
                 $sourceKey .= '_copy';
             }
@@ -439,7 +494,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return ElementInterface
+     * @return AbstractElement|null
      */
     public static function getElementById($type, $id, $force = false)
     {
@@ -616,7 +671,7 @@ class Service extends Model\AbstractModel
     /**
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getFilename(ElementInterface $element)
     {
@@ -625,6 +680,8 @@ class Service extends Model\AbstractModel
         } elseif ($element instanceof Asset) {
             return $element->getFilename();
         }
+
+        return null;
     }
 
     /**
@@ -696,10 +753,13 @@ class Service extends Model\AbstractModel
 
                     if ($originalElement) {
                         if ($data instanceof Asset) {
+                            /** @var Asset $originalElement */
                             $data->setFilename($originalElement->getFilename());
                         } elseif ($data instanceof Document) {
+                            /** @var Document $originalElement */
                             $data->setKey($originalElement->getKey());
                         } elseif ($data instanceof DataObject\AbstractObject) {
+                            /** @var AbstractObject $originalElement */
                             $data->setKey($originalElement->getKey());
                         }
 
@@ -774,15 +834,6 @@ class Service extends Model\AbstractModel
         }
 
         return $element;
-    }
-
-    /**
-     * clean up broken views which were generated by localized fields, ....
-     * when removing a language the view isn't valid anymore
-     */
-    public function cleanupBrokenViews()
-    {
-        $this->getDao()->cleanupBrokenViews();
     }
 
     /** Callback for array_filter function.
@@ -1285,6 +1336,7 @@ class Service extends Model\AbstractModel
     {
         if ($clone) {
             $copier = new DeepCopy();
+            $copier->skipUncloneable(true);
             $element = $copier->copy($element);
         }
 

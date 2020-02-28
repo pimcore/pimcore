@@ -42,7 +42,7 @@ class File
         $parts = explode('.', $name);
 
         if (count($parts) > 1) {
-            return strtolower($parts[count($parts) - 1]);
+            return $parts[count($parts) - 1];
         }
 
         return '';

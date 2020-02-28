@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
@@ -50,7 +51,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearchConfigInterface
+     * @var ElasticSearch
      */
     protected $tenantConfig;
 
@@ -1025,9 +1026,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         // create general filters and queries
         $toExcludeFieldnames = [];
+        /** @var ElasticSearch $tenantConfig */
+        $tenantConfig = $this->getTenantConfig();
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
             if ($config['fieldnameShouldBeExcluded']) {
-                $toExcludeFieldnames[$this->getTenantConfig()->getReverseMappedFieldName($fieldname)] = $fieldname;
+                $toExcludeFieldnames[$tenantConfig->getReverseMappedFieldName($fieldname)] = $fieldname;
             }
         }
 
@@ -1206,9 +1209,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
         if (!empty($bucket)) {
             $subAggregationField = array_key_first($bucket);
             $subAggregationBuckets = $bucket[$subAggregationField];
+            $reverseAggregationField = array_key_last($bucket);
+            $reverseAggregationBucket = $bucket[$reverseAggregationField];
 
             if (array_key_exists('key_as_string', $bucket)) {          // date aggregations
                 $data['key_as_string'] = $bucket['key_as_string'];
+            } elseif (is_array($reverseAggregationBucket) && array_key_exists('doc_count', $reverseAggregationBucket)) { // reverse aggregation
+                $data['reverse_count'] = $reverseAggregationBucket['doc_count'];
             } elseif (is_array($subAggregationBuckets['buckets'])) {        // sub aggregations
                 foreach ($subAggregationBuckets['buckets'] as $bucket) {
                     $data[$subAggregationField][] = $this->convertBucketValues($bucket);

@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
+ * @method \Pimcore\Model\Tool\Email\Blacklist\Dao delete()
+ * @method \Pimcore\Model\Tool\Email\Blacklist\Dao save()
  */
 class Blacklist extends Model\AbstractModel
 {

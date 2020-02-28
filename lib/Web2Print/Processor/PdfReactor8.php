@@ -36,25 +36,25 @@ class PdfReactor8 extends Processor
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig = [
             'document' => '',
-            'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
+            'baseURL' => (string)$web2PrintConfig->get('pdfreactorBaseUrl'),
             'author' => $config->author ?? '',
             'title' => $config->title ?? '',
-            'addLinks' => isset($config->links) && $config->links === 'true',
-            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === 'true',
+            'addLinks' => isset($config->links) && $config->links === true,
+            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === true,
             'javaScriptMode' => $config->javaScriptMode,
             'defaultColorSpace' => $config->colorspace ?? \ColorSpace::CMYK,
             'encryption' => $config->encryption ?? \Encryption::NONE,
-            'addTags' => isset($config->tags) && $config->tags === 'true',
+            'addTags' => isset($config->tags) && $config->tags === true,
             'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
-            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode === 'true',
-            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === 'true',
-            'httpsMode' => $web2PrintConfig->pdfreactorEnableLenientHttpsMode ? \HttpsMode::LENIENT : \HttpsMode::STRICT
+            'enableDebugMode' => $web2PrintConfig->get('pdfreactorEnableDebugMode') || $config->enableDebugMode === true,
+            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
+            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT
         ];
         if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
         }
-        if (trim($web2PrintConfig->pdfreactorLicence)) {
-            $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
+        if (trim($web2PrintConfig->get('pdfreactorLicence'))) {
+            $reactorConfig['licenseKey'] = trim($web2PrintConfig->get('pdfreactorLicence'));
         }
 
         return $reactorConfig;
@@ -69,13 +69,13 @@ class PdfReactor8 extends Processor
 
         include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
-        $port = ((string)$web2PrintConfig->pdfreactorServerPort) ? (string)$web2PrintConfig->pdfreactorServerPort : '9423';
-        $protocol = ((string)$web2PrintConfig->pdfreactorProtocol) ? (string)$web2PrintConfig->pdfreactorProtocol : 'http';
+        $port = ((string)$web2PrintConfig->get('pdfreactorServerPort')) ? (string)$web2PrintConfig->get('pdfreactorServerPort') : '9423';
+        $protocol = ((string)$web2PrintConfig->get('pdfreactorProtocol')) ? (string)$web2PrintConfig->get('pdfreactorProtocol') : 'http';
 
-        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->get('pdfreactorServer') . ':' . $port . '/service/rest');
 
-        if (trim($web2PrintConfig->pdfreactorApiKey)) {
-            $pdfreactor->apiKey = trim($web2PrintConfig->pdfreactorApiKey);
+        if (trim($web2PrintConfig->get('pdfreactorApiKey'))) {
+            $pdfreactor->apiKey = trim($web2PrintConfig->get('pdfreactorApiKey'));
         }
 
         return $pdfreactor;
@@ -127,8 +127,8 @@ class PdfReactor8 extends Processor
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $params = [];
-        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === 'true';
-        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === 'true';
+        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
+        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
         $params['colorspace'] = $config->colorspace ?? \ColorSpace::CMYK;
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
@@ -141,7 +141,6 @@ class PdfReactor8 extends Processor
         $pdfreactor = $this->getClient();
 
         $reactorConfig = $this->getConfig($config);
-        $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);

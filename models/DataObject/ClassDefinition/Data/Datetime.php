@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\Carbon;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -97,7 +98,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -113,6 +114,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -146,7 +149,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      *
      * @return \Carbon\Carbon()
      */
@@ -165,7 +168,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \DateTime|false
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -194,25 +197,25 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param \DateTime $data
-     * @param null $object
-     * @param mixed $params
+     * @param Model\DataObject\Concrete|null $object
+     * @param array $params
      *
-     * @return null
+     * @return int|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @see Data::getVersionPreview
      *
      * @param \DateTime $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -248,7 +251,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|Date|Model\DataObject\ClassDefinition\Data
@@ -264,7 +267,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -345,7 +348,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $useCurrentDate
+     * @param bool|int|null $useCurrentDate
      *
      * @return $this
      */
@@ -357,7 +360,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -368,8 +371,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     *
+     * @param array $data
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return null|Date
@@ -386,7 +390,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -416,8 +420,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|int $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -456,9 +460,12 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @param \Pimcore\Model\DataObject\Concrete $object
+     * @param array $context
+     *
      * @return Carbon|null
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
         if ($this->getDefaultValue()) {
             $date = new \Carbon\Carbon();

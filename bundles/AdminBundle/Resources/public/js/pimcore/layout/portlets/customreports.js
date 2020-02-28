@@ -184,7 +184,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
             colConfig = data.columnConfiguration[f];
-            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]);
         }
 
 
@@ -401,10 +401,10 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 continue;
             }
 
-            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]);
 
             gridColConfig = {
-                header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                header: colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
                 dataIndex: colConfig["name"]
@@ -447,7 +447,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     width: 40,
                     items: [
                         {
-                            tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
+                            tooltip: t("open") + " " + (colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"])),
                             icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (colConfig, grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex).getData();

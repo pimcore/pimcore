@@ -215,18 +215,17 @@ class Mail extends \Swift_Message
      */
     public function init($type = 'email')
     {
-        $systemConfig = \Pimcore\Config::getSystemConfig()->toArray();
-        $emailSettings = & $systemConfig[$type];
+        $config = \Pimcore\Config::getSystemConfiguration($type);
 
-        if ($emailSettings['sender']['email']) {
+        if (!empty($config['sender']['email'])) {
             if (empty($this->getFrom())) {
-                $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+                $this->setFrom($config['sender']['email'], $config['sender']['name']);
             }
         }
 
-        if ($emailSettings['return']['email']) {
+        if (!empty($config['return']['email'])) {
             if (empty($this->getReplyTo())) {
-                $this->setReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+                $this->setReplyTo($config['return']['email'], $config['return']['name']);
             }
         }
 
@@ -343,6 +342,8 @@ class Mail extends \Swift_Message
         $this->getHeaders()->removeAll('cc');
         $this->getHeaders()->removeAll('bcc');
         $this->getHeaders()->removeAll('replyTo');
+
+        return $this;
     }
 
     /**
@@ -380,7 +381,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets the parameters for the email view and the Placeholders
+     * Sets the parameters to the request object and the Placeholders
      *
      * @param array $params
      *
@@ -396,7 +397,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets a single parameter for the email view and the Placeholders
+     * Sets a single parameter to the request object and the Placeholders
      *
      * @param string | int $key
      * @param mixed $value
@@ -408,7 +409,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
         } else {
-            Logger::warn('$key has to be a string - Param ignored!');
+            Logger::warn('$key has to be a string or integer - Param ignored!');
         }
 
         return $this;
@@ -474,7 +475,7 @@ class Mail extends \Swift_Message
         if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
         } else {
-            Logger::warn('$key has to be a string - unsetParam ignored!');
+            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
         }
 
         return $this;
@@ -1005,6 +1006,8 @@ class Mail extends \Swift_Message
         } else {
             parent::addTo($address, $name);
         }
+
+        return $this;
     }
 
     /**

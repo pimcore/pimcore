@@ -117,6 +117,8 @@ class MigrateElementNamesCommand extends AbstractCommand
         }
 
         $this->processUpdates();
+
+        return 0;
     }
 
     private function buildQuery(): QueryBuilder

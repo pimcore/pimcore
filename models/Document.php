@@ -33,6 +33,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
  * @method bool __isBasedOnLatestData()
+ * @method int getChildAmount($user = null)
+ * @method string getCurrentFullPath()
  */
 class Document extends Element\AbstractElement
 {
@@ -139,13 +141,6 @@ class Document extends Element\AbstractElement
     protected $userModification;
 
     /**
-     * Permissions for the user which requested this document in editmode*
-     *
-     * @var array
-     */
-    protected $userPermissions;
-
-    /**
      * Dependencies for this document
      *
      * @var Dependency
@@ -213,7 +208,7 @@ class Document extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
@@ -262,7 +257,7 @@ class Document extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter|null
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {
@@ -296,8 +291,10 @@ class Document extends Element\AbstractElement
                     }
                 }
 
+                /** @var Document $document */
                 $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
+
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
@@ -323,7 +320,7 @@ class Document extends Element\AbstractElement
      * @param array $data
      * @param bool $save
      *
-     * @return Document
+     * @return static
      */
     public static function create($parentId, $data = [], $save = true)
     {
@@ -648,17 +645,18 @@ class Document extends Element\AbstractElement
      * set the children of the document
      *
      * @param self[] $children
+     * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren($children, $includingUnpublished = false)
     {
         if (empty($children)) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
         } elseif (is_array($children)) {
-            $cacheKey = $this->getListingCacheKey();
+            $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
             $this->hasChildren[$cacheKey] = (bool) count($children);
         }
@@ -862,6 +860,9 @@ class Document extends Element\AbstractElement
             Logger::error($e);
         }
 
+        $requestStack = \Pimcore::getContainer()->get('request_stack');
+        $masterRequest = $requestStack->getMasterRequest();
+
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
 
@@ -872,9 +873,6 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            $requestStack = \Pimcore::getContainer()->get('request_stack');
-
-            $masterRequest = $requestStack->getMasterRequest();
             if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
                     $hardlink = $masterDocument->getHardLinkSource();
@@ -890,7 +888,7 @@ class Document extends Element\AbstractElement
             }
 
             if (!$link) {
-                $config = \Pimcore\Config::getSystemConfig();
+                $config = \Pimcore\Config::getSystemConfiguration('general');
                 $request = $requestStack->getCurrentRequest();
                 $scheme = 'http://';
                 if ($request) {
@@ -910,8 +908,8 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                if (!$link && $config->general->domain) {
-                    $link = $scheme . $config->general->domain . $this->getRealFullPath();
+                if (!$link && !empty($config['domain'])) {
+                    $link = $scheme . $config['domain'] . $this->getRealFullPath();
                 }
             }
         }
@@ -920,7 +918,13 @@ class Document extends Element\AbstractElement
             $link = $this->getPath() . $this->getKey();
         }
 
-        $this->fullPathCache = $link;
+        if ($masterRequest) {
+            // caching should only be done when master request is available as it is done for performance reasons
+            // of the web frontend, without a request object there's no need to cache anything
+            // for details also see https://github.com/pimcore/pimcore/issues/5707
+            $this->fullPathCache = $link;
+        }
+
         $link = $this->prepareFrontendPath($link);
 
         return $link;
@@ -1078,7 +1082,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the document key.
      *
-     * @param int $key
+     * @param string $key
      *
      * @return Document
      */
@@ -1366,7 +1370,7 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'userPermissions', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1471,14 +1475,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param array $userPermissions
-     */
-    public function setUserPermissions($userPermissions): void
-    {
-        $this->userPermissions = $userPermissions;
-    }
-
-    /**
      * @return int
      */
     public function getVersionCount(): int
@@ -1504,5 +1500,15 @@ class Document extends Element\AbstractElement
         $cacheKey = (string)$unpublished;
 
         return $cacheKey;
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->parent = null;
+        $this->hasSiblings = [];
+        $this->siblings = [];
+        $this->dependencies = null;
+        $this->fullPathCache = null;
     }
 }

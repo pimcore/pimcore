@@ -50,13 +50,13 @@ class ThumbnailsClearCommand extends AbstractCommand
         if (!in_array($input->getOption('type'), $possibleOptions)) {
             $this->writeError(sprintf('Input option `type` must be one of %s', implode(',', $possibleOptions)));
 
-            return;
+            return 1;
         }
 
         if (!$input->getOption('name')) {
             $this->writeError('Input option `name` is required');
 
-            return;
+            return 1;
         }
 
         $configClass = 'Pimcore\Model\Asset\\' . ucfirst($input->getOption('type')) . '\Thumbnail\Config';
@@ -65,9 +65,11 @@ class ThumbnailsClearCommand extends AbstractCommand
         if (!$thumbConfig) {
             $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s', $input->getOption('type'), $input->getOption('name')));
 
-            return;
+            return 1;
         }
 
         $thumbConfig->clearTempFiles();
+
+        return 0;
     }
 }

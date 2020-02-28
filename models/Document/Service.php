@@ -31,10 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
- * @method array getTranslations(Document $document)
+ * @method array getTranslations(Document $document, string $task = 'open')
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
+ * @method removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
@@ -147,6 +148,7 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        /** @var Document $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
         $new->setChildren(null);
@@ -264,6 +266,7 @@ class Service extends Model\Element\Service
         }
 
         if ($source instanceof Document\PageSnippet) {
+            /** @var PageSnippet $target */
             $target->setElements($source->getElements());
 
             $target->setTemplate($source->getTemplate());
@@ -271,10 +274,12 @@ class Service extends Model\Element\Service
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {
+                /** @var Page $target */
                 $target->setTitle($source->getTitle());
                 $target->setDescription($source->getDescription());
             }
         } elseif ($source instanceof Document\Link) {
+            /** @var Link $target */
             $target->setInternalType($source->getInternalType());
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
@@ -599,22 +604,13 @@ class Service extends Model\Element\Service
     {
         $success = false;
 
+        /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl(false, $request);
         }
 
         $url = $hostUrl . $doc->getRealFullPath();
-
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($config->general->http_auth) {
-            $username = $config->general->http_auth->username;
-            $password = $config->general->http_auth->password;
-            if ($username && $password) {
-                $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-            }
-        }
-
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 

@@ -16,6 +16,9 @@ namespace Pimcore\Workflow;
 
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
@@ -226,7 +229,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param object $subject
+     * @param Asset|Concrete|PageSnippet $subject
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject

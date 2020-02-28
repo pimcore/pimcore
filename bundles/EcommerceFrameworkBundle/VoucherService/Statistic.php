@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+/**
+ * @method Statistic\Dao getDao()
+ */
 class Statistic extends \Pimcore\Model\AbstractModel
 {
     /**
@@ -87,7 +90,9 @@ class Statistic extends \Pimcore\Model\AbstractModel
     {
         $db = $db = \Pimcore\Db::get();
         try {
-            $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', $seriesId);
+            $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', [intval($seriesId)]);
+
+            return true;
         } catch (\Exception $e) {
             //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;

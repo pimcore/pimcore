@@ -42,6 +42,12 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: runSanityCheck }
 
+    Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupBrickTables }
+
     Pimcore\Maintenance\Tasks\VersionsCleanupTask:
         arguments:
             - '@logger'
@@ -98,6 +104,12 @@ services:
             - '%pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than%'
         tags:
             - { name: pimcore.maintenance.task, type: housekeeping }
+
+    Pimcore\Maintenance\Tasks\LowQualityImagePreviewTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: low_quality_image_preview }
 
     Pimcore\Maintenance\Tasks\TagsExpireTask:
         arguments:

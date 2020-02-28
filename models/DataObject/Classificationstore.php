@@ -21,7 +21,11 @@ use Pimcore\Model;
 use Pimcore\Tool;
 
 /**
+ * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
+ * @method void delete()
+ * @method Classifictionstore load()
+ * @method void save()
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
@@ -186,6 +190,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+        /** @var Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $dataDefinition */
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         // set the given group to active groups
@@ -193,7 +198,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
-                $oldData = $this->items[$groupId][$keyId][$language];
+                $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object);
                 $oldData = serialize($oldData);
 
@@ -304,7 +309,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @param string $language
      * @param Model\DataObject\ClassDefinition\Data $fielddefinition
      *
-     * @return null
+     * @return mixed
      */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
@@ -391,6 +396,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $getter = 'get' . ucfirst($this->fieldname);
                             $classificationStore = $parent->$getter();

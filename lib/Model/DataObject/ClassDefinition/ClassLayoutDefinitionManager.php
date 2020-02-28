@@ -37,7 +37,7 @@ class ClassLayoutDefinitionManager
 
             $cls = new CustomLayout();
             $cls->setId($id);
-            $definitionFile = $cls->getDefinitionFile($name);
+            $definitionFile = $cls->getDefinitionFile();
 
             if (!file_exists($definitionFile)) {
                 $deleted[] = [$name, $id];

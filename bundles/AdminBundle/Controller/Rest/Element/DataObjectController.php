@@ -125,10 +125,11 @@ class DataObjectController extends AbstractElementController
             $stopwatch->start('ws', $profileName);
         }
 
-        /** @var WebserviceObjectOut|WebserviceFolderOut $out */
         if ($object instanceof DataObject\Folder) {
+            /** @var WebserviceObjectOut|WebserviceFolderOut $out */
             $out = $this->service->getObjectFolderById($id);
         } else {
+            /** @var WebserviceObjectOut $out */
             $out = $this->service->getObjectConcreteById($id);
         }
 
@@ -571,6 +572,7 @@ class DataObjectController extends AbstractElementController
             $method = 'createObjectConcrete';
         }
 
+        /** @var \Pimcore\Model\Webservice\Data\DataObject $wsData */
         $wsData = $this->fillWebserviceData($class, $data);
 
         $object = new DataObject();

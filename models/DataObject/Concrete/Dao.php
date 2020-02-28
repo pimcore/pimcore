@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
@@ -138,7 +139,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     }
 
     /**
-     * Get the data-elements for the object from database for the given path
+     * Get all data-elements for all fields that are not lazy-loaded.
      */
     public function getData()
     {
@@ -147,15 +148,17 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
             if ($value instanceof CustomResourcePersistingInterface) {
-                // datafield has it's own loader
-                $params = [
-                    'context' => [
-                        'object' => $this->model
-                    ]
-                ];
-                $value = $value->load($this->model, $params);
-                if ($value === 0 || !empty($value)) {
-                    $this->model->setValue($key, $value);
+                if (!$value instanceof LazyLoadingSupportInterface || !$value->getLazyLoading()) {
+                    // datafield has it's own loader
+                    $params = [
+                        'context' => [
+                            'object' => $this->model
+                        ]
+                    ];
+                    $value = $value->load($this->model, $params);
+                    if ($value === 0 || !empty($value)) {
+                        $this->model->setValue($key, $value);
+                    }
                 }
             }
             if ($value instanceof ResourcePersistenceAwareInterface) {
@@ -188,7 +191,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $db = Db::get();
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
+            if (($fd instanceof LazyLoadingSupportInterface || method_exists($fd, 'getLazyLoading'))
+                                    && $fd->getLazyLoading()) {
                 if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
@@ -399,7 +403,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $this->db->delete('object_store_' . $this->model->getClassId(), ['oo_id' => $this->model->getId()]);
         $this->db->delete('object_relations_' . $this->model->getClassId(), ['src_id' => $this->model->getId()]);
 
-        // delete fields wich have their own delete algorithm
+        // delete fields which have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
             if ($fd instanceof CustomResourcePersistingInterface) {
                 $fd->delete($this->model);

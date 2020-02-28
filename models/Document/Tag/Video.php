@@ -382,10 +382,11 @@ class Video extends Model\Document\Tag
                     $imageThumbnailConf['format'] = 'JPEG';
                 }
 
-                if ($this->poster && ($poster = Asset::getById($this->poster))) {
+                if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                    if ($asset->getCustomSetting('image_thumbnail_asset')
+                        && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
                         $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
@@ -536,6 +537,8 @@ class Video extends Model\Document\Tag
             'enablejsapi',
             'end',
             'fs',
+            'playsinline',
+            'hl',
             'iv_load_policy',
             'list',
             'listType',
@@ -953,7 +956,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset|null
+     * @return Asset\Video|null
      */
     public function getVideoAsset()
     {
@@ -965,7 +968,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset
+     * @return Asset\Image
      */
     public function getPosterAsset()
     {
@@ -979,7 +982,7 @@ class Video extends Model\Document\Tag
      */
     public function getImageThumbnail($config)
     {
-        if ($this->poster && ($poster = Asset::getById($this->poster))) {
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
         }
 

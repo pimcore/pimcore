@@ -35,12 +35,12 @@ abstract class Processor
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config->generalTool == 'pdfreactor') {
+        if ($config->get('generalTool') === 'pdfreactor') {
             return new PdfReactor8();
-        } elseif ($config->generalTool == 'wkhtmltopdf') {
+        } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
         } else {
-            throw new \Exception('Invalid Configuation - ' . $config->generalTool);
+            throw new \Exception('Invalid Configuation - ' . $config->get('generalTool'));
         }
     }
 

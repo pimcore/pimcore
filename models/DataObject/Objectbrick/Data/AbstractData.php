@@ -19,11 +19,14 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method Dao getDao()
+ * @method void save(Concrete $object, $params = [])
+ * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
 abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
@@ -134,7 +137,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      */
     public function delete($object)
     {
@@ -254,7 +257,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

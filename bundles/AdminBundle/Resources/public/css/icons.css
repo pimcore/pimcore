@@ -96,6 +96,16 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
 }
 
+
+
+
+
+.................... overlay-error.svg
+
+
+
+
+
 .pimcore_icon_overlay_reading:before {
     position: absolute;
     width: 14px;
@@ -854,6 +864,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/warning.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_import_warning {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_view {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/close_up_mode.svg) center center no-repeat !important;
 }
@@ -1343,6 +1357,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/data_sheet.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_urlSlug {
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f40c.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_input {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/input.svg) center center no-repeat !important;
 }
@@ -1666,7 +1684,7 @@
 }
 
 .pimcore_icon_image_features {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/butting_in.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/touchscreen_smartphone.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_icons {

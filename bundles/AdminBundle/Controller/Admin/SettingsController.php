@@ -216,6 +216,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -318,6 +320,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -331,6 +335,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
+        //TODO use Pimcore\Config service when legacy mapping is removed
         $values = Config::getSystemConfig();
 
         $timezones = \DateTimeZone::listIdentifiers();
@@ -473,7 +478,6 @@ class SettingsController extends AdminController
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
-                'create_redirect_when_moved' => $values['documents.createredirectwhenmoved'],
                 'allow_trailing_slash' => $values['documents.allowtrailingslash'],
                 'generate_preview' => $values['documents.generatepreview']
             ],
@@ -935,6 +939,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1073,6 +1079,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1084,15 +1092,20 @@ class SettingsController extends AdminController
      */
     public function getAvailableSitesAction(Request $request)
     {
+        $excludeMainSite = $request->get('excludeMainSite');
+
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
-        $sites = [[
-            'id' => 'default',
-            'rootId' => 1,
-            'domains' => '',
-            'rootPath' => '/',
-            'domain' => $this->trans('main_site')
-        ]];
+        $sites = [];
+        if (!$excludeMainSite) {
+            $sites[] = [
+                'id' => 'default',
+                'rootId' => 1,
+                'domains' => '',
+                'rootPath' => '/',
+                'domain' => $this->trans('main_site')
+            ];
+        }
 
         foreach ($sitesObjects as $site) {
             if ($site->getRootDocument()) {
@@ -1836,6 +1849,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**

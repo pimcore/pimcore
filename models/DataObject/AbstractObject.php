@@ -28,8 +28,12 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
 /**
- * @method \Pimcore\Model\DataObject\AbstractObject\Dao getDao()
+ * @method AbstractObject\Dao getDao()
+ * @method array|null getPermissions(string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
+ * @method string getCurrentFullPath()
+ * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
+ * @method array getChildPermissions(string $type, Model\User $user, bool $quote = true)
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
@@ -288,6 +292,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                     }
 
+                    /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
@@ -296,8 +301,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
-                    if ($object instanceof CacheRawRelationDataInterface) {
-                        // force loading of relation data
+                    // force loading of relation data
+                    if ($object instanceof Concrete) {
                         $object->__getRawRelationData();
                     }
 
@@ -342,7 +347,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param array $config
      *
-     * @return Model\Listing\AbstractListing
+     * @return DataObject\Listing
      *
      * @throws \Exception
      */
@@ -351,15 +356,16 @@ class AbstractObject extends Model\Element\AbstractElement
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
+            /** @var Concrete $tmpObject */
             $tmpObject = new static();
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
         }
 
-        if (!empty($config['class'])) {
-            $className = ltrim($config['class'], '\\');
-        }
-
         if (is_array($config)) {
+            if (!empty($config['class'])) {
+                $className = ltrim($config['class'], '\\');
+            }
+
             if ($className) {
                 $listClass = $className . '\\Listing';
                 $list = self::getModelFactory()->build($listClass);
@@ -1235,7 +1241,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1442,5 +1448,18 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
 
         return $cacheKey;
+    }
+
+    /**
+     * load lazy loaded fields before cloning
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        $this->o_parent = null;
+        // note that o_children is currently needed for the recycle bin
+        $this->o_hasSiblings = [];
+        $this->o_siblings = [];
+        $this->o_dependencies = null;
     }
 }

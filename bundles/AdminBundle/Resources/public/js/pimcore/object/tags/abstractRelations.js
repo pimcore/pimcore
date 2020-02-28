@@ -107,7 +107,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
             if (columnConfig.value) {
                 var selectDataRaw = columnConfig.value.split(";");
                 for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                    selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
                 }
             }
 

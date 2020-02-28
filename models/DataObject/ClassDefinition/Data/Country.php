@@ -58,7 +58,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool

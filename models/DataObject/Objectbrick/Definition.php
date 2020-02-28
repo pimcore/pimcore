@@ -27,10 +27,13 @@ use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
+ * @method string getTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+
+    use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**
      * @var array
@@ -41,16 +44,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @var array
      */
     private $oldClassDefinitions = [];
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $group;
 
     /**
      * @param array $classDefinitions
@@ -224,14 +217,21 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $useParts = [
+            'Pimcore\Model\DataObject',
+            'Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException',
+            'Pimcore\Model\DataObject\PreGetValueHookInterface'
+        ];
+
+        $cd .= DataObject\ClassDefinition\Service::buildUseCode($useParts);
+
+        $cd .= "\n";
+
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
         $cd .= "\n\n";
 
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
@@ -446,7 +446,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
-                if (!$fd) {
+                if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
                     throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
 
@@ -669,21 +669,5 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
     }
 }

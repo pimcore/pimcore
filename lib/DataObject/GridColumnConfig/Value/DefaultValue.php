@@ -27,7 +27,7 @@ use Pimcore\Model\Element\ElementInterface;
 class DefaultValue extends AbstractValue
 {
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      * @param string $key
      * @param string|null $brickType
      * @param string|null $brickKey
@@ -59,8 +59,11 @@ class DefaultValue extends AbstractValue
         if (!$fieldDefinition) {
             $fieldDefinition = $object->getClass()->getFieldDefinition($key);
 
-            if (!$fieldDefinition && ($localizedFields = $object->getClass()->getFieldDefinition('localizedfields'))) {
-                $fieldDefinition = $localizedFields->getFieldDefinition($key);
+            if (!$fieldDefinition) {
+                $localizedFields = $object->getClass()->getFieldDefinition('localizedfields');
+                if ($localizedFields instanceof Data\Localizedfields) {
+                    $fieldDefinition = $localizedFields->getFieldDefinition($key);
+                }
             }
         }
 

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
     /**
      * Static type of this element
@@ -59,9 +59,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public $disallowAddRemove;
 
-    /**
-     * @var bool
-     */
     public $disallowReorder;
 
     /**
@@ -88,7 +85,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param  $lazyLoading
+     * @param  int|bool|null $lazyLoading
      *
      * @return $this
      */
@@ -216,6 +213,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setObject($object);
                 $collection->setIndex($count);
@@ -237,7 +235,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -264,18 +262,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -302,7 +300,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @throws \Exception
@@ -338,22 +336,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
-            $container = new DataObject\Fieldcollection(null, $this->getName());
-            $container->load($object);
+        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container->load($object);
 
-            if ($container->isEmpty()) {
-                return null;
-            }
-
-            return $container;
+        if ($container->isEmpty()) {
+            return null;
         }
 
-        return null;
+        return $container;
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -371,7 +365,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $allowedTypes
+     * @param string|array|null $allowedTypes
      *
      * @return $this
      */
@@ -502,6 +496,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 }
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollection);
+                /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
@@ -519,7 +514,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\Fieldcollection|null $data
      *
      * @return array
      */
@@ -621,7 +616,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return null|DataObject\Fieldcollection
@@ -636,7 +631,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-            $data = $this->load($object, ['force' => true]);
+            $data = $this->load($object);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
@@ -652,8 +647,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete $object
+     * @param DataObject\Fieldcollection|null $data
      * @param array $params
      *
      * @return array
@@ -670,7 +665,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -682,7 +677,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -713,7 +708,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $maxItems
+     * @param int|string|null $maxItems
      *
      * @return $this
      */
@@ -733,7 +728,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -743,11 +738,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param DataObject\Fieldcollection|null $data
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|string
@@ -786,18 +781,15 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
-        $result = parent::getDiffDataFromEditmode($data, $object, $params);
-        Logger::debug('bla');
-
-        return $result;
+        return parent::getDiffDataFromEditmode($data, $object, $params);
     }
 
     /**
@@ -843,7 +835,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -855,7 +847,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      * @param array $params
      */
     public function classSaved($class, $params = [])

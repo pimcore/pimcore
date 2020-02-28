@@ -23,19 +23,14 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface, DataObject\ClassDefinition\PathFormatterAwareInterface
+abstract class AbstractRelations extends Data implements
+    CustomResourcePersistingInterface,
+    DataObject\ClassDefinition\PathFormatterAwareInterface,
+    Data\LazyLoadingSupportInterface
 {
+    use DataObject\Traits\ContextPersistenceTrait;
+
     const RELATION_ID_SEPARATOR = '$$';
-
-    /**
-     * @var bool
-     */
-    public static $remoteOwner = false;
-
-    /**
-     * @var bool
-     */
-    public $lazyLoading;
 
     /**
      * Set of allowed classes
@@ -74,79 +69,11 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function getLazyLoading()
     {
-        return $this->lazyLoading;
+        return true;
     }
 
     /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        $this->lazyLoading = $lazyLoading;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /** Enrich relation with type-specific data.
-     * @param $object
-     * @param $params
-     * @param $classId
-     * @param array $relation
-     */
-    protected function enrichRelation($object, $params, &$classId, &$relation = [])
-    {
-        if (!$relation) {
-            $relation = [];
-        }
-
-        if ($object instanceof DataObject\Concrete) {
-            $relation['src_id'] = $object->getId();
-            $relation['ownertype'] = 'object';
-
-            $classId = $object->getClassId();
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId(); // use the id from the object, not from the field collection
-            $relation['ownertype'] = 'fieldcollection';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getIndex();
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Localizedfield) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'localizedfield';
-            $relation['ownername'] = 'localizedfield';
-            $context = $object->getContext();
-            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? null;
-                $relation['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
-            }
-
-            $relation['position'] = $params['language'];
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'objectbrick';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getType();
-
-            $classId = $object->getObject()->getClassId();
-        }
-    }
-
-    /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @throws \Exception
@@ -181,7 +108,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
-                $this->enrichRelation($object, $params, $classId, $relation);
+                $this->enrichDataRow($object, $params, $classId, $relation);
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
@@ -201,10 +128,10 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($object, $params = [])
     {
@@ -212,11 +139,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
-            } else {
-                return null;
-            }
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
@@ -274,7 +197,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -330,7 +253,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -403,7 +326,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $item
+     * @param Element\ElementInterface $item
      *
      * @return string
      */
@@ -416,8 +339,8 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     }
 
     /**
-     * @param $array1
-     * @param $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return bool
      */
@@ -463,7 +386,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -482,7 +405,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {

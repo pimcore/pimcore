@@ -343,8 +343,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Data\QuantityValue|null $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -423,7 +423,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -444,8 +444,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * display the quantity value field data in the grid
      *
-     * @param $data
-     * @param null $object
+     * @param Model\DataObject\Data\QuantityValue|null $data
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -641,9 +641,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @param Model\DataObject\Concrete $object
+     * @param array $context
+     *
      * @return Model\DataObject\Data\QuantityValue|null
      */
-    protected function doGetDefaultValue()
+    protected function doGetDefaultValue($object, $context = [])
     {
         if ($this->getDefaultValue() || $this->getDefaultUnit()) {
             return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
@@ -653,7 +656,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */

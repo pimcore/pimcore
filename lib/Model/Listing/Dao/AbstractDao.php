@@ -136,6 +136,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                 $select->order(new Expression(implode(', ', $parts)));
             }
         }
+
+        return $this;
     }
 
     /**
@@ -143,7 +145,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      *
      * @return $this
      *
-     * @internal param $QueryBuilder
+     * @internal
      *
      */
     protected function addGroupBy(QueryBuilder $select)

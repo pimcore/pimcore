@@ -35,7 +35,7 @@ class Processor
     ];
 
     /**
-     * @var array
+     * @var \Pimcore\Video\Adapter[]
      */
     public $queue = [];
 
@@ -95,7 +95,6 @@ class Processor
                     if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
                         $formatsToConvert[] = $f;
                     } else {
-                        $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
                     }
                 }
@@ -187,6 +186,9 @@ class Processor
         $instance->setProcessId($processId);
 
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+        /**
+         * @var self $instance
+         */
         $instance = $instanceItem->getData();
 
         $formats = [];

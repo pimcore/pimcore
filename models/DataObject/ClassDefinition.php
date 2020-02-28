@@ -76,6 +76,13 @@ class ClassDefinition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * Comma separated list of interfaces
+     *
+     * @var string|null
+     */
+    public $implementsInterfaces;
+
+    /**
      * Name of the listing parent class if set
      *
      * @var string
@@ -118,17 +125,12 @@ class ClassDefinition extends Model\AbstractModel
     public $showVariants = false;
 
     /**
-     * @var bool
-     */
-    public $cacheRawRelationData = false;
-
-    /**
-     * @var array
+     * @var DataObject\ClassDefinition\Data[]
      */
     public $fieldDefinitions = [];
 
     /**
-     * @var array
+     * @var DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
@@ -235,8 +237,9 @@ class ClassDefinition extends Model\AbstractModel
                 return self::getById($id);
             }
         } catch (\Exception $e) {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -265,7 +268,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $data
      */
     public static function cleanupForExport(&$data)
     {
@@ -273,8 +276,8 @@ class ClassDefinition extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
-        if (method_exists($data, 'getChilds')) {
-            $children = $data->getChilds();
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::cleanupForExport($child);
@@ -396,34 +399,25 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsBlock = '\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface';
-        if ($this->getCacheRawRelationData()) {
-            $implementsBlock .= ',\\Pimcore\\Model\\DataObject\\CacheRawRelationDataInterface';
-        }
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements ' . $implementsBlock . ' {';
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
-        $cd .= "\n\n";
+        $useParts = [
+            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
+        ];
 
-        if ($this->getCacheRawRelationData()) {
-            $cd .= 'use \Pimcore\Model\DataObject\Traits\CacheRawRelationDataTrait;';
-            $cd .= "\n\n";
-        }
-
-        if ($this->getUseTraits()) {
-            $cd .= 'use '.$this->getUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
         $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, 'isRemoteOwner') && $def->isRemoteOwner(
-                        )) && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
+                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
                     $cd .= 'protected $'.$key.";\n";
                 }
@@ -447,7 +441,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner()) {
+                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     continue;
                 }
 
@@ -494,10 +488,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
 
-        if ($this->getListingUseTraits()) {
-            $cd .= 'use '.$this->getListingUseTraits().";\n";
-            $cd .= "\n";
-        }
+        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
 
         $cd .= 'protected $classId = "'. $this->getId()."\";\n";
         $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
@@ -849,7 +840,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|mixed $context
+     * @param array $context
      *
      * @return DataObject\ClassDefinition\Data[]
      */
@@ -881,7 +872,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return DataObject\ClassDefinition\Layout|null
      */
     public function getLayoutDefinitions()
     {
@@ -889,13 +880,13 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $fieldDefinitions
+     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
      *
      * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitions = is_array($fieldDefinitions) ? $fieldDefinitions : [];
 
         return $this;
     }
@@ -934,7 +925,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $layoutDefinitions
+     * @param DataObject\ClassDefinition\Layout|null $layoutDefinitions
      *
      * @return $this
      */
@@ -949,7 +940,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
+     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     public function extractDataDefinitions($def)
     {
@@ -1242,10 +1233,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $group
+     *
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
+
+        return $this;
     }
 
     /**
@@ -1270,10 +1265,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showVariants
+     *
+     * @return $this
      */
     public function setShowVariants($showVariants)
     {
         $this->showVariants = (bool)$showVariants;
+
+        return $this;
     }
 
     /**
@@ -1294,10 +1293,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $showAppLoggerTab
+     *
+     * @return $this
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+
+        return $this;
     }
 
     /**
@@ -1310,10 +1313,14 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $linkGeneratorReference
+     *
+     * @return $this
      */
     public function setLinkGeneratorReference($linkGeneratorReference)
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
+
+        return $this;
     }
 
     /**
@@ -1327,21 +1334,21 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
-    public function getCacheRawRelationData(): bool
+    public function getImplementsInterfaces(): ?string
     {
-        return $this->cacheRawRelationData;
+        return $this->implementsInterfaces;
     }
 
     /**
-     * @param bool $cacheRawRelationData
+     * @param string|null $implementsInterfaces
      *
      * @return $this
      */
-    public function setCacheRawRelationData($cacheRawRelationData)
+    public function setImplementsInterfaces(?string $implementsInterfaces)
     {
-        $this->cacheRawRelationData = (bool) $cacheRawRelationData;
+        $this->implementsInterfaces = $implementsInterfaces;
 
         return $this;
     }

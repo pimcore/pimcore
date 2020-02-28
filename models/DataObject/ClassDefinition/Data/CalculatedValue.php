@@ -112,7 +112,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -177,20 +177,21 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
+        return null;
     }
 
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\CalculatedValue|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return float
@@ -203,7 +204,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param DataObject\Data\CalculatedValue|null $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception
@@ -218,30 +219,29 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
-     * @return float
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         // nothing to do
+        return null;
     }
 
     /**
@@ -249,16 +249,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
      *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
@@ -289,7 +287,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -323,7 +321,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -362,7 +360,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             $code .= "\t" . '$object = $this;'  . "\n";
         }
 
-        if ($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
             $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
         } else {
             $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
@@ -409,9 +407,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     * Creates getter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -443,7 +441,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param DataObject\ClassDefinition $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -547,11 +545,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param \DateTime $data
-     * @param null $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
-     * @return null
+     * @return mixed
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {

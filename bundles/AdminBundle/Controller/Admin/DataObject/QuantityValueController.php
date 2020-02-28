@@ -132,6 +132,8 @@ class QuantityValueController extends AdminController
                 return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
             }
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -236,7 +238,7 @@ class QuantityValueController extends AdminController
 
         $fromUnit = Unit::getById($unitId);
         if (!$fromUnit instanceof Unit) {
-            return null;
+            return $this->adminJson(['success' => false]);
         }
 
         $baseUnit = $fromUnit->getBaseunit() ?? $fromUnit;

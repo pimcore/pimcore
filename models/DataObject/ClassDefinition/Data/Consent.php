@@ -162,7 +162,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param bool $data
+     * @param string|bool $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -203,8 +203,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -247,8 +247,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param DataObject\Data\Consent|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return bool
@@ -259,8 +259,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param string|bool $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return DataObject\Data\Consent
@@ -274,7 +274,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getVersionPreview
      *
      * @param DataObject\Data\Consent $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return bool
@@ -327,7 +327,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -370,7 +370,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -381,7 +381,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Consent $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -391,9 +391,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  string$value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return string
      *
@@ -412,8 +412,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -421,7 +421,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFilterConditionExt($value, $operator, $params = [])
     {
         $db = \Pimcore\Db::get();
-        $name = $params['name'] ? $params['name'] : $this->name;
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name);
 
@@ -431,7 +430,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

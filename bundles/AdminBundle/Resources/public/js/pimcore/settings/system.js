@@ -676,7 +676,7 @@ pimcore.settings.system = Class.create({
                                 }
                             }, {
                                 xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice"),
+                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
                                 name: "general.show_cookie_notice",
                                 checked: this.getValue("general.show_cookie_notice")
                             }
@@ -724,11 +724,6 @@ pimcore.settings.system = Class.create({
                                 style: "margin-top: 10px;",
                                 width: 600,
                                 value: "&nbsp;"
-                            }, {
-                                fieldLabel: t('create_redirect_for_moved_renamed_page'),
-                                xtype: "checkbox",
-                                name: "documents.createredirectwhenmoved",
-                                checked: this.getValue("documents.createredirectwhenmoved")
                             }, {
                                 fieldLabel: t("allow_trailing_slash_for_documents"),
                                 xtype: "combo",

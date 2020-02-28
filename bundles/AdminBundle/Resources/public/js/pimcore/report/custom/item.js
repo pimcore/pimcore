@@ -726,7 +726,7 @@ pimcore.report.custom.item = Class.create({
         if (classMenu.length == 1) {
             items.push({
                 cls: "pimcore_block_button_plus",
-                text: ts(classMenu[0].text),
+                text: t(classMenu[0].text),
                 iconCls: "pimcore_icon_plus",
                 handler: classMenu[0].handler
             });

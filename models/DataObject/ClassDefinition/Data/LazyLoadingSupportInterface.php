@@ -15,12 +15,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface CacheRawRelationDataInterface
+/**
+ * Marker interface for data types that support lazy loading
+ */
+interface LazyLoadingSupportInterface
 {
     /**
-     * @return array
+     * @return bool
      */
-    public function __getRawRelationData(): array;
+    public function getLazyLoading();
 }

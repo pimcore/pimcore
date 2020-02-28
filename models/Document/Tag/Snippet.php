@@ -100,7 +100,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string
+     * @return string|void
      */
     public function frontend()
     {
@@ -177,6 +177,8 @@ class Snippet extends Model\Document\Tag
                 return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
+
+        return;
     }
 
     /**

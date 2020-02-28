@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
@@ -227,8 +228,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param IndexFieldSelection|null $data
+     * @param Concrete|null $object
      * @param mixed $params
      *
      * @return float
@@ -366,7 +367,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * True if change is allowed in edit mode.
      *
-     * @param \Pimcore\Model\DataObject\AbstractObject $object
+     * @param Concrete $object
      * @param mixed $params
      *
      * @return bool

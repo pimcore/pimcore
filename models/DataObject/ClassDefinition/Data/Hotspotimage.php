@@ -343,8 +343,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Hotspotimage|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -382,7 +382,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null|DataObject\ClassDefinition\Data
@@ -399,7 +399,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -457,7 +457,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param mixed $data
+     * @param DataObject\Data\Hotspotimage|null $data
      *
      * @return array
      */
@@ -533,7 +533,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -586,14 +586,16 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+
+        return null;
     }
 
     /**
-     * @param $data
-     * @param null $object
-     * @param mixed $params
+     * @param DataObject\Data\Hotspotimage|null $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -652,8 +654,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     }
 
     /**
-     * @param $dataArray
-     * @param $idMapping
+     * @param array|null $dataArray
+     * @param array $idMapping
      *
      * @return array
      */

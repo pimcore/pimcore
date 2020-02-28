@@ -20,7 +20,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Dao getDao()
+ * @method Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao getDao()
  */
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
@@ -31,6 +31,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected $__dataVersionTimestamp = null;
 
+    /**
+     * @internal
+     */
     protected function updateModificationInfos()
     {
         $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
@@ -203,14 +206,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
      * @param string $type
+     * @param null|Model\User $user
      *
      * @return bool
      */
-    public function isAllowed($type)
+    public function isAllowed($type, ?Model\User $user = null)
     {
-        $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
+        if (null === $user) {
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+        }
 
-        if (!$currentUser) {
+        if (!$user) {
             if (php_sapi_name() === 'cli') {
                 return true;
             }
@@ -219,16 +225,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         //everything is allowed for admin
-        if ($currentUser->isAdmin()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return $this->getDao()->isAllowed($type, $currentUser);
+        return $this->getDao()->isAllowed($type, $user);
     }
 
     public function unlockPropagate()
     {
         $type = Service::getType($this);
+
         $ids = $this->getDao()->unlockPropagate();
 
         // invalidate cache items
@@ -311,5 +318,26 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->save();
 
         return $version;
+    }
+
+    /**
+     * @return Model\Dependency
+     */
+    abstract public function getDependencies();
+
+    /**
+     * @return Model\Schedule\Task[]
+     */
+    public function getScheduledTasks()
+    {
+        return [];
+    }
+
+    /**
+     * @return Model\Version[]
+     */
+    public function getVersions()
+    {
+        return [];
     }
 }

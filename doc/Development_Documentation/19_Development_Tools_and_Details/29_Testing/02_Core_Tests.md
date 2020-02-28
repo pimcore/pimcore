@@ -77,7 +77,6 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | PIMCORE_PHP_ERROR_REPORTING               | 32767            | Should be set to E_ALL because Travis uses the same setting.                                                                   |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_CACHE_RAW_RELATION_DATA           | 1                | Will execute relation tests with caching enabled (off by default)                                                              |
 | PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |
 | PIMCORE_TEST_CACHE_REDIS_PORT             | defaults to 6379 | Redis port                                                                                                                     |
 | PIMCORE_TEST_CACHE_REDIS_PERSISTENT       |                  |                                                                                                                                |
@@ -138,7 +137,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 ## Travis
 
 Pimcore uses [Travis CI](https://travis-ci.com/) for continuous integration.
-Open https://travis-ci.org/pimcore/pimcore for the current build status. 
+Open https://travis-ci.com/pimcore/pimcore for the current build status. 
 
 ### Test Matrix
 
@@ -167,3 +166,57 @@ Please follow the structure and principles described above.
 
 If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/master/tests/_support/Helper/Model.php).
 There you will find all class definitions used for testing.
+
+### Perform PHPStan Analysis 
+
+First, get a copy of this [sample configuration file](../../../Samples/phpstan.local.neon) and place it in your `PIMCORE_PROJECT_ROOT` root directory.
+
+Replace all occurrences of `PIMCORE_PROJECT_ROOT` with the real directory according to your setup.
+
+Add dependencies:
+```sh
+# minimum
+composer require "phpstan/phpstan:^0.12" "phpstan/phpstan-symfony:^0.12"
+
+# required if you want to do a full analysis
+composer require "heidelpay/heidelpay-php:^1.2.5.1" "klarna/checkout:^3.0.0" "elasticsearch/elasticsearch:2.0.0" "paypal/paypal-checkout-sdk:^1" "mpay24/mpay24-php:^4.2" "composer/composer:*"
+```
+
+Run
+```sh
+TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon vendor/pimcore/pimcore/bundles/ vendor/pimcore/pimcore/lib/ vendor/pimcore/pimcore/models/ -l 1 --memory-limit=-1
+```
+
+where `/tmp/[dedicateddir]` must be a writable temporary directory.
+
+> Note regarding PRs: Please try to meet all 
+level 2 requirements (run it with `-l 2` instead) for all files you touch or add.
+
+Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
+
+![PHPStan Job](../../img/phpstan1.png)
+
+Open the build log and check for problems.
+
+![PHPStan Log](../../img/phpstan2.png) 
+
+## PHPStan Baseline Feature
+
+PHPStan can create a baseline file, which contain all current errors. See this [blog](https://medium.com/@ondrejmirtes/phpstans-baseline-feature-lets-you-hold-new-code-to-a-higher-standard-e77d815a5dff) entry.
+ 
+To generate a new baseline file you have to do following steps:
+
+1. Deactivate baseline file include (comment out) in phpstan.neon
+    ```sh
+    sed -e "s?- phpstan-baseline.neon?#- phpstan-baseline.neon?g" -i phpstan.neon
+    ```
+2. Generate new baseline file
+    ```sh
+    vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 2 --memory-limit=-1 --error-format baselineNeon > phpstan-baseline.neon
+    ```
+3. Activate baseline file include in phpstan.neon
+    ```sh
+    sed -e "s?#- phpstan-baseline.neon?- phpstan-baseline.neon?g" -i phpstan.neon
+    ```
+
+With this baseline file include, Travis can detect new errors without having to fix all errors first.

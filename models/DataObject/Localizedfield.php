@@ -18,10 +18,15 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Tool;
 
 /**
- * @method Localizedfield\Dao getDao()
+ * @method Localizedfield\Dao getDao()*
+ * @method void delete($deleteQuery = true, $isUpdate = true)
+ * @method void load($object, $params = [])
+ * @method void save($params = [])
+ * @method void createUpdateTable($params = [])
  */
 class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
 {
@@ -365,10 +370,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return $container->getFieldDefinitions($params);
     }
 
+    /**
+     * @param ClassDefinition\Data $fieldDefinition
+     * @param string $name
+     * @param string $language
+     */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        if (!$this->isLazyKeyLoaded($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();
@@ -411,7 +421,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -442,6 +452,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
 
@@ -550,7 +561,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
-        $isLazyLoadedField = method_exists($fieldDefinition, 'getLazyLoading') && $fieldDefinition->getLazyLoading();
+        $isLazyLoadedField = ($fieldDefinition instanceof LazyLoadingSupportInterface || method_exists($fieldDefinition, 'getLazyLoading'))
+                                    && $fieldDefinition->getLazyLoading();
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
 
         if ($isLazyLoadedField) {
@@ -732,11 +744,20 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @return int
+     */
+    public function getObjectId(): int
+    {
+        return $this->objectId;
     }
 }

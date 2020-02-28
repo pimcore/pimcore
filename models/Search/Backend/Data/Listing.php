@@ -20,6 +20,7 @@ use Pimcore\Model\Search\Backend\Data;
  * @method \Pimcore\Model\Search\Backend\Data\Listing\Dao getDao()
  * @method Data[] load()
  * @method Data current()
+ * @method int getTotalCount()
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {

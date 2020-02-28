@@ -399,6 +399,7 @@ class AssetHelperController extends AdminController
         $helperColumns = [];
         $newData = [];
         $data = json_decode($request->get('columns'));
+        /** @var \stdClass $item */
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
@@ -635,7 +636,7 @@ class AssetHelperController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
         $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
-        if (empty($ids = $allParams['ids'])) {
+        if (empty($ids = $allParams['ids'] ?? '')) {
             $ids = $list->loadIdList();
         }
 
@@ -808,6 +809,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -839,6 +842,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('XLSX file not found');
     }
 
     /**

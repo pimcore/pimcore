@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\Concrete;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
@@ -211,7 +212,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param string|null $itemKey
      * @param bool $replace
@@ -238,7 +239,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * @param string $itemKey
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param bool $replace
      * @param array $params
@@ -323,7 +324,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param string|null $itemKey
      * @param bool $replace
@@ -350,7 +351,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     /**
      * @param string $itemKey
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param int $count
      * @param bool $replace
      * @param array $params
@@ -607,7 +608,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getIsBookable()
     {
         foreach ($this->getItems() as $item) {
-            if (!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
+            if (!$item->getProduct()->getOSIsBookable($item->getCount())) {
                 return false;
             }
         }
@@ -846,10 +847,11 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @param callable $value_compare_func
      *
-     * @return CartItemInterface[]
+     * @return $this
      */
     public function sortItems(callable $value_compare_func)
     {
+        return $this;
     }
 
     /**
@@ -933,6 +935,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         } else {
             throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
+
+        return false;
     }
 
     /**
