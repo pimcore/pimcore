@@ -162,7 +162,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             $info = password_get_info($data);
 
             // is already a hashed string
-            if ($info['algo'] !== 0) {
+            if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;
             }
         } else {
@@ -194,7 +194,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
-     * @param $data
+     * @param string $data
      *
      * @return bool|null|string
      */
@@ -225,7 +225,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @param $password
+     * @param string $password
      * @param DataObject\AbstractObject $object
      * @param bool|true $updateHash
      *
@@ -241,7 +241,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return false;
         }
 
-        $result = false;
         if ($this->getAlgorithm() === static::HASH_FUNCTION_PASSWORD_HASH) {
             $result = (true === password_verify($password, $objectHash));
 
@@ -322,7 +321,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -333,8 +332,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $data
-     * @param $object
+     * @param string $data
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -350,7 +349,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @abstract
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\ClassDefinition\Data
@@ -361,7 +360,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -373,6 +372,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * converts data to be exposed via webservices
+     *
+     * @deprecated
      *
      * @param string $object
      * @param mixed $params
@@ -386,7 +387,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -397,8 +398,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|string
@@ -410,7 +411,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -438,7 +439,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {

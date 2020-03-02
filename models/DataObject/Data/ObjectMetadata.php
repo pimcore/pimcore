@@ -66,7 +66,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param DataObject\Concrete $object
      *
-     * @return $this|void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -75,7 +75,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if (!$object) {
             $this->setObjectId(null);
 
-            return;
+            return $this;
         }
 
         $this->objectId = $object->getId();
@@ -84,8 +84,8 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      *
      * @return mixed|void
      *
@@ -115,25 +115,25 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param string $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position, $index)
+    public function save($object, $ownertype, $ownername, $position, $index)
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      *
      * @return mixed
      */
@@ -143,7 +143,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -164,7 +164,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getObject()
     {
@@ -176,14 +176,14 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
             return $object;
         }
+
+        return null;
     }
 
     /**
-     * @param $element
+     * @param DataObject\Concrete $element
      *
      * @return $this
-     *
-     * @internal param $object
      */
     public function setElement($element)
     {
@@ -193,7 +193,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getElement()
     {
@@ -201,7 +201,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -239,7 +239,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function __toString()
     {

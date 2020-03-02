@@ -88,7 +88,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return ElementInterface
      */

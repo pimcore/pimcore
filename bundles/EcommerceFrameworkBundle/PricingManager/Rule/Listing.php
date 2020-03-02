@@ -19,12 +19,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 /**
  * @method Rule[] load()
+ * @method Rule current()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao getDao()
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var RuleInterface[]
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $rules;
 
@@ -32,6 +35,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      * @var bool
      */
     protected $validate;
+
+    public function __construct()
+    {
+        $this->rules = & $this->data;
+    }
 
     /**
      * @param bool $state
@@ -42,7 +50,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -56,21 +64,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getRules()
     {
-        // load rules if not loaded yet
-        if (empty($this->rules)) {
-            $this->load();
-        }
-
-        return $this->rules;
+        return $this->getData();
     }
 
     /**
      * @param RuleInterface[] $rules
      *
-     * @return void
+     * @return self
      */
     public function setRules(array $rules)
     {
-        $this->rules = $rules;
+        return $this->setData($rules);
     }
 }

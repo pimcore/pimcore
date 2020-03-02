@@ -97,7 +97,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
             columns: 1,
             vertical: true,
             items: [
-                {boxLabel: t('add'), name: 'rb', inputValue: '+', checked: operator == "+"},
+                {boxLabel: t('sum'), name: 'rb', inputValue: '+', checked: operator == "+"},
                 {boxLabel: t('subtract'), name: 'rb', inputValue: '-', checked: operator == "-"},
                 {boxLabel: t('multiply'), name: 'rb', inputValue: '*', checked: operator == "*"},
                 {boxLabel: t('divide'), name: 'rb', inputValue: '/', checked: operator == "/"}

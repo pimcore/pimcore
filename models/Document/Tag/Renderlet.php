@@ -104,7 +104,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string
+     * @return string|void
      */
     public function frontend()
     {
@@ -177,6 +177,8 @@ class Renderlet extends Model\Document\Tag
                 Logger::error($e);
             }
         }
+
+        return;
     }
 
     /**
@@ -254,9 +256,9 @@ class Renderlet extends Model\Document\Tag
     /**
      * get correct type of object as string
      *
-     * @param null $object
+     * @param Element\ElementInterface|null $object
      *
-     * @return bool|string
+     * @return string|null
      *
      * @internal param mixed $data
      */
@@ -290,9 +292,9 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -313,7 +315,7 @@ class Renderlet extends Model\Document\Tag
                     $this->o = Asset::getById($id);
                     if (!$this->o instanceof Asset) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced asset with id [ '.$this->id.' ] is unknown');
                         }
@@ -322,7 +324,7 @@ class Renderlet extends Model\Document\Tag
                     $this->o = Document::getById($id);
                     if (!$this->o instanceof Document) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced document with id [ '.$this->id.' ] is unknown');
                         }
@@ -331,7 +333,7 @@ class Renderlet extends Model\Document\Tag
                     $this->o = DataObject::getById($id);
                     if (!$this->o instanceof DataObject\AbstractObject) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                            $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->type, $this->id);
                         } else {
                             throw new \Exception('cannot get values from web service import - referenced object with id [ '.$this->id.' ] is unknown');
                         }

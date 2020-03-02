@@ -26,7 +26,16 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
-            style: 'float:left;margin-top:0px;'
+            style: 'float:left;margin-top:0px;',
+            listeners: {
+                render: function (cmp) {
+                    cmp.getEl().on('keypress', function (e) {
+                        if (e.getKey() === e.ENTER) {
+                            this.geocode();
+                        }
+                    }.bind(this));
+                }.bind(this)
+            }
         });
 
         var coordConf = {
@@ -228,17 +237,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-
-        // no render check is necessary because the input component returns the right values even if it is not
-        // rendered
-        var value = this.getValue();
-        if (value.longitude && value.latitude) {
-            return false;
-        }
-        return true;
-    },
-
     isDirty: function () {
         if (!this.isRendered()) {
             return false;
@@ -253,7 +251,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label),
+            text: t(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,

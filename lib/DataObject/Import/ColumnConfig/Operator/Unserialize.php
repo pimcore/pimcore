@@ -32,7 +32,7 @@ class Unserialize extends AbstractOperator
         if (!$childs) {
             return;
         } else {
-            /** @var $child AbstractConfigElement */
+            /** @var AbstractConfigElement $child */
             for ($i = 0; $i < count($childs); $i++) {
                 $child = $childs[$i];
                 $child->process($element, $target, $rowData, $colIndex, $context);

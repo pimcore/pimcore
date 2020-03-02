@@ -24,12 +24,13 @@ pimcore.asset.tags.textarea = Class.create(pimcore.asset.tags.abstract, {
 
     getGridColumnConfig:function (field) {
         return {
-            text:ts(field.label),
+            text: t(field.label),
             width: this.getColumnWidth(field, 200),
             sortable:false,
             dataIndex:field.key,
             filter: this.getGridColumnFilter(field),
-            getEditor: this.getGridColumnEditor.bind(this, field)
+            getEditor: this.getGridColumnEditor.bind(this, field),
+            renderer: this.getRenderer(field)
         };
     },
 

@@ -35,7 +35,7 @@ class Processor
     ];
 
     /**
-     * @var array
+     * @var \Pimcore\Video\Adapter[]
      */
     public $queue = [];
 
@@ -61,7 +61,7 @@ class Processor
 
     /**
      * @param Model\Asset\Video $asset
-     * @param $config
+     * @param Config $config
      * @param array $onlyFormats
      *
      * @return Processor
@@ -96,7 +96,6 @@ class Processor
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
-                        $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
                     }
                 }
 
@@ -112,7 +111,7 @@ class Processor
 
         foreach ($formats as $format) {
             $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
-            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . '/', '', $asset->getFilename()) . '.' . $format;
+            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $fsPath = $thumbDir . '/' . $filename;
             $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
 
@@ -179,7 +178,7 @@ class Processor
     }
 
     /**
-     * @param $processId
+     * @param string $processId
      */
     public static function execute($processId)
     {
@@ -187,6 +186,9 @@ class Processor
         $instance->setProcessId($processId);
 
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+        /**
+         * @var self $instance
+         */
         $instance = $instanceItem->getData();
 
         $formats = [];
@@ -262,7 +264,7 @@ class Processor
     }
 
     /**
-     * @param $processId
+     * @param string $processId
      *
      * @return string
      */
@@ -276,7 +278,7 @@ class Processor
     }
 
     /**
-     * @param $processId
+     * @param string $processId
      *
      * @return $this
      */
@@ -296,7 +298,7 @@ class Processor
     }
 
     /**
-     * @param $assetId
+     * @param int $assetId
      *
      * @return $this
      */
@@ -316,7 +318,7 @@ class Processor
     }
 
     /**
-     * @param $config
+     * @param Config $config
      *
      * @return $this
      */
@@ -336,7 +338,7 @@ class Processor
     }
 
     /**
-     * @param $queue
+     * @param array $queue
      *
      * @return $this
      */

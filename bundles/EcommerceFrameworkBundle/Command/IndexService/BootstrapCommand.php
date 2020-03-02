@@ -72,5 +72,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         } else {
             throw new \Exception('At least one option (--create-or-update-index-structure or --update-index) needs to be given');
         }
+
+        return 0;
     }
 }

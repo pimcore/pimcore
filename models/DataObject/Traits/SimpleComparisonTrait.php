@@ -20,8 +20,8 @@ namespace Pimcore\Model\DataObject\Traits;
 trait SimpleComparisonTrait
 {
     /**
-     * @param $oldValue
-     * @param $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      *
      * @return bool
      */

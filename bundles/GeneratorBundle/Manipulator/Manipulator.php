@@ -40,6 +40,8 @@ class Manipulator
 
             return $token;
         }
+
+        return null;
     }
 
     /**
@@ -63,6 +65,8 @@ class Manipulator
                 return $token;
             }
         }
+
+        return null;
     }
 
     /**

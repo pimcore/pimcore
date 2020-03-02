@@ -408,7 +408,7 @@
             {% if geoAddressDelivery %}
                 var leafletMapDelivery =  L.map("leafletmap-delivery").setView([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}], 10);
                 L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
-                L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressInvoice.lon }}]).addTo(leafletMapDelivery);
+                L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}]).addTo(leafletMapDelivery);
 
                 document.getElementById('addressDeliveryTab').onclick = function(el){
                     leafletMapDelivery.invalidateSize();

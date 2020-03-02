@@ -34,7 +34,8 @@ pimcore.asset.tags.manyToOneRelation = Class.create(pimcore.asset.tags.abstract,
             width: this.getColumnWidth(field, 300),
             sortable: false,
             dataIndex: field.key,
-            getEditor: this.getWindowCellEditor.bind(this, field)
+            getEditor: this.getWindowCellEditor.bind(this, field),
+            renderer: this.getRenderer(field)
         };
     },
 

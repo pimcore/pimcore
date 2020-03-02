@@ -59,9 +59,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param null $path
-     *
-     * @return |null
+     * @param string|null $path
      */
     public function processPageCount($path = null)
     {
@@ -73,7 +71,7 @@ class Document extends Model\Asset
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
-            return null;
+            return;
         }
 
         try {
@@ -100,7 +98,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param $thumbnailName
+     * @param string $thumbnailName
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
      *
@@ -108,8 +106,15 @@ class Document extends Model\Asset
      */
     public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
     {
-        if (!\Pimcore\Document::isAvailable() || !$this->getCustomSetting('document_page_count')) {
+        if (!\Pimcore\Document::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
+
+            return new Document\ImageThumbnail(null);
+        }
+
+        if (!$this->getCustomSetting('document_page_count')) {
+            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
+            TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
 
             return new Document\ImageThumbnail(null);
         }
@@ -118,9 +123,9 @@ class Document extends Model\Asset
     }
 
     /**
-     * @param null $page
+     * @param int|null $page
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getText($page = null)
     {
@@ -134,7 +139,7 @@ class Document extends Model\Asset
 
             return $text;
         } else {
-            Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
+            Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
         }
 
         return null;

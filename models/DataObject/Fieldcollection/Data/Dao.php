@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Model\DataObject\Concrete $object
      * @param array $params
-     * @param $saveRelationalData
+     * @param bool $saveRelationalData
      *
      * @throws \Exception
      */
@@ -42,7 +42,6 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname()
         ];
 
-        /** @var $fd Model\DataObject\ClassDefinition\Data */
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 

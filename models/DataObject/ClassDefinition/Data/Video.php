@@ -233,7 +233,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $video = null;
 
-        if ($data['type'] == 'asset') {
+        if (isset($data['type']) && $data['type'] === 'asset') {
             if ($asset = Asset::getByPath($data['data'])) {
                 $data['data'] = $asset;
             } else {
@@ -241,7 +241,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
         }
 
-        if ($data['poster']) {
+        if (!empty($data['poster'])) {
             if ($poster = Asset::getByPath($data['poster'])) {
                 $data['poster'] = $poster;
             } else {
@@ -275,13 +275,14 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param DataObject\Data\Video $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
+        $id = null;
         if ($data) {
             if ($data->getData() instanceof Asset) {
                 $id = $data->getData()->getId();
@@ -298,8 +299,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Video|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -339,8 +340,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed|null
@@ -370,7 +371,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -415,7 +416,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      *
      * @return array
      */
@@ -443,6 +444,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts data to be exposed via webservices
      *
+     * @deprecated
+     *
      * @param string $object
      * @param mixed $params
      *
@@ -459,10 +462,12 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
@@ -530,7 +535,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -541,9 +546,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param DataObject\Data\Video|null $data
      * @param null $object
      * @param mixed $params
      *
@@ -569,8 +574,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
-     * @param $idMapping
+     * @param DataObject\Concrete $object
+     * @param array $idMapping
      * @param array $params
      *
      * @return mixed

@@ -376,12 +376,14 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         if (!empty($check)) {
             return true;
         }
+
+        return false;
     }
 
     /**
      * Builds an insert query for an array of tokens.
      *
-     * @param $insertTokens
+     * @param array $insertTokens
      *
      * @return string
      */
@@ -389,6 +391,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     {
         $query = 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
         $finalLength = $this->getFinalTokenLength();
+        $insertParts = [];
 
         if (sizeof($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
@@ -448,6 +451,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                         $checkTokenCount++;
                     }
                 } else {
+                    $token = null;
                     $checkTokenCount++;
                 }
 
@@ -500,7 +504,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * Creates an array with the indices of days of the given usage period.
      *
      * @param array $data
-     * @param $usagePeriod
+     * @param int $usagePeriod
      */
     protected function prepareUsageStatisticData(&$data, $usagePeriod)
     {
@@ -517,7 +521,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * Prepares the view and returns the according template for rendering.
      *
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params
      *
      * @return string
@@ -624,7 +628,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * Checks whether an index for the given name parameter exists in
      * the character pool member array.
      *
-     * @param $poolName
+     * @param string $poolName
      *
      * @return bool
      */

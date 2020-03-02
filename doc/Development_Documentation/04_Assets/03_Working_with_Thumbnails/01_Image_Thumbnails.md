@@ -359,3 +359,8 @@ $asset->clearThumbnails(true);
 $thumb = $asset->getThumbnail($thumbnailConfig);
 $file = $thumb->getFileSystemPath();
 ```
+
+## Downloading Asset Thumbnails
+
+Besides embedding thumbnails into CMS pages and distributing them via other channels, backend users can download a thumbnail of an asset. 
+In order to make a thumbnail downloadable, mark "List as option in download section on image detail view" option in Image Thumbnail Advanced settings. All thumbnails with this option enabled are listed in the "Download Thumbnail" dropdown on the detail view of an Asset. To download the thumbnail of the asset choose the thumbnail from the list and hit the "Download" button.

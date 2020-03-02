@@ -296,12 +296,14 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * @return bool
      *   True if the pool was successfully cleared. False if there was an error.
      */
-    public function clear()
+    public function clear(/*string $prefix = ''*/)
     {
         $this->deferred = [];
 
+        $prefix = 0 < \func_num_args() ? (string) func_get_arg(0) : '';
+
         try {
-            return $this->doClear('');
+            return $this->doClear($prefix);
         } catch (\Exception $e) {
             CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
 
@@ -466,7 +468,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {
@@ -492,7 +494,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function doGet(PimcoreCacheItemPoolInterface $pool, string $key, callable $callback, ?float $beta, array &$metadata = null)
     {

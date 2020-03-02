@@ -14,12 +14,14 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required`      | boolean | set to true to make field value required for publish                               |
 
 ## Methods
 
 | Name        | Return | Description                           |
 |-------------|--------|---------------------------------------|
-| `getData()` | array  | Get the value of the wysiwyg          |
+| `getData()` | string  | Get the __raw__ value of the wysiwyg          |
+| `frontend()` | string  | Get the __parsed__ value of the wysiwyg           |
 | `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 ## Examples

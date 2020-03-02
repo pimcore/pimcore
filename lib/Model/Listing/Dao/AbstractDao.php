@@ -26,6 +26,13 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
+     * @TODO abstract method to be activated in Pimcore 7
+     *
+     * @return array
+     */
+    /*abstract public function load();*/
+
+    /**
      * @return string
      */
     protected function getOrder()
@@ -35,12 +42,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
         if (!empty($order) || !empty($orderKey)) {
             $c = 0;
-            $lastOrder = $order[0];
+            $lastOrder = $order[0] ?? null;
             $parts = [];
 
             if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {
-                    if ($order[$c]) {
+                    if (isset($order[$c])) {
                         $lastOrder = $order[$c];
                     }
 
@@ -110,12 +117,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
         if (!empty($order) || !empty($orderKey)) {
             $c = 0;
-            $lastOrder = $order[0];
+            $lastOrder = $order[0] ?? null;
             $parts = [];
 
             if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {
-                    if ($order[$c]) {
+                    if (!empty($order[$c])) {
                         $lastOrder = $order[$c];
                     }
 
@@ -129,6 +136,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                 $select->order(new Expression(implode(', ', $parts)));
             }
         }
+
+        return $this;
     }
 
     /**
@@ -136,7 +145,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      *
      * @return $this
      *
-     * @internal param $QueryBuilder
+     * @internal
      *
      */
     protected function addGroupBy(QueryBuilder $select)

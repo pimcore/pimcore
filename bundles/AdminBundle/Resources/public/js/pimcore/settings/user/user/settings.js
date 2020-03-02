@@ -285,6 +285,16 @@ pimcore.settings.user.user.settings = Class.create({
         generalItems.push(this.roleField);
 
         var perspectivesStore = Ext.create('Ext.data.JsonStore', {
+            fields: [
+                "name",
+                {
+                    name:"translatedName",
+                    convert: function (v, rec) {
+                        return t(rec.data.name);
+                    },
+                    depends : ['name']
+                }
+            ],
             data: this.data.availablePerspectives
         });
 
@@ -296,7 +306,7 @@ pimcore.settings.user.user.settings = Class.create({
             width: 400,
             minHeight: 100,
             store: perspectivesStore,
-            displayField: "name",
+            displayField: "translatedName",
             valueField: "name",
             value: this.currentUser.perspectives ? this.currentUser.perspectives.join(",") : null,
             hidden: this.currentUser.admin
@@ -402,7 +412,7 @@ pimcore.settings.user.user.settings = Class.create({
             this.apiKeyDescription = new Ext.form.DisplayField({
                 hideLabel: true,
                 width: 600,
-                value: t("user_apikey_description"),
+                value: "<b>DEPRECATED! Will be removed in 7.0!</b>  " +  t("user_apikey_description"),
                 cls: "pimcore_extra_label_bottom",
                 hidden: !this.wsenabled
             });
@@ -519,7 +529,7 @@ pimcore.settings.user.user.settings = Class.create({
                     store: pimcore.globalmanager.get("document_types_store"),
                     value: this.currentUser.docTypes,
                     listConfig: {
-                        itemTpl: new Ext.XTemplate('{[this.sanitize(values.name)]}',
+                        itemTpl: new Ext.XTemplate('{[this.sanitize(values.translatedName)]}',
                             {
                                 sanitize: function (name) {
                                     return Ext.util.Format.htmlEncode(name);

@@ -42,7 +42,7 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
                         $c->setPath($hardLink->getPath());
                         $c->setKey($hardLink->getKey());
                     } else {
-                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
+                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath(), '@') . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
                     }
 
                     $this->setObject($c);

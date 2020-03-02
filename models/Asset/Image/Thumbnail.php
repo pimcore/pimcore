@@ -30,8 +30,13 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
-     * @param $asset
-     * @param null $config
+     * @var string[]
+     */
+    protected static $hasListenersCache = [];
+
+    /**
+     * @param Image $asset
+     * @param string|array|Thumbnail\Config $config
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $deferred = true)
@@ -44,31 +49,45 @@ class Thumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
-                $path = $this->asset->getRealFullPath();
+                $fsPath = $this->asset->getRealFullPath();
             }
         }
 
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
-        $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
-            'frontendPath' => $path
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument('frontendPath');
+        if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
+            $event = new GenericEvent($this, [
+                'filesystemPath' => $fsPath,
+                'frontendPath' => $path
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            $path = $event->getArgument('frontendPath');
+        }
 
         return $path;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return bool
+     */
+    protected function hasListeners(string $eventName): bool
+    {
+        if (!isset(self::$hasListenersCache[$eventName])) {
+            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+        }
+
+        return self::$hasListenersCache[$eventName];
     }
 
     /**
@@ -104,7 +123,7 @@ class Thumbnail
                 $this->filesystemPath = $this->asset->getRealFullPath();
             } else {
                 try {
-                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $deferred = $deferredAllowed && $this->deferred;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
@@ -114,10 +133,12 @@ class Thumbnail
             }
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
-            'deferred' => $deferred,
-            'generated' => $generated
-        ]));
+        if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+                'deferred' => $deferred,
+                'generated' => $generated
+            ]));
+        }
     }
 
     /**
@@ -130,32 +151,6 @@ class Thumbnail
     public function __toString()
     {
         return $this->getPath(true);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileExtension()
-    {
-        $mapping = [
-            'image/png' => 'png',
-            'image/jpeg' => 'jpg',
-            'image/gif' => 'gif',
-            'image/tiff' => 'tif',
-            'image/svg+xml' => 'svg',
-        ];
-
-        $mimeType = $this->getMimeType();
-
-        if (isset($mapping[$mimeType])) {
-            return $mapping[$mimeType];
-        }
-
-        if ($this->getAsset()) {
-            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-        }
-
-        return '';
     }
 
     /**
@@ -187,9 +182,7 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
-        /**
-         * @var $image Image
-         */
+        /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];
         $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
@@ -214,7 +207,7 @@ class Thumbnail
             'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
 
         $customAttributes = [];
-        if (array_key_exists('attributes', $options) && is_array($options['attributes'])) {
+        if (isset($options['attributes']) && is_array($options['attributes'])) {
             $customAttributes = $options['attributes'];
         }
 
@@ -267,7 +260,7 @@ class Thumbnail
                 continue;
             }
 
-            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, 'data-') === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || isset($customAttributes[$key]) || strpos($key, 'data-') === 0)) {
                 continue;
             }
 
@@ -305,14 +298,18 @@ class Thumbnail
         }
 
         $isLowQualityPreview = false;
-        if (
-            (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            && ($previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri())
-            && !Tool::isFrontendRequestByAdmin()
-        ) {
+        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
+            $previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri();
+            if (!$previewDataUri) {
+                // use a 1x1 transparent GIF as a fallback if no LQIP exists
+                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            }
+
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
-            $attributes['data-srcset'] = $attributes['srcset'];
+            if (isset($attributes['srcset'])) {
+                $attributes['data-srcset'] = $attributes['srcset'];
+            }
             $attributes['src'] = $previewDataUri;
             unset($attributes['srcset']);
         }
@@ -321,10 +318,19 @@ class Thumbnail
         $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
 
         // $this->getConfig() can be empty, the original image is returned
-        if ($this->getConfig() && $this->getConfig()->hasMedias()) {
+        if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
+            $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+            $webpSupportBackup = null;
+
+            if ($isAutoFormat) {
+                $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
+                // ensure the default image is not WebP
+                $this->filesystemPath = null;
+                $path = $this->getPath(true);
+            }
 
             $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
@@ -336,6 +342,8 @@ class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $srcSetValues = [];
                 $sourceTagAttributes = [];
+                $thumb = null;
+
                 foreach ([1, 2] as $highRes) {
                     $thumbConfigRes = clone $thumbConfig;
                     $thumbConfigRes->selectMedia($mediaQuery);
@@ -346,22 +354,38 @@ class Thumbnail
                     if (!$fallBackImageThumb) {
                         $fallBackImageThumb = $thumb;
                     }
+
+                    if ($isAutoFormat) {
+                        $thumbConfigWebP = clone $thumbConfigRes;
+                        $thumbConfigWebP->setFormat('webp');
+                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
+                    }
                 }
 
-                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                if ($mediaQuery) {
-                    // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                    $maxWidth = str_replace('w', '', $mediaQuery);
-                    $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
-                    $thumb->reset();
-                }
+                if ($thumb) {
+                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+                    if ($mediaQuery) {
+                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
+                        $maxWidth = str_replace('w', '', $mediaQuery);
+                        $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        $thumb->reset();
+                    }
 
-                if ($isLowQualityPreview) {
-                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                    unset($sourceTagAttributes['srcset']);
-                }
+                    if ($isLowQualityPreview) {
+                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                        unset($sourceTagAttributes['srcset']);
+                    }
 
-                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
+                    $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                    $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                    if ($isAutoFormat) {
+                        $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
+                        $html .= "\t" . $sourceHtmlWebP . "\n";
+                    }
+
+                    $html .= "\t" . $sourceHtml . "\n";
+                }
             }
 
             $attrCleanedForPicture = $attributes;
@@ -387,6 +411,10 @@ class Thumbnail
             $html .= '</picture>' . "\n";
 
             $htmlImgTag = $html;
+
+            if ($isAutoFormat) {
+                Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
+            }
         }
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
@@ -409,7 +437,7 @@ class Thumbnail
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
 
-        if (array_key_exists($name, $mediaConfigs)) {
+        if (isset($mediaConfigs[$name])) {
             $thumbConfigRes = clone $thumbConfig;
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
@@ -425,7 +453,7 @@ class Thumbnail
     /**
      * Get a thumbnail image configuration.
      *
-     * @param mixed $selector Name, array or object describing a thumbnail configuration.
+     * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
      * @return Thumbnail\Config
      */

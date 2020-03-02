@@ -29,3 +29,7 @@ $this->get("translate")->setDomain("admin");
 </form>
 
 <a href="<?= $view->router()->path('pimcore_admin_logout') ?>"><?= $this->translate("Back to Login"); ?></a>
+
+<?= $this->breachAttackRandomContent(); ?>
+
+

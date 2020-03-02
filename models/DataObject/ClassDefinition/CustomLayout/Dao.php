@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
-     * @param null $id
+     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param mixed $id
+     * @param string $id
      *
      * @return string|null
      */
@@ -89,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $name
-     * @param int    $classId
+     * @param string $classId
      *
      * @return int|null
      */
@@ -107,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @return int|mixed
+     * @return int
      */
     public function getNewId()
     {
@@ -133,13 +133,13 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        return;
+        return null;
     }
 
     /**
      * Get latest identifier
      *
-     * @param int $classId
+     * @param string $classId
      *
      * @return int
      */

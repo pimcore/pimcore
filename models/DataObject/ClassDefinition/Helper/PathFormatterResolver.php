@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\PathFormatterInterface;
 
 class PathFormatterResolver extends ClassResolver
@@ -24,13 +23,13 @@ class PathFormatterResolver extends ClassResolver
     public static $formatterCache = [];
 
     /**
-     * @param $formatterClass
+     * @param string $formatterClass
      *
-     * @return PathFormatterInterface
+     * @return PathFormatterInterface|null
      */
     public static function resolvePathFormatter($formatterClass): ?PathFormatterInterface
     {
-        return self::resolve($formatterClass, static function($formatter) {
+        return self::resolve($formatterClass, static function ($formatter) {
             return $formatter instanceof PathFormatterInterface;
         });
     }

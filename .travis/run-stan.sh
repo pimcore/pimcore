@@ -1,12 +1,19 @@
 #!/bin/bash
 
+set -e
 
-# install suggested packages first
-composer require "klarna/checkout:^3.0.0" "elasticsearch/elasticsearch:2.0.0" "paypal/paypal-checkout-sdk:^1" "mpay24/mpay24-php:^4.2" "composer/composer:*"
+if [ $PHPSTAN_BASELINE == 0 ]; then sed -e "s?- phpstan-baseline.neon?#- phpstan-baseline.neon?g" -i phpstan.neon; fi
 
 if [ $SYMFONY_VERSION = "^3.4" ]
 then
-    vendor/bin/phpstan analyse -c .travis/phpstan.travis.neon bundles/ lib/ models/ -l 0 --memory-limit=-1;
+    config=".travis/phpstan.travis.neon"
 else
-    vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 0 --memory-limit=-1;
+    config=".travis/phpstan.s4.travis.neon"
 fi
+
+cmd="vendor/bin/phpstan analyse -c $config bundles/ lib/ models/ -l $PHPSTAN_LEVEL --memory-limit=-1"
+
+if [ $PHPSTAN_BASELINE_GENERATE == 1 ]; then cmd+=" --error-format baselineNeon > phpstan-baseline.neon"; fi
+
+echo $cmd
+eval $cmd

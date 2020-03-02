@@ -73,7 +73,9 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $document = $this->documentResolver->getDocument($request);
 
-        $this->assignDocumentTargetGroups($document, $event->getVisitorInfo());
+        if ($document) {
+            $this->assignDocumentTargetGroups($document, $event->getVisitorInfo());
+        }
     }
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)

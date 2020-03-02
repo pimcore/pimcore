@@ -17,7 +17,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 // TODO - Log Exceptions
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 
+/**
+ * @property Reservation $model
+ */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_vouchertoolkit_reservations';
@@ -97,6 +101,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $db = \Pimcore\Db::get();
 
         $query = 'SELECT COUNT(*) FROM ' . self::TABLE_NAME;
+        $params = [];
 
         if (isset($seriesId)) {
             $query .= ' WHERE seriesId = ?';

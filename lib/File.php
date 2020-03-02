@@ -32,9 +32,7 @@ class File
     protected static $context = null;
 
     /**
-     * @static
-     *
-     * @param  $name
+     * @param string $name
      *
      * @return string
      */
@@ -44,17 +42,17 @@ class File
         $parts = explode('.', $name);
 
         if (count($parts) > 1) {
-            return strtolower($parts[count($parts) - 1]);
+            return $parts[count($parts) - 1];
         }
 
         return '';
     }
 
     /**
-     * @static
+     * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
-     * @param  $tmpFilename
-     * @param null $language
+     * @param string $tmpFilename
+     * @param string|null $language
      * @param string $replacement
      *
      * @return string
@@ -73,9 +71,7 @@ class File
     }
 
     /**
-     * @static
-     *
-     * @param  $filename
+     * @param string $filename
      *
      * @return bool
      */
@@ -103,7 +99,7 @@ class File
     }
 
     /**
-     * @param $mode
+     * @param int $mode
      */
     public static function setDefaultMode($mode)
     {
@@ -119,8 +115,8 @@ class File
     }
 
     /**
-     * @param $path
-     * @param $data
+     * @param string $path
+     * @param mixed $data
      *
      * @return int
      */
@@ -137,8 +133,8 @@ class File
     }
 
     /**
-     * @param $path
-     * @param $data
+     * @param string $path
+     * @param mixed $data
      */
     public static function putPhpFile($path, $data)
     {
@@ -150,8 +146,8 @@ class File
     }
 
     /**
-     * @param $path
-     * @param null $mode
+     * @param string $path
+     * @param int|null $mode
      * @param bool $recursive
      *
      * @return bool
@@ -205,8 +201,8 @@ class File
     }
 
     /**
-     * @param $oldPath
-     * @param $newPath
+     * @param string $oldPath
+     * @param string $newPath
      *
      * @return bool
      */

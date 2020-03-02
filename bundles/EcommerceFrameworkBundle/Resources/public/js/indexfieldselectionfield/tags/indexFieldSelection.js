@@ -24,7 +24,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             this.data = {};
         }
         this.fieldConfig = fieldConfig;
-        
+
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
@@ -260,13 +260,5 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
 
     isDirty: function() {
         return this.fieldsCombobox.isDirty() || (this.preSelectCombobox && this.preSelectCombobox.isDirty());
-    },
-
-    isInvalidMandatory: function () {
-        if (this.fieldsCombobox.getValue()) {
-            return false;
-        }
-        return true;
     }
-
 });

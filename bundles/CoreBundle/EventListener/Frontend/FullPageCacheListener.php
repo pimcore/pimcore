@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
@@ -81,18 +82,25 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
+    /**
+     * @var Config
+     */
+    protected $config;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
         SessionStatus $sessionStatus,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Config $config
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->sessionStatus = $sessionStatus;
         $this->eventDispatcher = $eventDispatcher;
+        $this->config = $config;
     }
 
     /**
-     * @param null $reason
+     * @param string|null $reason
      *
      * @return bool
      */
@@ -126,7 +134,7 @@ class FullPageCacheListener
     }
 
     /**
-     * @param $lifetime
+     * @param int|null $lifetime
      *
      * @return $this
      */
@@ -197,11 +205,8 @@ class FullPageCacheListener
         }
 
         try {
-            $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->cache) {
-                $conf = $conf->cache;
-
-                if (!$conf->enabled) {
+            if ($conf = $this->config['full_page_cache']) {
+                if (!$conf['enabled']) {
                     return $this->disable();
                 }
 
@@ -209,19 +214,19 @@ class FullPageCacheListener
                     return $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
                 }
 
-                if ($conf->lifetime) {
-                    $this->setLifetime((int) $conf->lifetime);
+                if ($conf['lifetime']) {
+                    $this->setLifetime((int) $conf['lifetime']);
                 }
 
-                if ($conf->excludePatterns) {
-                    $confExcludePatterns = explode(',', $conf->excludePatterns);
+                if ($conf['exclude_patterns']) {
+                    $confExcludePatterns = explode(',', $conf['exclude_patterns']);
                     if (!empty($confExcludePatterns)) {
                         $excludePatterns = $confExcludePatterns;
                     }
                 }
 
-                if ($conf->excludeCookie) {
-                    $cookies = explode(',', strval($conf->excludeCookie));
+                if ($conf['exclude_cookie']) {
+                    $cookies = explode(',', strval($conf['exclude_cookie']));
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
@@ -293,9 +298,7 @@ class FullPageCacheListener
         }
 
         if ($cacheItem) {
-            /**
-             * @var $response Response
-             */
+            /** @var Response $response */
             $response = $cacheItem;
             $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
             $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));
@@ -318,8 +321,6 @@ class FullPageCacheListener
 
     /**
      * @param FilterResponseEvent $event
-     *
-     * @return bool|void
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {

@@ -180,7 +180,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
             'attr' => ['id' => 'payment_ogone_form']
         ]);
 
-        /** @var $paymentInfo \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
+        /** @var \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
         $paymentInfo = $config['paymentInfo'];
         //$order = $paymentInfo->getObject();
 
@@ -332,8 +332,8 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
      * Helper method for adding hidden fields to a form.
      *
      * @param FormBuilderInterface $form
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      *
      * @return FormBuilderInterface
      */
@@ -440,7 +440,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *

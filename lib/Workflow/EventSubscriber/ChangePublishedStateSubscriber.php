@@ -32,14 +32,10 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /**
-         * @var $transition Transition
-         */
+        /** @var Transition $transition */
         $transition = $event->getTransition();
 
-        /**
-         * @var $subject Document | Concrete
-         */
+        /** @var Document|Concrete $subject */
         $subject = $event->getSubject();
 
         $changePublishedState = $transition->getChangePublishedState();

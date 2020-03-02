@@ -79,7 +79,7 @@ class ProductDiscount implements ProductDiscountInterface
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface
+     * @return ActionInterface
      */
     public function fromJSON($string)
     {
@@ -90,6 +90,8 @@ class ProductDiscount implements ProductDiscountInterface
         if ($json->percent) {
             $this->setPercent($json->percent);
         }
+
+        return $this;
     }
 
     /**

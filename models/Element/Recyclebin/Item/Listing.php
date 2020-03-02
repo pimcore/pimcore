@@ -22,24 +22,29 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\Recyclebin\Item\Listing\Dao getDao()
  * @method Model\Element\Recyclebin\Item[] load()
+ * @method Model\Element\Recyclebin\Item current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $items = null;
+
+    public function __construct()
+    {
+        $this->items = & $this->data;
+    }
 
     /**
      * @return Model\Element\Recyclebin\Item[]
      */
     public function getItems()
     {
-        if ($this->items === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->items;
+        return $this->getData();
     }
 
     /**
@@ -49,8 +54,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setItems($items)
     {
-        $this->items = $items;
-
-        return $this;
+        return $this->setData($items);
     }
 }

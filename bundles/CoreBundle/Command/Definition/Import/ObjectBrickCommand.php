@@ -35,7 +35,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
      *
      * @param string $filename
      *
-     * @return string
+     * @return string|null
      */
     protected function getDefinitionName($filename)
     {
@@ -43,12 +43,14 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
         if (1 === preg_match('/^objectbrick_(.*)_export\.json$/', $filename, $parts)) {
             return $parts[1];
         }
+
+        return null;
     }
 
     /**
      * Try to load definition by name
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel|null
      */
@@ -60,7 +62,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     /**
      * Create a new definition
      *
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel
      */

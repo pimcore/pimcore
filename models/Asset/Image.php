@@ -95,6 +95,10 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
+        if (!isset($this->customSettings['disableImageFeatureAutoDetection'])) {
+            $this->detectFaces();
+        }
+
         if (!isset($this->customSettings['disableFocalPointDetection'])) {
             $this->detectFocalPoint();
         }
@@ -102,10 +106,38 @@ class Image extends Model\Asset
 
     public function detectFocalPoint()
     {
+        if ($this->getCustomSetting('focalPointX') && $this->getCustomSetting('focalPointY')) {
+            return;
+        }
+
+        if ($faceCordintates = $this->getCustomSetting('faceCoordinates')) {
+            $xPoints = [];
+            $yPoints = [];
+
+            foreach ($faceCordintates as $fc) {
+                // focal point calculation
+                $xPoints[] = ($fc['x'] + $fc['x'] + $fc['width']) / 2;
+                $yPoints[] = ($fc['y'] + $fc['y'] + $fc['height']) / 2;
+            }
+
+            $focalPointX = array_sum($xPoints) / count($xPoints);
+            $focalPointY = array_sum($yPoints) / count($yPoints);
+
+            $this->setCustomSetting('focalPointX', $focalPointX);
+            $this->setCustomSetting('focalPointY', $focalPointY);
+        }
+    }
+
+    public function detectFaces()
+    {
+        if ($this->getCustomSetting('faceCoordinates')) {
+            return;
+        }
+
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
 
         if (!$config['enabled']) {
-            return false;
+            return;
         }
 
         $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
@@ -119,8 +151,6 @@ class Image extends Model\Asset
             $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
             if (strpos($result, "\n")) {
                 $faces = explode("\n", trim($result));
-                $xPoints = [];
-                $yPoints = [];
 
                 foreach ($faces as $coordinates) {
                     list($x, $y, $width, $height) = explode(' ', $coordinates);
@@ -137,21 +167,9 @@ class Image extends Model\Asset
                         'width' => $Pw,
                         'height' => $Ph
                     ];
-
-                    // focal point calculation
-                    $xPoints[] = ($Px + $Px + $Pw) / 2;
-                    $yPoints[] = ($Py + + $Py + $Ph) / 2;
                 }
 
                 $this->setCustomSetting('faceCoordinates', $faceCoordinates);
-
-                if (!$this->getCustomSetting('focalPointX')) {
-                    $focalPointX = array_sum($xPoints) / count($xPoints);
-                    $focalPointY = array_sum($yPoints) / count($yPoints);
-
-                    $this->setCustomSetting('focalPointX', $focalPointX);
-                    $this->setCustomSetting('focalPointY', $focalPointY);
-                }
             }
         }
     }
@@ -166,6 +184,7 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
+        $sqipBin = null;
 
         if (!$config['enabled']) {
             return false;
@@ -307,7 +326,7 @@ EOT;
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
     public function clearThumbnail($name)
     {
@@ -320,9 +339,9 @@ EOT;
     /**
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
      *
-     * @param mixed $config
+     * @param string|array|Image\Thumbnail\Config $config
      *
-     * @return Image\Thumbnail|bool
+     * @return Image\Thumbnail\Config
      */
     public function getThumbnailConfig($config)
     {
@@ -334,7 +353,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
      *
-     * @param null $config
+     * @param string|array|Image\Thumbnail\Config $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
@@ -391,7 +410,7 @@ EOT;
     }
 
     /**
-     * @param null $path
+     * @param string|null $path
      * @param bool $force
      *
      * @return array

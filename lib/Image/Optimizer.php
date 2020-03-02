@@ -92,7 +92,7 @@ class Optimizer implements ImageOptimizerInterface
     }
 
     /**
-     * @param null $type
+     * @param string|null $type
      *
      * @return string
      */
@@ -107,12 +107,12 @@ class Optimizer implements ImageOptimizerInterface
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
     public static function optimize($path)
     {
         @trigger_error(
-            'Usage of Pimcore\Image\Optimizer::optimize is deprecated and will be removed with Pimcore 6.0. Please use the Service: Pimcore\Image\Optimizer instead.',
+            'Usage of Pimcore\Image\Optimizer::optimize is deprecated and will be removed with Pimcore 7.0. Please use the Service: Pimcore\Image\Optimizer instead.',
             E_USER_DEPRECATED
         );
 

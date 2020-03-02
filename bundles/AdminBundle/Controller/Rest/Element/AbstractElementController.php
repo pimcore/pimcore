@@ -20,6 +20,9 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Element\AbstractElement;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractElementController extends AbstractRestController
 {
     const ELEMENT_DOES_NOT_EXIST = -1;
@@ -136,8 +139,8 @@ abstract class AbstractElementController extends AbstractRestController
     }
 
     /**
-     * @param $class
-     * @param $data
+     * @param string $class
+     * @param array $data
      *
      * @return \Pimcore\Model\Webservice\Data
      */
@@ -149,8 +152,8 @@ abstract class AbstractElementController extends AbstractRestController
     }
 
     /**
-     * @param $wsData
-     * @param $data
+     * @param object $wsData
+     * @param array $data
      *
      * @return \Pimcore\Model\Webservice\Data
      */

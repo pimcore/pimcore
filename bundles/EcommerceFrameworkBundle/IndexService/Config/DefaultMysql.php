@@ -79,7 +79,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return mixed $subTenantData
      */
@@ -105,7 +105,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
     /**
      * returns column type for id
      *
-     * @param $isPrimary
+     * @param bool $isPrimary
      *
      * @return string
      */

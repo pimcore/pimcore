@@ -107,6 +107,8 @@ class KernelManipulator extends Manipulator
                 return true;
             }
         }
+
+        return false;
     }
 
     public function getFilename()

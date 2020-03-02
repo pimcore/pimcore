@@ -35,15 +35,15 @@ class ImageThumbnail
     protected $timeOffset;
 
     /**
-     * @var Image
+     * @var Model\Asset\Video
      */
     protected $imageAsset;
 
     /**
-     * @param $asset
-     * @param null $config
-     * @param null $timeOffset
-     * @param null $imageAsset
+     * @param Model\Asset\Video $asset
+     * @param string|array|Image\Thumbnail\Config|null $config
+     * @param int|null $timeOffset
+     * @param Image|null $imageAsset
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
@@ -58,13 +58,12 @@ class ImageThumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
@@ -84,7 +83,7 @@ class ImageThumbnail
     public function generate($deferredAllowed = true)
     {
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
-        $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+        $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if (!$this->asset) {
@@ -187,9 +186,9 @@ class ImageThumbnail
     }
 
     /**
-     * @param $selector
+     * @param string|array|Image\Thumbnail\Config $selector
      *
-     * @return bool|static
+     * @return Image\Thumbnail\Config|null
      */
     protected function createConfig($selector)
     {

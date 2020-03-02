@@ -56,17 +56,19 @@ pimcore.asset.tags.abstract = Class.create({
         return null;
     },
 
-    getGridColumnConfig:function (field) {
-        var renderer = function (key, value, metaData, record) {
+    getRenderer: function(field) {
+        return function (key, value, metaData, record) {
             return Ext.util.Format.htmlEncode(value);
         }.bind(this, field.key);
+    },
 
+    getGridColumnConfig:function (field) {
         return {
             text: field.label,
             sortable:false,
             width: this.getColumnWidth(field, 200),
             dataIndex:field.key,
-            renderer:renderer,
+            renderer: this.getRenderer(field),
             filter: 'string',
             editor:this.getGridColumnEditor(field)
         };

@@ -20,9 +20,9 @@ pimcore.asset.tags.date = Class.create(pimcore.asset.tags.abstract, {
 
         this.data = null;
 
-        if (typeof data === "undefined" || data === null) {
+        if (typeof data !== "undefined" && data !== null) {
             this.data = data;
-        } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
+        } else if (fieldConfig.useCurrentDate) {
             this.data = (new Date().getTime()) / 1000;
         }
 

@@ -20,25 +20,27 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
+ * @method array delete(Concrete $object, $saveMode = false)
+ * @method Fieldcollection\Dao getDao()
+ * @method array load(Concrete $object)
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
     /**
-     * @var array
+     * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
      */
     protected $items = [];
 
     /**
-     * @var
+     * @var string
      */
     protected $fieldname;
 
     /**
-     * @param array $items
-     * @param null $fieldname
+     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
+     * @param string|null $fieldname
      */
     public function __construct($items = [], $fieldname = null)
     {
@@ -53,7 +55,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return array
+     * @return Model\DataObject\Fieldcollection\Data\AbstractData[]
      */
     public function getItems()
     {
@@ -61,7 +63,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $items
+     * @param Model\DataObject\Fieldcollection\Data\AbstractData[] $items
      *
      * @return $this
      */
@@ -74,7 +76,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getFieldname()
     {
@@ -82,7 +84,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -94,7 +96,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return array
+     * @return Fieldcollection\Definition[]
      */
     public function getItemDefinitions()
     {
@@ -107,16 +109,18 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @throws \Exception
-     *
+     * @param Concrete $object
      * @param array $params
-     * @param $object
+     *
+     * @throws \Exception
      */
     public function save($object, $params = [])
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
-        $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
+        /** @var Model\DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
+        $fieldDef = $object->getClass()->getFieldDefinition($this->getFieldname());
+        $allowedTypes = $fieldDef->getAllowedTypes();
 
         $collectionItems = $this->getItems();
         if (is_array($collectionItems)) {
@@ -151,7 +155,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $item
+     * @param Model\DataObject\Fieldcollection\Data\AbstractData $item
      */
     public function add($item)
     {
@@ -161,7 +165,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $index
+     * @param int $index
      */
     public function remove($index)
     {
@@ -173,17 +177,39 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $index
+     * @param int $index
      *
-     * @return
-     *
-     * @todo: no return type definied here
+     * @return Fieldcollection\Data\AbstractData|null
      */
     public function get($index)
     {
         if ($this->items[$index]) {
             return $this->items[$index];
         }
+
+        return null;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return Fieldcollection\Data\AbstractData|null
+     */
+    public function getByOriginalIndex($index)
+    {
+        if ($index === null) {
+            return null;
+        }
+
+        if (is_array($this->items)) {
+            foreach ($this->items as $item) {
+                if ($item->getIndex() === $index) {
+                    return $item;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -248,23 +274,21 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @param Concrete $object
-     * @param $type
-     * @param $fcField
-     * @param $index
-     * @param $field
+     * @param string $type
+     * @param string $fcField
+     * @param int $index
+     * @param string $field
      *
      * @throws \Exception
      */
     public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
     {
-        /**
-         * @var Model\DataObject\Fieldcollection\Data\AbstractData $item
-         */
-        $item = $this->get($index);
+        // lazy loading existing can be data if the item already had an index
+        $item = $this->getByOriginalIndex($index);
         if ($item && !$item->isLazyKeyLoaded($field)) {
             if ($type == $item->getType()) {
                 $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
-                /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+                /** @var Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface $fieldDef */
                 $fieldDef = $fcDef->getFieldDefinition($field);
 
                 $params = [
@@ -308,12 +332,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     {
         $items = $this->getItems();
         if (is_array($items)) {
-            /** @var $item Model\DataObject\Fieldcollection\Data\AbstractData */
+            /** @var Model\DataObject\Fieldcollection\Data\AbstractData $item */
             foreach ($items as $item) {
                 $fcType = $item->getType();
                 $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 $fds = $fieldcolDef->getFieldDefinitions();
-                /** @var $fd Model\DataObject\ClassDefinition\Data */
                 foreach ($fds as $fd) {
                     $fieldGetter = 'get' . ucfirst($fd->getName());
                     $fieldValue = $item->$fieldGetter();

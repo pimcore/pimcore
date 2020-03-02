@@ -34,7 +34,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * Loads a list of predefined properties for the specicifies parameters, returns an array of Property\Predefined elements
      *
-     * @return array
+     * @return Config[]
      */
     public function load()
     {

@@ -43,7 +43,7 @@ class PimcoreUrl extends Helper
 
     /**
      * @param array $urlOptions
-     * @param null $name
+     * @param string|null $name
      * @param bool $reset
      * @param bool $encode
      * @param bool $relative
@@ -95,9 +95,7 @@ class PimcoreUrl extends Helper
         }
 
         if (isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
-            /**
-             * @var $object Concrete
-             */
+            /** @var Concrete $object */
             $object = $parameters['object'];
             if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 unset($parameters['object']);

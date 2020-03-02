@@ -23,7 +23,6 @@ Ext.define('documentreemodel', {
     }]
 });
 
-
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
@@ -231,10 +230,7 @@ pimcore.document.tree = Class.create({
             index += newParent.pagingData.offset;
         }
 
-        pimcore.elementservice.updateDocument(node.data.id, {
-            parentId: newParent.data.id,
-            index: index
-        }, function (newParent, oldParent, tree, response) {
+        var moveCallback = function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
@@ -276,7 +272,28 @@ pimcore.document.tree = Class.create({
             }
             tree.loadMask.hide();
 
-        }.bind(this, newParent, oldParent, tree));
+        }.bind(this, newParent, oldParent, tree);
+
+        var params = {
+            parentId: newParent.data.id,
+            index: index
+        };
+
+        if(
+            newParent.data.id !== oldParent.data.id &&
+            (node.data.type === 'page' || node.data.type === 'hardlink') &&
+            pimcore.globalmanager.get("user").isAllowed('redirects')
+        ) {
+            // ask the user if redirects should be created, if node was moved to a new parent
+            Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
+                if (buttonValue == "yes") {
+                    params['create_redirects'] = 'true';
+                }
+                pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+            }.bind(this));
+        } else {
+            pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+        }
     },
 
 
@@ -335,11 +352,11 @@ pimcore.document.tree = Class.create({
         } else {
             var pasteMenu = [];
             var pasteInheritanceMenu = [];
-
-            if ((record.data.type == "page" || record.data.type == "email" || record.data.type == "folder"
+            var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
                 || record.data.type == "link" || record.data.type == "hardlink"
-                || record.data.type == "printpage" || record.data.type == "printcontainer")
-                && record.data.permissions.create) {
+                || record.data.type == "printpage" || record.data.type == "printcontainer");
+
+            if (childSupportedDocument && record.data.permissions.create) {
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
@@ -562,7 +579,7 @@ pimcore.document.tree = Class.create({
 
 
             //paste
-            if (pimcore.cutDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.pasteCut")) {
+            if (childSupportedDocument && pimcore.cutDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.pasteCut")) {
                 pasteMenu.push({
                     text: t("paste_cut_element"),
                     iconCls: "pimcore_icon_paste",
@@ -707,7 +724,7 @@ pimcore.document.tree = Class.create({
                 }));
             }
 
-            if (record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
+            if (childSupportedDocument && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.searchAndMove")) {
                 advancedMenuItems.push({
                     text: t('search_and_move'),
                     iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
@@ -1308,10 +1325,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    itemId: "title",
+                    fieldLabel: t('title'),
+                    name: 'title',
                     width: "100%",
-                    fieldLabel: t('key'),
-                    itemId: "key",
-                    name: 'key',
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -1321,7 +1338,8 @@ pimcore.document.tree = Class.create({
                         },
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
-                        }
+                            pageForm.getComponent("key").setValue(el.getValue());
+                        }.bind(this)
                     }
                 },{
                     xtype: "textfield",
@@ -1331,10 +1349,10 @@ pimcore.document.tree = Class.create({
                     width: "100%"
                 },{
                     xtype: "textfield",
-                    itemId: "title",
-                    fieldLabel: t('title'),
-                    name: 'title',
-                    width: "100%"
+                    width: "100%",
+                    fieldLabel: t('key'),
+                    itemId: "key",
+                    name: 'key'
                 }]
             });
 

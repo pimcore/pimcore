@@ -59,8 +59,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
      */
     public function getCount()
     {
-        if (count($this->model->getObjects()) > 0) {
-            return count($this->model->getObjects());
+        if (count($this->model->load()) > 0) {
+            return count($this->model->load());
         }
 
         $select = $this->db->select();
@@ -84,7 +84,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     public function getAllTranslations()
     {
@@ -108,7 +108,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
             $translationsData = $this->db->fetchAll($select);
 
             foreach ($translationsData as $t) {
-                if (!$translations[$t['key']]) {
+                if (!isset($translations[$t['key']])) {
                     $translations[$t['key']] = new $itemClass();
                     $translations[$t['key']]->setKey($t['key']);
                 }

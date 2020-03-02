@@ -44,7 +44,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -54,7 +54,7 @@ class DefaultMockup implements ProductInterface
     }
 
     /**
-     * @param mixed $params
+     * @param array $params
      *
      * @return $this
      */

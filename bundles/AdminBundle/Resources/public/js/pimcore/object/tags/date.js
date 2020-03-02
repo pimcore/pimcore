@@ -17,26 +17,26 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
     type:"date",
 
     initialize:function (data, fieldConfig) {
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+    },
 
+    applyDefaultValue: function() {
         this.defaultValue = null;
 
-        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
-            this.defaultValue = fieldConfig.defaultValue;
-        } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
+        if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.defaultValue) {
+            this.defaultValue = this.fieldConfig.defaultValue;
+        } else if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.useCurrentDate) {
             this.defaultValue = (new Date().getTime()) / 1000;
         }
 
         if(this.defaultValue) {
-            data = this.defaultValue;
+            this.data = this.defaultValue;
         }
-
-        this.data = data;
-        this.fieldConfig = fieldConfig;
-
     },
 
     getGridColumnConfig:function (field) {
-        return {text:ts(field.label), width:150, sortable:true, dataIndex:field.key,
+        return {text: t(field.label), width:150, sortable:true, dataIndex:field.key,
             getEditor:this.getWindowCellEditor.bind(this, field),
             renderer:function (key, value, metaData, record) {
 
@@ -105,15 +105,6 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     getName:function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory:function () {
-
-        // no render check is necessary because the date compontent returns the right values even it is not rendered
-        if (this.getValue() == false) {
-            return true;
-        }
-        return false;
     },
 
     isDirty:function () {

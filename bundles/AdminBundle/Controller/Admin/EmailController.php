@@ -148,6 +148,10 @@ class EmailController extends AdminController
             }
 
             return $this->adminJson($params);
+        } elseif ($request->get('type') == 'details') {
+            $data = $emailLog->getObjectVars();
+
+            return $this->adminJson($data);
         } else {
             return new Response('No Type specified');
         }
@@ -155,7 +159,7 @@ class EmailController extends AdminController
 
     /**
      * @param array $data
-     * @param $fullEntry
+     * @param array $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
@@ -279,8 +283,15 @@ class EmailController extends AdminController
         if ($emailLog instanceof Tool\Email\Log) {
             $mail = new Mail();
             $mail->preventDebugInformationAppending();
-            $mail->disableLogging();
             $mail->setIgnoreDebugMode(true);
+
+            if (!empty($request->get('to'))) {
+                $emailLog->setTo(null);
+                $emailLog->setCc(null);
+                $emailLog->setBcc(null);
+            } else {
+                $mail->disableLogging();
+            }
 
             if ($html = $emailLog->getHtmlLog()) {
                 $mail->setBodyHtml($html);
@@ -291,8 +302,13 @@ class EmailController extends AdminController
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
-                $getter = 'get' . $field;
-                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
+                if (!$values = $request->get(strtolower($field))) {
+                    $getter = 'get' . $field;
+                    $values = $emailLog->{$getter}();
+                }
+
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($values);
+
                 if (!empty($values)) {
                     list($value) = $values;
                     if ($value) {
@@ -482,12 +498,14 @@ class EmailController extends AdminController
                 'total' => $list->getTotalCount()
             ]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
      * @param array $params
      *
-     * @return $data
+     * @return array
      */
     protected function parseLoggingParamObject($params)
     {

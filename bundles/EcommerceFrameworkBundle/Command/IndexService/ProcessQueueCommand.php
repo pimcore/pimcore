@@ -53,6 +53,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
         $queues = $input->getArgument('queue');
         $processPreparationQueue = in_array('preparation', $queues);
         $processUpdateIndexQueue = in_array('update-index', $queues);
+        $timeoutInSeconds = null;
 
         if ($timeoutInMinutes = (int)$input->getOption('timeout')) {
             $timeoutInSeconds = $timeoutInMinutes * 60;
@@ -62,7 +63,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             Lock::release($this->getLockName($input));
             $output->writeln(sprintf('<info>UNLOCKED "%s". Please start over again.</info>', $this->getLockname($input)));
 
-            return;
+            return 1;
         }
 
         $this->checkLock($input);
@@ -82,6 +83,8 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
         if (!filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN)) {
             Lock::release($this->getLockname($input));
         }
+
+        return 0;
     }
 
     /**
@@ -106,6 +109,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
     {
         $lockName = $this->getLockName($input);
         $ignoreLock = filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN);
+        $lockTimeoutInSeconds = null;
         if ($lockTimeoutInMinutes = (int)$input->getOption('lock-timeout')) {
             $lockTimeoutInSeconds = $lockTimeoutInMinutes * 60;
         }

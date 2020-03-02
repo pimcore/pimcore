@@ -191,10 +191,10 @@ pimcore.helpers.closeObject = function (id) {
     }
 };
 
-pimcore.helpers.updateObjectStyle = function (id, treeData) {
+pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
     if (treeData) {
 
-        var key = "object_" + id;
+        var key = type + "_" + id;
         if (pimcore.globalmanager.exists(key)) {
             var editMask = pimcore.globalmanager.get(key);
             if (editMask.tab) {
@@ -208,7 +208,7 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
             }
         }
 
-        var treeNames = pimcore.elementservice.getElementTreeNames("object");
+        var treeNames = pimcore.elementservice.getElementTreeNames(type);
 
         for (var index = 0; index < treeNames.length; index++) {
             var treeName = treeNames[index];
@@ -226,6 +226,10 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
 
                 if (typeof treeData.iconCls !== "undefined") {
                     record.set("iconCls", treeData.iconCls);
+                }
+
+                if (typeof treeData.qtipCfg !== "undefined") {
+                    record.set("qtipCfg", treeData.qtipCfg);
                 }
             }
         }
@@ -442,7 +446,9 @@ pimcore.helpers.isValidFilename = function (value) {
 pimcore.helpers.getValidFilenameCache = {};
 
 pimcore.helpers.getValidFilename = function (value, type) {
-
+    
+    value = value.trim();
+    
     if (pimcore.helpers.getValidFilenameCache[value + type]) {
         return pimcore.helpers.getValidFilenameCache[value + type];
     }
@@ -726,7 +732,7 @@ pimcore.helpers.closeAllUnmodified = function () {
             }
         });
     }
-    ;
+
 
     pimcore.helpers.closeAllElements(unmodifiedElements);
 };
@@ -1379,7 +1385,11 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     // these wrappers simulate the jQuery behavior
     var successWrapper = function (ev) {
         var data = JSON.parse(request.responseText);
-        callbackSuccess(data, request.statusText, request);
+        if(ev.currentTarget.status < 400) {
+            callbackSuccess(data, request.statusText, request);
+        } else {
+            callbackFailure(request, request.statusText, ev);
+        }
     };
 
     var errorWrapper = function (ev) {
@@ -2465,6 +2475,10 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
+    if (context && context['containerType'] == "batch") {
+        return;
+    }
+
     if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
@@ -2885,7 +2899,7 @@ pimcore.helpers.keyBindingMapping = {
 };
 
 pimcore.helpers.showPermissionError = function(permission) {
-    Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), ts(permission)));
+    Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), t(permission)));
 };
 
 pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {

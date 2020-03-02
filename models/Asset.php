@@ -31,6 +31,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
  * @method bool __isBasedOnLatestData()
+ * @method int getChildAmount($user = null)
+ * @method string|null getCurrentFullPath()
  */
 class Asset extends Element\AbstractElement
 {
@@ -220,7 +222,7 @@ class Asset extends Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     * @return static|null
      */
     public static function getByPath($path, $force = false)
     {
@@ -259,7 +261,7 @@ class Asset extends Element\AbstractElement
      * @param int $id
      * @param bool $force
      *
-     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     * @return static|null
      */
     public static function getById($id, $force = false)
     {
@@ -284,6 +286,7 @@ class Asset extends Element\AbstractElement
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
+                /** @var Asset $asset */
                 $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
@@ -349,7 +352,7 @@ class Asset extends Element\AbstractElement
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
-                    $data['stream'] = fopen($data['sourcePath'], 'r+', false, File::getContext());
+                    $data['stream'] = fopen($data['sourcePath'], 'r', false, File::getContext());
                 }
 
                 unset($data['sourcePath']);
@@ -362,6 +365,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        /** @var Asset $asset */
         $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
         $asset->setValues($data);
@@ -410,10 +414,10 @@ class Asset extends Element\AbstractElement
     /**
      * returns the asset type of a filename and mimetype
      *
-     * @param $mimeType
-     * @param $filename
+     * @param string $mimeType
+     * @param string $filename
      *
-     * @return int|string
+     * @return string
      */
     public static function getTypeFromMimeMapping($mimeType, $filename)
     {
@@ -471,15 +475,16 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+
+        $isUpdate = false;
+        $differentOldPath = null;
+
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $isUpdate = false;
-
             $preEvent = new AssetEvent($this, $params);
 
             if ($this->getId()) {
@@ -646,7 +651,7 @@ class Asset extends Element\AbstractElement
 
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof Asset and $duplicate->getId() != $this->getId()) {
+            if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
             }
         }
@@ -751,12 +756,16 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        if (!$this->getType()) {
+            $this->setType('unknown');
+        }
+
         $this->postPersistData();
 
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
-        if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
+        if (is_array($this->getProperties()) && count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
@@ -836,8 +845,9 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            if (Config::getSystemConfig()->assets->versions->steps
-                || Config::getSystemConfig()->assets->versions->days
+            $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
+            if (!empty($assetsConfig['versions']['steps'])
+                || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -928,7 +938,7 @@ class Asset extends Element\AbstractElement
     public function hasSiblings()
     {
         if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings and empty($this->siblings)) or (!$this->hasSiblings and !empty($this->siblings))) {
+            if (($this->hasSiblings && empty($this->siblings)) || (!$this->hasSiblings && !empty($this->siblings))) {
                 return $this->getDao()->hasSiblings();
             } else {
                 return $this->hasSiblings;
@@ -947,6 +957,14 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @return Asset[]
+     */
+    public function getChildren()
+    {
+        return [];
+    }
+
+    /**
      * Returns true if the element is locked
      *
      * @return string
@@ -957,7 +975,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param  $locked
+     * @param string $locked
      *
      * @return $this
      */
@@ -1193,6 +1211,18 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Alias for setFilename()
+     *
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        return $this->setFilename($key);
+    }
+
+    /**
      * @param int $modificationDate
      *
      * @return $this
@@ -1292,7 +1322,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $stream
+     * @param resource|null $stream
      *
      * @return $this
      */
@@ -1410,9 +1440,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $name
-     * @param $type
-     * @param $data
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
      * @param bool $inherited
      * @param bool $inheritable
      *
@@ -1538,9 +1568,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
-     * @return null
+     * @return mixed
      */
     public function getCustomSetting($key)
     {
@@ -1552,7 +1582,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function removeCustomSetting($key)
     {
@@ -1614,7 +1644,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array $metadata
+     * @param array|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
+     *
+     * @return self
      */
     public function setMetadata($metadata)
     {
@@ -1622,6 +1654,7 @@ class Asset extends Element\AbstractElement
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
             foreach ((array)$metadata as $metaItem) {
+                $metaItem = (array)$metaItem; // also allow object with appropriate keys (as it comes from Pimcore\Model\Webservice\Data\Asset\reverseMap)
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
         }
@@ -1639,6 +1672,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $hasMetaData
+     *
+     * @return self
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1650,8 +1685,10 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $name
      * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
-     * @param null $data
-     * @param null $language
+     * @param mixed $data
+     * @param string|null $language
+     *
+     * @return self
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {
@@ -1682,11 +1719,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param null $name
-     * @param null $language
+     * @param string|null $name
+     * @param string|null $language
      * @param bool $strictMatch
      *
-     * @return array|null
+     * @return array|string|null
      */
     public function getMetadata($name = null, $language = null, $strictMatch = false)
     {
@@ -1734,7 +1771,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
+     * @return Schedule\Task[]
      */
     public function getScheduledTasks()
     {
@@ -1748,7 +1785,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $scheduledTasks
+     * @param array $scheduledTasks
      *
      * @return $this
      */
@@ -1850,11 +1887,10 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $finalVars[] = $this->getDumpStateProperty();
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
@@ -1963,9 +1999,7 @@ class Asset extends Element\AbstractElement
 
             foreach ($metaData as $md) {
                 if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
-                    /**
-                     * @var $elementData ElementInterface
-                     */
+                    /** @var ElementInterface $elementData */
                     $elementData = $md['data'];
                     $elementType = $md['type'];
                     $key = $elementType . '_' . $elementData->getId();
@@ -1978,5 +2012,17 @@ class Asset extends Element\AbstractElement
         }
 
         return $dependencies;
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->parent = null;
+        $this->versions = null;
+        $this->hasSiblings = null;
+        $this->siblings = null;
+        $this->dependencies = null;
+        $this->scheduledTasks = null;
+        $this->closeStream();
     }
 }

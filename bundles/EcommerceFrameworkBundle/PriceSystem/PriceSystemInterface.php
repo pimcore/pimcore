@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 
 interface PriceSystemInterface
@@ -26,7 +27,7 @@ interface PriceSystemInterface
     /**
      * Creates price info object for given product and quantity scale
      *
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      * @param null|int|string $quantityScale - Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
      * @param CheckoutableInterface[] $products
      *
@@ -37,12 +38,12 @@ interface PriceSystemInterface
     /**
      * Filters and orders given product IDs based on price information
      *
-     * @param $productIds
-     * @param $fromPrice
-     * @param $toPrice
-     * @param $order
-     * @param $offset
-     * @param $limit
+     * @param array $productIds
+     * @param float $fromPrice
+     * @param float $toPrice
+     * @param string $order
+     * @param int $offset
+     * @param int $limit
      *
      * @return mixed
      */
@@ -53,7 +54,7 @@ interface PriceSystemInterface
      *
      * Should be overwritten in custom price systems with suitable implementation.
      *
-     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface&Concrete $product
      *
      * @return OnlineShopTaxClass
      */

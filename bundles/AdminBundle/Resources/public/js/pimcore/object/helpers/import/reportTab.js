@@ -93,11 +93,14 @@ pimcore.object.helpers.import.reportTab = Class.create({
             dataGridCols.push({
                 text: t("success"), width: 80, sortable: true, dataIndex: 'success',
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    var status = "error";
                     if (record.get('success')) {
-                        return '<div style="height: 16px;" class="pimcore_icon_success">&nbsp;</div>';
-                    } else {
-                        return '<div style="height: 16px;" class="pimcore_icon_error">&nbsp;</div>';
+                        status = "success";
+                    } else if (record.get('messageType') == 'warning') {
+                        status = "import_warning";
                     }
+
+                    return '<div style="height: 16px;" class="pimcore_icon_' + status + '">&nbsp;</div>';
                 },
                 filter: 'boolean'
             });
@@ -162,12 +165,13 @@ pimcore.object.helpers.import.reportTab = Class.create({
         this.dataStore.removeAll();
     },
 
-    logData: function (rowId, message, success, objectId) {
+    logData: function (data) {
         this.dataStore.insert(0, {
-                rowId: rowId,
-                message: message,
-                success: success,
-                objectId: objectId
+                rowId: data.rowId,
+                message: data.message,
+                success: data.success,
+                objectId: data.objectId,
+                messageType: data.messageType,
             }
         );
     }

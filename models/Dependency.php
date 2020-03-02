@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 /**
  * @method Dependency\Dao getDao()
+ * @method void save()
  */
 class Dependency extends AbstractModel
 {
@@ -74,7 +75,7 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param  Element\ELementInterface $element
+     * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element)
     {
@@ -99,8 +100,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
@@ -110,8 +111,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param null $offset
-     * @param null $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */

@@ -82,6 +82,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $tmpStore->setData($data);
         $tmpStore->update();
 
+        /** @var Model\Document\Newsletter $document */
         $document = Model\Document\Newsletter::getById($data['documentId']);
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];
@@ -97,9 +98,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             );
         }
 
-        /**
-         * @var $addressAdapterFactory AddressSourceAdapterFactoryInterface
-         */
+        /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
@@ -110,13 +109,15 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
 
         Model\Tool\TmpStore::delete($sendingId);
+
+        return 0;
     }
 
     /**
      * @param Model\Document\Newsletter $document
      * @param AddressSourceAdapterInterface $addressAdapter
-     * @param $sendingId
-     * @param $hostUrl
+     * @param string $sendingId
+     * @param string $hostUrl
      *
      * @throws Exception
      */
@@ -174,8 +175,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     /**
      * @param Model\Document\Newsletter $document
      * @param AddressSourceAdapterInterface $addressAdapter
-     * @param $sendingId
-     * @param $hostUrl
+     * @param string $sendingId
+     * @param string $hostUrl
      */
     protected function doSendMailInSingleMode(
         Model\Document\Newsletter $document,

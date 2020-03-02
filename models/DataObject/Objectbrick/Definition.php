@@ -27,10 +27,13 @@ use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
+ * @method string getTableName(DataObject\ClassDefinition $class, $query)
  */
 class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
+
+    use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
     /**
      * @var array
@@ -43,17 +46,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     private $oldClassDefinitions = [];
 
     /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $group;
-
-    /**
-     * @param $classDefinitions
+     * @param array $classDefinitions
      *
      * @return $this
      */
@@ -75,7 +68,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @param $key
+     * @param string $key
      *
      * @return self|null
      */
@@ -224,14 +217,21 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $useParts = [
+            'Pimcore\Model\DataObject',
+            'Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException',
+            'Pimcore\Model\DataObject\PreGetValueHookInterface'
+        ];
+
+        $cd .= DataObject\ClassDefinition\Service::buildUseCode($useParts);
+
+        $cd .= "\n";
+
+        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
         $cd .= "\n\n";
 
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
@@ -261,10 +261,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-
-                /**
-                 * @var $def DataObject\ClassDefinition\Data
-                 */
                 $cd .= $def->getGetterCodeObjectbrick($this);
 
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
@@ -292,7 +288,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $definitions
+     * @param array $definitions
      *
      * @return array
      */
@@ -306,8 +302,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $result;
     }
 
-    /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
-     * @param $oldObject
+    /**
+     * Returns a list of classes which need to be "rebuild" because they are affected of changes.
+     *
+     * @param self $oldObject
      *
      * @return array
      */
@@ -333,7 +331,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $serializedFilename
+     * @param string $serializedFilename
      */
     private function cleanupOldFiles($serializedFilename)
     {
@@ -436,8 +434,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @throws \Exception
-     *
-     * @todo: creates a PHP-Dock with "@return void" (line 351)
      */
     private function createContainerClasses()
     {
@@ -450,7 +446,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
-                if (!$fd) {
+                if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
                     throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
 
@@ -561,8 +557,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -572,8 +568,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
-     * @param $fieldname
+     * @param string $classname
+     * @param string $fieldname
      *
      * @return string
      */
@@ -583,7 +579,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @param $classname
+     * @param string $classname
      *
      * @return string
      */
@@ -673,21 +669,5 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
     }
 }

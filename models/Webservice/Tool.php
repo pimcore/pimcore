@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Tool
 {
     /**
@@ -31,6 +34,7 @@ class Tool
         $includePatterns = [
             "/Webservice\/Data/"
         ];
+        $classMap = [];
 
         foreach ($files as $file) {
             if (is_file($file)) {
@@ -64,7 +68,7 @@ class Tool
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -92,5 +96,7 @@ class Tool
         } else {
             return $data;
         }
+
+        return null;
     }
 }

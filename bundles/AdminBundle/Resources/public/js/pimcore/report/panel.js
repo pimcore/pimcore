@@ -113,7 +113,7 @@ pimcore.report.panel = Class.create({
                                 iconCls = iconCls + ' ' + iconCls.replace(/^pimcore_nav_icon_/, 'pimcore_icon_');
 
                                 var childConfig = {
-                                    text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
+                                    text: reportConfig["text"] ? t(reportConfig["text"]) : t(reportClass.prototype.getName()),
                                     iconCls: iconCls,
                                     leaf: true,
                                     xdata: {

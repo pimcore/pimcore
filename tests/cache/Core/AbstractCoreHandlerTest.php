@@ -201,7 +201,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * @dataProvider invalidKeys
      * @expectedException InvalidArgumentException
      *
-     * @param $key
+     * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave($key)
     {
@@ -214,7 +214,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * @dataProvider invalidKeys
      * @expectedException InvalidArgumentException
      *
-     * @param $key
+     * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove($key)
     {

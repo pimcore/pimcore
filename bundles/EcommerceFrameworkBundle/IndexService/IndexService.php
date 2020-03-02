@@ -186,7 +186,7 @@ class IndexService
      * Returns all index attributes
      *
      * @param bool $considerHideInFieldList
-     * @param string $tenant
+     * @param string|null $tenant
      *
      * @return array
      *
@@ -207,7 +207,7 @@ class IndexService
      * @deprecated
      *
      * @param bool $considerHideInFieldList
-     * @param null $tenant
+     * @param string|null $tenant
      *
      * @return mixed
      *
@@ -241,8 +241,8 @@ class IndexService
     /**
      * Returns all index attributes for a given filter group
      *
-     * @param $filterType
-     * @param string $tenant
+     * @param string $filterType
+     * @param string|null $tenant
      *
      * @return array
      *
@@ -262,8 +262,8 @@ class IndexService
     /**
      * @deprecated
      *
-     * @param $filterType
-     * @param null $tenant
+     * @param string $filterType
+     * @param string|null $tenant
      *
      * @return mixed
      *

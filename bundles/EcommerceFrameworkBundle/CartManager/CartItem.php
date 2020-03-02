@@ -14,10 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
+/**
+ * @method Dao getDao()
+ */
 class CartItem extends AbstractCartItem implements CartItemInterface
 {
     /**

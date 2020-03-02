@@ -18,7 +18,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
+/**
+ * @property Token $model
+ */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     public const TABLE_NAME = 'ecommerceframework_vouchertoolkit_tokens';
@@ -29,7 +33,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return bool
      */
@@ -42,6 +46,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
+
+            return true;
         } catch (\Exception $e) {
             //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;

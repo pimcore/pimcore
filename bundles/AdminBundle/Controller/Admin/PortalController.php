@@ -50,7 +50,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
     /**
      * @param Request $request
-     * @param $config
+     * @param array $config
      */
     protected function saveConfiguration(Request $request, $config)
     {
@@ -194,6 +194,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
         $colCount = 0;
+        $toMove = null;
 
         foreach ($config['positions'] as $col) {
             foreach ($col as $row) {

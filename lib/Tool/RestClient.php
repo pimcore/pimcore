@@ -20,6 +20,8 @@ use GuzzleHttp\Psr7\Uri;
 use Pimcore\Tool\RestClient\AbstractRestClient;
 
 /**
+ * @deprecated
+ *
  * Standard RestClient working with a Guzzle client
  */
 class RestClient extends AbstractRestClient
