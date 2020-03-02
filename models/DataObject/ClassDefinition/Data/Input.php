@@ -25,6 +25,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
      * Static type of this element
@@ -33,13 +34,15 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $fieldtype = 'input';
 
-    /** @var string */
-    public $defaultValueGenerator = '';
-
     /**
      * @var int
      */
     public $width;
+
+    /**
+     * @var string
+     */
+    public $defaultValue;
 
     /**
      * Type for the column to query
@@ -88,22 +91,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $context = [];
 
     /**
-     * @return string
-     */
-    public function getDefaultValueGenerator(): string
-    {
-        return $this->defaultValueGenerator;
-    }
-
-    /**
-     * @param string $defaultValueGenerator
-     */
-    public function setDefaultValueGenerator($defaultValueGenerator)
-    {
-        $this->defaultValueGenerator = (string)$defaultValueGenerator;
-    }
-
-    /**
      * @return int
      */
     public function getWidth()
@@ -134,10 +121,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if($this->isEmpty($data) && $object !== null && !empty($this->defaultValueGenerator)) {
-            $defaultValueGenerator = Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
-            $data = $defaultValueGenerator->getValue($object, $this, $params);
-        }
+        $data = $this->handleDefaultValue($data, $object, $params);
 
         return $data;
     }
@@ -326,5 +310,38 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param Model\DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return null|int
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @param int $defaultValue
+     *
+     * @return $this
+     */
+    public function setDefaultValue($defaultValue)
+    {
+        if ((string)$defaultValue !== '') {
+            $this->defaultValue = $defaultValue;
+        }
+
+        return $this;
     }
 }

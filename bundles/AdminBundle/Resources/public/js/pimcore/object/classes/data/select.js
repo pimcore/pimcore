@@ -252,6 +252,15 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         });
 
         items.push({
+            xtype: 'textfield',
+            width: 600,
+            fieldLabel: t("default_value_generator"),
+            labelWidth: 140,
+            name: 'defaultValueGenerator',
+            value: datax.defaultValueGenerator
+        });
+
+        items.push({
             xtype: "textfield",
             fieldLabel: t("options_provider_class"),
             width: 600,

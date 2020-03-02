@@ -62,12 +62,17 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
     getSpecificPanelItems: function (datax, inEncryptedField) {
         var specificItems = [
             {
+                xtype: "numberfield",
+                fieldLabel: t("default_value"),
+                name: "defaultValue",
+                value: datax.defaultValue
+            },{
                 xtype: 'textfield',
                 width: 600,
                 fieldLabel: t("default_value_generator"),
                 labelWidth: 140,
                 name: 'defaultValueGenerator',
-                value: this.datax.defaultValueGenerator
+                value: datax.defaultValueGenerator
             },{
                 xtype: "numberfield",
                 fieldLabel: t("width"),

@@ -73,7 +73,16 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 value: datax.defaultValue
-            }, {
+            },
+            {
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("default_value_generator"),
+                labelWidth: 140,
+                name: 'defaultValueGenerator',
+                value: this.datax.defaultValueGenerator
+            },
+            {
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",

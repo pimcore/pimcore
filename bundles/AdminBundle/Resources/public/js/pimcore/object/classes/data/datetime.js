@@ -142,6 +142,14 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 defaultComponent,
                 defaultValue,
                 {
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("default_value_generator"),
+                    labelWidth: 140,
+                    name: 'defaultValueGenerator',
+                    value: datax.defaultValueGenerator
+                },
+                {
                     xtype:"checkbox",
                     fieldLabel:t("use_current_date"),
                     name:"useCurrentDate",

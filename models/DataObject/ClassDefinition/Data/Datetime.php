@@ -317,16 +317,15 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @return Date
+     * @return int
      */
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        //return new Date($this->defaultValue);
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     /**
