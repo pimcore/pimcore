@@ -70,6 +70,10 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
             $data = json_decode($data, true);
+            $worker = $this->getTenantConfig()->getTenantWorker();
+            if(is_callable([$worker, "doPreIndexDataModifications"], true)) {
+                $data = $worker->doPreIndexDataModification($data);
+            }
         }
 
         if ($this->tenantConfig instanceof MockupConfigInterface) {
