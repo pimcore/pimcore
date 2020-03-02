@@ -267,7 +267,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string

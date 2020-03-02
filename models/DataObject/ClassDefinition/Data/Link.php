@@ -318,7 +318,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -373,7 +373,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null

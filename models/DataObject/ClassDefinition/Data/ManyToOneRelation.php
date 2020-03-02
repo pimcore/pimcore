@@ -413,7 +413,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -483,7 +483,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null

@@ -494,7 +494,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null

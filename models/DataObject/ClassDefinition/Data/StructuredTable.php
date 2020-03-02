@@ -421,7 +421,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -475,8 +475,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @return array|null
      */

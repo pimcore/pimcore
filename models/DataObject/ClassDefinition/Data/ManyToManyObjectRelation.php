@@ -378,7 +378,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -447,7 +447,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -467,9 +467,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return $items;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

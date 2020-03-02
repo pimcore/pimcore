@@ -420,7 +420,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -447,7 +447,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array

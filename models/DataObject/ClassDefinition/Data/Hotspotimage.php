@@ -363,7 +363,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -375,9 +375,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Hotspotimage) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

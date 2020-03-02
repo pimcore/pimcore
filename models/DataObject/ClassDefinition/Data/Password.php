@@ -226,12 +226,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
      * @param string $password
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param bool|true $updateHash
      *
      * @return bool
      */
-    public function verifyPassword($password, DataObject\AbstractObject $object, $updateHash = true)
+    public function verifyPassword($password, DataObject\Concrete $object, $updateHash = true)
     {
         $getter = 'get' . ucfirst($this->getName());
         $setter = 'set' . ucfirst($this->getName());
@@ -375,8 +375,8 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @return null
      */
@@ -388,7 +388,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return bool
      */

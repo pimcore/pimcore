@@ -211,7 +211,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -264,7 +264,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null

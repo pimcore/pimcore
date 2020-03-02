@@ -247,7 +247,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -279,7 +279,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

@@ -319,7 +319,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -446,8 +446,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @return string|null
      */

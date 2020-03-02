@@ -519,7 +519,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -622,7 +622,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
