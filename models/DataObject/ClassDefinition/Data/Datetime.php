@@ -57,7 +57,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $phpdocType = '\\Carbon\\Carbon';
 
     /**
-     * @var int
+     * @var int|null
      */
     public $defaultValue;
 
@@ -319,15 +319,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDefaultValue()
     {
-        if ($this->defaultValue !== null) {
-            return $this->defaultValue;
-        }
-
-        return 0;
+        return $this->defaultValue;
     }
 
     /**
