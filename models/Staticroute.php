@@ -716,6 +716,8 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string|array $methods
+     *
+     * @return $this
      */
     public function setMethods($methods)
     {
