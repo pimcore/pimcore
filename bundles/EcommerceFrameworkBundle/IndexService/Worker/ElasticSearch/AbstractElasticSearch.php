@@ -445,7 +445,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      *
      * @return mixed
      */
-    protected function doPreIndexDataModification($data)
+    public function doPreIndexDataModification($data)
     {
         return $data;
     }
