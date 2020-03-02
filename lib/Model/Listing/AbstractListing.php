@@ -215,11 +215,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
     /**
      * @param string|array $orderKey
-     * @param bool $backticks
+     * @param bool $escape
      *
      * @return $this
      */
-    public function setOrderKey($orderKey, $backticks = true)
+    public function setOrderKey($orderKey, $escape = true)
     {
         $this->setData(null);
 
@@ -231,10 +231,10 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
         if (is_array($orderKey)) {
             foreach ($orderKey as $o) {
-                if (!$backticks || $this->checkIfValueContainBackticks($o)) {
+                if (!$escape || $this->checkIfValueContainBackticks($o)) {
                     $this->orderKey[] = $o;
                 } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = '`' . $o . '`';
+                    $this->orderKey[] = $this->quote($o);
                 }
             }
         }
@@ -252,18 +252,18 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
     /**
      * @param string $groupBy
-     * @param bool $backticks
+     * @param bool $escape
      *
      * @return $this
      */
-    public function setGroupBy($groupBy, $backticks = true)
+    public function setGroupBy($groupBy, $escape = true)
     {
         $this->setData(null);
 
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
-            if (!$backticks || $this->checkIfValueContainBackticks($groupBy)) {
+            if (!$escape || $this->checkIfValueContainBackticks($groupBy)) {
                 $this->groupBy = new Expression($groupBy);
             }
         }
