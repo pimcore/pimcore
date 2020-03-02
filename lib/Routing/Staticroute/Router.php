@@ -211,7 +211,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        return $this->doMatch($request->getPathInfo());
+        return $this->doMatch($request->getPathInfo(), $request);
     }
 
     /**
@@ -227,7 +227,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    protected function doMatch($pathinfo)
+    protected function doMatch($pathinfo, Request $request = null)
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -235,6 +235,15 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
+            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+                $method = $request->getMethod();
+
+                if (!in_array($method, $route->getMethods(), true))
+                {
+                    continue;
+                }
+            }
+
             if ($routeParams = $route->match($pathinfo, $params)) {
                 Staticroute::setCurrentRoute($route);
 
