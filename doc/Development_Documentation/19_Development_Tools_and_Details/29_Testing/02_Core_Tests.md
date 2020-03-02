@@ -190,7 +190,7 @@ TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon ve
 where `/tmp/[dedicateddir]` must be a writable temporary directory.
 
 > Note regarding PRs: Please try to meet all 
-level 2 requirements (run it with `-l 2` instead) for all files you touch or add.
+level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
 
 Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
 
@@ -212,7 +212,7 @@ To generate a new baseline file you have to do following steps:
     ```
 2. Generate new baseline file
     ```sh
-    vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 2 --memory-limit=-1 --error-format baselineNeon > phpstan-baseline.neon
+    vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --error-format baselineNeon > phpstan-baseline.neon
     ```
 3. Activate baseline file include in phpstan.neon
     ```sh
@@ -220,3 +220,17 @@ To generate a new baseline file you have to do following steps:
     ```
 
 With this baseline file include, Travis can detect new errors without having to fix all errors first.
+
+## PHPStan Level Overview
+
+| Level | Checks                                                            |
+| ----- | ----------------------------------------------------------------- |
+| 0     | basic checks                                                      |
+| 1     | possibly undefined variable, ...                                  |
+| 2     | unknown methods checked on all expressions                        |
+| 3     | return types, types assigned to properties                        |
+| 4     | basic dead code checking                                          |
+| 5     | checking types of arguments passed to methods and functions       |
+| 6     | check for missing typehints                                       |
+| 7     | report partially wrong union types                                |
+| 8     | report calling methods and accessing properties on nullable types |
