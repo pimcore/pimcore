@@ -940,6 +940,5 @@
   "domain_label_width": "Domain label width",
   "redirect_performance_warning": "Using this feature has very bad effects on the performance of the entire application, do you really want to continue?",
   "Uncategorized": "Uncategorized",
-  "paste_here": "Paste your clipboard data here",
   "default_value_generator": "Default value generator service / class"
 }
