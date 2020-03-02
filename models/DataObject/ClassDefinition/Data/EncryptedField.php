@@ -397,9 +397,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
         {
             $fd = $this->getDelegateDatatypeDefinition();
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-            $result = $fd->getVersionPreview($data, $object, $params);
 
-            return $result;
+            return $fd->getVersionPreview($data, $object, $params);
         }
     }
 

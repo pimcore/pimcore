@@ -158,7 +158,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -198,7 +198,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
     /**
