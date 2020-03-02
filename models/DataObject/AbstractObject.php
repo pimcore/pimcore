@@ -493,9 +493,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -503,7 +503,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $o_locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $o_locked
      *
      * @return $this
      */

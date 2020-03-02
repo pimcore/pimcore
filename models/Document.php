@@ -183,7 +183,7 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * Check if the document is locked.
+     * enum('self','propagate') nullable
      *
      * @var string|null
      */
@@ -750,7 +750,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
      * @return string|null
      */
@@ -764,7 +764,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Mark the document as locked.
+     * enum('self','propagate') nullable
      *
      * @param string|null $locked
      *

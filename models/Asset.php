@@ -145,7 +145,7 @@ class Asset extends Element\AbstractElement
     /**
      * enum('self','propagate') nullable
      *
-     * @var string
+     * @var string|null
      */
     protected $locked;
 
@@ -965,9 +965,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -975,7 +975,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
      *
      * @return $this
      */

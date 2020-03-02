@@ -150,6 +150,8 @@ interface ElementInterface extends ModelInterface
     public function isLocked();
 
     /**
+     * enum('self','propagate') nullable
+     *
      * @param string|null $locked
      *
      * @return $this
@@ -157,6 +159,8 @@ interface ElementInterface extends ModelInterface
     public function setLocked($locked);
 
     /**
+     * enum('self','propagate') nullable
+     *
      * @return string|null
      */
     public function getLocked();
