@@ -87,9 +87,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $showCharCount;
 
-    /** @var array */
-    public $context = [];
-
     /**
      * @return int
      */
@@ -320,7 +317,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     protected function doGetDefaultValue($object, $context = [])
     {
-        return $this->getDefaultValue() ?? null;
+        return $this->getDefaultValue();
     }
 
     /**
