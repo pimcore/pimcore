@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -148,6 +149,13 @@ class DocumentFallbackListener implements EventSubscriberInterface
     }
 
     public function onKernelController(FilterControllerEvent $event) {
+
+        $controller = $event->getController();
+        if(is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
+            // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704
+            return;
+        }
+
         // no document found yet - try to find the nearest document by request path
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
