@@ -684,6 +684,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
 
         $classId = null;
         $objectId = null;
@@ -793,11 +795,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
-        }
-
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        if (!$this->getAllowMultipleAssignments()) {
-            $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
         }
 
         // note, in case of advanced many to many relations we don't want to force the loading of the element

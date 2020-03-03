@@ -337,61 +337,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
-     *
-     * @param array $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param string $fieldname
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public static function filterMultipleElements($data, $object, $fieldname)
-    {
-        $relationItems = [];
-        $objectId = null;
-
-        if ($object instanceof DataObject\Concrete) {
-            $objectId = $object->getId();
-        } elseif (
-            $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
-            $object instanceof DataObject\Localizedfield ||
-            $object instanceof DataObject\Objectbrick\Data\AbstractData
-        ) {
-            $object = $object->getObject();
-            if ($object) {
-                $objectId = $object->getId();
-            }
-        }
-
-        if (is_array($data)) {
-            foreach ($data as $item) {
-                $elementHash = null;
-                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
-                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
-                    }
-                } elseif ($item instanceof Model\Element\ElementInterface) {
-                    $elementHash = Model\Element\Service::getElementHash($item);
-                }
-
-                if ($elementHash && !isset($relationItems[$elementHash])) {
-                    $relationItems[$elementHash] = $item;
-                } elseif (isset($relationItems[$elementHash])) {
-                    @trigger_error(
-                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
-                        .  ' multiple times in field' . $fieldname . ' of object id: ' . $objectId,
-                        E_USER_DEPRECATED
-                    );
-                }
-            }
-        }
-
-        return array_values($relationItems);
-    }
-
-    /**
      * @static
      *
      * @param  string $type
@@ -537,11 +482,15 @@ class Service extends Model\AbstractModel
     /**
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
-    public static function getElementHash(ElementInterface $element): string
+    public static function getElementHash(ElementInterface $element): ?string
     {
-        return self::getElementType($element) . '-' . $element->getId();
+        $elementType = self::getElementType($element);
+        if ($element->getId() === null || $elementType === null) {
+            return null;
+        }
+        return $elementType . '-' . $element->getId();
     }
 
     /**
