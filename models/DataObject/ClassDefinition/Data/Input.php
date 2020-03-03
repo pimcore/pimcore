@@ -40,7 +40,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $width;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $defaultValue;
 
