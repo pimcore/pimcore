@@ -78,7 +78,7 @@ class Staticroute extends AbstractModel
     public $siteId;
 
     /**
-     * @var array|string
+     * @var array
      */
     public $methods;
 
@@ -715,7 +715,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string|array $methods
+     * @param array $methods
      *
      * @return $this
      */
