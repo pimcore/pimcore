@@ -321,7 +321,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
     public function getDefaultValue()
     {
