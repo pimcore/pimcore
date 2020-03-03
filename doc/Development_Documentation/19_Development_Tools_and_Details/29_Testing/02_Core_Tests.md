@@ -223,14 +223,14 @@ With this baseline file include, Travis can detect new errors without having to 
 
 ## PHPStan Level Overview
 
-| Level | Checks                                                            |
-| ----- | ----------------------------------------------------------------- |
-| 0     | basic checks                                                      |
-| 1     | possibly undefined variable, ...                                  |
-| 2     | unknown methods checked on all expressions                        |
-| 3     | return types, types assigned to properties                        |
-| 4     | basic dead code checking                                          |
-| 5     | checking types of arguments passed to methods and functions       |
-| 6     | check for missing typehints                                       |
-| 7     | report partially wrong union types                                |
-| 8     | report calling methods and accessing properties on nullable types |
+| Level | Checks                                                                                                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0     | basic checks, unknown classes, unknown functions, unknown methods called on $this, wrong number of arguments passed to those methods and functions, always undefined variables |
+| 1     | possibly undefined variables, unknown magic methods and properties on classes with __call and __get                                                                            |
+| 2     | unknown methods checked on all expressions (not just $this), validating PHPDocs                                                                                                |
+| 3     | return types, types assigned to properties                                                                                                                                     |
+| 4     | basic dead code checking - always false instanceof and other type checks, dead else branches, unreachable code after return; etc.                                              |
+| 5     | checking types of arguments passed to methods and functions                                                                                                                    |
+| 6     | check for missing typehints                                                                                                                                                    |
+| 7     | report partially wrong union types                                                                                                                                             |
+| 8     | report calling methods and accessing properties on nullable types                                                                                                              |
