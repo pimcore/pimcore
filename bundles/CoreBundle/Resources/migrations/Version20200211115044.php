@@ -21,7 +21,6 @@ class Version20200211115044 extends AbstractPimcoreMigration
                 $relationTable = current($table);
 
                 $this->addSql('ALTER TABLE `' . $relationTable . '`
-                        DROP PRIMARY KEY,
                         DROP INDEX `index`,
                         DROP INDEX `dest_id`,
                         DROP INDEX `fieldname`,
