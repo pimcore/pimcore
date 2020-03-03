@@ -490,6 +490,7 @@ class Service extends Model\AbstractModel
         if ($element->getId() === null || $elementType === null) {
             return null;
         }
+
         return $elementType . '-' . $element->getId();
     }
 

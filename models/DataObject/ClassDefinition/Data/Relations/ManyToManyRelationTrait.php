@@ -3,13 +3,12 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
-use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 
 trait ManyToManyRelationTrait
 {
     /**
      * TODO: move validation to checkValidity & throw exception in Pimcore 7
+     *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      */

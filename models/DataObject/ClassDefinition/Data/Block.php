@@ -135,19 +135,19 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
                     $elementData = $blockElement->getData();
                     //TODO: move validation to checkValidity & throw exception in Pimcore 7
-                    if($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
+                    if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
                         foreach ($elementData->getInternalData() as $language => $fields) {
                             foreach ($fields as $fieldName => $values) {
-                                    $lfd = $fd->getFieldDefinition($fieldName);
-                                    if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
-                                        if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
-                                            $contextParams['language'] = $language;
-                                            $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
-                                            $updateParams = array_merge($params, $contextParams);
-                                            $lfd->filterMultipleAssignments($values, $elementData, $updateParams);
-                                            $elementData = $blockElement->getData();
-                                        }
+                                $lfd = $fd->getFieldDefinition($fieldName);
+                                if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
+                                    if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
+                                        $contextParams['language'] = $language;
+                                        $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
+                                        $updateParams = array_merge($params, $contextParams);
+                                        $lfd->filterMultipleAssignments($values, $elementData, $updateParams);
+                                        $elementData = $blockElement->getData();
                                     }
+                                }
                             }
                         }
                     } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation) {
