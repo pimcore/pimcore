@@ -48,7 +48,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $width;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $defaultValue;
 
@@ -362,7 +362,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultValue()
     {
@@ -370,7 +370,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
@@ -554,8 +554,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $optionsProvider->getDefaultValue($context, $this);
-        } else {
-            return $this->getDefaultValue() ?? null;
         }
+
+        return $this->getDefaultValue();
     }
 }
