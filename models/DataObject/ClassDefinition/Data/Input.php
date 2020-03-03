@@ -329,7 +329,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $defaultValue
+     * @param string $defaultValue
      *
      * @return $this
      */
