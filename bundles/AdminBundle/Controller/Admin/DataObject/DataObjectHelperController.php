@@ -2337,7 +2337,7 @@ class DataObjectHelperController extends AdminController
                             // check if it is a localized field
                             if ($params['language']) {
                                 $localizedField = $class->getFieldDefinition('localizedfields');
-                                if ($localizedField instanceof DataObject\Localizedfield) {
+                                if ($localizedField instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
