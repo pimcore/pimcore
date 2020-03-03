@@ -619,7 +619,7 @@ trait PimcoreExtensionsTrait
      */
     public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '')
     {
-        $sql = 'SELECT ' . $idColumn . '  FROM ' . $table;
+        $sql = 'SELECT ' . $this->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
         if ($where) {
             $sql .= ' WHERE ' . $where;
