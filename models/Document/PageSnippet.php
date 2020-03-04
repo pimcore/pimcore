@@ -387,7 +387,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function removeElement($name)
     {
-        if ($this->hasElement($name)) {
+        if (isset($this->elements[$name])) {
             unset($this->elements[$name]);
         }
 
