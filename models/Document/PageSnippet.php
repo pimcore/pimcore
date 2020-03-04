@@ -387,7 +387,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function removeElement($name)
     {
-        if ($this->hasElement($name)) {
+        if (isset($this->elements[$name])) {
             unset($this->elements[$name]);
         }
 
@@ -404,7 +404,7 @@ abstract class PageSnippet extends Model\Document
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if ($this->hasElement($name)) {
+        if (isset($this->elements[$name]) ){
             return $elements[$name];
         }
 
@@ -504,9 +504,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function hasElement($name)
     {
-        $elements = $this->getElements();
-
-        return array_key_exists($name, $elements);
+        return $this->getElement($name) !== null;
     }
 
     /**
