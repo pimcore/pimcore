@@ -40,11 +40,9 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
 
         $changePublishedState = $transition->getChangePublishedState();
 
-        if ($subject->isPublished() && $changePublishedState == self::FORCE_UNPUBLISHED) {
+        if ($changePublishedState === self::FORCE_UNPUBLISHED) {
             $subject->setPublished(false);
-        }
-
-        if (!$subject->isPublished() && $changePublishedState == self::FORCE_PUBLISHED) {
+        } elseif ($changePublishedState === self::FORCE_PUBLISHED) {
             $subject->setPublished(true);
         }
     }

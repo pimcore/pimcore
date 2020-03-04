@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -247,8 +248,12 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
+        $transition = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transition->getChangePublishedState();
+
         if ($saveSubject && $subject instanceof AbstractElement) {
-            if (method_exists($subject, 'getPublished') && !$subject->getPublished()) {
+            if (method_exists($subject, 'getPublished')
+                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::NO_CHANGE)) {
                 $subject->saveVersion();
             } else {
                 $subject->save();
