@@ -18,7 +18,7 @@ class EventDispatcher implements EventDispatcherInterface
 
     public function dispatch($event/*, $eventName = null*/) {
         $eventName = 1 < \func_num_args() ? func_get_arg(1) : null;
-        if(\version_compare(Kernel::VERSION, '4') >= 0) {
+        if(\version_compare(Kernel::VERSION, '4.3') >= 0) {
             if(is_string($event) && is_object($eventName)) {
                 $tmp = $eventName;
                 $eventName = $event;
