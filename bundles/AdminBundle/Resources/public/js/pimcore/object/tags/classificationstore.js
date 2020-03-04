@@ -559,24 +559,26 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var activeLanguage = this.currentLanguage;
 
+        var newGroupIds = [];
+
+        for (var groupId in data) {
+            if (!this.activeGroups[groupId]) {
+                newGroupIds.push(groupId);
+            }
+        }
+
+
         for (var i=0; i < nrOfLanguages; i++) {
             var currentLanguage = this.frontendLanguages[i];
             this.currentLanguage = currentLanguage;
 
-            var childItems = [];
-
-            for (var groupId in data) {
+            for (let g = 0; g < newGroupIds.length; g++ ) {
+                let groupId = newGroupIds[g];
                 var groupedChildItems = [];
 
                 if (data.hasOwnProperty(groupId)) {
 
                     var group = data[groupId];
-
-                    if (this.activeGroups[groupId]) {
-                        continue;
-                    }
-
-                    this.activeGroups[groupId] = true;
 
                     addedGroups[groupId] = true;
                     this.groupCollectionMapping[groupId] = group.collectionId;
