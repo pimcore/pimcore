@@ -87,14 +87,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata']
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta']
                 ]));
 
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
@@ -351,11 +351,13 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
+            //TODO add test
+
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
                 ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
-                    ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2']]));
+                    ['position' => 2, 'key' => 'metaUpper2', 'type' => 'text', 'label' => 'label2']]));
 
             $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
@@ -602,14 +604,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata']
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta']
                 ]));
 
             $root->addChild($rootPanel);
@@ -715,14 +717,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata']
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta']
                 ]));
 
             $root->addChild($rootPanel);
