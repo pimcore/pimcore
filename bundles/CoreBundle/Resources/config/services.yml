@@ -202,3 +202,7 @@ services:
     Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
         tags:
             - { name: request.param_converter, priority: -2, converter: data_object_converter }
+
+    Pimcore\Event\EventDispatcher:
+        decorates: event_dispatcher
+        arguments: ['@Pimcore\Event\EventDispatcher.inner']
