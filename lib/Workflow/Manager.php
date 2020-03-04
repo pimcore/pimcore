@@ -249,7 +249,7 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition->getChangePublishedState();
+        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
         if ($saveSubject && $subject instanceof AbstractElement) {
             if (method_exists($subject, 'getPublished')
