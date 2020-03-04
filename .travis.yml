@@ -64,6 +64,7 @@ jobs:
       php: 7.2
       env:
         - SYMFONY_VERSION="^3.4"
+        - DATABASE_SERVER="mariadb-10.1"
 
     - name: "All Tests - PHP 7.3 Symfony 3.4"
       os: linux
