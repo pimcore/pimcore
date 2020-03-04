@@ -159,6 +159,11 @@ pimcore.element.selector.abstract = Class.create({
 
     getGridSelModel: function() {
         return Ext.create('Ext.selection.RowModel', {mode: (this.parent.multiselect ? "MULTI" : "SINGLE")});
-    }
+    },
 
+    updateTabTitle: function(term) {
+        if(this.parent.tabPanel) {
+            this.parent.tabPanel.setTitle(t('search') + ': <i>' + term + '</i>');
+        }
+    }
 });

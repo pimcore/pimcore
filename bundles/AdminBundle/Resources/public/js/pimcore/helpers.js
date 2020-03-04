@@ -1024,7 +1024,8 @@ pimcore.helpers.searchAction = function (type) {
     pimcore.helpers.itemselector(false, function (selection) {
             pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
         }, {type: [type]},
-        {moveToTab: true,
+        {
+            asTab: true,
             context: {
                 scope: "globalSearch"
             }

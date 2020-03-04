@@ -256,5 +256,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         }
 
         this.pagingtoolbar.moveFirst();
+        this.updateTabTitle(formValues.query);
     }
 });
