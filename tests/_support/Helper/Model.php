@@ -357,7 +357,7 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
-                    ['position' => 2, 'key' => 'metaUpper2', 'type' => 'text', 'label' => 'label2']]));
+                    ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2']]));
 
             $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
