@@ -26,6 +26,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**
      * Static type of this element
@@ -557,9 +558,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
             return $publishedList;
         }
-
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
 
         return is_array($data) ? $data : [];
     }

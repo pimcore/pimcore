@@ -30,6 +30,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**
      * Static type of this element
@@ -740,9 +741,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return $publishedList;
         }
-
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
 
         return is_array($data) ? $data : [];
     }

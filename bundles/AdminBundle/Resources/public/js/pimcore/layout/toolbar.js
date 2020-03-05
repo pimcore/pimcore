@@ -1071,7 +1071,8 @@ pimcore.layout.toolbar = Class.create({
                 pimcore.helpers.itemselector(false, function (selection) {
                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
                     }, {type: [type]},
-                    {moveToTab: true,
+                    {
+                        asTab: true,
                         context: {
                             scope: "globalSearch"
                         }
@@ -1162,7 +1163,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("maintenance_not_active"),
                     iconCls: "pimcore_nav_icon_maintenance",
                     handler: function () {
-                        window.open('https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
+                        window.open('https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
                     }
                 });
                 pimcore.notification.helper.incrementCount();
@@ -1174,7 +1175,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("mail_settings_incomplete"),
                     iconCls: "pimcore_nav_icon_email",
                     handler: function () {
-                        window.open('https://pimcore.com/docs/5.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
+                        window.open('https://pimcore.com/docs/6.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
                     }
                 });
                 pimcore.notification.helper.incrementCount();

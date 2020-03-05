@@ -5,7 +5,7 @@ be changed.
 
 > Support for the event-based approach for Documents, Assets and Data Objects is available since release 6.4.1
 > If you you are looking for the (deprecated) pre 6.4.1 way (supporting Data Objects only) read these
-> [instructions](https://pimcore.com/docs/5.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
+> [instructions](https://pimcore.com/docs/6.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
 
 #### Properties that can be changed
 * Element CSS class

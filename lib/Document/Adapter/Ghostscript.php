@@ -167,7 +167,7 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=png16m -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
+            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=pngalpha -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
 
             if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
