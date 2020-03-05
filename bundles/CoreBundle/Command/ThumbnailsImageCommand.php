@@ -16,26 +16,13 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Asset;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Webmozarts\Console\Parallelization\Parallelization;
 
-class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareInterface
+class ThumbnailsImageCommand extends AbstractCommand
 {
-    use Parallelization;
-    use ContainerAwareTrait;
-
-    protected static $defaultName = 'pimcore:thumbnails:image';
-
-    /**
-     * @var Asset\Image\Thumbnail\Config[] $thumbnailsToGenerate
-     */
-    private $thumbnailConfigNames = [];
-
     protected function configure()
     {
         $this
@@ -78,29 +65,13 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
                 null,
                 InputOption::VALUE_NONE,
                 'do not generate high-res (@2x) versions of thumbnails'
-            )->addOption(
-                'processes',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'The number of parallel processes to run',
-                1
-            )->addOption(
-                'child',
-                null,
-                InputOption::VALUE_NONE,
-                'For internal use only'
-            )->addArgument(
-                'item',
-                InputArgument::OPTIONAL,
-                'For internal use only'
             );
     }
 
     /**
-     * @inheritdoc
-     *
+     * @inheritDoc
      */
-    protected function fetchItems(InputInterface $input): array
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $thumbnailConfigList = $list->getThumbnails();
@@ -157,6 +128,12 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
             $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
+        $thumbnailConfigNames = [];
+        foreach ($thumbnailsToGenerate as $thumbnailConfig) {
+            $thumbnailConfigNames[] = $thumbnailConfig->getName();
+        }
+        $thumbnailConfigNames = array_unique($thumbnailConfigNames);
+
         // get only images
         $conditions = ["type = 'image'"];
 
@@ -172,88 +149,54 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
 
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions));
-        $idsList = $list->loadIdList();
+        $total = $list->getTotalCount();
+        $perLoop = 10;
 
-        $items = [];
-        foreach ($idsList as $imageId) {
-            $clearedThumbnails = [];
-            foreach ($thumbnailsToGenerate as $thumbnailConfig) {
-                $item = [
-                    'image_id' => $imageId,
-                    'thumbnail' => $thumbnailConfig
-                ];
-                if ($input->getOption('force') && !isset($clearedThumbnails[$thumbnailConfig->getName()])) {
-                    $item['clear_thumbnail'] = true;
-                    $clearedThumbnails[$thumbnailConfig->getName()] = true;
+        $totalToGenerate = $total * count($thumbnailsToGenerate);
+
+        $progress = new ProgressBar($output, $totalToGenerate);
+        $progress->setFormat(
+            ' %current%/%max% [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) %memory:6s%: %message%'
+        );
+        $progress->start();
+
+        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
+            $list->setLimit($perLoop);
+            $list->setOffset($i * $perLoop);
+            $images = $list->load();
+
+            foreach ($images as $image) {
+                if (!$image instanceof Asset\Image) {
+                    continue;
                 }
 
-                $items[] = serialize($item);
+                if ($input->getOption('force')) {
+                    foreach ($thumbnailConfigNames as $thumbnailConfigName) {
+                        $image->clearThumbnail($thumbnailConfigName);
+                    }
+                }
+
+                foreach ($thumbnailsToGenerate as $thumbnailConfig) {
+                    $thumbnail = $image->getThumbnail($thumbnailConfig);
+
+                    $progress->setMessage(
+                        sprintf(
+                            'generated thumbnail for image [%d] | file: %s',
+                            $image->getId(),
+                            $thumbnail->getPath(false)
+                        )
+                    );
+
+                    $progress->advance(1);
+                }
             }
+            \Pimcore::collectGarbage();
         }
 
-        return $items;
-    }
+        $progress->finish();
 
-    /**
-     * @inheritdoc
-     *
-     */
-    protected function runSingleCommand(string $item, InputInterface $input, OutputInterface $output)
-    {
-        $item = unserialize($item);
+        $output->writeln('');
 
-        $image = Asset\Image::getById($item['image_id']);
-        if (!$image instanceof Asset\Image) {
-            return;
-        }
-
-        $thumbnail = $item['thumbnail'] ?? null;
-        if (!$thumbnail instanceof Asset\Image\Thumbnail\Config) {
-            return;
-        }
-
-        if (isset($item['clear_thumbnail'])) {
-            $image->clearThumbnail($thumbnail->getName());
-        }
-
-        $thumbnail = $image->getThumbnail($thumbnail);
-
-        if ($output->isVerbose()) {
-            $output->writeln(
-                sprintf(
-                    'generated thumbnail for image [%d] | file: %s',
-                    $image->getId(),
-                    $thumbnail->getPath(false)
-                )
-            );
-        } else {
-            $thumbnail->getPath(false);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     *
-     */
-    protected function runAfterBatch(InputInterface $input, OutputInterface $output)
-    {
-        \Pimcore::collectGarbage();
-    }
-
-    /**
-     * @inheritdoc
-     *
-     */
-    protected function getItemName(int $count): string
-    {
-        return 1 === $count ? 'thumbnail' : 'thumbnails';
-    }
-
-    /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->container;
+        return 0;
     }
 }
