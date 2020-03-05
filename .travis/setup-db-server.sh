@@ -19,7 +19,7 @@ then
 
     sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu xenial main'
 
-    sudo apt update
-    sudo apt-get install -y -o mariadb-server-10.1
+    sudo apt-get update
+    sudo apt-get install -y mariadb-server-10.1
     sudo systemctl start mysql
 fi
