@@ -489,11 +489,11 @@ pimcore.element.helpers.gridColumnConfig = {
                 title: t('batch_operation'),
                 items: [this.batchProgressBar],
                 layout: 'fit',
-                width: 200,
+                width: 400,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,
-                listeners: pimcore.helpers.getProgressWindowListeners()
+                modal: true
             });
 
             this.batchProgressWin.show();
