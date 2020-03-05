@@ -22,4 +22,5 @@ then
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.1
     sudo systemctl start mysql
+    mysql -e "SET GLOBAL innodb_large_prefix=1;"
 fi
