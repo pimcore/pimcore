@@ -456,25 +456,3 @@ $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query)
     echo $query;
 });
 ```
-
-
-### Working with Runtime Cache
-Pimcore heavily uses runtime cache to cache API results for performance reasons. However, it is very crucial to understand that how to deal with cached results so that correct data should utilized from the API. Let's take few examples to understand similar situations:
-
-```php
-//Delete item from the list
-$list = new DataObject\Test\Listing;
-$list->load();
-$list->current()->delete();
-
-$list->load(); //call load again to reset the runtime cache
-
-foreach($list as $object) {
-    ...
-}
-
-//using force param to load latest data from database
-Pimcore\Model\DataObject::getById(123) === DataObject::getById(123) => true
-
-Pimcore\Model\DataObject::getById(123) === DataObject::getById(123, true) => true/false
-```
