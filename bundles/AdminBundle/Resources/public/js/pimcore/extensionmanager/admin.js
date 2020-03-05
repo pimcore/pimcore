@@ -317,7 +317,6 @@ pimcore.extensionmanager.admin = Class.create({
                 items: [{
                     tooltip: t('configure'),
                     getClass: function (v, meta, rec) {
-                        var klass = "pimcore_action_column ";
                         if (rec.get('active') && rec.get('installed')) {
                             if (rec.get("configuration")) {
                                 return "pimcore_action_column pimcore_icon_edit";
@@ -328,7 +327,6 @@ pimcore.extensionmanager.admin = Class.create({
                     },
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
-                        var id = rec.get("id");
                         var type = rec.get("type");
 
                         var iframeSrc = rec.get("configuration");

@@ -68,8 +68,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
 
     showWindow: function (data) {
-        var config = data.config;
-
         if (!this.importConfigId) {
             this.buildDefaultSelection();
         }

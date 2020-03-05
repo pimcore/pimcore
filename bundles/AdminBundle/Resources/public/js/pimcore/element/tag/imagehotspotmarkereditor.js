@@ -630,7 +630,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
-        var i;
 
         allowedTypes.push(type);
         if (type == "object") {

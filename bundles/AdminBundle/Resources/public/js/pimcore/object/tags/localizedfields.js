@@ -159,8 +159,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             var existingSettings = this.getCurrentSplitViewSettings();
 
-            var data = [];
-
             if (existingSettings) {
                 for (var currentLanguage in existingSettings.side) {
                     if (!in_array(currentLanguage, this.frontendLanguages)) {

@@ -605,7 +605,6 @@ pimcore.asset.tree = Class.create({
             if (pimcore.cachedAssetId
                 && (record.data.permissions.create || record.data.permissions.publish)
                 && perspectiveCfg.inTreeContextMenu("asset.paste")) {
-                var pasteMenu = [];
 
                 if (record.data.type == "folder") {
                     menu.add(new Ext.menu.Item({

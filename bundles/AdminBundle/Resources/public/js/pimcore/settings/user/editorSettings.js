@@ -70,7 +70,6 @@ pimcore.settings.user.editorSettings = Class.create({
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = this.valueGrid.getSelectionModel();
                                 }
                             }.bind(this)
                         }
@@ -117,7 +116,6 @@ pimcore.settings.user.editorSettings = Class.create({
 
     getContentLanguages: function () {
 
-        var settings = {};
         var languages = [];
 
         this.store.commitChanges();

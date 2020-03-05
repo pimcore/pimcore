@@ -433,7 +433,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            var count = this.chartStore.getCount();
                             var value = record.get(data.pieColumn);
 
 

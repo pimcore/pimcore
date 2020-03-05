@@ -137,8 +137,6 @@ pimcore.element.selector.abstract = Class.create({
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
-        var selModel = grid.getSelectionModel();
-        var selectedRows = selModel.getSelection();
 
         menu.add(new Ext.menu.Item({
             text: t('add'),

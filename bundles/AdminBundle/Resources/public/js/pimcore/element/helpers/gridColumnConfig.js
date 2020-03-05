@@ -321,7 +321,6 @@ pimcore.element.helpers.gridColumnConfig = {
             var menu = grid.headerCt.getMenu();
             var columnDataIndex = menu.activeHeader.dataIndex;
 
-            var view = grid.getView();
             // no batch for system properties
             if (Ext.Array.contains(this.systemColumns, columnDataIndex) || Ext.Array.contains(this.noBatchColumns, columnDataIndex)) {
                 batchAllMenu.hide();
