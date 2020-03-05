@@ -187,8 +187,6 @@ env:
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:
-  - mysql --version
-  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 install:
@@ -198,6 +196,8 @@ install:
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_script:
+  - mysql --version
+  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
   - yes | pecl install imagick
   - phpenv config-rm xdebug.ini || true
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
