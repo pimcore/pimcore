@@ -701,7 +701,6 @@ class Staticroute extends AbstractModel
         return [];
     }
 
-
     /**
      * @return array
      */

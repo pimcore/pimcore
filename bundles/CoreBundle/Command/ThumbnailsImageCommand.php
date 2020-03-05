@@ -190,6 +190,7 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
                 $items[] = serialize($item);
             }
         }
+
         return $items;
     }
 
@@ -207,7 +208,7 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
         }
 
         $thumbnail = $item['thumbnail'] ?? null;
-        if(!$thumbnail instanceof Asset\Image\Thumbnail\Config) {
+        if (!$thumbnail instanceof Asset\Image\Thumbnail\Config) {
             return;
         }
 
@@ -216,7 +217,6 @@ class ThumbnailsImageCommand extends AbstractCommand implements ContainerAwareIn
         }
 
         $thumbnail = $image->getThumbnail($thumbnail);
-
 
         if ($output->isVerbose()) {
             $output->writeln(

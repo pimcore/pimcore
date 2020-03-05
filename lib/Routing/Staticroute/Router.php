@@ -239,8 +239,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
                 $method = $request->getMethod();
 
-                if (!in_array($method, $route->getMethods(), true))
-                {
+                if (!in_array($method, $route->getMethods(), true)) {
                     continue;
                 }
             }

@@ -404,7 +404,7 @@ abstract class PageSnippet extends Model\Document
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if (isset($this->elements[$name]) ){
+        if (isset($this->elements[$name])) {
             return $elements[$name];
         }
 
