@@ -48,21 +48,21 @@ if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.6" ]; then
-    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-5.6'
+    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-server'
     sudo apt-get update
     sudo apt-get install -y mysql-5.6
     sudo systemctl start mysql
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.7" ]; then
-    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-5.7'
+    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-server'
     sudo apt-get update
     sudo apt-get install -y mysql-5.7
     sudo systemctl start mysql
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then
-    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-8.0'
+    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-server'
     sudo apt-get update
     sudo apt-get install -y mysql-8.0
     sudo systemctl start mysql
