@@ -145,7 +145,12 @@ In the configuration, you could also specify additional options for external ser
             thumbnail: 'example',
             width: 400,
             height: 300,
-            attributes: {'class': 'video-js custom-class', 'preload': 'auto', 'controls': '', 'data-custom-attr': 'my-test'}
+            attributes: {
+                'class': 'video-js custom-class',
+                'preload': 'auto',
+                'controls': '',
+                'data-custom-attr': 'my-test'
+            }
         })
     }}
  
