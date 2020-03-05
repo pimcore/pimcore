@@ -189,8 +189,8 @@ For a sample of a controller see our demo [here](https://github.com/pimcore/demo
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 
 to get the parameter of changed filters delivered back to the controller. 
 
-
 <div class="code-section">
+    
 ```php
 <?php if($this->filterDefinitionObject->getFilters()): ?>
 	<div class="widget">
