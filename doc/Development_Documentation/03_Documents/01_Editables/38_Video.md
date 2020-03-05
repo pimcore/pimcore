@@ -59,6 +59,15 @@ To create a container for local video files you can just use the `$this->video` 
 </section>
 ```
 
+```twig
+<section id="campaign_video">
+    {{ pimcore_video('campaignVideo', {
+        width: 700,
+        height: 400
+    }) }}
+</section>
+```
+
 In the editmode, there is now a container available where you can assign an asset path and a video poster. 
 
 ![Video editable window - editmode](../../img/editables_video_localtype_editmode.png)
