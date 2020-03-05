@@ -95,6 +95,24 @@ In the configuration, you could also specify additional options for external ser
 </section>
 ```
 
+```twig
+<section id="campaign_video">
+    {{ pimcore_video('campaignVideo', {
+            width: 700,
+            height: 400,
+            youtube: {
+                autoplay: true,
+                modestbranding: true
+            },
+            vimeo: {
+                autoplay: true,
+                loop: true
+            }
+       })
+    }}
+</section>
+```
+
 ### HTML5 with Automatic Video Transcoding (using video.js)
 ```php
 <!DOCTYPE HTML>
@@ -110,6 +128,26 @@ In the configuration, you could also specify additional options for external ser
         "height" => 300,
         "attributes" => ["class" => "video-js custom-class", "preload" => "auto", "controls" => "", "data-custom-attr" => "my-test"]
     )); ?>
+ 
+    <script src="http://vjs.zencdn.net/5.4.4/video.js"></script>
+</body>
+</html>
+```
+
+```twig
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="http://vjs.zencdn.net/5.4.4/video-js.css" rel="stylesheet">
+</head>
+<body>
+    {{ pimcore_video('myVideo', {
+            thumbnail: 'example',
+            width: 400,
+            height: 300,
+            attributes: {'class': 'video-js custom-class', 'preload': 'auto', 'controls': '', 'data-custom-attr': 'my-test'}
+        })
+    }}
  
     <script src="http://vjs.zencdn.net/5.4.4/video.js"></script>
 </body>
