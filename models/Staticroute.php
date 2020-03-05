@@ -78,6 +78,11 @@ class Staticroute extends AbstractModel
     public $siteId;
 
     /**
+     * @var array
+     */
+    public $methods;
+
+    /**
      * @var int
      */
     public $priority = 1;
@@ -694,6 +699,36 @@ class Staticroute extends AbstractModel
         }
 
         return [];
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getMethods()
+    {
+        if ($this->methods && !is_array($this->methods)) {
+            $this->methods = explode(',', $this->methods);
+        }
+
+        return $this->methods;
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return $this
+     */
+    public function setMethods($methods)
+    {
+        if (!is_array($methods)) {
+            $methods = strlen($methods) ? explode(',', $methods) : [];
+            $methods = array_map('trim', $methods);
+        }
+
+        $this->methods = $methods;
+
+        return $this;
     }
 
     /**
