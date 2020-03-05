@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -650,27 +651,25 @@ class AbstractObject extends Model\Element\AbstractElement
                         Logger::info($er);
                     }
 
-                    if ($e instanceof Model\Element\ValidationException) {
-                        throw $e;
-                    }
-
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    }
-
                     // set "HideUnpublished" back to the value it was originally
                     self::setHideUnpublished($hideUnpublishedBackup);
 
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                    } else if ($e instanceof DeadlockException) {
+                        // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                        if ($retries < ($maxRetries - 1)) {
+                            $run = $retries + 1;
+                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
-                        usleep($waitTime); // wait specified time until we restart the transaction
+                            usleep($waitTime); // wait specified time until we restart the transaction
+                        } else {
+                            // if the transaction still fail after $maxRetries retries, we throw out the exception
+                            Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                            throw $e;
+                        }
                     } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
                         throw $e;
                     }
                 }
