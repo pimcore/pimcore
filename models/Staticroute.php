@@ -723,9 +723,7 @@ class Staticroute extends AbstractModel
     {
         if (!is_array($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            $methods = array_map(static function ($entry) {
-                return trim($entry);
-            }, $methods);
+            $methods = array_map('trim', $methods);
         }
 
         $this->methods = $methods;
