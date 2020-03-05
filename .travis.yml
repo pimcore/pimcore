@@ -18,7 +18,6 @@ services:
 
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
-  mariadb: '10.3'
   artifacts:
     s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
     debug: true
@@ -198,6 +197,7 @@ env:
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^4.0
+    - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
     - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 
