@@ -62,7 +62,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     public function __construct($fieldname, $columns = [], $element = null)
     {
         $this->fieldname = $fieldname;
-        $this->columns = $columns;
+        $this->columns = array_map('strtolower', $columns);
         $this->setElement($element);
     }
 
@@ -221,7 +221,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      */
     public function setColumns($columns)
     {
-        $this->columns = $columns;
+        $this->columns = array_map('strtolower', $columns);;
         $this->markMeDirty();
 
         return $this;

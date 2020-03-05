@@ -59,7 +59,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     public function __construct($fieldname, $columns = [], $object = null)
     {
         $this->fieldname = $fieldname;
-        $this->columns = $columns;
+        $this->columns = array_map('strtolower', $columns);
         $this->setObject($object);
     }
 
@@ -207,7 +207,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      */
     public function setColumns($columns)
     {
-        $this->columns = $columns;
+        $this->columns = array_map('strtolower', $columns);;
         $this->markMeDirty();
 
         return $this;
