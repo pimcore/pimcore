@@ -480,6 +480,24 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param string $className
+     * @return string|null
+     */
+    public static function getElementTypeByClassName(string $className):?string
+    {
+        $className = trim($className, "\\");
+        if(is_subclass_of($className, AbstractObject::class) || $className === AbstractObject::class) {
+            return 'object';
+        } elseif (is_subclass_of($className, Asset::class) || $className === Asset::class) {
+            return 'asset';
+        } elseif (is_subclass_of($className, Document::class) || $className === Document::class) {
+            return 'document';
+        }
+
+        return null;
+    }
+
+    /**
      * @param ElementInterface $element
      *
      * @return string|null

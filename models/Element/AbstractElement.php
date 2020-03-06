@@ -127,6 +127,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
+     * @param string|int $id
+     * @return string
+     */
+    protected static function getCacheKey($id):string
+    {
+        $elementType = Service::getElementTypeByClassName(static::class);
+        return $elementType . '_' . $id;
+    }
+
+    /**
      * Get the cache tags for the element, resolve all dependencies to tag the cache entries
      * This is necessary to update the cache if there is a change in an depended object
      *
