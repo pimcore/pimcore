@@ -45,6 +45,7 @@ if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.4
     sudo systemctl start mysql
+    sudo mysql -e "UPDATE mysql.user SET plugin=''; flush privileges;"
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.6" ]; then
