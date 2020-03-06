@@ -179,16 +179,20 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
         if (idx < this.values.length) {
             if (idx == 0) {
                 this.batchProgressBar = new Ext.ProgressBar({
-                    text: t('generating'),
+                    text: t('initializing'),
                     style: "margin: 10px;",
                     width: 500
                 });
 
                 this.batchProgressWin = new Ext.Window({
+                    title: t("export"),
+                    layout: 'fit',
                     items: [this.batchProgressBar],
-                    modal: true,
-                    bodyStyle: "background: #fff;",
-                    closable: false
+                    width: 200,
+                    plain: true,
+                    bodyStyle: "padding: 10px;",
+                    closable: false,
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
                 this.batchProgressWin.show();
 

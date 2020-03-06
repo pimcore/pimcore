@@ -198,7 +198,7 @@ pimcore.asset.tree = Class.create({
         }
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -449,6 +449,10 @@ pimcore.asset.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("asset", record.id)) {
+            return;
+        }
 
         var menu = new Ext.menu.Menu();
         var perspectiveCfg = this.perspectiveCfg;
@@ -853,12 +857,12 @@ pimcore.asset.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();
@@ -968,6 +972,7 @@ pimcore.asset.tree = Class.create({
         pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + record.id, "Filedata", function (response) {
             // this.attributes.reference
             var res = Ext.decode(response.response.responseText);
+            pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.get("id"));
 
             this.downloadProgressBar = new Ext.ProgressBar({
                 text: t('initializing')
@@ -976,12 +981,12 @@ pimcore.asset.tree = Class.create({
             this.downloadProgressWin = new Ext.Window({
                 title: t("upload_zip"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [this.downloadProgressBar]
+                items: [this.downloadProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.downloadProgressWin.show();
@@ -1005,6 +1010,7 @@ pimcore.asset.tree = Class.create({
                 }.bind(this),
                 failure: function (message) {
                     this.downloadProgressWin.close();
+                    pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                     pimcore.helpers.showNotification(t("error"), t("error"),
                         "error", t(message));
                 }.bind(this),
@@ -1130,6 +1136,8 @@ pimcore.asset.tree = Class.create({
                                 this.uploadWindow.close();
                                 this.uploadWindow = null;
 
+                                pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.get("id"));
+
                                 var res = Ext.decode(response.responseText);
 
                                 this.downloadProgressBar = new Ext.ProgressBar({
@@ -1139,12 +1147,12 @@ pimcore.asset.tree = Class.create({
                                 this.downloadProgressWin = new Ext.Window({
                                     title: t("import_from_server"),
                                     layout:'fit',
-                                    width:500,
+                                    width:200,
                                     bodyStyle: "padding: 10px;",
                                     closable:false,
                                     plain: true,
-                                    modal: true,
-                                    items: [this.downloadProgressBar]
+                                    items: [this.downloadProgressBar],
+                                    listeners: pimcore.helpers.getProgressWindowListeners()
                                 });
 
                                 this.downloadProgressWin.show();
@@ -1168,6 +1176,8 @@ pimcore.asset.tree = Class.create({
                                     }.bind(this),
                                     failure: function (message) {
                                         this.downloadProgressWin.close();
+                                        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
+
                                         pimcore.helpers.showNotification(t("error"), t("error"),
                                             "error", t(message));
                                     }.bind(this),

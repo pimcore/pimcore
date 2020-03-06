@@ -120,6 +120,11 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var elementType = options.elementType;
         var id = options.id;
 
+        let ids = Ext.isString(id) ? id.split(',') : [id];
+        ids.forEach(function (elementId) {
+            pimcore.helpers.addTreeNodeLoadingIndicator(elementType, elementId);
+        });
+
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         for (var index = 0; index < affectedNodes.length; index++) {
             var node = affectedNodes[index];
@@ -142,12 +147,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             this.deleteWindow = new Ext.Window({
                 title: t("delete"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [this.deleteProgressBar]
+                items: [this.deleteProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.deleteWindow.show();
@@ -1066,12 +1071,12 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
             that.downloadProgressWin = new Ext.Window({
                 title: t("download_as_zip"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [that.downloadProgressBar]
+                items: [that.downloadProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             that.downloadProgressWin.show();

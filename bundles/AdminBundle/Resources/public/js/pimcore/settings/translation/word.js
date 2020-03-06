@@ -256,12 +256,12 @@ pimcore.settings.translation.word = Class.create({
                 this.exportProgressWin = new Ext.Window({
                     title: t("export"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [this.exportProgressbar]
+                    items: [this.exportProgressbar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 this.exportProgressWin.show();

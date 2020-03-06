@@ -1387,12 +1387,12 @@ pimcore.layout.toolbar = Class.create({
                     var progressWin = new Ext.Window({
                         title: t("generate_page_previews"),
                         layout:'fit',
-                        width:500,
+                        width:200,
                         bodyStyle: "padding: 10px;",
                         closable:false,
                         plain: true,
-                        modal: false,
-                        items: [progressBar]
+                        items: [progressBar],
+                        listeners: pimcore.helpers.getProgressWindowListeners()
                     });
 
                     progressWin.show();
