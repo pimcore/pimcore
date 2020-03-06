@@ -41,7 +41,7 @@ final class CleanupBrickTablesTask implements TaskInterface
     public function execute()
     {
         $db = Db::get();
-        $tableTypes = ['store', 'query'];
+        $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
             $prefix = 'object_brick_' . $tableType . '_';
             $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
