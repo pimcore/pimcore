@@ -11,7 +11,7 @@ then
     #sudo rm -rf /etc/mysql
 
     sudo apt-get install software-properties-common
-    sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    sudo apt-key adv --fetch-keys 'http://mariadb.org/mariadb_release_signing_key.asc'
 
     # Oracle / MySQL Key
     sudo apt-key adv --keyserver keys.gnupg.net --recv-keys 5072E1F5
