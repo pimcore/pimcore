@@ -656,7 +656,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     if ($e instanceof UniqueConstraintViolationException) {
                         throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    } else if ($e instanceof DeadlockException) {
+                    } elseif ($e instanceof DeadlockException) {
                         // we try to start the transaction $maxRetries times again (deadlocks, ...)
                         if ($retries < ($maxRetries - 1)) {
                             $run = $retries + 1;
