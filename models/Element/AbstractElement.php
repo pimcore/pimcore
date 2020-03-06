@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
 
 /**
@@ -229,7 +231,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return true;
         }
 
-        return $this->getDao()->isAllowed($type, $user);
+        $isAllowed = $this->getDao()->isAllowed($type, $user);
+
+        $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED, $event);
+
+        return (bool) $event->getArgument('isAllowed');
     }
 
     public function unlockPropagate()

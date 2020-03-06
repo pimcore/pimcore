@@ -404,4 +404,19 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT_ADMIN_STYLE = 'pimcore.admin.resolve.elementAdminStyle';
+
+    /**
+     * Allows you to modify whether a permission on an element is granted or not
+     *
+     * Subject: \Pimcore\Model\Element\AbstractElement
+     * Arguments:
+     *  - isAllowed | bool | the original "isAllowed" value as determined by pimcore. This can be modfied
+     *  - permissionType | string | the permission that is checked
+     *  - user | \Pimcore\Model\User | user the permission is checked for
+     *
+     * @Event("Pimcore\Event\Model\ElementEvent")
+     *
+     * @var string
+     */
+    const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
 }
