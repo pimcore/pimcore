@@ -486,11 +486,11 @@ class Service extends Model\AbstractModel
     public static function getElementTypeByClassName(string $className):?string
     {
         $className = trim($className, "\\");
-        if(is_subclass_of($className, AbstractObject::class) || $className === AbstractObject::class) {
+        if (is_a($className, AbstractObject::class, true)) {
             return 'object';
-        } elseif (is_subclass_of($className, Asset::class) || $className === Asset::class) {
+        } elseif (is_a($className, Asset::class, true)) {
             return 'asset';
-        } elseif (is_subclass_of($className, Document::class) || $className === Document::class) {
+        } elseif (is_a($className, Document::class, true)) {
             return 'document';
         }
 
