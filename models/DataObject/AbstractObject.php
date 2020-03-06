@@ -550,6 +550,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = 'object_' . $this->getParentId();
+            if (Runtime::isRegistered($parentCacheKey)) {
+                /** @var AbstractObject $parent **/
+                $parent = Runtime::get($parentCacheKey);
+                $parent->setChildren(null);
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DataObjectEvent($this);

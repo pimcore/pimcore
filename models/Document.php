@@ -818,6 +818,14 @@ class Document extends Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = 'document_' . $this->getParentId();
+            if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
+                /** @var Document $parent **/
+                $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
+                $parent->setChildren(null);
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
