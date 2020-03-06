@@ -426,13 +426,13 @@ on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
  
 /** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
 $list = new Pimcore\Model\DataObject\News\Listing();
- 
+$this->classId = $list->getClassId();
 // set onCreateQuery callback
 $list->onCreateQuery(
     function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) {
         $select->join(
         ['rating' => 'plugin_rating_ratings'],
-        'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
+        'rating.ratingTargetId = object_' . $this->classId . '.o_id',
         ''
     );
     }
