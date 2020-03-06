@@ -75,6 +75,7 @@ class Navigation extends Helper
      * @param callable|null $pageCallback
      * @param bool|string $cache
      * @param int|null $maxDepth
+     * @param int|null $cacheLifetime
      *
      * @return Container
      *
@@ -86,7 +87,8 @@ class Navigation extends Helper
         string $htmlMenuPrefix = null,
         callable $pageCallback = null,
         $cache = true,
-        $maxDepth = null
+        $maxDepth = null,
+        $cacheLifetime = null
     ): Container {
         return $this->builder->getNavigation(
             $activeDocument,
@@ -94,7 +96,8 @@ class Navigation extends Helper
             $htmlMenuPrefix,
             $pageCallback,
             $cache,
-            $maxDepth
+            $maxDepth,
+            $cacheLifetime
         );
     }
 
@@ -116,6 +119,7 @@ class Navigation extends Helper
            'htmlMenuPrefix' => null,
            'pageCallback' => null,
            'cache' => true,
+           'cacheLifetime' => null,
            'maxDepth' => null,
            'active' => null,
         ]);
@@ -128,7 +132,8 @@ class Navigation extends Helper
             $options['htmlMenuPrefix'],
             $options['pageCallback'],
             $options['cache'],
-            $options['maxDepth']
+            $options['maxDepth'],
+            $options['cacheLifetime']
         );
     }
 
