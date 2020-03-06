@@ -181,12 +181,13 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $id
+     * @param bool $force
      *
      * @return null|ClassDefinition
      *
      * @throws \Exception
      */
-    public static function getById($id)
+    public static function getById($id, $force = false)
     {
         if ($id === null) {
             throw new \Exception('Class id is null');
@@ -195,6 +196,9 @@ class ClassDefinition extends Model\AbstractModel
         $cacheKey = 'class_' . $id;
 
         try {
+            if ($force) {
+                throw new \Exception("Forced load");
+            }
             $class = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$class) {
                 throw new \Exception('Class in registry is null');
