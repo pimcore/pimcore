@@ -822,7 +822,7 @@ class Document extends Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = 'document_' . $this->getParentId();
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
-                /** @var Document $parent **/
+                /** @var Document $parent * */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
                 $parent->setChildren(null);
             }

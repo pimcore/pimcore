@@ -554,7 +554,7 @@ class AbstractObject extends Model\Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = 'object_' . $this->getParentId();
             if (Runtime::isRegistered($parentCacheKey)) {
-                /** @var AbstractObject $parent **/
+                /** @var AbstractObject $parent * */
                 $parent = Runtime::get($parentCacheKey);
                 $parent->setChildren(null);
             }
