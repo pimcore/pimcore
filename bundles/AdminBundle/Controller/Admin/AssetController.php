@@ -323,7 +323,7 @@ class AssetController extends ElementControllerBase implements EventedController
      * @param Request $request
      * @param Config $config
      *
-     * @return Response/JsonResponse
+     * @return JsonResponse
      */
     public function addAssetCompatibilityAction(Request $request, Config $config)
     {
