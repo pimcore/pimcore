@@ -59,7 +59,8 @@ if [ $DATABASE_SERVER = "mysql-5.7" ]; then
     sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-server'
     sudo apt-get update
     sudo apt-get install -y mysql-client-core-5.7 mysql-server-core-5.7
-    sudo systemctl start mysql
+    sudo systemctl unmask mysql.service
+    sudo service mysql start
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then
