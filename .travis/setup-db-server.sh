@@ -49,9 +49,7 @@ if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.6" ]; then
-    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-5.6'
-    sudo apt-get update
-    sudo apt-get install -y mysql-server mysql-client
+    sudo apt-get install -y percona-server-server-5.6
     sudo systemctl start mysql
 fi
 
@@ -60,7 +58,8 @@ if [ $DATABASE_SERVER = "mysql-5.7" ]; then
     sudo apt-get update
     sudo apt-get install -y mysql-server mysql-client
     sudo systemctl start mysql
-    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ''; flush privileges;"
+    sudo mysql -e "SELECT * FROM mysql.user;"
+    sudo mysql -e "UPDATE mysql.user SET plugin = '';"
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then

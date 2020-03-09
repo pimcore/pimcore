@@ -15,6 +15,7 @@ language: php
 
 services:
   - redis
+  - mysql
 
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
