@@ -1403,7 +1403,7 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     // these wrappers simulate the jQuery behavior
     var successWrapper = function (ev) {
         var data = JSON.parse(request.responseText);
-        if(ev.currentTarget.status < 400) {
+        if(ev.currentTarget.status < 400 && data.success === true) {
             callbackSuccess(data, request.statusText, request);
         } else {
             callbackFailure(request, request.statusText, ev);
@@ -3004,7 +3004,8 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
                         },
                         function (evt) {
                             // error
-                            pimcore.helpers.showNotification(t("error"), e["responseText"], "error");
+                            var res = Ext.decode(evt["responseText"]);
+                            pimcore.helpers.showNotification(t("error"), res.message ? res.message : t("error"), "error", evt["responseText"]);
                             win.close();
                             failure(evt);
                         }

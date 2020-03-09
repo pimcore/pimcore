@@ -259,7 +259,8 @@ pimcore.asset.tree = Class.create({
             }.bind(this);
 
             var errorHandler = function (e) {
-                pimcore.helpers.showNotification(t("error"), e["responseText"], "error");
+                var res = Ext.decode(e["responseText"]);
+                pimcore.helpers.showNotification(t("error"), res.message ? res.message : t("error"), "error", e["responseText"]);
                 finishedErrorHandler();
             }.bind(this);
 
@@ -963,6 +964,11 @@ pimcore.asset.tree = Class.create({
             var f = this.addAssetComplete.bind(this, tree, record);
             f();
         }.bind(this), function (res) {
+            var response = Ext.decode(res.response.responseText);
+            if(response.success === false) {
+                pimcore.helpers.showNotification(t("error"), response.message, "error",
+                    res.response.responseText);
+            }
             var f = this.addAssetComplete.bind(this, tree, record);
             f();
         }.bind(this));
