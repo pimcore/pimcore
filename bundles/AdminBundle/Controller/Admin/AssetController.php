@@ -124,7 +124,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = $asset->getFullPath() . '?_dc=' . time();
+                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset?id=%d&_dc=%d', $asset->getId(), time());
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -1156,6 +1156,33 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         throw $this->createNotFoundException('Thumbnail not found');
+    }
+
+    /**
+     * @Route("/get-asset", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function getAssetAction(Request $request)
+    {
+        $image = Asset::getById(intval($request->get('id')));
+
+        if (!$image) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
+        if (!$image->isAllowed('view')) {
+            throw $this->createAccessDeniedException('not allowed to view asset');
+        }
+
+        $response = new BinaryFileResponse($image->getFileSystemPath());
+        $response->headers->set('Content-type', $image->getMimetype());
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->addThumbnailCacheHeaders($response);
+
+        return $response;
     }
 
     /**
