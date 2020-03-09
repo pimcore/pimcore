@@ -6,9 +6,9 @@ echo "Setting up database server ..."
 if [ $DATABASE_SERVER ]
 then
     # remove the pre-installed MariaDB server
-    #sudo apt-get purge -y mariadb-*
-    #sudo rm -rf /var/lib/mysql
-    #sudo rm -rf /etc/mysql
+    sudo apt-get purge -y mysql-*
+    sudo rm -rf /var/lib/mysql
+    sudo rm -rf /etc/mysql
 
     sudo apt-get install software-properties-common
     sudo apt-key adv --fetch-keys 'http://mariadb.org/mariadb_release_signing_key.asc'
