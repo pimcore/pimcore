@@ -197,7 +197,7 @@ class ClassDefinition extends Model\AbstractModel
 
         try {
             if ($force) {
-                throw new \Exception("Forced load");
+                throw new \Exception('Forced load');
             }
             $class = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$class) {
