@@ -124,7 +124,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image?id=%d&_dc=%d', $asset->getId(), time());
+                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset-?id=%d&_dc=%d', $asset->getId(), time());
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -1159,15 +1159,15 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-image", methods={"GET"})
+     * @Route("/get-asset", methods={"GET"})
      *
      * @param Request $request
      *
      * @return BinaryFileResponse
      */
-    public function getImageAction(Request $request)
+    public function getAssetAction(Request $request)
     {
-        $image = Asset\Image::getById(intval($request->get('id')));
+        $image = Asset::getById(intval($request->get('id')));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
