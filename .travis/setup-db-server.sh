@@ -58,8 +58,8 @@ if [ $DATABASE_SERVER = "mysql-5.7" ]; then
     sudo apt-get update
     sudo apt-get install -y mysql-server mysql-client
     sudo systemctl start mysql
+    sudo mysql -e "UPDATE mysql.user SET plugin = '';  flush privileges;"
     sudo mysql -e "SELECT * FROM mysql.user;"
-    sudo mysql -e "UPDATE mysql.user SET plugin = '';"
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then
