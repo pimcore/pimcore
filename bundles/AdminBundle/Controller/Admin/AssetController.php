@@ -124,7 +124,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset-?id=%d&_dc=%d', $asset->getId(), time());
+                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset?id=%d&_dc=%d', $asset->getId(), time());
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
