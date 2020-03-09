@@ -85,7 +85,7 @@ class Item extends Model\AbstractModel
      * @param Element\ElementInterface $element
      * @param Model\User $user
      */
-    public static function create(Element\ElementInterface $element, Model\User $user)
+    public static function create(Element\ElementInterface $element, Model\User $user = null)
     {
         $item = new self();
         $item->setElement($element);
