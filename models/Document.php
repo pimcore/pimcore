@@ -265,9 +265,9 @@ class Document extends Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'document_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -597,7 +597,7 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set document to registry
-        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), $this);
+        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -619,7 +619,7 @@ class Document extends Element\AbstractElement
     public function clearDependentCache($additionalTags = [])
     {
         try {
-            $tags = ['document_' . $this->getId(), 'document_properties', 'output'];
+            $tags = [$this->getCacheTag(), 'document_properties', 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
@@ -820,7 +820,7 @@ class Document extends Element\AbstractElement
             $this->commit();
 
             //clear parent data from registry
-            $parentCacheKey = 'document_' . $this->getParentId();
+            $parentCacheKey = self::getCacheKey($this->getParentId());
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
                 /** @var Document $parent * */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
@@ -839,7 +839,7 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //clear document from registry
-        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }
@@ -1441,7 +1441,7 @@ class Document extends Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'document_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }
