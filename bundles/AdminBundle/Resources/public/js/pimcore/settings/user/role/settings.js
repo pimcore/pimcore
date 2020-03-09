@@ -78,7 +78,7 @@ pimcore.settings.user.role.settings = Class.create({
             }
             itemsPerSection[section].push({
                 xtype: "checkbox",
-                fieldLabel: t(this.data.availablePermissions[i].key),
+                boxLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
                 labelWidth: 200
