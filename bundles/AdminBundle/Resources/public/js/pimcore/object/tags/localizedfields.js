@@ -476,7 +476,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             });
         } else {
             item.iconCls = "pimcore_icon_language_" + language.toLowerCase();
-            item.title = pimcore.available_languages[language];
+            item.title = t(pimcore.available_languages[language]);
         }
     },
 
