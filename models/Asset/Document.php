@@ -42,8 +42,13 @@ class Document extends Model\Asset
         $this->clearThumbnails();
 
         if ($this->getDataChanged() && \Pimcore\Document::isAvailable()) {
-            // add to processing queue to generate a PDF if necessary (office documents)
-            TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
+            if(php_sapi_name() === 'cli') {
+                // on CLI we directly process the page count / document conversion
+                $this->processPageCount();
+            } else {
+                // add to processing queue to generate a PDF if necessary (office documents)
+                TmpStore::add(sprintf('asset_document_conversion_%d', $this->getId()), $this->getId(), 'asset-document-conversion');
+            }
         }
 
         parent::update($params);
@@ -81,7 +86,6 @@ class Document extends Model\Asset
             // read from blob here, because in $this->update() (see above) $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
             $this->setCustomSetting('document_page_count', $pageCount);
-            $this->save();
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -129,15 +133,19 @@ class Document extends Model\Asset
      */
     public function getText($page = null)
     {
-        if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename()) && $this->getCustomSetting('document_page_count')) {
-            $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
-            if (!$text = Cache::load($cacheKey)) {
-                $document = \Pimcore\Document::getInstance();
-                $text = $document->getText($page, $this->getFileSystemPath());
-                Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
-            }
+        if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
+            if($this->getCustomSetting('document_page_count')) {
+                $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
+                if (!$text = Cache::load($cacheKey)) {
+                    $document = \Pimcore\Document::getInstance();
+                    $text = $document->getText($page, $this->getFileSystemPath());
+                    Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
+                }
 
-            return $text;
+                return $text;
+            } else {
+                Logger::info("Unable to fetch text of " . $this->getRealFullPath() . ' as it was not processed yet by the maintenance script');
+            }
         } else {
             Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
         }
