@@ -97,12 +97,12 @@ jobs:
       env:
           - DATABASE_SERVER="mariadb-10.4"
 
-    - name: "All Tests - PHP 7.4 | Symfony 4 | MySQL 5.6"
+    - name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
       os: linux
       sudo: required
       php: 7.4
       env:
-          - DATABASE_SERVER="mysql-5.6"
+          - DATABASE_SERVER="percona-server-5.6"
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
