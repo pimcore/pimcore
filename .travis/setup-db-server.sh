@@ -10,7 +10,7 @@ then
     sudo rm -rf /var/lib/mysql
     sudo rm -rf /etc/mysql
 
-    sudo apt-get install software-properties-common
+    sudo apt-get install software-properties-common gnupg2
     sudo apt-key adv --fetch-keys 'http://mariadb.org/mariadb_release_signing_key.asc'
 
     # Oracle / MySQL Key
@@ -49,7 +49,8 @@ if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.6" ]; then
-    sudo add-apt-repository 'deb http://repo.percona.com/apt/dists/ xenial main'
+    wget https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb
+    sudo dpkg -i percona-release_latest.$(lsb_release -sc)_all.deb
     sudo apt-get update
     sudo apt-get install -y percona-server-server-5.6
     sudo systemctl start mysql
@@ -60,9 +61,8 @@ if [ $DATABASE_SERVER = "mysql-5.7" ]; then
     sudo apt-get update
     sudo apt-get install -y mysql-server mysql-client
     sudo systemctl start mysql
-    sudo mysql -e "SELECT * FROM mysql.user;"
-    sudo mysql -e "UPDATE mysql.user SET plugin = '', password='';  flush privileges;"
-    sudo mysql -e "SELECT * FROM mysql.user;"
+    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '';"
+    sudo mysql -e "UPDATE mysql.user SET plugin = '';  flush privileges;"
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then
