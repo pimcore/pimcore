@@ -16,6 +16,7 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Search\Backend\Data;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
 
@@ -53,6 +54,12 @@ final class AssetDocumentConversionTask implements TaskInterface
                     $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(),
                         $asset->getFullPath()));
                     $asset->processPageCount();
+
+                    $searchEntry = Data::getForElement($asset);
+                    if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
+                        $searchEntry->setDataFromElement($asset);
+                        $searchEntry->save();
+                    }
                 }
             } catch (\Throwable $e) {
                 $this->logger->debug(sprintf('Processing document with ID %s failed', $asset->getId()));
