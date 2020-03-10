@@ -54,12 +54,6 @@ final class AssetDocumentConversionTask implements TaskInterface
                     $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getFullPath()));
                     $asset->processPageCount();
                     $asset->save();
-
-                    $searchEntry = Data::getForElement($asset);
-                    if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
-                        $searchEntry->setDataFromElement($asset);
-                        $searchEntry->save();
-                    }
                 }
             } catch (\Throwable $e) {
                 $this->logger->debug(sprintf('Processing document with ID %s failed', $asset->getId()));
