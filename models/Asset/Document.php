@@ -129,7 +129,7 @@ class Document extends Model\Asset
      */
     public function getText($page = null)
     {
-        if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename()) && $this->getCustomSetting('document_page_count')) {
+        if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
             $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
             if (!$text = Cache::load($cacheKey)) {
                 $document = \Pimcore\Document::getInstance();
@@ -138,9 +138,9 @@ class Document extends Model\Asset
             }
 
             return $text;
-        } else {
-            Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
         }
+
+        Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
 
         return null;
     }
