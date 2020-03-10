@@ -293,21 +293,28 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function addAssetAction(Request $request, Config $config)
     {
-        $res = $this->addAsset($request, $config);
+        try {
+            $res = $this->addAsset($request, $config);
 
-        $response = [
-            'success' => $res['success'],
-        ];
-
-        if ($res['success']) {
-            $response['asset'] = [
-                'id' => $res['asset']->getId(),
-                'path' => $res['asset']->getFullPath(),
-                'type' => $res['asset']->getType()
+            $response = [
+                'success' => $res['success'],
             ];
-        }
 
-        return $this->adminJson($response);
+            if ($res['success']) {
+                $response['asset'] = [
+                    'id' => $res['asset']->getId(),
+                    'path' => $res['asset']->getFullPath(),
+                    'type' => $res['asset']->getType()
+                ];
+            }
+
+            return $this->adminJson($response);
+        } catch (\Exception $e) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -320,19 +327,26 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function addAssetCompatibilityAction(Request $request, Config $config)
     {
-        // this is a special action for the compatibility mode upload (without flash)
-        $res = $this->addAsset($request, $config);
+        try {
+            // this is a special action for the compatibility mode upload (without flash)
+            $res = $this->addAsset($request, $config);
 
-        $response = $this->adminJson([
-            'success' => $res['success'],
-            'msg' => $res['success'] ? 'Success' : 'Error',
-            'id' => $res['asset'] ? $res['asset']->getId() : null,
-            'fullpath' => $res['asset'] ? $res['asset']->getRealFullPath() : null,
-            'type' => $res['asset'] ? $res['asset']->getType() : null
-        ]);
-        $response->headers->set('Content-Type', 'text/html');
+            $response = $this->adminJson([
+                'success' => $res['success'],
+                'msg' => $res['success'] ? 'Success' : 'Error',
+                'id' => $res['asset'] ? $res['asset']->getId() : null,
+                'fullpath' => $res['asset'] ? $res['asset']->getRealFullPath() : null,
+                'type' => $res['asset'] ? $res['asset']->getType() : null
+            ]);
+            $response->headers->set('Content-Type', 'text/html');
 
-        return $response;
+            return $response;
+        } catch(\Exception $e) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
