@@ -15,10 +15,10 @@ language: php
 
 services:
   - redis
+  - mysql
 
 # see https://docs.travis-ci.com/user/installing-dependencies
 addons:
-  mariadb: '10.3'
   artifacts:
     s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
     debug: true
@@ -58,38 +58,54 @@ jobs:
 
   include:
     # Symfony 3.4 all tests
-    - name: "All Tests - PHP 7.2 Symfony 3.4"
+    - name: "All Tests - PHP 7.2 | Symfony 3.4 | MariaDB 10.1"
       os: linux
       sudo: required
       php: 7.2
       env:
         - SYMFONY_VERSION="^3.4"
+        - DATABASE_SERVER="mariadb-10.1"
 
-    - name: "All Tests - PHP 7.3 Symfony 3.4"
+    - name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
       os: linux
       sudo: required
       php: 7.3
       env:
         - SYMFONY_VERSION="^3.4"
+        - DATABASE_SERVER="mariadb-10.2"
 
-    # Symfony 4.* all tests
-    - name: "All Tests - PHP 7.2 Symfony 4"
-      os: linux
-      sudo: required
-      php: 7.2
-
-    - name: "All Tests - PHP 7.3 Symfony 4"
-      os: linux
-      sudo: required
-      php: 7.3
-
-    - name: "All Tests - PHP 7.4 Symfony 4"
+    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
       os: linux
       sudo: required
       php: 7.4
+      env:
+        - SYMFONY_VERSION="^3.4"
+        - DATABASE_SERVER="mysql-5.7"
+
+    # Symfony 4.* all tests
+    - name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
+      os: linux
+      sudo: required
+      php: 7.2
+      env:
+          - DATABASE_SERVER="mariadb-10.3"
+
+    - name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
+      os: linux
+      sudo: required
+      php: 7.3
+      env:
+          - DATABASE_SERVER="mariadb-10.4"
+
+    - name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
+      os: linux
+      sudo: required
+      php: 7.4
+      env:
+          - DATABASE_SERVER="percona-server-5.6"
 
     # Other Tests
-    - name: "REST Tests - PHP 7.2 Symfony 3.4"
+    - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
       os: linux
       sudo: required
       php: 7.2
@@ -97,8 +113,9 @@ jobs:
         - SYMFONY_VERSION="^3.4"
         - PIMCORE_TEST_SUITE=rest
         - PIMCORE_TEST_ENV=http
+        - DATABASE_SERVER="mysql-8.0"
 
-    - name: "REST Tests - PHP 7.3 Symfony 3.4"
+    - name: "REST Tests - PHP 7.3 | Symfony 3.4"
       os: linux
       sudo: required
       php: 7.3
@@ -181,13 +198,12 @@ env:
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^4.0
+    - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
     - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:
-  - mysql --version
-  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 install:
@@ -202,6 +218,8 @@ before_script:
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
   - if [ $TASK_STAN == 1 ]; then .travis/setup-php.sh; fi
+  - mysql --version
+  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 script:
