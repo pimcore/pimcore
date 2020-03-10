@@ -49,6 +49,8 @@ if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.6" ]; then
+    sudo add-apt-repository 'deb http://repo.percona.com/apt/dists/ xenial main'
+    sudo apt-get update
     sudo apt-get install -y percona-server-server-5.6
     sudo systemctl start mysql
 fi
@@ -58,12 +60,13 @@ if [ $DATABASE_SERVER = "mysql-5.7" ]; then
     sudo apt-get update
     sudo apt-get install -y mysql-server mysql-client
     sudo systemctl start mysql
-    sudo mysql -e "UPDATE mysql.user SET plugin = '';  flush privileges;"
+    sudo mysql -e "SELECT * FROM mysql.user;"
+    sudo mysql -e "UPDATE mysql.user SET plugin = '', password='';  flush privileges;"
     sudo mysql -e "SELECT * FROM mysql.user;"
 fi
 
 if [ $DATABASE_SERVER = "mysql-8.0" ]; then
-    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-5.8'
+    sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-8.0'
     sudo apt-get update
     sudo apt-get install -y mysql-server mysql-client
     sudo systemctl start mysql
