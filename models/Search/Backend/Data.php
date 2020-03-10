@@ -423,10 +423,12 @@ class Data extends \Pimcore\Model\AbstractModel
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
                     try {
                         $contentText = $element->getText();
-                        $contentText = Encoding::toUTF8($contentText);
-                        $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
-                        $contentText = preg_replace('/[ ]+/', ' ', $contentText);
-                        $this->data .= ' ' . $contentText;
+                        if($contentText) {
+                            $contentText = Encoding::toUTF8($contentText);
+                            $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
+                            $contentText = preg_replace('/[ ]+/', ' ', $contentText);
+                            $this->data .= ' ' . $contentText;
+                        }
                     } catch (\Exception $e) {
                         Logger::error($e);
                     }
