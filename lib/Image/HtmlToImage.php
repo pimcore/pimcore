@@ -16,6 +16,7 @@ namespace Pimcore\Image;
 
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class HtmlToImage
 {
@@ -61,8 +62,13 @@ class HtmlToImage
             '--format ' . $format
         ];
 
-        if (php_sapi_name() != 'cli') {
-            $options[] = '--cookie ' .  Session::getSessionName() . ' ' . Session::getSessionId();
+        if (php_sapi_name() !== 'cli') {
+
+            $sessionData = Session::useSession(function (AttributeBagInterface $session) {
+                return ['name' => Session::getSessionName(), 'id' => Session::getSessionId()];
+            });
+
+            $options[] = sprintf('--cookie %s %s', $sessionData['name'], $sessionData['id']);
         }
 
         $arguments = ' ' . implode(' ', $options) . ' "' . $url . '" ' . $outputFile;
