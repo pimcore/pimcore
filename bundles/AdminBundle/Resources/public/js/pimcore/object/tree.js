@@ -143,7 +143,7 @@ pimcore.object.tree = Class.create({
         });
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -303,6 +303,11 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("object", record.data.id)) {
+            return;
+        }
+
         tree.select();
 
         var menu = new Ext.menu.Menu();
@@ -858,12 +863,12 @@ pimcore.object.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout: 'fit',
-                    width: 500,
+                    width: 200,
                     bodyStyle: "padding: 10px;",
                     closable: false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();

@@ -12,19 +12,21 @@ class Version20200226102938 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `dependencies`
-            DROP INDEX `sourceid`,
-            DROP INDEX `targetid`,
-            DROP INDEX `targettype`,
-            DROP PRIMARY KEY
+        if($schema->getTable('dependencies')->hasIndex('sourceid')) {
+            $this->addSql('ALTER TABLE `dependencies`
+                DROP INDEX `sourceid`,
+                DROP INDEX `targetid`,
+                DROP INDEX `targettype`,
+                DROP PRIMARY KEY
             ');
 
-        $this->addSql('ALTER TABLE `dependencies`
-            ADD COLUMN `id` BIGINT NOT NULL AUTO_INCREMENT FIRST,
-            ADD UNIQUE INDEX `combi` (`sourcetype`, `sourceid`, `targettype`, `targetid`),
-            ADD INDEX `targettype_targetid` (`targettype`, `targetid`),
-            ADD PRIMARY KEY (`id`);
-        ');
+            $this->addSql('ALTER TABLE `dependencies`
+                ADD COLUMN `id` BIGINT NOT NULL AUTO_INCREMENT FIRST,
+                ADD UNIQUE INDEX `combi` (`sourcetype`, `sourceid`, `targettype`, `targetid`),
+                ADD INDEX `targettype_targetid` (`targettype`, `targetid`),
+                ADD PRIMARY KEY (`id`);
+            ');
+        }
     }
 
     /**
@@ -32,18 +34,20 @@ class Version20200226102938 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql('ALTER TABLE `dependencies`
-            DROP COLUMN `id`,
-            DROP PRIMARY KEY,
-            DROP INDEX `combi`,
-            DROP INDEX `targettype_targetid`;
+        if($schema->getTable('dependencies')->hasColumn('id')) {
+            $this->addSql('ALTER TABLE `dependencies`
+                DROP COLUMN `id`,
+                DROP PRIMARY KEY,
+                DROP INDEX `combi`,
+                DROP INDEX `targettype_targetid`;
             ');
 
-        $this->addSql('ALTER TABLE `dependencies`
-            ADD PRIMARY KEY (`sourcetype`, `sourceid`, `targettype`, `targetid`),
-            ADD INDEX `sourceid` (`sourceid`),
-            ADD INDEX `targetid` (`targetid`),
-            ADD INDEX `targettype` (`targettype`);
-        ');
+            $this->addSql('ALTER TABLE `dependencies`
+                ADD PRIMARY KEY (`sourcetype`, `sourceid`, `targettype`, `targetid`),
+                ADD INDEX `sourceid` (`sourceid`),
+                ADD INDEX `targetid` (`targetid`),
+                ADD INDEX `targettype` (`targettype`);
+            ');
+        }
     }
 }

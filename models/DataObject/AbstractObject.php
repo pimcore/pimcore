@@ -270,9 +270,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'object_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
@@ -550,6 +550,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = self::getCacheKey($this->getParentId());
+            if (Runtime::isRegistered($parentCacheKey)) {
+                /** @var AbstractObject $parent * */
+                $parent = Runtime::get($parentCacheKey);
+                $parent->setChildren(null);
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DataObjectEvent($this);
@@ -564,7 +572,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
 
         //clear object from registry
-        Runtime::set('object_' . $this->getId(), null);
+        Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -801,7 +809,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $d->save();
 
         //set object to registry
-        Runtime::set('object_' . $this->getId(), $this);
+        Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -1298,7 +1306,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'object_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!Runtime::isRegistered($cacheKey)) {
             Runtime::set($cacheKey, $this);
         }
