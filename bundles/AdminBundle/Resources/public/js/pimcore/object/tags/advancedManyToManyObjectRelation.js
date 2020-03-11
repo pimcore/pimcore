@@ -194,6 +194,20 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         fieldInfo: fieldInfo
                     });
                 }.bind(this, this.fieldConfig.columns[i]);
+
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (Ext.isString(value)) {
+                        value = value.split(',');
+                    }
+
+                    if (Ext.isArray(value)) {
+                        return value.map(function (str) {
+                            return t(str);
+                        }).join(',')
+                    } else {
+                        return value;
+                    }
+                }
             } else if (this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
