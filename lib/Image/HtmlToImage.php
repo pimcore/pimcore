@@ -63,7 +63,6 @@ class HtmlToImage
         ];
 
         if (php_sapi_name() !== 'cli') {
-
             $sessionData = Session::useSession(function (AttributeBagInterface $session) {
                 return ['name' => Session::getSessionName(), 'id' => Session::getSessionId()];
             });

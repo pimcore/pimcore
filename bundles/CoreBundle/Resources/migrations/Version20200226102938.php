@@ -12,7 +12,7 @@ class Version20200226102938 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        if($schema->getTable('dependencies')->hasIndex('sourceid')) {
+        if ($schema->getTable('dependencies')->hasIndex('sourceid')) {
             $this->addSql('ALTER TABLE `dependencies`
                 DROP INDEX `sourceid`,
                 DROP INDEX `targetid`,
@@ -34,7 +34,7 @@ class Version20200226102938 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        if($schema->getTable('dependencies')->hasColumn('id')) {
+        if ($schema->getTable('dependencies')->hasColumn('id')) {
             $this->addSql('ALTER TABLE `dependencies`
                 DROP COLUMN `id`,
                 DROP PRIMARY KEY,

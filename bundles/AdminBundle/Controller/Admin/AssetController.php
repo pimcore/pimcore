@@ -341,7 +341,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $response->headers->set('Content-Type', 'text/html');
 
             return $response;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->adminJson([
                 'success' => false,
                 'message' => $e->getMessage()
