@@ -359,6 +359,14 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isUseCurrentDate(): bool
+    {
+        return $this->useCurrentDate;
+    }
+
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -470,6 +478,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $date->setTimestamp($this->getDefaultValue());
 
             return $date;
+        } elseif ($this->isUseCurrentDate()) {
+            return new \Carbon\Carbon();
         }
 
         return null;
