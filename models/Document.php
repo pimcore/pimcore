@@ -23,6 +23,7 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
@@ -791,7 +792,7 @@ class Document extends Element\AbstractElement
 
         try {
             // remove children
-            if ($this->hasChildren()) {
+            if ($this->hasChildren() && !($this instanceof Hardlink || $this instanceof WrapperInterface)) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
