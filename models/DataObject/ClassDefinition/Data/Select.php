@@ -234,7 +234,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $data;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
