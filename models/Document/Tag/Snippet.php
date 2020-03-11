@@ -100,7 +100,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string|null
+     * @return string
      */
     public function frontend()
     {
@@ -111,12 +111,12 @@ class Snippet extends Model\Document\Tag
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$tagHandler->supports($this->view)) {
-            return null;
+            return '';
         }
 
         try {
             if (!$this->snippet instanceof Document\Snippet) {
-                return null;
+                return '';
             }
 
             if (!$this->snippet->isPublished()) {
@@ -178,7 +178,7 @@ class Snippet extends Model\Document\Tag
             }
         }
 
-        return null;
+        return '';
     }
 
     /**

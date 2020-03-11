@@ -104,7 +104,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string|null
+     * @return string
      */
     public function frontend()
     {
@@ -113,7 +113,7 @@ class Renderlet extends Model\Document\Tag
         $tagHandler = $container->get('pimcore.document.tag.handler');
 
         if (!$tagHandler->supports($this->view)) {
-            return null;
+            return '';
         }
 
         if (!$this->options['controller'] && !$this->options['action']) {
@@ -178,7 +178,7 @@ class Renderlet extends Model\Document\Tag
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
