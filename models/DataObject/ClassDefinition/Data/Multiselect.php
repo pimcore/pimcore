@@ -338,7 +338,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -347,7 +347,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
             return implode(',', $data);
         }
 
-        return null;
+        return '';
     }
 
     /**

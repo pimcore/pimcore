@@ -55,12 +55,12 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @var array
      */
-    public $cols;
+    public $cols = [];
 
     /**
      * @var array
      */
-    public $rows;
+    public $rows = [];
 
     /**
      * Type for the generated phpdoc
@@ -158,7 +158,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param object $cols
+     * @param array $cols
      *
      * @return $this
      */
@@ -424,25 +424,23 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
         $value = $this->getDataFromObjectParam($object, $params);
+        $string = '';
 
         if ($value instanceof DataObject\Data\StructuredTable) {
-            $string = '';
             $dataArray = $value->getData();
             foreach ($this->getRows() as $r) {
                 foreach ($this->getCols() as $c) {
                     $string .= $dataArray[$r['key']][$c['key']] . '##';
                 }
             }
-
-            return $string;
         }
 
-        return null;
+        return $string;
     }
 
     /**

@@ -214,7 +214,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -223,7 +223,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             return  $data->getNorthEast()->getLongitude().','.$data->getNorthEast()->getLatitude().'|'.$data->getSouthWest()->getLongitude().','.$data->getSouthWest()->getLatitude();
         }
 
-        return null;
+        return '';
     }
 
     /**

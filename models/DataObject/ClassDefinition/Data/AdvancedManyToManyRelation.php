@@ -508,7 +508,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -525,7 +525,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             return implode(',', $paths);
         }
 
-        return null;
+        return '';
     }
 
     /**

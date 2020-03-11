@@ -68,7 +68,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var string
      */
-    public $data;
+    public $data = '';
 
     /**
      * @var bool
@@ -497,7 +497,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -506,7 +506,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return base64_encode(Serialize::serialize($data));
         }
 
-        return null;
+        return '';
     }
 
     /**

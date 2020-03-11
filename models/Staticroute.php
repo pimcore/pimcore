@@ -137,7 +137,7 @@ class Staticroute extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Staticroute|null
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -166,7 +166,7 @@ class Staticroute extends AbstractModel
      * @param string $name
      * @param int|null $siteId
      *
-     * @return Staticroute|null
+     * @return self|null
      */
     public static function getByName($name, $siteId = null)
     {
@@ -198,7 +198,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @return Staticroute
+     * @return self
      */
     public static function create()
     {

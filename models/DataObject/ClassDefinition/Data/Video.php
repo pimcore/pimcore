@@ -322,7 +322,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -336,7 +336,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return $data->getType() . '~' . $value;
         }
 
-        return null;
+        return '';
     }
 
     /**

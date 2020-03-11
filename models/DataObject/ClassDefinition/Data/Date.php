@@ -316,9 +316,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @deprecated
      *
      * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function getForWebserviceExport($object, $params = [])
     {

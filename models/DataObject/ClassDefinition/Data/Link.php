@@ -321,7 +321,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -330,7 +330,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             return base64_encode(Serialize::serialize($data));
         }
 
-        return null;
+        return '';
     }
 
     /**

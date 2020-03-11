@@ -44,7 +44,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var float

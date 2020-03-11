@@ -391,7 +391,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -400,7 +400,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
             return base64_encode(Serialize::serialize($data));
         }
 
-        return null;
+        return '';
     }
 
     /**

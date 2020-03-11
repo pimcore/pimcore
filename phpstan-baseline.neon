@@ -1776,11 +1776,6 @@ parameters:
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
-			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\CalculatedValue\\:\\:getVersionPreview\\(\\) should return string but returns Pimcore\\\\Model\\\\DataObject\\\\Data\\\\CalculatedValue\\|null\\.$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/CalculatedValue.php
-
-		-
 			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Classificationstore\\:\\:getVersionPreview\\(\\) should return string but returns Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\|null\\.$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
@@ -1827,11 +1822,6 @@ parameters:
 
 		-
 			message: "#^Return type \\(Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getDataFromGridEditor\\(\\) should be compatible with return type \\(Pimcore\\\\Model\\\\Asset\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getDataFromGridEditor\\(\\)$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
-
-		-
-			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getForCsvExport\\(\\) should return string but returns null\\.$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
 

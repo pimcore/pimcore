@@ -37,7 +37,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string

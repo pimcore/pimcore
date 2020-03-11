@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
@@ -264,10 +265,10 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @abstract
      *
-     * @param \Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -282,7 +283,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return $object->$getter()->getTenant() . '%%%%' . $object->$getter()->getField() . '%%%%' . $preSelect ;
         }
 
-        return null;
+        return '';
     }
 
     /**

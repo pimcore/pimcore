@@ -92,7 +92,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $childs = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     public $layout;
 
@@ -622,7 +622,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param array $layout
+     * @param array|null $layout
      *
      * @return $this
      */
@@ -634,7 +634,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getLayout()
     {

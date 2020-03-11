@@ -407,7 +407,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param Model\DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -416,7 +416,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return $data->getValue() . '_' . $data->getUnitId();
         }
 
-        return null;
+        return '';
     }
 
     /**

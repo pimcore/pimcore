@@ -381,7 +381,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -397,7 +397,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return implode(',', $paths);
         }
 
-        return null;
+        return '';
     }
 
     /**

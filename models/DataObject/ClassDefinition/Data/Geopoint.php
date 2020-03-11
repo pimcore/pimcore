@@ -198,7 +198,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -208,7 +208,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
             return $data->getLatitude() . ',' . $data->getLongitude();
         }
 
-        return null;
+        return '';
     }
 
     /**

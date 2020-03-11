@@ -251,7 +251,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param Model\DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -260,7 +260,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return $data->getRealFullPath();
         }
 
-        return null;
+        return '';
     }
 
     /**

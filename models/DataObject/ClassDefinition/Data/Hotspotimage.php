@@ -377,7 +377,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             return base64_encode(Serialize::serialize($data));
         }
 
-        return null;
+        return '';
     }
 
     /**

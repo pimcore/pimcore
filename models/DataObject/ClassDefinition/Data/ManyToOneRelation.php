@@ -416,7 +416,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -425,7 +425,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return Element\Service::getType($data).':'.$data->getRealFullPath();
         }
 
-        return null;
+        return '';
     }
 
     /**

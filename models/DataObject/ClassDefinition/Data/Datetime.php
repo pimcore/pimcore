@@ -285,9 +285,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @deprecated
      *
      * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function getForWebserviceExport($object, $params = [])
     {
