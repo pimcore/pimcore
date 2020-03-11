@@ -792,12 +792,14 @@ class Document extends Element\AbstractElement
 
         try {
             // remove children
-            if ($this->hasChildren() && !($this instanceof Hardlink || $this instanceof WrapperInterface)) {
+            if ($this->hasChildren()) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete(true);
+                    if(!$child instanceof WrapperInterface) {
+                        $child->delete(true);
+                    }
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
