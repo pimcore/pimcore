@@ -188,7 +188,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPrettyUrl()
     {

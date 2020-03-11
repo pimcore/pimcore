@@ -43,7 +43,7 @@ class Link extends Model\Document
     protected $internalType;
 
     /**
-     * Contains object of linked Document|Asset
+     * Contains object of linked Document|Asset|DataObject
      *
      * @var Document|Asset|Model\DataObject\Concrete|null
      */

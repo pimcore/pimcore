@@ -161,7 +161,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
      */
