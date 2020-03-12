@@ -28,7 +28,7 @@ trait Relation
         $strArray = $asArray ? '[]' : '';
 
         // add documents
-        if (method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed()) {
+        if ($this->getDocumentsAllowed()) {
             $documentTypes = $this->getDocumentTypes();
             if (count($documentTypes) == 0) {
                 $class[] = '\Pimcore\Model\Document\Page' . $strArray;
@@ -42,7 +42,7 @@ trait Relation
         }
 
         // add asset
-        if (method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed()) {
+        if ($this->getAssetsAllowed()) {
             $assetTypes = $this->getAssetTypes();
             if (count($assetTypes) == 0) {
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
