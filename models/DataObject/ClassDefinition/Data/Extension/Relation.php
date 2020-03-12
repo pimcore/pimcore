@@ -78,4 +78,11 @@ trait Relation
 
         return $class;
     }
+
+    /**
+     * @return array[
+     *  'classes' => string,
+     * ]
+     */
+    abstract public function getClasses();
 }
