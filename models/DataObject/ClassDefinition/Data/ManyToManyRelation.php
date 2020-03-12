@@ -90,27 +90,27 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @var bool
      */
-    public $assetsAllowed;
+    public $assetsAllowed = false;
 
     /**
      * Allowed asset types
      *
      * @var array
      */
-    public $assetTypes;
+    public $assetTypes = [];
 
     /**
      *
      * @var bool
      */
-    public $documentsAllowed;
+    public $documentsAllowed = false;
 
     /**
      * Allowed document types
      *
      * @var array
      */
-    public $documentTypes;
+    public $documentTypes = [];
 
     /**
      * @return bool
@@ -157,7 +157,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function getDocumentTypes()
     {
-        return $this->documentTypes;
+        return $this->documentTypes ?: [];
     }
 
     /**
