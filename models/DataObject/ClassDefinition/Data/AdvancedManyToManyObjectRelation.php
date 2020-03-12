@@ -845,7 +845,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = $c['key'];
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
