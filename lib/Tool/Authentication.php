@@ -50,7 +50,7 @@ class Authentication
      *
      * @param Request $request
      *
-     * @return User
+     * @return User|null
      */
     public static function authenticateSession(Request $request = null)
     {

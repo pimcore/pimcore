@@ -52,7 +52,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @param array $emailLogs
      *
-     * @return $this
+     * @return static
      */
     public function setEmailLogs($emailLogs)
     {

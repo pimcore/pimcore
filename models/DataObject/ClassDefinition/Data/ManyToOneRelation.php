@@ -303,7 +303,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset|Document|DataObject\AbstractObject
+     * @return Asset|Document|DataObject\AbstractObject|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -413,7 +413,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -423,9 +423,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return Element\Service::getType($data).':'.$data->getRealFullPath();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -483,10 +483,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -497,9 +497,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'subtype' => $data->getType(),
                 'id' => $data->getId()
             ];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

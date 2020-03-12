@@ -96,9 +96,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -132,7 +132,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param string $allowedBrickType
      * @param int $level
      *
-     * @return array
+     * @return array|null
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
     {
@@ -363,7 +363,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -825,7 +825,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param array $params
      * @param int $level
      *
-     * @return array
+     * @return array|null
      */
     private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
     {

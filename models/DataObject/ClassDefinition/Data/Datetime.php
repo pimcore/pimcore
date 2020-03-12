@@ -57,7 +57,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $phpdocType = '\\Carbon\\Carbon';
 
     /**
-     * @var int
+     * @var int|null
      */
     public $defaultValue;
 
@@ -73,7 +73,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -98,7 +98,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime|null
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -139,19 +139,21 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return int|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
         }
+
+        return null;
     }
 
     /**
      * @param int $timestamp
      *
-     * @return \Carbon\Carbon()
+     * @return \Carbon\Carbon
      */
     protected function getDateFromTimestamp($timestamp)
     {
@@ -168,7 +170,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime|false
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -176,7 +178,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $this->getDateFromTimestamp($data / 1000);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -184,7 +186,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return \DateTime|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -237,7 +239,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\AbstractObject $object
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getForCsvExport($object, $params = [])
     {
@@ -254,7 +256,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null|Date|Model\DataObject\ClassDefinition\Data
+     * @return \Carbon\Carbon|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -283,9 +285,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @deprecated
      *
      * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -300,7 +302,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|void
+     * @return \Carbon\Carbon|null
      *
      * @throws \Exception
      */
@@ -309,24 +311,19 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         $timestamp = strtotime($value);
         if (empty($value)) {
             return null;
-        } elseif ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
         }
+        if ($timestamp !== false) {
+            return $this->getDateFromTimestamp($timestamp);
+        }
+        throw new \Exception('cannot get values from web service import - invalid data');
     }
 
     /**
-     * @return Date
+     * @return int|null
      */
     public function getDefaultValue()
     {
-        if ($this->defaultValue !== null) {
-            return $this->defaultValue;
-        //return new Date($this->defaultValue);
-        } else {
-            return 0;
-        }
+        return $this->defaultValue;
     }
 
     /**
@@ -348,7 +345,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param bool|int|null $useCurrentDate
+     * @param bool $useCurrentDate
      *
      * @return $this
      */
@@ -384,16 +381,16 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|Date
+     * @return \Carbon\Carbon|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $thedata = $data[0]['data'];
         if ($thedata) {
             return $this->getDateFromTimestamp($thedata);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /** See parent class.

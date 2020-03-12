@@ -20,7 +20,7 @@ namespace Pimcore\Model\DataObject\Traits;
 trait DirtyIndicatorTrait
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $o_dirtyFields;
 

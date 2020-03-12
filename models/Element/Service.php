@@ -214,7 +214,7 @@ class Service extends Model\AbstractModel
     /**
      * @param array $config
      *
-     * @return DataObject\AbstractObject|Document|Asset
+     * @return DataObject\AbstractObject|Document|Asset|null
      */
     public static function getDependedElement($config)
     {
@@ -226,7 +226,7 @@ class Service extends Model\AbstractModel
             return Document::getById($config['id']);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -439,7 +439,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return AbstractElement|null
+     * @return Asset|DataObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
@@ -460,7 +460,7 @@ class Service extends Model\AbstractModel
      *
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getElementType($element)
     {

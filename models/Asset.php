@@ -58,7 +58,7 @@ class Asset extends Element\AbstractElement
     protected $parentId;
 
     /**
-     * @var Asset
+     * @var Asset|null
      */
     protected $parent;
 
@@ -105,7 +105,7 @@ class Asset extends Element\AbstractElement
     protected $modificationDate;
 
     /**
-     * @var resource
+     * @var resource|null
      */
     protected $stream;
 
@@ -133,7 +133,7 @@ class Asset extends Element\AbstractElement
     /**
      * List of versions
      *
-     * @var array
+     * @var array|null
      */
     protected $versions = null;
 
@@ -145,7 +145,7 @@ class Asset extends Element\AbstractElement
     /**
      * enum('self','propagate') nullable
      *
-     * @var string
+     * @var string|null
      */
     protected $locked;
 
@@ -165,28 +165,28 @@ class Asset extends Element\AbstractElement
     /**
      * Dependencies of this asset
      *
-     * @var Dependency
+     * @var Dependency|null
      */
     protected $dependencies;
 
     /**
      * Contains a list of sibling documents
      *
-     * @var array
+     * @var array|null
      */
     protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
-     * @var bool
+     * @var bool|null
      */
     protected $hasSiblings;
 
     /**
      * Contains all scheduled tasks
      *
-     * @var array
+     * @var array|null
      */
     protected $scheduledTasks = null;
 
@@ -965,9 +965,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -975,7 +975,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
      *
      * @return $this
      */
@@ -1818,7 +1820,7 @@ class Asset extends Element\AbstractElement
      * @param bool $formatted
      * @param int $precision
      *
-     * @return string
+     * @return string|int
      */
     public function getFileSize($formatted = false, $precision = 2)
     {

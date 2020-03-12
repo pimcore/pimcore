@@ -51,7 +51,7 @@ class Tag extends Model\AbstractModel
     public $children;
 
     /**
-     * @var Tag
+     * @var Tag|null
      */
     public $parent;
 

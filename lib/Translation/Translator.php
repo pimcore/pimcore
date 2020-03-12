@@ -359,7 +359,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     /**
      * @param string $domain
      *
-     * @return string
+     * @return string|null
      */
     protected function getBackendForDomain($domain)
     {
@@ -372,7 +372,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             return $backends[$domain];
         }
 
-        return false;
+        return null;
     }
 
     /**

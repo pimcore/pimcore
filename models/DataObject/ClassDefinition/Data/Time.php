@@ -37,12 +37,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public $columnLength = 5;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $minValue;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $maxValue;
 
@@ -52,7 +52,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public $increment = 15 ;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMinValue()
     {
@@ -60,7 +60,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param string $minValue
+     * @param string|null $minValue
      */
     public function setMinValue($minValue)
     {
@@ -72,7 +72,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMaxValue()
     {
@@ -80,7 +80,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param string $maxValue
+     * @param string|null $maxValue
      */
     public function setMaxValue($maxValue)
     {
@@ -183,7 +183,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      * @param string $subject
      * @param string $comparison
      *
-     * @return int
+     * @return bool
      */
     public function isEarlier($subject, $comparison)
     {
@@ -198,7 +198,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      * @param string $subject
      * @param string $comparison
      *
-     * @return int
+     * @return bool
      */
     public function isLater($subject, $comparison)
     {
