@@ -67,9 +67,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      */
     public function next()
     {
-        $var = next($this->items);
-
-        return $var;
+        next($this->items);
     }
 
     /**

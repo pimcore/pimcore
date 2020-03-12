@@ -74,7 +74,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * Element belongs to the document
      *
-     * @var Document\PageSnippet
+     * @var Document\PageSnippet|null
      */
     protected $document;
 
@@ -86,7 +86,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $controller;
 
     /**
-     * @var ViewModelInterface
+     * @var ViewModelInterface|null
      */
     protected $view;
 
@@ -632,7 +632,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $params
      * @abstract
      *
-     * @return \stdClass
+     * @return mixed
      */
     public function getForWebserviceExport($document = null, $params = [])
     {

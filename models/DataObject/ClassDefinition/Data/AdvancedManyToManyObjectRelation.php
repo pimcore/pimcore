@@ -259,7 +259,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -406,7 +406,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -424,9 +424,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -486,7 +486,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -935,7 +935,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ObjectMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

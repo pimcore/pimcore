@@ -67,7 +67,7 @@ class Notification extends AbstractModel
     protected $message;
 
     /**
-     * @var Element\AbstractElement
+     * @var Element\ElementInterface|null
      */
     protected $linkedElement;
 
@@ -266,9 +266,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|Element\AbstractElement
+     * @return null|Element\ElementInterface
      */
-    public function getLinkedElement(): ?Element\AbstractElement
+    public function getLinkedElement(): ?Element\ElementInterface
     {
         return $this->linkedElement;
     }

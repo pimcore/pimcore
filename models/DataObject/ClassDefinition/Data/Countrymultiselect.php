@@ -28,7 +28,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     public $fieldtype = 'countrymultiselect';
 
     /** Restrict selection to comma-separated list of countries.
-     * @var null
+     * @var string|null
      */
     public $restrictTo = null;
 
@@ -51,7 +51,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     }
 
     /**
-     * @param string $restrictTo
+     * @param string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {
@@ -66,7 +66,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRestrictTo()
     {

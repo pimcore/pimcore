@@ -22,9 +22,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
  * @method bool getDocumentsAllowed()
  * @method bool getAssetsAllowed()
  * @method bool getObjectsAllowed()
- * @method string[] getDocumentTypes()
- * @method string[] getAssetTypes()
- * @method string[] getClasses()
+ * @method array getDocumentTypes()
+ * @method array getAssetTypes()
+ * @method array getClasses()
  */
 trait Relation
 {

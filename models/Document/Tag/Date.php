@@ -27,7 +27,7 @@ class Date extends Model\Document\Tag
     /**
      * Contains the date
      *
-     * @var \Carbon\Carbon
+     * @var \Carbon\Carbon|null
      */
     public $date;
 
@@ -54,7 +54,7 @@ class Date extends Model\Document\Tag
     /**
      * Converts the data so it's suitable for the editmode
      *
-     * @return string
+     * @return int|null
      */
     public function getDataEditmode()
     {

@@ -252,7 +252,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      *
      * @return $this
      */

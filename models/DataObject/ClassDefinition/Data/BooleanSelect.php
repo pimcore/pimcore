@@ -135,11 +135,11 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param int|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return bool|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -159,11 +159,11 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param int|bool|null $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return int|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -173,11 +173,11 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param int|bool|null $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -198,7 +198,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param string $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -365,7 +365,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return int
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -379,7 +379,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return int
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -397,7 +397,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return string
+     * @return bool|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -411,7 +411,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return bool|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {

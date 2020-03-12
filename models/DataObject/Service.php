@@ -479,7 +479,7 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      * @param string $key
      *
-     * @return bool
+     * @return string[]|null
      */
     public static function expandGridColumnForExport($helperDefinitions, $key)
     {
@@ -488,7 +488,7 @@ class Service extends Model\Element\Service
             return $config->getValidLanguages();
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -1470,7 +1470,7 @@ class Service extends Model\Element\Service
         }
 
         if (!$fd instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-            return $data;
+            return null;
         }
         $className = $fd->getCalculatorClass();
         $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);

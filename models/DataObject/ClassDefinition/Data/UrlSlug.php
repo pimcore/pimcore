@@ -150,7 +150,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {

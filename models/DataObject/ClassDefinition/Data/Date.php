@@ -74,7 +74,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -99,7 +99,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime|null
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -138,15 +138,17 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @param \DateTime $data
      * @param null|DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return int|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
         }
+
+        return null;
     }
 
     /**
@@ -169,7 +171,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \DateTime
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -177,7 +179,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             return $this->getDateFromTimestamp($data / 1000);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -185,7 +187,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -207,9 +209,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data) {
             return $data->getTimestamp();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -265,7 +267,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -314,9 +316,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @deprecated
      *
      * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -331,7 +333,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|void
+     * @return \Carbon\Carbon|null
      *
      * @throws \Exception
      */
@@ -340,15 +342,16 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $timestamp = strtotime($value);
         if (empty($value)) {
             return null;
-        } elseif ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
         }
+        if ($timestamp !== false) {
+            return $this->getDateFromTimestamp($timestamp);
+        }
+
+        throw new \Exception('cannot get values from web service import - invalid data');
     }
 
     /**
-     * @param int|bool $useCurrentDate
+     * @param bool $useCurrentDate
      *
      * @return $this
      */
@@ -390,9 +393,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $thedata = $data[0]['data'];
         if ($thedata) {
             return $this->getDateFromTimestamp($thedata);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /** See parent class.

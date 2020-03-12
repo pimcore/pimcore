@@ -30,7 +30,7 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
-     * @var string[]
+     * @var bool[]
      */
     protected static $hasListenersCache = [];
 

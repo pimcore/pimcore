@@ -122,7 +122,7 @@ interface CartItemInterface
      * @param string $itemKey
      * @param string $parentKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '');
 

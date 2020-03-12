@@ -520,7 +520,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -537,9 +537,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -551,7 +551,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return array
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -623,10 +623,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -644,9 +644,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return $items;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -852,7 +852,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return Element\ElementInterface[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

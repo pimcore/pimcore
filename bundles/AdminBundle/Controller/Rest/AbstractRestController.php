@@ -300,13 +300,15 @@ abstract class AbstractRestController extends AdminController
     /**
      * @param Request $request
      *
-     * @return string
+     * @throws \Exception
+     *
+     * @return string|null
      */
     protected function buildCondition(Request $request)
     {
         $q = trim($request->get('q'));
         if (!$q) {
-            return;
+            return null;
         }
         $q = json_decode($q, false);
         if (!$q) {
@@ -315,8 +317,6 @@ abstract class AbstractRestController extends AdminController
 
         $condition = Helper::buildSqlCondition($q);
 
-//        var_dump($condition);
-//        die();
 
         return $condition;
     }

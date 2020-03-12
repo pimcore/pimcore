@@ -193,11 +193,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @return string
-     */
-    abstract public function getLocked();
-
-    /**
      * @return array
      */
     public function getUserPermissions()

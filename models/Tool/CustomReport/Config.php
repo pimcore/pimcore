@@ -37,7 +37,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     public $sql = '';
 
     /**
-     * @var string[]
+     * @var array
      */
     public $dataSourceConfig = [];
 
@@ -321,7 +321,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param string[] $dataSourceConfig
+     * @param array $dataSourceConfig
      */
     public function setDataSourceConfig($dataSourceConfig)
     {
