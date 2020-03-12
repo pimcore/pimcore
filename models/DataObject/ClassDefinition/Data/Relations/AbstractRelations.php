@@ -37,7 +37,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @var array
      */
-    public $classes;
+    public $classes = [];
 
     /** Optional path formatter class
      * @var null|string
