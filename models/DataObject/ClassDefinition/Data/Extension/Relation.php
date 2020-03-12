@@ -14,17 +14,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
-/**
- * Class Relation
- *
- * @package Pimcore\Model\DataObject\ClassDefinition\Data\Extension
- *
- * @method bool getDocumentsAllowed()
- * @method bool getAssetsAllowed()
- * @method bool getObjectsAllowed()
- * @method string[] getDocumentTypes()
- * @method string[] getAssetTypes()
- */
 trait Relation
 {
     /**
@@ -84,5 +73,46 @@ trait Relation
      *  'classes' => string,
      * ]
      */
-    abstract public function getClasses();
+    public function getClasses() {
+        return [];
+    }
+
+    /**
+     * @return array[
+     *  'assetTypes' => string,
+     * ]
+     */
+    public function getAssetTypes() {
+        return [];
+    }
+
+    /**
+     * @return array[
+     *  'documentTypes' => string,
+     * ]
+     */
+    public function getDocumentTypes() {
+        return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDocumentsAllowed() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAssetsAllowed() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getObjectsAllowed() {
+        return false;
+    }
 }
