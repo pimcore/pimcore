@@ -417,6 +417,7 @@ class Service extends Model\Element\Service
                         }
                     }
 
+                    // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
                     if (strpos($key, '~') === 0 && empty($data[$key])) {
                         $parent = self::hasInheritableParentObject($object);
 
