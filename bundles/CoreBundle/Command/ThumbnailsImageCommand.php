@@ -36,6 +36,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
+                'id',
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'only create thumbnails of images with this (IDs)'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -145,6 +151,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                 $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
                 exit;
             }
+        }
+        
+        if ($ids = $input->getOption('id')) {
+            $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
         $list = new Asset\Listing();
