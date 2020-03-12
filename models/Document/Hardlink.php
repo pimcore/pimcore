@@ -239,10 +239,6 @@ class Hardlink extends Document
      */
     public function delete(bool $isNested = false)
     {
-
-        // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
-        $this->children = [];
-
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
         $redirects->setCondition('target = ?', $this->getId());
