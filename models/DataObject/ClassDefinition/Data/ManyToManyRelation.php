@@ -84,7 +84,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @var bool
      */
-    public $objectsAllowed;
+    public $objectsAllowed = false;
 
     /**
      *
