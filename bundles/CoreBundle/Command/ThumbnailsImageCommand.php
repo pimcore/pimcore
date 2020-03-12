@@ -36,10 +36,10 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
-                'asset-image',
+                'id',
                 null,
-                InputOption::VALUE_OPTIONAL,
-                'only create thumbnails of image with (ID)'
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'only create thumbnails of images with this (IDs)'
             )
             ->addOption(
                 'thumbnails',
@@ -153,14 +153,8 @@ class ThumbnailsImageCommand extends AbstractCommand
             }
         }
         
-        if ($input->getOption('asset-image')) {
-            $assetImage = Asset::getById($input->getOption('asset-image'));
-            if ($assetImage instanceof Asset\Image) {
-                $conditions[] = "id = '".$assetImage->getId()."'";
-            } else {
-                $this->writeError($input->getOption('asset-image').' is not a valid asset image ID!');
-                exit;
-            }
+        if ($ids = $input->getOption('id')) {
+            $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
         $list = new Asset\Listing();
