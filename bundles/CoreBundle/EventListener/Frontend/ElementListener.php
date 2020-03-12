@@ -126,7 +126,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $this->handleObjectParams($request);
             }
 
-            if($document) {
+            if ($document) {
                 // for public versions
                 $document = $this->handleVersion($request, $document);
 
@@ -189,11 +189,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @param Request $request
      * @param Document|null $document
+     *
      * @return Document|null
      */
     protected function handleAdminUserDocumentParams(Request $request, ?Document $document)
     {
-        if(!$document) {
+        if (!$document) {
             return null;
         }
 

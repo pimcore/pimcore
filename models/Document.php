@@ -797,7 +797,7 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    if(!$child instanceof WrapperInterface) {
+                    if (!$child instanceof WrapperInterface) {
                         $child->delete(true);
                     }
                 }

@@ -148,10 +148,10 @@ class DocumentFallbackListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelController(FilterControllerEvent $event) {
-
+    public function onKernelController(FilterControllerEvent $event)
+    {
         $controller = $event->getController();
-        if(is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
+        if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
             // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704
             return;
         }
@@ -177,11 +177,12 @@ class DocumentFallbackListener implements EventSubscriberInterface
 
     /**
      * @param Request $request
+     *
      * @return bool
      */
     private function isRequestContextDefault(Request $request): bool
     {
-        if($this->isRequestContextDefault === null) {
+        if ($this->isRequestContextDefault === null) {
             $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
         }
 

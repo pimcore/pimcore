@@ -317,7 +317,6 @@ abstract class AbstractRestController extends AdminController
 
         $condition = Helper::buildSqlCondition($q);
 
-
         return $condition;
     }
 
