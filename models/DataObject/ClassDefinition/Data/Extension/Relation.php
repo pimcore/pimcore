@@ -24,7 +24,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
  * @method bool getObjectsAllowed()
  * @method string[] getDocumentTypes()
  * @method string[] getAssetTypes()
- * @method string[] getClasses()
  */
 trait Relation
 {
@@ -67,11 +66,11 @@ trait Relation
 
         // add objects
         if ($this->getObjectsAllowed()) {
-            $classes = $this->getClasses() ? $this->getClasses() : [];
-            if (count($classes) == 0) {
+            $classes = $this->getClasses();
+            if (count($classes) === 0) {
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
-                foreach ($this->getClasses() as $item) {
+                foreach ($classes as $item) {
                     $class[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']) . $strArray);
                 }
             }
