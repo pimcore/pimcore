@@ -36,6 +36,12 @@ class ThumbnailsImageCommand extends AbstractCommand
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
+                'asset-image',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'only create thumbnails of image with (ID)'
+            )
+            ->addOption(
                 'thumbnails',
                 't',
                 InputOption::VALUE_OPTIONAL,
@@ -143,6 +149,16 @@ class ThumbnailsImageCommand extends AbstractCommand
                 $conditions[] = "path LIKE '".$parent->getRealFullPath()."/%'";
             } else {
                 $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
+                exit;
+            }
+        }
+        
+        if ($input->getOption('asset-image')) {
+            $assetImage = Asset::getById($input->getOption('asset-image'));
+            if ($assetImage instanceof Asset\Image) {
+                $conditions[] = "id = '".$assetImage->getId()."'";
+            } else {
+                $this->writeError($input->getOption('asset-image').' is not a valid asset image ID!');
                 exit;
             }
         }
