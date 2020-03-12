@@ -419,11 +419,15 @@ class Service extends Model\Element\Service
 
                     // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
                     if (strpos($key, '~') === 0 && empty($data[$key])) {
-                        $parent = self::hasInheritableParentObject($object);
+                        $type = $keyParts[1];
 
-                        if (!empty($parent)) {
-                            $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
-                            $data['inheritedFields'][$dataKey] = ['inherited' => $parent->getId() != $object->getId(), 'objectid' => $parent->getId()];
+                        if ($type === 'classificationstore') {
+                            $parent = self::hasInheritableParentObject($object);
+
+                            if (!empty($parent)) {
+                                $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
+                                $data['inheritedFields'][$dataKey] = ['inherited' => $parent->getId() != $object->getId(), 'objectid' => $parent->getId()];
+                            }
                         }
                     }
 
@@ -714,7 +718,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param string|null $requestedLanguage
      *
-     * @return string
+     * @return string|null
      */
     private static function getStoreValueForObject($object, $key, $requestedLanguage)
     {
@@ -758,7 +762,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
