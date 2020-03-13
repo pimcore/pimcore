@@ -14,18 +14,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
-/**
- * Class Relation
- *
- * @package Pimcore\Model\DataObject\ClassDefinition\Data\Extension
- *
- * @method bool getDocumentsAllowed()
- * @method bool getAssetsAllowed()
- * @method bool getObjectsAllowed()
- * @method array getDocumentTypes()
- * @method array getAssetTypes()
- * @method array getClasses()
- */
 trait Relation
 {
     /**
@@ -40,7 +28,7 @@ trait Relation
         $strArray = $asArray ? '[]' : '';
 
         // add documents
-        if (method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed()) {
+        if ($this->getDocumentsAllowed()) {
             $documentTypes = $this->getDocumentTypes();
             if (count($documentTypes) == 0) {
                 $class[] = '\Pimcore\Model\Document\Page' . $strArray;
@@ -54,7 +42,7 @@ trait Relation
         }
 
         // add asset
-        if (method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed()) {
+        if ($this->getAssetsAllowed()) {
             $assetTypes = $this->getAssetTypes();
             if (count($assetTypes) == 0) {
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
@@ -67,16 +55,64 @@ trait Relation
 
         // add objects
         if ($this->getObjectsAllowed()) {
-            $classes = $this->getClasses() ? $this->getClasses() : [];
-            if (count($classes) == 0) {
+            $classes = $this->getClasses();
+            if (count($classes) === 0) {
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
-                foreach ($this->getClasses() as $item) {
+                foreach ($classes as $item) {
                     $class[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']) . $strArray);
                 }
             }
         }
 
         return $class;
+    }
+
+    /**
+     * @return array[
+     *  'classes' => string,
+     * ]
+     */
+    public function getClasses() {
+        return [];
+    }
+
+    /**
+     * @return array[
+     *  'assetTypes' => string,
+     * ]
+     */
+    public function getAssetTypes() {
+        return [];
+    }
+
+    /**
+     * @return array[
+     *  'documentTypes' => string,
+     * ]
+     */
+    public function getDocumentTypes() {
+        return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDocumentsAllowed() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAssetsAllowed() {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getObjectsAllowed() {
+        return false;
     }
 }

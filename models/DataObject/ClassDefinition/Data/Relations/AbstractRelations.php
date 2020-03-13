@@ -37,7 +37,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @var array
      */
-    public $classes;
+    public $classes = [];
 
     /** Optional path formatter class
      * @var null|string
@@ -45,11 +45,13 @@ abstract class AbstractRelations extends Data implements
     public $pathFormatterClass;
 
     /**
-     * @return array
+     * @return array[
+     *  'classes' => string,
+     * ]
      */
     public function getClasses()
     {
-        return $this->classes;
+        return $this->classes ?: [];
     }
 
     /**
