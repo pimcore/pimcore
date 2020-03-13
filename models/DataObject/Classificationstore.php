@@ -378,7 +378,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != 'default') {
-            $data = $this->items[$groupId][$keyId]['default'];
+            $data = $this->items[$groupId][$keyId]['default'] ?? null;
         }
 
         // check for inherited value
