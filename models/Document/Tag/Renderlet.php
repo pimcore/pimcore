@@ -160,15 +160,13 @@ class Renderlet extends Model\Document\Tag
                 $moduleOrBundle = $this->options['module'];
             }
 
-            $content = $tagHandler->renderAction(
+            return $tagHandler->renderAction(
                 $this->view,
                 $this->options['controller'],
                 $this->options['action'],
                 $moduleOrBundle,
                 $params
             );
-
-            return $content;
         }
 
         return '';
