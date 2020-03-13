@@ -152,7 +152,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                 exit;
             }
         }
-        
+
         if ($ids = $input->getOption('id')) {
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }

@@ -20,7 +20,7 @@ class Version20200211115044 extends AbstractPimcoreMigration
             try {
                 $relationTable = current($table);
 
-                if(!$schema->getTable($relationTable)->hasIndex('forward_lookup')) {
+                if (!$schema->getTable($relationTable)->hasIndex('forward_lookup')) {
                     $this->addSql('ALTER TABLE `' . $relationTable . '`
                         DROP PRIMARY KEY,
                         DROP INDEX `index`,
@@ -51,7 +51,7 @@ class Version20200211115044 extends AbstractPimcoreMigration
             try {
                 $relationTable = current($table);
 
-                if($schema->getTable($relationTable)->hasIndex('forward_lookup')) {
+                if ($schema->getTable($relationTable)->hasIndex('forward_lookup')) {
                     $this->addSql('ALTER TABLE `' . $relationTable . '`
                     DROP INDEX `forward_lookup`,
                     DROP INDEX `reverse_lookup`,

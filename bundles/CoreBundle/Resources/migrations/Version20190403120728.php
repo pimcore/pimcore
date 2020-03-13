@@ -34,7 +34,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
                 $metaTable = current($table);
 
                 // add index column to metadata tables
-                if(!$schema->getTable($metaTable)->hasColumn('index')) {
+                if (!$schema->getTable($metaTable)->hasColumn('index')) {
                     $this->addSql('ALTER TABLE `' . $metaTable . '` ADD COLUMN `index` int(11) unsigned NOT NULL DEFAULT \'0\'');
                     $this->addSql('ALTER TABLE `' . $metaTable . '` DROP PRIMARY KEY');
                     $this->addSql('ALTER TABLE `' . $metaTable . '` ADD PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`)');
@@ -80,7 +80,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
             $metaTables = $db->fetchAll("SHOW TABLES LIKE 'object\_metadata\_%'");
             foreach ($metaTables as $table) {
                 $metaTable = current($table);
-                if($schema->getTable($metaTable)->hasColumn('index')) {
+                if ($schema->getTable($metaTable)->hasColumn('index')) {
                     $this->addSql('ALTER TABLE `' . $metaTable . '` DROP COLUMN `index`');
                     $this->addSql('ALTER TABLE `' . $metaTable . '` DROP PRIMARY KEY');
                     $this->addSql('ALTER TABLE `' . $metaTable . '` ADD PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`)');
