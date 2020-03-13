@@ -35,7 +35,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'consent';
 
     /**
-     * @var bool
+     * @var int
      */
     public $defaultValue = 0;
 
@@ -49,7 +49,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = [
         'consent' => 'tinyint(1)',
@@ -66,9 +66,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * Width of field
      *
-     * @var string
+     * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -143,7 +143,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return bool
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -154,9 +154,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
                 'noteContent' => $data->getSummaryString(),
                 'noteId' => $data->getNoteId()
             ];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -251,7 +251,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return bool
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -277,11 +277,11 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return bool
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data ? $data->getConsent() : false;
+        return $data ? (string)$data->getConsent() : '';
     }
 
     /**
@@ -309,7 +309,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -330,7 +330,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return DataObject\Data\Consent
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -340,7 +340,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return bool
@@ -362,7 +362,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed
+     * @return DataObject\Data\Consent
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {

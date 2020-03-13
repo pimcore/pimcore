@@ -51,7 +51,7 @@ class Hardlink extends Document
     protected $childrenFromSource;
 
     /**
-     * @return Document\PageSnippet
+     * @return Document|null
      */
     public function getSourceDocument()
     {
@@ -239,10 +239,6 @@ class Hardlink extends Document
      */
     public function delete(bool $isNested = false)
     {
-
-        // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
-        $this->children = [];
-
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
         $redirects->setCondition('target = ?', $this->getId());
@@ -253,10 +249,6 @@ class Hardlink extends Document
         }
 
         parent::delete($isNested);
-
-        // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
-        $this->children = null;
     }
 
     /**

@@ -399,7 +399,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag
+     * @return Tag|null
      */
     public function getElement($name)
     {
@@ -468,7 +468,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Document
+     * @return Document|null
      *
      * @throws \Exception
      */

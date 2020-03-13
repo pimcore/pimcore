@@ -121,9 +121,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -139,9 +139,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return Model\DataObject\Data\ExternalImage
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -175,7 +175,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -189,9 +189,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -203,9 +203,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return Model\DataObject\Data\ExternalImage
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -215,9 +215,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return Model\DataObject\Data\ExternalImage
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -229,7 +229,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param DataObject\Data\ExternalImage|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -247,7 +247,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -259,7 +259,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
             return $data->getUrl();
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -279,10 +279,10 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function getForWebserviceExport($object, $params = [])
     {

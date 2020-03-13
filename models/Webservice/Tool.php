@@ -70,7 +70,7 @@ class Tool
     /**
      * @param mixed $data
      *
-     * @return array
+     * @return mixed
      */
     public static function keyValueReverseMapping($data)
     {

@@ -38,14 +38,14 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
@@ -388,7 +388,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -398,9 +398,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -480,8 +480,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @return array
      */

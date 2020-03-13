@@ -28,7 +28,7 @@ use Pimcore\Tool\HtmlUtils;
 class Scheduledblock extends Block implements BlockInterface
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $cachedCurrentElement = null;
 

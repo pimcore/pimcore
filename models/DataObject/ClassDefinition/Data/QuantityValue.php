@@ -77,7 +77,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * Type for the column to query
      *
-     * @var int
+     * @var array
      */
     public $queryColumnType = [
         'value' => 'double',
@@ -87,7 +87,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = [
         'value' => 'double',
@@ -134,7 +134,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return int
+     * @return float|null
      */
     public function getDefaultValue()
     {
@@ -309,7 +309,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\QuantityValue|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -319,7 +319,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param float $data
+     * @param array $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -347,7 +347,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -414,9 +414,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
             return $data->getValue() . '_' . $data->getUnitId();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -424,9 +424,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param string $importValue
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return float
+     * @return Model\DataObject\Data\QuantityValue|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -435,7 +435,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $value = null;
         if ($values[0] && $values[1]) {
             $number = (float) str_replace(',', '.', $values[0]);
-            $value = new  \Pimcore\Model\DataObject\Data\QuantityValue($number, $values[1]);
+            $value = new Model\DataObject\Data\QuantityValue($number, $values[1]);
         }
 
         return $value;
@@ -448,7 +448,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -467,7 +467,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             ];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -475,10 +475,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param Model\DataObject\AbstractObject $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -490,9 +490,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 'unit' => $data->getUnitId(),
                 'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ''
             ];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

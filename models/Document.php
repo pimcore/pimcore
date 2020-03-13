@@ -23,6 +23,7 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
@@ -52,7 +53,7 @@ class Document extends Element\AbstractElement
     private static $hideUnpublished = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $fullPathCache;
 
@@ -73,7 +74,7 @@ class Document extends Element\AbstractElement
     /**
      * The parent document.
      *
-     * @var Document
+     * @var Document|null
      */
     protected $parent;
 
@@ -144,14 +145,14 @@ class Document extends Element\AbstractElement
     /**
      * Dependencies for this document
      *
-     * @var Dependency
+     * @var Dependency|null
      */
     protected $dependencies;
 
     /**
      * List of Property, concerning the folder
      *
-     * @var array
+     * @var array|null
      */
     protected $properties = null;
 
@@ -184,9 +185,9 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * Check if the document is locked.
+     * enum('self','propagate') nullable
      *
-     * @var string
+     * @var string|null
      */
     protected $locked = null;
 
@@ -351,8 +352,8 @@ class Document extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = Listing::class;
-            $list = self::getModelFactory()->build($listClass);
+            /** @var Listing $list */
+            $list = self::getModelFactory()->build(Listing::class);
             $list->setValues($config);
 
             return $list;
@@ -751,9 +752,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -765,9 +766,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Mark the document as locked.
+     * enum('self','propagate') nullable
      *
-     * @param string $locked
+     * @param string|null $locked
      *
      * @return Document
      */
@@ -796,7 +797,9 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete(true);
+                    if (!$child instanceof WrapperInterface) {
+                        $child->delete(true);
+                    }
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -1184,7 +1187,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the document type.
      *
-     * @param int $type
+     * @param string $type
      *
      * @return Document
      */

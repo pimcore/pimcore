@@ -36,7 +36,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $fieldtype = 'checkbox';
 
     /**
-     * @var bool
+     * @var int|null
      */
     public $defaultValue;
 
@@ -125,7 +125,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return bool
+     * @return int
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -139,13 +139,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return bool
+     * @return int
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $value = $this->getDataForResource($data, $object, $params);
-
-        return $value;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -169,11 +167,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return bool
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string)$data;
     }
 
     /**
@@ -220,7 +218,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return bool
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -230,7 +228,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return bool
