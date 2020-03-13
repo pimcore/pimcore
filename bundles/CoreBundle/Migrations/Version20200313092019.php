@@ -1,0 +1,63 @@
+<?php
+
+namespace Pimcore\Bundle\CoreBundle\Migrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Pimcore\File;
+use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
+
+/**
+ * Migration to adapt new directory path for App and CoreBundle
+ */
+class Version20200313092019 extends AbstractPimcoreMigration
+{
+    public function doesSqlMigrations(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function up(Schema $schema)
+    {
+        // move app migrations to new path app/Resources/migrations -> app/Migrations
+        $oldPath = PIMCORE_APP_ROOT.'/Resources/migrations/';
+        $newPath = PIMCORE_APP_ROOT.'/Migrations/';
+
+        if (!isdir($newPath)) {
+            File::mkdir($newPath);
+        }
+
+        $migrationFiles = glob($oldPath . 'Version*.php');
+        if (is_array($migrationFiles)) {
+            foreach ($migrationFiles as $migrationFile) {
+                $newMigrationFile = str_replace($oldPath, $newPath, $migrationFile);
+                File::rename($migrationFile, $newMigrationFile);
+            }
+        }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function down(Schema $schema)
+    {
+        // move app migrations to old path app/Migrations -> app/Resources/migrations
+        $newPath = PIMCORE_APP_ROOT.'/Migrations/';
+        $oldPath = PIMCORE_APP_ROOT.'/Resources/migrations/';
+
+        if (!isdir($oldPath)) {
+            File::mkdir($oldPath);
+        }
+
+        $migrationFiles = glob($newPath . 'Version*.php');
+        if (is_array($migrationFiles)) {
+            foreach ($migrationFiles as $migrationFile) {
+                $newMigrationFile = str_replace($newPath, $oldPath, $migrationFile);
+                File::rename($migrationFile, $newMigrationFile);
+            }
+        }
+
+    }
+}
