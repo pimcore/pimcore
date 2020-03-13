@@ -20,7 +20,8 @@ class Version20200211115044 extends AbstractPimcoreMigration
             try {
                 $relationTable = current($table);
 
-                $this->addSql('ALTER TABLE `' . $relationTable . '`
+                if(!$schema->getTable($relationTable)->hasIndex('forward_lookup')) {
+                    $this->addSql('ALTER TABLE `' . $relationTable . '`
                         DROP PRIMARY KEY,
                         DROP INDEX `index`,
                         DROP INDEX `dest_id`,
@@ -31,6 +32,7 @@ class Version20200211115044 extends AbstractPimcoreMigration
                         DROP INDEX `ownername`,
                         ADD INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
                         ADD INDEX `reverse_lookup` (`dest_id`, `type`);');
+                }
             } catch (\Exception $e) {
                 $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
             }
@@ -49,7 +51,8 @@ class Version20200211115044 extends AbstractPimcoreMigration
             try {
                 $relationTable = current($table);
 
-                $this->addSql('ALTER TABLE `' . $relationTable . '`
+                if($schema->getTable($relationTable)->hasIndex('forward_lookup')) {
+                    $this->addSql('ALTER TABLE `' . $relationTable . '`
                     DROP INDEX `forward_lookup`,
                     DROP INDEX `reverse_lookup`,
                     ADD PRIMARY KEY (`src_id`, `dest_id`, `ownertype`, `ownername`, `fieldname`, `type`, `position`, `index`),
@@ -60,6 +63,7 @@ class Version20200211115044 extends AbstractPimcoreMigration
                     ADD INDEX `ownertype` (`ownertype`),
                     ADD INDEX `type` (`type`),
                     ADD INDEX `ownername` (`ownername`);');
+                }
             } catch (\Exception $e) {
                 $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
             }
