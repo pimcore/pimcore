@@ -7,7 +7,7 @@ use Pimcore\File;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 /**
- * Migration to adapt new directory path for App and CoreBundle
+ * Migration to adapt new base directory for App and CoreBundle migrations
  */
 class Version20200313092019 extends AbstractPimcoreMigration
 {
