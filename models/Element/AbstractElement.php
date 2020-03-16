@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
+use Pimcore\Model\Element\Traits\KeyValueTrait;
 
 /**
  * @method Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -27,6 +28,7 @@ use Pimcore\Model;
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
 {
     use ElementDumpStateTrait;
+    use KeyValueTrait;
 
     /**
      * @var int
@@ -44,23 +46,29 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->setVersionCount(1);
         }
 
-        $updateTime = time();
-        $this->setModificationDate($updateTime);
+        $modificationDateKey = Service::getElementType($this) === 'object' ? 'o_modificationDate' : 'modificationDate';
+        if ($this->matchValueFromTemp($modificationDateKey, $this->getModificationDate())) {
+            $updateTime = time();
+            $this->setModificationDate($updateTime);
+        }
 
         if (!$this->getCreationDate()) {
-            $this->setCreationDate($updateTime);
+            $this->setCreationDate($this->getModificationDate());
         }
 
-        // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
-        $userId = 0;
-        $user = \Pimcore\Tool\Admin::getCurrentUser();
-        if ($user instanceof Model\User) {
-            $userId = $user->getId();
+        // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
+        $userModificationKey = Service::getElementType($this) === 'object' ? 'o_userModification' : 'userModification';
+        if ($this->matchValueFromTemp($userModificationKey, $this->getUserModification())) {
+            $userId = 0;
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+            if ($user instanceof Model\User) {
+                $userId = $user->getId();
+            }
+            $this->setUserModification($userId);
         }
-        $this->setUserModification($userId);
 
         if ($this->getUserOwner() === null) {
-            $this->setUserOwner($userId);
+            $this->setUserOwner($this->getUserModification());
         }
     }
 

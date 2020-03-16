@@ -1087,6 +1087,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setModificationDate($o_modificationDate)
     {
+        //save value to temp for later comparisons, if set initially
+        if ($o_modificationDate && $this->o_modificationDate === null) {
+            $this->copyValueToTemp('o_modificationDate', $o_modificationDate);
+        }
         $this->o_modificationDate = (int) $o_modificationDate;
 
         return $this;
@@ -1111,6 +1115,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setUserModification($o_userModification)
     {
+        //save value to temp for later comparisons, if set initially
+        if ($o_userModification && $this->o_userModification === null) {
+            $this->copyValueToTemp('o_userModification', $o_userModification);
+        }
         $this->o_userModification = (int) $o_userModification;
 
         return $this;
