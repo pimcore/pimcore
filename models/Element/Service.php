@@ -401,6 +401,16 @@ class Service extends Model\AbstractModel
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
+            } elseif (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
+                // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
+                $keyParts = explode('_', $sourceKey);
+                $counterKey = array_key_last($keyParts);
+                if (intval($keyParts[$counterKey]) > 0) {
+                    $keyParts[$counterKey] = intval($keyParts[$counterKey]) + 1;
+                } else {
+                    $keyParts[] = 1;
+                }
+                $sourceKey = implode('_', $keyParts);
             } else {
                 $sourceKey .= '_copy';
             }
