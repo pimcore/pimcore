@@ -2,6 +2,7 @@
 
 ## 6.6.0
 - Default config for monolog handler `main` in prod environment is now `stream` instead of `fingers_crossed`. If you still want to use `fingers_crossed` please update your project config accordingly. 
+- `app` migration set is now located in `app/Migrations` instead of `app/Resources/migrations` - Pimcore will automatically move existing migration scripts for you (update your VCS!)
 
 ## 6.5.2
 - Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.

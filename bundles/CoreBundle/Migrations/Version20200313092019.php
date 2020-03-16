@@ -30,7 +30,8 @@ class Version20200313092019 extends AbstractPimcoreMigration
         }
 
         $migrationFiles = glob($oldPath . 'Version*.php');
-        if (is_array($migrationFiles)) {
+        if (is_array($migrationFiles) && !empty($migrationFiles)) {
+            $this->writeMessage(sprintf('Moving custom migration scripts from %s to %s', $oldPath, $newPath));
             foreach ($migrationFiles as $migrationFile) {
                 $newMigrationFile = str_replace($oldPath, $newPath, $migrationFile);
                 File::rename($migrationFile, $newMigrationFile);
@@ -52,7 +53,8 @@ class Version20200313092019 extends AbstractPimcoreMigration
         }
 
         $migrationFiles = glob($newPath . 'Version*.php');
-        if (is_array($migrationFiles)) {
+        if (is_array($migrationFiles) && !empty($migrationFiles)) {
+            $this->writeMessage(sprintf('Moving custom migration scripts from %s to %s', $newPath, $oldPath));
             foreach ($migrationFiles as $migrationFile) {
                 $newMigrationFile = str_replace($newPath, $oldPath, $migrationFile);
                 File::rename($migrationFile, $newMigrationFile);
