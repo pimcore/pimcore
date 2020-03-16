@@ -25,7 +25,7 @@ class Version20200313092019 extends AbstractPimcoreMigration
         $oldPath = PIMCORE_APP_ROOT.'/Resources/migrations/';
         $newPath = PIMCORE_APP_ROOT.'/Migrations/';
 
-        if (!isdir($newPath)) {
+        if (!is_dir($newPath)) {
             File::mkdir($newPath);
         }
 
@@ -47,7 +47,7 @@ class Version20200313092019 extends AbstractPimcoreMigration
         $newPath = PIMCORE_APP_ROOT.'/Migrations/';
         $oldPath = PIMCORE_APP_ROOT.'/Resources/migrations/';
 
-        if (!isdir($oldPath)) {
+        if (!is_dir($oldPath)) {
             File::mkdir($oldPath);
         }
 
