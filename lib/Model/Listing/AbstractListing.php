@@ -433,8 +433,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     public function setConditionVariables($conditionVariables)
     {
-        $this->setData(null);
-
         $this->conditionVariables = $conditionVariables;
 
         return $this;

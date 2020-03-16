@@ -239,7 +239,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @deprecated
      *
-     * @param string $object
+     * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -250,9 +250,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -281,7 +281,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return string|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -293,7 +293,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {

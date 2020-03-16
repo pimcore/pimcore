@@ -188,7 +188,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             //pagination for custom view
             $total = $cv
-                ? $childsList->count()
+                ? $filteredTotalCount
                 : $object->getChildAmount(null, $this->getAdminUser());
         }
 

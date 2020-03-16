@@ -159,8 +159,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             var existingSettings = this.getCurrentSplitViewSettings();
 
-            var data = [];
-
             if (existingSettings) {
                 for (var currentLanguage in existingSettings.side) {
                     if (!in_array(currentLanguage, this.frontendLanguages)) {
@@ -478,7 +476,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             });
         } else {
             item.iconCls = "pimcore_icon_language_" + language.toLowerCase();
-            item.title = pimcore.available_languages[language];
+            item.title = t(pimcore.available_languages[language]);
         }
     },
 

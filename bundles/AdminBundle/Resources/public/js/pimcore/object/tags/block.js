@@ -93,12 +93,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     getControls: function (blockElement) {
-
-        var collectionMenu = [];
-
         var items = [];
-
-
 
         if(blockElement) {
             items.push({

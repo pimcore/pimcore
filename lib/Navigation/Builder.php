@@ -63,12 +63,13 @@ class Builder
      * @param \Closure|null $pageCallback
      * @param bool|string $cache
      * @param int|null $maxDepth
+     * @param int|null $cacheLifetime
      *
      * @return mixed|\Pimcore\Navigation\Container
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null)
+    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
     {
         $cacheEnabled = $cache !== false;
 
@@ -113,7 +114,7 @@ class Builder
             // we need to force caching here, otherwise the active classes and other settings will be set and later
             // also written into cache (pass-by-reference) ... when serializing the data directly here, we don't have this problem
             if ($cacheEnabled) {
-                CacheManager::save($navigation, $cacheKey, ['output', 'navigation'], null, 999, true);
+                CacheManager::save($navigation, $cacheKey, ['output', 'navigation'], $cacheLifetime, 999, true);
             }
         }
 

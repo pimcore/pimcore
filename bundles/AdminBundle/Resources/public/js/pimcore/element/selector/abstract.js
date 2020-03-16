@@ -137,8 +137,6 @@ pimcore.element.selector.abstract = Class.create({
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
-        var selModel = grid.getSelectionModel();
-        var selectedRows = selModel.getSelection();
 
         menu.add(new Ext.menu.Item({
             text: t('add'),
@@ -159,6 +157,11 @@ pimcore.element.selector.abstract = Class.create({
 
     getGridSelModel: function() {
         return Ext.create('Ext.selection.RowModel', {mode: (this.parent.multiselect ? "MULTI" : "SINGLE")});
-    }
+    },
 
+    updateTabTitle: function(term) {
+        if(this.parent.tabPanel) {
+            this.parent.tabPanel.setTitle(t('search') + ': <i>' + term + '</i>');
+        }
+    }
 });

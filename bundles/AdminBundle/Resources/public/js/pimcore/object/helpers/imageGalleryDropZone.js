@@ -60,7 +60,6 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
         var match = false;
         var pos = 0;
         var col = -1;
-        var afterP = false;
         var afterMatch = false;
 
         for(var len = itemLength; pos < len; pos++){

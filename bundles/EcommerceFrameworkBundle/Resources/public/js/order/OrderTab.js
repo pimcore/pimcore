@@ -85,7 +85,6 @@ pimcore.bundle.EcommerceFramework.OrderTab = Class.create({
 
     reload: function () {
         try {
-            var d = new Date();
             Ext.get("bundle_ecommerce_order_tab_frame_" + this.id).dom.src = this.src;
         }
         catch (e) {

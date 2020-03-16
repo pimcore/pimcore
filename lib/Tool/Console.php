@@ -288,7 +288,7 @@ class Console
      * @param string $arguments
      * @param string|null $outputFile
      *
-     * @return string
+     * @return int
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
@@ -411,7 +411,7 @@ class Console
 
         Logger::debug('Process started with PID ' . $pid);
 
-        return $pid;
+        return (int)$pid;
     }
 
     /**

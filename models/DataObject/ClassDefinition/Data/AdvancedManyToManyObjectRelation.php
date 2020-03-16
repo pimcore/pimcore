@@ -259,7 +259,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -406,7 +406,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -424,9 +424,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -486,7 +486,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -602,6 +602,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $objectsMetadata = $this->filterMultipleAssignments($objectsMetadata, $object, $params);
 
         $classId = null;
         $objectId = null;
@@ -711,11 +713,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
-        }
-
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        if (!$this->getAllowMultipleAssignments()) {
-            $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
         }
 
         // note, in case of advanced many to many relations we don't want to force the loading of the element
@@ -938,7 +935,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ObjectMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

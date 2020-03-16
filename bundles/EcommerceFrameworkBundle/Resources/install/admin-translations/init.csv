@@ -32,6 +32,7 @@
 "bundle_ecommerce.back-office.order.item-edit.message";"";"Message"
 "bundle_ecommerce.back-office.order.order-items";"";"Items"
 "bundle_ecommerce.back-office.order.payment.history";"";"Payment history"
+"bundle_ecommerce.back-office.order.gifts";"";"Gift items"
 "bundle_ecommerce.back-office.order.price.total";"";"Total price"
 "bundle_ecommerce.back-office.order.price.unit";"";"Unit price"
 "bundle_ecommerce.back-office.order.product";"";"Product"

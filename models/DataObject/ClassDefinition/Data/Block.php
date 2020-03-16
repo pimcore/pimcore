@@ -92,7 +92,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $childs = [];
 
     /**
-     * @var string
+     * @var array|null
      */
     public $layout;
 
@@ -104,7 +104,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     protected $referencedFields = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     public $fieldDefinitionsCache;
 
@@ -134,6 +134,27 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         continue;
                     }
                     $elementData = $blockElement->getData();
+                    //TODO: move validation to checkValidity & throw exception in Pimcore 7
+                    if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
+                        foreach ($elementData->getInternalData() as $language => $fields) {
+                            foreach ($fields as $fieldName => $values) {
+                                $lfd = $fd->getFieldDefinition($fieldName);
+                                if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
+                                    if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
+                                        $contextParams['language'] = $language;
+                                        $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
+                                        $updateParams = array_merge($params, $contextParams);
+                                        $lfd->filterMultipleAssignments($values, $elementData, $updateParams);
+                                        $elementData = $blockElement->getData();
+                                    }
+                                }
+                            }
+                        }
+                    } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation) {
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                            $elementData = $fd->filterMultipleAssignments($elementData, $object, $params);
+                        }
+                    }
                     $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
 
@@ -197,11 +218,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'containerKey' => $this->getName(),
                                 'classId' => $object ? $object->getClassId() : null]);
                             $blockElementRaw['data'] = $data;
-                        }
-                    } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation && is_array($blockElementRaw['data'])) {
-                        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $blockElementRaw['data'] = Element\Service::filterMultipleElements($blockElementRaw['data'], $object, $elementName);
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
@@ -420,14 +436,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        return null;
+        return '';
     }
 
     /**
@@ -435,7 +451,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -447,10 +463,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -492,7 +508,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|void
+     * @return array
      *
      * @throws \Exception
      */
@@ -622,7 +638,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param array $layout
+     * @param array|null $layout
      *
      * @return $this
      */
@@ -634,7 +650,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getLayout()
     {

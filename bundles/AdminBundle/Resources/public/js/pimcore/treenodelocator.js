@@ -320,7 +320,6 @@ pimcore.treenodelocator = function()
         {
             var node = pagingState.node;
             var childNodes = node.childNodes;
-            var sortBy = node.data.sortBy;
             var childCount = childNodes.length;
 
             // Check if child exists
@@ -432,7 +431,6 @@ pimcore.treenodelocator = function()
         {
             treeState.reloaded = true;
             var store = node.getTreeStore();
-            var proxy = store.getProxy();
             store.load({
                 node: node,
                 callback: self.processFullPath

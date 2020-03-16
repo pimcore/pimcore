@@ -120,7 +120,6 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
 
     completeEdit: function(remainVisible) {
         var me = this,
-            field = me.field,
             startValue = me.startValue,
             value;
 

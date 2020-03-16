@@ -268,7 +268,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             var chartFields = [];
             if (data.pieLabelColumn) {
                 chartFields.push(data.pieLabelColumn);
-            };
+            }
             if (data.pieColumn) {
                 chartFields.push({
                     name: data.pieColumn,
@@ -302,10 +302,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            var count = chartStore.getCount();
                             var value = record.get(data.pieColumn);
-
-
                             var sum = chartStore.sum(data.pieColumn);
                             var percentage = sum > 0 ? " (" + Math.round((value * 100 / sum)) + ' %)' : "";
                             tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + value + percentage);

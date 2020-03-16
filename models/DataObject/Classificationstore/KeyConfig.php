@@ -55,7 +55,7 @@ class KeyConfig extends Model\AbstractModel
     public $name;
 
     /** Pseudo column for title
-     * @var string
+     * @var string|null
      */
     public $title;
 

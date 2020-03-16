@@ -152,11 +152,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
     updateImage: function () {
 
-        // 5px padding (-10)
         var body = this.getBody();
-        var width = body.getWidth()-10;
-        var height = body.getHeight()-10;
-
         var path = this.inputField.getValue();
 
         body = body.down('.x-autocontainer-innerCt');

@@ -172,7 +172,7 @@ abstract class Processor
     /**
      * @param int $documentId
      *
-     * @return Document\Printpage
+     * @return Document\PrintAbstract
      *
      * @throws \Exception
      */

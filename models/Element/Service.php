@@ -214,7 +214,7 @@ class Service extends Model\AbstractModel
     /**
      * @param array $config
      *
-     * @return DataObject\AbstractObject|Document|Asset
+     * @return DataObject\AbstractObject|Document|Asset|null
      */
     public static function getDependedElement($config)
     {
@@ -226,7 +226,7 @@ class Service extends Model\AbstractModel
             return Document::getById($config['id']);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -337,61 +337,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
-     *
-     * @param array $data
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param string $fieldname
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public static function filterMultipleElements($data, $object, $fieldname)
-    {
-        $relationItems = [];
-        $objectId = null;
-
-        if ($object instanceof DataObject\Concrete) {
-            $objectId = $object->getId();
-        } elseif (
-            $object instanceof DataObject\Fieldcollection\Data\AbstractData ||
-            $object instanceof DataObject\Localizedfield ||
-            $object instanceof DataObject\Objectbrick\Data\AbstractData
-        ) {
-            $object = $object->getObject();
-            if ($object) {
-                $objectId = $object->getId();
-            }
-        }
-
-        if (is_array($data)) {
-            foreach ($data as $item) {
-                $elementHash = null;
-                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
-                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
-                    }
-                } elseif ($item instanceof Model\Element\ElementInterface) {
-                    $elementHash = Model\Element\Service::getElementHash($item);
-                }
-
-                if ($elementHash && !isset($relationItems[$elementHash])) {
-                    $relationItems[$elementHash] = $item;
-                } elseif (isset($relationItems[$elementHash])) {
-                    @trigger_error(
-                        'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
-                        .  ' multiple times in field' . $fieldname . ' of object id: ' . $objectId,
-                        E_USER_DEPRECATED
-                    );
-                }
-            }
-        }
-
-        return array_values($relationItems);
-    }
-
-    /**
      * @static
      *
      * @param  string $type
@@ -456,6 +401,16 @@ class Service extends Model\AbstractModel
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == 'asset' && $fileExtension = File::getFileExtension($sourceKey)) {
                 $sourceKey = preg_replace('/\.' . $fileExtension . '$/i', '_copy.' . $fileExtension, $sourceKey);
+            } elseif (preg_match("/_copy(|_\d*)$/", $sourceKey) === 1) {
+                // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
+                $keyParts = explode('_', $sourceKey);
+                $counterKey = array_key_last($keyParts);
+                if (intval($keyParts[$counterKey]) > 0) {
+                    $keyParts[$counterKey] = intval($keyParts[$counterKey]) + 1;
+                } else {
+                    $keyParts[] = 1;
+                }
+                $sourceKey = implode('_', $keyParts);
             } else {
                 $sourceKey .= '_copy';
             }
@@ -494,7 +449,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return AbstractElement|null
+     * @return Asset|DataObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
@@ -515,7 +470,7 @@ class Service extends Model\AbstractModel
      *
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
     public static function getElementType($element)
     {
@@ -535,13 +490,37 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param string $className
+     *
+     * @return string|null
+     */
+    public static function getElementTypeByClassName(string $className): ?string
+    {
+        $className = trim($className, '\\');
+        if (is_a($className, AbstractObject::class, true)) {
+            return 'object';
+        } elseif (is_a($className, Asset::class, true)) {
+            return 'asset';
+        } elseif (is_a($className, Document::class, true)) {
+            return 'document';
+        }
+
+        return null;
+    }
+
+    /**
      * @param ElementInterface $element
      *
-     * @return string
+     * @return string|null
      */
-    public static function getElementHash(ElementInterface $element): string
+    public static function getElementHash(ElementInterface $element): ?string
     {
-        return self::getElementType($element) . '-' . $element->getId();
+        $elementType = self::getElementType($element);
+        if ($element->getId() === null || $elementType === null) {
+            return null;
+        }
+
+        return $elementType . '-' . $element->getId();
     }
 
     /**

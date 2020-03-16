@@ -81,7 +81,7 @@ class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -99,9 +99,8 @@ class DataObjectHelperController extends AdminController
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
-        $configListing = $configListing->load();
 
-        return $configListing;
+        return $configListing->load();
     }
 
     /**
@@ -2337,7 +2336,7 @@ class DataObjectHelperController extends AdminController
                             // check if it is a localized field
                             if ($params['language']) {
                                 $localizedField = $class->getFieldDefinition('localizedfields');
-                                if ($localizedField instanceof DataObject\Localizedfield) {
+                                if ($localizedField instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;

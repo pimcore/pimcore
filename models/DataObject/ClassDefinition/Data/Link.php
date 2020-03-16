@@ -64,7 +64,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -318,7 +318,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -328,9 +328,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -338,18 +338,18 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return DataObject\ClassDefinition\Data\Link
+     * @return DataObject\Data\Link|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if ($value instanceof DataObject\Data\Link) {
             return $value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -373,10 +373,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -391,9 +391,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             return $keys;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

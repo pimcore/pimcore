@@ -159,8 +159,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var placeholderComponent = this.createPlaceholder(fieldConfig);
         items.push(placeholderComponent);
 
-        var defaultFieldConfig = this.getDefaultFieldConfig();
-
         var toolbarCfg = {
             region: "north",
             border: false,
@@ -215,8 +213,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             // title: this.fieldConfig.title,
             items: items,
             proxyConfig: {
-                width: defaultFieldConfig.width,
-                height: defaultFieldConfig.height,
+                width: fieldConfig.width,
+                height: fieldConfig.height,
                 respectPlaceholder: true,
                 callback: this
             },

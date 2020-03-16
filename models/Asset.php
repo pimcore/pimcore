@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -58,7 +58,7 @@ class Asset extends Element\AbstractElement
     protected $parentId;
 
     /**
-     * @var Asset
+     * @var Asset|null
      */
     protected $parent;
 
@@ -105,7 +105,7 @@ class Asset extends Element\AbstractElement
     protected $modificationDate;
 
     /**
-     * @var resource
+     * @var resource|null
      */
     protected $stream;
 
@@ -133,7 +133,7 @@ class Asset extends Element\AbstractElement
     /**
      * List of versions
      *
-     * @var array
+     * @var array|null
      */
     protected $versions = null;
 
@@ -145,7 +145,7 @@ class Asset extends Element\AbstractElement
     /**
      * enum('self','propagate') nullable
      *
-     * @var string
+     * @var string|null
      */
     protected $locked;
 
@@ -165,28 +165,28 @@ class Asset extends Element\AbstractElement
     /**
      * Dependencies of this asset
      *
-     * @var Dependency
+     * @var Dependency|null
      */
     protected $dependencies;
 
     /**
      * Contains a list of sibling documents
      *
-     * @var array
+     * @var array|null
      */
     protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
-     * @var bool
+     * @var bool|null
      */
     protected $hasSiblings;
 
     /**
      * Contains all scheduled tasks
      *
-     * @var array
+     * @var array|null
      */
     protected $scheduledTasks = null;
 
@@ -268,9 +268,9 @@ class Asset extends Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'asset_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -552,7 +552,7 @@ class Asset extends Element\AbstractElement
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
+                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
                         $run = $retries + 1;
                         $waitTime = rand(1, 5) * 100000; // microseconds
                         Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
@@ -795,14 +795,14 @@ class Asset extends Element\AbstractElement
         $this->getDao()->update();
 
         //set asset to registry
-        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $this);
+        $cacheKey = self::getCacheKey($this->getId());
+        \Pimcore\Cache\Runtime::set($cacheKey, $this);
         if (get_class($this) == 'Asset' || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
-            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
-            $asset = Asset::getById($this->getId());
-            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
+            \Pimcore\Cache\Runtime::set($cacheKey, null);
+            Asset::getById($this->getId()); // call it to load it to the runtime cache again
         }
 
         $this->closeStream();
@@ -965,9 +965,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -975,7 +975,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
      *
      * @return $this
      */
@@ -1076,7 +1078,7 @@ class Asset extends Element\AbstractElement
         $this->clearDependentCache();
 
         // clear asset from registry
-        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
@@ -1087,7 +1089,7 @@ class Asset extends Element\AbstractElement
     public function clearDependentCache($additionalTags = [])
     {
         try {
-            $tags = ['asset_' . $this->getId(), 'asset_properties', 'output'];
+            $tags = [$this->getCacheTag(), 'asset_properties', 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
@@ -1818,7 +1820,7 @@ class Asset extends Element\AbstractElement
      * @param bool $formatted
      * @param int $precision
      *
-     * @return string
+     * @return string|int
      */
     public function getFileSize($formatted = false, $precision = 2)
     {
@@ -1944,7 +1946,7 @@ class Asset extends Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'asset_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }

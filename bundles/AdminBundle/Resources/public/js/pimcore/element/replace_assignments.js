@@ -301,14 +301,14 @@ pimcore.element.replace_assignments = Class.create({
             });
 
             this.progressBarWin = new Ext.Window({
-                title: t("please_wait"),
+                title: t("replace"),
                 layout: 'fit',
-                width: 500,
+                width: 200,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,
-                modal: true,
-                items: [this.progressBar]
+                items: [this.progressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.progressBarWin.show();

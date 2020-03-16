@@ -42,9 +42,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'numeric';
 
     /**
-     * @var float
+     * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var float
@@ -380,7 +380,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return float|int|string
+     * @return float|int|string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -591,7 +591,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param float|int|string $data
      * @param array $params
      *
-     * @return array|null
+     * @return float|int|string|null
      */
     public function preSetData($object, $data, $params = [])
     {

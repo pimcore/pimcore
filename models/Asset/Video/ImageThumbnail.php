@@ -35,7 +35,7 @@ class ImageThumbnail
     protected $timeOffset;
 
     /**
-     * @var Model\Asset\Video
+     * @var Image|null
      */
     protected $imageAsset;
 

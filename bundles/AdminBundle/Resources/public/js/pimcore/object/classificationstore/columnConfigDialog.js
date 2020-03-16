@@ -30,8 +30,6 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
     handleSelectionWindowClosed: function() {
         if (this.keysAdded == 0 && !this.requestIsPending) {
             // no keys added, remove the node
-            var store = this.ownerTree.getStore();
-            var nodeId = this.node.getId()
             this.node.remove();
         }
     },

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -82,7 +83,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_parentId;
 
     /**
-     * @var self
+     * @var self|null
      */
     protected $o_parent;
 
@@ -151,7 +152,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency[]
+     * @var Model\Dependency|null
      */
     protected $o_dependencies;
 
@@ -269,9 +270,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'object_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
@@ -368,6 +369,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if ($className) {
                 $listClass = $className . '\\Listing';
+                /** @var DataObject\Listing $list */
                 $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
@@ -492,9 +494,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -502,7 +504,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $o_locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $o_locked
      *
      * @return $this
      */
@@ -549,6 +553,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = self::getCacheKey($this->getParentId());
+            if (Runtime::isRegistered($parentCacheKey)) {
+                /** @var AbstractObject $parent * */
+                $parent = Runtime::get($parentCacheKey);
+                $parent->setChildren(null);
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DataObjectEvent($this);
@@ -563,7 +575,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
 
         //clear object from registry
-        Runtime::set('object_' . $this->getId(), null);
+        Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -650,27 +662,25 @@ class AbstractObject extends Model\Element\AbstractElement
                         Logger::info($er);
                     }
 
-                    if ($e instanceof Model\Element\ValidationException) {
-                        throw $e;
-                    }
-
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    }
-
                     // set "HideUnpublished" back to the value it was originally
                     self::setHideUnpublished($hideUnpublishedBackup);
 
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                    } elseif ($e instanceof DeadlockException) {
+                        // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                        if ($retries < ($maxRetries - 1)) {
+                            $run = $retries + 1;
+                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
-                        usleep($waitTime); // wait specified time until we restart the transaction
+                            usleep($waitTime); // wait specified time until we restart the transaction
+                        } else {
+                            // if the transaction still fail after $maxRetries retries, we throw out the exception
+                            Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                            throw $e;
+                        }
                     } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
                         throw $e;
                     }
                 }
@@ -802,7 +812,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $d->save();
 
         //set object to registry
-        Runtime::set('object_' . $this->getId(), $this);
+        Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -1299,7 +1309,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'object_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!Runtime::isRegistered($cacheKey)) {
             Runtime::set($cacheKey, $this);
         }

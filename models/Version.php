@@ -299,6 +299,7 @@ class Version extends AbstractModel
         $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Templating\Model\ViewModelInterface'));
         $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Psr\Container\ContainerInterface'));
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         $newData = $copier->copy($data);
 
         return $newData;

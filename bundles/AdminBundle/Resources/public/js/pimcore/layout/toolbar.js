@@ -1056,7 +1056,7 @@ pimcore.layout.toolbar = Class.create({
         if (perspectiveCfg.inToolbar("search")) {
             var searchItems = [];
 
-            if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
+            if ((user.isAllowed("documents") || user.isAllowed("assets") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
                 searchItems.push({
                     text: t("quicksearch"),
                     iconCls: "pimcore_nav_icon_quicksearch",
@@ -1071,7 +1071,8 @@ pimcore.layout.toolbar = Class.create({
                 pimcore.helpers.itemselector(false, function (selection) {
                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
                     }, {type: [type]},
-                    {moveToTab: true,
+                    {
+                        asTab: true,
                         context: {
                             scope: "globalSearch"
                         }
@@ -1386,12 +1387,12 @@ pimcore.layout.toolbar = Class.create({
                     var progressWin = new Ext.Window({
                         title: t("generate_page_previews"),
                         layout:'fit',
-                        width:500,
+                        width:200,
                         bodyStyle: "padding: 10px;",
                         closable:false,
                         plain: true,
-                        modal: false,
-                        items: [progressBar]
+                        items: [progressBar],
+                        listeners: pimcore.helpers.getProgressWindowListeners()
                     });
 
                     progressWin.show();

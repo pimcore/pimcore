@@ -162,7 +162,7 @@ pimcore.document.tree = Class.create({
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -332,6 +332,10 @@ pimcore.document.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("document", record.data.id)) {
+            return;
+        }
 
         var menu = new Ext.menu.Menu();
         var perspectiveCfg = this.perspectiveCfg;
@@ -1068,7 +1072,7 @@ pimcore.document.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type, enableInheritance, language) {
-        pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+        pimcore.helpers.addTreeNodeLoadingIndicator("document", record.get('id'));
 
         if (typeof language !== "string") {
             language = false;
@@ -1105,12 +1109,12 @@ pimcore.document.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();

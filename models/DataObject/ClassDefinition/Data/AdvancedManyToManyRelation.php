@@ -28,7 +28,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -349,7 +349,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -505,7 +505,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -523,9 +523,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -570,7 +570,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -684,6 +684,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
 
         $classId = null;
         $objectId = null;
@@ -795,11 +797,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
-        if (!$this->getAllowMultipleAssignments()) {
-            $data = Element\Service::filterMultipleElements($data, $object, $this->getName());
-        }
-
         // note, in case of advanced many to many relations we don't want to force the loading of the element
         // instead, ask the database directly
         return Element\Service::filterUnpublishedAdvancedElements($data);
@@ -880,7 +877,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getColumns()
     {
@@ -947,7 +944,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ElementMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

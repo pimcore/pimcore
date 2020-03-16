@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 class Pdf extends Model\Document\Tag
 {
     /**
-     * @var int
+     * @var int|null
      */
     public $id;
 

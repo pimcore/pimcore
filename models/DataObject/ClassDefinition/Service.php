@@ -127,6 +127,7 @@ class Service
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
+        $fieldCollection = clone $fieldCollection;
         $fieldCollection->setKey(null);
         $fieldCollection->setFieldDefinitions([]);
 
@@ -167,6 +168,7 @@ class Service
      */
     public static function generateObjectBrickJson($objectBrick)
     {
+        $objectBrick = clone $objectBrick;
         $objectBrick->setKey(null);
         $objectBrick->setFieldDefinitions([]);
 

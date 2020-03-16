@@ -75,6 +75,9 @@ class Dependency extends AbstractModel
     }
 
     /**
+     * Used when element gets deleted. Removes entries (by source = element) and
+     * schedules a sanity check for the affected targets.
+     *
      * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element)
@@ -83,7 +86,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * Cleanup the dependencies for current source id
+     * Cleanup the dependencies for current source id.
+     * Can be used for updating the dependencies.
      */
     public function clean()
     {

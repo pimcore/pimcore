@@ -302,7 +302,7 @@ class AssetHelperController extends AdminController
      * @param string $language
      * @param string|null $keyPrefix
      *
-     * @return array
+     * @return array|null
      */
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {

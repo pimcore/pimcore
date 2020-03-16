@@ -281,7 +281,6 @@ pimcore.object.classes.klass = Class.create({
             var allowed = false;
 
             if('object' !== typeof dataComp) {
-                var tt = typeof dataComp;
                 if (dataComp.prototype.allowIn[this.allowedInType]) {
                     allowed = true;
                 }
@@ -441,7 +440,6 @@ pimcore.object.classes.klass = Class.create({
             }
 
             if (record.data.type == "data") {
-                var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
                     text: t('clone'),
                     iconCls: "pimcore_icon_clone",
@@ -1076,8 +1074,6 @@ pimcore.object.classes.klass = Class.create({
             theData.name = nodeLabel;
             theData.datatype = "data";
             theData.fieldtype = type;
-
-            var isLeaf = this.leaf;
 
             if (!removeExisting) {
                 var matches = nodeLabel.match(/\d+$/);

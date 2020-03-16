@@ -480,7 +480,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
     openConfig: function(id) {
 
-        var sorters = this.groupsStore.getSorters();
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var params = {
