@@ -559,7 +559,9 @@ class AbstractObject extends Model\Element\AbstractElement
             if (Runtime::isRegistered($parentCacheKey)) {
                 /** @var AbstractObject $parent * */
                 $parent = Runtime::get($parentCacheKey);
-                $parent->setChildren(null);
+                if($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
             }
         } catch (\Exception $e) {
             $this->rollBack();

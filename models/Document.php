@@ -827,7 +827,9 @@ class Document extends Element\AbstractElement
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
                 /** @var Document $parent * */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
-                $parent->setChildren(null);
+                if($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
             }
         } catch (\Exception $e) {
             $this->rollBack();
