@@ -559,7 +559,7 @@ class AbstractObject extends Model\Element\AbstractElement
             if (Runtime::isRegistered($parentCacheKey)) {
                 /** @var AbstractObject $parent * */
                 $parent = Runtime::get($parentCacheKey);
-                if($parent instanceof self) {
+                if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
             }

@@ -827,7 +827,7 @@ class Document extends Element\AbstractElement
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
                 /** @var Document $parent * */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
-                if($parent instanceof self) {
+                if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
             }

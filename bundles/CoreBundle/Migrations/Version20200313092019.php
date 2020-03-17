@@ -60,6 +60,5 @@ class Version20200313092019 extends AbstractPimcoreMigration
                 File::rename($migrationFile, $newMigrationFile);
             }
         }
-
     }
 }

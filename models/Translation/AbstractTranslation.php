@@ -260,6 +260,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         if ($translationItem instanceof self) {
             return $translationItem->getTranslation($language);
         }
+
         return null;
     }
 
