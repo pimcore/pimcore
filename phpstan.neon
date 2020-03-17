@@ -12,7 +12,7 @@ parameters:
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
-        - '**/migrations/Version*.php'
+        - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
         - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'

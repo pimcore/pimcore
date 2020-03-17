@@ -322,7 +322,8 @@ class Thumbnail
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
-            $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+            $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+            $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
             $webpSupportBackup = null;
 
             if ($isAutoFormat) {

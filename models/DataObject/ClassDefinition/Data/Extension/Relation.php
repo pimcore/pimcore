@@ -73,7 +73,8 @@ trait Relation
      *  'classes' => string,
      * ]
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         return [];
     }
 
@@ -82,7 +83,8 @@ trait Relation
      *  'assetTypes' => string,
      * ]
      */
-    public function getAssetTypes() {
+    public function getAssetTypes()
+    {
         return [];
     }
 
@@ -91,28 +93,32 @@ trait Relation
      *  'documentTypes' => string,
      * ]
      */
-    public function getDocumentTypes() {
+    public function getDocumentTypes()
+    {
         return [];
     }
 
     /**
      * @return bool
      */
-    public function getDocumentsAllowed() {
+    public function getDocumentsAllowed()
+    {
         return false;
     }
 
     /**
      * @return bool
      */
-    public function getAssetsAllowed() {
+    public function getAssetsAllowed()
+    {
         return false;
     }
 
     /**
      * @return bool
      */
-    public function getObjectsAllowed() {
+    public function getObjectsAllowed()
+    {
         return false;
     }
 }

@@ -27,6 +27,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
      * @var array
      */
@@ -868,7 +869,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }

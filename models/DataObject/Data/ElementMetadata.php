@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject;
 class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
+
     /**
      * @var string
      */
@@ -88,19 +89,24 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     public function __call($name, $arguments)
     {
         if (substr($name, 0, 3) == 'get') {
-            $key = strtolower(substr($name, 3, strlen($name) - 3));
+            $key = substr($name, 3, strlen($name) - 3);
+            $idx = array_searchi($key, $this->columns);
 
-            if (in_array($key, $this->columns)) {
-                return $this->data[$key];
+            if ($idx !== false) {
+                $correctedKey = $this->columns[$idx];
+                return isset($this->data[$correctedKey]) ? $this->data[$correctedKey] : null;
             }
 
             throw new \Exception("Requested data $key not available");
         }
 
         if (substr($name, 0, 3) == 'set') {
-            $key = strtolower(substr($name, 3, strlen($name) - 3));
-            if (in_array($key, $this->columns)) {
-                $this->data[$key] = $arguments[0];
+            $key = substr($name, 3, strlen($name) - 3);
+            $idx = array_searchi($key, $this->columns);
+
+            if ($idx !== false) {
+                $correctedKey = $this->columns[$idx];
+                $this->data[$correctedKey] = $arguments[0];
                 $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
