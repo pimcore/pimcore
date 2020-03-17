@@ -97,8 +97,14 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         }
 
         if (this.options.className) {
-            if (this.options.className != data.className) {
-                return false;
+            if(Array.isArray(this.options.className)) {
+                if (this.options.className.indexOf(data.className) < 0) {
+                    return false;
+                }
+            } else {
+                if (this.options.className != data.className) {
+                    return false;
+                }
             }
         }
 
@@ -124,8 +130,14 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         }
 
         if (this.options.className) {
-            if (this.options.className != data.className) {
-                return false;
+            if(Array.isArray(this.options.className)) {
+                if (this.options.className.indexOf(data.className) < 0) {
+                    return false;
+                }
+            } else {
+                if (this.options.className != data.className) {
+                    return false;
+                }
             }
         }
 

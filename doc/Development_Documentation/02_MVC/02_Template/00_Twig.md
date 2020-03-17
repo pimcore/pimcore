@@ -1,6 +1,6 @@
 # Twig
 
-Pimcore, starting with version 5, fully supports the Twig templating engine which is favored in many Symfony projects
+Pimcore fully supports the Twig templating engine which is favored in many Symfony projects
 and third party bundles. You can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/2.x/)
@@ -80,7 +80,7 @@ template will be used for auto-rendering when the controller does not return a r
 
 ## Twig Reference
 
-To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see the [Twig Demo](https://github.com/pimcore/demo-basic-twig)
+To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
 as first reference how to use Pimcore with Twig. 
 
 Although we're working on adding Twig examples throughout the documentation where applicable, here follows a list of 
@@ -202,7 +202,10 @@ editable, we introduced a function called `pimcore_iterate_block` to allow walki
 Used to interact with navigations. See [Navigation](../../03_Documents/03_Navigation.md) for details. Simplified example:
 
 ```twig
-{% set navigation = pimcore_build_nav(document) %}
+{% set navigation = pimcore_build_nav({
+    active: document,
+    root: navRootDocument
+}) %}
 {{ pimcore_render_nav(navigation) }}
 
 {# you can also fetch the renderer instance and call custom render methods #}

@@ -24,8 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 class Authentication
 {
     /**
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      *
      * @return null|User
      */
@@ -50,7 +50,7 @@ class Authentication
      *
      * @param Request $request
      *
-     * @return User
+     * @return User|null
      */
     public static function authenticateSession(Request $request = null)
     {
@@ -114,34 +114,32 @@ class Authentication
     }
 
     /**
-     * @param $username
-     * @param $token
+     * @param string $token
      * @param bool $adminRequired
      *
      * @return null|User
      */
-    public static function authenticateToken($username, $token, $adminRequired = false)
+    public static function authenticateToken($token, $adminRequired = false)
     {
-        $user = User::getByName($username);
+        $username = null;
+        $timestamp = null;
+        try {
+            $decrypted = self::tokenDecrypt($token);
+            list($timestamp, $username) = $decrypted;
+        } catch (CryptoException $e) {
+            return null;
+        }
 
+        $user = User::getByName($username);
         if (self::isValidUser($user)) {
             if ($adminRequired and !$user->isAdmin()) {
                 return null;
             }
 
-            $passwordHash = $user->getPassword();
-
-            try {
-                $decrypted = self::tokenDecrypt($passwordHash, $token);
-            } catch (CryptoException $e) {
-                return null;
-            }
-
-            $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
             date_default_timezone_set('UTC');
 
-            if ($timestamp > time() or $timestamp < (time() - (60 * 30))) {
+            if ($timestamp > time() or $timestamp < (time() - (60 * 60 * 24))) {
                 return null;
             }
             date_default_timezone_set($timeZone);
@@ -154,7 +152,7 @@ class Authentication
 
     /**
      * @param User $user
-     * @param $password
+     * @param string $password
      *
      * @return bool
      */
@@ -177,7 +175,7 @@ class Authentication
     }
 
     /**
-     * @param $user
+     * @param User|null $user
      *
      * @return bool
      */
@@ -191,8 +189,8 @@ class Authentication
     }
 
     /**
-     * @param $username
-     * @param $plainTextPassword
+     * @param string $username
+     * @param string $plainTextPassword
      *
      * @return bool|false|string
      *
@@ -209,8 +207,8 @@ class Authentication
     }
 
     /**
-     * @param $username
-     * @param $plainTextPassword
+     * @param string $username
+     * @param string $plainTextPassword
      *
      * @return string
      */
@@ -222,32 +220,29 @@ class Authentication
     }
 
     /**
-     * @param $username
-     * @param $passwordHash
+     * @param string $username
      *
      * @return string
      */
-    public static function generateToken($username, $passwordHash)
+    public static function generateToken($username)
     {
-        if (empty($passwordHash)) {
-            throw new \InvalidArgumentException('Can\'t generate token for an empty password');
-        }
+        $secret = \Pimcore::getContainer()->getParameter('secret');
 
         $data = time() - 1 . '|' . $username;
-        $token = Crypto::encryptWithPassword($data, $passwordHash);
+        $token = Crypto::encryptWithPassword($data, $secret);
 
         return $token;
     }
 
     /**
-     * @param $passwordHash
-     * @param $token
+     * @param string $token
      *
      * @return array
      */
-    public static function tokenDecrypt($passwordHash, $token)
+    public static function tokenDecrypt($token)
     {
-        $decrypted = Crypto::decryptWithPassword($token, $passwordHash);
+        $secret = \Pimcore::getContainer()->getParameter('secret');
+        $decrypted = Crypto::decryptWithPassword($token, $secret);
 
         return explode('|', $decrypted);
     }

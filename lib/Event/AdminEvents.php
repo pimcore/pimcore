@@ -329,6 +329,18 @@ final class AdminEvents
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
      * Arguments:
+     *  - icons | array | the list of selectable icons
+     *  - classId | string | classid of class definition
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const CLASS_OBJECT_ICONS_PRE_SEND_DATA = 'pimcore.admin.class.dataobject.preSendData';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
+     * Arguments:
      *  - list | array | the list of object bricks
      *  - objectId | int | id of the origin object
      *
@@ -379,4 +391,32 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT = 'pimcore.admin.resolve.element';
+
+    /**
+     * Fired before the an element is opened
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementController
+     * Arguments:
+     *     none
+     *
+     * @Event("Pimcore\Event\Admin\ElementAdminStyleEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_ELEMENT_ADMIN_STYLE = 'pimcore.admin.resolve.elementAdminStyle';
+
+    /**
+     * Allows you to modify whether a permission on an element is granted or not
+     *
+     * Subject: \Pimcore\Model\Element\AbstractElement
+     * Arguments:
+     *  - isAllowed | bool | the original "isAllowed" value as determined by pimcore. This can be modfied
+     *  - permissionType | string | the permission that is checked
+     *  - user | \Pimcore\Model\User | user the permission is checked for
+     *
+     * @Event("Pimcore\Event\Model\ElementEvent")
+     *
+     * @var string
+     */
+    const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
 }

@@ -132,6 +132,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     checkForInheritance: function () {
+
+        // do not run when tab is not active
+        if(document.hidden) {
+            return;
+        }
+
         if (!this.edit.layout.rendered) {
             throw "edit not available";
         }
@@ -164,14 +170,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     addTab: function () {
 
-        // icon class
-        var iconClass = this.data.general.o_type == "variant" ? "pimcore_icon_variant" : " pimcore_icon_object";
         if (this.data.general["iconCls"]) {
             iconClass = this.data.general["iconCls"];
         } else if (this.data.general["icon"]) {
             iconClass = pimcore.helpers.getClassForIcon(this.data.general["icon"]);
         }
-
 
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + this.id;
@@ -212,7 +215,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
             if(this.options && this.options['uiState']) {
-                this.setUiState(this.tab, this.options['uiState']);
+                this.setUiState(this.tabbar, this.options['uiState']);
             }
         }.bind(this, tabId));
 
@@ -361,12 +364,23 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.save.bind(this, "unpublish"),
-                menu: [{
-                    text: t('save_close'),
-                    iconCls: "pimcore_icon_save",
-                    handler: this.unpublishClose.bind(this)
-                }]
+                handler: this.save.bind(this, "version"),
+                menu: [
+                    {
+                        text: t('save_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: function() {
+                            this.save("version");
+                            this.close();
+                        }.bind(this)
+                    },
+                    {
+                        text: t('save_only_scheduled_tasks'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.save.bind(this, "scheduler", "scheduler"),
+                        hidden: !this.isAllowed("settings") || this.data.general.o_published
+                    }
+                ]
             });
 
 
@@ -377,21 +391,21 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
-                    text: t('save_pubish_close'),
-                    iconCls: "pimcore_icon_save",
-                    handler: this.publishClose.bind(this)
-                },
+                        text: t('save_pubish_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.publishClose.bind(this)
+                    },
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "version"),
-                        hidden: !this.isAllowed("save")
+                        hidden: !this.isAllowed("save") || !this.data.general.o_published
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings")
+                        hidden: !this.isAllowed("settings") || !this.data.general.o_published
                     }
                 ]
             });
@@ -450,7 +464,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 var menu = [];
                 for (var i = 0; i < this.data.validLayouts.length; i++) {
-                    var menuLabel = ts(this.data.validLayouts[i].name);
+                    var menuLabel = t(this.data.validLayouts[i].name);
                     if (this.data.currentLayoutId == this.data.validLayouts[i].id) {
                         menuLabel = "<b>" + menuLabel + "</b>";
                     }
@@ -481,10 +495,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             buttons.push({
+                xtype: "splitbutton",
                 tooltip: t("show_metainfo"),
                 iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
-                handler: this.showMetaInfo.bind(this)
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
             });
 
 
@@ -504,6 +520,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 });
             }
 
+            if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+                buttons.push({
+                    tooltip: t('share_via_notifications'),
+                    iconCls: "pimcore_icon_share",
+                    scale: "medium",
+                    handler: this.shareViaNotifications.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -514,7 +539,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: ts(this.data.general.o_className),
+                text: t(this.data.general.o_className),
                 scale: "medium"
             });
 
@@ -625,17 +650,20 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return data;
     },
 
+    close: function() {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
+    },
+
     saveClose: function (only) {
         if (this.save()) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }
     },
 
     publishClose: function () {
         this.publish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this))
     },
 
@@ -676,8 +704,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     unpublishClose: function () {
         this.unpublish();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        this.close();
     },
 
     saveToSession: function (callback) {
@@ -746,15 +773,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
 
-                                pimcore.helpers.updateObjectStyle(this.id, rdata.treeData);
+                                pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
                                 pimcore.plugin.broker.fireEvent("postSaveObject", this);
 
                                 // for internal use ID.
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
-                            }
-                            else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                                    rdata.message, rdata.stack, rdata.code);
                             }
                         } catch (e) {
                             pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
@@ -809,12 +832,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         params = params || {};
         var uiState = null;
 
-        if(!params['layoutId']) {
+        // Reload layout when explicitly set to false
+        if (params['layoutId'] === false) {
+            params['layoutId'] = null;
+        } else if (params['layoutId'] !== 0 && !params['layoutId']) {
             params['layoutId'] = this.data.currentLayoutId;
         }
 
         if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {
-            uiState = this.getUiState(this.tab);
+            uiState = this.getUiState(this.tabbar);
         }
 
         this.tab.on("close", function () {
@@ -833,45 +859,61 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         pimcore.helpers.closeObject(this.id);
     },
 
+    getMetaInfo: function() {
+        return {
+            id: this.data.general.o_id,
+            path: this.data.general.fullpath,
+            parentid: this.data.general.o_parentId,
+            classid: this.data.general.o_classId,
+            "class": this.data.general.o_className,
+            modificationdate: this.data.general.o_modificationDate,
+            creationdate: this.data.general.o_creationDate,
+            usermodification: this.data.general.o_userModification,
+            userowner: this.data.general.o_userOwner,
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
+        };
+    },
+
     showMetaInfo: function () {
+        var metainfo = this.getMetaInfo();
 
         new pimcore.element.metainfo([
             {
                 name: "id",
-                value: this.data.general.o_id
+                value: metainfo.id
             },
             {
                 name: "path",
-                value: this.data.general.fullpath
+                value: metainfo.path
             }, {
                 name: "parentid",
-                value: this.data.general.o_parentId
+                value: metainfo.parentid
             }, {
                 name: "classid",
-                value: this.data.general.o_classId
+                value: metainfo.classid
             }, {
                 name: "class",
-                value: this.data.general.o_className
+                value: metainfo.class
             }, {
                 name: "modificationdate",
                 type: "date",
-                value: this.data.general.o_modificationDate
+                value: metainfo.modificationdate
             }, {
                 name: "creationdate",
                 type: "date",
-                value: this.data.general.o_creationDate
+                value: metainfo.creationdate
             }, {
                 name: "usermodification",
                 type: "user",
-                value: this.data.general.o_userModification
+                value: metainfo.usermodification
             }, {
                 name: "userowner",
                 type: "user",
-                value: this.data.general.o_userOwner
+                value: metainfo.userowner
             },
             {
                 name: "deeplink",
-                value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
+                value: metainfo.deeplink
             }
         ], "object");
     },
@@ -923,5 +965,19 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }.bind(this));
         }
+    },
+
+    shareViaNotifications: function () {
+        if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+            var elementData = {
+                id:this.id,
+                type:'object',
+                published:this.data.general.o_published,
+                path:this.data.general.fullpath
+            };
+            if (pimcore.globalmanager.get("new_notifications")) {
+                pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+            }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     }
 });

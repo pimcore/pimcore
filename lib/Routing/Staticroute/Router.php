@@ -65,10 +65,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $localeParams = [];
 
-    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer, Config $config)
     {
         $this->context = $context;
         $this->configNormalizer = $configNormalizer;
+        $this->config = $config;
     }
 
     /**
@@ -147,7 +153,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
         if (isset($parameters['site'])) {
-            $config = Config::getSystemConfig();
             $site = $parameters['site'];
 
             if (!empty($site)) {
@@ -166,8 +171,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                     ]);
                 }
             } else {
-                if ($needsHostname && !empty($config->general->domain)) {
-                    $hostname = $config->general->domain;
+                if ($needsHostname && !empty($this->config['general']['domain'])) {
+                    $hostname = $this->config['general']['domain'];
                 }
             }
         }
@@ -179,7 +184,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
             $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
             $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
-
+            unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
 
@@ -206,7 +211,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        return $this->doMatch($request->getPathInfo());
+        return $this->doMatch($request->getPathInfo(), $request);
     }
 
     /**
@@ -219,10 +224,11 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
+     * @param Request $request
      *
      * @return array
      */
-    protected function doMatch($pathinfo)
+    protected function doMatch($pathinfo, Request $request = null)
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -230,6 +236,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
+            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+                $method = $request->getMethod();
+
+                if (!in_array($method, $route->getMethods(), true)) {
+                    continue;
+                }
+            }
+
             if ($routeParams = $route->match($pathinfo, $params)) {
                 Staticroute::setCurrentRoute($route);
 

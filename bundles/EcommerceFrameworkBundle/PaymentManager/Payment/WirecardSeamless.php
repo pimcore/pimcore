@@ -20,13 +20,16 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\SnippetResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -36,7 +39,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
-class WirecardSeamless extends AbstractPayment
+class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 
@@ -300,10 +303,20 @@ class WirecardSeamless extends AbstractPayment
         return $this->templatingEngine->render($this->partial, $params);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $snippet = $this->initPayment($price, $config->asArray());
+
+        return new SnippetResponse($orderAgent->getOrder(), $snippet);
+    }
+
     public function getInitPaymentRedirectUrl($config)
     {
-        /** @var CartInterface $cart */
         if (!$cart = $config['cart']) {
+            /** @var CartInterface $cart */
             throw new \Exception('no cart sent');
         }
 
@@ -373,7 +386,7 @@ class WirecardSeamless extends AbstractPayment
         $redirectURL = $result['redirectUrl'];
 
         if (!$redirectURL) {
-            if (\Pimcore::inDebugMode(DebugMode::LOG)) {
+            if (\Pimcore::inDebugMode()) {
                 Logger::error('seamless result: ' . var_export($result, true));
             }
             throw new \Exception('redirect url could not be evalutated');
@@ -412,9 +425,9 @@ class WirecardSeamless extends AbstractPayment
      * This method adds additional fields to Wirecard Seamless, so that order items
      * can be transmitted and visualized in Paypal (during the payment process and in the Paypal invoice email).
      *
-     * @param $fields
+     * @param array $fields
      * @param \Pimcore\Model\DataObject\OnlineShopOrder $order
-     * @param $config
+     * @param array $config
      *
      * @return array
      */
@@ -448,7 +461,7 @@ class WirecardSeamless extends AbstractPayment
 
         $priceModifications = $order->getPriceModifications();
         foreach ($priceModifications as $modification) {
-            /** @var $modification OrderPriceModifications */
+            /** @var OrderPriceModifications $modification */
             $net = $modification->getNetAmount();
             $amount = $modification->getAmount();
             $taxRate = round((($amount / $net) - 1) * 100, 2);
@@ -589,7 +602,7 @@ class WirecardSeamless extends AbstractPayment
         }
 
         // computes the fingerprint from the fingerprint string
-        $fingerprint = $this->calculateFingerprint($fingerprintString, $this->secret);
+        $fingerprint = $this->calculateFingerprint($fingerprintString);
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
             && ($mandatoryFingerPrintFields == 3)
@@ -641,7 +654,7 @@ class WirecardSeamless extends AbstractPayment
      * execute payment
      *
      * @param PriceInterface|null $price
-     * @param null $reference
+     * @param string|null $reference
      *
      * @throws \Exception
      *
@@ -709,7 +722,7 @@ class WirecardSeamless extends AbstractPayment
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @throws \Exception
      *
@@ -721,9 +734,9 @@ class WirecardSeamless extends AbstractPayment
     }
 
     /**
-     * @param $reference
-     * @param $transactionId
-     * @param $paymentType
+     * @param string $reference
+     * @param string $transactionId
+     * @param string $paymentType
      *
      * @return bool|Status
      */
@@ -785,8 +798,8 @@ class WirecardSeamless extends AbstractPayment
     }
 
     /**
-     * @param $url
-     * @param $params
+     * @param string $url
+     * @param array $params
      *
      * @return string[]
      */
@@ -814,7 +827,7 @@ class WirecardSeamless extends AbstractPayment
     /**
      * Environment was kept optional for backwards compatibility, but should be passed if possible
      *
-     * @param $response
+     * @param array $response
      * @param EnvironmentInterface|null $environment
      *
      * @return CartInterface|null
@@ -839,6 +852,8 @@ class WirecardSeamless extends AbstractPayment
                 return $cart;
             }
         }
+
+        return null;
     }
 
     protected function encodeOrderIdent($orderIdent)

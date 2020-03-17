@@ -20,7 +20,7 @@ namespace Pimcore\Model\DataObject\Traits;
 trait DirtyIndicatorTrait
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $o_dirtyFields;
 
@@ -33,7 +33,7 @@ trait DirtyIndicatorTrait
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -49,10 +49,8 @@ trait DirtyIndicatorTrait
     /**
      * marks the given field as dirty
      *
-     * @param $field
+     * @param string $field
      * @param bool $dirty
-     *
-     * @return mixed
      */
     public function markFieldDirty($field, $dirty = true)
     {

@@ -1,12 +1,13 @@
 <?php
     /**
-     * @var \Pimcore\Model\Element\ElementInterface $element
+     * @var \Pimcore\Model\Element\AbstractElement $element
      */
+    $element = $this->element;
     $this->get("translate")->setDomain("admin");
 ?>
-<div class="data-table <?= $cls ?>">
+<div class="data-table <?= $this->cls ?>">
     <table>
-        <?php if($element instanceof \Pimcore\Model\DataObject) { ?>
+        <?php if($element instanceof \Pimcore\Model\DataObject\Concrete) { ?>
             <tr>
                 <th><?= $this->translate('class') ?></th>
                 <td><?= $element->getClassName() ?> [<?= $element->getClassId() ?>]</td>
@@ -23,7 +24,7 @@
         <?php if($element->getProperty('language')) { ?>
             <tr>
                 <th><?= $this->translate('language') ?></th>
-                <td style="padding-left: 40px; background: url(<?= str_replace(PIMCORE_WEB_ROOT, '', Pimcore\Tool::getLanguageFlagFile($element->getProperty('language'))) ?>) left top no-repeat; background-size: 31px 21px;">
+                <td style="padding-left: 40px; background: url(<?= \Pimcore\Tool::getLanguageFlagFile($element->getProperty('language'), false); ?>) left top no-repeat; background-size: 31px 21px;">
                     <?php
                     $locales = \Pimcore\Tool::getSupportedLocales();
                     ?>

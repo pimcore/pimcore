@@ -25,9 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
 {
     /**
-     * Loads a list of translations for the specified parameters, returns an array of Translation elements
-     *
-     * @return array
+     * @return string
      */
     public static function getTableName()
     {

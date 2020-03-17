@@ -71,24 +71,22 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @throws UnsupportedException
+     * Should return a float
      *
-     * @return float
+     * @return void
      */
     public function getSubTotalNetPrice()
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('getSubTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
-     *
      * @param float $subTotalPrice
      */
     public function setSubTotalNetPrice($subTotalPrice)
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('setSubTotalNetPrice not implemented for ' . get_class($this));
     }
 
@@ -113,46 +111,42 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @throws UnsupportedException
+     * Should return a float
      *
-     * @return float
+     * @return void
      */
     public function getTotalNetPrice()
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
-     *
      * @param float $totalPrice
      */
     public function setTotalNetPrice($totalPrice)
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
+     * Should return an array
      *
      * @return array
      */
     public function getTaxInfo()
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('getTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
-     * @throws UnsupportedException
-     *
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo)
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('setTaxInfo not implemented for ' . get_class($this));
     }
 
@@ -179,7 +173,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem[]
+     * @return AbstractOrderItem[]
      */
     public function getItems()
     {
@@ -187,7 +181,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem[] $items
+     * @param AbstractOrderItem[] $items
      *
      * @throws UnsupportedException
      */
@@ -196,14 +190,22 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
         throw new UnsupportedException('setItems is not implemented for ' . get_class($this));
     }
 
+    /**
+     * @throws UnsupportedException
+     *
+     * @return AbstractOrderItem[]
+     */
     public function getGiftItems()
     {
         throw new UnsupportedException('getGiftItems is not implemented for ' . get_class($this));
     }
 
+    /**
+     * @param AbstractOrderItem[] $giftItems
+     */
     public function setGiftItems($giftItems)
     {
-        //prevent throwing an exception for backward compatibility
+        // @TODO Throw UnsupportedException or change to abstract method in v7.0
         Logger::err('setGiftItems not implemented for ' . get_class($this));
     }
 
@@ -239,6 +241,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param \Pimcore\Model\DataObject\Fieldcollection $priceModifications
      *
      * @return void
@@ -249,6 +253,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getOrderState()
@@ -257,6 +263,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $orderState
      *
      * @return $this
@@ -267,7 +275,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return string
+     * @throws UnsupportedException
+     *
+     * @return int
      */
     public function getCartId()
     {
@@ -275,7 +285,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $cartId
+     * @throws UnsupportedException
+     *
+     * @param int $cartId
      *
      * @return void
      */
@@ -295,6 +307,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param \Pimcore\Model\DataObject\Fieldcollection $paymentInfo
      *
      * @return void
@@ -321,6 +335,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getComment()
@@ -329,6 +345,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $comment
      *
      * @return $this
@@ -339,6 +357,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerEMail()
@@ -347,6 +367,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerEMail
      *
      * @return $this
@@ -357,6 +379,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerCountry()
@@ -365,6 +389,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerCountry
      *
      * @return $this
@@ -375,6 +401,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerCity()
@@ -383,6 +411,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerCity
      *
      * @return $this
@@ -393,6 +423,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerZip()
@@ -401,6 +433,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerZip
      *
      * @return $this
@@ -411,6 +445,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerStreet()
@@ -419,6 +455,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerStreet
      *
      * @return $this
@@ -429,6 +467,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return mixed
      */
     public function getCustomerCompany()
@@ -437,6 +477,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $customerCompany
      *
      * @return $this
@@ -447,6 +489,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getCustomerFirstname()
@@ -455,7 +499,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerFirstame
+     * @throws UnsupportedException
+     *
+     * @param string $customerFirstname
      *
      * @return $this
      */
@@ -465,6 +511,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getCustomerLastname()
@@ -473,7 +521,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param string $customerLastame
+     * @throws UnsupportedException
+     *
+     * @param string $customerLastname
      *
      * @return $this
      */
@@ -483,7 +533,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryEMail()
     {
@@ -491,6 +543,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryEMail
      *
      * @return $this
@@ -501,7 +555,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryCountry()
     {
@@ -509,6 +565,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryCountry
      *
      * @return $this
@@ -519,7 +577,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryCity()
     {
@@ -527,6 +587,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryCity
      *
      * @return $this
@@ -537,7 +599,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryZip()
     {
@@ -545,6 +609,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryZip
      *
      * @return $this
@@ -555,7 +621,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryStreet()
     {
@@ -563,6 +631,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryStreet
      *
      * @return $this
@@ -573,7 +643,9 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @return mixed
+     * @throws UnsupportedException
+     *
+     * @return string
      */
     public function getDeliveryCompany()
     {
@@ -581,6 +653,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryCompany
      *
      * @return $this
@@ -591,6 +665,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getDeliveryFirstname()
@@ -599,6 +675,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryFirstname
      *
      * @return $this
@@ -609,6 +687,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getDeliveryLastname()
@@ -617,6 +697,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $deliveryLastname
      *
      * @return $this
@@ -642,6 +724,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param string $currency
      *
      * @return $this
@@ -652,6 +736,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @return string
      */
     public function getCurrency()
@@ -661,6 +747,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
 
     /**
      * Get voucherTokens - Voucher Tokens
+     *
+     * @throws UnsupportedException
      *
      * @return array
      */
@@ -672,6 +760,8 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * Set voucherTokens - Voucher Tokens
      *
+     * @throws UnsupportedException
+     *
      * @param array $voucherTokens
      *
      * @return \Pimcore\Model\DataObject\OnlineShopOrder
@@ -679,5 +769,17 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     public function setVoucherTokens($voucherTokens)
     {
         throw new UnsupportedException('setVoucherTokens is not implemented for ' . get_class($this));
+    }
+
+    /**
+     * return cart modification time stamp
+     *
+     * @throws UnsupportedException
+     *
+     * @return int
+     */
+    public function getCartModificationTimestamp()
+    {
+        throw new UnsupportedException('getCartModificationTimestamp is not implemented for ' . get_class($this));
     }
 }

@@ -6,8 +6,12 @@ use Mpay24\Mpay24;
 use Mpay24\Mpay24Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\SnippetResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -23,9 +27,8 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @see https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/introduction
  *
- * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
-class Mpay24Seamless extends AbstractPayment
+class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     /**
      * @var string[]
@@ -38,6 +41,7 @@ class Mpay24Seamless extends AbstractPayment
     private $successURL;
     private $errorURL;
     private $confirmationURL;
+    private $authorizedData;
 
     public function __construct(array $options, EngineInterface $templatingEngine)
     {
@@ -71,13 +75,17 @@ class Mpay24Seamless extends AbstractPayment
 
         $resolver->setAllowedTypes('payment_methods', 'array');
         $resolver->setAllowedTypes('partial', 'string');
+        $resolver->setAllowedTypes('testSystem', 'bool');
+        $resolver->setAllowedTypes('debugMode', 'bool');
 
         $notEmptyValidator = function ($value) {
             return !empty($value);
         };
 
         foreach ($resolver->getRequiredOptions() as $requiredProperty) {
-            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+            if (!in_array($requiredProperty, ['debugMode', 'testSystem'])) {
+                $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+            }
         }
 
         //$resolver->setAllowedValues('testSystem', ['SHA1', 'SHA256', 'SHA512']);
@@ -85,7 +93,9 @@ class Mpay24Seamless extends AbstractPayment
             return !empty($value);
         };
         foreach ($resolver->getRequiredOptions() as $requiredProperty) {
-            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+            if (!in_array($requiredProperty, ['debugMode', 'testSystem'])) {
+                $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+            }
         }
 
         return $resolver;
@@ -151,14 +161,25 @@ class Mpay24Seamless extends AbstractPayment
         $params = [];
         $params['tokenizer'] = $tokenizer;
         $params['paymentMethods'] = $this->ecommerceConfig['payment_methods'];
+        $params['enabledPaymentMethods'] = isset($config['enabledPaymentMethods']) ? $config['enabledPaymentMethods'] : array_keys($params['paymentMethods']);
 
         return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
     }
 
     /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $snippet = $this->initPayment($price, $config->asArray());
+
+        return new SnippetResponse($orderAgent->getOrder(), $snippet);
+    }
+
+    /**
      * Get payment redirect URL after payment form has been submitted with a post.
      *
-     * @param $config
+     * @param array $config
      *
      * @return string[] first parameter contains redirect URL, second parameter contains error message if there is any.
      * if there is an error message is it up to you to redirect to the suggested URL, which might not
@@ -217,25 +238,47 @@ class Mpay24Seamless extends AbstractPayment
 
             // All fields are optional, but most of them are highly recommended
             //@see https://docs.mpay24.com/docs/paypal for extensions (payment - method specific)
+            $customerName = $order->getCustomer() ? $order->getCustomer()->getLastname().' '.$order->getCustomer()->getFirstname() : '';
             $additional = [
-                // "customerID" => "customer123", // not set due to GDPR; required if useProfile is true
-                //"customerName" => "Jon Doe", // not set due to GDPR;
+                'customerID' => $order->getCustomer() ? $order->getCustomer()->getId() : '', // ensure GDPR compliance
+                'customerName' => $customerName, // ensure GDPR compliance
                 'order' =>
                     [
-                        'description' => \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription')
+                        'description' => sprintf(
+                            \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription'),
+                            $order->getOrdernumber(), $order->getId())
                     ],
                 'successURL' => $this->successURL,
                 'errorURL' => $this->errorURL,
                 'confirmationURL' => $this->confirmationURL,
-                'language' => $this->getProviderCompatibleLocale($request)
+                'language' => strtoupper($this->getProviderCompatibleLocale($request))
             ];
 
-            //add information on item level
-            //@todo switch to Mpay24SDK library, see https://github.com/mpay24/mpay24-php/pull/79#issuecomment-383528608
-            $additional = $this->addOrderItemPositions($order, $paymentType, $additional);
+            /* Version with Mpay24 page (not seamless)
+            $mdxi = new Mpay24Order();
+            $mdxi->Order->Tid               = $paymentInfo->getInternalPaymentId();
+            $mdxi->Order->TemplateSet->setLanguage(strtoupper($this->getProviderCompatibleLocale($request)));
+            $mdxi->Order->PaymentTypes->Payment->setType($paymentType);
+            $mdxi->Order->ShoppingCart->Description =  \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription');
+            $mdxi->Order->Price             = round($order->getTotalPrice(), 2);
+            $mdxi->Order->Currency          = $order->getCurrency();
+            $mdxi->Order->URL->Success      = $this->successURL;
+            $mdxi->Order->URL->Error        = $this->errorURL;
+            $mdxi->Order->URL->Confirmation = $this->confirmationURL;
+            $mdxi = $this->addOrderItemPositions2($mdxi, $order);
+            $result = $mpay24->paymentPage($mdxi);
+            */
 
-            $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(),
-                $payment, $additional);
+            //add information on item level
+            $additional = [];
+            // @note: for item-level transmission of price information, the MPAY24 vendor folder currently must
+            // be manually updated on every upgrade:
+            // @see https://github.com/mpay24/mpay24-php/pull/79#issuecomment-383528608
+            // if payment with Paypal won't work, then deactivate this line (although this line is very cool)
+            //$additional = $this->addOrderItemPositions($order, $paymentType, $additional);
+
+            $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(), $payment, $additional);
+
             if ($result->getReturnCode() == 'REDIRECT') {
                 return [$result->getLocation(), ''];
             } elseif ($result->hasStatusOk()) {
@@ -256,13 +299,18 @@ class Mpay24Seamless extends AbstractPayment
 
                 //errText may be empty (e.g. on EXTERNAL_ERROR - invalid exceed date of CC).
                 $errorText = $result->getErrText();
+                $t = \Pimcore::getContainer()->get('translator');
                 if (empty($errorText)) {
-                    $errorText = \Pimcore::getContainer()->get('translator')->trans('mpay24.general.payment-failed');
+                    $errorText = $t->trans('mpay24.general.payment-failed');
+                } else {
+                    $errorText = sprintf($t->trans('mpay24.general.payment-failed-with-reason'), $errorText);
                 }
 
                 return [$forwardUrl, $errorText];
             }
         }
+
+        return [];
     }
 
     private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional): array
@@ -270,19 +318,26 @@ class Mpay24Seamless extends AbstractPayment
         $checkSum = 0.0;
         $checkSumVat = 0.0;
 
+        $orderTotalPrice = round($order->getTotalPrice(), 2);
+        $orderTotalVat = round($orderTotalPrice - $order->getTotalNetPrice(), 2);
+
         $pos = 1;
         $additional['order']['shoppingCart'] = [];
         foreach ($order->getItems() as $orderItem) {
             $totalPrice = round($orderItem->getTotalPrice(), 2);
             $vat = round($totalPrice - $orderItem->getTotalNetPrice(), 2);
             $checkSum += $totalPrice;
-            $checkSumVat += $vat;
+
+            $itemPrice = round($totalPrice / $orderItem->getAmount(), 2);
+            $itemVat = round($vat / $orderItem->getAmount(), 2);
+            $checkSumVat += $itemVat * $orderItem->getAmount();
+
             $additional['order']['shoppingCart']['item-'.$pos] = [
                 'productNr' => $orderItem->getProduct()->getOSProductNumber(),
                 'description' => $orderItem->getProduct()->getOSName(),
                 'quantity' => $orderItem->getAmount(),
-                'tax' => $vat * 100,
-                'amount' => $totalPrice * 100,
+                'tax' => round($itemVat * 100, 2),
+                'amount' => round($itemPrice * 100, 2),
             ];
             $pos++;
         }
@@ -293,10 +348,12 @@ class Mpay24Seamless extends AbstractPayment
             $vat = round($totalPrice - $modification->getNetAmount(), 2);
             $checkSum += $totalPrice;
             $checkSumVat += $vat;
+
             //@see: pull-request made to allow formatting of order item positions: https://github.com/mpay24/mpay24-php/pull/79/commits
+            $modificationTrans = \Pimcore::getContainer()->get('translator')->trans('mpay24.order.modification.'.$modification->getName());
             $additional['order']['shoppingCart']['item-'.$pos] = [
-                'productNr' => $modification->getName(),
-                'descrption' => $modification->getName(),
+                'productNr' => $modificationTrans,
+                'description' => $modificationTrans,
                 'quantity' => 1,
                 'tax' => $vat * 100,
                 'amount' => $totalPrice * 100,
@@ -304,12 +361,12 @@ class Mpay24Seamless extends AbstractPayment
             $pos++;
         }
 
-        if ($checkSum != $order->getTotalPrice()) {
+        if (round($checkSum, 2) != $orderTotalPrice) {
             $difference = $order->getTotalPrice() - $checkSum;
             $differenceVat = round($order->getTotalPrice() - $order->getTotalNetPrice(), 2) - $checkSumVat;
             $additional['order']['shoppingCart']['item-'.$pos] = [
                 'productNr' => 'Balance',
-                'descrption' => 'Balance',
+                'description' => 'Balance',
                 'quantity' => 1,
                 'tax' => $differenceVat * 100,
                 'amount' => $difference * 100,
@@ -410,7 +467,7 @@ class Mpay24Seamless extends AbstractPayment
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *

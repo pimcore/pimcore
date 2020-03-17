@@ -22,7 +22,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Search\Backend\Data\Dao;
 
+/**
+ * @method Dao getDao()
+ */
 class Data extends \Pimcore\Model\AbstractModel
 {
     /**
@@ -92,7 +96,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public $userModification;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $data;
 
@@ -102,27 +106,13 @@ class Data extends \Pimcore\Model\AbstractModel
     public $properties;
 
     /**
-     * @param null $element
+     * @param Element\ElementInterface $element
      */
     public function __construct($element = null)
     {
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
         }
-    }
-
-    /**
-     * @return \Pimcore\Model\Dao\AbstractDao
-     *
-     * @throws \Exception
-     */
-    public function getDao()
-    {
-        if (!$this->dao) {
-            $this->initDao('\\Pimcore\\Model\\Search\\Backend\\Data');
-        }
-
-        return $this->dao;
     }
 
     /**
@@ -134,7 +124,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param Data\Id $id
      *
      * @return $this
      */
@@ -174,7 +164,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -194,7 +184,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $subtype
+     * @param string $subtype
      *
      * @return $this
      */
@@ -214,7 +204,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -354,7 +344,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return $this
      */
@@ -433,10 +423,12 @@ class Data extends \Pimcore\Model\AbstractModel
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
                     try {
                         $contentText = $element->getText();
-                        $contentText = Encoding::toUTF8($contentText);
-                        $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
-                        $contentText = preg_replace('/[ ]+/', ' ', $contentText);
-                        $this->data .= ' ' . $contentText;
+                        if ($contentText) {
+                            $contentText = Encoding::toUTF8($contentText);
+                            $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
+                            $contentText = preg_replace('/[ ]+/', ' ', $contentText);
+                            $this->data .= ' ' . $contentText;
+                        }
                     } catch (\Exception $e) {
                         Logger::error($e);
                     }
@@ -493,9 +485,9 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
-     * @return mixed|string
+     * @return string
      */
     protected function cleanupData($data)
     {
@@ -520,7 +512,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Element\ElementInterface $element
      *
      * @return Data
      */

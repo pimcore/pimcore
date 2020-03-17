@@ -96,7 +96,7 @@ class Image extends Model\Document\Tag
     /**
      * @see TagInterface::getData
      *
-     * @return mixed
+     * @return array
      */
     public function getData()
     {
@@ -113,6 +113,9 @@ class Image extends Model\Document\Tag
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getDataForResource()
     {
         return [
@@ -173,7 +176,7 @@ class Image extends Model\Document\Tag
                 'cropLeft' => $this->cropLeft,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
-                'predefinedDataTemplates' => $this->getOptions()['predefinedDataTemplates']
+                'predefinedDataTemplates' => $this->getOptions()['predefinedDataTemplates'] ?? null,
             ];
         }
 
@@ -216,11 +219,12 @@ class Image extends Model\Document\Tag
         $image = $this->getImage();
 
         if ($image instanceof Asset) {
-            if ((isset($this->options['thumbnail']) && $this->options['thumbnail']) || $this->cropPercent) {
+            $thumbnailName = $this->options['thumbnail'] ?? null;
+            if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
                 $autoName = false;
 
-                $thumbConfig = $image->getThumbnailConfig($this->options['thumbnail']);
+                $thumbConfig = $image->getThumbnailConfig($thumbnailName);
                 if (!$thumbConfig && $this->cropPercent) {
                     $thumbConfig = new Asset\Image\Thumbnail\Config();
                 }
@@ -304,15 +308,15 @@ class Image extends Model\Document\Tag
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        $this->id = $data['id'];
-        $this->alt = $data['alt'];
-        $this->cropPercent = $data['cropPercent'];
-        $this->cropWidth = $data['cropWidth'];
-        $this->cropHeight = $data['cropHeight'];
-        $this->cropTop = $data['cropTop'];
-        $this->cropLeft = $data['cropLeft'];
-        $this->marker = $data['marker'];
-        $this->hotspots = $data['hotspots'];
+        $this->id = $data['id'] ?? null;
+        $this->alt = $data['alt'] ?? null;
+        $this->cropPercent = $data['cropPercent'] ?? null;
+        $this->cropWidth = $data['cropWidth'] ?? null;
+        $this->cropHeight = $data['cropHeight'] ?? null;
+        $this->cropTop = $data['cropTop'] ?? null;
+        $this->cropLeft = $data['cropLeft'] ?? null;
+        $this->marker = $data['marker'] ?? null;
+        $this->hotspots = $data['hotspots'] ?? null;
 
         return $this;
     }
@@ -353,15 +357,15 @@ class Image extends Model\Document\Tag
                 $data['hotspots'] = $rewritePath($data['hotspots']);
             }
 
-            $this->id = $data['id'];
-            $this->alt = $data['alt'];
-            $this->cropPercent = $data['cropPercent'];
-            $this->cropWidth = $data['cropWidth'];
-            $this->cropHeight = $data['cropHeight'];
-            $this->cropTop = $data['cropTop'];
-            $this->cropLeft = $data['cropLeft'];
-            $this->marker = $data['marker'];
-            $this->hotspots = $data['hotspots'];
+            $this->id = $data['id'] ?? null;
+            $this->alt = $data['alt'] ?? null;
+            $this->cropPercent = $data['cropPercent'] ?? null;
+            $this->cropWidth = $data['cropWidth'] ?? null;
+            $this->cropHeight = $data['cropHeight'] ?? null;
+            $this->cropTop = $data['cropTop'] ?? null;
+            $this->cropLeft = $data['cropLeft'] ?? null;
+            $this->marker = $data['marker'] ?? null;
+            $this->hotspots = $data['hotspots'] ?? null;
         }
 
         return $this;
@@ -453,7 +457,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $conf
+     * @param string|array|Asset\Image\Thumbnail\Config $conf
      * @param bool $deferred
      *
      * @return Asset\Image\Thumbnail|string
@@ -476,9 +480,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $thumbConfig
-     *
-     * @return mixed
+     * @param Asset\Image\Thumbnail\Config $thumbConfig
      */
     protected function applyCustomCropping($thumbConfig)
     {
@@ -513,7 +515,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
      * @return array|mixed
@@ -603,18 +605,18 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param null $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @deprecated
      *
-     * @return Model\Webservice\Data\Document\Element|void
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id !== null) {
             $this->alt = $data->alt;
             $this->id = $data->id;
@@ -643,7 +645,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropHeight
+     * @param float $cropHeight
      *
      * @return $this
      */
@@ -663,7 +665,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropLeft
+     * @param float $cropLeft
      *
      * @return $this
      */
@@ -683,7 +685,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropPercent
+     * @param bool $cropPercent
      *
      * @return $this
      */
@@ -703,7 +705,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropTop
+     * @param float $cropTop
      *
      * @return $this
      */
@@ -723,7 +725,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @param $cropWidth
+     * @param float $cropWidth
      *
      * @return $this
      */

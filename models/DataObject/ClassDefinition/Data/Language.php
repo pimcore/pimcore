@@ -66,7 +66,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param $value
+     * @param int|bool $value
      *
      * @return $this
      */
@@ -78,7 +78,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return static
      */
@@ -88,5 +88,10 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

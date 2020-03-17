@@ -9,17 +9,19 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | Name            | Type    | Description                                                                        |
 |-----------------|---------|------------------------------------------------------------------------------------|
 | `customConfig`  | string  | Path to JavaScript file with configuration for CKEditor                            |
-| `enterMode`     | integer | Set it to 2 if you don't want to add the P-tag                                     |
+| `enterMode`     | integer | Set it to `CKEDITOR.CKEDITOR.ENTER_BR` if you don't want to add a `<p>`-tag on pressing enter key  |
 | `height`        | integer | Minimum height of the field in pixels                                              |
 | `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required`      | boolean | set to true to make field value required for publish                               |
 
 ## Methods
 
 | Name        | Return | Description                           |
 |-------------|--------|---------------------------------------|
-| `getData()` | array  | Get the value of the wysiwyg          |
+| `getData()` | string  | Get the __raw__ value of the wysiwyg          |
+| `frontend()` | string  | Get the __parsed__ value of the wysiwyg           |
 | `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 ## Examples
@@ -105,6 +107,15 @@ There is also an additional way to specify the configuration by adding `customCo
         "height" => 200,
         "customConfig" => "/custom/ckeditor_config.js"
     ]); ?>
+</section>
+```
+```twig
+<section id="marked-content">
+    {{  pimcore_wysiwyg('specialContent', {
+            height: 200,
+            customConfig: '/custom/ckeditor_config.js'
+        })
+    }}
 </section>
 ```
 
@@ -198,6 +209,15 @@ With the following code you can get the text even in editmode:
         <?= $this->wysiwyg("specialContent")->getData(); ?>
     </div>
 <?php endif; ?>
+```
+
+```twig
+{{ pimcore_wysiwyg('specialContent') }}
+
+<h4>Preview</h4>
+<div style="border: 1px solid #000;" class="preview">
+    {{ pimcore_wysiwyg('specialContent').getData() }}
+</div>
 ```
 
 ![WYSIWYG with preview - editmode](../../img/editables_wysiwyg_with_preview_editmode.png)

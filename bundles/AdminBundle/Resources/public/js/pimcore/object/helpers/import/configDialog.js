@@ -68,8 +68,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
 
     showWindow: function (data) {
-        var config = data.config;
-
         if (!this.importConfigId) {
             this.buildDefaultSelection();
         }
@@ -738,7 +736,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata) {
-                        this.reportPanel.logData(rdata.rowId, rdata.message, rdata.success, rdata.objectId);
+                        this.reportPanel.logData(rdata);
                         if (!rdata.success) {
                             this.importErrors.push({
                                 job: rdata.message

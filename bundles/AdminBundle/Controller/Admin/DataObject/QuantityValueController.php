@@ -121,7 +121,7 @@ class QuantityValueController extends AdminController
                 }
             } elseif ($request->get('xaction') == 'create') {
                 $data = json_decode($request->get('data'), true);
-                if ($data['baseunit'] === -1) {
+                if (isset($data['baseunit']) && $data['baseunit'] === -1) {
                     $data['baseunit'] = null;
                 }
                 unset($data['id']);
@@ -132,19 +132,21 @@ class QuantityValueController extends AdminController
                 return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
             }
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @param $comparison
+     * @param string $comparison
      *
-     * @return mixed
+     * @return string
      */
     private function getOperator($comparison)
     {
         $mapper = [
             'lt' => '<',
             'gt' => '>',
-            'eq' => '='
+            'eq' => '=',
         ];
 
         return $mapper[$comparison];
@@ -209,7 +211,7 @@ class QuantityValueController extends AdminController
         $fromUnit = Unit::getById($fromUnitId);
         $toUnit = Unit::getById($toUnitId);
         if (!$fromUnit instanceof Unit || !$toUnit instanceof Unit) {
-            return null;
+            return $this->adminJson(['success' => false]);
         }
 
         /** @var UnitConversionService $converter */
@@ -221,5 +223,44 @@ class QuantityValueController extends AdminController
         }
 
         return $this->adminJson(['value' => $convertedValue->getValue(), 'success' => true]);
+    }
+
+    /**
+     * @Route("/quantity-value/convert-all", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function convertAllAction(Request $request)
+    {
+        $unitId = $request->get('unit');
+
+        $fromUnit = Unit::getById($unitId);
+        if (!$fromUnit instanceof Unit) {
+            return $this->adminJson(['success' => false]);
+        }
+
+        $baseUnit = $fromUnit->getBaseunit() ?? $fromUnit;
+
+        $units = new Unit\Listing();
+        $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
+        $units = $units->load();
+
+        $convertedValues = [];
+        /** @var UnitConversionService $converter */
+        $converter = $this->container->get(UnitConversionService::class);
+        /** @var Unit $targetUnit */
+        foreach ($units as $targetUnit) {
+            try {
+                $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
+
+                $convertedValues[] = ['unit' => $targetUnit->getAbbreviation(), 'unitName' => $targetUnit->getLongname(), 'value' => round($convertedValue->getValue(), 4)];
+            } catch (\Exception $e) {
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+            }
+        }
+
+        return $this->adminJson(['value' => $request->get('value'), 'fromUnit' => $fromUnit->getAbbreviation(), 'values' => $convertedValues, 'success' => true]);
     }
 }

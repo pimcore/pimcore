@@ -64,7 +64,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -205,8 +205,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Link|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -246,7 +246,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Link|null $data
      *
      * @return array
      */
@@ -318,7 +318,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -328,32 +328,32 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
-     * @return DataObject\ClassDefinition\Data\Link
+     * @return DataObject\Data\Link|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if ($value instanceof DataObject\Data\Link) {
             return $value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -371,10 +371,12 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
-     * @param mixed $params
+     * @deprecated
      *
-     * @return mixed
+     * @param DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -389,16 +391,18 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             }
 
             return $keys;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -406,7 +410,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        if ($value instanceof \stdclass) {
+        if ($value instanceof \stdClass) {
             $value = (array) $value;
         }
 
@@ -471,7 +475,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -481,24 +485,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param DataObject\Data\Link|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        if ($data) {
-            if ($data->text) {
-                return $data->text;
-            } elseif ($data->direct) {
-                return $data->direct;
+        if ($data instanceof DataObject\Data\Link) {
+            if ($data->getText()) {
+                return $data->getText();
+            } elseif ($data->getDirect()) {
+                return $data->getDirect();
             }
         }
+
+        return null;
     }
 
     /**

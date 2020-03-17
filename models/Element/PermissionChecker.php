@@ -63,7 +63,7 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var $user User */
+        /** @var User $user */
         foreach ($users as $user) {
             $userPermission = [];
             $userPermission['userId'] = $user->getId();
@@ -119,7 +119,7 @@ class PermissionChecker
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
-                            $details[] = self::createDetail($user, $columnName, result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
                             continue;
                         }
                     }
@@ -192,6 +192,7 @@ class PermissionChecker
             if (!$user->getPermission($permissionKey)) {
                 // check roles
                 foreach ($user->getRoles() as $roleId) {
+                    /** @var User\UserRole $role */
                     $role = User\Role::getById($roleId);
                     if ($role->getPermission($permissionKey)) {
                         $entry = self::createDetail($user, $permissionKey, true, $role->getType(), $role->getName());
@@ -210,11 +211,11 @@ class PermissionChecker
     }
 
     /**
-     * @param $user User\
-     * @param $element
-     * @param $details
+     * @param User $user
+     * @param ElementInterface $element
+     * @param array $details
      */
-    protected function getLanguagePermissions($user, $element, &$details)
+    protected static function getLanguagePermissions($user, $element, &$details)
     {
         if ($user->isAdmin()) {
             return;

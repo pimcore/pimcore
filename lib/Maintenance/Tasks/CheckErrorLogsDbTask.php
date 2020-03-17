@@ -15,23 +15,30 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Config;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 
 final class CheckErrorLogsDbTask implements TaskInterface
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $db;
 
     /**
-     * @param Connection   $db
+     * @var Config
      */
-    public function __construct(Connection $db)
+    private $config;
+
+    /**
+     * @param ConnectionInterface   $db
+     * @param Config $config
+     */
+    public function __construct(ConnectionInterface $db, Config $config)
     {
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
@@ -39,15 +46,12 @@ final class CheckErrorLogsDbTask implements TaskInterface
      */
     public function execute()
     {
-        $conf = Config::getSystemConfig();
-        $config = $conf->applicationlog;
-
-        if ($config->mail_notification->send_log_summary) {
-            $receivers = preg_split('/,|;/', $config->mail_notification->mail_receiver);
+        if (!empty($this->config['applicationlog']['mail_notification']['send_log_summary'])) {
+            $receivers = preg_split('/,|;/', $this->config['applicationlog']['mail_notification']['mail_receiver'] ?? '');
 
             array_walk($receivers, 'trim');
 
-            $logLevel = (int)$config->mail_notification->filter_priority;
+            $logLevel = (int) ($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
 
             $query = 'SELECT * FROM '. ApplicationLoggerDb::TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 

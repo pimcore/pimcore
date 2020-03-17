@@ -14,6 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
+
+/**
+ * @property Cart $model
+ */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_cart';
@@ -52,30 +57,24 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * Create a new record for the object in database
-     *
-     * @return bool
+     * @return void
      */
     public function create()
     {
         $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 
     /**
-     * Save object to database
-     *
      * @return void
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     /**
@@ -83,6 +82,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function update()
     {
+        $data = [];
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);

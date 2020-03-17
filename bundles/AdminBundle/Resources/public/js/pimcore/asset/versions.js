@@ -43,10 +43,15 @@ pimcore.asset.versions = Class.create({
 
             this.store = new Ext.data.Store({
                 model: modelName,
-                sorters: [{
-                    property: 'id',
-                    direction: 'DESC'
-                }],
+                sorters: [
+                    {
+                        property: 'versionCount',
+                        direction: 'DESC'
+                    },
+                    {
+                        property: 'id',
+                        direction: 'DESC'
+                    }],
                 proxy: {
                     type: 'ajax',
                     url: "/admin/element/get-versions",
@@ -149,7 +154,6 @@ pimcore.asset.versions = Class.create({
 
         var versionId = data.id;
         var url = "/admin/asset/show-version?id=" + versionId;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.frameId).dom.src = url;
     },
 
@@ -229,7 +233,16 @@ pimcore.asset.versions = Class.create({
             url: "/admin/asset/publish-version",
             method: 'post',
             params: {id: versionId},
-            success: this.asset.reload.bind(this.asset)
+            success: function(response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success) {
+                    this.asset.reload();
+                    pimcore.helpers.updateTreeElementStyle('asset', this.asset.id, rdata.treeData);
+                } else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
+                }
+            }.bind(this)
         });
     },
 

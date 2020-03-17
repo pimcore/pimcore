@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>{% block ecommerce_title %}Ecommerce Framework Back Office{% endblock %}</title>
+
+        {% spaceless -%}
+            {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
+            {% do pimcore_head_link().appendStylesheet('https://use.fontawesome.com/releases/v5.9.0/css/all.css') %}
+            {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/back-office.css')) %}
+            {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
+
+
+        {%- endspaceless %}
+
+        {% block head_stylesheets deferred %}
+            {{ pimcore_head_link() }}
+        {% endblock %}
+
+        {% block head_ie_stylesheets %}
+            <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+        {% endblock %}
+
+        <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
+    </head>
+    <body>
+    {% block body %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+            <div class="container">
+                <a href="#" class="navbar-brand"><span class="fa fa-shopping-cart"></span> Ecommerce Framework Back Office</a>
+
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        {% set user = pimcoreUser %}
+                        {% set currentRouteName = app.request.get('_route') %}
+                        {% set arrActions = [] %}
+
+                        {% if (user.isAllowed('bundle_ecommerce_back-office_order')) %}
+                            {% set arrActions = arrActions|merge({'order': ['list']}) %}
+                        {% endif %}
+                        {% for controller,actions in arrActions %}
+                            {% for action in actions %}
+                                {% set route = "pimcore_ecommerce_backend_admin-" ~ controller ~ "_" ~ action %}
+                                <li class="nav-item {{ (currentRouteName == route ? 'active' : '') }}">
+                                    <a class="nav-link" href="{{ path(route) }}">{{ ('bundle_ecommerce.back-office.' ~ controller ~ '-' ~ action)|trans([],'admin') }}</a>
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="main-content container">
+            {{ block('content') }}
+        </div>
+    {% endblock %}
+
+
+    <!-- Modal / Popup -->
+    <div class="modal" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div id="modal-content" class="modal-content"></div>
+        </div>
+    </div>
+
+    {# output scripts added before #}
+    {% block scripts deferred %}
+        {{ pimcore_head_script() }}
+    {% endblock %}
+
+    <script>
+        var pimcore = parent.pimcore;
+        var popups = document.getElementsByClassName('popup-modal');
+        for (var i = 0; i < popups.length; i++) {
+            var element = popups[i];
+
+            element.onclick = function (e) {
+                e.preventDefault();
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var actionModal = document.getElementById('actionModal');
+                        var modal = new Modal(actionModal,
+                            {
+                                content: '<div id="modal-content" class="modal-content">' + this.response + '</div>', // sets modal content
+                            });
+
+                        modal.show();
+                    }
+                };
+
+                xhttp.open("GET", (this).getAttribute('href'), true);
+                xhttp.send();
+            };
+
+        }
+    </script>
+
+    </body>
+</html>

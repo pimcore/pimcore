@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.relationSelectionWindow");
+/*
+ * this is for the grid
+ */
 pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
     acceptEvents: true,
@@ -114,10 +117,8 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
     getToolbar: function () {
 
-        var user = pimcore.globalmanager.get("user");
         var toolbar;
         var items = [];
-
 
         var keyButton  = new Ext.Button({
             text: t("key"),

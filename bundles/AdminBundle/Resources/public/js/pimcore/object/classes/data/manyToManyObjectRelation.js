@@ -32,10 +32,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
 
         this.initData(initData);
 
-        if (typeof this.datax.lazyLoading == "undefined") {
-            this.datax.lazyLoading = true;
-        }
-
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "classes");
 
         // overwrite default settings
@@ -84,27 +80,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 value: this.datax.maxItems,
                 disabled: this.isInCustomLayoutEditor(),
                 minValue: 0
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("lazy_loading"),
-                name: "lazyLoading",
-                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
-                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_description'),
-                cls: "pimcore_extra_label_bottom",
-                style: "padding-bottom:0;"
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_warning_block'),
-                cls: "pimcore_extra_label_bottom",
-                style: "color:red; font-weight: bold;"
             },
             {
                 xtype: 'textfield',
@@ -207,6 +182,12 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
+                boxLabel: t("allow_to_create_new_object"),
+                name: "allowToCreateNewObject",
+                value: this.datax.allowToCreateNewObject
+            });
+            this.specificPanel.add({
+                xtype: "checkbox",
                 boxLabel: t("enable_admin_async_load"),
                 name: "optimizedAdminLoading",
                 value: this.datax.optimizedAdminLoading
@@ -234,13 +215,14 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                     maxItems: source.datax.maxItems,
                     relationType: source.datax.relationType,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
-                    classes: source.datax.classes
+                    classes: source.datax.classes,
+                    visibleFields: source.datax.visibleFields,
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading
                 });
         }
     }
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;

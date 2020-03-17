@@ -33,19 +33,19 @@ class Id extends AbstractResolver
 
         $object = Concrete::getById($id);
         if (!$object) {
-            throw new \Exception('Could not resolve object with id ' . $id);
+            throw new ImportErrorException('Could not resolve object with id ' . $id);
         }
 
         $classDefinition = ClassDefinition::getById($config->classId);
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
         if (!$object instanceof $className) {
-            throw new \Exception('Class mismatch for ID ' . $id);
+            throw new ImportErrorException('Class mismatch for ID ' . $id);
         }
 
         $parent = $object->getParent();
         if (!$parent->isAllowed('create')) {
-            throw new \Exception('no permission to overwrite object with id ' . $id);
+            throw new ImportErrorException('no permission to overwrite object with id ' . $id);
         }
 
         $this->setObjectType($config, $object, $rowData);

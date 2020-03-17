@@ -76,7 +76,7 @@ class HeadStyle extends AbstractHelper
     /**
      * Capture type and/or attributes (used for hinting during capture)
      *
-     * @var string
+     * @var string|null
      */
     protected $_captureAttrs = null;
 
@@ -159,7 +159,7 @@ class HeadStyle extends AbstractHelper
      * @param  string $method
      * @param  array $args
      *
-     * @return void
+     * @return mixed
      *
      * @throws Exception When no $content provided or invalid method
      */
@@ -204,8 +204,7 @@ class HeadStyle extends AbstractHelper
     /**
      * Determine if a value is a valid style tag
      *
-     * @param  mixed $value
-     * @param  string $method
+     * @param mixed $value
      *
      * @return bool
      */
@@ -233,7 +232,7 @@ class HeadStyle extends AbstractHelper
             throw new Exception('Invalid value passed to append; please use appendStyle()');
         }
 
-        return $this->getContainer()->append($value);
+        $this->getContainer()->append($value);
     }
 
     /**
@@ -250,7 +249,7 @@ class HeadStyle extends AbstractHelper
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -266,7 +265,7 @@ class HeadStyle extends AbstractHelper
             throw new Exception('Invalid value passed to prepend; please use prependStyle()');
         }
 
-        return $this->getContainer()->prepend($value);
+        $this->getContainer()->prepend($value);
     }
 
     /**
@@ -282,14 +281,14 @@ class HeadStyle extends AbstractHelper
             throw new Exception('Invalid value passed to set; please use setStyle()');
         }
 
-        return $this->getContainer()->set($value);
+        $this->getContainer()->set($value);
     }
 
     /**
      * Start capture action
      *
-     * @param  mixed $captureType
-     * @param  string $typeOrAttrs
+     * @param string $type
+     * @param string|null $attrs
      *
      * @return void
      */
@@ -379,7 +378,7 @@ class HeadStyle extends AbstractHelper
             $escapeEnd = null;
         }
 
-        $html = '<style type="text/css"' . $attrString . '>' . PHP_EOL
+        $html = '<style' . $attrString . '>' . PHP_EOL
             . $escapeStart . $indent . $item->content . PHP_EOL . $escapeEnd
             . '</style>';
 

@@ -47,7 +47,7 @@ class PropertyGetter extends AbstractOperator
         $properties = $element->getProperties();
 
         if (array_key_exists($this->getPropertyName(), $properties)) {
-            $result->value = $properties[$this->getPropertyName()]->data;
+            $result->value = $properties[$this->getPropertyName()]->getObjectVar('data');
         }
 
         return $result;

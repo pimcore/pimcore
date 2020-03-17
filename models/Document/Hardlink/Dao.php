@@ -53,36 +53,21 @@ class Dao extends Model\Document\Dao
         }
     }
 
-    /**
-     * Create a new record for the object in the database
-     *
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_hardlink', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_hardlink', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
-     * Deletes the object (and data) from database
-     *
      * @throws \Exception
      */
     public function delete()
     {
-        try {
-            $this->db->delete('documents_hardlink', ['id' => $this->model->getId()]);
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents_hardlink', ['id' => $this->model->getId()]);
+        parent::delete();
     }
 }

@@ -16,13 +16,22 @@ use Pimcore\DataObject\Import\ColumnConfig\Operator\AbstractOperator;
 
 class MyImportCodeOperator extends AbstractOperator
 {
+    private $additionalData;
+
+    public function __construct(\stdClass $config, $context = null)
+    {
+        parent::__construct($config, $context);
+
+        $this->additionalData = $config->additionalData;
+    }
+
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $colData = $rowData[$colIndex];
 
         $target->setPublished($colData > 1510931949);
         if (!$target->getPublished()) {
-            $target->setShortText("not available anymore", "en");
+            $target->setShortText("not available anymore " . $this->additionalData, "en");
         }
     }
 }

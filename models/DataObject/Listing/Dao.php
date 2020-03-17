@@ -27,7 +27,9 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
@@ -39,19 +41,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * get select query
+     * @param array|string|Expression $columns
      *
      * @return QueryBuilder
      *
      * @throws \Exception
      */
-    public function getQuery()
+    public function getQuery($columns = '*')
     {
         // init
         $select = $this->db->select();
 
         // create base
-        $select->from([ $this->getTableName() ]);
+        $select->from([$this->getTableName()], $columns);
 
         // add joins
         $this->addJoins($select);
@@ -156,11 +158,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        if (count($this->model->getObjects()) == 0) {
-            $this->load();
-        }
+        if ($this->model->isLoaded()) {
+            return count($this->model->getObjects());
+        } else {
+            $idList = $this->loadIdList();
 
-        return count($this->model->getObjects());
+            return count($idList);
+        }
     }
 
     /**
@@ -170,7 +174,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery();
+        $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type']);
         $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);
@@ -221,7 +225,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $callback Callable
+     * @param callable $callback
      */
     public function onCreateQuery(callable $callback)
     {

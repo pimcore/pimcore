@@ -15,30 +15,35 @@
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Config;
+use Pimcore\Controller\Controller;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as FrameworkController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\EventListener\SessionListener;
 
-class PublicServicesController extends FrameworkController
+class PublicServicesController extends Controller
 {
     /**
      * @param Request $request
+     * @param SessionListener $sessionListener
      *
      * @return BinaryFileResponse
      */
-    public function thumbnailAction(Request $request)
+    public function thumbnailAction(Request $request, SessionListener $sessionListener)
     {
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
+        $requestedFileExtension = strtolower(File::getFileExtension($filename));
         $asset = Asset::getById($assetId);
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
@@ -47,14 +52,9 @@ class PublicServicesController extends FrameworkController
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {
-                $page = 1; // default
+                $imageThumbnail = null;
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
-
-                //get page in case of an asset document (PDF, ...)
-                if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
-                    $page = (int)$matchesThumbs[1];
-                }
 
                 // just check if the thumbnail exists -> throws exception otherwise
                 $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
@@ -78,11 +78,33 @@ class PublicServicesController extends FrameworkController
                     throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
                 }
 
-                if ($asset instanceof Asset\Document) {
+                if (strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+                    $formatOverride = $requestedFileExtension;
+                    if (in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
+                        $formatOverride = 'pjpeg';
+                    }
+                    $thumbnailConfig->setFormat($formatOverride);
+                }
+
+                if ($asset instanceof Asset\Video) {
+                    $time = 1;
+                    if (preg_match("|~\-~time\-(\d+)\.|", $filename, $matchesThumbs)) {
+                        $time = (int)$matchesThumbs[1];
+                    }
+
+                    $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
+                } elseif ($asset instanceof Asset\Document) {
+                    $page = 1;
+                    if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
+                        $page = (int)$matchesThumbs[1];
+                    }
+
                     $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
                     $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
-                    $thumbnailFile = $asset->getImageThumbnail($thumbnailConfig, $page)->getFileSystemPath();
+                    $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 } elseif ($asset instanceof Asset\Image) {
                     //check if high res image is called
 
@@ -98,19 +120,49 @@ class PublicServicesController extends FrameworkController
                         $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                     }
 
-                    $thumbnailFile = $asset->getThumbnail($thumbnailConfig)->getFileSystemPath();
+                    $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 }
 
-                if ($thumbnailFile && file_exists($thumbnailFile)) {
+                if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
+                    $actualFileExtension = File::getFileExtension($thumbnailFile);
+
+                    if ($actualFileExtension !== $requestedFileExtension) {
+                        // create a copy/symlink to the file with the original file extension
+                        // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
+                        // is set to auto-optimized format so the resulting thumbnail can be jpeg
+                        $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
+                        $linked = is_link($requestedFile) || symlink($thumbnailFile, $requestedFile);
+                        if (false === $linked) {
+                            // create a hard copy
+                            copy($thumbnailFile, $requestedFile);
+                        }
+                    }
 
                     // set appropriate caching headers
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
                     $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
-                    return new BinaryFileResponse($thumbnailFile, 200, [
+                    $headers = [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
-                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime)
-                    ]);
+                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                        'Content-Type' => $imageThumbnail->getMimeType()
+                    ];
+
+                    // in certain cases where an event listener starts a session (e.g. when there's a firewall
+                    // configured for the entire site /*) the session event listener shouldn't modify the
+                    // cache control headers of this response
+                    if (defined('Symfony\Component\HttpKernel\EventListener\AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER')) {
+                        // this method of bypassing the session listener was introduced in Symfony 4, so we need
+                        // to check for the constant first
+                        $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
+                    } else {
+                        // @TODO to be removed in Pimcore 7
+                        // Symfony 3.4 doesn't support bypassing the session listener, so we just remove it
+                        \Pimcore::getEventDispatcher()->removeSubscriber($sessionListener);
+                    }
+
+                    return new BinaryFileResponse($thumbnailFile, 200, $headers);
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
@@ -120,10 +172,12 @@ class PublicServicesController extends FrameworkController
         } else {
             throw $this->createNotFoundException('Asset not found');
         }
+
+        throw $this->createNotFoundException('Unable to create image thumbnail');
     }
 
     /**
-     * @param $request
+     * @param Request $request
      *
      * @return Response
      */
@@ -155,7 +209,9 @@ class PublicServicesController extends FrameworkController
             $content = "User-agent: *\nDisallow:";
         }
 
-        return new Response($content, 200);
+        return new Response($content, Response::HTTP_OK, [
+            'Content-Type' => 'text/plain'
+        ]);
     }
 
     /**

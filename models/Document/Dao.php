@@ -29,7 +29,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -42,7 +42,7 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
         }
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('Document with the ID ' . $id . " doesn't exists");
@@ -52,7 +52,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by a path from the database and assign variables to the model.
      *
-     * @param $path
+     * @param string $path
      *
      * @throws \Exception
      */
@@ -77,98 +77,84 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * Insert a new row to the database.
-     *
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            $this->db->insert('documents', [
-                'key' => $this->model->getKey(),
-                'path' => $this->model->getRealPath(),
-                'parentId' => $this->model->getParentId(),
-                'index' => 0
-            ]);
+        $this->db->insert('documents', [
+            'key' => $this->model->getKey(),
+            'type' => $this->model->getType(),
+            'path' => $this->model->getRealPath(),
+            'parentId' => $this->model->getParentId(),
+            'index' => 0
+        ]);
 
-            $this->model->setId($this->db->lastInsertId());
+        $this->model->setId($this->db->lastInsertId());
 
-            if (!$this->model->getKey()) {
-                $this->model->setKey($this->model->getId());
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if (!$this->model->getKey()) {
+            $this->model->setKey($this->model->getId());
         }
     }
 
     /**
-     * Update the row in the database. (based on the model id)
-     *
      * @throws \Exception
      */
     public function update()
     {
-        try {
-            $typeSpecificTable = null;
-            $validColumnsTypeSpecific = [];
-            if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
-                $typeSpecificTable = 'documents_' . $this->model->getType();
-                $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
-            }
-
-            $this->model->setModificationDate(time());
-
-            $document = $this->model->getObjectVars();
-
-            $dataDocument = [];
-            $dataTypeSpecific = [];
-
-            foreach ($document as $key => $value) {
-
-                // check if the getter exists
-                $getter = 'get' . ucfirst($key);
-                if (!method_exists($this->model, $getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $validColumnsTypeSpecific)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-                if (is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (is_array($value)) {
-                    $value = Serialize::serialize($value);
-                }
-
-                if (in_array($key, $this->getValidTableColumns('documents'))) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $validColumnsTypeSpecific)) {
-                    $dataTypeSpecific[$key] = $value;
-                }
-            }
-
-            // use the real document path, just for the case that a documents gets saved in the frontend
-            // and the page is within a site. see also: PIMCORE-2684
-            $dataDocument['path'] = $this->model->getRealPath();
-
-            // update the values in the database
-            $this->db->insertOrUpdate('documents', $dataDocument);
-
-            if ($typeSpecificTable) {
-                $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
-            }
-
-            $this->updateLocks();
-        } catch (\Exception $e) {
-            throw $e;
+        $typeSpecificTable = null;
+        $validColumnsTypeSpecific = [];
+        if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
+            $typeSpecificTable = 'documents_' . $this->model->getType();
+            $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
+
+        $this->model->setModificationDate(time());
+
+        $document = $this->model->getObjectVars();
+
+        $dataDocument = [];
+        $dataTypeSpecific = [];
+
+        foreach ($document as $key => $value) {
+
+            // check if the getter exists
+            $getter = 'get' . ucfirst($key);
+            if (!method_exists($this->model, $getter)) {
+                continue;
+            }
+
+            // get the value from the getter
+            if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $validColumnsTypeSpecific)) {
+                $value = $this->model->$getter();
+            } else {
+                continue;
+            }
+
+            if (is_bool($value)) {
+                $value = (int)$value;
+            }
+            if (is_array($value)) {
+                $value = Serialize::serialize($value);
+            }
+
+            if (in_array($key, $this->getValidTableColumns('documents'))) {
+                $dataDocument[$key] = $value;
+            }
+            if (in_array($key, $validColumnsTypeSpecific)) {
+                $dataTypeSpecific[$key] = $value;
+            }
+        }
+
+        // use the real document path, just for the case that a documents gets saved in the frontend
+        // and the page is within a site. see also: PIMCORE-2684
+        $dataDocument['path'] = $this->model->getRealPath();
+
+        // update the values in the database
+        $this->db->insertOrUpdate('documents', $dataDocument);
+
+        if ($typeSpecificTable) {
+            $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
+        }
+
+        $this->updateLocks();
     }
 
     /**
@@ -178,11 +164,7 @@ class Dao extends Model\Element\Dao
      */
     public function delete()
     {
-        try {
-            $this->db->delete('documents', ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents', ['id' => $this->model->getId()]);
     }
 
     /**
@@ -204,7 +186,7 @@ class Dao extends Model\Element\Dao
      *
      * @internal
      *
-     * @param $oldPath
+     * @param string $oldPath
      *
      * @return array
      */
@@ -351,15 +333,15 @@ class Dao extends Model\Element\Dao
     /**
      * Quick check if there are children.
      *
-     * @param bool $unpublished
+     * @param bool|null $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren($includingUnpublished = null)
     {
         $sql = 'SELECT id FROM documents WHERE parentId = ?';
 
-        if (Model\Document::doHideUnpublished() && !$unpublished) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 
@@ -396,11 +378,21 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the document has siblings
      *
+     * @param bool|null $includingUnpublished
+     *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings($includingUnpublished = null)
     {
-        $c = $this->db->fetchOne('SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1', [$this->model->getParentId(), $this->model->getId()]);
+        $sql = 'SELECT id FROM documents WHERE parentId = ? and id != ?';
+
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+            $sql .= ' AND published = 1';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, [$this->model->getParentId(), $this->model->getId()]);
 
         return (bool)$c;
     }
@@ -453,6 +445,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes locks from the document and its children.
+     *
+     * @return array
      */
     public function unlockPropagate()
     {
@@ -465,8 +459,8 @@ class Dao extends Model\Element\Dao
     /**
      * Checks if the action is allowed.
      *
-     * @param $type
-     * @param $user
+     * @param string $type
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -488,7 +482,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_document WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') AND `' . $type . '`=1 ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_document WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
@@ -517,9 +511,7 @@ class Dao extends Model\Element\Dao
     /**
      * Save the document index.
      *
-     * @param $index
-     *
-     * @throws \Exception
+     * @param int $index
      */
     public function saveIndex($index)
     {
@@ -533,7 +525,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return string
+     * @return int
      */
     public function getNextIndex()
     {

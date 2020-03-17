@@ -31,7 +31,7 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
@@ -61,18 +61,14 @@ class Dao extends Model\Dao\PhpArrayTable
         }
         $this->model->setModificationDate($ts);
 
-        try {
-            $dataRaw = $this->model->getObjectVars();
-            $data = [];
+        $dataRaw = $this->model->getObjectVars();
+        $data = [];
 
-            foreach ($dataRaw as $key => $value) {
-                $data[$key] = $value;
-            }
-
-            $this->db->insertOrUpdate($data, $this->model->getId());
-        } catch (\Exception $e) {
-            throw $e;
+        foreach ($dataRaw as $key => $value) {
+            $data[$key] = $value;
         }
+
+        $this->db->insertOrUpdate($data, $this->model->getId());
 
         if (!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());

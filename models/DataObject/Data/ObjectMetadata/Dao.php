@@ -28,12 +28,17 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
+     * @var array|null
+     */
+    protected $tableDefinitions = null;
+
+    /**
      * @param DataObject\Concrete $object
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
-     * @param $type
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
+     * @param string $type
      *
      * @throws \Exception
      */
@@ -60,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      *
      * @return string
      */
@@ -71,14 +76,14 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      *
-     * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
+     * @return null|DataObject\Data\ObjectMetadata
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
@@ -123,7 +128,6 @@ class Dao extends Model\Dao\AbstractDao
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
-              INDEX `o_id` (`o_id`),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),

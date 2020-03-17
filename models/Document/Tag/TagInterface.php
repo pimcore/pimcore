@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Model\Document\PageSnippet;
+
 interface TagInterface
 {
     /**
@@ -52,6 +54,8 @@ interface TagInterface
      * Receives the data from the editmode and convert this to the internal data in the object eg. image-id to Asset\Image
      *
      * @param mixed $data
+     *
+     * @return $this
      */
     public function setDataFromEditmode($data);
 
@@ -60,31 +64,25 @@ interface TagInterface
      *
      * @param mixed $data
      *
-     * @return string
+     * @return $this
      */
     public function setDataFromResource($data);
 
     /**
-     * Receives data from webservice import and fills the current tag's data
-     *
-     * @abstract
-     *
-     * @param  object $wsElement
-     * @param IdMapper $idMapper
-     */
-    //    JAIC: $idMapper is needed for REST webservice import. However, cannot just add this to
-    //    the interface as otherwise all tags would have to implement it including those defined
-    //    in (internal & external) plugins which are already in use.
-    //    public function getFromWebserviceImport($wsElement, $idMapper = null);
-
-    /**
      * Returns the current tag's data for web service export
      *
-     * @param $document
-     * @param mixed $params
+     * @deprecated
+     *
+     * @param PageSnippet|null $document
+     * @param array $params
      * @abstract
      *
-     * @return array
+     * @return mixed
      */
     public function getForWebserviceExport($document = null, $params = []);
+
+    /**
+     * @return bool
+     */
+    public function isEmpty();
 }

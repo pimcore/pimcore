@@ -13,7 +13,7 @@ Pimcore is able to render preview images for most file types.
 > displaying capabilities and Ghostscript or LibreOffice are not availabe on the server.
 
 Some file types, like images, can be edited directly in Pimcore and can be used to create thumbnails for different 
-output channels. Note that the image editor does use the Adobe Creative SDK under the hood, specifically it does use the [Image Editor UI](https://creativesdk.adobe.com/docs/web/#/articles/imageeditorui/index.html) which does automatically resize images to 1000px or less.
+output channels. Note that the image editor does use the [miniPaint image editor](https://github.com/viliusle/miniPaint) under the hood.
 
 ![Pimcore Assets](../img/pimcore_assets.png)
    

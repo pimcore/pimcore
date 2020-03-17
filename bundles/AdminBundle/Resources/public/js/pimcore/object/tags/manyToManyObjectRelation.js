@@ -19,6 +19,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     idProperty: "id",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -62,11 +63,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
                 function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
-                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
 
@@ -74,14 +75,20 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
                         // only show 10 relations in the grid
                         var maxAmount = 10;
+                        var result = [];
+                        var i;
+                        for (i = 0; i < value.length && i < maxAmount; i++) {
+                            var item = value[i];
+                            result.push(item["fullpath"]);
+                        }
                         if (value.length > maxAmount) {
-                            value.splice(maxAmount, (value.length - maxAmount));
-                            value.push("...");
+                            result.push("...");
                         }
 
-                        return value.join("<br />");
+                        return result.join("<br />");
                     }
-                }.bind(this, field.key)
+                }.bind(this, field.key),
+            getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
@@ -250,7 +257,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         if (allowedClasses && allowedClasses.length > 0) {
             for (i = 0; i < allowedClasses.length; i++) {
                 collectionMenu.push({
-                    text: ts(allowedClasses[i]),
+                    text: t(allowedClasses[i]),
                     handler: this.create.bind(this, allowedClasses[i]),
                     iconCls: "pimcore_icon_fieldcollection"
                 });
@@ -258,23 +265,25 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
         var items = [];
 
-        if (collectionMenu.length == 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                handler: collectionMenu[0].handler
-            });
-        } else if (collectionMenu.length > 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                menu: collectionMenu
-            });
-        } else {
-            items.push({
-                xtype: "tbtext",
-                text: t("no_collections_allowed")
-            });
+        if (this.fieldConfig.allowToCreateNewObject) {
+            if (collectionMenu.length == 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    handler: collectionMenu[0].handler
+                });
+            } else if (collectionMenu.length > 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    menu: collectionMenu
+                });
+            } else {
+                items.push({
+                    xtype: "tbtext",
+                    text: t("no_collections_allowed")
+                });
+            }
         }
 
 
@@ -285,11 +294,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     getVisibleColumns: function () {
         var visibleFields = this.visibleFields || [];
 
-        var columns = [
-            {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
-            {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
-            {text: t("class"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
-        ];
+        var columns = [];
+
+        if(visibleFields.length === 0) {
+            columns.push(
+                {text: 'ID', dataIndex: 'id', width: 50},
+                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)},
+                {text: t("class"), dataIndex: 'classname', width: 100}
+            );
+        }
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
@@ -336,6 +349,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             xtype: 'actioncolumn',
             menuText: t('up'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('up'),
@@ -352,57 +366,57 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         });
 
         columns.push({
-                xtype: 'actioncolumn',
-                menuText: t('down'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('down'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
-                        handler: function (grid, rowIndex) {
-                            if (rowIndex < (grid.getStore().getCount() - 1)) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                grid.getStore().removeAt(rowIndex);
-                                grid.getStore().insert(rowIndex + 1, [rec]);
-                            }
-                        }.bind(this)
-                    }
-                ]
-            });
-
-        columns.push(
-            {
-                xtype: 'actioncolumn',
-                menuText: t('open'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('open'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                        handler: function (grid, rowIndex) {
-                            var data = grid.getStore().getAt(rowIndex);
-                            pimcore.helpers.openObject(data.data.id, "object");
-                        }.bind(this)
-                    }
-                ]
-            });
-
-        columns.push(
-            {
-                xtype: 'actioncolumn',
-                menuText: t('remove'),
-                width: 40,
-                items: [
-                    {
-                        tooltip: t('remove'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                        handler: function (grid, rowIndex) {
+            xtype: 'actioncolumn',
+            menuText: t('down'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('down'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
+                    handler: function (grid, rowIndex) {
+                        if (rowIndex < (grid.getStore().getCount() - 1)) {
+                            var rec = grid.getStore().getAt(rowIndex);
                             grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }
-                ]
-            }
-        );
+                            grid.getStore().insert(rowIndex + 1, [rec]);
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
+
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('open'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('open'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openObject(data.data.id, "object");
+                    }.bind(this)
+                }
+            ]
+        });
+
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('remove'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('remove'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }
+            ]
+        });
 
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
@@ -410,14 +424,13 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             viewConfig: {
                 markDirty: false,
+                enableTextSelection: true,
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
+                    draggroup: 'element'
                 },
                 listeners: {
                     drop: function (node, data, dropRec, dropPosition) {
-                        var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
                         if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
@@ -445,7 +458,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCssClass: "pimcore_object_tag_objects",
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
+            }
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu);
@@ -610,8 +626,9 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
+            enableTextSelection: true,
                 listeners: {
-                    refresh: function (gridview) {
+                    afterrender: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
@@ -667,7 +684,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
                 type: ["object"],
                 subtype: {
-                    object: ["object", "folder", "variant"]
+                    object: ["object", "variant"]
                 },
                 specific: {
                     classes: allowedClasses
@@ -689,19 +706,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     }
     ,
 
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
-
-    }
-    ,
-
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
@@ -715,6 +719,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
             this.requestNicePathData(toBeRequested);
         }
+    }
+    ,
+    getCellEditValue: function () {
+        return this.getValue();
     }
     ,
 
@@ -821,7 +829,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
-        pimcore.helpers.requestNicePathData(
+
+        var nicePathRequested = pimcore.helpers.requestNicePathData(
             {
                 type: "object",
                 id: this.object.id
@@ -841,6 +850,17 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fields: fields
             }, this.component.getView())
         );
+
+        // unfortunately we have to use a timeout here to adjust the height of grids configured
+        // with autoHeight: true, there are no other events that would work, see also:
+        // - https://github.com/pimcore/pimcore/pull/4337
+        // - https://github.com/pimcore/pimcore/pull/4909
+        // - https://github.com/pimcore/pimcore/pull/5367
+        if (nicePathRequested) {
+            window.setTimeout(function () {
+                this.component.getView().refresh();
+            }.bind(this), 500);
+        }
     },
 
     normalizeTargetData: function (targets) {
@@ -889,5 +909,5 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.tags.objects = pimcore.object.tags.manyToManyObjectRelation;

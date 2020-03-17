@@ -96,6 +96,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         var tabTitle = this.data.key;
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + this.id;
+
         this.tab = new Ext.Panel({
             id: tabId,
             title: tabTitle,
@@ -105,7 +106,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 this.getLayoutToolbar(),
                 this.getTabPanel()
             ],
-            iconCls: "pimcore_icon_" + this.data.type,
+            iconCls: this.getIconClass(),
             document: this
         });
 
@@ -443,9 +444,9 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                         checked: this.data.propertiesFromSource
                     }, {
                         xtype: "checkbox",
-                        name: "childsFromSource",
+                        name: "childrenFromSource",
                         fieldLabel: t("childs_from_source"),
-                        checked: this.data.childsFromSource
+                        checked: this.data.childrenFromSource
                     }]
             });
         }

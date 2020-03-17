@@ -55,17 +55,21 @@ class KeyConfig extends Model\AbstractModel
     public $name;
 
     /** Pseudo column for title
-     * @var string
+     * @var string|null
      */
     public $title;
 
-    /** The key description.
-     * @var
+    /**
+     * The key description.
+     *
+     * @var string
      */
     public $description;
 
-    /** The key type ("text", "number", etc...)
-     * @var
+    /**
+     * The key type ("text", "number", etc...)
+     *
+     * @var string
      */
     public $type;
 
@@ -140,20 +144,38 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param int $storeId
      *
      * @return self|null
-     *
-     * @internal param null $groupId
      */
     public static function getByName($name, $storeId = 1)
     {
         try {
+            $cacheKey = 'cs_keyconfig_' . $storeId . '_' . md5($name);
+
+            if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey)) {
+                $config = Cache\Runtime::get($cacheKey);
+                if ($config) {
+                    return $config;
+                }
+            }
+
+            $config = Cache::load($cacheKey);
+            if ($config) {
+                return $config;
+            }
+
             $config = new self();
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
+
+            if (self::$cacheEnabled) {
+                Cache\Runtime::set($cacheKey, $config);
+            }
+
+            Cache::save($config, $cacheKey, [], null, 0, true);
 
             return $config;
         } catch (\Exception $e) {
@@ -212,16 +234,20 @@ class KeyConfig extends Model\AbstractModel
         return $this->name;
     }
 
-    /** Returns the key description.
-     * @return mixed
+    /**
+     * Returns the key description.
+     *
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /** Sets the key description
-     * @param $description
+    /**
+     * Sets the key description
+     *
+     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\KeyConfig
      */
@@ -245,7 +271,7 @@ class KeyConfig extends Model\AbstractModel
             $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
         }
-        parent::delete();
+        $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
     }
 
@@ -276,7 +302,7 @@ class KeyConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, new KeyConfigEvent($this));
         }
 
-        $model = parent::save();
+        $model = $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE, new KeyConfigEvent($this));
@@ -320,7 +346,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
@@ -328,7 +354,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $type
+     * @param string $type
      */
     public function setType($type)
     {
@@ -352,7 +378,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getEnabled()
     {
@@ -360,7 +386,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled)
     {

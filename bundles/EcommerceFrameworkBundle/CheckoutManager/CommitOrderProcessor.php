@@ -43,6 +43,12 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
     public function __construct(OrderManagerLocatorInterface $orderManagers, array $options = [])
     {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->orderManagers = $orderManagers;
 
         $resolver = new OptionsResolver();
@@ -74,13 +80,29 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     }
 
     /**
-     * @param $paymentResponseParams
+     * @var null | string
+     */
+    protected $lastPaymentStateResponseHash = null;
+
+    /**
+     * @var null | StatusInterface
+     */
+    protected $lastPaymentStatus = null;
+
+    /**
+     * @param array|StatusInterface $paymentResponseParams
      * @param PaymentInterface $paymentProvider
      *
      * @return Status|StatusInterface
      */
     protected function getPaymentStatus($paymentResponseParams, PaymentInterface $paymentProvider)
     {
+        $responseHash = md5(serialize($paymentResponseParams));
+
+        if ($this->lastPaymentStateResponseHash === $responseHash) {
+            return $this->lastPaymentStatus;
+        }
+
         // since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
@@ -96,6 +118,9 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
                 StatusInterface::STATUS_CANCELLED
             );
         }
+
+        $this->lastPaymentStateResponseHash = $responseHash;
+        $this->lastPaymentStatus = $paymentStatus;
 
         return $paymentStatus;
     }
@@ -292,7 +317,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
         $list->addFieldCollection('PaymentInfo', 'paymentinfo');
         $list->setCondition('`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
-        /** @var AbstractOrder[] $list */
+        /** @var AbstractOrder $order */
         foreach ($list as $order) {
             $payments = $order->getPaymentInfo();
 

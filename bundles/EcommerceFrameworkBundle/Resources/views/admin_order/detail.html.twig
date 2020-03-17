@@ -1,0 +1,453 @@
+{% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
+
+{% spaceless -%}
+    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css')) %}
+    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js')) %}
+{%- endspaceless %}
+
+
+
+{% set order = orderAgent.getOrder() %}
+{% set currency = orderAgent.getCurrency() %}
+{% set regionArray = locale.getDisplayRegions() %}
+{% set urlParams = app.request.query.all %}
+
+{% block content %}
+    <div class="order-detail row mt-3">
+        <div class="col-md-7">
+            {#order header#}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="row font-weight-bold">
+                        {% set urlParams = urlParams|merge({"id":null}) %}
+                        {% set urlList = path("pimcore_ecommerce_backend_admin-order_list",urlParams) %}
+                        <div class="col-sm-6">
+                            <a href="{{ urlList }}">{{ ('bundle_ecommerce.back-office.order-list')|trans([],'admin') }}</a>
+                            <span class="fa fa-chevron-right"></span>
+                            <a href="#" data-action="open" data-id="{{ order.getId() }}">{{ order.getOrdernumber() }}</a>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            {{ order.getOrderDate() }}
+                        </div>
+                    </div>
+                    <h2 class="d-none row font-weight-bold">
+                        <div class="col-md-6">
+                            <a class="btn btn-default btn-xs"><span class="fa fa-chevron-left"></span></a>
+                            {{ ('bundle_ecommerce.back-office.order')|trans([],'admin') }} <a href="#" data-action="open" data-id="{{ order.getId() }}">{{ order.getOrdernumber() }}</a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            {{ order.getOrderDate() }}
+                        </div>
+                    </h2>
+                </div>
+            </div>
+
+            {#order items#}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span class="fa fa-list-alt"></span> {{ ('bundle_ecommerce.back-office.order.order-items')|trans([],'admin') }}
+                    {% if order.getComment() %}
+                        <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ order.getComment()|nl2br }}">
+                            <span class="fa fa-comment"></span>
+                        </button>
+                    {% endif %}
+                </div>
+                <table class="table table-order-items">
+                    <thead>
+                    <tr>
+                        <th width="70">ID</th>
+                        <th>{{ ('bundle_ecommerce.back-office.order.product')|trans([],'admin') }}</th>
+                        <th class="text-right">{{ ('bundle_ecommerce.back-office.order.price.unit')|trans([],'admin') }}</th>
+                        <th width="60" class="text-center">{{ ('bundle_ecommerce.back-office.order.quantity')|trans([],'admin') }}</th>
+                        <th class="text-right" width="110">{{ ('bundle_ecommerce.back-office.order.price.total')|trans([],'admin') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr class="card-header">
+                        <td colspan="6"></td>
+                    {% for modification in order.getPriceModifications() ?: [] %}
+                        <tr>
+                            <td colspan="4" class="text-right">{{ modification.getName() }}</td>
+                            <th class="text-right">{{ currency.toCurrency(modification.getAmount()) ?: '-' }}</th>
+                            <th></th>
+                        </tr>
+                    {% endfor %}
+                    <tr class="card-header">
+                        <td colspan="4"  class="text-right">Total</td>
+                        <th class="text-right">{{ currency.toCurrency(order.getTotalPrice()) }}</th>
+                        <td></td>
+                    </tr>
+
+                    {% if order.getTaxInfo() %}
+                        <tr>
+                            <th colspan="4" class="text-right">{{ "bundle_ecommerce.back-office.order.cart-taxes"|trans([],'admin') }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+
+                        {% for taxEntry in order.getTaxInfo() %}
+                            <tr>
+                                <td colspan="4" class="text-right">{{ taxEntry[0] }}</td>
+                                <td class="text-right">
+                                    {{ taxEntry[1] }} ({{ currency.toCurrency(taxEntry[2]) }})
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tfoot>
+                    <tbody>
+
+                    {% for item in order.getItems() %}
+                        <tr>
+                            <td>
+                                <a href="#" data-action="open" data-id="{{ item.getId() }}">{{ item.getId() }}</a>
+                            </td>
+                            <td>
+                                {{ (item.isCanceled() ? '<s>%s</s>'|format(item.getProductName())|raw : item.getProductName()) }}
+                            </td>
+                            <td class="text-right">{{ currency.toCurrency(item.getTotalPrice() / item.getAmount) }}</td>
+                            <td class="text-center">{{ item.getAmount() }}</td>
+                            <td class="text-right">{{ currency.toCurrency(item.getTotalPrice()) }}</td>
+                            <td>
+                                {% if item.getComment() %}
+                                    <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="{{ ('bundle_ecommerce.back-office.order.comment.user')|trans([],'admin') }}" data-content="{{ item.getComment()|nl2br }}">
+                                        <span class="fa fa-commnet"></span>
+                                    </button>
+                                {% endif %}
+
+                                <!-- item actions -->
+                                {% if item.isEditAble() %}
+                                    {% set urlEdit = path("pimcore_ecommerce_backend_admin-order_item-edit", {'id': item.getId()}) %}
+
+                                <div class="btn-group btn-group-sm">
+                                    <button href="{{ urlEdit }}" class="popup-modal btn btn-secondary input-group-text"><span class="fa fa-pen"></span></button>
+                                    <button type="button" class="input-group-append btn btn-secondary input-group-text dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            {% if (item.isCancelAble()) %}
+                                                {% set urlCancel = path("pimcore_ecommerce_backend_admin-order_item-cancel", {'id': item.getId()}) %}
+                                                <a class="dropdown-item popup-modal" href="{{ urlCancel }}" class="text-danger">
+                                                    <span class="fa fa-times pr-2 text-danger"></span>
+                                                    {{ ('bundle_ecommerce.back-office.order.cancel.item')|trans([],'admin') }}
+                                                </a>
+                                            {% endif %}
+                                            {% if (item.isComplaintAble()) %}
+                                                {% set urlComplaint = path("pimcore_ecommerce_backend_admin-order_item-complaint", {'id': item.getId()}) %}
+                                                <a class="dropdown-item popup-modal" href="{{ urlComplaint }}" class="text-danger">
+                                                    <span class="fa fa-share pr-1"></span>
+                                                    {{ ('bundle_ecommerce.back-office.order.complaint.item')|trans([],'admin') }}
+                                                </a>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if order.giftItems() | length > 0 %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fa fa-gift"></span> {{ ('bundle_ecommerce.back-office.order.gifts')|trans([],'admin')}}
+                    </div>
+                    <table class="table table-order-items">
+                        <thead>
+                        <tr>
+                            <th width="70">ID</th>
+                            <th>{{ ('bundle_ecommerce.back-office.order.product')|trans([],'admin') }}</th>
+                            <th width="60" class="text-center">{{ ('bundle_ecommerce.back-office.order.quantity')|trans([],'admin') }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tbody>
+
+                        {% for item in order.giftItems() %}
+                            <tr>
+                                <td>
+                                    <a href="#" data-action="open" data-id="{{ item.getId() }}">{{ item.getId() }}</a>
+                                </td>
+                                <td>
+                                    {{ (item.isCanceled() ? '<s>%s</s>'|format(item.getProductName())|raw : item.getProductName()) }}
+                                </td>
+                                <td class="text-center">{{ item.getAmount() }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {#payment history#}
+            {% if orderAgent.hasPayment() %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="fa fa-credit-card"></span> {{ ('bundle_ecommerce.back-office.order.payment.history')|trans([],'admin')}}
+                </div>
+                <table class="table table-condensed mb-0">
+                    {% set class = null %}
+                    <tbody>
+                        {% for item in order.getPaymentInfo() %}
+                            {% if item.getPaymentFinish() %}
+                                {% if item.getPaymentState() == 'paymentAuthorized' %}
+                                        {% set class = 'alert-info' %}
+                                {% elseif item.getPaymentState() == 'committed' %}
+                                        {% set class = 'alert-success' %}
+                                {% elseif item.getPaymentState() == 'aborted' %}
+                                        {% set class = 'alert-danger' %}
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td width="130">
+                                    <small>
+                                        {{ (item.getPaymentFinish() ? formatter.formatDateTime(item.getPaymentFinish(), constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) : '') }}
+                                    </small>
+                                </td>
+                                <td width="100">
+                                    <small>
+                                        {% set providers = ['qpay', 'datatrans', 'paypal', 'ogone', 'mpay24', 'payu'] %}
+                                        {% set amount = null %}
+                                        {% set break = false %}
+                                        {% for provider in providers if not break %}
+                                            {% set getter = 'getProvider_%s_amount'|format(provider) %}
+                                            {% if attribute(item, getter) is defined %}
+                                                {#{% set amount = attribute(item, getter) %}#}
+                                                {% if amount %}
+                                                    {{ amount }}
+                                                    {% set break = true %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                </td>
+                                <td class="{{ class }}">
+                                    <small title="{{ item.getPaymentState() }}">{{ item.getMessage() }}</small>
+                                </td>
+                                <td class="text-right"><small>{{ item.getPaymentReference() }}</small></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-5">
+            <!-- customer infos -->
+            <div role="tabpanel" class="tabpanel-customer-info">
+                <ul class="nav nav-tabs" id="deliveryTab" role="tablist">
+                    <li role="presentation" class="nav-item active">
+                        <a class="nav-link active" href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="fa fa-file"></span>
+                            {{ ('bundle_ecommerce.back-office.order.address.invoice')|trans([],'admin') }}</a>
+                    </li>
+                    {% if order.hasDeliveryAddress() %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="addressDeliveryTab" href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="fa fa-home"></span>
+                            {{ ('bundle_ecommerce.back-office.order.address.delivery')|trans([],'admin') }}</a>
+                    </li>
+                    {% endif %}
+
+                    {% if order.getCustomer() %}
+                        <li class="nav-item ml-auto" role="presentation">
+                            <a class="nav-link" href="#customerDetail" aria-controls="customerDetail" role="tab" data-toggle="tab"><span class="fa fa-user"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="addressInvoice">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <address>
+                                    {% set address = [] %}
+                                    {% if order.getCustomerCompany() %}
+                                        <h4>{{ order.getCustomerCompany()|nl2br }}</h4>
+                                    {% endif %}
+                                    {% if order.getCustomerFirstname() or order.getCustomerLastname() %}
+                                        {{ order.getCustomerFirstname() ~ ' ' ~ order.getCustomerLastname() }}<br/>
+                                    {% endif %}
+                                    {{ order.getCustomerStreet() }}<br/>
+                                    {{ order.getCustomerZip() ~ ' - ' ~ order.getCustomerCity() }}<br/>
+                                    {% if(order.getCustomerCountry()) %}
+                                        {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
+                                    {% endif %}
+
+                                    {% if order.getCustomer() and attribute(order.getCustomer(), 'email') is defined %}
+                                        {{ '<a href="mailto:%1$s">%1$s</a>'|format(order.getCustomer().getEmail()) | raw }}
+                                    {% endif %}
+                                </address>
+                            </div>
+                            {% if geoAddressInvoice %}
+                                <div class="col-md-6">
+                                    <div id="leafletmap-invoice" style="width: 200px; height:200px"></div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if order.hasDeliveryAddress() %}
+                        <div role="tabpanel" class="tab-pane" id="addressDelivery">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <address>
+                                        {% set address = [] %}
+                                        {% if order.getDeliveryCompany() %}
+                                            <h4>{{ order.getDeliveryCompany()|nl2br }}</h4>
+                                        {% endif %}
+                                        {% if order.getDeliveryFirstname() or order.getDeliveryLastname() %}
+                                            {{ order.getDeliveryFirstname() ~ ' ' ~ order.getDeliveryLastname() }}<br/>
+                                        {% endif %}
+                                        {{ order.getDeliveryStreet() }}<br/>
+                                        {{ order.getDeliveryZip() ~ ' - ' ~ order.getDeliveryCity() }}<br/>
+                                        {{ regionArray[order.getDeliveryCountry()]|upper }}<br/>
+                                    </address>
+                                </div>
+                                {% if geoAddressDelivery %}
+                                    <div class="col-md-6">
+                                        <div id="leafletmap-delivery" style="width: 200px; height:200px"></div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if order.getCustomer() %}
+                        <div role="tabpanel" class="tab-pane" id="customerDetail">
+                            <h4>{{ ('bundle_ecommerce.back-office.order.customer.account')|trans([],'admin') }}</h4>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card card-body bg-light text-center" style="margin-bottom: 0;">
+                                        <a href="#" data-action="open" data-id="{{ order.getCustomer().getId() }}">
+                                            <span class="fa fa-user" style="font-size: 400%;"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="row text-truncate">
+                                        <tbody>
+                                        {% set arrIcon = {
+                                            'created': 'fa fa-certificate',
+                                            'email': 'fa fa-envelope',
+                                            'orderCount': 'fa fa-shopping-cart'
+                                        } %}
+                                        {% for field, value in arrCustomerAccount %}
+                                            {{ ('<div title="%1$s" class="col-md-12 p-1"><span  class="%3$s"></span> %2$s</div>'|format(
+                                                ('bundle_ecommerce.back-office.order.customer-account.'~ field)|trans([],'admin'),
+                                                value,
+                                                arrIcon[field]
+                                            )) | raw }}
+                                        {% endfor %}
+                                        </tbody>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- timeline -->
+            <div class="timeline">
+
+                <!-- Line component -->
+                <div class="line text-muted"></div>
+
+                {% for name, group in timeLine %}
+                    <!-- Separator -->
+                    <div class="separator text-muted">
+                        <time>{{ name }}</time>
+                    </div>
+                    {% for item in group %}
+                        <!-- Panel -->
+                        <article class="panel border rounded border-{{ item['context'] }}">
+                            <!-- Icon -->
+                            <div class="panel-heading icon card-header alert-{{ item['context'] }}">
+                                <span class="{{ item['icon'] }}" title="{{ ('bundle_ecommerce.back-office.order.history.' ~ item['type']|lower)|trans([],'admin') }}"></span>
+                            </div>
+                            <!-- /Icon -->
+
+                            <!-- Body -->
+                            <div class="card-body ">
+                                <div class="media ng-scope">
+                                    <img src="{{ item['avatar'] }}" width="40" class="rounded-circle pr-2 mr-2" title="{{ item['user'] }}">
+                                    <div class="media-body">
+                                        <h6 class="media-heading">
+                                            {{ item['title'] ~ ' -' }}
+                                            <small>{{ ('bundle_ecommerce.back-office.order.history.' ~ item['type']|lower)|trans([],'admin') }}
+                                                {{ item['quantity'] ? '(' ~ item['quantity'] ~ ')' }}
+                                            </small>
+                                        </h6>
+                                        <p>{{ item['message']|nl2br }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Body -->
+                        </article>
+                        <!-- /Panel -->
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- Separator -->
+                <div class="separator text-muted">
+                    <time>{{ formatter.formatDateTime(order.getOrderdate(), constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}</time>
+                </div>
+                <!-- /Separator -->
+
+                <article class="panel panel-default panel-outline">
+                    <div class="panel-heading icon alert-secondary">
+                        <i class="fa fa-shopping-cart"></i>
+                    </div>
+                    <div class="panel-body">
+                        {{ ('bundle_ecommerce.back-office.order.commit')|trans([],'admin') }}
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    {% do pimcore_head_script().captureStart() %}
+        document.addEventListener("DOMContentLoaded", function(event) {
+            // pimcore open object
+            document.querySelectorAll('[data-action=open]').forEach(function(el){
+                el.addEventListener('click', function() {
+                    pimcore.helpers.openObject(this.getAttribute('data-id') , "object");
+                });
+            });
+
+
+            var elementsPopover = document.querySelectorAll('[data-toggle="popover"]');
+            for (var i = 0; i < elementsPopover.length; i++){
+                new Popover(elementsPopover[i], {
+                placement: 'right',
+                delay: 100,
+                dismissible: true,
+                })
+            }
+
+            var tileLayerUrl = "{{ pimcoreSymfonyConfig['maps']['tile_layer_url_template'] }}";
+            {% if geoAddressInvoice %}
+                var leafletMapInvoice =  L.map("leafletmap-invoice").setView([{{ geoAddressInvoice.lat }}, {{  geoAddressInvoice.lon }}], 10);
+                L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
+                L.marker([{{ geoAddressInvoice.lat }}, {{ geoAddressInvoice.lon }}]).addTo(leafletMapInvoice);
+            {% endif %}
+
+            {% if geoAddressDelivery %}
+                var leafletMapDelivery =  L.map("leafletmap-delivery").setView([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}], 10);
+                L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
+                L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}]).addTo(leafletMapDelivery);
+
+                document.getElementById('addressDeliveryTab').onclick = function(el){
+                    leafletMapDelivery.invalidateSize();
+                };
+            {% endif %}
+
+        });
+    {% do pimcore_head_script().captureEnd() %}
+{% endblock %}

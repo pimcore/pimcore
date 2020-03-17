@@ -16,9 +16,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends AbstractFilterType
 {
+    /**
+     * @param FilterNumberRangeSelection $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
@@ -55,7 +65,7 @@ class NumberRangeSelection extends AbstractFilterType
 
         $currentValue = '';
         if ($currentFilter[$field]['from'] || $currentFilter[$field]['to']) {
-            $currentValue = implode($currentFilter[$field], '-');
+            $currentValue = implode('-', $currentFilter[$field]);
         }
 
         return $this->render($this->getTemplate($filterDefinition), [
@@ -89,10 +99,19 @@ class NumberRangeSelection extends AbstractFilterType
         }
     }
 
+    /**
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     *
+     * @return array
+     */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
-        $rawValue = $params[$field];
+        $rawValue = $params[$field] ?? null;
 
         if (!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING && is_string($rawValue)) {
             $values = explode('-', $rawValue);

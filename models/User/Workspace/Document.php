@@ -17,9 +17,6 @@
 
 namespace Pimcore\Model\User\Workspace;
 
-/**
- * @method \Pimcore\Model\User\Workspace\Dao getDao()
- */
 class Document extends AbstractWorkspace
 {
     /**
@@ -33,7 +30,7 @@ class Document extends AbstractWorkspace
     public $unpublish = false;
 
     /**
-     * @param $save
+     * @param bool $save
      *
      * @return $this
      */
@@ -53,7 +50,7 @@ class Document extends AbstractWorkspace
     }
 
     /**
-     * @param $unpublish
+     * @param bool $unpublish
      *
      * @return $this
      */

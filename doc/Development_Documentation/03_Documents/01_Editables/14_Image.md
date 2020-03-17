@@ -15,7 +15,7 @@ The biggest advantages of using that instead of (for example) the relation edita
 
 | Name                           | Type    | Description                                                                                                                                                                                                                              |
 |--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `title`                        | string  | You can give the image widget in editmode a title. Using the new style (**ExtJS 6**) this title is displayed as a tooltip.                                                                                                               |
+| `title`                        | string  | You can give the image widget in editmode a title. Using the new style this title is displayed as a tooltip.                                                                                                               |
 | `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                              |
 | `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                             |
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                                    |
@@ -39,7 +39,8 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
 | `lowQualityPlaceholder`        | bool    | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires [SQIP](https://github.com/technopagan/sqip) or [Imagick](http://php.net/imagick), details see [setup of additional tools](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)|
 | `predefinedDataTemplates`      | array   | Add predefined config sets for hotspots and images                                                                                                                                                                                       |
-| `cacheBuster`                 | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
+| `cacheBuster`                  | bool    | (default: false) Add cache-buster prefix with modificationDate timestamp                                                                                                                                                                 |
+| `pictureAttributes`            | array   | Custom attributes for the <picture> tag (if thumbnail definition has media queries defined)                                                                                                                                              |
 
 You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
@@ -335,10 +336,10 @@ All dimensions are in percent and therefore independent from the image size, you
             <?php
             // outside the editmode: do something with the data
             if($this->image("myImage")->getHotspots()) {
-                \Zend_Debug::dump($this->image("myImage")->getHotspots());
+                dump($this->image("myImage")->getHotspots());
             }
             if($this->image("myImage")->getMarker()) {
-                \Zend_Debug::dump($this->image("myImage")->getMarker());
+                dump($this->image("myImage")->getMarker());
             }
             ?>
         <?php endif; ?>

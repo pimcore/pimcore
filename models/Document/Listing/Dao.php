@@ -27,7 +27,9 @@ use Pimcore\Model\Document;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
@@ -56,17 +58,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @param $columns
+     * @param array|string|Expression $columns
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
-    public function getQuery($columns)
+    public function getQuery($columns = '*')
     {
         $select = $this->db->select();
-        $select->from(
-            [ 'documents' ],
-            $columns
-        );
+        $select->from([ 'documents' ], $columns);
         $this->addConditions($select);
         $this->addOrder($select);
         $this->addLimit($select);
@@ -98,7 +97,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = $this->getQuery(['id', 'CONCAT(path,`key`)']);
+        $select = $this->getQuery(['id', 'CONCAT(path,`key`) as path']);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
@@ -109,10 +108,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        if ($this->model->isLoaded()) {
+            return count($this->model->getDocuments());
+        } else {
+            $idList = $this->loadIdList();
 
-        return $amount;
+            return count($idList);
+        }
     }
 
     /**
@@ -122,6 +124,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->getQuery([new Expression('COUNT(*)')]);
         $select->reset(QueryBuilder::LIMIT_COUNT);
+        $select->reset(QueryBuilder::LIMIT_OFFSET);
+        $select->reset(QueryBuilder::ORDER);
+
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;

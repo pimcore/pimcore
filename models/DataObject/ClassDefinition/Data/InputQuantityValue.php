@@ -60,7 +60,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param array $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -81,8 +81,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param float $data
-     * @param null $object
+     * @param array $data
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -130,7 +130,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param string $importValue
-     * @param null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return null|InputQuantityValueDataObject
@@ -149,10 +149,12 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|InputQuantityValueDataObject
      *
@@ -186,7 +188,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|mixed|null|InputQuantityValueDataObject

@@ -16,6 +16,19 @@ The following code makes the `<h1>` headline editable in a document:
 <h1>{{ pimcore_input("headline") }}</h1>
 ```
 
+In some cases, especially with areablocks, editables could throw exceptions. Since Pimcore internally uses the `__toString` method to render
+the editables, Pimcore can't throw exceptions there. Therefore Pimcore catches the exception, and puts it out as string if DEBUG Mode is enabled.
+
+To prevent that and to have Pimcore throw the Exception, you can call editables like:
+
+```php 
+<h1><?= $this->input("headline")->render() ?></h1>
+```
+
+```twig 
+<h1>{{ pimcore_input("headline").render() }}</h1>
+```
+
 </div>
 
 Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 

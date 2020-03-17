@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class Discount implements IDiscount
+class Discount implements DiscountInterface
 {
     /**
      * @var Decimal
@@ -67,24 +67,23 @@ class Discount implements IDiscount
      */
     public function modify(PriceInterface $currentSubTotal, CartInterface $cart)
     {
-        if ($this->getAmount() != 0) {
-            $amount = $this->getAmount();
-            if ($currentSubTotal->getAmount()->lessThan($amount->mul(-1))) {
-                $amount = $currentSubTotal->getAmount()->mul(-1);
-            }
-
-            $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
-
-            $taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
-            if ($taxClass) {
-                $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-                $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
-
-                $modificatedPrice->setGrossAmount($amount, true);
-            }
-
-            return $modificatedPrice;
+        $amount = $this->getAmount();
+        if ($currentSubTotal->getAmount()->lessThan($amount->mul(-1))) {
+            $amount = $currentSubTotal->getAmount()->mul(-1);
         }
+
+        $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+        $modificatedPrice->setRule($this->rule);
+
+        $taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
+        if ($taxClass) {
+            $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+            $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+            $modificatedPrice->setGrossAmount($amount, true);
+        }
+
+        return $modificatedPrice;
     }
 
     /**

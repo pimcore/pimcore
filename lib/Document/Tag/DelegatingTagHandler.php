@@ -18,7 +18,6 @@ use Pimcore\Document\Tag\Exception\NotFoundException;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Templating\Model\ViewModelInterface;
-use Pimcore\View;
 
 class DelegatingTagHandler implements TagHandlerInterface
 {
@@ -37,12 +36,14 @@ class DelegatingTagHandler implements TagHandlerInterface
     public function addHandler(TagHandlerInterface $handler)
     {
         $this->handlers[] = $handler;
+
+        return $this;
     }
 
     /**
      * Get the matching handler for a view
      *
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return TagHandlerInterface
      */

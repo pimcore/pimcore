@@ -36,7 +36,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     }
 
     /**
-     * @param Document $document
+     * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
      *
@@ -72,6 +72,9 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $elements = [];
+        $service = new Document\Service;
+
+        $translations = $service->getTranslations($document);
 
         if ($document instanceof Document\PageSnippet) {
             $tagNames = $this->tagUsageResolver->getUsedTagnames($document);
@@ -84,16 +87,32 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
         foreach ($elements as $tag) {
             if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
-                if (in_array($tag->getType(), ['image', 'link'])) {
+                if ($tag instanceof Document\Tag\Image || $tag instanceof Document\Tag\Link) {
                     $content = $tag->getText();
                 } else {
                     $content = $tag->getData();
                 }
 
+                $targetContent = [];
+                foreach ($result->getTargetLanguages() as $targetLanguage) {
+                    if (isset($translations[$targetLanguage])) {
+                        $targetDocument = Document::getById($translations[$targetLanguage]);
+
+                        if ($targetDocument instanceof  Document\PageSnippet) {
+                            $targetTag = $targetDocument->getElement($tag->getName());
+                            if ($targetTag instanceof Document\Tag\Image || $targetTag instanceof Document\Tag\Link) {
+                                $targetContent[$targetLanguage] = $targetTag->getText();
+                            } else {
+                                $targetContent[$targetLanguage] = $targetTag->getData();
+                            }
+                        }
+                    }
+                }
+
                 if (is_string($content)) {
                     $contentCheck = trim(strip_tags($content));
                     if (!empty($contentCheck)) {
-                        $result->addAttribute(Attribute::TYPE_TAG, $tag->getName(), $content);
+                        $result->addAttribute(Attribute::TYPE_TAG, $tag->getName(), $content, false, $targetContent);
                     }
                 }
             }

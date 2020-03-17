@@ -381,8 +381,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         this.grid =  Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.groupsStore.load();
-
         return this.grid
     },
 
@@ -415,7 +413,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                     var data = Ext.decode(response.responseText);
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t("classificationstore_error_addgroup_title"), t("classificationstore_error_addgroup_msg"));
+                        Ext.Msg.alert(t("classificationstore_error_addgroup_title"), t(data.message ? data.message : "classificationstore_error_addgroup_msg"));
                     } else {
                         this.groupsStore.reload({
                                 callback: function() {
@@ -482,7 +480,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
     openConfig: function(id) {
 
-        var sorters = this.groupsStore.getSorters();
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var params = {

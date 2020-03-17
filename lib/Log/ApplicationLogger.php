@@ -19,7 +19,6 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 class ApplicationLogger implements LoggerInterface
 {
@@ -81,18 +80,11 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $writer
+     * @param object $writer
      */
     public function addWriter($writer)
     {
-        if ($writer instanceof \Zend_Log_Writer_Abstract) {
-            // ZF compatibility
-            if (!isset($this->loggers['default-zend'])) {
-                // auto init Monolog logger
-                $this->loggers['default-zend'] = new \Zend_Log();
-            }
-            $this->loggers['default-zend']->addWriter($writer);
-        } elseif ($writer instanceof \Monolog\Handler\HandlerInterface) {
+        if ($writer instanceof \Monolog\Handler\HandlerInterface) {
             if (!isset($this->loggers['default-monolog'])) {
                 // auto init Monolog logger
                 $this->loggers['default-monolog'] = new \Monolog\Logger('app');
@@ -126,7 +118,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @deprecated
      *
-     * @param \\Pimcore\Model\DataObject\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
+     * @param \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|\Pimcore\Model\Asset|int $relatedObject
      */
     public function setRelatedObject($relatedObject)
     {
@@ -147,8 +139,6 @@ class ApplicationLogger implements LoggerInterface
      * @param mixed $level
      * @param string $message
      * @param array $context
-     *
-     * @return null
      */
     public function log($level, $message, array $context = [])
     {
@@ -191,15 +181,8 @@ class ApplicationLogger implements LoggerInterface
         foreach ($this->loggers as $logger) {
             if ($logger instanceof \Psr\Log\LoggerInterface) {
                 $logger->log($level, $message, $context);
-            } elseif ($logger instanceof \Zend_Log) {
-                // zf compatibility
-                $zendLoggerPsr3Mapping = array_flip(self::getZendLoggerPsr3Mapping());
-                $prio = $zendLoggerPsr3Mapping[$level];
-                $logger->log($message, $prio, $context);
             }
         }
-
-        return null;
     }
 
     /**
@@ -342,9 +325,9 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $level
-     * @param $message
-     * @param $params
+     * @param mixed $level
+     * @param string $message
+     * @param array $params
      */
     protected function handleLog($level, $message, $params)
     {
@@ -375,11 +358,11 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param $message
+     * @param string $message
      * @param \Throwable $exceptionObject
      * @param string $priority
-     * @param null $relatedObject
-     * @param null $component
+     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
+     * @param string|null $component
      */
     public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
     {
@@ -406,7 +389,7 @@ class ApplicationLogger implements LoggerInterface
      * @param string $message
      * @param \Throwable $exception
      * @param mixed $level
-     * @param null $relatedObject
+     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param array $context
      */
     public static function logExceptionObject(
@@ -439,24 +422,5 @@ class ApplicationLogger implements LoggerInterface
         }
 
         return new FileObject($dataDump);
-    }
-
-    /**
-     * @return array
-     */
-    public static function getZendLoggerPsr3Mapping()
-    {
-        // the index numer represents the Zend_Log level, e.g.: Zend_Log::EMERG
-        // we don't use the contants here, to avoid a dependency on ZF in v5-only mode
-        return [
-            7 => LogLevel::DEBUG,
-            6 => LogLevel::INFO,
-            5 => LogLevel::NOTICE,
-            4 => LogLevel::WARNING,
-            3 => LogLevel::ERROR,
-            2 => LogLevel::CRITICAL,
-            1 => LogLevel::ALERT,
-            0 => LogLevel::EMERGENCY
-        ];
     }
 }

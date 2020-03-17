@@ -300,7 +300,7 @@ object as parameter. The `action()` method is no real controller action, it is j
  and code out of the 
 view. However, you can use the action method to prepare data for the view (for example parse request params).
 
-Since Pimcore 5.0.3 you can return a Response object from `action()` and `postRenderAction()` and this response
+You can return a Response object from `action()` and `postRenderAction()` and this response
 will be sent back to the client.
 
 If you need to influence the HTML open and close tag, you can do so by customizing `getHtmlTagOpen()` and 
@@ -368,4 +368,4 @@ the compatibility they still need to be implemented the Pimcore 4 way in `websit
 
 ## Examples
 
-You can find many examples in the [demo / quick start package](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/master/src/AppBundle/Document/Areabrick).

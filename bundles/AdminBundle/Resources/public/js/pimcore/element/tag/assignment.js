@@ -204,12 +204,12 @@ pimcore.element.tag.assignment = Class.create({
                         this.progressBarWin = new Ext.Window({
                             title: t("batch_assignment"),
                             layout:'fit',
-                            width:500,
+                            width:200,
                             bodyStyle: "padding: 10px;",
                             closable:false,
                             plain: true,
-                            modal: true,
-                            items: [this.progressBar]
+                            items: [this.progressBar],
+                            listeners: pimcore.helpers.getProgressWindowListeners()
                         });
 
                         this.progressBarWin.show();

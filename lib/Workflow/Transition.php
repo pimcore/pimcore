@@ -16,13 +16,13 @@ namespace Pimcore\Workflow;
 
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
-use Pimcore\Workflow\NotificationEmail\NotificationEmailInterface;
-use Pimcore\Workflow\NotificationEmail\NotificationEmailTrait;
+use Pimcore\Workflow\Notification\NotificationInterface;
+use Pimcore\Workflow\Notification\NotificationTrait;
 
-class Transition extends \Symfony\Component\Workflow\Transition implements NotesAwareInterface, NotificationEmailInterface
+class Transition extends \Symfony\Component\Workflow\Transition implements NotesAwareInterface, NotificationInterface
 {
     use NotesAwareTrait;
-    use NotificationEmailTrait;
+    use NotificationTrait;
 
     private $options;
 
@@ -30,8 +30,8 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
      * Transition constructor.
      *
      * @param string $name
-     * @param string|\string[] $froms
-     * @param string|\string[] $tos
+     * @param string|string[] $froms
+     * @param string|string[] $tos
      * @param array $options
      */
     public function __construct($name, $froms, $tos, $options = [])
@@ -53,6 +53,14 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     public function getIconClass(): string
     {
         return $this->options['iconClass'] ?? 'pimcore_icon_workflow_action';
+    }
+
+    /**
+     * @return string|int|false
+     */
+    public function getObjectLayout()
+    {
+        return $this->options['objectLayout'] ?: false;
     }
 
     public function getChangePublishedState(): string

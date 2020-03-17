@@ -107,6 +107,11 @@ pimcore.element.scheduler = Class.create({
                             var d = new Date(intval(v) * 1000);
 
                             var ret = Ext.Date.format(d, "Y-m-d H:i");
+
+                            if (rec.data.note) {
+                                ret += " - " + rec.data.note;
+                            }
+
                             if (rec.data.user) {
                                 ret += " - " + rec.data.user.name;
                             }
@@ -240,27 +245,21 @@ pimcore.element.scheduler = Class.create({
     buildActionsColumnStore: function() {
         var actions = [];
 
-        if ("document" === this.type) {
-            actions = [
-                ["publish", t("publish")],
-                ["unpublish", t("unpublish")],
-                ["delete", t("delete")]
-            ];
-        }
-        else if ("asset" === this.type) {
-            actions = [
-                ["delete", t("delete")]
-            ];
-        }
-        else if ("object" === this.type) {
-            actions = [
-                ["publish", t("publish")],
-                ["unpublish", t("unpublish")],
-                ["delete", t("delete")]
-            ];
+        if ("document" === this.type || "object" === this.type) {
+            if(this.element.isAllowed("publish")) {
+                actions.push(["publish", t("publish")]);
+            }
+
+            if(this.element.isAllowed("unpublish")) {
+                actions.push(["unpublish", t("unpublish")]);
+            }
         }
 
-        if (this.options.supportsVersions) {
+        if(this.element.isAllowed("delete")) {
+            actions.push(["delete", t("delete")]);
+        }
+
+        if (this.options.supportsVersions && this.element.isAllowed("publish") && this.element.isAllowed("versions")) {
             actions.push(["publish-version", t("publish_version")]);
         }
 

@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
@@ -98,6 +99,7 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
+        'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Mark existing migrations as done ...',
         'complete' => 'Install complete!'
     ];
@@ -318,6 +320,13 @@ class Installer
             $dbConfig['port'] = $params['mysql_port'];
         }
 
+        $mysqlSslCertPath = $params['mysql_ssl_cert_path'];
+        if (!empty($mysqlSslCertPath)) {
+            $dbConfig['driverOptions'] = [
+                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath
+            ];
+        }
+
         return $dbConfig;
     }
 
@@ -329,6 +338,11 @@ class Installer
 
         unset($dbConfig['driver']);
         unset($dbConfig['wrapperClass']);
+
+        if (isset($dbConfig['driverOptions'])) {
+            $dbConfig['options'] = $dbConfig['driverOptions'];
+            unset($dbConfig['driverOptions']);
+        }
 
         $this->createConfigFiles([
             'doctrine' => [
@@ -364,6 +378,9 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses($kernel);
 
+        $this->dispatchStepEvent('install_custom_layouts');
+        $this->installCustomLayouts($kernel);
+
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone($kernel);
 
@@ -374,13 +391,12 @@ class Installer
 
     private function markMigrationsAsDone(KernelInterface $kernel)
     {
-        /**
-         * @var $manager \Pimcore\Migrations\MigrationManager
-         */
+        /** @var \Pimcore\Migrations\MigrationManager $manager */
         $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
         $config = $manager->getConfiguration('pimcore_core');
         $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
-        $latest = end($config->getMigrations());
+        $migrations = $config->getMigrations();
+        $latest = end($migrations);
         $manager->markVersionAsMigrated($latest);
     }
 
@@ -430,6 +446,56 @@ class Installer
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
             $stdErr->note('Installing classes failed. Please run the following command manually:');
+            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+        }
+    }
+
+    private function installCustomLayouts(KernelInterface $kernel)
+    {
+        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:custom-layouts-rebuild']);
+        $io = $this->commandLineOutput;
+
+        try {
+            $arguments = [
+                Console::getPhpCli(),
+                PIMCORE_PROJECT_ROOT . '/bin/console',
+                'pimcore:deployment:custom-layouts-rebuild',
+                '-c'
+            ];
+
+            $partsBuilder = new PartsBuilder($arguments);
+            $parts = $partsBuilder->getParts();
+
+            $process = new Process($parts);
+            $process->setTimeout(0);
+            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }
+
+            if (null !== $io) {
+                $io->writeln($process->getOutput());
+            }
+        } catch (ProcessFailedException $e) {
+            $this->logger->error($e->getMessage());
+
+            if (null === $io) {
+                return;
+            }
+
+            $stdErr = $io->getErrorStyle();
+            $process = $e->getProcess();
+
+            $errorOutput = trim($process->getErrorOutput());
+            if (!empty($errorOutput)) {
+                $stdErr->write($errorOutput);
+            }
+
+            $stdErr->write($process->getOutput());
+            $stdErr->write($process->getErrorOutput());
+            $stdErr->note('Installing custom layouts failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
     }
@@ -551,6 +617,9 @@ class Installer
         return $errors;
     }
 
+    /**
+     * @return array
+     */
     protected function getDataFiles()
     {
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
@@ -567,13 +636,12 @@ class Installer
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
-        /**
-         * @var User $user
-         */
         if ($user = User::getByName($settings['username'])) {
+            /** @var User $user */
             $user->delete();
         }
 
+        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
@@ -585,7 +653,7 @@ class Installer
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @throws \Exception
      */
@@ -597,24 +665,29 @@ class Installer
         // remove comments in SQL script
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        // get every command as single part - ; at end of line
-        $singleQueries = explode(";\n", $dumpFile);
+        if (strpos($file, 'atomic') !== false) {
+            $db->exec($dumpFile);
+        } else {
 
-        // execute queries in bulk mode to prevent max_packet_size errors
-        $batchQueries = [];
-        foreach ($singleQueries as $m) {
-            $sql = trim($m);
-            if (strlen($sql) > 0) {
-                $batchQueries[] = $sql . ';';
+            // get every command as single part - ; at end of line
+            $singleQueries = explode(";\n", $dumpFile);
+
+            // execute queries in bulk mode to prevent max_packet_size errors
+            $batchQueries = [];
+            foreach ($singleQueries as $m) {
+                $sql = trim($m);
+                if (strlen($sql) > 0) {
+                    $batchQueries[] = $sql . ';';
+                }
+
+                if (count($batchQueries) > 500) {
+                    $db->exec(implode("\n", $batchQueries));
+                    $batchQueries = [];
+                }
             }
 
-            if (count($batchQueries) > 500) {
-                $db->exec(implode("\n", $batchQueries));
-                $batchQueries = [];
-            }
+            $db->exec(implode("\n", $batchQueries));
         }
-
-        $db->exec(implode("\n", $batchQueries));
 
         // set the id of the system user to 0
         $db->update('users', ['id' => 0], ['name' => 'system']);

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCacheWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -28,9 +29,9 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
     /**
      * creates object mockup for given data
      *
-     * @param $objectId
-     * @param $data
-     * @param $relations
+     * @param int $objectId
+     * @param mixed $data
+     * @param array $relations
      *
      * @return DefaultMockup
      */
@@ -43,13 +44,15 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId)
     {
-        $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);
+        /** @var AbstractMockupCacheWorker $worker */
+        $worker = $this->getTenantWorker();
+        $mockup = $worker->getMockupFromCache($objectId);
 
         if (empty($mockup)) {
             Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");

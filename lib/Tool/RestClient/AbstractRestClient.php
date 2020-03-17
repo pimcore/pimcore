@@ -14,7 +14,8 @@
 
 namespace Pimcore\Tool\RestClient;
 
-use Pimcore\Logger;
+use GuzzleHttp\Client;
+use Pimcore\Http\ClientFactory;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -25,6 +26,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractRestClient implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -40,7 +44,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     protected $enableProfiling = false;
 
     /**
-     * @var mixed
+     * @var object|null
      */
     protected $profilingInfo;
 
@@ -149,8 +153,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param  $key
-     * @param  $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return $this
      */
@@ -167,7 +171,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $disableMappingExceptions
+     * @param bool $disableMappingExceptions
      *
      * @return $this
      */
@@ -187,7 +191,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $condense
+     * @param bool $condense
      *
      * @return $this
      */
@@ -207,7 +211,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $enableProfiling
+     * @param bool $enableProfiling
      *
      * @return $this
      */
@@ -227,7 +231,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @return mixed
+     * @return object|null
      */
     public function getProfilingInfo()
     {
@@ -251,7 +255,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $apikey
+     * @param string $apikey
      *
      * @return $this
      */
@@ -367,7 +371,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         if ($response->getStatusCode() !== $expectedStatus) {
             throw Exception::create(
-                sprintf('Response status %d does not match the expected status %d', $response->getStatusCode(), $expectedStatus),
+                sprintf("Response status %d does not match the expected status %d, response was: \n\n" . $response->getBody(), $response->getStatusCode(), $expectedStatus),
                 $request,
                 $response
             );
@@ -490,16 +494,16 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
      * @param bool $decode
-     * @param null $objectClass
+     * @param string|null $objectClass
      *
-     * @return Object[]
+     * @return DataObject\AbstractObject[]
      *
      * @throws Exception
      */
@@ -529,12 +533,12 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
      * @param bool $decode
      *
      * @return Asset[]
@@ -569,12 +573,12 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
      * @param bool $decode
      *
      * @return Document[]
@@ -614,11 +618,11 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param      $id
+     * @param int $id
      * @param bool $decode
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|DataObject\Folder
+     * @return DataObject\AbstractObject|null
      *
      * @throws Exception
      */
@@ -673,14 +677,16 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
             }
         }
+
+        return null;
     }
 
     /**
-     * @param      $id
+     * @param int $id
      * @param bool $decode
-     * @param null $idMapper
+     * @param Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed
+     * @return Document|null
      *
      * @throws Exception
      */
@@ -715,20 +721,20 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 return $document;
             }
         }
+
+        return null;
     }
 
     /**
-     * TODO
-     *
-     * @param        $id
-     * @param bool   $decode
-     * @param null   $idMapper
-     * @param bool   $light
-     * @param null   $thumbnail
-     * @param bool   $tolerant
+     * @param int $id
+     * @param bool $decode
+     * @param Webservice\IdMapperInterface|null $idMapper
+     * @param bool $light
+     * @param string|null $thumbnail
+     * @param bool $tolerant
      * @param string $protocol
      *
-     * @return mixed|Asset\Folder
+     * @return Asset|null
      *
      * @throws Exception
      */
@@ -737,6 +743,10 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         $params = [];
         if ($light) {
             $params['light'] = 1;
+        }
+
+        if ($thumbnail) {
+            $params['thumbnail'] = $thumbnail;
         }
 
         $response = $this->getJsonResponse('GET', sprintf('/asset/id/%d', $id), $params);
@@ -769,25 +779,20 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
                 if ($light) {
-                    $client = Tool::getHttpClient();
-                    $client->setMethod('GET');
+                    /** @var Client $client */
+                    $client = ClientFactory::createHttpClient();
 
                     $assetType = $asset->getType();
                     $data = null;
 
                     if ($assetType == 'image' && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
-                        // http://example.com/var/tmp/thumb_9__fancybox_thumb
-                        $tmpPath = preg_replace('@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@', '', PIMCORE_TEMPORARY_DIRECTORY);
-                        $uri = $protocol . $this->getHost() . $tmpPath . '/thumb_' . $asset->getId() . '__' . $thumbnail;
-                        $client->setUri($uri);
 
-                        if ($this->getLoggingEnabled()) {
-                            print '    =>' . $uri . "\n";
-                        }
+                        $uri = $protocol . $this->getHost() . $wsDocument->thumbnail;
 
-                        $result = $client->request();
-                        if ($result->getStatus() == 200) {
+                        $result = $client->request('GET', $uri, []);
+
+                        if ($result->getStatusCode() == 200) {
                             $data = $result->getBody();
                         }
                         $mimeType = $result->getHeader('Content-Type');
@@ -810,7 +815,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
                         }
 
-                        Logger::debug('mimeType: ' . $mimeType);
                         $asset->setFilename($filename);
                     }
 
@@ -818,19 +822,23 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         $path = $wsDocument->path;
                         $filename = $wsDocument->filename;
                         $uri = $protocol . $this->getHost() . '/var/assets' . $path . $filename;
-                        $client->setUri($uri);
-                        $result = $client->request();
-                        if ($result->getStatus() != 200 && !$tolerant) {
+
+                        $result = $client->request('GET', $uri, []);
+
+                        if ($result->getStatusCode() != 200 && !$tolerant) {
                             throw new Exception('Could not retrieve asset');
                         }
                         $data = $result->getBody();
                     }
+
                     $asset->setData($data);
                 }
 
                 return $asset;
             }
         }
+
+        return null;
     }
 
     /**
@@ -838,7 +846,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @param Document $document
      *
-     * @return mixed json encoded success value and id
+     * @return object json encoded success value and id
      */
     public function createDocument(Document $document)
     {
@@ -882,7 +890,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @return mixed|null|string
      *
-     * @throws Exception
      * @throws \Exception
      */
     public function createAsset(Asset $asset)
@@ -904,7 +911,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Deletes an object.
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return mixed json encoded success value and id
      */
@@ -918,7 +925,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Deletes an asset.
      *
-     * @param $assetId
+     * @param int $assetId
      *
      * @return mixed json encoded success value and id
      */
@@ -932,7 +939,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Deletes a document.
      *
-     * @param $documentId
+     * @param int $documentId
      *
      * @return mixed json encoded success value and id
      */
@@ -980,7 +987,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param      $id
+     * @param string $id
      * @param bool $decode
      *
      * @return mixed|null|DataObject\ClassDefinition|string
@@ -1005,7 +1012,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param      $id
+     * @param int $id
      * @param bool $decode
      *
      * @return mixed|DataObject\ClassDefinition
@@ -1030,8 +1037,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $groupBy
      *
      * @return mixed
      *
@@ -1052,8 +1059,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $groupBy
      *
      * @return mixed
      *
@@ -1074,9 +1081,9 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param null $condition
-     * @param null $groupBy
-     * @param null $objectClass
+     * @param string|null $condition
+     * @param string|null $groupBy
+     * @param string|null $objectClass
      *
      * @return mixed
      *
@@ -1122,7 +1129,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return mixed|null|string
      *
@@ -1162,7 +1169,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Returns the given object brick definition
      *
-     * @param $id
+     * @param int $id
      *
      * @return mixed
      */
@@ -1200,7 +1207,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Returns the image thumbnail configuration with the given ID.
      *
-     * @param $id
+     * @param int $id
      *
      * @return mixed
      */
@@ -1228,8 +1235,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $wsData
-     * @param $data
+     * @param object $wsData
+     * @param \stdClass $data
      *
      * @return mixed
      *
@@ -1263,8 +1270,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $class
-     * @param $data
+     * @param string $class
+     * @param \stdClass $data
      *
      * @return mixed
      *
@@ -1284,8 +1291,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
-     * @param $filename
-     * @param $extension
+     * @param string $filename
+     * @param string $extension
      *
      * @return string
      */

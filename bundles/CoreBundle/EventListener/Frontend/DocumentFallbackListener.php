@@ -14,13 +14,16 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -61,6 +64,11 @@ class DocumentFallbackListener implements EventSubscriberInterface
      */
     protected $options;
 
+    /**
+     * @var bool|null
+     */
+    protected $isRequestContextDefault = null;
+
     public function __construct(
         RequestStack $requestStack,
         DocumentResolver $documentResolver,
@@ -82,7 +90,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     protected function configureOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setDefaults([
-            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink']
+            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink', 'link', 'folder']
         ]);
 
         $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');
@@ -98,6 +106,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // -> Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()
             // -> Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener::onKernelRequest()
             KernelEvents::REQUEST => ['onKernelRequest', 20],
+            KernelEvents::CONTROLLER => ['onKernelController', 20],
         ];
     }
 
@@ -109,44 +118,49 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->isRequestContextDefault($request)) {
             return;
         }
 
-        if ($this->documentResolver->getDocument($request)) {
-            // we already have a document (e.g. set through the document router)
-            return;
-        } else {
+        if (!$event->isMasterRequest() && !$this->documentResolver->getDocument($request)) {
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
-            if (!$event->isMasterRequest()) {
-                $parentRequest = $this->requestStack->getParentRequest();
-                $masterRequest = $this->requestStack->getMasterRequest();
+            $parentRequest = $this->requestStack->getParentRequest();
+            $masterRequest = $this->requestStack->getMasterRequest();
 
-                $eligibleRequests = [];
+            $eligibleRequests = [];
 
-                if (null !== $parentRequest) {
-                    $eligibleRequests[] = $parentRequest;
-                }
+            if (null !== $parentRequest) {
+                $eligibleRequests[] = $parentRequest;
+            }
 
-                if ($masterRequest !== $parentRequest) {
-                    $eligibleRequests[] = $masterRequest;
-                }
+            if ($masterRequest !== $parentRequest) {
+                $eligibleRequests[] = $masterRequest;
+            }
 
-                foreach ($eligibleRequests as $eligibleRequest) {
-                    if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
-                        $this->documentResolver->setDocument($request, $document);
+            foreach ($eligibleRequests as $eligibleRequest) {
+                if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
+                    $this->documentResolver->setDocument($request, $document);
 
-                        return;
-                    }
+                    return;
                 }
             }
+        }
+    }
+
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $controller = $event->getController();
+        if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
+            // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704
+            return;
         }
 
         // no document found yet - try to find the nearest document by request path
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
-        if ($event->isMasterRequest()) {
+        $request = $event->getRequest();
+        if ($event->isMasterRequest() && $this->isRequestContextDefault($request) && !$this->documentResolver->getDocument($request)) {
             $path = null;
             if ($this->siteResolver->isSiteRequest($request)) {
                 $path = $this->siteResolver->getSitePath($request);
@@ -159,5 +173,19 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 $this->documentResolver->setDocument($request, $document);
             }
         }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    private function isRequestContextDefault(Request $request): bool
+    {
+        if ($this->isRequestContextDefault === null) {
+            $this->isRequestContextDefault = $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT);
+        }
+
+        return $this->isRequestContextDefault;
     }
 }

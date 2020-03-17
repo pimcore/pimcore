@@ -25,7 +25,7 @@ class Service
     /**
      * @param Document $doc
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      *
      * @throws \Exception
      */
@@ -33,6 +33,7 @@ class Service
     {
         if ($doc instanceof Document\Hardlink) {
             if ($sourceDoc = $doc->getSourceDocument()) {
+                /** @var Document\Hardlink\Wrapper\Hardlink $destDoc */
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
                 $destDoc->setPath($doc->getRealPath());
@@ -58,7 +59,7 @@ class Service
      *
      * @param Document $doc
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc)
     {
@@ -80,19 +81,19 @@ class Service
     }
 
     /**
-     * this is used to get childs below a hardlink by a path
+     * this is used to get children below a hardlink by a path
      * for example: the requested path is /de/service/contact but /de/service is a hardlink to /en/service
      * then $hardlink would be /en/service and $path /de/service/contact and this function returns then /en/service/contact
      *
      * @param Document\Hardlink $hardlink
      * @param string $path
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      */
     public static function getChildByPath(Document\Hardlink $hardlink, $path)
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
-            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath()) . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
+            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath(), '@') . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
             if ($hardLinkedDocument instanceof Document) {
                 $hardLinkedDocument = self::wrap($hardLinkedDocument);
@@ -113,14 +114,14 @@ class Service
 
     /**
      * @param Document\Hardlink $hardlink
-     * @param $path
+     * @param string $path
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
-            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath()) . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
+            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath(), '@') . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $pathes = [];
 
             $pathes[] = '/';
@@ -146,7 +147,7 @@ class Service
                     $_path = str_replace('\\', '/', $_path); // windows patch
                     $_path .= $_path != '/' ? '/' : '';
 
-                    $_path = preg_replace('@^' . preg_quote($hardlink->getSourceDocument()->getRealPath()) . '@', $hardlink->getRealPath(), $_path);
+                    $_path = preg_replace('@^' . preg_quote($hardlink->getSourceDocument()->getRealPath(), '@') . '@', $hardlink->getRealPath(), $_path);
 
                     $hardLinkedDocument->setPath($_path);
 
@@ -154,5 +155,7 @@ class Service
                 }
             }
         }
+
+        return null;
     }
 }

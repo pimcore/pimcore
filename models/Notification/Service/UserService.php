@@ -17,57 +17,59 @@ declare(strict_types=1);
 namespace Pimcore\Model\Notification\Service;
 
 use Pimcore\Model\User;
-use Pimcore\Model\User\Role;
 
 class UserService
 {
     /**
-     * @param User $user
+     * @param User $loggedIn
      *
      * @return array
      */
     public function findAll(User $loggedIn): array
     {
-        $users = [];
-        $roles = [];
 
-        $filter = [
-            'id > ?' => 0,
-            'id != ?' => $loggedIn->getId(),
-            'name != ?' => 'system',
-            'active = ?' => 1,
-        ];
+        // condition for users with groups having notifications permission
+        $condition = [];
+        $rolesList = new \Pimcore\Model\User\Role\Listing();
+        $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,notifications,%');
+        $rolesList->load();
+        $roles = $rolesList->getRoles();
 
-        $userFilter = array_merge($filter, [
-            '(permissions LIKE ? OR admin = 1)' => '%notifications%',
-        ]);
+        foreach ($roles as $role) {
+            $condition[] = "CONCAT(',', roles, ',') LIKE '%," . $role->getId() . ",%'";
+        }
 
-        $roleFilter = array_merge($filter, [
-            'type = ?' => 'role'
-        ]);
+        // get available users having notifications permission or having a group with notifications permission
+        $userListing = new User\Listing();
+        $userListing->setOrderKey('name');
+        $userListing->setOrder('ASC');
 
-        $condition = implode(' AND ', array_keys($userFilter));
-        $conditionVariables = array_values($userFilter);
-
-        $listing = new User\Listing();
-        $listing->setCondition($condition, $conditionVariables);
-        $listing->setOrderKey('name');
-        $listing->setOrder('ASC');
-        $listing->load();
-
-        $users = $listing->getUsers();
-
-        $condition = implode(' AND ', array_keys($roleFilter));
-        $conditionVariables = array_values($roleFilter);
-
-        $listing = new Role\Listing();
-        $listing->setCondition($condition, $conditionVariables);
-        $listing->setOrderKey('name');
-        $listing->setOrder('ASC');
-        $listing->load();
-
-        $roles = $listing->getRoles();
+        $condition[] = 'admin = 1';
+        $userListing->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(' OR ', $condition) . ')', '%,notifications,%');
+        $userListing->addConditionParam('id != ?', $loggedIn->getId());
+        $userListing->addConditionParam('active = ?', '1');
+        $userListing->load();
+        $users = $userListing->getUsers();
 
         return array_merge($users, $roles);
+    }
+
+    /**
+     * @param array $users
+     *
+     * @return array
+     */
+    public function filterUsersWithPermission(array $users): array
+    {
+        $usersList = [];
+
+        /** @var User $user */
+        foreach ($users as $user) {
+            if ($user->isAllowed('notifications')) {
+                $usersList[] = $user;
+            }
+        }
+
+        return $usersList;
     }
 }

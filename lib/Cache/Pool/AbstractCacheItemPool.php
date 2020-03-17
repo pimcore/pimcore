@@ -17,6 +17,7 @@ namespace Pimcore\Cache\Pool;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Contracts\Cache\ItemInterface;
 
 abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 {
@@ -295,12 +296,14 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * @return bool
      *   True if the pool was successfully cleared. False if there was an error.
      */
-    public function clear()
+    public function clear(/*string $prefix = ''*/)
     {
         $this->deferred = [];
 
+        $prefix = 0 < \func_num_args() ? (string) func_get_arg(0) : '';
+
         try {
-            return $this->doClear('');
+            return $this->doClear($prefix);
         } catch (\Exception $e) {
             CacheItem::log($this->logger, 'Failed to clear the cache', ['exception' => $e]);
 
@@ -465,7 +468,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {
@@ -491,7 +494,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function doGet(PimcoreCacheItemPoolInterface $pool, string $key, callable $callback, ?float $beta, array &$metadata = null)
     {
@@ -505,8 +508,8 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
         $metadata = $item instanceof PimcoreCacheItemInterface ? $item->getMetadata() : [];
 
         if (!$recompute && $metadata) {
-            $expiry = $metadata[PimcoreCacheItemInterface::METADATA_EXPIRY] ?? false;
-            $ctime = $metadata[PimcoreCacheItemInterface::METADATA_CTIME] ?? false;
+            $expiry = $metadata[ItemInterface::METADATA_EXPIRY] ?? false;
+            $ctime = $metadata[ItemInterface::METADATA_CTIME] ?? false;
 
             if ($recompute = $ctime && $expiry && $expiry <= microtime(true) - $ctime / 1000 * $beta * log(random_int(1, PHP_INT_MAX) / PHP_INT_MAX)) {
                 // force applying defaultLifetime to expiry

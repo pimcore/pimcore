@@ -22,7 +22,7 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ['name','title','noteditable','invisible','style'];
+        this.availableSettingsFields = ['name','title','mandatory','noteditable','invisible','style'];
 
         this.treeNode = treeNode;
     },

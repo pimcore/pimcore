@@ -45,7 +45,7 @@ class ClassesRebuildCommand extends AbstractCommand
                 'delete-classes',
                 'd',
                 InputOption::VALUE_NONE,
-                'Delete missing Classes (Classes that dont exists in var/classes anymore but in the database)'
+                'Delete missing Classes (Classes that don\'t exists in var/classes anymore but in the database)'
             );
     }
 
@@ -142,5 +142,7 @@ class ClassesRebuildCommand extends AbstractCommand
 
             $fc->save(false);
         }
+
+        return 0;
     }
 }

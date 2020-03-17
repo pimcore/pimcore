@@ -33,7 +33,7 @@ pimcore.settings.user.editorSettings = Class.create({
         var data = [];
         for (var i = 0; i < nrOfLanguages; i++) {
             var language = this.contentLanguages[i];
-            data.push([language, ts(pimcore.available_languages[language])]);
+            data.push([language, t(pimcore.available_languages[language])]);
         }
 
         this.store = new Ext.data.ArrayStore({
@@ -70,7 +70,6 @@ pimcore.settings.user.editorSettings = Class.create({
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = this.valueGrid.getSelectionModel();
                                 }
                             }.bind(this)
                         }
@@ -117,7 +116,6 @@ pimcore.settings.user.editorSettings = Class.create({
 
     getContentLanguages: function () {
 
-        var settings = {};
         var languages = [];
 
         this.store.commitChanges();

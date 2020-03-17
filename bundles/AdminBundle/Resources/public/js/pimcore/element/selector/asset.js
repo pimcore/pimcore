@@ -156,7 +156,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 listeners: {
                     rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
                         var menu = new Ext.menu.Menu();
-                        var data = grid.getStore().getAt(rowIndex);
 
                         menu.add(new Ext.menu.Item({
                             text: t('remove'),
@@ -190,7 +189,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             var columns = [
                 {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
+                        return '<div style="height: 16px;" class="pimcore_icon_'
                             + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
@@ -265,5 +264,6 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         }
 
         this.pagingtoolbar.moveFirst();
+        this.updateTabTitle(formValues.query);
     }
 });

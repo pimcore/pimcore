@@ -20,8 +20,8 @@ framework:
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id:  session.handler.native_file
-        save_path:   "%kernel.root_dir%/../var/sessions"
+        # use the native PHP session mechanism
+        handler_id:  null
     php_errors:
         log: true
 
@@ -33,6 +33,7 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
 
 # Doctrine Configuration
 doctrine:
@@ -106,6 +107,7 @@ pimcore:
                     geobounds: \Pimcore\Model\DataObject\ClassDefinition\Data\Geobounds
                     geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
                     geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
+                    geopolyline: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolyline
                     hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
                     manyToOneRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation
                     image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
@@ -121,6 +123,7 @@ pimcore:
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
+                    urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
                     manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
@@ -153,7 +156,7 @@ pimcore:
     documents:
         tags:
             map:
-                # @TODO: BC layer, to be removed in v6.0
+                # @TODO: BC layer, to be removed in v7
                 href: \Pimcore\Model\Document\Tag\Relation
                 multihref: \Pimcore\Model\Document\Tag\Relations
 
@@ -202,23 +205,22 @@ pimcore:
     context:
         profiler:
             routes:
-                - { path: ^/_(profiler|wdt) }
+                - { path: ^/_(profiler|wdt)(/.*)?$ }
         admin:
             routes:
-                - { path: ^/admin }
+                - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
         webservice:
             routes:
-                - { path: ^/webservice }
+                - { path: ^/webservice(/.*)?$ }
                 - { route: ^pimcore_webservice }
         plugin:
             routes:
-                - { path: ^/plugin }
+                - { path: ^/plugin(/.*)?$ }
     admin:
         session:
             attribute_bags:
                 - pimcore_admin
-                - pimcore_documents
                 - pimcore_objects
                 - pimcore_copy
                 - pimcore_gridconfig
@@ -244,13 +246,13 @@ pimcore:
             app:
                 name: Migrations
                 namespace: App\Migrations
-                directory: "%kernel.root_dir%/Resources/migrations"
+                directory: "%kernel.root_dir%/Migrations"
 
             # this is the core migration set used for Composer post-package-update event
             pimcore_core:
                 name: Pimcore Core Migrations
                 namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Resources/migrations"
+                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
 
     sitemaps:
         generators:
@@ -398,10 +400,12 @@ pimcore:
             cgm: 'image/cgm'
             gif: 'image/gif'
             ief: 'image/ief'
+            pjpeg: 'image/jpeg'
             jpeg: 'image/jpeg'
             jpg: 'image/jpeg'
             jpe: 'image/jpeg'
             png: 'image/png'
+            webp: 'image/webp'
             svg: 'image/svg+xml'
             tiff: 'image/tiff'
             tif: 'image/tiff'
@@ -468,6 +472,8 @@ swiftmailer:
     default_mailer: pimcore_mailer
 
 presta_sitemap:
+    # override default dump_directory from public to web
+    dump_directory: web
     # do not add properties by default
     defaults:
         lastmod: ~

@@ -27,75 +27,43 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ImageThumbnail
 {
-    /**
-     * @var \Pimcore\Model\Asset\Video
-     */
-    protected $asset;
-
-    /**
-     * @var mixed|string
-     */
-    protected $filesystemPath;
+    use Model\Asset\Thumbnail\ImageThumbnailTrait;
 
     /**
      * @var int
-     */
-    protected $width;
-
-    /**
-     * @var int
-     */
-    protected $height;
-
-    /**
-     * @var int
-     */
-    protected $realWidth;
-
-    /**
-     * @var int
-     */
-    protected $realHeight;
-
-    /**
-     * @var Image\Thumbnail\Config
-     */
-    protected $config;
-
-    /**
-     * @var
      */
     protected $timeOffset;
 
     /**
-     * @var
+     * @var Image|null
      */
     protected $imageAsset;
 
     /**
-     * ImageThumbnail constructor.
-     *
-     * @param $asset
-     * @param null $config
-     * @param null $timeOffset
-     * @param null $imageAsset
+     * @param Model\Asset\Video $asset
+     * @param string|array|Image\Thumbnail\Config|null $config
+     * @param int|null $timeOffset
+     * @param Image|null $imageAsset
+     * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null)
+    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
         $this->imageAsset = $imageAsset;
         $this->config = $this->createConfig($config);
+        $this->deferred = $deferred;
     }
 
     /**
-     * @return mixed
+     * @param bool $deferredAllowed
+     *
+     * @return string
      */
-    public function getPath()
+    public function getPath($deferredAllowed = true)
     {
-        $fsPath = $this->getFileSystemPath();
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-        $path = urlencode_ignore_slash($path);
+        $fsPath = $this->getFileSystemPath($deferredAllowed);
+        $path = $this->convertToWebPath($fsPath);
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
@@ -108,21 +76,14 @@ class ImageThumbnail
     }
 
     /**
-     * @return mixed|string
+     * @param bool $deferredAllowed
+     *
+     * @throws \Exception
      */
-    public function getFileSystemPath()
-    {
-        if (!$this->filesystemPath) {
-            $this->generate();
-        }
-
-        return $this->filesystemPath;
-    }
-
-    public function generate()
+    public function generate($deferredAllowed = true)
     {
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
-        $deferred = false;
+        $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if (!$this->asset) {
@@ -212,15 +173,6 @@ class ImageThumbnail
         }
     }
 
-    public function reset()
-    {
-        $this->filesystemPath = null;
-        $this->width = null;
-        $this->height = null;
-        $this->realHeight = null;
-        $this->realWidth = null;
-    }
-
     /**
      * Get the public path to the thumbnail image.
      * This method is here for backwards compatility.
@@ -234,116 +186,9 @@ class ImageThumbnail
     }
 
     /**
-     * @return int Width of the generated thumbnail image.
-     */
-    public function getWidth()
-    {
-        if (!$this->width) {
-            $this->getDimensions();
-        }
-
-        return $this->width;
-    }
-
-    /**
-     * Get the width of the generated thumbnail image in pixels.
+     * @param string|array|Image\Thumbnail\Config $selector
      *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getHeight()
-    {
-        if (!$this->height) {
-            $this->getDimensions();
-        }
-
-        return $this->height;
-    }
-
-    /**
-     * @return int real Width of the generated thumbnail image. (when using high resolution option)
-     */
-    public function getRealWidth()
-    {
-        if (!$this->realWidth) {
-            $this->getDimensions();
-        }
-
-        return $this->realWidth;
-    }
-
-    /**
-     * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
-     *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getRealHeight()
-    {
-        if (!$this->realHeight) {
-            $this->getDimensions();
-        }
-
-        return $this->realHeight;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDimensions()
-    {
-        if (!$this->width || !$this->height) {
-            $config = $this->getConfig();
-            $dimensions = [];
-
-            // generate the thumbnail and get dimensions from the thumbnail file
-            $info = @getimagesize($this->getFileSystemPath());
-            if ($info) {
-                $dimensions = [
-                    'width' => $info[0],
-                    'height' => $info[1]
-                ];
-            }
-
-            $this->width = $dimensions['width'];
-            $this->height = $dimensions['height'];
-
-            // the following is only relevant if using high-res option (retina, ...)
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = floor($this->width * $config->getHighResolution());
-                $this->realHeight = floor($this->height * $config->getHighResolution());
-            }
-        }
-
-        return [
-            'width' => $this->width,
-            'height' => $this->height
-        ];
-    }
-
-    /**
-     * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
-     */
-    public function getAsset()
-    {
-        return $this->asset;
-    }
-
-    /**
-     * Get thumbnail image configuration.
-     *
-     * @return Image\Thumbnail\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param $selector
-     *
-     * @return bool|static
+     * @return Image\Thumbnail\Config|null
      */
     protected function createConfig($selector)
     {

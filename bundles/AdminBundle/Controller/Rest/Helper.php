@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Db;
 
+/**
+ * @deprecated
+ */
 class Helper
 {
     public static function buildSqlCondition($q, $op = null, $subject = null)
@@ -45,7 +48,7 @@ class Helper
         if (!$op) {
             $op = 'AND';
         }
-        $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
+        $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<=', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
                 '$not' => 'NOT'];
         $ops = array_keys($mappingTable);
 

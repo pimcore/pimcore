@@ -70,7 +70,7 @@ class DefaultController extends FrontendController
 
     /**
     * Example using a different template than the name of the action.
-    * Will use the template /app/Resources/views/Default/different.html.php as view.
+    * Will use the template /app/Resources/views/Default/somethingelse.html.php as view.
     */
     public function differentAction()
     {

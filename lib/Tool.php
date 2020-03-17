@@ -15,8 +15,6 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\FeatureToggles\Features\DebugMode;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -69,7 +67,7 @@ class Tool
     /**
      * @static
      *
-     * @param  $path
+     * @param string $path
      *
      * @return bool
      */
@@ -119,14 +117,13 @@ class Tool
     public static function getValidLanguages()
     {
         if (empty(self::$validLanguages)) {
-            $config = Config::getSystemConfig();
-            $validLanguages = strval($config->general->validLanguages);
+            $config = Config::getSystemConfiguration('general');
 
-            if (empty($validLanguages)) {
+            if (empty($config['valid_languages'])) {
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', $validLanguages);
+            $validLanguages = str_replace(' ', '', strval($config['valid_languages']));
             $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
@@ -140,7 +137,7 @@ class Tool
     }
 
     /**
-     * @param $language
+     * @param string $language
      *
      * @return array
      */
@@ -148,9 +145,9 @@ class Tool
     {
         $languages = [];
 
-        $conf = Config::getSystemConfig();
-        if ($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
-            $fallbackLanguages = explode(',', $conf->general->fallbackLanguages->$language);
+        $config = Config::getSystemConfiguration('general');
+        if (!empty($config['fallback_languages'][$language])) {
+            $fallbackLanguages = explode(',', $config['fallback_languages'][$language]);
             foreach ($fallbackLanguages as $l) {
                 if (self::isValidLanguage($l)) {
                     $languages[] = trim($l);
@@ -170,8 +167,8 @@ class Tool
      */
     public static function getDefaultLanguage()
     {
-        $config = Config::getSystemConfig();
-        $defaultLanguage = $config->general->defaultLanguage;
+        $config = Config::getSystemConfiguration('general');
+        $defaultLanguage = $config['default_language'] ?? null;
         $languages = self::getValidLanguages();
 
         if (!empty($languages) && in_array($defaultLanguage, $languages)) {
@@ -222,15 +219,19 @@ class Tool
     }
 
     /**
-     * @param $language
+     * @param string $language
+     * @param bool $absolutePath
      *
      * @return string
      */
-    public static function getLanguageFlagFile($language)
+    public static function getLanguageFlagFile($language, $absolutePath = true)
     {
-        $relativePath = '/bundles/pimcoreadmin/img/flags';
-        $iconWebBasePath = PIMCORE_PROJECT_ROOT . $relativePath;
-        $iconFsBasePath = PIMCORE_WEB_ROOT . $relativePath;
+        $basePath = '/bundles/pimcoreadmin/img/flags';
+        $iconFsBasePath = PIMCORE_WEB_ROOT . $basePath;
+
+        if ($absolutePath === true) {
+            $basePath = PIMCORE_WEB_ROOT . $basePath;
+        }
 
         $code = strtolower($language);
         $code = str_replace('_', '-', $code);
@@ -247,7 +248,7 @@ class Tool
         $countryFsPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
         $fallbackFsLanguagePath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
 
-        $iconPath = $iconFsBasePath . '/countries/_unknown.svg';
+        $iconPath = ($absolutePath === true ? $iconFsBasePath : $basePath) . '/countries/_unknown.svg';
 
         $languageCountryMapping = [
             'aa' => 'er', 'af' => 'za', 'am' => 'et', 'as' => 'in', 'ast' => 'es', 'asa' => 'tz',
@@ -269,13 +270,13 @@ class Tool
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
-            $iconPath = $iconFsBasePath . '/countries/' . $languageCountryMapping[$code] . '.svg';
+            $iconPath = $basePath . '/countries/' . $languageCountryMapping[$code] . '.svg';
         } elseif (file_exists($languageFsPath)) {
-            $iconPath = $languageFsPath;
+            $iconPath = $basePath . '/languages/' . $code . '.svg';
         } elseif ($countryCode && file_exists($countryFsPath)) {
-            $iconPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
+            $iconPath = $basePath . '/countries/' . $countryCode . '.svg';
         } elseif ($fallbackLanguageCode && file_exists($fallbackFsLanguagePath)) {
-            $iconPath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
+            $iconPath = $basePath . '/languages/' . $fallbackLanguageCode . '.svg';
         }
 
         return $iconPath;
@@ -387,7 +388,7 @@ class Tool
         ]);
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {
             return false;
         }
 
@@ -399,7 +400,7 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getHostname(Request $request = null)
     {
@@ -453,8 +454,8 @@ class Tool
 
         // get it from System settings
         if (!$hostname || $hostname == 'localhost') {
-            $systemConfig = Config::getSystemConfig()->toArray();
-            $hostname = $systemConfig['general']['domain'];
+            $systemConfig = Config::getSystemConfiguration('general');
+            $hostname = $systemConfig['domain'] ?? null;
 
             if (!$hostname) {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
@@ -475,23 +476,36 @@ class Tool
      *
      * @param Request|null $request
      *
-     * @return string
+     * @return string|null
      */
     public static function getClientIp(Request $request = null)
     {
         $request = self::resolveRequest($request);
+        if ($request) {
+            return $request->getClientIp();
+        }
 
-        if (null === $request) {
+        // fallback to $_SERVER variables
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        } else {
             return null;
         }
 
-        return $request->getClientIp();
+        $ips = explode(',', $ip);
+        $ip = trim(array_shift($ips));
+
+        return $ip;
     }
 
     /**
      * @param Request|null $request
      *
-     * @return string
+     * @return null|string
      */
     public static function getAnonymizedClientIp(Request $request = null)
     {
@@ -523,9 +537,9 @@ class Tool
 
             foreach ($confArray['views'] as $tmp) {
                 if (isset($tmp['name'])) {
-                    $tmp['showroot'] = (bool) $tmp['showroot'];
+                    $tmp['showroot'] = !empty($tmp['showroot']);
 
-                    if ((bool) $tmp['hidden']) {
+                    if (!empty($tmp['hidden'])) {
                         continue;
                     }
 
@@ -538,9 +552,9 @@ class Tool
     }
 
     /**
-     * @param null $recipients
-     * @param null $subject
-     * @param null $charset
+     * @param array|string|null $recipients
+     * @param string|null $subject
+     * @param string|null $charset
      *
      * @return Mail
      *
@@ -571,7 +585,7 @@ class Tool
     /**
      * @static
      *
-     * @param $url
+     * @param string $url
      * @param array $paramsGet
      * @param array $paramsPost
      * @param array $options
@@ -619,9 +633,7 @@ class Tool
     }
 
     /**
-     * @static
-     *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -631,9 +643,7 @@ class Tool
     }
 
     /**
-     * @static
-     *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
@@ -643,8 +653,18 @@ class Tool
     }
 
     /**
-     * @param $class
-     * @param $type
+     * @param string $class
+     *
+     * @return bool
+     */
+    public static function traitExists($class)
+    {
+        return self::classInterfaceExists($class, 'trait');
+    }
+
+    /**
+     * @param string $class
+     * @param string $type (e.g. 'class', 'interface', 'trait')
      *
      * @return bool
      */
@@ -685,7 +705,21 @@ class Tool
     }
 
     /**
-     * @param $message
+     * @return array
+     */
+    public static function getCachedSymfonyEnvironments(): array
+    {
+        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
+        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
+            unset($dirs[$key]);
+        }
+        $dirs = array_map('basename', $dirs);
+
+        return array_values($dirs);
+    }
+
+    /**
+     * @param string $message
      */
     public static function exitWithError($message)
     {

@@ -246,13 +246,8 @@ class TestHelper
 
                     /** @var ObjectModel\Fieldcollection\Data\AbstractData $item */
                     foreach ($items as $item) {
-                        /** @var ObjectModel\Fieldcollection\Definition $def */
                         $def = $item->getDefinition();
 
-                        /**
-                         * @var string $k
-                         * @var ObjectModel\ClassDefinition\Data $v
-                         */
                         foreach ($def->getFieldDefinitions() as $k => $v) {
                             $getter = 'get' . ucfirst($v->getName());
                             $fieldValue = $item->$getter();
@@ -368,9 +363,9 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool   $save
-     * @param bool   $publish
-     * @param null   $type
+     * @param bool $save
+     * @param bool $publish
+     * @param string|null $type
      *
      * @return Concrete|Unittest
      */
@@ -704,27 +699,27 @@ class TestHelper
     }
 
     /**
-     * @param AbstractElement|null $root
+     * @param AbstractElement $root
      * @param string $type
      */
-    public static function cleanUpTree(AbstractElement $root = null, $type)
+    public static function cleanUpTree(AbstractElement $root, $type)
     {
-        if (!$root) {
-            return;
-        }
-
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
         }
 
-        if ($root and $root->hasChildren()) {
-            $childs = $root->getChildren();
+        if ($root instanceof AbstractObject) {
+            $children = $root->getChildren([], true);
+        } elseif ($root instanceof Document) {
+            $children = $root->getChildren(true);
+        } else {
+            $children = $root->getChildren();
+        }
 
-            /** @var AbstractElement|AbstractObject|Document|Asset $child */
-            foreach ($childs as $child) {
-                codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
-                $child->delete();
-            }
+        /** @var AbstractElement|AbstractObject|Document|Asset $child */
+        foreach ($children as $child) {
+            codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
+            $child->delete();
         }
     }
 
@@ -779,5 +774,22 @@ class TestHelper
         $path = __DIR__ . '/../Resources/' . ltrim($path, '/');
 
         return $path;
+    }
+
+    /**
+     * @param int $length
+     *
+     * @return string
+     */
+    public static function generateRandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
     }
 }

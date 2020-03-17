@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Carbon\Carbon;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -23,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use DataObject\Traits\DefaultValueTrait;
+
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -67,14 +70,16 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         if ($data) {
             $result = $data->getTimestamp();
             if ($this->getColumnType() == 'date') {
@@ -83,6 +88,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+
+        return null;
     }
 
     /**
@@ -92,7 +99,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -108,12 +115,14 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
             return $result;
         }
+
+        return null;
     }
 
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -127,32 +136,30 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataForEditmode
      *
-     * @param \Zend_Date\DateTime $data
+     * @param \DateTime $data
      * @param null|DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return int|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
         }
+
+        return null;
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      *
-     * @return \DateTime|\Pimcore\Date
+     * @return \Carbon\Carbon
      */
     protected function getDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $date = new \Pimcore\Date($timestamp);
-        } else {
-            $date = new \Carbon\Carbon();
-            $date->setTimestamp($timestamp);
-        }
+        $date = new \Carbon\Carbon();
+        $date->setTimestamp($timestamp);
 
         return $date;
     }
@@ -164,7 +171,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return \Zend_Date|\DateTime
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -172,7 +179,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             return $this->getDateFromTimestamp($data / 1000);
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -180,7 +187,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return \Carbon\Carbon|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -192,8 +199,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param Carbon|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return int|null|string
@@ -202,31 +209,31 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data) {
             return $data->getTimestamp();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @see Data::getVersionPreview
      *
-     * @param \Zend_Date|\DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param \DateTime $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof \Zend_Date) {
-            return $data->get(\Zend_Date::DATE_MEDIUM);
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d');
         }
+
+        return '';
     }
 
     /**
-     * @return \Pimcore\Date
+     * @return int
      */
     public function getDefaultValue()
     {
@@ -260,7 +267,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -268,21 +275,19 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
+        if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d');
         }
 
-        return null;
+        return '';
     }
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null|\Pimcore\Date|DataObject\ClassDefinition\Data
+     * @return null|\Carbon\Carbon
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -295,7 +300,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -308,10 +313,12 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * converts data to be exposed via webservices
      *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @deprecated
      *
-     * @return mixed
+     * @param DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -319,12 +326,14 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed|void
+     * @return \Carbon\Carbon|null
      *
      * @throws \Exception
      */
@@ -333,15 +342,16 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $timestamp = strtotime($value);
         if (empty($value)) {
             return null;
-        } elseif ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
         }
+        if ($timestamp !== false) {
+            return $this->getDateFromTimestamp($timestamp);
+        }
+
+        throw new \Exception('cannot get values from web service import - invalid data');
     }
 
     /**
-     * @param $useCurrentDate
+     * @param bool $useCurrentDate
      *
      * @return $this
      */
@@ -352,8 +362,16 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isUseCurrentDate(): bool
+    {
+        return $this->useCurrentDate;
+    }
+
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -364,25 +382,25 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore\Date
+     * @return null|\Carbon\Carbon
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $thedata = $data[0]['data'];
         if ($thedata) {
             return $this->getDateFromTimestamp($thedata);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -412,8 +430,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|int $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -443,5 +461,30 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return parent::getFilterConditionExt($value, $operator, $params);
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return Carbon|null
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        if ($this->getDefaultValue()) {
+            $date = new \Carbon\Carbon();
+            $date->setTimestamp($this->getDefaultValue());
+
+            return $date;
+        } elseif ($this->isUseCurrentDate()) {
+            return new \Carbon\Carbon();
+        }
+
+        return null;
     }
 }

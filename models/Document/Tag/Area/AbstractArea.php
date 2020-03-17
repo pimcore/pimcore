@@ -18,12 +18,11 @@
 namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Templating\Model\ViewModelInterface;
-use Pimcore\View;
 
 abstract class AbstractArea
 {
     /**
-     * @var ViewModelInterface|View
+     * @var ViewModelInterface
      */
     protected $view;
 
@@ -43,7 +42,7 @@ abstract class AbstractArea
     protected $params = [];
 
     /**
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return $this
      */
@@ -55,7 +54,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return ViewModelInterface|View
+     * @return ViewModelInterface
      */
     public function getView()
     {
@@ -63,7 +62,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @param $config
+     * @param \Pimcore\Config\Config $config
      *
      * @return $this
      */
@@ -83,7 +82,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -92,6 +91,8 @@ abstract class AbstractArea
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }
+
+        return null;
     }
 
     /**
@@ -103,8 +104,8 @@ abstract class AbstractArea
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function addParam($key, $value)
     {
@@ -112,7 +113,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return $this
      */

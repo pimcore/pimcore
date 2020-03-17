@@ -21,35 +21,37 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Listing\Dao getDao()
  * @method Model\DataObject\ClassDefinition[] load()
+ * @method Model\DataObject\ClassDefinition current()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\ClassDefinition[]|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $classes = null;
+
+    public function __construct()
+    {
+        $this->classes = & $this->data;
+    }
 
     /**
      * @return Model\DataObject\ClassDefinition[]
      */
     public function getClasses()
     {
-        if ($this->classes === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->classes;
+        return $this->getData();
     }
 
     /**
-     * @param $classes
+     * @param Model\DataObject\ClassDefinition[]|null $classes
      *
-     * @return $this
+     * @return static
      */
     public function setClasses($classes)
     {
-        $this->classes = $classes;
-
-        return $this;
+        return $this->setData($classes);
     }
 }

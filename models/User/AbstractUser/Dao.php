@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     use Model\Element\ChildsCompatibilityTrait;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -48,40 +48,29 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws \Exception
      */
     public function getByName($name)
     {
-        try {
-            $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
+        $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
-            if ($data['id']) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception("user doesn't exist");
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if ($data['id']) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception("user doesn't exist");
         }
     }
 
-    /**
-     * @throws \Exception
-     */
     public function create()
     {
-        try {
-            $this->db->insert('users', [
-                'name' => $this->model->getName(),
-                'type' => $this->model->getType()
-            ]);
+        $this->db->insert('users', [
+            'name' => $this->model->getName(),
+            'type' => $this->model->getType()
+        ]);
 
-            $this->model->setId($this->db->lastInsertId());
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->model->setId($this->db->lastInsertId());
     }
 
     /**
@@ -101,33 +90,29 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        try {
-            if (strlen($this->model->getName()) < 2) {
-                throw new \Exception('Name of user/role must be at least 2 characters long');
-            }
-
-            $data = [];
-            $dataRaw = $this->model->getObjectVars();
-            foreach ($dataRaw as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('users'))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    } elseif (in_array($key, ['permissions', 'roles', 'docTypes', 'classes', 'perspectives', 'websiteTranslationLanguagesEdit', 'websiteTranslationLanguagesView'])) {
-                        // permission and roles are stored as csv
-                        if (is_array($value)) {
-                            $value = implode(',', $value);
-                        }
-                    } elseif (in_array($key, ['twoFactorAuthentication'])) {
-                        $value = json_encode($value);
-                    }
-                    $data[$key] = $value;
-                }
-            }
-
-            $this->db->update('users', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
+        if (strlen($this->model->getName()) < 2) {
+            throw new \Exception('Name of user/role must be at least 2 characters long');
         }
+
+        $data = [];
+        $dataRaw = $this->model->getObjectVars();
+        foreach ($dataRaw as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('users'))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
+                } elseif (in_array($key, ['permissions', 'roles', 'docTypes', 'classes', 'perspectives', 'websiteTranslationLanguagesEdit', 'websiteTranslationLanguagesView'])) {
+                    // permission and roles are stored as csv
+                    if (is_array($value)) {
+                        $value = implode(',', $value);
+                    }
+                } elseif (in_array($key, ['twoFactorAuthentication'])) {
+                    $value = json_encode($value);
+                }
+                $data[$key] = $value;
+            }
+        }
+
+        $this->db->update('users', $data, ['id' => $this->model->getId()]);
     }
 
     /**
@@ -146,11 +131,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function setLastLoginDate()
     {
-        try {
-            $data['lastLogin'] = (new \Datetime())->getTimestamp();
-            $this->db->update('users', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $data['lastLogin'] = (new \DateTime())->getTimestamp();
+        $this->db->update('users', $data, ['id' => $this->model->getId()]);
     }
 }

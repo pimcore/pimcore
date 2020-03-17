@@ -16,12 +16,15 @@ namespace Pimcore\Workflow;
 
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Workflow\Exception\InvalidARgumentException;
+use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
@@ -87,8 +90,9 @@ class Manager
     }
 
     /**
-     * @param string $place
-     * @param array $placeConfig
+     * @param string $workflowName
+     * @param string $action
+     * @param array $actionConfig
      *
      * @return $this
      */
@@ -176,7 +180,7 @@ class Manager
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Workflow[]
      */
@@ -201,7 +205,8 @@ class Manager
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
-        } catch (InvalidARgumentException $e) { // workflow does not apply to given subject
+        } catch (InvalidArgumentException $e) {
+            // workflow does not apply to given subject
             return null;
         }
 
@@ -224,7 +229,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param Asset|Concrete|PageSnippet $subject
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject
@@ -255,7 +260,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param object $subject
      * @param string $globalAction
      * @param array $additionalData
      * @param bool $saveSubject

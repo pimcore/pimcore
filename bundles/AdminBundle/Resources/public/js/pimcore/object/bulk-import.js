@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.bulkimport");
-pimcore.object.bulkimport = Class.create({
+pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
 
 
     uploadUrl: '/admin/class/bulk-import',
@@ -150,10 +150,6 @@ pimcore.object.bulkimport = Class.create({
         return this.window;
     },
 
-    getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
-        return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
-    },
-
     applyData: function() {
         var store = this.gridPanel.getStore();
         var records = store.getRange();
@@ -173,18 +169,7 @@ pimcore.object.bulkimport = Class.create({
             });
         }
 
-        this.values.sort(function(data1, data2){
-            var value1 = this.getPrio(data1);
-            var value2 = this.getPrio(data2);
-
-            if (value1 > value2) {
-                return 1;
-            } else if (value1 < value2) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }.bind(this));
+        this.sortValues();
 
         this.commitData(0);
 
@@ -194,16 +179,20 @@ pimcore.object.bulkimport = Class.create({
         if (idx < this.values.length) {
             if (idx == 0) {
                 this.batchProgressBar = new Ext.ProgressBar({
-                    text: t('generating'),
+                    text: t('initializing'),
                     style: "margin: 10px;",
                     width: 500
                 });
 
                 this.batchProgressWin = new Ext.Window({
+                    title: t("export"),
+                    layout: 'fit',
                     items: [this.batchProgressBar],
-                    modal: true,
-                    bodyStyle: "background: #fff;",
-                    closable: false
+                    width: 200,
+                    plain: true,
+                    bodyStyle: "padding: 10px;",
+                    closable: false,
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
                 this.batchProgressWin.show();
 
@@ -218,7 +207,7 @@ pimcore.object.bulkimport = Class.create({
                 });
             }
 
-            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + ts(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
+            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + t(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
 
             Ext.Ajax.request({
                 url: "/admin/class/bulk-commit",
@@ -247,33 +236,9 @@ pimcore.object.bulkimport = Class.create({
                 }.bind(this),
                 failure: function(transport) {
                     this.batchProgressWin.close();
-                    var response = Ext.decode(transport.responseText);
                     pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });
-        }
-    },
-
-    getPrio: function(data) {
-        switch (data.type) {
-            case "fieldcollection":
-                return 0;
-            case "class":
-                return 1;
-            case "customlayout":
-                return 2;
-            case "objectbrick":
-                return 3;
-        }
-        return 0;
-    },
-
-    selectAll: function(value) {
-        var store = this.gridPanel.getStore();
-        var records = store.getRange();
-        for (var i = 0; i < records.length; i++) {
-            var currentData = records[i];
-            currentData.set("checked", value);
         }
     }
 });

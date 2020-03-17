@@ -90,6 +90,11 @@ pimcore.settings.targeting.conditions = (function () {
         }),
 
         country: Class.create(pimcore.settings.targeting.condition.abstract, {
+
+            isAvailable : function () {
+                return pimcore.settings['maxmind_geoip_installed'];
+            },
+
             getName: function () {
                 return t("country");
             },
@@ -204,6 +209,11 @@ pimcore.settings.targeting.conditions = (function () {
         }),
 
         geopoint: Class.create(pimcore.settings.targeting.condition.abstract, {
+
+            isAvailable : function () {
+                return pimcore.settings['maxmind_geoip_installed'];
+            },
+
             getName: function () {
                 return t("geopoint");
             },
@@ -245,12 +255,17 @@ pimcore.settings.targeting.conditions = (function () {
 
                         var searchHandler = function() {
                             var address = searchfield.getValue();
-                            jQuery.getJSON(pimcore.settings.targeting.conditions.getSearchUrl(address), function (json) {
-                                if (json[0].lat !== null && json[0].lon !== null) {
-                                    marker.setLatLng(L.latLng(json[0].lat, json[0].lon));
-                                    leafletMap.setView(L.latLng(json[0].lat, json[0].lon), 7);
-                                }
-                            }.bind(this));
+                            Ext.Ajax.request({
+                                url: pimcore.settings.targeting.conditions.getSearchUrl(address),
+                                method: "GET",
+                                success: function (response, opts) {
+                                    var data = Ext.decode(response.responseText);
+                                    if (data[0].lat !== null && data[0].lon !== null) {
+                                        marker.setLatLng(L.latLng(data[0].lat, data[0].lon));
+                                        leafletMap.setView(L.latLng(data[0].lat, data[0].lon), 7);
+                                    }
+                                }.bind(this),
+                            });
                         };
 
                         var searchfield = new Ext.form.TextField({
@@ -416,9 +431,10 @@ pimcore.settings.targeting.conditions = (function () {
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
-                        fieldLabel: t('referrer'),
+                        fieldLabel: t('referrer') + ' (' + t("regex") + ')',
                         name: "referrer",
                         value: data.referrer,
+                        labelWidth: 170,
                         width: 450
                     }, {
                         xtype: "hidden",

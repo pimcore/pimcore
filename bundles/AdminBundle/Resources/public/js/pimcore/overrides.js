@@ -16,6 +16,9 @@ if(typeof window['t'] !== 'function') {
     window.t = function(v) { return v; };
 }
 
+
+Ext.form.field.Date.prototype.startDay = 1;
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 
@@ -112,7 +115,7 @@ Ext.define('pimcore.filters', {
         var type = column.filter.type;
         var theFilter = column.filter.filter;
 
-        if (type == "date" || type == "numeric") {
+        if (column.filter instanceof Ext.grid.filters.filter.TriFilter) {
             theFilter.lt.config.type = type;
             theFilter.gt.config.type = type;
             theFilter.eq.config.type = type;
@@ -383,7 +386,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
                 node.set('expandable', true);
             });
 
-            if (me.pageSize < total) {
+            if (me.pageSize < total || node.inSearch) {
                 node.needsPaging = true;
                 node.pagingData = {
                     total: data.total,

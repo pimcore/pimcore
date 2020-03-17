@@ -201,7 +201,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * @dataProvider invalidKeys
      * @expectedException InvalidArgumentException
      *
-     * @param $key
+     * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave($key)
     {
@@ -214,7 +214,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * @dataProvider invalidKeys
      * @expectedException InvalidArgumentException
      *
-     * @param $key
+     * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove($key)
     {
@@ -662,19 +662,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
     public function testShutdownTagListIsProcessedOnShutdown()
     {
         $this->handleShutdownTagListProcessing(true);
-    }
-
-    public function testForceCacheIsNotWrittenWithActiveWriteLock()
-    {
-        $this->handler->save('itemA', 'test', [], null, null, true);
-
-        $this->assertTrue($this->cacheHasItem('itemA'));
-
-        $this->writeLock->lock();
-
-        $this->handler->save('itemB', 'test', [], null, null, true);
-
-        $this->assertFalse($this->cacheHasItem('itemB'));
     }
 
     public function testForceCacheIsWrittenWhenWriteLockIsDisabled()

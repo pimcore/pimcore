@@ -133,7 +133,7 @@ pimcore.object.helpers.edit = {
 
         // translate title
         if(typeof l.title != "undefined") {
-            l.title = ts(l.title);
+            l.title = t(l.title);
         }
 
         if (l.datatype == "layout") {
@@ -215,7 +215,7 @@ pimcore.object.helpers.edit = {
                     if(l[configKeys[u]]) {
                         //if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
-                            newConfig[configKeys[u]] = l["renderingClass"] ? l[configKeys[u]] : ts(l[configKeys[u]]);
+                            newConfig[configKeys[u]] = l["renderingClass"] ? l[configKeys[u]] : t(l[configKeys[u]]);
                         } else {
                             newConfig[configKeys[u]] = l[configKeys[u]];
                         }
@@ -297,11 +297,26 @@ pimcore.object.helpers.edit = {
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
+                let applyDefaults = false;
+                if (context && context['applyDefaults']) {
+                    applyDefaults = true;
+                }
                 field.setObject(this.object);
                 field.updateContext(context);
+
                 field.setName(l.name);
                 field.setTitle(l.titleOriginal);
+
+                if (applyDefaults && typeof field["applyDefaultValue"] !== "undefined") {
+                    field.applyDefaultValue();
+                }
                 field.setInitialData(data);
+
+
+                if (typeof field["finishSetup"] !== "undefined") {
+                    field.finishSetup();
+                }
+
 
                 if (typeof l.labelWidth != "undefined") {
                     field.labelWidth = l.labelWidth;
@@ -391,9 +406,10 @@ pimcore.object.helpers.edit = {
                                 try {
                                     new Ext.ToolTip({
                                         target: el,
-                                        html: nl2br(ts(field.tooltip)),
+                                        html: nl2br(t(field.tooltip)),
                                         trackMouse:true,
-                                        showDelay: 200
+                                        showDelay: 200,
+                                        dismissDelay: 0
                                     });
                                 } catch (e6) {
                                     console.log(e6);

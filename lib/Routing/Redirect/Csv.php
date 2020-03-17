@@ -173,7 +173,7 @@ class Csv
         $redirect = null;
 
         if ($data['id']) {
-            $redirect = Redirect::getById($data['id'], true);
+            $redirect = Redirect::getById($data['id']);
             $stats['updated']++;
         } else {
             $redirect = new Redirect();

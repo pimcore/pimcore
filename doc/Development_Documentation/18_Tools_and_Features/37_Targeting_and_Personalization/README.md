@@ -1,22 +1,25 @@
 # Targeting and Personalization
 
-<div class="alert alert-warning">
-The new targeting engine is considered experimental and may be subject to change in later versions!
-</div>
-
-Pimcore 5.1 introduces completely new targeting and personalization features by implementing a server side targeting engine
-which can be tightly integrated into other server side components such as the customer management framework or the ecommerce 
-framework.
-
 The following section describes the technical concepts and aspects of the Pimcore targeting enginge. For usage 
 description and feature listing see your [user docs](../../../User_Documentation/05_Targeting_and_Personalization/README.md)
 first. 
 
+## Setup
+
+Basically the targeting engine works out of the box, however if you'd like to use geo-related conditions in your 
+targeting rules it's necessary to configure the underlying data provider first. 
+
+### Configuring the MaxMind GeoIP Data Provider
+
+Follow the [official instructions](https://dev.maxmind.com/geoip/geoipupdate/) for obtaining and updating the GeoIP database.
+Store the database file at the location of your choice, the default location used by _geoipupdate_ is `/usr/share/GeoIP/GeoLite2-City.mmdb`
+
+Set the path to the database file in your `parameters.yml` to enable the geo support in Pimcore: 
+```yaml
+pimcore.geoip.db_file: /usr/share/GeoIP/GeoLite2-City.mmdb
+``` 
+
  
-**NOTE:** the new targeting engine is incompatible to the targeting feature which was shipped with Pimcore before 5.1. See
-[Migrating from the existing Targeting Engine](./30_Migrating_from_the_existing_Targeting_Engine.md) for further details.
-
-
 ## Basic concepts
 
 | Concept          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |

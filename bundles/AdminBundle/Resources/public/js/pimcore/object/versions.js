@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.versions");
 pimcore.object.versions = Class.create({
 
-    initialize: function(object) {
+    initialize: function (object) {
         this.object = object;
     },
 
@@ -26,25 +26,32 @@ pimcore.object.versions = Class.create({
             if (!Ext.ClassManager.get(modelName)) {
                 Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['id', 'date', 'scheduled', 'note', {name:'name', convert: function (v, rec) {
-                        if (rec.data) {
-                            if (rec.data.user) {
-                                if (rec.data.user.name) {
-                                    return rec.data.user.name;
+                    fields: ['id', 'date', 'scheduled', 'note', {
+                        name: 'name', convert: function (v, rec) {
+                            if (rec.data) {
+                                if (rec.data.user) {
+                                    if (rec.data.user.name) {
+                                        return rec.data.user.name;
+                                    }
                                 }
                             }
+                            return null;
                         }
-                        return null;
-                    }}, 'versionCount']
+                    }, 'versionCount']
                 });
             }
 
             this.store = new Ext.data.Store({
                 model: modelName,
-                sorters: [{
-                    property: 'id',
-                    direction: 'DESC'
-                }],
+                sorters: [
+                    {
+                        property: 'versionCount',
+                        direction: 'DESC'
+                    },
+                    {
+                        property: 'id',
+                        direction: 'DESC'
+                    }],
                 proxy: {
                     type: 'ajax',
                     url: "/admin/element/get-versions",
@@ -71,27 +78,43 @@ pimcore.object.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
-                    {text: t("published"), width:50, sortable: false, dataIndex: 'id', renderer: function(d, metaData, cellValues) {
-                        var d = cellValues.get('date');
-                        var versionCount = cellValues.get('versionCount');
-                        var index = cellValues.get('index');
-                        if (this.object.data.general.o_published && index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {
-                            metaData.tdCls = "pimcore_icon_publish";
+                    {
+                        text: t("published"),
+                        width: 50,
+                        sortable: false,
+                        dataIndex: 'id',
+                        renderer: function (d, metaData, cellValues) {
+                            var d = cellValues.get('date');
+                            var versionCount = cellValues.get('versionCount');
+                            var index = cellValues.get('index');
+                            if (this.object.data.general.o_published && index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {
+                                metaData.tdCls = "pimcore_icon_publish";
+                            }
+                            return "";
+                        }.bind(this),
+                        editable: false
+                    },
+                    {
+                        text: t("date"), width: 150, sortable: true, dataIndex: 'date', renderer: function (d) {
+                            var date = new Date(d * 1000);
+                            return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
-                        return "";
-                    }.bind(this), editable: false},
-                    {text: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
-                        var date = new Date(d * 1000);
-                        return Ext.Date.format(date, "Y-m-d H:i:s");
-                    }},
+                    },
                     {text: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
                     {text: t("user"), sortable: true, dataIndex: 'name'},
-                    {text: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
-                    	if (d != null){
-                        	var date = new Date(d * 1000);
-                            return Ext.Date.format(date, "Y-m-d H:i:s");
-                    	}
-                    }, editable: false},
+                    {
+                        text: t("scheduled"),
+                        width: 130,
+                        sortable: true,
+                        dataIndex: 'scheduled',
+                        renderer: function (d) {
+                            if (d != null) {
+                                var date = new Date(d * 1000);
+                                return Ext.Date.format(date, "Y-m-d H:i:s");
+                            }
+                        },
+                        editable: false
+                    },
                     {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()}
                 ],
                 stripeRows: true,
@@ -103,7 +126,8 @@ pimcore.object.versions = Class.create({
                     mode: 'MULTI'
                 }),
                 viewConfig: {
-                    xtype: 'patchedgridview'
+                    xtype: 'patchedgridview',
+                    enableTextSelection: true
                 }
             });
 
@@ -126,11 +150,11 @@ pimcore.object.versions = Class.create({
 
             this.layout = new Ext.Panel({
                 title: t('versions'),
-                bodyStyle:'padding:20px 5px 20px 5px;',
+                bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: "border",
                 iconCls: "pimcore_material_icon_versions pimcore_material_icon",
-                items: [grid,preview]
+                items: [grid, preview]
             });
 
             preview.on("resize", this.setLayoutFrameDimensions.bind(this));
@@ -145,7 +169,7 @@ pimcore.object.versions = Class.create({
         });
     },
 
-    onRowClick: function(grid, record, tr, rowIndex, e, eOpts ) {
+    onRowClick: function (grid, record, tr, rowIndex, e, eOpts) {
         var selModel = grid.getSelectionModel();
         if (selModel.getCount() > 2) {
             selModel.select(record);
@@ -153,8 +177,7 @@ pimcore.object.versions = Class.create({
 
         if (selModel.getCount() > 1) {
             this.compareVersions(grid, rowIndex, e);
-        }
-        else {
+        } else {
             this.showVersionPreview(grid, rowIndex, e);
         }
     },
@@ -165,7 +188,6 @@ pimcore.object.versions = Class.create({
             var selections = grid.getSelectionModel().getSelection();
 
             var url = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
             Ext.get(this.iframeId).dom.src = url;
         }
     },
@@ -177,11 +199,10 @@ pimcore.object.versions = Class.create({
         var versionId = data.id;
 
         var url = "/admin/object/preview-version?id=" + versionId;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.iframeId).dom.src = url;
     },
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
 
@@ -228,18 +249,18 @@ pimcore.object.versions = Class.create({
         var elememntId = data.cid;
 
         if (elememntId > 0) {
-            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
-                if (btn == 'yes'){
+            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function (btn) {
+                if (btn == 'yes') {
                     var modificationDate = this.object.data.general.o_modificationDate;
-                    
+
                     Ext.Ajax.request({
                         url: "/admin/element/delete-all-versions",
                         method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });
-                    
+
                     //get sub collection of versions for removel. Keep current version
-                    var removeCollection = grid.getStore().getData().createFiltered(function(item){
+                    var removeCollection = grid.getStore().getData().createFiltered(function (item) {
                         return item.get('date') != modificationDate;
                     });
 
@@ -247,11 +268,6 @@ pimcore.object.versions = Class.create({
                 }
             }.bind(this));
         }
-    },
-
-    editVersion: function (index, grid) {
-        var data = grid.getStore().getAt(index).data;
-        var versionId = data.id;
     },
 
     publishVersion: function (index, grid) {
@@ -262,15 +278,14 @@ pimcore.object.versions = Class.create({
             url: "/admin/object/publish-version",
             method: "POST",
             params: {id: versionId},
-            success: function(response) {
+            success: function (response) {
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success) {
                     this.object.reload();
 
-                    pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
-                }
-                else {
+                    pimcore.helpers.updateTreeElementStyle('object', this.object.id, rdata.treeData);
+                } else {
                     Ext.MessageBox.alert(t("error"), rdata.message);
                 }
 

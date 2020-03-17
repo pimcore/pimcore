@@ -35,7 +35,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field) {
 
         return {
-            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -44,7 +44,36 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                return t("not_supported");
+                var content = '';
+
+                if(value && value.length > 0) {
+
+                    for(var i = 0; i < value.length; i++) {
+
+                        var item = value[i];
+
+                        var baseUrl = '<img style="padding-left: 3px" src="/admin/asset/get-image-thumbnail?id=' + item.id;
+                        var params = {
+                            width: 88,
+                            height: 88,
+                            frame: true
+                        };
+
+                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
+
+                        if (item.crop) {
+                            var cropParams = Ext.Object.toQueryString(item.crop);
+                            url = Ext.String.urlAppend(url, cropParams);
+                        }
+
+                        url = url + '" />';
+
+                        content += url;
+                    }
+
+                }
+
+                return content;
             }.bind(this, field.key)
         };
     },
@@ -68,9 +97,9 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             }
         };
 
-        var dragableComponent = Ext.create('Ext.panel.Panel', dragConf);
-        hotspotImageTag.setContainer(dragableComponent);
-        return dragableComponent;
+        var draggableComponent = Ext.create('Ext.panel.Panel', dragConf);
+        hotspotImageTag.setContainer(draggableComponent);
+        return draggableComponent;
 
     },
 
@@ -98,8 +127,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             var fieldConfig = this.getDefaultFieldConfig();
             var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
             hotspotImage.updateContext(this.context);
-            var dragableComponent = this.wrap(hotspotImage);
-            items.push(dragableComponent);
+            var draggableComponent = this.wrap(hotspotImage);
+            items.push(draggableComponent);
         }
         return items;
     },
@@ -119,8 +148,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             var fieldConfig = this.getDefaultFieldConfig();
             var hotspotImage = new pimcore.object.tags.hotspotimage(itemData, fieldConfig, this.hotspotConfig);
             hotspotImage.updateContext(this.context);
-            var dragableComponent = this.wrap(hotspotImage);
-            items.push(dragableComponent);
+            var draggableComponent = this.wrap(hotspotImage);
+            items.push(draggableComponent);
 
         }
         // var items = this.getFakeItems();
@@ -129,8 +158,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
         var placeholderComponent = this.createPlaceholder(fieldConfig);
         items.push(placeholderComponent);
-
-        var defaultFieldConfig = this.getDefaultFieldConfig();
 
         var toolbarCfg = {
             region: "north",
@@ -166,7 +193,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                         while (this.component.items.length > 1) {
                             var item = this.component.items.getAt(0);
                             this.component.remove(item);
-                            this.dirty = true;
+                            this.markDirty();
                         }
                         Ext.resumeLayouts();
                         this.component.updateLayout();
@@ -186,8 +213,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             // title: this.fieldConfig.title,
             items: items,
             proxyConfig: {
-                width: defaultFieldConfig.width,
-                height: defaultFieldConfig.height,
+                width: fieldConfig.width,
+                height: fieldConfig.height,
                 respectPlaceholder: true,
                 callback: this
             },
@@ -280,8 +307,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                         hotspotImage.updateContext(objectField.context);
                         var itemCount = objectField.component.items.length;
 
-                        var dragableComponent = objectField.wrap(hotspotImage);
-                        objectField.component.insert(itemCount - 1, dragableComponent);
+                        var draggableComponent = objectField.wrap(hotspotImage);
+                        objectField.component.insert(itemCount - 1, draggableComponent);
                     });
                 }.bind(this)
             });
@@ -341,12 +368,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 this.component.moveBefore(item, item.previousSibling());
             }
         }
-        this.dirty = true;
+        this.markDirty();
     },
 
     add: function (me) {
 
-        this.dirty = true;
+        this.markDirty();
         var pos = 0;
 
         var itemCount = this.component.items.length;
@@ -367,29 +394,33 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var hotspotImage = new pimcore.object.tags.hotspotimage({}, this.getDefaultFieldConfig(), this.hotspotConfig);
         hotspotImage.updateContext(this.context);
         var itemCount = this.component.items.length;
-        var dragableComponent = this.wrap(hotspotImage);
-        this.component.insert(pos + 1, dragableComponent);
+        var draggableComponent = this.wrap(hotspotImage);
+        this.component.insert(pos + 1, draggableComponent);
     },
 
     addDataFromSelector: function (item) {
 
         if (item) {
-            this.dirty = true;
+            this.markDirty();
             var hotspotImage = new pimcore.object.tags.hotspotimage({id: item.id}, this.getDefaultFieldConfig(), this.hotspotConfig);
             hotspotImage.updateContext(this.context);
             var itemCount = this.component.items.length;
-            var dragableComponent = this.wrap(hotspotImage);
-            this.component.insert(this.component.items.length - 1, dragableComponent);
+            var draggableComponent = this.wrap(hotspotImage);
+            this.component.insert(this.component.items.length - 1, draggableComponent);
 
         }
     },
 
     delete: function (item) {
-        this.dirty = true;
+        this.markDirty();
         this.component.remove(item);
     },
 
     notifyDrop: function() {
+        this.markDirty();
+    },
+
+    markDirty: function() {
         this.dirty = true;
     },
 

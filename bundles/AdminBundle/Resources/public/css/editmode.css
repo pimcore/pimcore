@@ -28,12 +28,30 @@
     -webkit-box-sizing: content-box !important;
 }
 
+.cke_dialog_container {
+    z-index: 100300 !important;
+}
+
 .cke_toolgroup, .cke_combo_button {
     border-bottom: 0 !important;
 }
 
 .cke-code-editor textarea {
     font-family: "courier new", courier !important;
+}
+
+input.cke_dialog_ui_input_tel {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 2px inset;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(174, 179, 185) rgb(201, 204, 207) rgb(201, 204, 207);
+    border-image: initial;
+    padding: 4px 6px;
+    outline: 0px;
+    border-radius: 3px;
 }
 
 /* pimcore editables */
@@ -80,6 +98,11 @@
     position: relative;
     top: 0;
     padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.pimcore_area_buttons.fixed.top:after {
+    top: 49px;
 }
 
 .pimcore_area_buttons.right {
@@ -428,6 +451,7 @@
     padding-bottom: 3px;
     background: #000;
     border-bottom: 1px solid #ccc;
+    cursor: move;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small:last-child {
@@ -508,6 +532,11 @@
 
 .pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
     outline: 1px dashed #BABABA;
+}
+
+.editable-error {
+    outline: 2px dashed #ff5500 !important;
+    outline-offset: 5px;
 }
 
 .pimcore_wysiwyg.empty:after {

@@ -66,6 +66,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.startCKeditor();
 
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
         this.checkValue();
     },
 
@@ -101,14 +105,14 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
-                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig, specificConfig);
+                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig);
             }
 
             eConfig = mergeObject(eConfig, specificConfig);
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
-            this.ckeditor.on('change', this.checkValue.bind(this));
+            this.ckeditor.on('change', this.checkValue.bind(this, true));
 
                 // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
@@ -119,6 +123,17 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     }
                 } else if (urlField) {
                     urlField.getParent().getParent().getParent().show();
+                }
+            });
+
+            // force paste dialog to prevent security message on various browsers
+            this.ckeditor.on('beforeCommandExec', function(event) {
+                if (event.data.name === 'paste') {
+                    event.editor._.forcePasteDialog = true;
+                }
+
+                if (event.data.name === 'pastetext' && event.data.commandData.from === 'keystrokeHandler') {
+                    event.cancel();
                 }
             });
 
@@ -242,7 +257,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     },
 
-    checkValue: function () {
+    checkValue: function (mark) {
 
         var value = this.getValue();
 
@@ -250,6 +265,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             Ext.get(this.textarea).addCls("empty");
         } else {
             Ext.get(this.textarea).removeCls("empty");
+        }
+
+
+        if (this.required) {
+            this.validateRequiredValue(value, Ext.get(this.textarea), this, mark);
         }
     },
 

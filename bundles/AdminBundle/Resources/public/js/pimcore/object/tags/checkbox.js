@@ -18,23 +18,24 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     initialize:function (data, fieldConfig) {
 
-        this.data = "";
-
-        if (data) {
-            this.data = data;
-        } else if ((typeof data === "undefined" || data === null)) {
-            if (fieldConfig.defaultValue !== null) {
-                this.dataChanged = true;
-            }
-
-            this.data = fieldConfig.defaultValue;
-        }
+        this.data = data;
         this.fieldConfig = fieldConfig;
     },
 
+    applyDefaultValue: function() {
+        if ((typeof this.data === "undefined" || this.data === null)) {
+            if (this.fieldConfig.defaultValue !== null) {
+                this.dataChanged = true;
+            }
+
+            this.data = this.fieldConfig.defaultValue;
+        }
+    },
+
+
     getGridColumnConfig:function (field) {
         var columnConfig = {
-            text:ts(field.label),
+            text: t(field.label),
             dataIndex:field.key,
             renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
                 var key = field.key;
@@ -78,7 +79,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     updateStyle: function(newStyle) {
 
-        if(!this.getObject().data.general.allowInheritance) {
+        if(!this.getObject() || !this.getObject().data.general.allowInheritance) {
             return;
         }
 
@@ -115,22 +116,24 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             checkbox.labelWidth = this.fieldConfig.labelWidth;
         }
 
-        this.emptyButton = new Ext.Button({
-            iconCls: "pimcore_icon_delete",
-            cls: 'pimcore_button_transparent',
-            tooltip: t("set_to_null"),
-            hidden: !this.getObject().data.general.allowInheritance,
-            handler: function() {
-                if (this.data !== null) {
-                    this.dataChanged = true;
-                }
-                this.checkbox.setValue(false);
+        if (this.getObject()) {
+            this.emptyButton = new Ext.Button({
+                iconCls: "pimcore_icon_delete",
+                cls: 'pimcore_button_transparent',
+                tooltip: t("set_to_null"),
+                hidden: this.fieldConfig.hideEmptyButton || !this.getObject().data.general.allowInheritance,
+                handler: function () {
+                    if (this.data !== null) {
+                        this.dataChanged = true;
+                    }
+                    this.checkbox.setValue(false);
 
-                this.data = null;
-                this.updateStyle();
-            }.bind(this),
-            style: "margin-left: 10px; filter:grayscale(100%);",
-        });
+                    this.data = null;
+                    this.updateStyle();
+                }.bind(this),
+                style: "margin-left: 10px; filter:grayscale(100%);",
+            });
+        }
 
         this.checkbox = new Ext.form.Checkbox(checkbox);
 
@@ -174,10 +177,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     getName:function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory:function () {
-        return false;
     },
 
     isDirty:function () {

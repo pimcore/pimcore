@@ -74,12 +74,6 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
 
         var user = pimcore.globalmanager.get("user");
 
-        var insertPoint = Ext.get("pimcore_menu_settings");
-        if (!insertPoint) {
-            var dom = Ext.dom.Query.select('#pimcore_navigation ul li:last');
-            insertPoint = Ext.get(dom[0]);
-        }
-
         var config = pimcore.bundle.EcommerceFramework.bundle.config;
 
         // pricing rules
@@ -166,8 +160,6 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
                     }
 
                     Ext.Array.each(siteConfig.entries, function (entry) {
-                        var entryTitle = title + entry.title;
-
                         reportItems.push({
                             text: title + entry.title,
                             iconCls: 'pimcore_icon_reports',
@@ -210,6 +202,17 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
                 object.tab.items.items[1].insert(1, tab.getLayout());
                 object.tab.items.items[1].updateLayout();
                 pimcore.layout.refresh();
+            }
+
+            if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
+
+                if (type == "object" && object.data.general.o_className == "OnlineShopOrder") {
+                    var tab = new pimcore.bundle.EcommerceFramework.OrderTab(object, type);
+                    object.tab.items.items[1].insert(0, tab.getLayout());
+                    object.tab.items.items[1].updateLayout();
+                    object.tab.items.items[1].setActiveTab(0);
+                    pimcore.layout.refresh();
+                }
             }
 
         }

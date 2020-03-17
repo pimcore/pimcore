@@ -159,8 +159,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             var existingSettings = this.getCurrentSplitViewSettings();
 
-            var data = [];
-
             if (existingSettings) {
                 for (var currentLanguage in existingSettings.side) {
                     if (!in_array(currentLanguage, this.frontendLanguages)) {
@@ -243,7 +241,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 var data = [];
                 for (var i = 0; i < nrOfLanguages; i++) {
                     var language = this.frontendLanguages[i];
-                    data.push([language, ts(pimcore.available_languages[language])]);
+                    data.push([language, t(pimcore.available_languages[language])]);
                 }
 
                 var store = new Ext.data.ArrayStore({
@@ -478,7 +476,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             });
         } else {
             item.iconCls = "pimcore_icon_language_" + language.toLowerCase();
-            item.title = pimcore.available_languages[language];
+            item.title = t(pimcore.available_languages[language]);
         }
     },
 
@@ -587,41 +585,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         return false;
-    },
-
-    isInvalidMandatory: function () {
-        // also check the referenced localized fields
-        if (this.referencedFields.length > 0) {
-            for (var r = 0; r < this.referencedFields.length; r++) {
-                if (this.referencedFields[r].isInvalidMandatory()) {
-                    return true;
-                }
-            }
-        }
-
-        var currentLanguage;
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-
-        for (var i = 0; i < this.frontendLanguages.length; i++) {
-            currentLanguage = this.frontendLanguages[i];
-
-            for (var s = 0; s < this.languageElements[currentLanguage].length; s++) {
-                if (this.languageElements[currentLanguage][s].isMandatory()) {
-                    if (this.languageElements[currentLanguage][s].isInvalidMandatory()) {
-                        invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                            + currentLanguage.toUpperCase() + " ("
-                            + this.languageElements[currentLanguage][s].getName() + ")");
-                        isInvalid = true;
-                    }
-                }
-            }
-        }
-
-        // return the error messages not bool, this is handled in object/edit.js
-        if (isInvalid) {
-            return invalidMandatoryFields;
-        }
     },
 
     removeInheritanceSourceButton: function () {
@@ -823,7 +786,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     dataIndex: 'language',
                     flex: 5,
                     renderer: function (value, metaData, record, row, col, store, gridView) {
-                        return ts(pimcore.available_languages[value]);
+                        return t(pimcore.available_languages[value]);
                     }
                 }, {
                     xtype: 'checkcolumn',
@@ -904,7 +867,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     } else {
                         record.set("left", 1);
                     }
-                    ;
+
                 }.bind(this)
             }
         });

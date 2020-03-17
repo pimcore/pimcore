@@ -33,6 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $gridConfigsFavourites = [];
         $data = $this->db->fetchAll('SELECT * FROM gridconfig_favourites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $gridConfigs = [];
 
         foreach ($data as $configData) {
             $gridConfig = new Model\GridConfig();
@@ -50,6 +51,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM gridconfig_favourites ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

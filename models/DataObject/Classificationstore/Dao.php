@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
 
     /**
-     * @var null
+     * @var array|null
      */
     protected $tableDefinitions = null;
 
@@ -49,6 +49,9 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
@@ -62,16 +65,20 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($dataTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
 
         $items = $this->model->getItems();
+        $activeGroups = $this->model->getActiveGroups();
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
+                if (!isset($activeGroups[$groupId])) {
+                    continue;
+                }
                 $keyConfig = DefinitionCache::get($keyId);
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 foreach ($keyData as $language => $value) {
-                    $collectionId = $collectionMapping[$groupId];
+                    $collectionId = $collectionMapping[$groupId] ?? null;
                     $data = [
                         'o_id' => $objectId,
                         'collectionId' => $collectionId,
@@ -89,13 +96,13 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } else {
+                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                         $value = $fd->getDataForResource($value, $this->model->getObject());
                     }
                     $value = $fd->marshal($value, $object);
 
                     $data['value'] = $value['value'];
-                    $data['value2'] = $value['value2'];
+                    $data['value2'] = isset($value['value2']) ? $value['value2'] : '';
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -106,7 +113,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->delete($groupsTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
 
-        $activeGroups = $this->model->getActiveGroups();
         if (is_array($activeGroups)) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
@@ -133,14 +139,27 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($groupsTable, ['o_id' => $objectId]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load()
     {
-        /** @var $classificationStore DataObject\Classificationstore */
+        /** @var DataObject\Classificationstore $classificationStore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
         $objectId = $object->getId();
         $fieldname = $this->model->getFieldname();
+        $groupsTableName = $this->getGroupsTableName();
+
+        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+
+        $data = $this->db->fetchAll($query);
+        $list = [];
+
+        foreach ($data as $item) {
+            $list[$item['groupId']] = true;
+        }
 
         $query = 'SELECT * FROM ' . $dataTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
@@ -149,6 +168,10 @@ class Dao extends Model\Dao\AbstractDao
         $groupCollectionMapping = [];
 
         foreach ($data as $item) {
+            if (!isset($list[$item['groupId']])) {
+                continue;
+            }
+
             $groupId = $item['groupId'];
             $keyId = $item['keyId'];
             $collectionId = $item['collectionId'];
@@ -168,21 +191,12 @@ class Dao extends Model\Dao\AbstractDao
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
-            $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            }
 
             $language = $item['language'];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-        }
-
-        $groupsTableName = $this->getGroupsTableName();
-
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
-
-        $data = $this->db->fetchAll($query);
-        $list = [];
-
-        foreach ($data as $item) {
-            $list[$item['groupId']] = true;
         }
 
         $classificationStore->setActiveGroups($list);
@@ -216,7 +230,6 @@ class Dao extends Model\Dao\AbstractDao
             `type` VARCHAR(50) NULL,
             PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
             INDEX `o_id` (`o_id`),
-            INDEX `groupId` (`groupId`),
             INDEX `keyId` (`keyId`),
             INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)

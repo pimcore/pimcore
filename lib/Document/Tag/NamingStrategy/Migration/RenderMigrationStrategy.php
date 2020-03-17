@@ -157,11 +157,11 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         $user = User::getByName($username);
 
         if (!$user) {
-            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded'));
+            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded', $username));
         }
 
         if (!$user->isAdmin()) {
-            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights'));
+            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights', $username));
         }
 
         // See ElementListener. The UserLoader will be used to fetch the admin user when rendering

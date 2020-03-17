@@ -27,7 +27,7 @@ use Pimcore\Tool\Serialize;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
@@ -74,11 +74,11 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            $this->model->update();
-        } else {
+        if (!$this->model->getId()) {
             $this->create();
         }
+
+        $this->update();
     }
 
     /**
@@ -94,39 +94,27 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        try {
-            $type = $this->model->getObjectVars();
-            $data = [];
+        $type = $this->model->getObjectVars();
+        $data = [];
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('targeting_rules'))) {
-                    if (is_array($value) || is_object($value)) {
-                        $value = Serialize::serialize($value);
-                    }
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('targeting_rules'))) {
+                if (is_array($value) || is_object($value)) {
+                    $value = Serialize::serialize($value);
                 }
+                if (is_bool($value)) {
+                    $value = (int) $value;
+                }
+                $data[$key] = $value;
             }
-
-            $this->db->update('targeting_rules', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->update('targeting_rules', $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
     public function create()
     {
         $this->db->insert('targeting_rules', []);
-
         $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
     }
 }

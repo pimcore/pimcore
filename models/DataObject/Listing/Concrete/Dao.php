@@ -43,32 +43,26 @@ class Dao extends Model\DataObject\Listing\Dao
      */
     protected $totalCount = 0;
 
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**
      * get select query
      *
-     * @param bool|false $forceNew
+     * @param array|string|Expression|bool $columns
      *
      * @return QueryBuilder
      *
      * @throws \Exception
      */
-    public function getQuery($forceNew = false)
+    public function getQuery($columns = '*')
     {
-
         // init
         $select = $this->db->select();
 
-        // create base
-        $field = $this->getTableName() . '.o_id';
-        $select->from(
-            [$this->getTableName()],
-            [
-                new Expression(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
-            ]
-        );
+        $select->from([$this->getTableName()], $columns);
 
         // add joins
         $this->addJoins($select);
@@ -96,7 +90,7 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return int[]
      *
-     * @throws
+     * @throws \Exception
      */
     public function loadIdList()
     {
@@ -108,16 +102,14 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @param $e
+     * @param \Exception $e
      *
      * @return int[]
      *
-     * @throws
      * @throws \Exception
      */
     protected function exceptionHandler($e)
     {
-
         // create view if it doesn't exist already // HACK
         $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
         $Mysqli = preg_match("/Table (.*) doesn't exist/", $e->getMessage());
@@ -138,7 +130,6 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @return string
      *
-     * @throws \Exception
      * @throws \Exception
      */
     public function getLocalizedBrickLanguage()
@@ -171,7 +162,6 @@ class Dao extends Model\DataObject\Listing\Dao
      * @return string
      *
      * @throws \Exception
-     * @throws \Exception
      */
     public function getTableName()
     {
@@ -187,6 +177,9 @@ class Dao extends Model\DataObject\Listing\Dao
                     if ($this->model->getLocale()) {
                         if (Tool::isValidLanguage((string)$this->model->getLocale())) {
                             $language = (string)$this->model->getLocale();
+                        }
+                        if (!$language && DataObject\Localizedfield::isStrictMode()) {
+                            throw new \Exception('could not resolve locale: ' . $this->model->getLocale());
                         }
                     }
 
@@ -210,19 +203,6 @@ class Dao extends Model\DataObject\Listing\Dao
         }
 
         return $this->tableName;
-    }
-
-    /**
-     * @param string $defaultString
-     * @param string $column
-     *
-     * @return string
-     */
-    protected function getSelectPart($defaultString = '', $column = 'oo_id')
-    {
-        $selectPart = $defaultString;
-
-        return $selectPart;
     }
 
     /**

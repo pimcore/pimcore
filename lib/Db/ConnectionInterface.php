@@ -42,8 +42,8 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $query
-     * @param $params
-     * @param $types
+     * @param array $params
+     * @param array $types
      * @param QueryCacheProfile $qcp
      *
      * @return \Doctrine\DBAL\Driver\ResultStatement
@@ -96,7 +96,7 @@ interface ConnectionInterface extends Connection
     public function fetchRow($sql, $params = [], $types = []);
 
     /**
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -105,7 +105,7 @@ interface ConnectionInterface extends Connection
     public function fetchCol($sql, $params = [], $types = []);
 
     /**
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -114,7 +114,7 @@ interface ConnectionInterface extends Connection
     public function fetchOne($sql, $params = [], $types = []);
 
     /**
-     * @param $sql
+     * @param string $sql
      * @param array $params
      * @param array $types
      *
@@ -138,8 +138,8 @@ interface ConnectionInterface extends Connection
     public function quoteIdentifier($str);
 
     /**
-     * @param $text
-     * @param $value
+     * @param string $text
+     * @param mixed $value
      * @param string|null $type
      * @param int|null $count
      *
@@ -148,7 +148,7 @@ interface ConnectionInterface extends Connection
     public function quoteInto($text, $value, $type = null, $count = null);
 
     /**
-     * @param string $ident
+     * @param string|array $ident
      * @param string $alias
      *
      * @return string
@@ -247,4 +247,11 @@ interface ConnectionInterface extends Connection
      * @return void
      */
     public function close();
+
+    /**
+     * @param string $table
+     * @param string $idColumn
+     * @param string $where
+     */
+    public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '');
 }

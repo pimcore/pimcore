@@ -19,8 +19,8 @@ use Pimcore\File;
 class Archive
 {
     /**
-     * @param $sourceDir
-     * @param $destinationFile
+     * @param string $sourceDir
+     * @param string $destinationFile
      * @param array $excludeFilePattern
      * @param array $options
      *
@@ -88,8 +88,8 @@ class Archive
     }
 
     /**
-     * @param $sourceDir
-     * @param $destinationFile
+     * @param string $sourceDir
+     * @param string $destinationFile
      * @param array $excludeFilePattern
      * @param array $options
      *
@@ -133,8 +133,8 @@ class Archive
     }
 
     /**
-     * @param $sourceDir
-     * @param $destinationFile
+     * @param string $sourceDir
+     * @param string $destinationFile
      *
      * @return array
      *

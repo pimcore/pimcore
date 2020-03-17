@@ -19,10 +19,15 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class DataObject extends Model\Webservice\Data
 {
-    /** If set to true then null values will not be exported.
-     * @var
+    /**
+     * If set to true then null values will not be exported.
+     *
+     * @var bool
      */
     protected static $dropNullValues;
 
@@ -72,8 +77,13 @@ class DataObject extends Model\Webservice\Data
     public $index;
 
     /**
-     * @param $object
-     * @param null $options
+     * @var array
+     */
+    public $childs;
+
+    /**
+     * @param Model\DataObject\AbstractObject $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {
@@ -94,7 +104,7 @@ class DataObject extends Model\Webservice\Data
     }
 
     /**
-     * @param  $dropNullValues
+     * @param bool $dropNullValues
      */
     public static function setDropNullValues($dropNullValues)
     {
@@ -102,7 +112,7 @@ class DataObject extends Model\Webservice\Data
     }
 
     /**
-     * @return
+     * @return bool
      */
     public static function getDropNullValues()
     {

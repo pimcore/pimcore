@@ -20,7 +20,9 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Property\Predefined\Dao getDao()
+ * @method Predefined\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Predefined extends Model\AbstractModel
 {
@@ -82,7 +84,7 @@ class Predefined extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return self
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -99,7 +101,7 @@ class Predefined extends Model\AbstractModel
     /**
      * @param string $key
      *
-     * @return self
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -275,7 +277,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getInheritable()
     {
@@ -283,7 +285,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $inheritable
+     * @param bool $inheritable
      *
      * @return $this
      */
@@ -316,6 +318,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $creationDate
+     *
+     * @return self
      */
     public function setCreationDate($creationDate)
     {
@@ -334,6 +338,8 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param int $modificationDate
+     *
+     * @return self
      */
     public function setModificationDate($modificationDate)
     {

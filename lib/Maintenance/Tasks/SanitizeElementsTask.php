@@ -15,9 +15,13 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
 final class SanitizeElementsTask implements TaskInterface
@@ -48,7 +52,7 @@ final class SanitizeElementsTask implements TaskInterface
                 \Pimcore::collectGarbage();
             }
 
-            $element = Service::getElementById($sanityCheck->getType(), $sanityCheck->getId());
+            $element = Service::getElementById($sanityCheck->getType(), $sanityCheck->getId(), true);
             if ($element) {
                 try {
                     $this->performSanityCheck($element);
@@ -67,20 +71,31 @@ final class SanitizeElementsTask implements TaskInterface
         }
     }
 
+    /**
+     * @param PageSnippet|Asset|Concrete $element
+     *
+     * @throws \Exception
+     */
     protected function performSanityCheck(ElementInterface $element)
     {
+        $latestNotPublishedVersion = null;
+
         if ($latestVersion = $element->getLatestVersion()) {
-            if ($latestVersion->getDate() > $element->getModificationDate()) {
-                return;
+            if ($latestVersion->getDate() > $element->getModificationDate() || $latestVersion->getVersionCount() > $element->getVersionCount()) {
+                $latestNotPublishedVersion = $latestVersion;
             }
         }
 
         $element->setUserModification(0);
-        $element->save();
+        $element->save(['versionNote' => 'Sanity Check']);
 
-        if ($version = $element->getLatestVersion(true)) {
-            $version->setNote('Sanitycheck');
-            $version->save();
+        if ($latestNotPublishedVersion) {
+            // we have to make sure that the previous unpublished version is on top of the list again
+            // otherwise we will get wrong data in editmode
+            $latestNotPublishedVersionCount = $element->getVersionCount() + 1;
+            $latestNotPublishedVersion->setVersionCount($latestNotPublishedVersionCount);
+            $latestNotPublishedVersion->setNote('Sanity Check');
+            $latestNotPublishedVersion->save();
         }
     }
 }

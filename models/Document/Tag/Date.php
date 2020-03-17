@@ -27,7 +27,7 @@ class Date extends Model\Document\Tag
     /**
      * Contains the date
      *
-     * @var \Zend_Date|\Carbon\Carbon
+     * @var \Carbon\Carbon|null
      */
     public $date;
 
@@ -54,7 +54,7 @@ class Date extends Model\Document\Tag
     /**
      * Converts the data so it's suitable for the editmode
      *
-     * @return string
+     * @return int|null
      */
     public function getDataEditmode()
     {
@@ -150,10 +150,12 @@ class Date extends Model\Document\Tag
     /**
      * Receives a Webservice\Data\Document\Element from webservice import and fill the current tag's data
      *
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -171,11 +173,13 @@ class Date extends Model\Document\Tag
     /**
      * Returns the current tag's data for web service export
      *
-     * @param $document
-     * @param mixed $params
+     * @deprecated
+     *
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
      * @abstract
      *
-     * @return array
+     * @return int|null
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
@@ -187,15 +191,11 @@ class Date extends Model\Document\Tag
     }
 
     /**
-     * @param $timestamp
+     * @param int $timestamp
      */
     protected function setDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $this->date = new \Pimcore\Date($timestamp);
-        } else {
-            $this->date = new \Carbon\Carbon();
-            $this->date->setTimestamp($timestamp);
-        }
+        $this->date = new \Carbon\Carbon();
+        $this->date->setTimestamp($timestamp);
     }
 }

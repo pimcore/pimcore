@@ -41,7 +41,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
@@ -129,7 +129,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $url = $this->router->generate('pimcore_admin_login');
+        $url = $this->router->generate('pimcore_admin_login', ['perspective' => strip_tags($request->get('perspective'))]);
 
         return new RedirectResponse($url);
     }
@@ -143,23 +143,21 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
             $username = $request->get('username');
-            if (null === $username) {
-                throw new AuthenticationException('Missing username');
-            }
-
-            $this->bruteforceProtectionHandler->checkProtection($username);
-
-            if ($request->getMethod() === 'POST' && $password = $request->get('password')) {
+            if ($request->getMethod() === 'POST' && $request->get('password') && $username) {
+                $this->bruteforceProtectionHandler->checkProtection($username);
                 $credentials = [
                     'username' => $username,
-                    'password' => $password
+                    'password' => $request->get('password')
                 ];
             } elseif ($token = $request->get('token')) {
+                $this->bruteforceProtectionHandler->checkProtection();
                 $credentials = [
-                    'username' => $username,
                     'token' => $token,
-                    'reset' => (bool)$request->get('reset', false)
+                    'reset' => (bool) $request->get('reset', false)
                 ];
+            } else {
+                $this->bruteforceProtectionHandler->checkProtection();
+                throw new AuthenticationException('Missing username or token');
             }
 
             $event = new LoginCredentialsEvent($request, $credentials);
@@ -196,8 +194,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $this->twoFactorRequired = true;
             }
         } else {
-            if (!isset($credentials['username'])) {
-                throw new AuthenticationException('Missing username');
+            if (!isset($credentials['username']) && !isset($credentials['token'])) {
+                throw new AuthenticationException('Missing username/token');
             }
 
             if (isset($credentials['password'])) {
@@ -217,7 +215,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                     }
                 }
             } elseif (isset($credentials['token'])) {
-                $pimcoreUser = Authentication::authenticateToken($credentials['username'], $credentials['token']);
+                $pimcoreUser = Authentication::authenticateToken($credentials['token']);
 
                 if ($pimcoreUser) {
                     $user = new User($pimcoreUser);
@@ -317,7 +315,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             $url .= '?' . $request->get('deeplink');
         } else {
             $url = $this->router->generate('pimcore_admin_index', [
-                '_dc' => time()
+                '_dc' => time(),
+                'perspective' => strip_tags($request->get('perspective'))
             ]);
         }
 
@@ -327,6 +326,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
             return $response;
         }
+
+        return null;
     }
 
     /**

@@ -86,8 +86,6 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 
-        var deleteMethod = "delete" + ucfirst(options.elementType) + "FromServer";
-
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
@@ -122,6 +120,11 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var elementType = options.elementType;
         var id = options.id;
 
+        let ids = Ext.isString(id) ? id.split(',') : [id];
+        ids.forEach(function (elementId) {
+            pimcore.helpers.addTreeNodeLoadingIndicator(elementType, elementId);
+        });
+
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         for (var index = 0; index < affectedNodes.length; index++) {
             var node = affectedNodes[index];
@@ -144,12 +147,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             this.deleteWindow = new Ext.Window({
                 title: t("delete"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [this.deleteProgressBar]
+                items: [this.deleteProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.deleteWindow.show();
@@ -190,10 +193,17 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     successHandler();
                 }
             }.bind(this, id, successHandler),
-            update: function (currentStep, steps, percent) {
+            update: function (currentStep, steps, percent, response) {
                 if(this.deleteProgressBar) {
                     var status = currentStep / steps;
                     this.deleteProgressBar.updateProgress(status, percent + "%");
+                }
+
+                if(response && response['deleted']) {
+                    var ids = Object.keys(response['deleted']);
+                    ids.forEach(function (id) {
+                        pimcore.helpers.closeElement(id, elementType);
+                    })
                 }
             }.bind(this),
             failure: function (id, message) {
@@ -300,7 +310,7 @@ pimcore.elementservice.getAffectedNodes = function(elementType, id) {
 
 
 pimcore.elementservice.applyNewKey = function(affectedNodes, elementType, id, value) {
-
+    value = Ext.util.Format.htmlEncode(value);
     for (var index = 0; index < affectedNodes.length; index++) {
         var record = affectedNodes[index];
         record.set("text", value);
@@ -343,7 +353,10 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
-        pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
+        pimcore.elementservice.updateDocument(id, {
+            key: value,
+            create_redirects: options['create_redirects']
+        }, function (response) {
             var record, index;
             var rdata = Ext.decode(response.responseText);
             if (!rdata || !rdata.success) {
@@ -352,8 +365,8 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                     record.set("text", originalText);
                     record.set("path", originalPath);
                 }
-                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
-                    "error");
+                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
+                    t(rdata.message));
                 return;
             }
 
@@ -545,8 +558,70 @@ pimcore.elementservice.editElementKey = function(options) {
         throw new Error("type " + options.elementType + " not supported!");
     }
 
-    Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    if(
+        options['elementType'] === 'document' &&
+        (options['elementSubType'] === 'page' || options['elementSubType'] === 'hardlink') &&
+        pimcore.globalmanager.get("user").isAllowed('redirects')
+    ) {
+        // for document pages & hardlinks we need an additional checkbox for auto-redirects
+        var messageBox = null;
+        completeCallback = pimcore.elementservice.editDocumentKeyComplete.bind(this);
+        var submitFunction = function () {
+            options['create_redirects'] = messageBox.getComponent('create_redirects').getValue()
+            completeCallback(options, 'ok', messageBox.getComponent('key').getValue());
+            messageBox.close();
+        };
 
+        messageBox = new Ext.Window({
+            modal: true,
+            width: 500,
+            title: t('rename'),
+            items: [{
+                xtype: 'container',
+                html: t('please_enter_the_new_name')
+            }, {
+                xtype: "textfield",
+                width: "100%",
+                name: 'key',
+                itemId: 'key',
+                value: options.default,
+                listeners: {
+                    afterrender: function () {
+                        window.setTimeout(function () {
+                            this.focus(true);
+                        }.bind(this), 100);
+                    }
+                }
+            },{
+                xtype: "checkbox",
+                boxLabel: t('create_redirects'),
+                name: 'create_redirects',
+                itemId: 'create_redirects',
+                checked: true
+            }],
+            bodyStyle: 'padding: 10px 10px 0px 10px',
+            buttonAlign: 'center',
+            buttons: [{
+                text: t('OK'),
+                handler: submitFunction
+            },{
+                text: t('cancel'),
+                handler: function() {
+                    messageBox.close();
+                }
+            }]
+        });
+
+        messageBox.show();
+
+        var map = new Ext.util.KeyMap({
+            target: messageBox.getEl(),
+            key:  Ext.event.Event.ENTER,
+            fn: submitFunction
+        });
+    } else {
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    }
 };
 
 
@@ -579,7 +654,7 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-            Ext.MessageBox.alert(t('rename'),
+            Ext.MessageBox.alert(t('error'),
                 t('name_already_in_use'));
             return true;
         }
@@ -785,11 +860,17 @@ pimcore.elementservice.setElementPublishedState = function(options) {
                         }
                     }
                 }
-                if (published) {
-                    delete node.data.cls;
-                } else {
-                    node.data.cls = "pimcore_unpublished";
+
+                if(!node.data['cls']) {
+                    node.data['cls'] = '';
                 }
+
+                if (published) {
+                    node.data.cls = node.data.cls.replace(/pimcore_unpublished/g, '');
+                } else {
+                    node.data.cls += " pimcore_unpublished";
+                }
+
                 node.data.published = published;
             }
         } catch (e) {
@@ -990,12 +1071,12 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
             that.downloadProgressWin = new Ext.Window({
                 title: t("download_as_zip"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [that.downloadProgressBar]
+                items: [that.downloadProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             that.downloadProgressWin.show();

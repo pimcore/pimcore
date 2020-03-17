@@ -44,6 +44,24 @@ class TestDataHelper extends Module
      * @param int         $seed
      * @param string|null $language
      */
+    public function fillUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $setter = 'set' . ucfirst($field);
+        if ($language) {
+            $data = new DataObject\Data\UrlSlug('/' . $language . '/content' . $seed);
+            $object->$setter([$data], $language);
+        } else {
+            $data = new DataObject\Data\UrlSlug('/content' . $seed);
+            $object->$setter([$data]);
+        }
+    }
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
     public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
     {
         $getter = 'get' . ucfirst($field);
@@ -54,6 +72,32 @@ class TestDataHelper extends Module
         }
 
         $expected = $language . 'content' . $seed;
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete    $object
+     * @param string      $field
+     * @param int         $seed
+     * @param string|null $language
+     */
+    public function assertUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    {
+        $getter = 'get' . ucfirst($field);
+        if ($language) {
+            $value = $object->$getter($language);
+            $expected = '/' . $language . '/content' . $seed;
+        } else {
+            $value = $object->$getter();
+            $expected = '/content' . $seed;
+        }
+
+        $this->assertTrue(is_array($value) && count($value) == 1, 'expected one item');
+
+        /** @var $value DataObject\Data\UrlSlug */
+        $value = $value[0];
+        $value = $value->getSlug();
 
         $this->assertEquals($expected, $value);
     }
@@ -242,19 +286,23 @@ class TestDataHelper extends Module
     {
         $result = [];
 
-        $hotspot1 = new \stdClass();
-        $hotspot1->name = 'hotspot1';
-        $hotspot1->width = '10';
-        $hotspot1->height = '20';
-        $hotspot1->top = '30';
-        $hotspot1->left = '40';
+        $hotspot1 = [
+            'name' => 'hotspot1',
+            'width' => 10,
+            'height' => 20,
+            'top' => 30,
+            'left' => 40
+        ];
         $result[] = $hotspot1;
 
-        $hotspot2 = clone $hotspot1;
-        $hotspot2->width = '10';
-        $hotspot2->height = '50';
-        $hotspot2->top = '20';
-        $hotspot2->left = '40';
+        $hotspot2 = [
+            'name' => 'hotspot2',
+            'width' => 10,
+            'height' => 50,
+            'top' => 20,
+            'left' => 40
+        ];
+
         $result[] = $hotspot2;
 
         return $result;
@@ -791,7 +839,7 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param $seed
+     * @param int $seed
      *
      * @return array
      */
@@ -1023,8 +1071,8 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param $field
-     * @param $seed
+     * @param string $field
+     * @param int $seed
      *
      * @return DataObject\Data\ObjectMetadata[]
      */
@@ -1122,7 +1170,6 @@ class TestDataHelper extends Module
 
         $emptyObjects = TestHelper::createEmptyObjects('myBrickPrefix', true, 10);
         $emptyLazyObjects = TestHelper::createEmptyObjects('myLazyBrickPrefix', true, 15);
-        $brick->setBrickRelation($emptyObjects);
         $brick->setBrickLazyRelation($emptyLazyObjects);
 
         /** @var DataObject\Unittest\Mybricks $objectbricks */
@@ -1151,9 +1198,6 @@ class TestDataHelper extends Module
 
         $this->assertEquals($expectedInputValue, $inputValue);
 
-        $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
-
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
@@ -1165,8 +1209,6 @@ class TestDataHelper extends Module
 
         /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
-        $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
@@ -1330,7 +1372,7 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param null $condition
+     * @param string|null $condition
      *
      * @return Concrete[]
      */

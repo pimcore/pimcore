@@ -30,13 +30,12 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field, forGridConfigPreview) {
 
         return {
-            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
+            renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
-                    == true) {
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -45,7 +44,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
-                        return baseUrl + '&width=88&height=88&frame=true" />';
+                        return baseUrl + '&width=88&height=88&frame=true" style="width:88px; height:88px;" />';
                     }
 
                 }
@@ -378,13 +377,6 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        if (this.getValue()) {
-            return false;
-        }
-        return true;
     },
 
     isDirty: function () {

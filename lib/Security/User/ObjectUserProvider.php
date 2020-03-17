@@ -60,7 +60,7 @@ class ObjectUserProvider implements UserProviderInterface
     }
 
     /**
-     * @param $className
+     * @param string $className
      */
     protected function setClassName($className)
     {

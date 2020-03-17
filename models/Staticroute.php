@@ -21,7 +21,9 @@ use Pimcore\Event\FrontendEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * @method \Pimcore\Model\Staticroute\Dao getDao()
+ * @method Staticroute\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Staticroute extends AbstractModel
 {
@@ -76,6 +78,11 @@ class Staticroute extends AbstractModel
     public $siteId;
 
     /**
+     * @var array
+     */
+    public $methods;
+
+    /**
      * @var int
      */
     public $priority = 1;
@@ -115,7 +122,7 @@ class Staticroute extends AbstractModel
     /**
      * @static
      *
-     * @param $route
+     * @param Staticroute $route
      */
     public static function setCurrentRoute($route)
     {
@@ -135,7 +142,7 @@ class Staticroute extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Staticroute
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -162,9 +169,9 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $name
-     * @param null $siteId
+     * @param int|null $siteId
      *
-     * @return Staticroute
+     * @return self|null
      */
     public static function getByName($name, $siteId = null)
     {
@@ -191,10 +198,12 @@ class Staticroute extends AbstractModel
 
             return self::getById($route->getId());
         }
+
+        return null;
     }
 
     /**
-     * @return Staticroute
+     * @return self
      */
     public static function create()
     {
@@ -693,7 +702,36 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @return array
+     */
+    public function getMethods()
+    {
+        if ($this->methods && !is_array($this->methods)) {
+            $this->methods = explode(',', $this->methods);
+        }
+
+        return $this->methods;
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return $this
+     */
+    public function setMethods($methods)
+    {
+        if (!is_array($methods)) {
+            $methods = strlen($methods) ? explode(',', $methods) : [];
+            $methods = array_map('trim', $methods);
+        }
+
+        $this->methods = $methods;
+
+        return $this;
+    }
+
+    /**
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -713,7 +751,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

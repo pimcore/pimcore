@@ -49,6 +49,8 @@ class StringContains extends AbstractOperator
                     $childValues = [$childValues];
                 }
 
+                $newValue = null;
+
                 if (is_array($childValues)) {
                     foreach ($childValues as $value) {
                         if (is_array($value)) {
@@ -62,8 +64,6 @@ class StringContains extends AbstractOperator
                             $newValue = $this->contains($value);
                         }
                     }
-                } else {
-                    $newValue = null;
                 }
 
                 $newChildsResult[] = $newValue;
@@ -80,9 +80,9 @@ class StringContains extends AbstractOperator
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
-     * @return mixed
+     * @return bool
      */
     public function contains($value)
     {

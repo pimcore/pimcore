@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Config extends Model\AbstractModel implements \JsonSerializable
 {
@@ -35,7 +37,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     public $sql = '';
 
     /**
-     * @var string[]
+     * @var array
      */
     public $dataSourceConfig = [];
 
@@ -125,7 +127,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     public $sharedRoleNames;
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Config
      */
@@ -168,8 +170,8 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param $configuration
-     * @param null $fullConfig
+     * @param \stdClass $configuration
+     * @param Config|null $fullConfig
      *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
@@ -184,9 +186,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
             throw new \RuntimeException(sprintf('Could not find Custom Report Adapter with type %s', $type));
         }
 
-        /**
-         * @var $factory Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface
-         */
+        /** @var Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface $factory */
         $factory = $serviceLocator->get($type);
 
         return $factory->create($configuration, $fullConfig);
@@ -321,7 +321,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param \string[] $dataSourceConfig
+     * @param array $dataSourceConfig
      */
     public function setDataSourceConfig($dataSourceConfig)
     {
@@ -329,7 +329,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return \string[]
+     * @return \stdClass|null
      */
     public function getDataSourceConfig()
     {

@@ -82,5 +82,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
         File::putPhpFile($dataFile, $contents);
 
         $this->output->writeln('Updated mappings in ' . $dataFile);
+
+        return 0;
     }
 }

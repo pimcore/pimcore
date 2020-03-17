@@ -32,10 +32,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.initData(initData);
 
-        if (typeof this.datax.lazyLoading == "undefined") {
-            this.datax.lazyLoading = true;
-        }
-
         // overwrite default settings
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
             "visibleGridView","visibleSearch","style"];
@@ -81,27 +77,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 value: this.datax.maxItems,
                 disabled: this.isInCustomLayoutEditor(),
                 minValue: 0
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("lazy_loading"),
-                name: "lazyLoading",
-                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
-                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_description'),
-                cls: "pimcore_extra_label_bottom",
-                style: "padding-bottom:0;"
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('lazy_loading_warning_block'),
-                cls: "pimcore_extra_label_bottom",
-                style: "color:red; font-weight: bold;"
             },
             {
                 xtype: 'textfield',
@@ -401,13 +376,15 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     visibleFields: source.datax.visibleFields,
                     columns: source.datax.columns,
                     remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
-                    classes: source.datax.classes
+                    classes: source.datax.classes,
+                    enableBatchEdit: source.datax.enableBatchEdit,
+                    allowMultipleAssignments: source.datax.allowMultipleAssignments,
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading
                 });
         }
     }
 
 });
 
-// @TODO BC layer, to be removed in v6.0
+// @TODO BC layer, to be removed in v7.0
 pimcore.object.classes.data.objectsMetadata = pimcore.object.classes.data.advancedManyToManyObjectRelation;

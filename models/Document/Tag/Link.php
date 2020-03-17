@@ -71,6 +71,21 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementClasses($options = []): array
+    {
+        // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
+        // the default behavior of the parent method is to include the "class" attribute
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        return $classes;
+    }
+
+    /**
      * @see Document\Tag\TagInterface::frontend
      *
      * @return string
@@ -100,14 +115,7 @@ class Link extends Model\Document\Tag
 
             if (isset($this->options['noText']) && $this->options['noText'] == true) {
                 $noText = true;
-            }
-
-            // add attributes to link
-            $attribs = [];
-            foreach ($this->options as $key => $value) {
-                if (is_string($value) || is_numeric($value)) {
-                    $attribs[] = $key.'="'.$value.'"';
-                }
+                unset($this->options['noText']);
             }
 
             // add attributes to link
@@ -150,9 +158,13 @@ class Link extends Model\Document\Tag
 
             $availableAttribs = array_merge($defaultAttributes, $this->data, $this->options);
 
+            // add attributes to link
+            $attribs = [];
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
-                    if (!empty($value)) {
+                    if (!empty($this->data[$key]) && !empty($this->options[$key])) {
+                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
+                    } elseif (!empty($value)) {
                         $attribs[] = $key.'="'.$value.'"';
                     }
                 }
@@ -176,7 +188,7 @@ class Link extends Model\Document\Tag
     public function checkValidity()
     {
         $sane = true;
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {
@@ -240,6 +252,7 @@ class Link extends Model\Document\Tag
 
     /**
      * @param bool $realPath
+     * @param bool $editmode
      */
     protected function updatePathFromInternal($realPath = false, $editmode = false)
     {
@@ -266,17 +279,19 @@ class Link extends Model\Document\Tag
                     if ($editmode) {
                         $this->data['path'] = $object->getFullPath();
                     } else {
-                        if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-                            if ($realPath) {
-                                $this->data['path'] = $object->getFullPath();
-                            } else {
-                                $this->data['path'] = $linkGenerator->generate(
-                                    $object,
-                                    [
-                                        'document' => Document::getById($this->getDocumentId()),
-                                        'context' => $this,
-                                    ]
-                                );
+                        if ($object instanceof Model\DataObject\Concrete) {
+                            if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                                if ($realPath) {
+                                    $this->data['path'] = $object->getFullPath();
+                                } else {
+                                    $this->data['path'] = $linkGenerator->generate(
+                                        $object,
+                                        [
+                                            'document' => $this->getDocument(),
+                                            'context' => $this,
+                                        ]
+                                    );
+                                }
                             }
                         }
                     }
@@ -290,7 +305,7 @@ class Link extends Model\Document\Tag
      */
     public function getText()
     {
-        return $this->data['text'];
+        return $this->data['text'] ?? '';
     }
 
     /**
@@ -306,7 +321,7 @@ class Link extends Model\Document\Tag
      */
     public function getTarget()
     {
-        return $this->data['target'];
+        return $this->data['target'] ?? '';
     }
 
     /**
@@ -314,7 +329,7 @@ class Link extends Model\Document\Tag
      */
     public function getParameters()
     {
-        return $this->data['parameters'];
+        return $this->data['parameters'] ?? '';
     }
 
     /**
@@ -322,7 +337,7 @@ class Link extends Model\Document\Tag
      */
     public function getAnchor()
     {
-        return $this->data['anchor'];
+        return $this->data['anchor'] ?? '';
     }
 
     /**
@@ -330,7 +345,7 @@ class Link extends Model\Document\Tag
      */
     public function getTitle()
     {
-        return $this->data['title'];
+        return $this->data['title'] ?? '';
     }
 
     /**
@@ -338,7 +353,7 @@ class Link extends Model\Document\Tag
      */
     public function getRel()
     {
-        return $this->data['rel'];
+        return $this->data['rel'] ?? '';
     }
 
     /**
@@ -346,7 +361,7 @@ class Link extends Model\Document\Tag
      */
     public function getTabindex()
     {
-        return $this->data['tabindex'];
+        return $this->data['tabindex'] ?? '';
     }
 
     /**
@@ -354,7 +369,7 @@ class Link extends Model\Document\Tag
      */
     public function getAccesskey()
     {
-        return $this->data['accesskey'];
+        return $this->data['accesskey'] ?? '';
     }
 
     /**
@@ -362,7 +377,7 @@ class Link extends Model\Document\Tag
      */
     public function getClass()
     {
-        return $this->data['class'];
+        return $this->data['class'] ?? '';
     }
 
     /**
@@ -370,7 +385,7 @@ class Link extends Model\Document\Tag
      */
     public function getAttributes()
     {
-        return $this->data['attributes'];
+        return $this->data['attributes'] ?? '';
     }
 
     /**
@@ -406,6 +421,8 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
+            $target = null;
+
             if ($data['linktype'] == 'internal' && $data['internalType']) {
                 $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {
@@ -459,8 +476,9 @@ class Link extends Model\Document\Tag
     public function resolveDependencies()
     {
         $dependencies = [];
+        $isInternal = $this->data['internal'] ?? false;
 
-        if (is_array($this->data) && $this->data['internal']) {
+        if (is_array($this->data) && $isInternal) {
             if (intval($this->data['internalId']) > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
@@ -488,21 +506,21 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        if ($wsElement->value->data instanceof \stdClass) {
-            $wsElement->value->data = (array)$wsElement->value->data;
-        }
+        $data = $this->sanitizeWebserviceData($wsElement->value);
 
-        if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
-            $this->data = $wsElement->value->data;
+        if (empty($data->data) or $data->data instanceof \stdClass) {
+            $this->data = $data->data instanceof \stdClass ? get_object_vars($data->data) : null;
             if ($this->data['internal']) {
                 if (intval($this->data['internalId']) > 0) {
                     $id = $this->data['internalId'];
@@ -546,6 +564,10 @@ class Link extends Model\Document\Tag
                             }
                         }
                     }
+
+                    if ($id) {
+                        $this->data['internalId'] = $id;
+                    }
                 }
             }
         } else {
@@ -556,11 +578,12 @@ class Link extends Model\Document\Tag
     /**
      * Returns the current tag's data for web service export
      *
-     * @param $document
-     * @param mixed $params
-     * @abstract
+     * @deprecated
      *
-     * @return array
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
+     *
+     * @return \stdClass
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
@@ -571,13 +594,13 @@ class Link extends Model\Document\Tag
                     $referencedDocument = Document::getById($this->data['internalId']);
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     $referencedAsset = Asset::getById($this->data['internalId']);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
-                        $document = Document::getById($this->getDocumentId());
+                        $document = $this->getDocument();
                     }
                 }
             }
@@ -603,7 +626,7 @@ class Link extends Model\Document\Tag
      */
     public function rewriteIds($idMapping)
     {
-        if ($this->data['internal']) {
+        if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];
             $id = (int)$this->data['internalId'];
 

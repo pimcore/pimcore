@@ -21,10 +21,14 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Admin;
 
+/**
+ * @deprecated
+ */
 class Service
 {
     /**
@@ -42,7 +46,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -65,7 +71,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -88,7 +96,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -111,7 +121,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -134,7 +146,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -159,7 +173,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -184,12 +200,14 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -197,6 +215,8 @@ class Service
     {
         try {
             $conditionParts = [];
+            $finalCondition = null;
+
             if ($condition) {
                 $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
@@ -229,7 +249,7 @@ class Service
             $list->setUnpublished(1);
 
             $items = [];
-            /** @var $doc Document */
+            /** @var Document $doc */
             foreach ($list as $doc) {
                 $item = new Webservice\Data\Document\Listing\Item();
                 $item->id = $doc->getId();
@@ -249,7 +269,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -272,7 +294,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -294,7 +318,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -313,7 +339,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -332,7 +360,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -351,7 +381,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -370,7 +402,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -389,7 +423,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -408,7 +444,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -427,7 +465,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -446,7 +486,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -465,7 +507,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -484,7 +528,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Page\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -505,7 +551,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Snippet\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -527,7 +575,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Email\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -549,7 +599,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -570,7 +622,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Link\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -591,7 +645,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document\Hardlink\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -612,7 +668,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -633,7 +691,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset\File\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -664,7 +724,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Folder\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -686,7 +748,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject\Concrete\In $wsDocument
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -711,7 +775,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -734,8 +800,10 @@ class Service
     }
 
     /**
-     * @param $id
-     * @param null $options
+     * @param int $id
+     * @param array|null $options
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -757,12 +825,14 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -830,7 +900,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -852,7 +924,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -874,7 +948,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -899,13 +975,15 @@ class Service
     }
 
     /**
-     * @param null $condition
-     * @param null $order
-     * @param null $orderKey
-     * @param null $offset
-     * @param null $limit
-     * @param null $groupBy
-     * @param null $objectClass
+     * @param string|null $condition
+     * @param string|null $order
+     * @param string|null $orderKey
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param string|null $groupBy
+     * @param string|null $objectClass
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -925,7 +1003,7 @@ class Service
             if (!$currentUser->isAdmin()) {
                 $userIds = $currentUser->getRoles();
                 $userIds[] = $currentUser->getId();
-                $conditionParts[] .= ' (
+                $conditionParts[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -984,7 +1062,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -992,7 +1072,7 @@ class Service
     {
         try {
             $object = DataObject\AbstractObject::getById($id);
-            if ($object instanceof DataObject\AbstractObject) {
+            if ($object instanceof DataObject\Concrete) {
                 $object->setPublished(false);
                 $object->save();
 
@@ -1007,7 +1087,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1029,8 +1111,8 @@ class Service
     }
 
     /**
-     * @param $wsDocument
-     * @param $element
+     * @param Webservice\Data\Document $wsDocument
+     * @param Document|Asset|DataObject\AbstractObject $element
      *
      * @return mixed
      *
@@ -1053,14 +1135,16 @@ class Service
     }
 
     /**
-     * @param $element
-     * @param $key
-     * @param $path
+     * @param AbstractElement $element
+     * @param string $key
+     * @param string $path
      *
      * @return string
      */
     protected function getSaveCopyName($element, $key, $path)
     {
+        $equal = null;
+
         if ($element instanceof DataObject\AbstractObject) {
             $equal = DataObject\AbstractObject::getByPath($path . '/' . $key);
         } elseif ($element instanceof Document) {
@@ -1079,7 +1163,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Document $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1104,7 +1190,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\DataObject $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1117,12 +1205,13 @@ class Service
         }
 
         $this->setModificationParams($object, false);
-        if ($object instanceof DataObject\Concrete and $object->getClassName() == $wsDocument->className) {
+        /** @var Webservice\Data\DataObject\Concrete|Data\DataObject\Folder $wsDocument */
+        if ($object instanceof DataObject\Concrete && $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();
 
             return true;
-        } elseif ($object instanceof DataObject\Folder and $object->getType() == strtolower($wsDocument->type)) {
+        } elseif ($object instanceof DataObject\Folder && $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
 
@@ -1133,7 +1222,9 @@ class Service
     }
 
     /**
-     * @param $wsDocument
+     * @param Webservice\Data\Asset $wsDocument
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -1157,7 +1248,7 @@ class Service
     }
 
     /**
-     * @param $element
+     * @param AbstractElement $element
      * @param bool $creation
      *
      * @return $this
@@ -1180,7 +1271,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -1203,7 +1296,9 @@ class Service
     }
 
     /**
-     * @param $id
+     * @param int $id
+     *
+     * @return array|string
      *
      * @throws \Exception
      */
@@ -1227,8 +1322,8 @@ class Service
     }
 
     /**
-     * @param $type
-     * @param $params
+     * @param string $type
+     * @param array $params
      *
      * @return array
      *
@@ -1238,9 +1333,7 @@ class Service
     {
         if (in_array($type, ['website', 'admin'])) {
             $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
-            /**
-             * @var $list \Pimcore\Model\Translation\Website\Listing
-             */
+            /** @var \Pimcore\Model\Translation\Website\Listing $list */
             $list = new $listClass();
             if ($key = $params['key']) {
                 $list->addConditionParam(' `key` LIKE ' . \Pimcore\Db::get()->quote('%' . $key . '%'), '');

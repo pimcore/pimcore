@@ -30,7 +30,7 @@ The framework already defines a number of core filter types in [filter_service_f
 
 > FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
 > Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 
-> [Elastic Search Config](./03_Elastic_Search.md).  
+> [Elastic Search Config](03_Elastic_Search/README.md).  
  
 ```yaml
 pimcore_ecommerce_framework:
@@ -109,7 +109,7 @@ pimcore_ecommerce_framework:
   in filter definition objects (see next chapter). 
 - `class`: Backend implementation of the filter type. 
 - `script`: Default view script of the filter type, can be overwritten in the filter definition objects. 
-  You can find some script filter examples in the E-Commerce Framework Demo [here](https://github.com/pimcore/demo-ecommerce/tree/master/app/Resources/views/Shop/filters). 
+  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/master/app/Resources/views/product/filters). 
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
@@ -137,8 +137,8 @@ The Filter Definition class can be extended and modified to custom needs of the 
 
 Filter Definition objects can be assigned to category objects to build up automatic category pages or to area bricks in 
 Pimcore documents to set up manual landing pages etc. 
-Both is demonstrated at [E-Commerce demo](http://ecommercedemo.pimcore.org/en) and also available as 
-[source code](https://github.com/pimcore/demo-ecommerce). 
+Both is demonstrated at our [Demo](https://demo.pimcore.fun) and also available as 
+[source code](https://github.com/pimcore/demo). 
 
 In case that a filter contains relational objects (```FilterMultiRelation```, ```FilterRelation```, etc.), 
 the ```getName()``` method of the object is used to render the text in pre-select lists and filters. 
@@ -154,40 +154,43 @@ sample:
 
 ```php 
 <?php 
+$ecommerceFactory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
 
-$factory = Factory::getInstance();
-
+$viewModel = new ViewModel();
 $params = array_merge($request->query->all(), $request->attributes->all());
 
-//get filter definition from document, category or global settings
-$this->view->filterDefinitionObject = $filterDefinition;
+$indexService = $ecommerceFactory->getIndexService();
+$productListing = $indexService->getProductListForCurrentTenant();
+$viewModel->productListing = $productListing;
 
-// create product list
-$products = $factory->getIndexService()->getProductListForCurrentTenant();
-$this->view->products = $products;
+//get filter definition from document, category or global settings
+$filterDefinition = //TODO ...get from somewhere;
 
 // create and init filter service
-$filterService = $factory->getFilterService();
-
-\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
-$this->view->filterService = $filterService;
-
+$filterService = $ecommerceFactory->getFilterService();
+\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $productListing, $params, $viewModel, $filterService, true);
+$viewModel->filterService = $filterService;
+$viewModel->filterDefinition = $filterDefinition;
 
 // init pagination
-$paginator = new Paginator($products);
-$paginator->setCurrentPageNumber( $this->getParam('page') );
-$paginator->setItemCountPerPage( $filterDefinition->getPageLimit() );
-$paginator->setPageRange(10);
-$this->view->paginator = $paginator;
+$paginator = new Paginator($productListing);
+$paginator->setCurrentPageNumber($request->get('page'));
+$paginator->setItemCountPerPage(18);
+$paginator->setPageRange(5);
+$viewModel->results = $paginator;
+$viewModel->paginationVariables = $paginator->getPages('Sliding');
 
+return $viewModel->getAllParameters();
 ```
 
-For a sample of a controller see our demo-ecommerce [here](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Controller/ShopController.php#L54). 
+For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/AppBundle/Controller/ProductController.php#L118). 
 
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 
 to get the parameter of changed filters delivered back to the controller. 
 
+<div class="code-section">
+    
 ```php
 <?php if($this->filterDefinitionObject->getFilters()): ?>
 	<div class="widget">
@@ -197,3 +200,14 @@ to get the parameter of changed filters delivered back to the controller.
 	</div>
 <?php endif; ?>
 ```
+
+```twig
+{% if(filterDefinition.filters|length > 0) %}
+    {% for filter in filterDefinition.filters %}
+        {% set filterMarkup = filterService.filterFrontend(filter, productListing, currentFilter) %}
+        {{ filterMarkup | raw  }}
+    {% endfor %}
+{% endif %}
+```
+
+</div>

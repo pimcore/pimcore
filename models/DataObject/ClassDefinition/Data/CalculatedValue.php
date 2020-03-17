@@ -31,10 +31,13 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public $fieldtype = 'calculatedValue';
 
+    /** @var string */
+    public $elementType = 'input';
+
     /**
-     * @var float
+     * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string
@@ -63,6 +66,28 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
 
     /**
+     * @return string
+     */
+    public function getElementType(): string
+    {
+        return $this->elementType;
+    }
+
+    /**
+     * @param string $elementType
+     *
+     * @return $this
+     */
+    public function setElementType($elementType)
+    {
+        if ($elementType) {
+            $this->elementType = $elementType;
+        }
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -87,7 +112,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param $columnLength
+     * @param int|null $columnLength
      *
      * @return $this
      */
@@ -133,16 +158,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see Data::getDataForEditmode
      *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Model\DataObject\Data\CalculatedValue|null $data
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return float
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
-            $data = Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, [], $data);
+            return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
         }
 
         return $data;
@@ -152,33 +177,34 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
+        return null;
     }
 
     /**
      * @see Data::getVersionPreview
      *
-     * @param float $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\CalculatedValue|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param DataObject\Data\CalculatedValue|null $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception
@@ -193,54 +219,55 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
      * fills object field data values from CSV Import String
      *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
-     * @return float
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         // nothing to do
+        return null;
     }
 
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
-     * @param mixed $params
+     * @deprecated
+     *
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
      *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data;
+        return $this->getDataFromObjectParam($object, $params);
     }
 
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
@@ -260,7 +287,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -278,9 +305,15 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
 
-        $code .= "\t" . '$data = Service::getCalculatedFieldValue($this, $data);' . "\n";
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
+        } else {
+            $code .= "\t" . '$object = $this;'  . "\n";
+        }
+
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
@@ -288,7 +321,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -313,12 +346,32 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}'  . "\n";
 
-        $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("localizedfield", "localizedfields", null, $language);' . "\n";
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $ownerType = 'objectbrick';
+            $index = $class->getKey();
+            $ownerName = '$this->getFieldName()';
 
-        $code .= "\t" . '$data = Service::getCalculatedFieldValue($this, $data);' . "\n";
+            $code .= "\t" . '$object = $this->getObject();'  . "\n";
+        } else {
+            $ownerType = 'localizedfield';
+            $ownerName = '"localizedfields"';
+            $index = null;
+
+            $code .= "\t" . '$object = $this;'  . "\n";
+        }
+
+        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
+            $code .= "\t" . '$fieldDefinition = $this->getDefinition()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
+        } else {
+            $code .= "\t" . '$fieldDefinition = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("'.$key.'");'  . "\n";
+        }
+
+        $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
+        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index === null ? 'null' : '"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
+
+        $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
@@ -326,7 +379,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -348,15 +401,15 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
-        $code .= "\t" . "}\n\n";
+        $code .= "}\n\n";
 
         return $code;
     }
 
     /**
-     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     * Creates getter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -388,7 +441,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -413,7 +466,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -438,7 +491,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -463,18 +516,25 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
+        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
+            $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
+        } else {
+            $classname = $class->getName();
+        }
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
 
@@ -485,11 +545,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
-     * @param null $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
-     * @return null
+     * @return mixed
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {

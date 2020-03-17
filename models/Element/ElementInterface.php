@@ -17,10 +17,16 @@
 
 namespace Pimcore\Model\Element;
 
-interface ElementInterface
+use Pimcore\Model\ModelInterface;
+use Pimcore\Model\Property;
+use Pimcore\Model\Schedule\Task;
+use Pimcore\Model\User;
+use Pimcore\Model\Version;
+
+interface ElementInterface extends ModelInterface
 {
     /**
-     * @return int $id
+     * @return int
      */
     public function getId();
 
@@ -30,9 +36,23 @@ interface ElementInterface
     public function getKey();
 
     /**
+     * @param string $key
+     *
+     * @return $this
+     */
+    public function setKey($key);
+
+    /**
      * @return string
      */
     public function getPath();
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function setPath($path);
 
     /**
      * @return string
@@ -104,7 +124,7 @@ interface ElementInterface
 
     /**
      *
-     * @param $id
+     * @param int $id
      *
      * @return ElementInterface $resource
      */
@@ -118,23 +138,32 @@ interface ElementInterface
     public static function getTypes();
 
     /**
-     * @return array
+     * @return Property[]
      */
     public function getProperties();
 
     /**
      * returns true if the element is locked
      *
-     * @return $this
+     * @return bool
      */
     public function isLocked();
 
     /**
-     * @param  bool $locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
      *
      * @return $this
      */
     public function setLocked($locked);
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @return string|null
+     */
+    public function getLocked();
 
     /**
      * @return int
@@ -176,4 +205,36 @@ interface ElementInterface
     public function save();
 
     public function delete();
+
+    /**
+     * @param array $additionalTags
+     */
+    public function clearDependentCache($additionalTags = []);
+
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id);
+
+    /**
+     * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
+     *
+     * @param string $type
+     * @param null|User $user
+     *
+     * @return bool
+     */
+    public function isAllowed($type, ?User $user = null);
+
+    /**
+     * @return Task[]
+     */
+    public function getScheduledTasks();
+
+    /**
+     * @return Version[]
+     */
+    public function getVersions();
 }

@@ -1,5 +1,5 @@
 <?php
-/** @var $view \Pimcore\Templating\PhpEngine */
+/** @var \Pimcore\Templating\PhpEngine $view */
 $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 
 $this->get("translate")->setDomain("admin");
@@ -27,7 +27,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
 
 <div id="loginform">
-    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check') ?>" autocomplete="off">
+    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check', ['perspective' => strip_tags($view->request()->getParameter('perspective'))]) ?>" autocomplete="off">
 
         <?php if ($this->error) { ?>
             <div class="text error">
@@ -37,6 +37,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
         <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus/>
         <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required/>
+        <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
 
         <button type="submit"><?= $this->translate("Login"); ?></button>
     </form>
@@ -62,8 +63,8 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
     <script type="text/javascript">
         function showLogin() {
-            $("#loginform").show();
-            $("#browserinfo").hide();
+            document.getElementById('loginform').style.display = 'block';
+            document.getElementById('browserinfo').style.display = 'none';
         }
     </script>
     <style type="text/css">
@@ -81,7 +82,15 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
     // clear opened tabs store
     localStorage.removeItem("pimcore_opentabs");
     <?php } ?>
-    $("#username").select();
+
+    // hide symfony toolbar by default
+    var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
+    if(!window.localStorage.getItem(symfonyToolbarKey)) {
+        window.localStorage.setItem(symfonyToolbarKey, 'none');
+    }
 </script>
 
 <?php $view->slots()->stop() ?>
+
+<?= $this->breachAttackRandomContent(); ?>
+

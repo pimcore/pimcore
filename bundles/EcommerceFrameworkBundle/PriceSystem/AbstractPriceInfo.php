@@ -80,6 +80,8 @@ class AbstractPriceInfo implements PriceInfoInterface
     public function setPriceSystem(PriceSystemInterface $priceSystem)
     {
         $this->priceSystem = $priceSystem;
+
+        return $this;
     }
 
     /**
@@ -112,6 +114,8 @@ class AbstractPriceInfo implements PriceInfoInterface
     public function setProduct(CheckoutableInterface $product)
     {
         $this->product = $product;
+
+        return $this;
     }
 
     /**

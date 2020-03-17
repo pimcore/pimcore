@@ -65,6 +65,8 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
     public function setForceEditmode(bool $forceEditmode)
     {
         $this->forceEditmode = $forceEditmode;
+
+        return $this;
     }
 
     /**

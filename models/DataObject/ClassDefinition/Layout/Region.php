@@ -17,9 +17,12 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\IconTrait;
 
 class Region extends Model\DataObject\ClassDefinition\Layout
 {
+    use IconTrait;
+
     /**
      * Static type of this element
      *

@@ -21,6 +21,7 @@ use Pimcore\Model\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -108,13 +109,18 @@ class EmailController extends AdminController
      * @Route("/show-email-log", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return JsonResponse|Response
      *
      * @throws \Exception
      */
-    public function showEmailLogAction(Request $request)
+    public function showEmailLogAction(Request $request, ?Profiler $profiler)
     {
+        if ($profiler) {
+            $profiler->disable();
+        }
+
         if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
@@ -127,7 +133,9 @@ class EmailController extends AdminController
 
             return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
-            return new Response($emailLog->getHtmlLog());
+            return new Response($emailLog->getHtmlLog(), 200, [
+                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'"
+            ]);
         } elseif ($request->get('type') == 'params') {
             try {
                 $params = $this->decodeJson($emailLog->getParams());
@@ -140,6 +148,10 @@ class EmailController extends AdminController
             }
 
             return $this->adminJson($params);
+        } elseif ($request->get('type') == 'details') {
+            $data = $emailLog->getObjectVars();
+
+            return $this->adminJson($data);
         } else {
             return new Response('No Type specified');
         }
@@ -147,7 +159,7 @@ class EmailController extends AdminController
 
     /**
      * @param array $data
-     * @param $fullEntry
+     * @param array $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
@@ -271,8 +283,15 @@ class EmailController extends AdminController
         if ($emailLog instanceof Tool\Email\Log) {
             $mail = new Mail();
             $mail->preventDebugInformationAppending();
-            $mail->disableLogging();
             $mail->setIgnoreDebugMode(true);
+
+            if (!empty($request->get('to'))) {
+                $emailLog->setTo(null);
+                $emailLog->setCc(null);
+                $emailLog->setBcc(null);
+            } else {
+                $mail->disableLogging();
+            }
 
             if ($html = $emailLog->getHtmlLog()) {
                 $mail->setBodyHtml($html);
@@ -283,8 +302,13 @@ class EmailController extends AdminController
             }
 
             foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
-                $getter = 'get' . $field;
-                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
+                if (!$values = $request->get(strtolower($field))) {
+                    $getter = 'get' . $field;
+                    $values = $emailLog->{$getter}();
+                }
+
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($values);
+
                 if (!empty($values)) {
                     list($value) = $values;
                     if ($value) {
@@ -475,13 +499,13 @@ class EmailController extends AdminController
             ]);
         }
 
-        return $this->adminJson(false);
+        return $this->adminJson(['success' => false]);
     }
 
     /**
      * @param array $params
      *
-     * @return $data
+     * @return array
      */
     protected function parseLoggingParamObject($params)
     {

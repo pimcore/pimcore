@@ -146,6 +146,7 @@ pimcore.settings.system = Class.create({
                                 typeAhead: true,
                                 value: this.getValue("general.language"),
                                 queryMode: 'local',
+                                mode: 'local',
                                 listWidth: 100,
                                 //editable: true,     // If typeAhead is enabled the combo must be editable: true -- please change one of those settings.
                                 store: pimcore.globalmanager.get("pimcorelanguages"),
@@ -293,7 +294,7 @@ pimcore.settings.system = Class.create({
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
-                            value: t('valid_languages_frontend_description'),
+                            value: t('valid_languages_frontend_description') + " <br /><br />" + t('delete_language_note'),
                             cls: "pimcore_extra_label_bottom"
                         },
                             {
@@ -675,7 +676,7 @@ pimcore.settings.system = Class.create({
                                 }
                             }, {
                                 xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice"),
+                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
                                 name: "general.show_cookie_notice",
                                 checked: this.getValue("general.show_cookie_notice")
                             }
@@ -723,11 +724,6 @@ pimcore.settings.system = Class.create({
                                 style: "margin-top: 10px;",
                                 width: 600,
                                 value: "&nbsp;"
-                            }, {
-                                fieldLabel: t('create_redirect_for_moved_renamed_page'),
-                                xtype: "checkbox",
-                                name: "documents.createredirectwhenmoved",
-                                checked: this.getValue("documents.createredirectwhenmoved")
                             }, {
                                 fieldLabel: t("allow_trailing_slash_for_documents"),
                                 xtype: "combo",
@@ -938,14 +934,14 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t("cache_enabled"),
                                 xtype: "checkbox",
-                                name: "cache.enabled",
-                                checked: this.getValue("cache.enabled")
+                                name: "full_page_cache.enabled",
+                                checked: this.getValue("full_page_cache.enabled")
                             },
                             {
                                 fieldLabel: t('lifetime'),
                                 xtype: "numberfield",
-                                name: 'cache.lifetime',
-                                value: this.getValue("cache.lifetime"),
+                                name: 'full_page_cache.lifetime',
+                                value: this.getValue("full_page_cache.lifetime"),
                                 width: 350,
                                 step: 100
                             },
@@ -966,11 +962,11 @@ pimcore.settings.system = Class.create({
                                         type: 'memory'
                                     },
                                     fields: ['value'],
-                                    data: this.getValue("cache.excludePatternsArray", true)
+                                    data: this.getValue("full_page_cache.excludePatternsArray", true)
                                 }),
                                 fieldLabel: t('exclude_patterns'),
-                                name: 'cache.excludePatterns',
-                                value: this.getValue("cache.excludePatterns"),
+                                name: 'full_page_cache.excludePatterns',
+                                value: this.getValue("full_page_cache.excludePatterns"),
                                 displayField: 'value',
                                 valueField: 'value',
                                 forceSelection: false,
@@ -986,8 +982,8 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: t('cache_disable_cookies'),
-                                name: 'cache.excludeCookie',
-                                value: this.getValue("cache.excludeCookie")
+                                name: 'full_page_cache.excludeCookie',
+                                value: this.getValue("full_page_cache.excludeCookie")
                             }
                         ]
                     },
@@ -1001,6 +997,10 @@ pimcore.settings.system = Class.create({
                         defaultType: 'textfield',
                         defaults: {width: 300},
                         items: [
+                            {
+                                xtype: 'container',
+                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
+                            },
                             {
                                 fieldLabel: t("webservice_enabled"),
                                 xtype: "checkbox",

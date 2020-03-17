@@ -70,7 +70,7 @@ options in the editable configuration.
 {{ pimcore_relation("myRelation",{
     "types": ["asset","object"],
     "subtypes": {
-        "assets": ["video", "image"],
+        "asset": ["video", "image"],
         "object": ["object"],
     },
     "classes": ["person"]

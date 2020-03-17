@@ -23,7 +23,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Config\ReportConfigWriter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Exposes parts of the Piwik SitesManager API
@@ -50,16 +50,23 @@ class SitesManager
      */
     private $translator;
 
+    /**
+     * @var Config
+     */
+    private $pimcoreConfig;
+
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
         ReportConfigWriter $configWriter,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        PimcoreConfig $pimcoreConfig
     ) {
         $this->config = $configProvider->getConfig();
         $this->apiClient = $apiClient;
         $this->configWriter = $configWriter;
         $this->translator = $translator;
+        $this->pimcoreConfig = $pimcoreConfig;
     }
 
     public function addSite(SiteId $siteId, array $params = []): int
@@ -180,11 +187,8 @@ class SitesManager
                 }
             }
         } elseif (SiteId::CONFIG_KEY_MAIN_DOMAIN === $siteId->getConfigKey()) {
-            $systemConfig = PimcoreConfig::getSystemConfig();
-
-            $mainDomain = $systemConfig->general->domain;
-            if (!empty($mainDomain)) {
-                $siteUrls[] = $mainDomain;
+            if (!empty($this->pimcoreConfig['general']['domain'])) {
+                $siteUrls[] = $this->pimcoreConfig['general']['domain'];
             }
         }
 

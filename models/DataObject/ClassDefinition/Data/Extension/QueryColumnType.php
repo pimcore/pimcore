@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait QueryColumnType
 {
     /**
-     * @return string | array
+     * @return string|array|null
      */
     public function getQueryColumnType()
     {

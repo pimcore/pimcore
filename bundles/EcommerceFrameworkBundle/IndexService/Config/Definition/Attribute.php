@@ -194,7 +194,7 @@ class Attribute
      * Get value from object, running through getter if defined
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      * @param ConfigInterface|null $tenantConfig
      * @param mixed $default
      *

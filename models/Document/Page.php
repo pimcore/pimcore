@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -54,7 +53,7 @@ class Page extends TargetingDocument
     protected $type = 'page';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $prettyUrl;
 
@@ -88,39 +87,6 @@ class Page extends TargetingDocument
         }
 
         parent::delete($isNested);
-    }
-
-    /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
-     */
-    protected function update($params = [])
-    {
-        $oldPath = $this->getDao()->getCurrentFullPath();
-
-        parent::update($params);
-
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
-            // create redirect for old path
-            $redirect = new Redirect();
-            $redirect->setType(Redirect::TYPE_PATH);
-            $redirect->setRegex(true);
-            $redirect->setTarget($this->getId());
-            $redirect->setSource('@' . $oldPath . '/?@');
-            $redirect->setStatusCode(301);
-            $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
-
-            $site = Frontend::getSiteForDocument($this);
-            if ($site) {
-                $redirect->setSourceSite($site->getId());
-                $oldPath = preg_replace('@^' . preg_quote($site->getRootPath()) . '@', '', $oldPath);
-                $redirect->setSource('@' . $oldPath . '/?@');
-            }
-
-            $redirect->save();
-        }
     }
 
     /**
@@ -164,7 +130,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @param $metaData
+     * @param array $metaData
      *
      * @return $this
      */
@@ -183,9 +149,16 @@ class Page extends TargetingDocument
         return $this->metaData;
     }
 
-    public function getFullPath()
+    /**
+     * Returns the full path of the document including the key (path+key)
+     *
+     * @param bool $force
+     *
+     * @return string
+     */
+    public function getFullPath(bool $force = false)
     {
-        $path = parent::getFullPath();
+        $path = parent::getFullPath($force);
 
         // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
         if (!\Pimcore::inAdmin() && !($this instanceof Hardlink\Wrapper\WrapperInterface) && \Pimcore\Tool\Frontend::isDocumentInCurrentSite($this)) {
@@ -200,7 +173,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @param $prettyUrl
+     * @param string $prettyUrl
      *
      * @return $this
      */
@@ -215,7 +188,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPrettyUrl()
     {

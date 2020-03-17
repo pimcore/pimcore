@@ -39,6 +39,11 @@ class Listing extends AbstractOrderList implements OrderListInterface
     protected $useSubItems = false;
 
     /**
+     * @var null|string[]
+     */
+    protected $availableFilterValues = null;
+
+    /**
      * @param string $type
      *
      * @return OrderListInterface
@@ -140,6 +145,25 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $this->getQuery()->joinLeft(
                 ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()],
                 'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"',
+                ''
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     */
+    public function joinPriceModifications()
+    {
+        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+
+        if (!array_key_exists('OrderPriceModifications', $joins)) {
+            $this->getQuery()->joinLeft(
+                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
+                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
                 ''
             );
         }
@@ -316,13 +340,15 @@ SUBQUERY
     }
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return $this
      */
     public function addSelectField($field)
     {
         $this->getQuery()->columns($field);
+
+        return $this;
     }
 
     /**
@@ -334,6 +360,8 @@ SUBQUERY
     {
         $this->filter[] = $filter;
         $filter->apply($this);
+
+        return $this;
     }
 
     /**

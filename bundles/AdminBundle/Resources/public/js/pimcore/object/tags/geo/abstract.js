@@ -21,7 +21,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {
-            text: ts(field.label),
+            text: t(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,
@@ -32,7 +32,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += ' grid_value_inherited';
                 }
                 if (value) {
-                    return ts('preview_not_available');
+                    return t('preview_not_available');
                 }
             }.bind(this, field.key)
         };
@@ -89,5 +89,20 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     getSearchUrl: function (query) {
         var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
         return url;
+    },
+
+    geocode: function () {
+        var address = this.searchfield.getValue();
+        Ext.Ajax.request({
+            url: this.getSearchUrl(address),
+            method: "GET",
+            success: function (response, opts) {
+                var data = Ext.decode(response.responseText);
+                if( data[0].lat !== null && data[0].lon !== null) {
+                    var map = this.getLeafletMap(data[0].lat, data[0].lon, 15);
+                    this.getLeafletToolbar(map);
+                }
+            }.bind(this),
+        });
     }
 });

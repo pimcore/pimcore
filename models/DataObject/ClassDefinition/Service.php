@@ -20,6 +20,7 @@ use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
+use Pimcore\Tool;
 
 /**
  * Class Service
@@ -57,7 +58,7 @@ class Service
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
@@ -73,9 +74,10 @@ class Service
     }
 
     /**
-     * @param $class DataObject\ClassDefinition
-     * @param $json
+     * @param DataObject\ClassDefinition $class
+     * @param string $json
      * @param bool $throwException
+     * @param bool $ignoreId
      *
      * @return bool
      */
@@ -89,7 +91,7 @@ class Service
 
         $importData = json_decode($json, true);
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             // set layout-definition
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             if ($layout === false) {
@@ -106,10 +108,10 @@ class Service
         $class->setUserModification($userId);
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
-                    'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
+                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
-                $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
+                $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
         }
 
@@ -119,23 +121,22 @@ class Service
     }
 
     /**
-     * @param $fieldCollection
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
      *
      * @return string
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
-        unset($fieldCollection->key);
-        unset($fieldCollection->fieldDefinitions);
+        $fieldCollection = clone $fieldCollection;
+        $fieldCollection->setKey(null);
+        $fieldCollection->setFieldDefinitions([]);
 
-        $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
     }
 
     /**
-     * @param $fieldCollection
-     * @param $json
+     * @param DataObject\Fieldcollection\Definition $fieldCollection
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -149,21 +150,27 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        $fieldCollection->setParentClass($importData['parentClass']);
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
+            if (isset($importData[$importPropertyName])) {
+                $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
+            }
+        }
+
         $fieldCollection->save();
 
         return true;
     }
 
     /**
-     * @param $objectBrick
+     * @param DataObject\Objectbrick\Definition $objectBrick
      *
      * @return string
      */
     public static function generateObjectBrickJson($objectBrick)
     {
-        unset($objectBrick->key);
-        unset($objectBrick->fieldDefinitions);
+        $objectBrick = clone $objectBrick;
+        $objectBrick->setKey(null);
+        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -181,14 +188,12 @@ class Service
             }
         }
 
-        $json = json_encode($objectBrick, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($objectBrick, JSON_PRETTY_PRINT);
     }
 
     /**
-     * @param $objectBrick
-     * @param $json
+     * @param DataObject\Objectbrick\Definition $objectBrick
+     * @param string $json
      * @param bool $throwException
      *
      * @return bool
@@ -216,13 +221,14 @@ class Service
             }
         }
 
-        if (!is_null($importData['layoutDefinitions'])) {
+        if ($importData['layoutDefinitions'] !== null) {
             $layout = self::generateLayoutTreeFromArray($importData['layoutDefinitions'], $throwException);
             $objectBrick->setLayoutDefinitions($layout);
         }
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
+        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }
@@ -235,10 +241,11 @@ class Service
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @param bool $throwException
+     * @param bool $insideLocalizedField
      *
-     * @return bool
+     * @return Data|Layout|false
      *
      * @throws \Exception
      */
@@ -249,28 +256,29 @@ class Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
+                /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows childs
-
                     $item->setValues($array, ['childs']);
+                    $childs = $array['childs'] ?? [];
 
-                    if (is_array($array) && is_array($array['childs']) && isset($array['childs']['datatype']) && $array['childs']['datatype']) {
-                        $childO = self::generateLayoutTreeFromArray($array['childs'], $throwException, $insideLocalizedField);
+                    if (!empty($childs['datatype'])) {
+                        $childO = self::generateLayoutTreeFromArray($childs, $throwException, $insideLocalizedField);
                         $item->addChild($childO);
-                    } elseif (is_array($array['childs']) && count($array['childs']) > 0) {
-                        foreach ($array['childs'] as $child) {
+                    } elseif (is_array($childs) && count($childs) > 0) {
+                        foreach ($childs as $child) {
                             $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);
                             } else {
                                 if ($throwException) {
                                     throw new \Exception('Could not add child ' . var_export($child, true));
-                                } else {
-                                    Logger::err('Could not add child ' . var_export($child, true));
                                 }
+
+                                Logger::err('Could not add child ' . var_export($child, true));
 
                                 return false;
                             }
@@ -295,8 +303,8 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $tableNames
+     * @param array $tableDefinitions
+     * @param array $tableNames
      */
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
     {
@@ -313,7 +321,7 @@ class Service
         foreach ($tmp as $tableName => $columns) {
             foreach ($columns as $column) {
                 $column['Type'] = strtolower($column['Type']);
-                if (strtolower($column['Null']) == 'yes') {
+                if (strtolower($column['Null']) === 'yes') {
                     $column['Null'] = 'null';
                 }
                 //                $fieldName = strtolower($column["Field"]);
@@ -324,18 +332,18 @@ class Service
     }
 
     /**
-     * @param $tableDefinitions
-     * @param $table
-     * @param $colName
-     * @param $type
-     * @param $default
-     * @param $null
+     * @param array $tableDefinitions
+     * @param string $table
+     * @param string $colName
+     * @param string $type
+     * @param string $default
+     * @param string $null
      *
      * @return bool
      */
     public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
     {
-        $tableDefinition = $tableDefinitions[$table];
+        $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
             if ($colDefinition) {
@@ -351,5 +359,85 @@ class Service
         }
 
         return false;
+    }
+
+    /**
+     * @param array $implementsParts
+     * @param string|null $newInterfaces A comma separated list of interfaces
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces)
+    {
+        if ($newInterfaces) {
+            $customParts = explode(',', $newInterfaces);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $implementsParts[] = $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+        }
+
+        if ($implementsParts) {
+            return ' implements ' . implode(', ', $implementsParts);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $useParts
+     * @param string|null $newTraits
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    {
+        if (!is_array($useParts)) {
+            $useParts = [];
+        }
+
+        if ($newTraits) {
+            $customParts = explode(',', $newTraits);
+            foreach ($customParts as $trait) {
+                $trait = trim($trait);
+                if (Tool::traitExists($trait)) {
+                    $useParts[] = $trait;
+                } else {
+                    throw new \Exception("trait '" . $trait . "' does not exist");
+                }
+            }
+        }
+
+        return self::buildUseCode($useParts);
+    }
+
+    /**
+     * @param array $useParts
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildUseCode($useParts)
+    {
+        if ($useParts) {
+            $result = '';
+            foreach ($useParts as $part) {
+                $result .= 'use ' . $part . ";\r\n";
+            }
+            $result .= "\n";
+
+            return $result;
+        }
+
+        return '';
     }
 }

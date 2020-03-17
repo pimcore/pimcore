@@ -117,7 +117,7 @@ class DefaultFactFinder implements ProductListInterface
     protected $conditions = [];
 
     /**
-     * @var string[]
+     * @var array
      */
     protected $queryConditions = [];
 
@@ -301,7 +301,7 @@ class DefaultFactFinder implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param $condition
+     * @param string $condition
      * @param string $fieldname
      */
     public function addQueryCondition($condition, $fieldname = '')
@@ -313,9 +313,7 @@ class DefaultFactFinder implements ProductListInterface
     /**
      * Reset query condition for fieldname
      *
-     * @param $fieldname
-     *
-     * @return mixed
+     * @param string $fieldname
      */
     public function resetQueryCondition($fieldname)
     {
@@ -391,7 +389,7 @@ class DefaultFactFinder implements ProductListInterface
     }
 
     /**
-     * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
+     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
     public function setOrderKey($orderKey)
     {
@@ -720,7 +718,7 @@ class DefaultFactFinder implements ProductListInterface
     /**
      * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
      *
-     * @param      $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -731,10 +729,11 @@ class DefaultFactFinder implements ProductListInterface
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         // TODO: Implement getGroupBySystemValues() method.
+        return [];
     }
 
     /**
-     * @param      $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      *
@@ -782,9 +781,9 @@ class DefaultFactFinder implements ProductListInterface
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $response = $client->request('GET', $url);
 
-        $factFinderTimeout = $response->getHeader('X-FF-Timeout');
+        $factFinderTimeout = $response->getHeaderLine('X-FF-Timeout');
         if ($factFinderTimeout === 'true') {
-            $errorMessage = 'FactFinder Read timeout:' . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys + 1);
+            $errorMessage = 'FactFinder Read timeout:' . $url.' X-FF-RefKey: ' . $response->getHeaderLine('X-FF-RefKey').' Tried: ' . ($trys + 1);
             $this->getLogger()->err($errorMessage);
             $trys++;
             if ($trys > 2) {
@@ -811,17 +810,6 @@ class DefaultFactFinder implements ProductListInterface
             $this->tenantConfig->getClientConfig('host'),
             $this->tenantConfig->getClientConfig('customer')
         );
-    }
-
-    public function getSearchParams()
-    {
-        $params = [];
-        if ($data = $this->getLastResultData()) {
-            $url = str_replace('/FACT-Finder/Search.ff?', '', $data['searchResult']['searchParams']);
-            parse_str($url, $params);
-        }
-
-        return $params;
     }
 
     /**
@@ -877,7 +865,7 @@ class DefaultFactFinder implements ProductListInterface
     }
 
     /**
-     * @return null
+     * @return string|null
      */
     public function getFollowSearchParam()
     {
@@ -885,7 +873,7 @@ class DefaultFactFinder implements ProductListInterface
     }
 
     /**
-     * @param null $followSearchParam
+     * @param string|null $followSearchParam
      *
      * @return $this
      */
@@ -904,7 +892,6 @@ class DefaultFactFinder implements ProductListInterface
     protected function sendRequest()
     {
         $url = $this->getQuery();
-        $this->requestUrl = $url;
         $response = $this->doRequest($url);
         $data = json_decode((string)$response->getBody(), true);
 
@@ -915,7 +902,6 @@ class DefaultFactFinder implements ProductListInterface
         if ($data['searchResult']['timedOut']) {
             throw new \Exception('FactFinder Read timeout in response JSON: ' . $url);
         }
-        $this->resultData = $data;
 
         return $data;
     }

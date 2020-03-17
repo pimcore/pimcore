@@ -139,7 +139,7 @@ class Log extends Model\AbstractModel
     public $subject;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -151,7 +151,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $requestUri
+     * @param string $requestUri
      *
      * @return $this
      */
@@ -183,7 +183,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -195,7 +195,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $subject
+     * @param string $subject
      *
      * @return $this
      */
@@ -251,7 +251,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return $this
      */
@@ -265,7 +265,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the dynamic parameter
      *
-     * @return string
+     * @return array
      */
     public function getParams()
     {
@@ -372,6 +372,8 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsHtml()) {
             return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
         }
+
+        return false;
     }
 
     /**
@@ -384,6 +386,8 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsText()) {
             return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
         }
+
+        return false;
     }
 
     /**
@@ -396,50 +400,9 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * Sets the creation date (unix timestamp)
-     *
-     * @param int $creationDate
-     *
-     * @return $this
-     *
-     * @todo: creationDate not found in class
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * Returns the creation date as unix timestamp
-     *
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * Saves the email log entry (forwards to $this->update())
-     */
     public function save()
     {
-        // set date
-        if (!(int)$this->getId()) {
-            $this->getDao()->create();
-        }
-        $this->update();
-    }
-
-    /**
-     * Updates and save the email log entry to the db and the file-system
-     */
-    protected function update()
-    {
-        $this->getDao()->update();
+        $this->getDao()->save();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
             File::mkdir(PIMCORE_LOG_MAIL_PERMANENT);
         }
@@ -458,7 +421,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $to
+     * @param string $to
      *
      * @return $this
      */
@@ -480,7 +443,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $cc
+     * @param string $cc
      *
      * @return $this
      */
@@ -502,7 +465,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $bcc
+     * @param string $bcc
      *
      * @return $this
      */
@@ -524,7 +487,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $from
+     * @param string $from
      *
      * @return $this
      */
@@ -546,7 +509,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $replyTo
+     * @param string $replyTo
      *
      * @return $this
      */
@@ -568,7 +531,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $html
+     * @param string $html
      *
      * @return $this
      */
@@ -590,7 +553,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return $this
      */

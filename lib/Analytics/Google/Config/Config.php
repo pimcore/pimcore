@@ -34,8 +34,8 @@ class Config
     public static function fromReportConfig(ConfigObject $reportConfig): self
     {
         $config = null;
-        if ($reportConfig->analytics) {
-            $config = $reportConfig->analytics;
+        if ($reportConfig->get('analytics')) {
+            $config = $reportConfig->get('analytics');
         } else {
             $config = new ConfigObject([]);
         }
@@ -56,7 +56,7 @@ class Config
             return false;
         }
 
-        $trackId = $this->normalizeStringValue($config->trackid);
+        $trackId = $this->normalizeStringValue($config->get('trackid'));
         if (null === $trackId) {
             return false;
         }
@@ -71,11 +71,11 @@ class Config
      */
     public function getConfigForSite(string $configKey)
     {
-        if (!$this->config->sites || !$this->config->sites->$configKey) {
+        if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
             return null;
         }
 
-        return $this->config->sites->$configKey;
+        return $this->config->get('sites')->$configKey;
     }
 
     public function getConfiguredSites(): array
@@ -96,7 +96,7 @@ class Config
             return false;
         }
 
-        $profile = $this->normalizeStringValue($config->profile);
+        $profile = $this->normalizeStringValue($config->get('profile'));
         if (null === $profile) {
             return false;
         }

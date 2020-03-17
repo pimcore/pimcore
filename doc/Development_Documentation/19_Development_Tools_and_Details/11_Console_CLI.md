@@ -1,7 +1,7 @@
 # CLI and Pimcore Console
 
 Pimcore can be executed headless and has a very powerful PHP API. As a consequence of these two aspects, 
-it is possible to automate pretty every task within Pimcore. 
+it is possible to automate pretty much every task within Pimcore. 
 
 Pimcore implements the `Symfony\Console` component and provides `bin/console` as single 
 entry point to console commands registered to the `Symfony\Console` application. 

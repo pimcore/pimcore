@@ -71,7 +71,7 @@ interface CoreHandlerInterface
     /**
      * Load data from cache (retrieves data from cache item)
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool|mixed
      */
@@ -80,7 +80,7 @@ interface CoreHandlerInterface
     /**
      * Get PSR-6 cache item
      *
-     * @param $key
+     * @param string $key
      *
      * @return PimcoreCacheItemInterface
      */
@@ -103,7 +103,7 @@ interface CoreHandlerInterface
     /**
      * Remove a cache item
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */

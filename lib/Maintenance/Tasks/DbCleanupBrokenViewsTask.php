@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
 final class DbCleanupBrokenViewsTask implements TaskInterface
 {
     /**
-     * @var Db\Connection
+     * @var Db\ConnectionInterface
      */
     private $db;
 
@@ -31,10 +31,10 @@ final class DbCleanupBrokenViewsTask implements TaskInterface
     private $logger;
 
     /**
-     * @param Db\Connection   $db
+     * @param Db\ConnectionInterface   $db
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\Connection $db, LoggerInterface $logger)
+    public function __construct(Db\ConnectionInterface $db, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->logger = $logger;
@@ -61,7 +61,7 @@ final class DbCleanupBrokenViewsTask implements TaskInterface
 
                         $this->db->query('DROP VIEW '.$name);
                     } else {
-                        $this->logger->errorerror($e);
+                        $this->logger->error($e);
                     }
                 }
             }

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -26,6 +27,9 @@ use Pimcore\Model\DataObject;
 class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
+
+    /** @var DataObject\AbstractObject */
+    protected $object;
 
     /**
      * @var int
@@ -62,7 +66,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param DataObject\Concrete $object
      *
-     * @return $this|void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -71,7 +75,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         if (!$object) {
             $this->setObjectId(null);
 
-            return;
+            return $this;
         }
 
         $this->objectId = $object->getId();
@@ -80,8 +84,8 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      *
      * @return mixed|void
      *
@@ -111,25 +115,25 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param string $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position, $index)
+    public function save($object, $ownertype, $ownername, $position, $index)
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
      *
      * @return mixed
      */
@@ -139,7 +143,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -160,26 +164,26 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getObject()
     {
         if ($this->getObjectId()) {
             $object = DataObject\Concrete::getById($this->getObjectId());
             if (!$object) {
-                throw new \Exception('object '  . $this->getObjectId() . ' does not exist anymore');
+                Logger::info('object ' . $this->getObjectId() . ' does not exist anymore');
             }
 
             return $object;
         }
+
+        return null;
     }
 
     /**
-     * @param $element
+     * @param DataObject\Concrete $element
      *
      * @return $this
-     *
-     * @internal param $object
      */
     public function setElement($element)
     {
@@ -189,7 +193,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete
+     * @return DataObject\Concrete|null
      */
     public function getElement()
     {
@@ -197,7 +201,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -235,7 +239,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function __toString()
     {
@@ -256,5 +260,30 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     public function setObjectId($objectId)
     {
         $this->objectId = $objectId;
+    }
+
+    public function __wakeup()
+    {
+        if ($this->object) {
+            $this->objectId = $this->object->getId();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['object'];
+        $vars = parent::__sleep();
+
+        foreach ($vars as $value) {
+            if (!in_array($value, $blockedVars)) {
+                $finalVars[] = $value;
+            }
+        }
+
+        return $finalVars;
     }
 }

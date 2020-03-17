@@ -110,6 +110,10 @@ class MultiCartManager implements CartManagerInterface
                 $order = $this->orderManagers->getOrderManager()->getOrderFromCart($cart);
                 if (empty($order) || $order->getOrderState() !== $order::ORDER_STATE_COMMITTED) {
                     $this->carts[$cart->getId()] = $cart;
+
+                    if ($cart instanceof AbstractCart) {
+                        $cart->setCurrentReadOnlyMode($this->cartFactory->getCartReadOnlyMode());
+                    }
                 } else {
                     // cart is already committed - cleanup cart and environment
                     $this->logger->warning('Deleting cart with id {cartId} because linked order {orderId} is already committed.', [
@@ -129,12 +133,12 @@ class MultiCartManager implements CartManagerInterface
     /**
      * @param CheckoutableInterface $product
      * @param float $count
-     * @param null $key
-     * @param null $itemKey
+     * @param string|null $key
+     * @param string|null $itemKey
      * @param bool $replace
      * @param array $params
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return null|string
      *
@@ -177,7 +181,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      */
     public function deleteCart($key = null)
     {
@@ -198,7 +202,9 @@ class MultiCartManager implements CartManagerInterface
     {
         $this->checkForInit();
 
-        if (array_key_exists($params['id'], $this->carts)) {
+        $cartId = $params['id'] ?? null;
+
+        if ($cartId && isset($this->carts[$cartId])) {
             throw new InvalidConfigException('Cart with id ' . $params['id'] . ' already exists.');
         }
 
@@ -206,7 +212,7 @@ class MultiCartManager implements CartManagerInterface
             throw new InvalidConfigException('Cart name is missing');
         }
 
-        $cart = $this->cartFactory->create($this->environment, (string)$params['name'], $params['id'] ?? null, $params);
+        $cart = $this->cartFactory->create($this->environment, (string)$params['name'], $cartId, $params);
         $cart->save();
 
         $this->carts[$cart->getId()] = $cart;
@@ -215,7 +221,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @throws InvalidConfigException
      */
@@ -234,7 +240,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @return CartInterface
      *
@@ -302,7 +308,7 @@ class MultiCartManager implements CartManagerInterface
 
     /**
      * @param string $itemKey
-     * @param null $key
+     * @param string|null $key
      *
      * @throws InvalidConfigException
      */
