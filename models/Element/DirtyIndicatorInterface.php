@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject;
+namespace Pimcore\Model\Element;
 
 interface DirtyIndicatorInterface
 {
@@ -43,3 +43,6 @@ interface DirtyIndicatorInterface
 
     public function resetDirtyMap();
 }
+
+//TODO: remove in Pimcore 7
+class_alias(DirtyIndicatorInterface::class, 'Pimcore\Model\DataObject\DirtyIndicatorInterface');

@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method array delete(Concrete $object, $saveMode = false)
