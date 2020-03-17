@@ -256,7 +256,11 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             }
         }
 
-        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
+        $translationItem = self::getByKey($id, $create, $returnIdIfEmpty);
+        if ($translationItem instanceof self) {
+            return $translationItem->getTranslation($language);
+        }
+        return null;
     }
 
     public function save()
