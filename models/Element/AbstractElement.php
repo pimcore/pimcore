@@ -20,15 +20,15 @@ namespace Pimcore\Model\Element;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
-use Pimcore\Model\Element\Traits\KeyValueTrait;
+use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 
 /**
  * @method Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao getDao()
  */
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface, DirtyIndicatorInterface
 {
     use ElementDumpStateTrait;
-    use KeyValueTrait;
+    use DirtyIndicatorTrait;
 
     /**
      * @var int
@@ -47,7 +47,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         $modificationDateKey = Service::getElementType($this) === 'object' ? 'o_modificationDate' : 'modificationDate';
-        if ($this->matchValueFromTemp($modificationDateKey, $this->getModificationDate())) {
+        if (!$this->isFieldDirty($modificationDateKey)) {
             $updateTime = time();
             $this->setModificationDate($updateTime);
         }
@@ -58,7 +58,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
         $userModificationKey = Service::getElementType($this) === 'object' ? 'o_userModification' : 'userModification';
-        if ($this->matchValueFromTemp($userModificationKey, $this->getUserModification())) {
+        if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();
             if ($user instanceof Model\User) {

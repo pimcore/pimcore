@@ -1231,10 +1231,7 @@ class Asset extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
-        //save value to temp for later comparisons, if set initially
-        if ($modificationDate && $this->modificationDate === null) {
-            $this->copyValueToTemp('modificationDate', $modificationDate);
-        }
+        $this->checkFieldDirty('modificationDate', $modificationDate, false);
 
         $this->modificationDate = (int) $modificationDate;
 
@@ -1508,10 +1505,8 @@ class Asset extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
-        //save value to temp for later comparisons, if set initially
-        if ($userModification && $this->userModification === null) {
-            $this->copyValueToTemp('userModification', $userModification);
-        }
+        $this->checkFieldDirty('userModification', $userModification, false);
+
         $this->userModification = (int) $userModification;
 
         return $this;
