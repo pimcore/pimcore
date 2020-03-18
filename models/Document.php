@@ -298,6 +298,9 @@ class Document extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
 
                 $document->getDao()->getById($id);
+
+                $document->resetDirtyMap();
+
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
                 \Pimcore\Cache::save($document, $cacheKey);
@@ -1116,7 +1119,7 @@ class Document extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
-        $this->checkFieldDirty('modificationDate', $modificationDate, false);
+        $this->markFieldDirty('modificationDate');
 
         $this->modificationDate = (int) $modificationDate;
 
@@ -1231,7 +1234,7 @@ class Document extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
-        $this->checkFieldDirty('userModification', $userModification, false);
+        $this->markFieldDirty('userModification');
 
         $this->userModification = (int) $userModification;
 

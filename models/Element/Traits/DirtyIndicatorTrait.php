@@ -75,12 +75,11 @@ trait DirtyIndicatorTrait
      *
      * @param string $field
      * @param mixed $value
-     * @param bool $compareExisting
      *
      */
-    protected function checkFieldDirty($field, $value, $compareExisting = true)
+    protected function checkFieldDirty($field, $value)
     {
-        if ($this->{$field} !== null && (!$compareExisting || $this->{$field} !== $value)) {
+        if ($this->{$field} !== $value) {
             $this->markFieldDirty($field);
         }
     }

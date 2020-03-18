@@ -1000,9 +1000,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
-            $this->markFieldDirty('o_parentId');
-        }
+        $this->checkFieldDirty('o_parentId', $o_parentId);
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
         $this->o_siblings = [];
@@ -1090,7 +1088,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setModificationDate($o_modificationDate)
     {
-        $this->checkFieldDirty('o_modificationDate', $o_modificationDate, false);
+        $this->markFieldDirty('o_modificationDate');
 
         $this->o_modificationDate = (int) $o_modificationDate;
 
@@ -1116,7 +1114,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setUserModification($o_userModification)
     {
-        $this->checkFieldDirty('o_userModification', $o_userModification, false);
+        $this->markFieldDirty('o_userModification');
 
         $this->o_userModification = (int) $o_userModification;
 
