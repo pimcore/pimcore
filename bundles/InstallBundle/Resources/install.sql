@@ -383,6 +383,7 @@ CREATE TABLE `objects` (
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
   KEY `o_modificationDate` (`o_modificationDate`)
+  KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
