@@ -439,9 +439,6 @@ class InheritanceHelper
                     $ids = $this->db->fetchCol($query);
                 }
 
-                if(empty($ids)){
-                    $ids = [0];
-                }
 
                 if (isset($params['language'])) {
                     $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE  o_id IN( ' . implode(',',$ids).')'
