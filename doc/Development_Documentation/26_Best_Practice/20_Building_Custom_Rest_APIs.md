@@ -40,7 +40,7 @@ class CustomRestController extends FrontendController
                 "tags" => $blog->getTags());
         }
 
-        return $this->adminJson(["success" => true, "data" => $data]);
+        return $this->json(["success" => true, "data" => $data]);
     }
 }
 
