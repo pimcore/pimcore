@@ -431,7 +431,7 @@ class InheritanceHelper
 
                 if (self::$useRuntimeCache) {
                     $queryCacheKey = 'tree_ids_'.md5($query);
-                    if(is_null(self::$runtimeCache[$queryCacheKey])){
+                    if(!key_exists($queryCacheKey,self::$runtimeCache)){
                         self::$runtimeCache[$queryCacheKey] = $this->db->fetchCol($query);
                     }
                     $ids = self::$runtimeCache[$queryCacheKey];
