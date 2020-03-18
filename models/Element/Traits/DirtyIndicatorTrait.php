@@ -69,20 +69,6 @@ trait DirtyIndicatorTrait
     {
         $this->o_dirtyFields = null;
     }
-
-    /**
-     * @internal mark field dirty if initial value is changed
-     *
-     * @param string $field
-     * @param mixed $value
-     *
-     */
-    protected function checkFieldDirty($field, $value)
-    {
-        if ($this->{$field} !== $value) {
-            $this->markFieldDirty($field);
-        }
-    }
 }
 
 //TODO: remove in Pimcore 7

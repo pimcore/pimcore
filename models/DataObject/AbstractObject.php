@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -999,7 +998,9 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        $this->checkFieldDirty('o_parentId', $o_parentId);
+        if ($o_parentId != $this->o_parentId) {
+            $this->markFieldDirty('o_parentId');
+        }
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
         $this->o_siblings = [];
