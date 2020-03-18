@@ -421,43 +421,66 @@ class InheritanceHelper
 
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
-            if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath() . '/%')
-                    . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
-                    . ' ORDER BY LENGTH(o_path) ASC';
-            } else {
-                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
-            }
-            $queryCacheKey = 'tree_'.md5($query);
 
-            if (self::$useRuntimeCache) {
-                $parentIdGroups = self::$runtimeCache[$queryCacheKey] ?? null;
-            }
+            if($object->hasChildren()){
+                /**
+                 * get the object keys once and reuse it because we don't have a key on o_path and it can take quite long when you have a lot of data
+                 *
+                 */
+                $query = 'SELECT o_id FROM objects WHERE o_path LIKE ' .  $this->db->quote($object->getRealFullPath() . '/%');
 
-            if (!$parentIdGroups) {
-                $result = $this->db->fetchAll($query);
+                if (self::$useRuntimeCache) {
+                    $queryCacheKey = 'tree_ids_'.md5($query);
+                    if(is_null(self::$runtimeCache[$queryCacheKey])){
+                        self::$runtimeCache[$queryCacheKey] = $this->db->fetchCol($query);
+                    }
+                    $ids = self::$runtimeCache[$queryCacheKey];
+                }else{
+                    $ids = $this->db->fetchCol($query);
+                }
 
                 if (isset($params['language'])) {
-                    $result = $this->filterResultByLanguage($result, $params['language'], 'language');
+                    $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE  o_id IN( ' . implode(',',$ids).')'
+                        . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
+                        . ' ORDER BY LENGTH(o_path) ASC';
+                } else {
+                    $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE  o_id IN( ' . implode(',',$ids) . ') GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
                 }
 
-                // group the results together based on the parent id's
-                $parentIdGroups = [];
-                $rowCount = count($result);
-                for ($rowIdx = 0; $rowIdx < $rowCount; ++$rowIdx) {
-                    // assign the reference
-                    $rowData = &$result[$rowIdx];
 
-                    if (!isset($parentIdGroups[$rowData['parentId']])) {
-                        $parentIdGroups[$rowData['parentId']] = [];
+
+                $queryCacheKey = 'tree_'.md5($query);
+
+                if (self::$useRuntimeCache) {
+                    $parentIdGroups = self::$runtimeCache[$queryCacheKey] ?? null;
+                }
+
+                if (!$parentIdGroups) {
+                    $result = $this->db->fetchAll($query);
+
+                    if (isset($params['language'])) {
+                        $result = $this->filterResultByLanguage($result, $params['language'], 'language');
                     }
 
-                    $parentIdGroups[$rowData['parentId']][] = &$rowData;
-                }
-                if (self::$useRuntimeCache) {
-                    self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
+                    // group the results together based on the parent id's
+                    $parentIdGroups = [];
+                    $rowCount = count($result);
+                    for ($rowIdx = 0; $rowIdx < $rowCount; ++$rowIdx) {
+                        // assign the reference
+                        $rowData = &$result[$rowIdx];
+
+                        if (!isset($parentIdGroups[$rowData['parentId']])) {
+                            $parentIdGroups[$rowData['parentId']] = [];
+                        }
+
+                        $parentIdGroups[$rowData['parentId']][] = &$rowData;
+                    }
+                    if (self::$useRuntimeCache) {
+                        self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
+                    }
                 }
             }
+
         }
 
         if (isset($parentIdGroups[$currentParentId])) {
