@@ -36,6 +36,6 @@ class Version20200317163018 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
+        $this->writeMessage('Please execute bin/console pimcore:deployment:classes-rebuild afterwards.');
     }
 }

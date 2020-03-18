@@ -27,7 +27,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  */
 class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var array

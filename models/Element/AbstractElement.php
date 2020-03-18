@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 
 /**
@@ -46,7 +47,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->setVersionCount(1);
         }
 
-        $modificationDateKey = Service::getElementType($this) === 'object' ? 'o_modificationDate' : 'modificationDate';
+        $modificationDateKey = $this instanceof AbstractObject ? 'o_modificationDate' : 'modificationDate';
         if (!$this->isFieldDirty($modificationDateKey)) {
             $updateTime = time();
             $this->setModificationDate($updateTime);
@@ -57,7 +58,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
-        $userModificationKey = Service::getElementType($this) === 'object' ? 'o_userModification' : 'userModification';
+        $userModificationKey = $this instanceof AbstractObject ? 'o_userModification' : 'userModification';
         if (!$this->isFieldDirty($userModificationKey)) {
             $userId = 0;
             $user = \Pimcore\Tool\Admin::getCurrentUser();

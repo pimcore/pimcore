@@ -70,7 +70,15 @@ trait DirtyIndicatorTrait
         $this->o_dirtyFields = null;
     }
 
-    public function checkFieldDirty($field, $value, $compareExisting = true)
+    /**
+     * @internal mark field dirty if initial value is changed
+     *
+     * @param string $field
+     * @param mixed $value
+     * @param bool $compareExisting
+     *
+     */
+    protected function checkFieldDirty($field, $value, $compareExisting = true)
     {
         if ($this->{$field} !== null && (!$compareExisting || $this->{$field} !== $value)) {
             $this->markFieldDirty($field);

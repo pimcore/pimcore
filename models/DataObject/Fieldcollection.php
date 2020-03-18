@@ -27,7 +27,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]

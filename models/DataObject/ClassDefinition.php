@@ -403,16 +403,14 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\Element\\DirtyIndicatorInterface'];
+        $implementsParts = [];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $useParts = [
-            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
-        ];
+        $useParts = [];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
