@@ -290,10 +290,9 @@ class Asset extends Element\AbstractElement
                 $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
+                $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 $asset->resetDirtyMap();
-
-                $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 \Pimcore\Cache::save($asset, $cacheKey);
             } else {

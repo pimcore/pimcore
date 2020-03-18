@@ -298,10 +298,9 @@ class Document extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
 
                 $document->getDao()->getById($id);
+                $document->__setDataVersionTimestamp($document->getModificationDate());
 
                 $document->resetDirtyMap();
-
-                $document->__setDataVersionTimestamp($document->getModificationDate());
 
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {

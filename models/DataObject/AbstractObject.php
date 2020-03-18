@@ -298,10 +298,9 @@ class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
+                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Service::recursiveResetDirtyMap($object);
-
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     // force loading of relation data
                     if ($object instanceof Concrete) {
