@@ -347,6 +347,33 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->save($isUpdate);
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        // empty object cache
+        try {
+            Cache::clearTag('class_'.$this->getId());
+        } catch (\Exception $e) {
+        }
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_UPDATE,
+                new ClassDefinitionEvent($this)
+            );
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_ADD,
+                new ClassDefinitionEvent($this)
+            );
+        }
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
         $infoDocBlock = $this->getInfoDocBlock();
 
         // create class for object
@@ -530,7 +557,7 @@ class ClassDefinition extends Model\AbstractModel
             );
         }
 
-        if ($saveDefinitionFile) {
+        if ($generateDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
@@ -547,24 +574,6 @@ class ClassDefinition extends Model\AbstractModel
             $data .= "\nreturn ".$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
-        }
-
-        // empty object cache
-        try {
-            Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
-        }
-
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
-            );
         }
     }
 
