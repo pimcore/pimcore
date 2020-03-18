@@ -36,7 +36,7 @@ pimcore.settings.user.websiteTranslationSettings = Class.create({
             var language = this.validLanguages[i];
             data.push([
                 language,
-                ts(pimcore.available_languages[language]),
+                t(pimcore.available_languages[language]),
                 this.userRole.websiteTranslationLanguagesView.indexOf(language) >= 0,
                 this.userRole.websiteTranslationLanguagesEdit.indexOf(language) >= 0
             ]);

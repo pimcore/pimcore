@@ -1,6 +1,6 @@
 {
     "id": "50",
-    "description": null,
+    "description": "class for lazy loading tests",
     "parentClass": null,
     "listingParentClass": null,
     "useTraits": null,

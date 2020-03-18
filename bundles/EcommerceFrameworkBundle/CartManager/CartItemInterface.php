@@ -118,20 +118,18 @@ interface CartItemInterface
     /**
      * @static
      *
-     * @param $cartId
-     * @param $itemKey
+     * @param int $cartId
+     * @param string $itemKey
      * @param string $parentKey
      *
-     * @return CartItemInterface
+     * @return CartItemInterface|null
      */
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '');
 
     /**
      * @static
      *
-     * @param $cartId
-     *
-     * @return void
+     * @param int $cartId
      */
     public static function removeAllFromCart($cartId);
 

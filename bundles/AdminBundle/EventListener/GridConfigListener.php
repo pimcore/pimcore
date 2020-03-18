@@ -39,7 +39,7 @@ class GridConfigListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $event DataObjectEvent
+     * @param DataObjectEvent $event
      */
     public function onObjectDelete($event)
     {
@@ -50,7 +50,7 @@ class GridConfigListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $event ClassDefinitionEvent
+     * @param ClassDefinitionEvent $event
      */
     public function onClassDelete($event)
     {
@@ -69,7 +69,7 @@ class GridConfigListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $event UserRoleEvent
+     * @param UserRoleEvent $event
      */
     public function onUserDelete($event)
     {

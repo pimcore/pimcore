@@ -43,9 +43,13 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         this.element.update(data);
 
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
         this.checkValue();
 
-        this.element.on("keyup", this.checkValue.bind(this));
+        this.element.on("keyup", this.checkValue.bind(this, true));
         this.element.on("keydown", function (e, t, o) {
 
             if(e.getCharCode() == 13) {
@@ -110,13 +114,17 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         }
     },
 
-    checkValue: function () {
+    checkValue: function (mark) {
         var value = this.element.dom.innerHTML;
 
         if(trim(strip_tags(value)).length < 1) {
             this.element.addCls("empty");
         } else {
             this.element.removeCls("empty");
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
         }
     },
 

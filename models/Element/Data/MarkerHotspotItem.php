@@ -32,12 +32,12 @@ class MarkerHotspotItem implements \ArrayAccess
     public $type = '';
 
     /**
-     * @var
+     * @var mixed
      */
     public $value;
 
     /**
-     * @param $data
+     * @param array $data
      */
     public function __construct($data)
     {
@@ -82,7 +82,7 @@ class MarkerHotspotItem implements \ArrayAccess
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getValue()
     {
@@ -90,7 +90,7 @@ class MarkerHotspotItem implements \ArrayAccess
     }
 
     /**
-     * @param mixed $value
+     * @param int $value
      */
     public function setValue($value)
     {

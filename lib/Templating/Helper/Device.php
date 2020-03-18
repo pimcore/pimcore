@@ -20,7 +20,7 @@ use Symfony\Component\Templating\Helper\Helper;
 class Device extends Helper
 {
     /**
-     * @param null $default
+     * @param string|null $default
      *
      * @return DeviceDetector
      */

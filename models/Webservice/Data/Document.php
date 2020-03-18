@@ -20,6 +20,9 @@ namespace Pimcore\Model\Webservice\Data;
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 abstract class Document extends Model\Webservice\Data
 {
     /**
@@ -73,8 +76,8 @@ abstract class Document extends Model\Webservice\Data
     public $childs;
 
     /**
-     * @param $object
-     * @param null $options
+     * @param Model\Document $object
+     * @param array|null $options
      */
     public function map($object, $options = null)
     {

@@ -14,9 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
+/**
+ * @method Dao getDao()
+ */
 class CartCheckoutData extends AbstractCartCheckoutData
 {
     public function save()

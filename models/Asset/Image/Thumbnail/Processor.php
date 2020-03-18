@@ -54,7 +54,12 @@ class Processor
     ];
 
     /**
-     * @param $format
+     * @var null|bool
+     */
+    protected static $hasWebpSupport = null;
+
+    /**
+     * @param string $format
      * @param array $allowed
      * @param string $fallback
      *
@@ -67,7 +72,7 @@ class Processor
             'tif' => 'tiff'
         ];
 
-        if (array_key_exists($format, $typeMappings)) {
+        if (isset($typeMappings[$format])) {
             $format = $typeMappings[$format];
         }
 
@@ -83,7 +88,7 @@ class Processor
     /**
      * @param Asset $asset
      * @param Config $config
-     * @param null $fileSystemPath
+     * @param string|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @param bool $returnAbsolutePath
      * @param bool $generated
@@ -105,7 +110,10 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
-            $format = self::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
+            $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
+            if ($format === 'jpeg') {
+                $format = 'pjpeg';
+            }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
@@ -140,7 +148,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if ($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
             $format = 'webp';
         }
 
@@ -165,11 +173,12 @@ class Processor
         $fsPath = $thumbDir . '/' . $filename;
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
+        // the configuration is saved for later use in
+        // \Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction()
         // so that it can be used also with dynamic configurations
         if ($deferred) {
-            // only add the config to the TmpStore if necessary (the config is auto-generated)
-            if (!Config::getByName($config->getName())) {
+            // only add the config to the TmpStore if necessary (e.g. if the config is auto-generated)
+            if (!Config::exists($config->getName())) {
                 $configId = 'thumb_' . $asset->getId() . '__' . md5(self::returnPath($fsPath, false));
                 TmpStore::add($configId, $config, 'thumbnail_deferred');
             }
@@ -343,7 +352,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
+        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -377,10 +386,10 @@ class Processor
     }
 
     /**
-     * @param $path
-     * @param $absolute
+     * @param string $path
+     * @param bool $absolute
      *
-     * @return mixed
+     * @return string
      */
     protected static function returnPath($path, $absolute)
     {
@@ -389,5 +398,30 @@ class Processor
         }
 
         return $path;
+    }
+
+    /**
+     * @param bool|null $webpSupport
+     *
+     * @return bool|null
+     */
+    public static function setHasWebpSupport(?bool $webpSupport): ?bool
+    {
+        $prevValue = self::$hasWebpSupport;
+        self::$hasWebpSupport = $webpSupport;
+
+        return $prevValue;
+    }
+
+    /**
+     * @return bool
+     */
+    protected static function hasWebpSupport(): bool
+    {
+        if (self::$hasWebpSupport !== null) {
+            return self::$hasWebpSupport;
+        }
+
+        return Frontend::hasWebpSupport();
     }
 }

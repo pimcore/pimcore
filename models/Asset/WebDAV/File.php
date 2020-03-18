@@ -31,7 +31,7 @@ class File extends DAV\File
     private $asset;
 
     /**
-     * @param $asset
+     * @param Asset $asset
      */
     public function __construct($asset)
     {

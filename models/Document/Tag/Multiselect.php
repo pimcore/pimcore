@@ -44,7 +44,7 @@ class Multiselect extends Model\Document\Tag
     /**
      * @see TagInterface::getData
      *
-     * @return mixed
+     * @return array
      */
     public function getData()
     {
@@ -72,7 +72,7 @@ class Multiselect extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromResource
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -112,10 +112,12 @@ class Multiselect extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -123,7 +125,7 @@ class Multiselect extends Model\Document\Tag
     {
         $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->values === null) {
-            $this->values = null;
+            $this->values = [];
         } elseif ($data->values instanceof  \stdClass) {
             $this->values = get_object_vars($data->values);
         } else {

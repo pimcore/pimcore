@@ -68,5 +68,7 @@ class InstallCommand extends AbstractBundleCommand
             $this->io,
             $this->getApplication()->getKernel()->getEnvironment()
         );
+
+        return 0;
     }
 }

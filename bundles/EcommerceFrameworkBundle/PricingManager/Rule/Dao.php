@@ -14,8 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Model\Dao\AbstractDao;
 
+/**
+ * @property Rule $model
+ */
 class Dao extends AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_pricing_rule';
@@ -48,7 +52,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -89,6 +93,8 @@ class Dao extends AbstractDao
      */
     public function update()
     {
+        $data = [];
+
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);

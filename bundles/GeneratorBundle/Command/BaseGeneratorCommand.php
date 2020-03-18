@@ -19,12 +19,6 @@ abstract class BaseGeneratorCommand extends ContainerAwareCommand
      */
     private $generator;
 
-    // only useful for unit tests
-    public function setGenerator(Generator $generator)
-    {
-        $this->generator = $generator;
-    }
-
     abstract protected function createGenerator();
 
     protected function getGenerator(BundleInterface $bundle = null)
@@ -58,7 +52,7 @@ abstract class BaseGeneratorCommand extends ContainerAwareCommand
     protected function getQuestionHelper()
     {
         $question = $this->getHelperSet()->get('question');
-        if (!$question || get_class($question) !== 'Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper') {
+        if (!$question || get_class($question) !== QuestionHelper::class) {
             $this->getHelperSet()->set($question = new QuestionHelper());
         }
 

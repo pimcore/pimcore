@@ -25,8 +25,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @throws \Exception
      */
@@ -57,6 +57,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $version = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('edit_lock'))) {
@@ -84,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $sessionId
+     * @param string $sessionId
      */
     public function clearSession($sessionId)
     {

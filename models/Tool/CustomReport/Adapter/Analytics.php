@@ -17,20 +17,19 @@ namespace Pimcore\Model\Tool\CustomReport\Adapter;
 class Analytics extends AbstractAdapter
 {
     /**
-     * @param $filters
-     * @param $sort
-     * @param $dir
-     * @param $offset
-     * @param $limit
-     * @param null $fields
-     * @param null $drillDownFilters
-     * @param null $fullConfig
+     * @param array|null $filters
+     * @param string|null $sort
+     * @param string|null $dir
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param array|null $fields
+     * @param array|null $drillDownFilters
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null, $fullConfig = null)
+    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
         $this->setFilters($filters, $drillDownFilters);
 
@@ -54,9 +53,9 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $configuration
+     * @param \stdClass $configuration
      *
-     * @return array|mixed
+     * @return array
      *
      * @throws \Exception
      */
@@ -73,7 +72,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $filters
+     * @param array $filters
      * @param array $drillDownFilters
      */
     protected function setFilters($filters, $drillDownFilters = [])
@@ -117,8 +116,8 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param null $fields
-     * @param null $drillDownFilters
+     * @param array|null $fields
+     * @param array|null $drillDownFilters
      * @param bool $useDimensionHandling
      *
      * @return mixed
@@ -188,7 +187,7 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $results
+     * @param array $results
      *
      * @return array
      */
@@ -210,8 +209,8 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $configuration
-     * @param $fields
+     * @param \stdClass $configuration
+     * @param array $fields
      *
      * @return mixed
      */
@@ -237,9 +236,9 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $configuration
+     * @param \stdClass $configuration
      *
-     * @return mixed
+     * @return \stdClass
      */
     protected function handleDimensions($configuration)
     {
@@ -261,10 +260,10 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $date
-     * @param $relativeDate
+     * @param int $date
+     * @param string $relativeDate
      *
-     * @return float|int|string
+     * @return int
      */
     protected function calcDate($date, $relativeDate)
     {
@@ -303,11 +302,11 @@ class Analytics extends AbstractAdapter
     }
 
     /**
-     * @param $filters
-     * @param $field
-     * @param $drillDownFilters
+     * @param array $filters
+     * @param string $field
+     * @param array $drillDownFilters
      *
-     * @return array|mixed
+     * @return array
      *
      * @throws \Exception
      */

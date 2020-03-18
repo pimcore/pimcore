@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -39,12 +39,12 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $category
-     * @param $action
-     * @param $label
-     * @param $day
-     * @param $month
-     * @param $year
+     * @param string $category
+     * @param string $action
+     * @param string $label
+     * @param int $day
+     * @param int $month
+     * @param int $year
      *
      * @throws \Exception
      */

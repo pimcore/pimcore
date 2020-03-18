@@ -96,7 +96,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
-                html: '<span class="object_field_setting_warning">' + t('default_value_warning') + '</span>'
+                html: '<span class="object_field_setting_warning">' + t('inherited_default_value_warning') + '</span>'
             }
         ];
 

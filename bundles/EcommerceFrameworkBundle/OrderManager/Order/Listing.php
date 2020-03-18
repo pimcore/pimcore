@@ -154,6 +154,25 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @return $this
+     *
+     */
+    public function joinPriceModifications()
+    {
+        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+
+        if (!array_key_exists('OrderPriceModifications', $joins)) {
+            $this->getQuery()->joinLeft(
+                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
+                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
+                ''
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
      */
     public function joinPaymentInfo()
     {
@@ -321,13 +340,15 @@ SUBQUERY
     }
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return $this
      */
     public function addSelectField($field)
     {
         $this->getQuery()->columns($field);
+
+        return $this;
     }
 
     /**
@@ -339,6 +360,8 @@ SUBQUERY
     {
         $this->filter[] = $filter;
         $filter->apply($this);
+
+        return $this;
     }
 
     /**

@@ -251,7 +251,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label),
+            text: t(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,

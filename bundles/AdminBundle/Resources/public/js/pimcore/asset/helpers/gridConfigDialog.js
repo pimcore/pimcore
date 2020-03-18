@@ -337,7 +337,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                             record.data.inheritedFields = {};
 
                             if (key == "preview" && value) {
-                                return '<img src="' + value + '" />';
+                                return '<img height=70 width=108 src="' + value + '" />';
                             } else if ((key == "modificationDate" || key == "creationDate") && value) {
                                 var timestamp = intval(value) * 1000;
                                 var date = new Date(timestamp);

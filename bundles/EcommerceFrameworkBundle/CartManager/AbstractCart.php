@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\Concrete;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
@@ -211,13 +212,13 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
-     * @param $count
-     * @param null $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param string|null $itemKey
      * @param bool $replace
      * @param array $params
      * @param AbstractSetProductEntry[] $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return mixed
      */
@@ -237,15 +238,15 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param $itemKey
-     * @param CheckoutableInterface $product
-     * @param $count
+     * @param string $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
      * @param bool $replace
      * @param array $params
      * @param AbstractSetProductEntry[] $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
-     * @return mixed
+     * @return string
      */
     public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
@@ -303,8 +304,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * updates count of specific cart item
      *
-     * @param $itemKey
-     * @param $count
+     * @param string $itemKey
+     * @param int $count
+     *
+     * @return CartItemInterface
      */
     public function updateItemCount($itemKey, $count)
     {
@@ -319,13 +322,13 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CheckoutableInterface $product
-     * @param int                                  $count
-     * @param null                                 $itemKey
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param string|null $itemKey
+     * @param bool $replace
+     * @param array $params
+     * @param array $subProducts
+     * @param string|null $comment
      *
      * @return string
      */
@@ -345,13 +348,13 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param string                               $itemKey
-     * @param CheckoutableInterface $product
-     * @param int                                  $count
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
+     * @param string $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param bool $replace
+     * @param array $params
+     * @param array $subProducts
+     * @param string|null $comment
      *
      * @return string
      */
@@ -601,7 +604,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function getIsBookable()
     {
         foreach ($this->getItems() as $item) {
-            if (!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
+            if (!$item->getProduct()->getOSIsBookable($item->getCount())) {
                 return false;
             }
         }
@@ -610,7 +613,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      */
     public function setId($id)
     {
@@ -618,7 +621,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -654,7 +657,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param $creationDateTimestamp
+     * @param int $creationDateTimestamp
      */
     public function setCreationDateTimestamp($creationDateTimestamp)
     {
@@ -701,7 +704,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param $modificationDateTimestamp
+     * @param int $modificationDateTimestamp
      */
     public function setModificationDateTimestamp($modificationDateTimestamp)
     {
@@ -746,7 +749,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     abstract public function delete();
 
     /**
-     * @param  $key string
+     * @param string $key
      *
      * @return string
      */
@@ -761,10 +764,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param  $key string
-     * @param  $data string
-     *
-     * @return void
+     * @param string $key
+     * @param string $data
      */
     public function setCheckoutData($key, $data)
     {
@@ -840,12 +841,13 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * sorts all items in cart according to a given callback function
      *
-     * @param $value_compare_func
+     * @param callable $value_compare_func
      *
-     * @return CartItemInterface[]
+     * @return $this
      */
     public function sortItems(callable $value_compare_func)
     {
+        return $this;
     }
 
     /**
@@ -881,7 +883,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * Checks if an error code is a defined Voucher Error Code.
      *
-     * @param $errorCode
+     * @param int $errorCode
      *
      * @return bool
      */
@@ -929,6 +931,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         } else {
             throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
+
+        return false;
     }
 
     /**

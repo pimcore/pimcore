@@ -85,7 +85,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromResource
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -99,7 +99,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromEditmode
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -119,10 +119,12 @@ class Wysiwyg extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -146,7 +148,7 @@ class Wysiwyg extends Model\Document\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $blockedTags
      *
      * @return array
@@ -169,7 +171,7 @@ class Wysiwyg extends Model\Document\Tag
      *
      * @param array $idMapping
      *
-     * @return string|null
+     * @return string|void
      *
      * @todo: no rewriteIds method ever returns anything, why this one?
      */
@@ -201,5 +203,7 @@ class Wysiwyg extends Model\Document\Tag
 
         $html->clear();
         unset($html);
+
+        return;
     }
 }

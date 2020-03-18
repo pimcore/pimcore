@@ -49,9 +49,10 @@ pimcore.object.helpers.grid = Class.create({
         this.baseParams['fields[]'] = fieldParam;
     },
 
-    getStore: function(noBatchColumns, batchAppendColumns) {
+    getStore: function(noBatchColumns, batchAppendColumns, batchRemoveColumns) {
 
         batchAppendColumns = batchAppendColumns || [];
+        batchRemoveColumns = batchRemoveColumns || [];
         // the store
         var readerFields = [];
         readerFields.push({name: "id"});
@@ -70,6 +71,7 @@ pimcore.object.helpers.grid = Class.create({
 
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
+        this.batchRemoveColumns = [];
 
         for (var i = 0; i < this.fields.length; i++) {
             if (!in_array(this.fields[i].key, ["creationDate", "modificationDate"])) {
@@ -102,6 +104,9 @@ pimcore.object.helpers.grid = Class.create({
 
                 if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchAppend) {
                     batchAppendColumns.push(key);
+                }
+                if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchRemove) {
+                    batchRemoveColumns.push(key);
                 }
 
                 readerFields.push(readerFieldConfig);
@@ -238,7 +243,7 @@ pimcore.object.helpers.grid = Class.create({
                     dataIndex: 'key', hidden: !showKey, filter: 'string'});
             } else if(field.key == "classname") {
                 gridColumns.push({text: t("class"), width: this.getColumnWidth(field, 200), sortable: true,
-                    dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
+                    dataIndex: 'classname',renderer: function(v){return t(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
                 gridColumns.push({text: t("creationdate") + " (System)", width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: "creationDate", filter: 'date', editable: false, renderer: function(d) {
@@ -402,11 +407,10 @@ pimcore.object.helpers.grid = Class.create({
             var columnKeys = field.layout.columnKeys ? field.layout.columnKeys : [];
             if (columnKeys && columnKeys.length) {
                 result = '<table border="0" cellpadding="0"  cellspacing="0" style="border-collapse: collapse;">';
-                var i;
 
                 result += '<tr><td>&nbsp;</td>';
                 for (let i = 0; i < columnKeys.length; i++) {
-                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + ts(columnKeys[i]) + '</td>';
+                    result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">' + t(columnKeys[i]) + '</td>';
                 }
                 result += '</tr>';
 

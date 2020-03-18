@@ -59,7 +59,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                 extraParams: this.searchParams
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return ts(rec.data.classname);
+                return t(rec.data.classname);
             }},"published"]
         });
 
@@ -145,8 +145,6 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 "id": data.data.id,
                                 "success": function () {
                                     this.store.reload();
-                                    var tree = pimcore.globalmanager.get("layout_object_tree");
-                                    var treePanel = tree.tree;
                                     pimcore.elementservice.refreshRootNodeAllTrees("object");
                                 }.bind(this)
                             };

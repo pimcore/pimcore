@@ -31,7 +31,7 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
-     * @param null $id
+     * @param string|null $id
      *
      * @throws \Exception
      */
@@ -52,6 +52,16 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function exists(string $name): bool
+    {
+        return (bool) $this->db->getById($this->model->getName());
+    }
+
+    /**
      * @throws \Exception
      */
     public function save()
@@ -65,7 +75,8 @@ class Dao extends Model\Dao\PhpArrayTable
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['name', 'description', 'group', 'items', 'medias', 'format',
-            'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'preserveMetaData', 'rasterizeSVG', 'downloadable'];
+            'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'preserveMetaData',
+            'rasterizeSVG', 'downloadable', 'forcePictureTag'];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

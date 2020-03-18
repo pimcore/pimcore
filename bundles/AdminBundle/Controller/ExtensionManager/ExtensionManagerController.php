@@ -23,7 +23,6 @@ use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
-use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
@@ -44,7 +43,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     private $bundleManager;
 
     /**
-     * @var AreabrickManager
+     * @var AreabrickManagerInterface
      */
     private $areabrickManager;
 
@@ -354,9 +353,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @param $bundleName
+     * @param string $bundleName
      *
-     * @return PimcoreBundleInterface
+     * @return PimcoreBundleInterface|null
      */
     private function buildBundleInstance($bundleName)
     {
@@ -372,6 +371,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'error' => $e->getMessage()
             ]);
         }
+
+        return null;
     }
 
     /**
@@ -445,6 +446,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 return $iframePath;
             }
         }
+
+        return null;
     }
 
     /**

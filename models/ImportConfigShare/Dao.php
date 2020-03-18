@@ -25,8 +25,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $importConfigId
-     * @param $sharedWithUserId
+     * @param int $importConfigId
+     * @param int $sharedWithUserId
      *
      * @throws \Exception
      */
@@ -44,6 +44,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $importConfigShare = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($importConfigShare as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('importconfig_shares'))) {

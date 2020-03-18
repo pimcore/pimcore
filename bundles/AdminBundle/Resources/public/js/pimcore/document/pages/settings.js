@@ -272,17 +272,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
         }
 
         return this.layout;
-    },
-
-    getValues: function () {
-
-        if (!this.layout.rendered) {
-            throw "settings not available";
-        }
-
-        // get values
-        var settings = this.getLayout().getForm().getFieldValues();
-        return settings;
     }
 
 });

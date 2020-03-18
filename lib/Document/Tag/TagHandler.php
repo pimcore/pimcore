@@ -291,10 +291,6 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
 
     protected function handleBrickActionResult($result)
     {
-        // TODO Pimcore 6 rely on responseStack being set as constructor dependency
-        if (null === $this->responseStack) {
-            return;
-        }
 
         // if the action result is a response object, push it onto the
         // response stack. this response will be used by the ResponseStackListener
@@ -309,7 +305,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * TemplateAreabrickInterface fall back to auto-resolving the template reference. See interface for examples.
      *
      * @param AreabrickInterface $brick
-     * @param $type
+     * @param string $type
      *
      * @return mixed|null|string
      */

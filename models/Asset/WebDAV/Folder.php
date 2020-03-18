@@ -31,7 +31,7 @@ class Folder extends DAV\Collection
     private $asset;
 
     /**
-     * @param $asset
+     * @param Asset $asset
      */
     public function __construct($asset)
     {
@@ -75,6 +75,7 @@ class Folder extends DAV\Collection
     {
         $nameParts = explode('/', $name);
         $name = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
+        $asset = null;
 
         if (is_string($name)) {
             $parentPath = $this->asset->getRealFullPath();
@@ -109,9 +110,7 @@ class Folder extends DAV\Collection
 
     /**
      * @param string $name
-     * @param null $data
-     *
-     * @return null|string|void
+     * @param string|null $data
      *
      * @throws DAV\Exception\Forbidden
      */

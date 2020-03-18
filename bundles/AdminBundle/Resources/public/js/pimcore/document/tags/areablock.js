@@ -497,7 +497,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             return;
         }
 
-        var self = this;
         var menu = new Ext.menu.Menu();
 
         if(element != false) {
@@ -1132,6 +1131,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
                 : brick.name,
             width: areaBlockToolbarSettings.buttonWidth,
+            handler: function () {
+                Ext.MessageBox.alert(t("info"), t("area_brick_assign_info_message"));
+            },
             listeners: {
                 "afterrender": function (brick, v) {
 

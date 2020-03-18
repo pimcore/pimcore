@@ -242,7 +242,7 @@ class HeadLink extends CacheBusterAware
             throw new Exception('append() expects a data token; please use one of the custom append*() methods');
         }
 
-        return $this->getContainer()->append($value);
+        $this->getContainer()->append($value);
     }
 
     /**
@@ -259,15 +259,13 @@ class HeadLink extends CacheBusterAware
             throw new Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
      * prepend()
      *
-     * @param  array $value
-     *
-     * @return HeadLink
+     * @param array $value
      */
     public function prepend($value)
     {
@@ -275,15 +273,13 @@ class HeadLink extends CacheBusterAware
             throw new Exception('prepend() expects a data token; please use one of the custom prepend*() methods');
         }
 
-        return $this->getContainer()->prepend($value);
+        $this->getContainer()->prepend($value);
     }
 
     /**
      * set()
      *
-     * @param  array $value
-     *
-     * @return HeadLink
+     * @param array $value
      */
     public function set($value)
     {
@@ -291,7 +287,7 @@ class HeadLink extends CacheBusterAware
             throw new Exception('set() expects a data token; please use one of the custom set*() methods');
         }
 
-        return $this->getContainer()->set($value);
+        $this->getContainer()->set($value);
     }
 
     /**
@@ -420,6 +416,7 @@ class HeadLink extends CacheBusterAware
         $type = 'text/css';
         $media = 'screen';
         $conditionalStylesheet = false;
+        $extras = [];
         $href = array_shift($args);
 
         if ($this->_isDuplicateStylesheet($href)) {
@@ -488,6 +485,7 @@ class HeadLink extends CacheBusterAware
         $href = array_shift($args);
         $type = array_shift($args);
         $title = array_shift($args);
+        $extras = [];
 
         if (0 < count($args) && is_array($args[0])) {
             $extras = array_shift($args);

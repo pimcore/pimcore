@@ -19,6 +19,8 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Glossary\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Glossary extends AbstractModel
 {
@@ -80,7 +82,7 @@ class Glossary extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Glossary
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -227,7 +229,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @param $casesensitive
+     * @param bool $casesensitive
      *
      * @return $this
      */
@@ -247,7 +249,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @param $exactmatch
+     * @param bool $exactmatch
      *
      * @return $this
      */
@@ -267,7 +269,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @param $site
+     * @param Site|int $site
      *
      * @return $this
      */
@@ -290,7 +292,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -310,7 +312,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

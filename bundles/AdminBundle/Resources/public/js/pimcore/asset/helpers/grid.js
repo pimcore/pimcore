@@ -201,7 +201,7 @@ pimcore.asset.helpers.grid = Class.create({
                         width: this.getColumnWidth(field, 150),
                         renderer: function (value) {
                             if (value) {
-                                return '<img src="' + value + '" />';
+                                return '<img style="height: auto; width: 100%;" src="' + value + '" />';
                             }
                         }.bind(this)
                     });

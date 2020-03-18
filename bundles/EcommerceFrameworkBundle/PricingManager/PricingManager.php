@@ -208,7 +208,7 @@ class PricingManager implements PricingManagerInterface
      */
     public function getValidRules()
     {
-        if (empty($this->rules)) {
+        if (is_null($this->rules)) {
             /** @var Rule\Listing $rules */
             $rules = $this->getRuleListing();
             $rules->setCondition('active = 1');
@@ -236,18 +236,6 @@ class PricingManager implements PricingManagerInterface
         $environment->setSession($sessionBag);
 
         return $environment;
-    }
-
-    /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return RuleInterface
-     */
-    public function getRule()
-    {
-        $class = $this->options['rule_class'];
-
-        return new $class();
     }
 
     /**

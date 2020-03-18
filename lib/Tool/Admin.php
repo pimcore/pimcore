@@ -51,18 +51,27 @@ class Admin
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
         $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
+        $appDefaultPath = \Pimcore::getContainer()->getParameter('translator.default_path');
+
         $languages = [];
-        $languageDirs = [$languageDir];
+        $languageDirs = [$languageDir, $appDefaultPath];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
                 foreach ($files as $file) {
                     if (is_file($filesDir . '/' . $file)) {
                         $parts = explode('.', $file);
-                        if (($adminLang != null && in_array($parts[0], array_values($adminLang))) || $adminLang == null) {
-                            if ($parts[1] == 'json') {
-                                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($parts[0])) {
-                                    $languages[] = $parts[0];
+
+                        $languageCode = $parts[0];
+                        if ($parts[0] === 'admin') {
+                            // this is for the app specific translations
+                            $languageCode = $parts[1];
+                        }
+
+                        if (($adminLang != null && in_array($languageCode, array_values($adminLang))) || $adminLang == null) {
+                            if ($parts[1] === 'json' || $parts[0] === 'admin') {
+                                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($languageCode)) {
+                                    $languages[] = $languageCode;
                                 }
                             }
                         }
@@ -77,7 +86,7 @@ class Admin
     /**
      * @static
      *
-     * @param  $scriptContent
+     * @param string $scriptContent
      *
      * @return mixed
      */
@@ -98,7 +107,7 @@ class Admin
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @return \stdClass
      */
@@ -146,7 +155,7 @@ class Admin
     }
 
     /**
-     * @param null $sessionId
+     * @param string|null $sessionId
      *
      * @throws \Exception
      */
@@ -237,7 +246,7 @@ class Admin
     /**
      * @static
      *
-     * @return \Pimcore\Model\User
+     * @return \Pimcore\Model\User|null
      */
     public static function getCurrentUser()
     {
@@ -259,7 +268,7 @@ class Admin
      * @param string|array $languages
      * @param bool $returnLanguageArray
      *
-     * @return string
+     * @return string|array
      */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {

@@ -235,7 +235,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($request->get('oid')) {
             $object = DataObject\Concrete::getById($request->get('oid'));
             $class = $object->getClass();
-            /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
             $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -352,6 +352,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -428,6 +430,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($request->get('oid')) {
             $object = DataObject\Concrete::getById($request->get('oid'));
             $class = $object->getClass();
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
             $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -500,6 +503,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -549,10 +554,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $condition = '';
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $condition = '';
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -633,6 +638,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -813,10 +820,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $list->setOffset($start);
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
+        $conditionParts = [];
 
         if ($request->get('filter')) {
             $db = Db::get();
-            $conditionParts = [];
             $filterString = $request->get('filter');
             $filters = json_decode($filterString);
 
@@ -855,7 +862,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $rootElement = [];
 
         $data = [];
-        /** @var $config Classificationstore\KeyGroupRelation */
+        /** @var Classificationstore\KeyGroupRelation $config */
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
@@ -910,6 +917,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -925,8 +934,9 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
+        $data = [];
 
         if ($ids) {
             $db = \Pimcore\Db::get();
@@ -940,12 +950,14 @@ class ClassificationstoreController extends AdminController implements EventedCo
             }
 
             $groupIdList = [];
+            $groupId = null;
 
             $allowedGroupIds = null;
 
             if ($request->get('oid')) {
                 $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
+                /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
             }
@@ -1032,7 +1044,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
 
         $keyCondition = 'groupId in (' . implode(',', array_fill(0, count($ids), '?')) . ')';
@@ -1132,7 +1144,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                     $keyIdList = $keyIdList->load();
                     if ($keyIdList) {
                         $keyIds = [];
-                        /** @var $keyEntry Classificationstore\KeyGroupRelation */
+                        /** @var Classificationstore\KeyGroupRelation $keyEntry */
                         foreach ($keyIdList as $keyEntry) {
                             $keyIds[] = $keyEntry->getKeyId();
                         }
@@ -1278,10 +1290,12 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $item]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @param $config
+     * @param Classificationstore\KeyConfig $config
      *
      * @return array
      */
@@ -1420,7 +1434,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $result = [];
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
-        /** @var $item Classificationstore\StoreConfig */
+        /** @var Classificationstore\StoreConfig $item */
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),

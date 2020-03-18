@@ -30,21 +30,21 @@ class Video extends Model\Document\Tag
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
-     * @var mixed
+     * @var int|string|null
      */
     public $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
-     * @var string
+     * @var string|null
      */
     public $type = 'asset';
 
     /**
      * asset ID of poster image
      *
-     * @var int
+     * @var int|null
      */
     public $poster;
 
@@ -59,7 +59,7 @@ class Video extends Model\Document\Tag
     public $description = '';
 
     /**
-     * @param $title
+     * @param string $title
      *
      * @return $this
      */
@@ -84,7 +84,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -142,6 +142,9 @@ class Video extends Model\Document\Tag
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getDataForResource()
     {
         return [
@@ -352,9 +355,10 @@ class Video extends Model\Document\Tag
     {
         $asset = Asset::getById($this->id);
         $options = $this->getOptions();
+        $thumbnailOption = $options['thumbnail'] ?? null;
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
-        if (!\Pimcore\Video::isAvailable() || !$options['thumbnail']) {
+        if (!\Pimcore\Video::isAvailable() || !$thumbnailOption) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 return $this->getHtml5Code(['mp4' => (string) $asset]);
             }
@@ -362,12 +366,12 @@ class Video extends Model\Document\Tag
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $options['thumbnail']) {
-            $thumbnail = $asset->getThumbnail($options['thumbnail']);
+        if ($asset instanceof Asset\Video && $thumbnailOption) {
+            $thumbnail = $asset->getThumbnail($thumbnailOption);
             if ($thumbnail) {
                 if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
                     // try to get the dimensions out ouf the video thumbnail
-                    $imageThumbnailConf = $asset->getThumbnailConfig($options['thumbnail'])->getEstimatedDimensions();
+                    $imageThumbnailConf = $asset->getThumbnailConfig($thumbnailOption)->getEstimatedDimensions();
                     $imageThumbnailConf['format'] = 'JPEG';
                 } else {
                     $imageThumbnailConf = $options['imagethumbnail'];
@@ -378,10 +382,11 @@ class Video extends Model\Document\Tag
                     $imageThumbnailConf['format'] = 'JPEG';
                 }
 
-                if ($this->poster && ($poster = Asset::getById($this->poster))) {
+                if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                    if ($asset->getCustomSetting('image_thumbnail_asset')
+                        && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
                         $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
                     } else {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
@@ -408,7 +413,7 @@ class Video extends Model\Document\Tag
                     return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
             } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options['thumbnail'] . "'");
+                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
             }
         } else {
             return $this->getEmptyCode();
@@ -432,7 +437,7 @@ class Video extends Model\Document\Tag
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
-            $width = ($this->getWidth() - 1) . 'px';
+            $width = ((int)$this->getWidth() - 1) . 'px';
         }
 
         // only display error message in debug mode
@@ -532,6 +537,8 @@ class Video extends Model\Document\Tag
             'enablejsapi',
             'end',
             'fs',
+            'playsinline',
+            'hl',
             'iv_load_policy',
             'list',
             'listType',
@@ -740,7 +747,7 @@ class Video extends Model\Document\Tag
 
     /**
      * @param array $urls
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -782,7 +789,7 @@ class Video extends Model\Document\Tag
                 'description' => $this->getDescription(),
                 'uploadDate' => $uploadDate->format(\DateTime::ISO8601),
                 'duration' => $durationString,
-                'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
+                //'contentUrl' => Tool::getHostUrl() . $urls['mp4'],
                 //"embedUrl" => "http://www.example.com/videoplayer.swf?video=123",
                 //"interactionCount" => "1234",
             ];
@@ -791,7 +798,13 @@ class Video extends Model\Document\Tag
                 $thumbnail = $video->getImageThumbnail([]);
             }
 
-            if (!preg_match('@https?://@', $thumbnail)) {
+            $jsonLd['contentUrl'] = $urls['mp4'];
+            if (!preg_match('@https?://@', $urls['mp4'])) {
+                $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
+            }
+
+            $jsonLd['thumbnailUrl'] = (string)$thumbnail;
+            if (!preg_match('@https?://@', (string)$thumbnail)) {
                 $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
             }
 
@@ -847,7 +860,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param null $thumbnail
+     * @param string|null $thumbnail
      *
      * @return string
      */
@@ -905,10 +918,12 @@ class Video extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -941,31 +956,33 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset
+     * @return Asset\Video|null
      */
     public function getVideoAsset()
     {
         if ($this->getVideoType() == 'asset') {
-            return Asset::getById($this->id);
+            return Asset\Video::getById($this->id);
         }
+
+        return null;
     }
 
     /**
-     * @return Asset
+     * @return Asset\Image
      */
     public function getPosterAsset()
     {
-        return Asset::getById($this->poster);
+        return Asset\Image::getById($this->poster);
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return string
      */
     public function getImageThumbnail($config)
     {
-        if ($this->poster && ($poster = Asset::getById($this->poster))) {
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
         }
 
@@ -977,7 +994,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param $config
+     * @param string|Asset\Video\Thumbnail\Config $config
      *
      * @return array
      */
@@ -991,7 +1008,7 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @param mixed $id
+     * @param int|string $id
      *
      * @return Video
      */
@@ -1003,11 +1020,11 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
     public function getId()
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     /**

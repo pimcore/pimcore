@@ -74,12 +74,12 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             if (\Pimcore::inDebugMode()) {
                 $data['trace'] = $ex->getTrace();
-                $data['traceString'] = $ex->getTraceAsString();
+                $data['traceString'] = 'in ' . $ex->getFile() . ':' . $ex->getLine() . "\n" . $ex->getTraceAsString();
             }
 
             if ($ex instanceof ValidationException) {
                 $data['type'] = 'ValidationException';
-                $code = 403;
+                $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
@@ -132,16 +132,15 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $items
-     * @param $message
-     * @param $detailedInfo
+     * @param ValidationException[] $items
+     * @param string $message
+     * @param string $detailedInfo
      */
     protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
     {
         if (!$items) {
             return;
         }
-        /** @var $items ValidationException[] */
         foreach ($items as $e) {
             if ($e->getMessage()) {
                 $message .= '<b>' . $e->getMessage() . '</b>';
@@ -161,7 +160,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
     /**
      * @param ValidationException $e
-     * @param $message
+     * @param string $message
      */
     protected function addContext(ValidationException $e, &$message)
     {

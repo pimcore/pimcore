@@ -30,6 +30,8 @@ class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
+    protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
+
     /**
      * format of array:
      * array(
@@ -73,7 +75,7 @@ class Config extends Model\AbstractModel
     public $format = 'SOURCE';
 
     /**
-     * @var mixed
+     * @var int
      */
     public $quality = 85;
 
@@ -118,9 +120,14 @@ class Config extends Model\AbstractModel
     public $filenameSuffix;
 
     /**
-     * @param $config
+     * @var bool
+     */
+    public $forcePictureTag = false;
+
+    /**
+     * @param string|array|self $config
      *
-     * @return self|bool
+     * @return self|null
      */
     public static function getByAutoDetect($config)
     {
@@ -149,13 +156,17 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return null|Config
      */
     public static function getByName($name)
     {
-        $cacheKey = 'imagethumb_' . crc32($name);
+        $cacheKey = self::getCacheKey($name);
+
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
+            return self::getPreviewConfig();
+        }
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -183,6 +194,37 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected static function getCacheKey(string $name): string
+    {
+        return 'imagethumb_' . crc32($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function exists(string $name): bool
+    {
+        $cacheKey = self::getCacheKey($name);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return true;
+        }
+
+        if ($name === self::PREVIEW_THUMBNAIL_NAME) {
+            return true;
+        }
+
+        $thumbnail = new self();
+
+        return $thumbnail->getDao()->exists($name);
+    }
+
+    /**
      * @param bool $hdpi
      *
      * @return Config
@@ -198,7 +240,7 @@ class Config extends Model\AbstractModel
 
         if (!$thumbnail) {
             $thumbnail = new self();
-            $thumbnail->setName('pimcore-system-treepreview');
+            $thumbnail->setName(self::PREVIEW_THUMBNAIL_NAME);
             $thumbnail->addItem('scaleByWidth', [
                 'width' => 400
             ]);
@@ -219,6 +261,8 @@ class Config extends Model\AbstractModel
 
     /**
      * Returns thumbnail config for webservice export.
+     *
+     * @deprecated
      */
     public function getForWebserviceExport()
     {
@@ -240,9 +284,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -265,10 +309,10 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $position
-     * @param $name
-     * @param $parameters
-     * @param $media
+     * @param int $position
+     * @param string $name
+     * @param array $parameters
+     * @param string $media
      *
      * @return bool
      */
@@ -296,7 +340,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */
@@ -320,6 +364,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $description
+     *
+     * @return self
      */
     public function setDescription($description)
     {
@@ -338,6 +384,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param array $items
+     *
+     * @return self
      */
     public function setItems($items)
     {
@@ -356,6 +404,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
+     * @return self
      */
     public function setName($name)
     {
@@ -374,6 +424,8 @@ class Config extends Model\AbstractModel
 
     /**
      * @param string $format
+     *
+     * @return self
      */
     public function setFormat($format)
     {
@@ -391,7 +443,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param mixed $quality
+     * @param int $quality
+     *
+     * @return self
      */
     public function setQuality($quality)
     {
@@ -403,7 +457,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getQuality()
     {
@@ -469,7 +523,7 @@ class Config extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -504,7 +558,7 @@ class Config extends Model\AbstractModel
      * @deprecated
      * @static
      *
-     * @param $config
+     * @param array $config
      *
      * @return self
      */
@@ -587,7 +641,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $asset
+     * @param Model\Asset\Image $asset
      *
      * @return array
      */
@@ -676,6 +730,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @deprecated
+     *
      * @param string $colorspace
      */
     public function setColorspace($colorspace)
@@ -684,7 +740,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @deprecated
      */
     public function getColorspace()
     {
@@ -800,6 +856,22 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForcePictureTag(): bool
+    {
+        return $this->forcePictureTag;
+    }
+
+    /**
+     * @param bool $forcePictureTag
+     */
+    public function setForcePictureTag(bool $forcePictureTag): void
+    {
+        $this->forcePictureTag = $forcePictureTag;
     }
 
     /**

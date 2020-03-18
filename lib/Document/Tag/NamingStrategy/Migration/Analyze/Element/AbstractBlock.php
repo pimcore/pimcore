@@ -37,7 +37,7 @@ abstract class AbstractBlock extends AbstractElement
     /**
      * Get a list of available child indexes from block data
      *
-     * @param null $data
+     * @param string|null $data
      *
      * @return array
      */

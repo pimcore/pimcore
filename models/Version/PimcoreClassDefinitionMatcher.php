@@ -23,9 +23,37 @@ use Pimcore\Model\DataObject\Concrete;
 
 class PimcoreClassDefinitionMatcher implements Matcher
 {
+    /** @var string $matchType */
+    private $matchType;
+
+    /**
+     * PimcoreClassDefinitionMatcher constructor.
+     *
+     * @param string $matchType
+     */
+    public function __construct($matchType)
+    {
+        $this->matchType = $matchType;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     *
+     * @return bool
+     */
     public function matches($object, $property)
     {
-        return $object instanceof Concrete &&
-            $object->getClass()->getFieldDefinition($property) instanceof ClassDefinition\Data\CustomVersionMarshalInterface;
+        // TODO check if matcher only works for container type object (but not for localized fields, bricks, etc...)
+
+        if ($object instanceof Concrete) {
+            // do not call getClass on the object as this will set the class again
+            $def = ClassDefinition::getById($object->getClassId());
+            if ($def) {
+                return $def->getFieldDefinition($property) instanceof $this->matchType;
+            }
+        }
+
+        return false;
     }
 }

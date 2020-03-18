@@ -43,7 +43,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $this->assertEquals(3, count($relations), 'expected 3 relations');
 
-        $o = new \Pimcore\Model\DataObject\Csstoreclass();
+        $o = new \Pimcore\Model\DataObject\Csstore();
         $o->setParentId(1);
         $o->setKey('testobject');
         $o->setPublished(1);
@@ -53,7 +53,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::disable();
         Cache::clearAll();
 
-        /** @var $csField \Pimcore\Model\DataObject\Classificationstore */
+        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField = $o->getCsstore();
         $this->assertTrue($csField instanceof \Pimcore\Model\DataObject\Classificationstore, 'type mismatch');
 
@@ -76,7 +76,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         $csField = $o->getCsstore();
 
         $idx = 0;
@@ -95,7 +95,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         $csField = $o->getCsstore();
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), null, 'en');
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'defaultValue', 'default');
@@ -103,7 +103,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         $csField = $o->getCsstore();
         $value = $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'en');
         $this->assertEquals('defaultValue', $value);

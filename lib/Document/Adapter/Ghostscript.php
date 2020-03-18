@@ -81,7 +81,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return $this
      *
@@ -109,7 +109,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param null $path
+     * @param string|null $path
      *
      * @return null|string
      *
@@ -135,7 +135,7 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @return string
+     * @return int
      *
      * @throws \Exception
      */
@@ -148,11 +148,11 @@ class Ghostscript extends Adapter
             throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
-        return $pages;
+        return (int)$pages;
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param int $page
      * @param int $resolution
      *
@@ -167,7 +167,7 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=png16m -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
+            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=pngalpha -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
 
             if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
@@ -182,8 +182,8 @@ class Ghostscript extends Adapter
     }
 
     /**
-     * @param null $page
-     * @param null $path
+     * @param int|null $page
+     * @param string|null $path
      *
      * @return bool|string
      */
@@ -192,6 +192,7 @@ class Ghostscript extends Adapter
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
             $pageRange = '';
+            $text = null;
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript

@@ -52,25 +52,30 @@ class VersionTest extends TestCase
      */
     public function testCondense()
     {
-        /** @var $savedObject Unittest */
+        /** @var Unittest $savedObject */
 
         // create target object
         $randomText = TestHelper::generateRandomString(10000);
 
-        /** @var $targetObject Unittest */
+        /** @var Unittest $targetObject */
         $targetObject = TestHelper::createEmptyObject();
         $targetObject->setInput($randomText);
         $targetObject->save();
 
         // create source object
-        /** @var $sourceObject Unittest */
+        /** @var Unittest $sourceObject */
         $sourceObject = TestHelper::createEmptyObject();
 
-        Version::setCondenseVersion(true);
         $sourceObject->setMultihref([$targetObject]);
         $sourceObject->save();
 
         $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), true);
+
+        $targetObjects = $sourceObject->getMultihref();
+        $this->assertEquals(1, count($targetObjects), 'expected one target');
+
+        $targetObject = $targetObjects[0];
+        $this->assertEquals($randomText, $targetObject->getInput(), 'random text does not match');
 
         $latestVersion1 = $this->getNewestVersion($sourceObject->getId());
         $content = file_get_contents($latestVersion1->getFilePath());
@@ -78,29 +83,6 @@ class VersionTest extends TestCase
 
         $multihref = $sourceObjectFromDb->getMultihref();
         $this->assertEquals(1, count($multihref), 'expected 1 target element');
-
-        Version::setCondenseVersion(false);
-
-        // save again
-        $sourceObject->save();
-        $latestVersion2 = $this->getNewestVersion($sourceObject->getId());
-        $content = file_get_contents($latestVersion2->getFilePath());
-        $this->assertTrue(strpos($content, $randomText) !== false, 'expected random text to be there');
-
-        Version::setCondenseVersion(true);
-        // save again
-        $sourceObject->save();
-        $latestVersion3 = $this->getNewestVersion($sourceObject->getId());
-        $content = file_get_contents($latestVersion3->getFilePath());
-        $this->assertTrue(strpos($content, $randomText) === false, "random text shouldn't be there");
-
-        // compare file size
-        $size1 = filesize($latestVersion1->getFilePath());
-        $size2 = filesize($latestVersion2->getFilePath());
-        $size3 = filesize($latestVersion3->getFilePath());
-        codecept_debug($latestVersion3->getFilePath());
-        $this->assertTrue($size1 < $size2, 'Expected that condensed version is smaller (1)');
-        $this->assertTrue($size3 < $size2, 'Expected that condensed version is smaller (2)');
     }
 
     /**
@@ -131,7 +113,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return Version
      */

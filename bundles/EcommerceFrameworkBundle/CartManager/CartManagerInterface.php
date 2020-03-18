@@ -111,7 +111,7 @@ interface CartManagerInterface extends ComponentInterface
     /**
      * Creates new cart
      *
-     * @param array $param - array of cart information
+     * @param array $params - array of cart information
      *
      * @return string key of new created cart
      */

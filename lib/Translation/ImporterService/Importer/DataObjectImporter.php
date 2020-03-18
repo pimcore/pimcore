@@ -42,29 +42,31 @@ class DataObjectImporter extends AbstractElementImporter
         if ($attribute->getType() === Attribute::TYPE_BRICK_LOCALIZED_FIELD) {
             list($brickField, $brick, $field) = explode(DataObjectDataExtractor::BRICK_DELIMITER, $attribute->getName());
 
+            $brickGetter = null;
             $brickContainerGetter = 'get' . ucfirst($brickField);
             if ($brickContainer = $element->$brickContainerGetter()) {
                 $brickGetter = 'get' . ucfirst($brick);
             }
 
-            if (method_exists($brickContainer, $brickGetter) && ($brick = $brickContainer->$brickGetter())) {
-                /**
-                 * @var DataObject\Localizedfield $localizedFields
-                 */
-                if (method_exists($brick, 'getLocalizedfields') && ($localizedFields = $brick->getLocalizedfields())) {
-                    $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
+            if (method_exists($brickContainer, $brickGetter)) {
+                $brick = $brickContainer->$brickGetter();
+                if ($brick instanceof DataObject\Objectbrick) {
+                    $localizedFields = $brick->get('localizedfields');
+                    if ($localizedFields instanceof DataObject\Localizedfield) {
+                        $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
+                    }
                 }
             }
         }
 
         if ($attribute->getType() === Attribute::TYPE_BLOCK_IN_LOCALIZED_FIELD) {
             list($blockName, $blockIndex, $fieldname, $sourceLanguage) = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
-            /** @var $blockData array */
+            /** @var array $originalBlockData */
             $originalBlockData = $element->{'get' . $blockName}($sourceLanguage);
             $originalBlockItem = $originalBlockData[$blockIndex];
             $originalBlockItemData = $originalBlockItem[$fieldname];
 
-            /** @var $blockData array */
+            /** @var array $blockData */
             $blockData = $element->{'get' . $blockName}($targetLanguage);
             $blockItem = !empty($blockData) && $blockData[$blockIndex] ? $blockData[$blockIndex] : $originalBlockItem;
             $blockItemData = !empty($blockData) ? $blockItem[$fieldname] : clone $originalBlockItemData;
@@ -78,14 +80,14 @@ class DataObjectImporter extends AbstractElementImporter
 
         if ($attribute->getType() === Attribute::TYPE_BLOCK) {
             list($blockName, $blockIndex, $dummy, $fieldname) = explode(DataObjectDataExtractor::BLOCK_DELIMITER, $attribute->getName());
-            /** @var $blockData array */
+            /** @var array $blockData */
             $blockData = $element->{'get' . $blockName}();
             $blockItem = $blockData[$blockIndex];
             $blockItemData = $blockItem['localizedfields'];
             if (!$blockItemData) {
                 $blockItemData = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', new DataObject\Localizedfield());
             }
-            /** @var $localizedFieldData DataObject\Localizedfield */
+            /** @var DataObject\Localizedfield $localizedFieldData */
             $localizedFieldData = $blockItemData->getData();
             $localizedFieldData->setLocalizedValue($fieldname, $attribute->getContent(), $targetLanguage);
         }

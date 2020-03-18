@@ -15,9 +15,7 @@
 namespace Pimcore\Model\Search\Backend\Data\Listing;
 
 use Pimcore\Logger;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 
 /**
@@ -36,15 +34,12 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         $data = $this->db->fetchAll('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $entryData) {
-            if ($entryData['maintype'] == 'document') {
-                $element = Document::getById($entryData['id']);
-            } elseif ($entryData['maintype'] == 'asset') {
-                $element = Asset::getById($entryData['id']);
-            } elseif ($entryData['maintype'] == 'object') {
-                $element = DataObject::getById($entryData['id']);
-            } else {
-                Logger::err('unknown maintype ');
+            if (!in_array($entryData['maintype'], ['document', 'asset', 'object'], true)) {
+                Logger::err('unknown maintype');
             }
+
+            $element = Service::getElementById($entryData['maintype'], $entryData['id']);
+
             if ($element) {
                 $entry = new Search\Backend\Data();
                 $entry->setId(new Search\Backend\Data\Id($element));
@@ -55,7 +50,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
                 $entry->setUserModification($entryData['userModification']);
                 $entry->setCreationDate($entryData['creationDate']);
                 $entry->setModificationDate($entryData['modificationDate']);
-                $entry->setPublished($entryData['published'] === 0 ? false : true);
+                $entry->setPublished($entryData['published'] !== 0);
                 $entries[] = $entry;
             }
         }
@@ -65,11 +60,11 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getTotalCount()
     {
-        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        $amount = (int)$this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
 
         return $amount;
     }

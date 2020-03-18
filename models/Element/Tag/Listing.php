@@ -22,26 +22,32 @@ use Pimcore\Model;
 /**
  * @method Model\Element\Tag\Listing\Dao getDao()
  * @method Model\Element\Tag[] load()
+ * @method Model\Element\Tag current()
  * @method int[] loadIdList()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Element\Tag[]|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $tags = null;
 
+    public function __construct()
+    {
+        $this->tags = & $this->data;
+    }
+
     /**
-     * @param $tags
+     * @param Model\Element\Tag[]|null $tags
      *
-     * @return $this
+     * @return static
      */
     public function setTags($tags)
     {
-        $this->tags = $tags;
-
-        return $this;
+        return $this->setData($tags);
     }
 
     /**
@@ -49,10 +55,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTags()
     {
-        if ($this->tags === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->tags;
+        return $this->getData();
     }
 }

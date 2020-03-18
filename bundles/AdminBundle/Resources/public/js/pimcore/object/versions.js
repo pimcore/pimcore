@@ -270,11 +270,6 @@ pimcore.object.versions = Class.create({
         }
     },
 
-    editVersion: function (index, grid) {
-        var data = grid.getStore().getAt(index).data;
-        var versionId = data.id;
-    },
-
     publishVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
@@ -289,7 +284,7 @@ pimcore.object.versions = Class.create({
                 if (rdata.success) {
                     this.object.reload();
 
-                    pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
+                    pimcore.helpers.updateTreeElementStyle('object', this.object.id, rdata.treeData);
                 } else {
                     Ext.MessageBox.alert(t("error"), rdata.message);
                 }

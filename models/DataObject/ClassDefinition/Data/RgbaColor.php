@@ -153,7 +153,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -173,7 +173,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -217,7 +217,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -237,7 +237,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @deprecated
+     *
+     * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -248,18 +250,20 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return Model\DataObject\Data\RgbaColor|null
      *
@@ -273,11 +277,11 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * display the quantity value field data in the grid
      *
-     * @param $data
-     * @param null $object
+     * @param Model\DataObject\Data\RgbaColor|null $data
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return string|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -285,11 +289,11 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Data\RgbaColor|null $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -300,6 +304,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
             return $result;
         }
+
+        return null;
     }
 
     /** Encode value for packing it into a single column.
@@ -355,8 +361,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -369,9 +375,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  string|array $value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return string
      *
@@ -390,8 +396,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|array $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -421,8 +427,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param $value
-     * @param null $object
+     * @param mixed $value
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
@@ -433,8 +439,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @param $value
-     * @param null $object
+     * @param mixed $value
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return mixed

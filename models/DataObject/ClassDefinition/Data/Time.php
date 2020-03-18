@@ -37,12 +37,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public $columnLength = 5;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $minValue;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $maxValue;
 
@@ -52,7 +52,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public $increment = 15 ;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMinValue()
     {
@@ -60,7 +60,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param string $minValue
+     * @param string|null $minValue
      */
     public function setMinValue($minValue)
     {
@@ -72,7 +72,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMaxValue()
     {
@@ -80,7 +80,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param string $maxValue
+     * @param string|null $maxValue
      */
     public function setMaxValue($maxValue)
     {
@@ -123,7 +123,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -134,7 +134,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return bool
      */
@@ -146,13 +146,13 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns a 5 digit time string of a given time
      *
-     * @param $string
+     * @param int $timestamp
      *
      * @return null|string
      */
-    public function toTime($string)
+    public function toTime($timestamp)
     {
-        $time = @date('H:i', strtotime($string));
+        $time = @date('H:i', strtotime($timestamp));
         if (!$time) {
             return null;
         }
@@ -163,7 +163,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns a timestamp representation of a given time
      *
-     * @param      $string
+     * @param string $string
      * @param null $baseTimestamp
      *
      * @return int
@@ -180,10 +180,10 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns whether or not a time is earlier than the subject
      *
-     * @param $subject
-     * @param $comparison
+     * @param string $subject
+     * @param string $comparison
      *
-     * @return int
+     * @return bool
      */
     public function isEarlier($subject, $comparison)
     {
@@ -195,10 +195,10 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * Returns whether or not a time is later than the subject
      *
-     * @param $subject
-     * @param $comparison
+     * @param string $subject
+     * @param string $comparison
      *
-     * @return int
+     * @return bool
      */
     public function isLater($subject, $comparison)
     {
@@ -208,7 +208,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete\Dao|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string

@@ -111,12 +111,12 @@ class Snippet extends Model\Document\Tag
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$tagHandler->supports($this->view)) {
-            return null;
+            return '';
         }
 
         try {
             if (!$this->snippet instanceof Document\Snippet) {
-                return null;
+                return '';
             }
 
             if (!$this->snippet->isPublished()) {
@@ -177,6 +177,8 @@ class Snippet extends Model\Document\Tag
                 return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
+
+        return '';
     }
 
     /**
@@ -247,10 +249,12 @@ class Snippet extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
@@ -293,7 +297,7 @@ class Snippet extends Model\Document\Tag
     public function load()
     {
         if (!$this->snippet && $this->id) {
-            $this->snippet = Document::getById($this->id);
+            $this->snippet = Document\Snippet::getById($this->id);
         }
     }
 

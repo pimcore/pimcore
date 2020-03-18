@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -48,6 +48,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $importconfigs = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($importconfigs as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('importconfigs'))) {

@@ -66,9 +66,9 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * Default data
      *
-     * @var int
+     * @var string
      */
-    public $data;
+    public $data = '';
 
     /**
      * @var bool
@@ -222,7 +222,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getData()
     {
@@ -318,31 +318,38 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
-        //set array keys based on column configuration if set
-        $columnConfig = $this->getColumnConfig();
-        if ($this->isColumnConfigActivated() && $columnConfig) {
-            $dataWithKeys = [];
-            foreach ($unserializedData as $row) {
-                $indexedRow = [];
-                $index = 0;
-                foreach ($row as $col) {
-                    $indexedRow[$columnConfig[$index]['key']] = $col;
-                    $index++;
-                }
-
-                $dataWithKeys[] = $indexedRow;
-            }
-
-            return $dataWithKeys;
-        } else {
+        if ($unserializedData === null) {
             return $unserializedData;
         }
+
+        //set array keys based on column configuration if set
+        $columnConfig = $this->getColumnConfig();
+
+        if (!$this->isColumnConfigActivated() || !$columnConfig) {
+            return $unserializedData;
+        }
+
+        $dataWithKeys = [];
+
+        foreach ($unserializedData as $row) {
+            $indexedRow = [];
+            $index = 0;
+
+            foreach ($row as $col) {
+                $indexedRow[$columnConfig[$index]['key']] = $col;
+                $index++;
+            }
+
+            $dataWithKeys[] = $indexedRow;
+        }
+
+        return $dataWithKeys;
     }
 
     /**
@@ -375,11 +382,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -392,11 +399,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -406,11 +413,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -433,11 +440,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -448,7 +455,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -487,7 +494,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -497,31 +504,31 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed|null
+     * @return array|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if (is_array($value)) {
             return $value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * @param $object
-     * @param mixed $params
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
      *
      * @return string
      */
@@ -546,7 +553,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -557,10 +564,10 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -609,10 +616,12 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** converts data to be imported via webservices
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return array|mixed
      */
@@ -633,14 +642,14 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->cols = $masterDefinition->cols;
-        $this->colsFixed = $masterDefinition->cols_fixed;
+        $this->colsFixed = $masterDefinition->colsFixed;
         $this->rows = $masterDefinition->rows;
-        $this->rowsFixed = $masterDefinition->rows_fixed;
+        $this->rowsFixed = $masterDefinition->rowsFixed;
         $this->data = $masterDefinition->data;
     }
 }

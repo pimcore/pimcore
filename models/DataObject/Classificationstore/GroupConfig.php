@@ -51,8 +51,10 @@ class GroupConfig extends Model\AbstractModel
      */
     public $name;
 
-    /** The group description.
-     * @var
+    /**
+     * The group description.
+     *
+     * @var string
      */
     public $description;
 
@@ -97,7 +99,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param int $storeId
      *
      * @return self|null
@@ -173,6 +175,8 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
+     * @return self
      */
     public function setName($name)
     {
@@ -189,16 +193,20 @@ class GroupConfig extends Model\AbstractModel
         return $this->name;
     }
 
-    /** Returns the description.
-     * @return mixed
+    /**
+     * Returns the description.
+     *
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /** Sets the description.
-     * @param $description
+    /**
+     * Sets the description.
+     *
+     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\GroupConfig
      */
@@ -253,7 +261,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -273,7 +281,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -292,8 +300,10 @@ class GroupConfig extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    /** Returns all keys belonging to this group
-     * @return KeyGroupRelation
+    /**
+     * Returns all keys belonging to this group
+     *
+     * @return KeyGroupRelation[]
      */
     public function getRelations()
     {

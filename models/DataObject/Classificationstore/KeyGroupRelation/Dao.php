@@ -27,8 +27,8 @@ class Dao extends Model\Dao\AbstractDao
     const TABLE_NAME_RELATIONS = 'classificationstore_relations';
 
     /**
-     * @param null $keyId
-     * @param null $groupId
+     * @param int|null $keyId
+     * @param int|null $groupId
      */
     public function getById($keyId = null, $groupId = null)
     {
@@ -65,6 +65,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $type = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($type as $key => $value) {
             if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {

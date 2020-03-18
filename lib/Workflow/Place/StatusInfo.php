@@ -81,10 +81,10 @@ class StatusInfo
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      * @param bool $visibleInHeaderOnly
      *
-     * @return PlaceConfig
+     * @return PlaceConfig[]
      */
     private function getAllPlaces($subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
     {

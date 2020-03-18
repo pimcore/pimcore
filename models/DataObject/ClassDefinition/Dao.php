@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
     protected $tableDefinitions = null;
 
     /**
-     * @param mixed $id
+     * @param string $id
      *
      * @return string|null
      */
@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = null;
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id]);
             }
         } catch (\Exception $e) {
         }
@@ -58,14 +58,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getIdByName($name)
     {
         $id = null;
         try {
             if (!empty($name)) {
-                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
         }
@@ -88,7 +88,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
      * @throws \Exception
      */
     public function update()
@@ -130,23 +129,16 @@ class Dao extends Model\Dao\AbstractDao
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
-          `src_id` int(11) NOT NULL DEFAULT '0',
-          `dest_id` int(11) NOT NULL DEFAULT '0',
-          `type` varchar(50) NOT NULL DEFAULT '',
-          `fieldname` varchar(70) NOT NULL DEFAULT '0',
-          `index` int(11) unsigned NOT NULL DEFAULT '0',
-          `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-          `ownername` varchar(70) NOT NULL DEFAULT '',
-          `position` varchar(70) NOT NULL DEFAULT '0',
-          PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`, `index`),
-          KEY `index` (`index`),
-          KEY `src_id` (`src_id`),
-          KEY `dest_id` (`dest_id`),
-          KEY `fieldname` (`fieldname`),
-          KEY `position` (`position`),
-          KEY `ownertype` (`ownertype`),
-          KEY `type` (`type`),
-          KEY `ownername` (`ownername`)
+              `src_id` int(11) NOT NULL DEFAULT '0',
+              `dest_id` int(11) NOT NULL DEFAULT '0',
+              `type` varchar(50) NOT NULL DEFAULT '',
+              `fieldname` varchar(70) NOT NULL DEFAULT '0',
+              `index` int(11) unsigned NOT NULL DEFAULT '0',
+              `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+              `ownername` varchar(70) NOT NULL DEFAULT '',
+              `position` varchar(70) NOT NULL DEFAULT '0',
+              INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
+              INDEX `reverse_lookup` (`dest_id`, `type`)
         ) DEFAULT CHARSET=utf8mb4;");
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
@@ -164,6 +156,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
                 if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
+                    /** @var Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -282,12 +275,15 @@ class Dao extends Model\Dao\AbstractDao
             $brickTable = current($table);
             $this->db->query('DROP TABLE `'.$brickTable.'`');
         }
+
+        // clean slug table
+        DataObject\Data\UrlSlug::handleClassDeleted($this->model->getId());
     }
 
     /**
      * Update the class name in all object
      *
-     * @param $newName
+     * @param string $newName
      */
     public function updateClassNameInObjects($newName)
     {

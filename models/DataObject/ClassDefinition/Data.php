@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use ProxyManager\Proxy\LazyLoadingInterface;
 
 abstract class Data
 {
@@ -65,7 +66,7 @@ abstract class Data
     public $locked;
 
     /**
-     * @var bool
+     * @var string
      */
     public $style;
 
@@ -104,8 +105,10 @@ abstract class Data
      */
     public $visibleSearch = true;
 
-    /** If set to true then null values will not be exported.
-     * @var
+    /**
+     * If set to true then null values will not be exported.
+     *
+     * @var bool
      */
     protected static $dropNullValues;
 
@@ -180,7 +183,7 @@ abstract class Data
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
@@ -191,8 +194,8 @@ abstract class Data
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -203,7 +206,7 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -217,7 +220,9 @@ abstract class Data
     /**
      * converts data to be exposed via webservices
      *
-     * @param DataObject\AbstractObject $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -230,10 +235,12 @@ abstract class Data
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */
@@ -324,15 +331,18 @@ abstract class Data
 
     /**
      * @param array $data
+     * @param array $blockedKeys
      *
      * @return $this
      */
-    public function setValues($data = [])
+    public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
-            $method = 'set' . $key;
-            if (method_exists($this, $method)) {
-                $this->$method($value);
+            if (!in_array($key, $blockedKeys)) {
+                $method = 'set' . $key;
+                if (method_exists($this, $method)) {
+                    $this->$method($value);
+                }
             }
         }
 
@@ -417,7 +427,7 @@ abstract class Data
 
     /**
      *
-     * @return bool
+     * @return string
      */
     public function getStyle()
     {
@@ -425,7 +435,7 @@ abstract class Data
     }
 
     /**
-     * @param $style
+     * @param string|null $style
      *
      * @return $this
      */
@@ -446,7 +456,7 @@ abstract class Data
     }
 
     /**
-     * @param $locked
+     * @param int|bool|null $locked
      *
      * @return $this
      */
@@ -467,7 +477,7 @@ abstract class Data
     }
 
     /**
-     * @param $tooltip
+     * @param string|null $tooltip
      *
      * @return $this
      */
@@ -496,7 +506,7 @@ abstract class Data
     }
 
     /**
-     * @param $invisible
+     * @param bool|int|null $invisible
      *
      * @return $this
      */
@@ -516,7 +526,7 @@ abstract class Data
     }
 
     /**
-     * @param $visibleGridView
+     * @param bool|int|null $visibleGridView
      *
      * @return $this
      */
@@ -536,7 +546,7 @@ abstract class Data
     }
 
     /**
-     * @param $visibleSearch
+     * @param bool|int|null $visibleSearch
      *
      * @return $this
      */
@@ -561,7 +571,7 @@ abstract class Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -573,9 +583,9 @@ abstract class Data
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  mixed $value
+     * @param  string $operator
+     * @param  mixed $params
      *
      * @return string
      *
@@ -594,8 +604,8 @@ abstract class Data
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param $value
-     * @param $operator
+     * @param string|array $value
+     * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
@@ -647,7 +657,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -694,7 +704,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for object classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -747,7 +757,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -790,7 +800,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for object brick classes using this data type
      *
-     * @param $brickClass
+     * @param DataObject\Objectbrick\Definition $brickClass
      *
      * @return string
      */
@@ -840,7 +850,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -876,7 +886,7 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
      *
-     * @param $fieldcollectionDefinition
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
      *
      * @return string
      */
@@ -926,7 +936,7 @@ abstract class Data
     /**
      * Creates getter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
@@ -941,7 +951,7 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
 
@@ -960,14 +970,14 @@ abstract class Data
     /**
      * Creates setter code which is used for generation of php file for localized fields in classes using this data type
      *
-     * @param $class
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
      *
      * @return string
      */
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
@@ -1011,7 +1021,43 @@ abstract class Data
     }
 
     /**
-     * @param $number
+     * Creates filter method code for listing classes
+     *
+     * @return string
+     */
+    public function getFilterCode()
+    {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
+
+        $dataParamDoc = 'mixed $data';
+        $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
+        if (preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
+        }
+
+        $operatorParamDoc = 'string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"';
+        if (preg_match('/@param\s+([^\s]+)\s+\$operator(.*)/', $reflectionMethod->getDocComment(), $dataParam)) {
+            $operatorParamDoc = $dataParam[1].' $operator '.$dataParam[2];
+        }
+
+        $code .= '* @param '.$dataParamDoc."\n";
+        $code .= '* @param '.$operatorParamDoc."\n";
+        $code .= '* @return static'."\n";
+        $code .= '*/' . "\n";
+
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\') {'."\n";
+        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
+        $code .= "\treturn " . '$this' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * @param int|string|null $number
      *
      * @return int|null
      */
@@ -1021,7 +1067,7 @@ abstract class Data
     }
 
     /**
-     * @param $number
+     * @param mixed $number
      *
      * @return float
      */
@@ -1031,8 +1077,8 @@ abstract class Data
     }
 
     /**
-     * @param $data
-     * @param null|DataObject\AbstractObject $object
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -1057,7 +1103,7 @@ abstract class Data
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -1073,7 +1119,7 @@ abstract class Data
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
-     * @param $data
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *
@@ -1130,7 +1176,7 @@ abstract class Data
     }
 
     /**
-     * @param  $dropNullValues
+     * @param bool $dropNullValues
      */
     public static function setDropNullValues($dropNullValues)
     {
@@ -1138,7 +1184,7 @@ abstract class Data
     }
 
     /**
-     * @return
+     * @return bool
      */
     public static function getDropNullValues()
     {
@@ -1154,7 +1200,103 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     *  @internal
+     *
+     * @param mixed $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
+     * @param array $params
+     *
+     * @throws \Exception
+     */
+    protected function setDataToObject($data, $container, $params = [])
+    {
+        $context = $params['context'] ?? null;
+
+        if (isset($context['containerType'])) {
+            if ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'block') {
+                if ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield) {
+                    $fieldname = $context['fieldname'];
+
+                    if ($container instanceof DataObject\Concrete) {
+                        $containerGetter = 'get' . ucfirst($fieldname);
+                        $parentContainer = $container->$containerGetter();
+
+                        if ($parentContainer) {
+                            $originalIndex = $context['oIndex'] ?? null;
+
+                            // field collection or block items
+                            if ($originalIndex !== null) {
+                                if ($context['containerType'] === 'block') {
+                                    $items = $parentContainer;
+                                } else {
+                                    $items = $parentContainer->getItems();
+                                }
+
+                                if ($items && count($items) > $originalIndex) {
+                                    $item = $items[$originalIndex];
+
+                                    if ($context['containerType'] === 'block') {
+                                        $data = $item[$this->getName()] ?? null;
+                                        if ($data instanceof DataObject\Data\BlockElement) {
+                                            $data->setData($data);
+                                        }
+                                    } else {
+                                        if ($container instanceof DataObject\Localizedfield) {
+                                            $item->setLocalizedValue($this->getName(), $data, $params['language']);
+                                        } else {
+                                            $setter = 'set' . ucfirst($this->getName());
+                                            $item->$setter($data);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } elseif ($container instanceof DataObject\Localizedfield) {
+                        $container->setLocalizedValue($this->getName(), $data, $params['language']);
+                    }
+                }
+            } elseif ($context['containerType'] === 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $container instanceof DataObject\Localizedfield)) {
+                $fieldname = $context['fieldname'];
+
+                if ($container instanceof DataObject\Concrete) {
+                    $containerGetter = 'get' . ucfirst($fieldname);
+                    $parentContainer = $container->$containerGetter();
+                    if ($parentContainer) {
+                        $brickGetter = 'get' . ucfirst($context['containerKey']);
+                        $brickData = $parentContainer->$brickGetter();
+
+                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
+                            $brickData->set('localizedfields', $data);
+                        }
+                    }
+                } elseif ($container instanceof DataObject\Localizedfield) {
+                    $container->setLocalizedValue($this->getName(), $data, $params['language']);
+                }
+            } elseif ($context['containerType'] === 'classificationstore') {
+                $fieldname = $context['fieldname'];
+                $getter = 'get' . ucfirst($fieldname);
+                if (method_exists($container, $getter)) {
+                    $groupId = $context['groupId'];
+                    $keyId = $context['keyId'];
+                    $language = $context['language'];
+
+                    /** @var DataObject\Classificationstore $classificationStoreData */
+                    $classificationStoreData = $container->$getter();
+                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyId, $data, $language);
+                }
+            }
+        }
+
+        $setter = 'set' . ucfirst($this->getName());
+        if (method_exists($container, $setter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
+            $container->$setter($data);
+        } elseif ($container instanceof DataObject\Localizedfield) {
+            $container->setLocalizedValue($this->getName(), $data, $params['language']);
+        }
+    }
+
+    /**
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return mixed
@@ -1206,7 +1348,7 @@ abstract class Data
                                     $item = $items[$originalIndex];
 
                                     if ($context['containerType'] === 'block') {
-                                        $data = $item[$this->getName()];
+                                        $data = $item[$this->getName()] ?? null;
                                         if ($data instanceof DataObject\Data\BlockElement) {
                                             $data = $data->getData();
 
@@ -1245,15 +1387,10 @@ abstract class Data
                     $container = $object->$containerGetter();
                     if ($container) {
                         $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
                         $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            /** @var $localizedFields DataObject\Localizedfield */
-                            $data = $brickData->getLocalizedFields();
-                            // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
-
-                            return $data;
+                        if ($brickData instanceof DataObject\Objectbrick\Data\AbstractData) {
+                            return $brickData->get('localizedfields');
                         }
                     }
 
@@ -1271,7 +1408,7 @@ abstract class Data
                     $keyId = $context['keyId'];
                     $language = $context['language'];
 
-                    /** @var $classificationStoreData DataObject\Classificationstore */
+                    /** @var DataObject\Classificationstore $classificationStoreData */
                     $classificationStoreData = $object->$getter();
                     $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
 
@@ -1312,7 +1449,8 @@ abstract class Data
                 unset($this->$name);
             }
         }
-        foreach ($masterDefinition as $name => $value) {
+        $vars = get_object_vars($masterDefinition);
+        foreach ($vars as $name => $value) {
             if (!in_array($name, $protectedFields)) {
                 $this->$name = $value;
             }
@@ -1356,12 +1494,23 @@ abstract class Data
     }
 
     /**
-     * @param $existingData
-     * @param $additionalData
+     * @param array|null $existingData
+     * @param array $additionalData
      *
      * @return mixed
      */
     public function appendData($existingData, $additionalData)
+    {
+        return $existingData;
+    }
+
+    /**
+     * @param mixed $existingData
+     * @param mixed $removeData
+     *
+     * @return mixed
+     */
+    public function removeData($existingData, $removeData)
     {
         return $existingData;
     }
@@ -1385,8 +1534,8 @@ abstract class Data
     }
 
     /**
-     * @param $oldValue
-     * @param $newValue
+     * @param mixed $oldValue
+     * @param mixed $newValue
      *
      * @return bool
      */
@@ -1396,12 +1545,29 @@ abstract class Data
     }
 
     /**
-     * @param $object
+     * @param LazyLoadingInterface $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
             $object->markLazyKeyAsLoaded($this->getName());
         }
+    }
+
+    public function isFilterable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param DataObject\Listing            $listing
+     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     *
+     * @return DataObject\Listing
+     */
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
+    {
+        return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 }

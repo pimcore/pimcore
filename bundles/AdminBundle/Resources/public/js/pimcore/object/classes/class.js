@@ -264,7 +264,7 @@ pimcore.object.classes.klass = Class.create({
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
 
-        // @TODO: ignoredAliases are there for BC reasons, to be removed in v6
+        // @TODO: ignoredAliases are there for BC reasons, to be removed in v7
         var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
         ignoredAliases.forEach(function (item) {
             dataComps = array_remove_value(dataComps, item);
@@ -281,7 +281,6 @@ pimcore.object.classes.klass = Class.create({
             var allowed = false;
 
             if('object' !== typeof dataComp) {
-                var tt = typeof dataComp;
                 if (dataComp.prototype.allowIn[this.allowedInType]) {
                     allowed = true;
                 }
@@ -310,7 +309,7 @@ pimcore.object.classes.klass = Class.create({
                         if (!in_array(group, groupNames)) {
                             groupNames.push(group);
                         }
-                        groups[group] = new Array();
+                        groups[group] = [];
                     }
                     var handler;
                     if (editMode) {
@@ -441,7 +440,6 @@ pimcore.object.classes.klass = Class.create({
             }
 
             if (record.data.type == "data") {
-                var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
                     text: t('clone'),
                     iconCls: "pimcore_icon_clone",
@@ -672,6 +670,7 @@ pimcore.object.classes.klass = Class.create({
             },
             fields: ["text", "value"]
         });
+
         var iconField = new Ext.form.field.Text({
             id: "iconfield-" + this.getId(),
             name: "icon",
@@ -733,6 +732,13 @@ pimcore.object.classes.klass = Class.create({
                     name: "parentClass",
                     width: 600,
                     value: this.data.parentClass
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "implementsInterfaces",
+                    fieldLabel: t("implements_interfaces"),
+                    value: this.data.implementsInterfaces
                 },
                 {
                     xtype: "textfield",
@@ -834,7 +840,8 @@ pimcore.object.classes.klass = Class.create({
                     name: "encryption",
                     style: 'margin: 0',
                     checked: this.data.encryption
-                }, {
+                },
+                {
                     xtype: 'container',
                     html: t('encrypt_data_description'),
                     style: 'margin-bottom:10px'
@@ -1068,8 +1075,6 @@ pimcore.object.classes.klass = Class.create({
             theData.datatype = "data";
             theData.fieldtype = type;
 
-            var isLeaf = this.leaf;
-
             if (!removeExisting) {
                 var matches = nodeLabel.match(/\d+$/);
 
@@ -1290,12 +1295,16 @@ pimcore.object.classes.klass = Class.create({
                 pimcore.globalmanager.get("object_types_store").load();
                 pimcore.globalmanager.get("object_types_store_create").load();
 
-                // set the current modification date, to detect modifcations on the class which are not made here
+                // set the current modification date, to detect modifications on the class which are not made here
                 this.data.modificationDate = res['class'].modificationDate;
 
                 pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
-                throw "save was not successful, see log files in /var/logs";
+                if (res.message) {
+                    pimcore.helpers.showNotification(t("error"), res.message, "error");
+                } else {
+                    throw "save was not successful, see log files in /var/logs";
+                }
             }
         } catch (e) {
             this.saveOnError();

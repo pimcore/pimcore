@@ -23,41 +23,43 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Model\Asset[] load()
+ * @method Model\Asset current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
     /**
      * @var array|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $assets = null;
+
+    public function __construct()
+    {
+        $this->assets = & $this->data;
+    }
 
     /**
      * @return Model\Asset[]
      */
     public function getAssets()
     {
-        if ($this->assets === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->assets;
+        return $this->getData();
     }
 
     /**
-     * @param string $assets
+     * @param Model\Asset[] $assets
      *
-     * @return $this
+     * @return static
      */
     public function setAssets($assets)
     {
-        $this->assets = $assets;
-
-        return $this;
+        return $this->setData($assets);
     }
 
     /**
@@ -93,58 +95,5 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * Methods for Iterator
-     */
-    public function rewind()
-    {
-        $this->getAssets();
-        reset($this->assets);
-    }
-
-    /**
-     * @return Model\Asset
-     */
-    public function current()
-    {
-        $this->getAssets();
-        $var = current($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getAssets();
-        $var = key($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return Model\Asset
-     */
-    public function next()
-    {
-        $this->getAssets();
-        $var = next($this->assets);
-
-        return $var;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getAssets();
-        $var = $this->current() !== false;
-
-        return $var;
     }
 }

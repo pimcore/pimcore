@@ -25,6 +25,7 @@ use Pimcore\Model\Site;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -46,6 +47,11 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $renderErrorPage = true;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * @var ConnectionInterface
      */
     protected $db;
@@ -55,11 +61,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
      * @param ConnectionInterface $db
      * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
     {
         $this->documentRenderer = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
@@ -107,32 +114,19 @@ class ResponseExceptionListener implements EventSubscriberInterface
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
             $headers = $exception->getHeaders();
+        } else {
+            // only log exception if it's not intentional (like a NotFoundHttpException)
+            $this->logger->error($exception);
         }
 
-        $errorPath = Config::getSystemConfig()->documents->error_pages->default;
+        $errorPath = $this->config['documents']['error_pages']['default'];
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
             $errorPath = $site->getErrorDocument();
         }
 
-        // HTTP Error Log
-        $uri = $event->getRequest()->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
-        if ($exists) {
-            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
-        } else {
-            $this->db->insert('http_error_log', [
-                'uri' => $uri,
-                'code' => (int) $statusCode,
-                'parametersGet' => serialize($_GET),
-                'parametersPost' => serialize($_POST),
-                'cookies' => serialize($_COOKIE),
-                'serverVars' => serialize($_SERVER),
-                'date' => time(),
-                'count' => 1
-            ]);
-        }
+        $this->logToHttpErrorLog($event->getRequest(), $statusCode);
 
         // Error page rendering
         if (empty($errorPath)) {
@@ -158,5 +152,25 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));
+    }
+
+    protected function logToHttpErrorLog(Request $request, $statusCode)
+    {
+        $uri = $request->getUri();
+        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
+        if ($exists) {
+            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
+        } else {
+            $this->db->insert('http_error_log', [
+                'uri' => $uri,
+                'code' => (int) $statusCode,
+                'parametersGet' => serialize($_GET),
+                'parametersPost' => serialize($_POST),
+                'cookies' => serialize($_COOKIE),
+                'serverVars' => serialize($_SERVER),
+                'date' => time(),
+                'count' => 1
+            ]);
+        }
     }
 }

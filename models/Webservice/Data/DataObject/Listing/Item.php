@@ -19,6 +19,13 @@ namespace Pimcore\Model\Webservice\Data\DataObject\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Item extends Model\Webservice\Data\Element\Listing\Item
 {
+    /**
+     * @var bool
+     */
+    public $published;
 }
