@@ -422,7 +422,7 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
 
-            if($object->hasChildren([$object::OBJECT_TYPE_OBJECT, $object::OBJECT_TYPE_FOLDER, $object::OBJECT_TYPE_VARIANT],true)){
+            if($object->getDao()->hasChildren([$object::OBJECT_TYPE_OBJECT, $object::OBJECT_TYPE_FOLDER, $object::OBJECT_TYPE_VARIANT],true)){
                 /**
                  * get the object keys once and reuse it because we don't have a key on o_path and it can take quite long when you have a lot of data
                  *
