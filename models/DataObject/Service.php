@@ -332,35 +332,7 @@ class Service extends Model\Element\Service
                 } elseif (strpos($key, '~') === 0) {
                     $type = $keyParts[1];
                     if ($type === 'classificationstore') {
-                        $field = $keyParts[2];
-                        $groupKeyId = explode('-', $keyParts[3]);
-
-                        $groupId = $groupKeyId[0];
-                        $keyid = $groupKeyId[1];
-                        $getter = 'get' . ucfirst($field);
-                        if (method_exists($object, $getter)) {
-                            /** @var Classificationstore $classificationStoreData */
-                            $classificationStoreData = $object->$getter();
-
-                            /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
-                            }
-
-                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
-
-                            $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
-                            $type = $keyConfig->getType();
-                            $definition = json_decode($keyConfig->getDefinition());
-                            $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                            if (method_exists($definition, 'getDataForGrid')) {
-                                $fielddata = $definition->getDataForGrid($fielddata, $object);
-                            }
-                            $data[$key] = $fielddata;
-                        }
+                        $data[$key] = self::getStoreValueForObject($object, $key, $requestedLanguage);
                     }
                 } elseif (count($keyParts) > 1) {
                     // brick
@@ -407,7 +379,6 @@ class Service extends Model\Element\Service
 
                     //relation type fields with remote owner do not have a getter
                     if (method_exists($object, $getter)) {
-
                         //system columns must not be inherited
                         if (in_array($key, Concrete::$systemColumnNames)) {
                             $data[$dataKey] = $object->$getter();
@@ -442,6 +413,20 @@ class Service extends Model\Element\Service
                                 }
                             } else {
                                 $data[$dataKey] = $valueObject->value;
+                            }
+                        }
+                    }
+
+                    // because the key for the classification store has not a direct getter, you have to check separately if the data is inheritable
+                    if (strpos($key, '~') === 0 && empty($data[$key])) {
+                        $type = $keyParts[1];
+
+                        if ($type === 'classificationstore') {
+                            $parent = self::hasInheritableParentObject($object);
+
+                            if (!empty($parent)) {
+                                $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
+                                $data['inheritedFields'][$dataKey] = ['inherited' => $parent->getId() != $object->getId(), 'objectid' => $parent->getId()];
                             }
                         }
                     }
@@ -722,6 +707,62 @@ class Service extends Model\Element\Service
         $result->objectid = $object->getId();
 
         return $result;
+    }
+
+    /**
+     * gets store value for given object and key
+     *
+     * @static
+     *
+     * @param Concrete $object
+     * @param string $key
+     * @param string|null $requestedLanguage
+     *
+     * @return string|null
+     */
+    private static function getStoreValueForObject($object, $key, $requestedLanguage)
+    {
+        $keyParts = explode('~', $key);
+
+        if (strpos($key, '~') === 0) {
+            $type = $keyParts[1];
+            if ($type === 'classificationstore') {
+                $field = $keyParts[2];
+                $groupKeyId = explode('-', $keyParts[3]);
+
+                $groupId = $groupKeyId[0];
+                $keyid = $groupKeyId[1];
+                $getter = 'get' . ucfirst($field);
+
+                if (method_exists($object, $getter)) {
+                    /** @var Classificationstore $classificationStoreData */
+                    $classificationStoreData = $object->$getter();
+
+                    /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                    $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                    $csLanguage = $requestedLanguage;
+
+                    if (!$csFieldDefinition->isLocalized()) {
+                        $csLanguage = 'default';
+                    }
+
+                    $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
+
+                    $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
+                    $type = $keyConfig->getType();
+                    $definition = json_decode($keyConfig->getDefinition());
+                    $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                    if (method_exists($definition, 'getDataForGrid')) {
+                        $fielddata = $definition->getDataForGrid($fielddata, $object);
+                    }
+
+                    return $fielddata;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
