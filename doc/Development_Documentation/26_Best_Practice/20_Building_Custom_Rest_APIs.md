@@ -25,7 +25,7 @@ use \Pimcore\Controller\FrontendController;
 class CustomRestController extends FrontendController
 {
     /**
-     * @Route("/webservice/rest/get-products")
+     * @Route("/custom-pimcore-webservice/rest/get-products")
      */
     public function defaultAction(Request $request)
     {
