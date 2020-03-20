@@ -422,11 +422,8 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
 
+            // we call hasChildren() here directly on the DAO to avoid the caching in the model
             if($object->getDao()->hasChildren([$object::OBJECT_TYPE_OBJECT, $object::OBJECT_TYPE_FOLDER, $object::OBJECT_TYPE_VARIANT],true)){
-                /**
-                 * get the object keys once and reuse it because we don't have a key on o_path and it can take quite long when you have a lot of data
-                 *
-                 */
                 $query = 'SELECT o_id FROM objects WHERE o_path LIKE ' .  $this->db->quote($object->getRealFullPath() . '/%');
 
                 if (self::$useRuntimeCache) {
