@@ -94,6 +94,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
+
                 return isset($this->data[$correctedKey]) ? $this->data[$correctedKey] : null;
             }
 

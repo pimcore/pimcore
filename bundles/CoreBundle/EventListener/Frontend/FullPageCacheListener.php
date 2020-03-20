@@ -188,6 +188,7 @@ class FullPageCacheListener
         // only enable GET method
         if (!$request->isMethodCacheable()) {
             $this->disable();
+
             return;
         }
 
@@ -196,11 +197,13 @@ class FullPageCacheListener
         if (!$request->isSecure()) {
             if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'no-cache') {
                 $this->disable('HTTP Header Cache-Control: no-cache was sent');
+
                 return;
             }
 
             if (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] === 'no-cache') {
                 $this->disable('HTTP Header Pragma: no-cache was sent');
+
                 return;
             }
         }
@@ -209,11 +212,13 @@ class FullPageCacheListener
             if ($conf = $this->config['full_page_cache']) {
                 if (empty($conf['enabled'])) {
                     $this->disable();
+
                     return;
                 }
 
                 if (\Pimcore::inDebugMode()) {
                     $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
+
                     return;
                 }
 
@@ -234,6 +239,7 @@ class FullPageCacheListener
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
                             $this->disable('exclude cookie in system-settings matches');
+
                             return;
                         }
                     }
@@ -242,22 +248,26 @@ class FullPageCacheListener
                 // output-cache is always disabled when logged in at the admin ui
                 if (null !== $pimcoreUser = Tool\Authentication::authenticateSession($request)) {
                     $this->disable('backend user is logged in');
+
                     return;
                 }
             } else {
                 $this->disable();
+
                 return;
             }
         } catch (\Exception $e) {
             Logger::error($e);
 
             $this->disable('ERROR: Exception (see log files in /var/logs)');
+
             return;
         }
 
         foreach ($excludePatterns as $pattern) {
             if (@preg_match($pattern, $requestUri)) {
                 $this->disable('exclude path pattern in system-settings matches');
+
                 return;
             }
         }
@@ -265,6 +275,7 @@ class FullPageCacheListener
         // check if targeting matched anything and disable cache
         if ($this->disabledByTargeting()) {
             $this->disable('Targeting matched rules/target groups');
+
             return;
         }
 

@@ -115,7 +115,7 @@ class GetBy extends AbstractResolver
 
                 $object = $this->modelFactory->build($className);
                 $object->setKey(Service::getValidKey($cellData, 'object'));
-                $object->setParent($parentId);
+                $object->setParentId($parentId);
                 $object->setPublished(1);
 
                 $object = $this->setObjectType($config, $object, $rowData);

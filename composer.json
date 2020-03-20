@@ -92,7 +92,8 @@
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
-    "phpoffice/phpspreadsheet": "^1.9"
+    "phpoffice/phpspreadsheet": "^1.9",
+    "html2text/html2text": "^4.2.1"
   },
   "conflict": {
     "monolog/monolog": ">=2"

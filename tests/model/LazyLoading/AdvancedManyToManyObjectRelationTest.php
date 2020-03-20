@@ -174,7 +174,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(),  $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -297,7 +297,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(),  $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -334,7 +334,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(),  $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

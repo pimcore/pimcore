@@ -99,6 +99,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
             $idx = array_searchi($key, $this->columns);
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
+
                 return isset($this->data[$correctedKey]) ? $this->data[$correctedKey] : null;
             }
 
