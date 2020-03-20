@@ -164,8 +164,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->checkTablenames();
 
-        $definitionFile = $this->getDefinitionFile();
-
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
 
@@ -179,11 +177,30 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->classDefinitions = $newClassDefinitions;
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        $cacheKey = 'objectbrick_' . $this->getKey();
+        // for localized fields getting a fresh copy
+        Runtime::set($cacheKey, $this);
+
+        $this->createContainerClasses();
+        $this->updateDatabase();
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
+
+        $definitionFile = $this->getDefinitionFile();
+
         $infoDocBlock = $this->getInfoDocBlock();
 
-        $this->cleanupOldFiles($definitionFile);
+        if ($generateDefinitionFile) {
+            $this->cleanupOldFiles($definitionFile);
 
-        if ($saveDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->oldClassDefinitions);
@@ -276,12 +293,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n";
 
         File::putPhpFile($this->getPhpClassFile(), $cd);
-        $cacheKey = 'objectbrick_' . $this->getKey();
-        // for localized fields getting a fresh copy
-        Runtime::set($cacheKey, $this);
-
-        $this->createContainerClasses();
-        $this->updateDatabase();
     }
 
     /**
