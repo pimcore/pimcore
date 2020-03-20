@@ -231,7 +231,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if (! is_null($filter)) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote($filter);
+                $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
             $childsList->setCondition($condition);

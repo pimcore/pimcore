@@ -149,7 +149,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($filter) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter);
+                $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
             $list->setCondition($condition);
