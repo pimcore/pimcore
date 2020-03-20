@@ -86,8 +86,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setParent(null);
 
         $asset->setStream(null);
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         $data = $asset->getObjectVars();
+        $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
 
         if ($asset instanceof Asset\Text) {
             if ($asset->getFileSize() < 2000000) {
