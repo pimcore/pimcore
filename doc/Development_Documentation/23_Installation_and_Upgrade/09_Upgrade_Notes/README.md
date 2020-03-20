@@ -3,6 +3,7 @@
 ## 6.6.0
 - Default config for monolog handler `main` in prod environment is now `stream` instead of `fingers_crossed`. If you still want to use `fingers_crossed` please update your project config accordingly. 
 - `app` migration set is now located in `app/Migrations` instead of `app/Resources/migrations` - Pimcore will automatically move existing migration scripts for you (update your VCS!)
+- Replaced `html2text` from [Martin Bayer] with `Html2Text\Html2Text` library. `Pimcore\Mail::determineHtml2TextIsInstalled`, `Pimcore\Mail::getHtml2TextBinaryEnabled`, `Pimcore\Mail::enableHtml2textBinary`, are deprecated in favour of new library and will be removed in Pimcore 7. Also, `Pimcore\Mail::setHtml2TextOptions` now accepts array options instead of string.
 
 ## 6.5.2
 - Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
