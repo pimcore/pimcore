@@ -7,7 +7,6 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20200318100042 extends AbstractPimcoreMigration
 {
-
     public function doesSqlMigrations(): bool
     {
         return false;
@@ -26,7 +25,6 @@ class Version20200318100042 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
-
     }
 
     /**
@@ -43,6 +41,5 @@ class Version20200318100042 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
-
     }
 }

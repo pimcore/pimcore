@@ -993,4 +993,3 @@ class Mail extends \Swift_Message
         return $this->lastLogEntry;
     }
 }
-
