@@ -1330,7 +1330,7 @@ class Service extends Model\Element\Service
 
         $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId);
         if (is_array($mergedFieldDefinition)) {
-            if ($mergedFieldDefinition['localizedfields']) {
+            if (isset($mergedFieldDefinition['localizedfields'])) {
                 $childs = $mergedFieldDefinition['localizedfields']->getFieldDefinitions();
                 if (is_array($childs)) {
                     foreach ($childs as $locKey => $locValue) {
