@@ -56,14 +56,26 @@ pimcore.settings.translation.xliff = Class.create({
 
     getExportPanel: function () {
 
+        let fields = [
+            "rowId",
+            "id",
+            "path",
+            "type",
+            "children",
+            "relations"
+        ];
+
+        let modelName = 'pimcore.model.xliff.store';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: "rowId",
+                fields: fields
+            });
+        }
+
         this.exportStore = new Ext.data.ArrayStore({
-            fields: [
-                "id",
-                "path",
-                "type",
-                "children",
-                "relations"
-            ]
+            model: modelName
         });
 
         this.component = Ext.create('Ext.grid.Panel', {
@@ -78,8 +90,8 @@ pimcore.settings.translation.xliff = Class.create({
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("path"), dataIndex: 'path', flex: 200},
                     {text: t("type"), dataIndex: 'type', width: 100},
+                    {text: t("path"), dataIndex: 'path', flex: 200},
                     Ext.create('Ext.grid.column.Check', {
                         text: t("children"),
                         dataIndex: "children",
@@ -130,7 +142,9 @@ pimcore.settings.translation.xliff = Class.create({
                             pimcore.helpers.itemselector(true, function (items) {
                                 if (items.length > 0) {
                                     for (var i = 0; i < items.length; i++) {
+                                        let rowId = items[i].type + '-' + items[i].id;
                                         this.exportStore.add({
+                                            rowId: rowId,
                                             id: items[i].id,
                                             path: items[i].fullpath,
                                             type: items[i].type,
@@ -178,7 +192,9 @@ pimcore.settings.translation.xliff = Class.create({
 
                         var type = data.elementType;
                         if (type == "document" || type == "object") {
+                            let rowId = type + '-' + data.id;
                             this.exportStore.add({
+                                rowId: rowId,
                                 id: data.id,
                                 path: data.path,
                                 type: data.elementType,
