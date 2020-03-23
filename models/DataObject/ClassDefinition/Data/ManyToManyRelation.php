@@ -717,7 +717,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
 
-                if ($object instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object instanceof Element\DirtyIndicatorInterface) {
                     $object->markFieldDirty($this->getName(), false);
                 }
             }

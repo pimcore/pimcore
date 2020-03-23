@@ -292,6 +292,8 @@ class Asset extends Element\AbstractElement
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
+                $asset->resetDirtyMap();
+
                 \Pimcore\Cache::save($asset, $cacheKey);
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
@@ -1231,6 +1233,8 @@ class Asset extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
+        $this->markFieldDirty('modificationDate');
+
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
@@ -1503,6 +1507,8 @@ class Asset extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
+        $this->markFieldDirty('userModification');
+
         $this->userModification = (int) $userModification;
 
         return $this;

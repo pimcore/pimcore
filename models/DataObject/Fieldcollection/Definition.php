@@ -125,11 +125,36 @@ class Definition extends Model\AbstractModel
                 $this->getParentClass()));
         }
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        // update classes
+        $classList = new DataObject\ClassDefinition\Listing();
+        $classes = $classList->load();
+        if (is_array($classes)) {
+            foreach ($classes as $class) {
+                foreach ($class->getFieldDefinitions() as $fieldDef) {
+                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                            $this->getDao()->createUpdateTable($class);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
         $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();
 
-        if ($saveDefinitionFile) {
+        if ($generateDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
@@ -165,14 +190,12 @@ class Definition extends Model\AbstractModel
         $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+        $implementsParts = [];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . ' {';
 
-        $cd .= "\n\n";
-        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
@@ -206,22 +229,6 @@ class Definition extends Model\AbstractModel
         $cd .= "\n";
 
         File::put($this->getPhpClassFile(), $cd);
-
-        // update classes
-        $classList = new DataObject\ClassDefinition\Listing();
-        $classes = $classList->load();
-        if (is_array($classes)) {
-            foreach ($classes as $class) {
-                foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                        if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                            $this->getDao()->createUpdateTable($class);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public function delete()

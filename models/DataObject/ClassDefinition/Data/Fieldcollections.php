@@ -632,7 +632,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
             $data = $this->load($object);
-            if ($data instanceof DataObject\DirtyIndicatorInterface) {
+            if ($data instanceof Model\Element\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 

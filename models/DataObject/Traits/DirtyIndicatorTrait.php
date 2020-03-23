@@ -17,56 +17,20 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-trait DirtyIndicatorTrait
-{
+@trigger_error(
+    'DirtyIndicatorTrait is deprecated since version 6.6.0 and will be removed in 7.0.0. ' .
+    'Use `' . \Pimcore\Model\Element\Traits\DirtyIndicatorTrait::class . '` instead.',
+    E_USER_DEPRECATED
+);
+
+trait_exists(\Pimcore\Model\Element\Traits\DirtyIndicatorTrait::class);
+
+if (false) {
     /**
-     * @var array|null
+     * @deprecated use \Pimcore\Model\Element\Traits\DirtyIndicatorTrait instead
      */
-    protected $o_dirtyFields;
-
-    /**
-     * @return bool
-     */
-    public function hasDirtyFields()
+    trait DirtyIndicatorTrait
     {
-        return is_array($this->o_dirtyFields) && count($this->o_dirtyFields);
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isFieldDirty($key)
-    {
-        if (is_array($this->o_dirtyFields) && array_key_exists($key, $this->o_dirtyFields)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * marks the given field as dirty
-     *
-     * @param string $field
-     * @param bool $dirty
-     */
-    public function markFieldDirty($field, $dirty = true)
-    {
-        if ($dirty && !is_array($this->o_dirtyFields)) {
-            $this->o_dirtyFields = [];
-        }
-
-        if ($dirty) {
-            $this->o_dirtyFields[$field] = true;
-        } else {
-            unset($this->o_dirtyFields[$field]);
-        }
-    }
-
-    public function resetDirtyMap()
-    {
-        $this->o_dirtyFields = null;
+        use \Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
     }
 }

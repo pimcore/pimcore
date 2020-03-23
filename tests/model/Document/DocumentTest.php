@@ -62,4 +62,47 @@ class DocumentTest extends ModelTestCase
 
         $this->assertEquals(1, count($firstChildDoc->getSiblings(true)), 'Expected 1 sibling');
     }
+
+    /**
+     * Verifies that a document can be saved with custom user modification id.
+     *
+     */
+    public function testCustomUserModification()
+    {
+        $userId = 101;
+        $document = TestHelper::createEmptyDocumentPage();
+
+        //custom user modification
+        $document->setUserModification($userId);
+        $document->save();
+        $this->assertEquals($userId, $document->getUserModification(), 'Expected custom user modification id');
+
+        //auto generated user modification
+        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document->save();
+        $this->assertEquals(0, $document->getUserModification(), 'Expected auto assigned user modification id');
+    }
+
+    /**
+     * Verifies that a document can be saved with custom modification date.
+     *
+     */
+    public function testCustomModificationDate()
+    {
+        $customDateTime = new \Carbon\Carbon();
+        $customDateTime = $customDateTime->subHour();
+
+        $document = TestHelper::createEmptyDocumentPage();
+
+        //custom modification date
+        $document->setModificationDate($customDateTime->getTimestamp());
+        $document->save();
+        $this->assertEquals($customDateTime->getTimestamp(), $document->getModificationDate(), 'Expected custom modification date');
+
+        //auto generated modification date
+        $currentTime = time();
+        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document->save();
+        $this->assertGreaterThanOrEqual($currentTime, $document->getModificationDate(), 'Expected auto assigned modification date');
+    }
 }

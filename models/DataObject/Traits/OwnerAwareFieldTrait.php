@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\DirtyIndicatorInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\DataObject\Localizedfield;
 
 trait OwnerAwareFieldTrait
