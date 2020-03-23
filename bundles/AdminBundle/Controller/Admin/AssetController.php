@@ -86,7 +86,6 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setParent(null);
 
         $asset->setStream(null);
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         $data = $asset->getObjectVars();
 
         if ($asset instanceof Asset\Text) {
@@ -142,6 +141,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $data['imageInfo'] = $imageInfo;
         }
 
+        $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
         $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
