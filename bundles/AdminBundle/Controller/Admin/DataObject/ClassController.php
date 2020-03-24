@@ -1237,7 +1237,6 @@ class ClassController extends AdminController implements EventedControllerInterf
             } else {
                 if ($forObjectEditor) {
                     $layout = $item->getLayoutDefinitions();
-                    DataObject\Service::enrichLayoutDefinition($layout, $object);
 
                     $currentLayoutId = $request->get('layoutId', null);
 
