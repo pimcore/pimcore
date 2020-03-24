@@ -2,6 +2,8 @@
 
 set -e
 
+if [ $PHPSTAN_BASELINE == 0 ]; then sed -e "s?- phpstan-baseline.neon?#- phpstan-baseline.neon?g" -i phpstan.neon; fi
+
 if [ $SYMFONY_VERSION = "^3.4" ]
 then
     config=".travis/phpstan.travis.neon"
