@@ -50,7 +50,7 @@
   "good": "Good",
   "best": "Best",
   "average": "Average",
-  "please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail": "Please enter the maximum viewport width (in pixels) allowed for this thumbnail",
+  "enter_media_query": "Please enter a valid CSS media query",
   "add_media_query": "Add Media Query",
   "specific_settings": "Specific Settings",
   "login_as_this_user_description": "The following link is a temporary link that allows you to login as this user in a different browser:",

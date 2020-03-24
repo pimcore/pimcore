@@ -366,9 +366,15 @@ class Thumbnail
                 if ($thumb) {
                     $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                     if ($mediaQuery) {
-                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                        $maxWidth = str_replace('w', '', $mediaQuery);
-                        $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        if(preg_match('/^[\d]+w$/', $mediaQuery)) {
+                            // we replace the width indicator (400w) out of the name and build a proper media query for max width
+                            $maxWidth = str_replace('w', '', $mediaQuery);
+                            $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        } else {
+                            // new style custom media queries
+                            $sourceTagAttributes['media'] = $mediaQuery;
+                        }
+
                         $thumb->reset();
                     }
 
