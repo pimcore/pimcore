@@ -18,10 +18,12 @@
 
 namespace Pimcore\Model;
 
+use Doctrine\DBAL\Exception\DeadlockException;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
+use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
@@ -51,7 +53,7 @@ class Document extends Element\AbstractElement
     private static $hideUnpublished = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $fullPathCache;
 
@@ -72,7 +74,7 @@ class Document extends Element\AbstractElement
     /**
      * The parent document.
      *
-     * @var Document
+     * @var Document|null
      */
     protected $parent;
 
@@ -143,14 +145,14 @@ class Document extends Element\AbstractElement
     /**
      * Dependencies for this document
      *
-     * @var Dependency
+     * @var Dependency|null
      */
     protected $dependencies;
 
     /**
      * List of Property, concerning the folder
      *
-     * @var array
+     * @var array|null
      */
     protected $properties = null;
 
@@ -183,9 +185,9 @@ class Document extends Element\AbstractElement
     protected $hasSiblings = [];
 
     /**
-     * Check if the document is locked.
+     * enum('self','propagate') nullable
      *
-     * @var string
+     * @var string|null
      */
     protected $locked = null;
 
@@ -264,9 +266,9 @@ class Document extends Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'document_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -297,6 +299,8 @@ class Document extends Element\AbstractElement
 
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
+
+                $document->resetDirtyMap();
 
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {
@@ -350,8 +354,8 @@ class Document extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = Listing::class;
-            $list = self::getModelFactory()->build($listClass);
+            /** @var Listing $list */
+            $list = self::getModelFactory()->build(Listing::class);
             $list->setValues($config);
 
             return $list;
@@ -446,7 +450,7 @@ class Document extends Element\AbstractElement
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
+                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
                         $run = $retries + 1;
                         $waitTime = rand(1, 5) * 100000; // microseconds
                         Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
@@ -596,7 +600,7 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set document to registry
-        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), $this);
+        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -618,7 +622,7 @@ class Document extends Element\AbstractElement
     public function clearDependentCache($additionalTags = [])
     {
         try {
-            $tags = ['document_' . $this->getId(), 'document_properties', 'output'];
+            $tags = [$this->getCacheTag(), 'document_properties', 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
@@ -750,9 +754,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -764,9 +768,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Mark the document as locked.
+     * enum('self','propagate') nullable
      *
-     * @param string $locked
+     * @param string|null $locked
      *
      * @return Document
      */
@@ -795,7 +799,9 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete(true);
+                    if (!$child instanceof WrapperInterface) {
+                        $child->delete(true);
+                    }
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -817,6 +823,16 @@ class Document extends Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = self::getCacheKey($this->getParentId());
+            if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
+                /** @var Document $parent * */
+                $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
+                if ($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
@@ -830,7 +846,7 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //clear document from registry
-        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }
@@ -1102,6 +1118,8 @@ class Document extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
+        $this->markFieldDirty('modificationDate');
+
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
@@ -1175,7 +1193,7 @@ class Document extends Element\AbstractElement
     /**
      * Set the document type.
      *
-     * @param int $type
+     * @param string $type
      *
      * @return Document
      */
@@ -1215,6 +1233,8 @@ class Document extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
+        $this->markFieldDirty('userModification');
+
         $this->userModification = (int) $userModification;
 
         return $this;
@@ -1432,7 +1452,7 @@ class Document extends Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'document_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }

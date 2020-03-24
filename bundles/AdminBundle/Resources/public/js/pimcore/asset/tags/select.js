@@ -46,7 +46,6 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             fields: ['key', 'value'],
             data: options
         });
-
         var editorConfig = {};
 
         if (field.config) {
@@ -72,9 +71,7 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             )
         });
 
-        var combo = new Ext.form.ComboBox(editorConfig);
-        var currentValue = combo.getValue();
-        return combo;
+        return new Ext.form.ComboBox(editorConfig);
     },
 
     getGridColumnEditor: function(field) {

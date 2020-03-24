@@ -93,7 +93,7 @@ class Sanitycheck extends Model\AbstractModel
     /**
      * @static
      *
-     * @return Sanitycheck
+     * @return Sanitycheck|null
      */
     public static function getNext()
     {

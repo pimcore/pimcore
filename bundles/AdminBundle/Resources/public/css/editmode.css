@@ -28,7 +28,7 @@
     -webkit-box-sizing: content-box !important;
 }
 
-.cke_dialog {
+.cke_dialog_container {
     z-index: 100300 !important;
 }
 

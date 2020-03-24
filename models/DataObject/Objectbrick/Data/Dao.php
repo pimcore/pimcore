@@ -67,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  DataObject\DirtyIndicatorInterface) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  Model\Element\DirtyIndicatorInterface) {
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
             $getter = 'get' . ucfirst($fd->getName());
 
             if ($fd instanceof CustomResourcePersistingInterface) {
-                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
+                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
                         continue;

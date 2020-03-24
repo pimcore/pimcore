@@ -48,7 +48,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\ClassDefinition[]|null $classes
      *
-     * @return $this
+     * @return static
      */
     public function setClasses($classes)
     {

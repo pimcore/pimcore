@@ -362,7 +362,6 @@ pimcore.element.properties = Class.create({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete",
                     handler: function (grid, index) {
-                        var name = grid.getStore().getAt(index).data.name;
                         grid.getStore().removeAt(index);
                     }.bind(this, grid, rowIndex)
                 }));
@@ -452,8 +451,6 @@ pimcore.element.properties = Class.create({
  
     getCellEditor: function (record, defaultField ) {
         var data = record.data;
-        var value = data.all;
- 
         var type = data.type;
         var property;
  
@@ -480,7 +477,6 @@ pimcore.element.properties = Class.create({
  
     updateRows: function (event) {
         var rows = Ext.get(this.propertyGrid.getEl().dom).query(".x-grid-row");
-        var parentTable;
 
         for (var i = 0; i < rows.length; i++) {
  

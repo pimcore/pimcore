@@ -3,6 +3,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
@@ -14,9 +15,9 @@ trait ManyToManyRelationTrait
      */
     public function save($container, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
             if ($container instanceof DataObject\Localizedfield) {
-                if ($container->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                if ($container->getObject() instanceof DirtyIndicatorInterface) {
                     if (!$container->hasDirtyFields()) {
                         return;
                     }

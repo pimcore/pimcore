@@ -38,14 +38,14 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
@@ -124,7 +124,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @param DataObject\Data\Hotspotimage $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -161,7 +161,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
      */
@@ -289,7 +289,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -363,7 +363,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -375,9 +375,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Hotspotimage) {
             return base64_encode(Serialize::serialize($data));
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**

@@ -31,7 +31,7 @@ class DataObjects extends Elements implements DataProviderInterface
     protected $service;
 
     /**
-     * @var string[]
+     * @var array
      */
     protected $exportIds = [];
 

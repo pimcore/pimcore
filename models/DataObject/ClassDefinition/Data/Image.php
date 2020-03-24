@@ -136,7 +136,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return Asset|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -168,11 +168,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Asset $data
+     * @param Asset\Image|null $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -198,11 +198,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return Asset\Image|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -258,9 +258,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return $data->getRealFullPath();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -338,17 +338,19 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param Model\DataObject\AbstractObject $object
+     * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset) {
-            return  $data->getId();
+            return $data->getId();
         }
+
+        return null;
     }
 
     /**

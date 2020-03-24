@@ -22,14 +22,10 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
 
     getPanel: function () {
 
-        var that = this;
-        var twoFactorData = this.data;
-
         var buttonLabel = t('setup_two_factor');
         if(this.data['isActive']) {
             buttonLabel = t('renew_2fa_secret');
         }
-
 
         var panelConf = {
             xtype: "fieldset",

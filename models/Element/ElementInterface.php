@@ -145,16 +145,25 @@ interface ElementInterface extends ModelInterface
     /**
      * returns true if the element is locked
      *
-     * @return $this
+     * @return bool
      */
     public function isLocked();
 
     /**
-     * @param  bool $locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $locked
      *
      * @return $this
      */
     public function setLocked($locked);
+
+    /**
+     * enum('self','propagate') nullable
+     *
+     * @return string|null
+     */
+    public function getLocked();
 
     /**
      * @return int

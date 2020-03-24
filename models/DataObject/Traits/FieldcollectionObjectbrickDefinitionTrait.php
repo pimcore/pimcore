@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 trait FieldcollectionObjectbrickDefinitionTrait
 {
     /**
-     * @var string
+     * @var string|null
      */
     public $key;
 
@@ -60,7 +60,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     protected $fieldDefinitions = [];
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKey()
     {
@@ -68,7 +68,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param string $key
+     * @param string|null $key
      *
      * @return $this
      */

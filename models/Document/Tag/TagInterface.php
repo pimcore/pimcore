@@ -54,6 +54,8 @@ interface TagInterface
      * Receives the data from the editmode and convert this to the internal data in the object eg. image-id to Asset\Image
      *
      * @param mixed $data
+     *
+     * @return $this
      */
     public function setDataFromEditmode($data);
 
@@ -62,7 +64,7 @@ interface TagInterface
      *
      * @param mixed $data
      *
-     * @return string
+     * @return $this
      */
     public function setDataFromResource($data);
 
@@ -75,7 +77,7 @@ interface TagInterface
      * @param array $params
      * @abstract
      *
-     * @return array
+     * @return mixed
      */
     public function getForWebserviceExport($document = null, $params = []);
 

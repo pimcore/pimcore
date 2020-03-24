@@ -177,7 +177,6 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
     batchProcess: function (dataIndex, editor, grid, onlySelected) {
 
         var newValue = editor.getValue();
-        var valueType = "primitive";
 
         if (onlySelected) {
             var selectedRows = grid.getSelectionModel().getSelection();

@@ -12,14 +12,15 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
 class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 {
-    protected function loadMetadataRelations($fieldname)
+    protected function loadMetadataRelations($fieldname, $metaKey = 'metadata')
     {
         $relations = $this->loadRelations();
 
         $metaDataList = [];
         foreach ($relations as $relation) {
-            $objectMetadata = new ObjectMetadata($fieldname, ['metadata'], $relation);
-            $objectMetadata->setMetaData('some-metadata');
+            $objectMetadata = new ObjectMetadata($fieldname, [$metaKey], $relation);
+            $setter = 'set' . ucfirst($metaKey);
+            $objectMetadata->$setter('some-metadata');
             $metaDataList[] = $objectMetadata;
         }
 
@@ -38,7 +39,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
 
         $object = $this->createDataObject();
-        $object->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
+        $object->setAdvancedObjects($this->loadMetadataRelations('advancedObjects', 'metadataUpper'));
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
@@ -61,7 +62,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -95,7 +96,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -135,7 +136,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
@@ -173,7 +174,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -187,7 +188,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
         $items = new Fieldcollection();
         $item = new Fieldcollection\Data\LazyLoadingTest();
-        $item->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
+        $item->setAdvancedObjects($this->loadMetadataRelations('advancedObjects', 'metadataUpper'));
         $items->add($item);
         $object->setFieldcollection($items);
         $object->save();
@@ -215,7 +216,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
                 //check if relation meta data is there
-                $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
             }
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -258,7 +259,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
                 //check if relation meta data is there
-                $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
             }
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -271,7 +272,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingTest($object);
-        $brick->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
+        $brick->setAdvancedObjects($this->loadMetadataRelations('advancedObjects', 'metadataUpper'));
         $object->getBricks()->setLazyLoadingTest($brick);
         $object->save();
         $parentId = $object->getId();
@@ -296,7 +297,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -333,7 +334,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //check if relation meta data is there
-            $this->assertEquals($relationObjects[2]->getMetaData(), 'some-metadata', $messagePrefix . 'relations metadata not loaded properly');
+            $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

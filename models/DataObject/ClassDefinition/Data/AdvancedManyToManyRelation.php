@@ -27,8 +27,9 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -349,7 +350,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -505,7 +506,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -523,9 +524,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -570,7 +571,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -667,9 +668,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function save($object, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -739,7 +740,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
@@ -842,7 +843,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];
                     }
@@ -868,7 +869,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
@@ -877,7 +877,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getColumns()
     {
@@ -944,7 +944,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ElementMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {

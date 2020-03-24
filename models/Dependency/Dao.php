@@ -32,6 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param int $id
      * @param string $type
+     *
      * @return void
      */
     public function getBySourceId($id = null, $type = null)
@@ -55,6 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      * Clear all relations in the database
      *
      * @param Element\ElementInterface $element
+     *
      * @return void
      */
     public function cleanAllForElement($element)
@@ -74,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto("sourceid = ?", $id) . " AND  " . $this->db->quoteInto("sourcetype = ?",  $type));
+            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $id) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $type));
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -88,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
     public function clear()
     {
         try {
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND  " . $this->db->quoteInto("sourcetype = ?",  $this->model->getSourceType()));
+            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $this->model->getSourceId()) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $this->model->getSourceType()));
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -102,7 +104,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         // get existing dependencies
-        $existingDependenciesRaw = $this->db->fetchAll("SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?",
+        $existingDependenciesRaw = $this->db->fetchAll('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
             [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $existingDepencies = [];
@@ -143,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($idsForDeletion) {
-            $idString = implode(",", $idsForDeletion);
+            $idString = implode(',', $idsForDeletion);
             $this->db->deleteWhere('dependencies', 'id IN (' . $idString . ')');
         }
 

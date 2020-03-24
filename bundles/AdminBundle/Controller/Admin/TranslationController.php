@@ -723,7 +723,8 @@ class TranslationController extends AdminController
                             'id' => $childId,
                             'type' => $element['type'],
                         ];
-                        if ($element['relations']) {
+
+                        if (isset($element['relations']) && $element['relations']) {
                             $childDependencies = $child->getDependencies()->getRequires();
                             foreach ($childDependencies as $cd) {
                                 if ($cd['type'] == 'object' || $cd['type'] == 'document') {
@@ -734,7 +735,7 @@ class TranslationController extends AdminController
                     }
                 }
 
-                if ($element['relations']) {
+                if (isset($element['relations']) && $element['relations']) {
                     if (!$el instanceof Element\AbstractElement) {
                         $el = Element\Service::getElementById($element['type'], $element['id']);
                     }

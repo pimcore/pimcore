@@ -397,8 +397,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 definition.labelWidth = this.fieldConfig.labelWidth;
             }
 
-            var visible = true;
-
             if (this.fieldConfig.hideEmptyData && !isNew) {
                 // check if we should hide the feature because it is empty but only if the group hasn't been just added added via the dialog
                 if (!this.data[language] || !this.data[language][group.id] || typeof this.data[language][group.id][key.id] === "undefined") {
@@ -441,7 +439,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         if (expandable) {
             var expandableId = Ext.id();
-            var expandingId = Ext.id();
             tools.push(
                 {
                     type: 'expand',
@@ -517,7 +514,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var currentLanguage;
 
         this.groupModified = true;
-        var itemHeight = 0;
 
         for (var i=0; i < this.frontendLanguages.length; i++) {
 

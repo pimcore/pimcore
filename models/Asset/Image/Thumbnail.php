@@ -30,7 +30,7 @@ class Thumbnail
     use ImageThumbnailTrait;
 
     /**
-     * @var string[]
+     * @var bool[]
      */
     protected static $hasListenersCache = [];
 
@@ -322,7 +322,8 @@ class Thumbnail
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
-            $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source' ? true : false;
+            $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+            $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
             $webpSupportBackup = null;
 
             if ($isAutoFormat) {
@@ -365,9 +366,15 @@ class Thumbnail
                 if ($thumb) {
                     $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                     if ($mediaQuery) {
-                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                        $maxWidth = str_replace('w', '', $mediaQuery);
-                        $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        if(preg_match('/^[\d]+w$/', $mediaQuery)) {
+                            // we replace the width indicator (400w) out of the name and build a proper media query for max width
+                            $maxWidth = str_replace('w', '', $mediaQuery);
+                            $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        } else {
+                            // new style custom media queries
+                            $sourceTagAttributes['media'] = $mediaQuery;
+                        }
+
                         $thumb->reset();
                     }
 
@@ -380,7 +387,7 @@ class Thumbnail
 
                     $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
                     if ($isAutoFormat) {
-                        $sourceHtmlWebP = preg_replace(['@(\.)(pjpeg|png)@', '@(/)(jpeg|png)@'], '$1webp', $sourceHtml);
+                        $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
                         $html .= "\t" . $sourceHtmlWebP . "\n";
                     }
 

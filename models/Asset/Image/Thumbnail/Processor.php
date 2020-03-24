@@ -167,7 +167,10 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+        } elseif ($format === 'pjpeg' || $format === 'jpeg') {
+            $fileExtension = 'jpg';
         }
+
         $filename .= '.' . $fileExtension;
 
         $fsPath = $thumbDir . '/' . $filename;

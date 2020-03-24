@@ -449,15 +449,15 @@ class Container implements \RecursiveIterator, \Countable
      * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
      *
-     * @return Page|null  matching page or null
+     * @return Page|Page[]|null  matching page or null
      */
     public function findBy($property, $value, $all = false, $useRegex = false)
     {
         if ($all) {
             return $this->findAllBy($property, $value, $useRegex);
-        } else {
-            return $this->findOneBy($property, $value, $useRegex);
         }
+
+        return $this->findOneBy($property, $value, $useRegex);
     }
 
     /**
@@ -492,7 +492,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Returns an array representation of all pages in container
      *
-     * @return Page[]
+     * @return array
      */
     public function toArray()
     {

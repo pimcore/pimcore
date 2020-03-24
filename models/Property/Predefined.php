@@ -84,7 +84,7 @@ class Predefined extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return self
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -101,7 +101,7 @@ class Predefined extends Model\AbstractModel
     /**
      * @param string $key
      *
-     * @return self
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -277,7 +277,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getInheritable()
     {
@@ -285,7 +285,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $inheritable
+     * @param bool $inheritable
      *
      * @return $this
      */

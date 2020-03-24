@@ -135,9 +135,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             )
         });
 
-        var combo = new Ext.form.ComboBox(editorConfig);
-        var currentValue = combo.getValue();
-        return combo;
+        return new Ext.form.ComboBox(editorConfig);
     },
 
     getGridColumnEditor: function(field) {
