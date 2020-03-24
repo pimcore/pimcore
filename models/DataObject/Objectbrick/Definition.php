@@ -189,11 +189,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param bool $generateDefinitionFile
+     *
      * @throws \Exception
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
-
         $definitionFile = $this->getDefinitionFile();
 
         $infoDocBlock = $this->getInfoDocBlock();

@@ -146,6 +146,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param bool $generateDefinitionFile
+     *
      * @throws \Exception
      */
     public function generateClassFiles($generateDefinitionFile = true)
