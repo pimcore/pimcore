@@ -2510,19 +2510,11 @@ class DataObjectHelperController extends AdminController
             $configData = $importConfig->getConfig();
             $configName = $importConfig->getName();
             
-            $response = new Response();
-
-            $response->setContent($configData);
-
-            $disposition = $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $configName.".json"
-            );
-
-            $response->headers->set('Content-Type', 'application/json');
-            $response->headers->set('Content-Disposition', $disposition);
-
-            return $response;
+            $jsonResponse = new JsonResponse($configData, 200, [
+                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
+            ], true);
+            
+            return $jsonResponse;
             
         } catch (\Exception $e) {
             throw new \Exception("Error retrieving import configuration - ".$e->getMessage());
