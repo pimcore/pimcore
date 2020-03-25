@@ -2538,15 +2538,16 @@ class DataObjectHelperController extends AdminController
 
         $configData = json_decode($json, true);
 
+        $dataFields = $configData['dataFields'];
+        $targetFields = $configData['targetFields'];
         $selectedGridColumns = $configData['selectedGridColumns'];
         $resolverSettings = $configData['resolverSettings'];
         $shareSettings = $configData['shareSettings'];
         $dialect = json_decode(json_encode($configData['csvSettings']), false);
         
         $success = true;
-        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geopolyline', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
-
         $classId = $request->get('classId');
+        
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
 
         $originalFile = $file . '_original';
@@ -2555,6 +2556,10 @@ class DataObjectHelperController extends AdminController
             $dialect = Tool\Admin::determineCsvDialect($file . '_original');
         }
 
+        /**
+         * Reload data form original CSV to properly refresh 
+         * the data preview on the import interface
+         */
         $count = 0;
         $data = [];
         if (($handle = fopen($originalFile, 'r')) !== false) {
@@ -2567,7 +2572,6 @@ class DataObjectHelperController extends AdminController
 
                 $tmpData['rowId'] = $count + 1;
                 $data[] = $tmpData;
-                $cols = count($rowData);
 
                 $count++;
 
@@ -2577,52 +2581,7 @@ class DataObjectHelperController extends AdminController
             }
             fclose($handle);
         }
-
-        // get class data
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-        $fields = $class->getFieldDefinitions();
-
-        $availableFields = [];
-
-        foreach ($fields as $key => $field) {
-            $config = null;
-            $title = $field->getName();
-            if (method_exists($field, 'getTitle')) {
-                if ($field->getTitle()) {
-                    $title = $field->getTitle();
-                }
-            }
-
-            if (in_array($field->getFieldType(), $supportedFieldTypes)) {
-                $availableFields[] = [$field->getName(), $title . '(' . $field->getFieldType() . ')'];
-            }
-        }
-
-        $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV);
-        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-        $rows = 0;
-        $nbFields = 0;
-        foreach ($csv as $fields) {
-            if (0 === $rows) {
-                $nbFields = count($fields);
-                $rows++;
-            } elseif ($nbFields == count($fields)) {
-                $rows++;
-            }
-        }
-
-        $importConfig = null;
-        try {
-            $importConfig = ImportConfig::getById($importConfigId);
-        } catch (\Exception $e) {
-        }
         
-        //ignore if lineterminator is already hex otherwise generate hex for string
-        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
-            $dialect->lineterminator = bin2hex($dialect->lineterminator);
-        }
-
         $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
 
         return $this->adminJson([
@@ -2630,16 +2589,16 @@ class DataObjectHelperController extends AdminController
             'config' => [
                 'importConfigId' => $importConfigId,
                 'dataPreview' => $data,
-                'dataFields' => array_keys($data[0]),
-                'targetFields' => $availableFields,
+                'dataFields' => $dataFields,
+                'targetFields' => $targetFields,
                 'selectedGridColumns' => $selectedGridColumns,
                 'resolverSettings' => $resolverSettings ?? null,
                 'shareSettings' => $shareSettings ?? null,
                 'csvSettings' => $dialect,
-                'rows' => $rows,
-                'cols' => $cols ?? null,
+                'rows' => $configData["rows"],
+                'cols' => $configData["cols"] ?? null,
                 'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
+                'isShared' => $configData["isShared"]
             ],
             'availableConfigs' => $availableConfigs
         ]);
