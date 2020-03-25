@@ -366,7 +366,7 @@ class Thumbnail
                 if ($thumb) {
                     $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                     if ($mediaQuery) {
-                        if(preg_match('/^[\d]+w$/', $mediaQuery)) {
+                        if (preg_match('/^[\d]+w$/', $mediaQuery)) {
                             // we replace the width indicator (400w) out of the name and build a proper media query for max width
                             $maxWidth = str_replace('w', '', $mediaQuery);
                             $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
