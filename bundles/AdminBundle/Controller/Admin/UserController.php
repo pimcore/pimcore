@@ -176,6 +176,9 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->setCloseWarning($rObject->getCloseWarning());
                         }
 
+                        $user->setWebsiteTranslationLanguagesView($rObject->getWebsiteTranslationLanguagesView());
+                        $user->setWebsiteTranslationLanguagesEdit($rObject->getWebsiteTranslationLanguagesEdit());
+
                         $user->save();
                     }
                 }
