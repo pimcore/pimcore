@@ -939,7 +939,5 @@
     "redirect_performance_warning": "Using this feature has very bad effects on the performance of the entire application, do you really want to continue?",
     "test_url": "Test URL",
     "create_redirects": "Create redirects to keep URLs working (incl. children)?",
-    "auto_create": "Auto create",
-	  "export_configuration": "Esporta Configurazione",
-	  "import_configuration": "Importa Configurazione"
+    "auto_create": "Auto create"
 }
