@@ -23,8 +23,6 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
 
     getPanel: function () {
 
-        var data = this.config;
-
         var user = pimcore.globalmanager.get("user");
 
         if (!this.saveAndShareForm) {

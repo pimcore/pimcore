@@ -160,8 +160,6 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
                     }
 
                     Ext.Array.each(siteConfig.entries, function (entry) {
-                        var entryTitle = title + entry.title;
-
                         reportItems.push({
                             text: title + entry.title,
                             iconCls: 'pimcore_icon_reports',

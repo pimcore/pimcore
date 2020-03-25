@@ -50,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $redirects
      *
-     * @return $this
+     * @return static
      */
     public function setRedirects($redirects)
     {

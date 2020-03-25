@@ -40,10 +40,6 @@ class PropertiesFilter implements FilterInterface
 
     public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        if (!$this->canBeAdded($element, $context)) {
-            return false;
-        }
-
         if ($this->getBoolProperty($element, self::PROPERTY_EXCLUDE_CHILDREN)) {
             return false;
         }

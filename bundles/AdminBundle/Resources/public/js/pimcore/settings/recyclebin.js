@@ -201,7 +201,6 @@ pimcore.settings.recyclebin = Class.create({
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
-        var data = grid.getStore().getAt(rowIndex);
         var selModel = grid.getSelectionModel();
         var selectedRows = selModel.getSelection();
 

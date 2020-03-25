@@ -413,7 +413,7 @@ EOT;
      * @param string|null $path
      * @param bool $force
      *
-     * @return array
+     * @return array|null
      *
      * @throws \Exception
      */
@@ -440,7 +440,7 @@ EOT;
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
             $imageSize = getimagesize($path);
-            if ($imageSize[0] && $imageSize[1]) {
+            if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
                     'height' => $imageSize[1]
@@ -453,7 +453,7 @@ EOT;
 
             $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
-                return;
+                return null;
             }
 
             $dimensions = [

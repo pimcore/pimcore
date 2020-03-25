@@ -13,7 +13,7 @@ fi
 
 cmd="vendor/bin/phpstan analyse -c $config bundles/ lib/ models/ -l $PHPSTAN_LEVEL --memory-limit=-1"
 
-if [ $PHPSTAN_BASELINE_GENERATE == 1 ]; then cmd+=" --error-format baselineNeon > phpstan-baseline.neon"; fi
+if [ $PHPSTAN_BASELINE_GENERATE == 1 ]; then cmd+=" --generate-baseline"; fi
 
 echo $cmd
 eval $cmd

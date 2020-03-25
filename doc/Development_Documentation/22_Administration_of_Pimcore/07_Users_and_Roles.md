@@ -110,3 +110,9 @@ custom layouts for the user.
 
 ![User permission workspaces](../img/permissions2.png)
 
+#### Dynamically control permissions on elements
+
+By using the event `Pimcore\Event\AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` it is possible to dynamically manipulate 
+the permissions of a user on a specific element on request. 
+
+ 

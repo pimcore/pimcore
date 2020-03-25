@@ -148,7 +148,6 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = valueGrid.getSelectionModel();
                                     this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)

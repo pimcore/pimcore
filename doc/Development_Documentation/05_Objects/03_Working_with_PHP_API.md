@@ -429,7 +429,7 @@ $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
 $list->onCreateQuery(
-    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) {
+    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list) {
         $select->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',

@@ -407,7 +407,6 @@ pimcore.object.helpers.grid = Class.create({
             var columnKeys = field.layout.columnKeys ? field.layout.columnKeys : [];
             if (columnKeys && columnKeys.length) {
                 result = '<table border="0" cellpadding="0"  cellspacing="0" style="border-collapse: collapse;">';
-                var i;
 
                 result += '<tr><td>&nbsp;</td>';
                 for (let i = 0; i < columnKeys.length; i++) {

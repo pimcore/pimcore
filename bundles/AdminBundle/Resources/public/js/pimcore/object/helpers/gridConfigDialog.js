@@ -277,6 +277,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                             } else if (key == "published") {
                                 return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
                             } else {
+                                var layout = record.data.layout;
                                 var fieldType = record.data.dataType;
 
                                 try {
@@ -288,11 +289,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     }
 
                                     if (tag) {
+                                        layout.noteditable = true;
                                         var fc = tag.prototype.getGridColumnConfig({
                                             key: key,
-                                            layout: {
-                                                noteditable: true
-                                            }
+                                            layout: layout
                                         }, true);
 
                                         value = fc.renderer(value, null, record);
@@ -422,8 +422,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     realOverModel = realOverModel.parentNode;
                                 }
 
-                                var sourceType = this.getNodeTypeAndClass(sourceNode);
-                                var targetType = this.getNodeTypeAndClass(realOverModel);
                                 var allowed = true;
 
 
@@ -492,9 +490,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
-
-            var items = [];
-
             this.brickKeys = [];
             this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
                 this.config.classid, this.config.objectId);

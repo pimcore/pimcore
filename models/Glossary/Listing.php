@@ -51,7 +51,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Glossary[]|null $glossary
      *
-     * @return $this
+     * @return static
      */
     public function setGlossary($glossary)
     {

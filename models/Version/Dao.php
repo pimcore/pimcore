@@ -96,16 +96,16 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $hash
      *
-     * @return string
+     * @return int|null
      */
-    public function getBinaryFileIdForHash(string $hash): ?string
+    public function getBinaryFileIdForHash(string $hash): ?int
     {
-        $hash = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
-        if (!$hash) {
-            $hash = null;
+        $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
+        if (!$id) {
+            return null;
         }
 
-        return $hash;
+        return (int)$id;
     }
 
     /**

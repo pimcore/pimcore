@@ -96,7 +96,7 @@ class IndexController extends AdminController
             }
 
             $event = new GenericEvent(null, ['data' => $data, 'field' => $request->get('field')]);
-            $eventDispatcher->dispatch($event, AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA);
+            $eventDispatcher->dispatch(AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
             return $this->adminJson(['data' => array_values($data)]);

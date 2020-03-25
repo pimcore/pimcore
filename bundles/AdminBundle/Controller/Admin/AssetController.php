@@ -86,7 +86,6 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setParent(null);
 
         $asset->setStream(null);
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         $data = $asset->getObjectVars();
 
         if ($asset instanceof Asset\Text) {
@@ -124,7 +123,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = $asset->getFullPath() . '?_dc=' . time();
+                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset?id=%d&_dc=%d', $asset->getId(), time());
             }
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -142,6 +141,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $data['imageInfo'] = $imageInfo;
         }
 
+        $data['properties'] = Element\Service::minimizePropertiesForEditmode($asset->getProperties());
         $data['metadata'] = Asset\Service::expandMetadataForEditmode($asset->getMetadata());
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
@@ -231,7 +231,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if (! is_null($filter)) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote($filter);
+                $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
             $childsList->setCondition($condition);
@@ -293,21 +293,28 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function addAssetAction(Request $request, Config $config)
     {
-        $res = $this->addAsset($request, $config);
+        try {
+            $res = $this->addAsset($request, $config);
 
-        $response = [
-            'success' => $res['success'],
-        ];
-
-        if ($res['success']) {
-            $response['asset'] = [
-                'id' => $res['asset']->getId(),
-                'path' => $res['asset']->getFullPath(),
-                'type' => $res['asset']->getType()
+            $response = [
+                'success' => $res['success'],
             ];
-        }
 
-        return $this->adminJson($response);
+            if ($res['success']) {
+                $response['asset'] = [
+                    'id' => $res['asset']->getId(),
+                    'path' => $res['asset']->getFullPath(),
+                    'type' => $res['asset']->getType()
+                ];
+            }
+
+            return $this->adminJson($response);
+        } catch (\Exception $e) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -320,19 +327,26 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function addAssetCompatibilityAction(Request $request, Config $config)
     {
-        // this is a special action for the compatibility mode upload (without flash)
-        $res = $this->addAsset($request, $config);
+        try {
+            // this is a special action for the compatibility mode upload (without flash)
+            $res = $this->addAsset($request, $config);
 
-        $response = $this->adminJson([
-            'success' => $res['success'],
-            'msg' => $res['success'] ? 'Success' : 'Error',
-            'id' => $res['asset'] ? $res['asset']->getId() : null,
-            'fullpath' => $res['asset'] ? $res['asset']->getRealFullPath() : null,
-            'type' => $res['asset'] ? $res['asset']->getType() : null
-        ]);
-        $response->headers->set('Content-Type', 'text/html');
+            $response = $this->adminJson([
+                'success' => $res['success'],
+                'msg' => $res['success'] ? 'Success' : 'Error',
+                'id' => $res['asset'] ? $res['asset']->getId() : null,
+                'fullpath' => $res['asset'] ? $res['asset']->getRealFullPath() : null,
+                'type' => $res['asset'] ? $res['asset']->getType() : null
+            ]);
+            $response->headers->set('Content-Type', 'text/html');
 
-        return $response;
+            return $response;
+        } catch (\Exception $e) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -1156,6 +1170,33 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         throw $this->createNotFoundException('Thumbnail not found');
+    }
+
+    /**
+     * @Route("/get-asset", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function getAssetAction(Request $request)
+    {
+        $image = Asset::getById(intval($request->get('id')));
+
+        if (!$image) {
+            throw $this->createNotFoundException('Asset not found');
+        }
+
+        if (!$image->isAllowed('view')) {
+            throw $this->createAccessDeniedException('not allowed to view asset');
+        }
+
+        $response = new BinaryFileResponse($image->getFileSystemPath());
+        $response->headers->set('Content-type', $image->getMimetype());
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->addThumbnailCacheHeaders($response);
+
+        return $response;
     }
 
     /**

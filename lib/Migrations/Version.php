@@ -49,7 +49,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     /**
      * The version in timestamp format (YYYYMMDDHHMMSS)
      *
-     * @var int
+     * @var string
      */
     private $version;
 

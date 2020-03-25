@@ -37,7 +37,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @var array
      */
-    public $classes;
+    public $classes = [];
 
     /** Optional path formatter class
      * @var null|string
@@ -45,11 +45,13 @@ abstract class AbstractRelations extends Data implements
     public $pathFormatterClass;
 
     /**
-     * @return array
+     * @return array[
+     *  'classes' => string,
+     * ]
      */
     public function getClasses()
     {
-        return $this->classes;
+        return $this->classes ?: [];
     }
 
     /**
@@ -89,10 +91,10 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return;
                     }
                 } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
@@ -171,7 +173,7 @@ abstract class AbstractRelations extends Data implements
         });
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof DataObject\DirtyIndicatorInterface && $data['dirty']) {
+        if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
             $object->markFieldDirty($this->getName(), true);
         }
 
@@ -431,61 +433,62 @@ abstract class AbstractRelations extends Data implements
     {
         if (
             (!is_array($data) || count($data) < 2)
-            || !$container instanceof DataObject\DirtyIndicatorInterface
+            || !$container instanceof Element\DirtyIndicatorInterface
             || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
-            || ((  $container instanceof DataObject\Fieldcollection\Data\AbstractData
+            || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
                 || $container instanceof DataObject\Localizedfield
-                || $container instanceof DataObject\Objectbrick\Data\AbstractData )
+                || $container instanceof DataObject\Objectbrick\Data\AbstractData)
                 && !$container->isFieldDirty('_self'))
         ) {
             return $data;
         }
 
         if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
-                $relationItems = [];
-                $objectId = null;
-                $fieldName = $this->getName();
+            $relationItems = [];
+            $objectId = null;
+            $fieldName = $this->getName();
 
-                if ($container instanceof DataObject\Concrete) {
-                    $objectId = $container->getId();
-                } elseif (
+            if ($container instanceof DataObject\Concrete) {
+                $objectId = $container->getId();
+            } elseif (
                     $container instanceof DataObject\Fieldcollection\Data\AbstractData ||
                     $container instanceof DataObject\Localizedfield ||
                     $container instanceof DataObject\Objectbrick\Data\AbstractData
                 ) {
-                    $objectFromContainer = $container->getObject();
-                    if ($objectFromContainer) {
-                        $objectId = $objectFromContainer->getId();
+                $objectFromContainer = $container->getObject();
+                if ($objectFromContainer) {
+                    $objectId = $objectFromContainer->getId();
+                }
+            }
+
+            foreach ($data as $item) {
+                $elementHash = null;
+                if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
+                    if ($item->getElement() instanceof Element\ElementInterface) {
+                        $elementHash = Element\Service::getElementHash($item->getElement());
                     }
+                } elseif ($item instanceof Element\ElementInterface) {
+                    $elementHash = Element\Service::getElementHash($item);
                 }
 
-                foreach ($data as $item) {
-                    $elementHash = null;
-                    if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
-                        if ($item->getElement() instanceof Element\ElementInterface) {
-                            $elementHash = Element\Service::getElementHash($item->getElement());
-                        }
-                    } elseif ($item instanceof Element\ElementInterface) {
-                        $elementHash = Element\Service::getElementHash($item);
-                    }
-
-                    if($elementHash === null) {
-                        $relationItems[] = $item; //do not filter if element hash fails
-                    } elseif (!isset($relationItems[$elementHash])) {
-                        $relationItems[$elementHash] = $item;
-                    } else {
-                        @trigger_error(
+                if ($elementHash === null) {
+                    $relationItems[] = $item; //do not filter if element hash fails
+                } elseif (!isset($relationItems[$elementHash])) {
+                    $relationItems[$elementHash] = $item;
+                } else {
+                    @trigger_error(
                             'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
                             . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
                             E_USER_DEPRECATED
                         );
-                    }
                 }
+            }
 
-                if(count($relationItems) !== count($data)) {
-                    $this->setDataToObject(array_values($relationItems), $container, $params);
-                    return array_values($relationItems);
-                }
+            if (count($relationItems) !== count($data)) {
+                $this->setDataToObject(array_values($relationItems), $container, $params);
+
+                return array_values($relationItems);
+            }
         }
 
         return $data;

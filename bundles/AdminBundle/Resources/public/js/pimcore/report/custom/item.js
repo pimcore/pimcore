@@ -753,8 +753,6 @@ pimcore.report.custom.item = Class.create({
     addSourceDefinition: function (sourceDefinitionData) {
         this.sourceDefinitionsItems.remove(this.sourceDefinitionsItems.getComponent(0));
 
-        var currentData = {};
-
         if (!this.currentElements) {
             this.currentElements = [];
         }

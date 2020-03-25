@@ -128,7 +128,6 @@ pimcore.object.classes.data.encryptedField = Class.create(pimcore.object.classes
             var dataComp = pimcore.object.classes.data[dataComps[i]];
 
             if ('object' !== typeof dataComp) {
-                var tt = typeof dataComp;
                 if (dataComp.prototype.allowIn['encryptedField']) {
                     internalTypeData.push([dataComps[i], t(dataComps[i])]);
                 }

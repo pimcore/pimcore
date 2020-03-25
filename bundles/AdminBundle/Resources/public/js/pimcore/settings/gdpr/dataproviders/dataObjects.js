@@ -145,8 +145,6 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 "id": data.data.id,
                                 "success": function () {
                                     this.store.reload();
-                                    var tree = pimcore.globalmanager.get("layout_object_tree");
-                                    var treePanel = tree.tree;
                                     pimcore.elementservice.refreshRootNodeAllTrees("object");
                                 }.bind(this)
                             };

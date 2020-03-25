@@ -151,6 +151,39 @@
                 </table>
             </div>
 
+            {% if order.giftItems() | length > 0 %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <span class="fa fa-gift"></span> {{ ('bundle_ecommerce.back-office.order.gifts')|trans([],'admin')}}
+                    </div>
+                    <table class="table table-order-items">
+                        <thead>
+                        <tr>
+                            <th width="70">ID</th>
+                            <th>{{ ('bundle_ecommerce.back-office.order.product')|trans([],'admin') }}</th>
+                            <th width="60" class="text-center">{{ ('bundle_ecommerce.back-office.order.quantity')|trans([],'admin') }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tbody>
+
+                        {% for item in order.giftItems() %}
+                            <tr>
+                                <td>
+                                    <a href="#" data-action="open" data-id="{{ item.getId() }}">{{ item.getId() }}</a>
+                                </td>
+                                <td>
+                                    {{ (item.isCanceled() ? '<s>%s</s>'|format(item.getProductName())|raw : item.getProductName()) }}
+                                </td>
+                                <td class="text-center">{{ item.getAmount() }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
             {#payment history#}
             {% if orderAgent.hasPayment() %}
             <div class="card">

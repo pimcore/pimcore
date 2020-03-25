@@ -200,7 +200,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
 
             if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
-                if ($this->model instanceof DataObject\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
                     if (!in_array($key, $untouchable)) {
                         $untouchable[] = $key;
                     }
@@ -237,7 +237,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     'context' => [
                         'containerType' => 'object'
                     ]];
-                if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
                 $fd->save($this->model, $saveParams);

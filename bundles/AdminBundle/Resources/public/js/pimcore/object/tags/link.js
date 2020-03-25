@@ -63,10 +63,6 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
 
-        var input = {
-            name: this.fieldConfig.name
-        };
-
         this.editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
             style: "margin-left: 5px",

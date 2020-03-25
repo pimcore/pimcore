@@ -30,21 +30,21 @@ class Video extends Model\Document\Tag
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
-     * @var int|string
+     * @var int|string|null
      */
     public $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
-     * @var string
+     * @var string|null
      */
     public $type = 'asset';
 
     /**
      * asset ID of poster image
      *
-     * @var int
+     * @var int|null
      */
     public $poster;
 
@@ -961,7 +961,7 @@ class Video extends Model\Document\Tag
     public function getVideoAsset()
     {
         if ($this->getVideoType() == 'asset') {
-            return Asset::getById($this->id);
+            return Asset\Video::getById($this->id);
         }
 
         return null;
@@ -972,7 +972,7 @@ class Video extends Model\Document\Tag
      */
     public function getPosterAsset()
     {
-        return Asset::getById($this->poster);
+        return Asset\Image::getById($this->poster);
     }
 
     /**

@@ -97,14 +97,14 @@ CREATE TABLE `custom_layouts` (
 
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
-  `sourcetype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `sourceid` int(11) unsigned NOT NULL DEFAULT '0',
-  `targettype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `targetid` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`sourcetype`,`sourceid`,`targetid`,`targettype`),
-  KEY `sourceid` (`sourceid`),
-  KEY `targetid` (`targetid`),
-  KEY `targettype` (`targettype`)
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`sourcetype` ENUM('document','asset','object') NOT NULL DEFAULT 'document',
+	`sourceid` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+	`targettype` ENUM('document','asset','object') NOT NULL DEFAULT 'document',
+	`targetid` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `combi` (`sourcetype`, `sourceid`, `targettype`, `targetid`),
+	INDEX `targettype_targetid` (`targettype`, `targetid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents` ;
@@ -382,7 +382,8 @@ CREATE TABLE `objects` (
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
-  KEY `o_modificationDate` (`o_modificationDate`)
+  KEY `o_modificationDate` (`o_modificationDate`),
+  KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
