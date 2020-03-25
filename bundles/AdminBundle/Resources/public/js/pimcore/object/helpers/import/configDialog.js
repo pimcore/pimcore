@@ -125,6 +125,15 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         buttons.push(this.deleteButton);
 
+        this.exportConfigButton = new Ext.menu.Item({
+            text: t("export_configuration"),
+            iconCls: "pimcore_icon_download",
+            disabled: !this.config.importConfigId,
+            handler: function () {
+                pimcore.helpers.download(this.getExportConfigUrl());
+            }.bind(this)
+        });
+        
         this.loadButton = new Ext.button.Split({
 
                 text: t("load"),
@@ -133,6 +142,18 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     this.showLoadDialog();
                 }.bind(this),
                 menu: [
+                    this.exportConfigButton,
+                    {
+                        text: t("import_configuration"),
+                        iconCls: "pimcore_icon_upload",
+                        handler: function(){
+                            pimcore.helpers.uploadDialog(this.getImportConfigUrl(), "Filedata", function (res) {
+                                this.getFileInfoComplete(true, res.response);
+                            }.bind(this), function () {
+                                Ext.MessageBox.alert(t("error"), t("error"));
+                            });
+                        }.bind(this)
+                    },
                     {
                         text: t("import_export_configuration"),
                         iconCls: "pimcore_icon_import",
@@ -773,5 +794,13 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 pimcore.helpers.showNotification(t("error"), message, "error");
             }.bind(this)
         });
+    },
+    
+    getExportConfigUrl: function(){
+        return "/admin/object-helper/export-json-config?importConfigId="+this.importConfigId;
+    },
+    
+    getImportConfigUrl: function(){
+        return '/admin/object-helper/import-json-config?importId=' + this.uniqueImportId + "&importConfigId="+this.importConfigId + "&classId=" + this.classId;
     }
 });
