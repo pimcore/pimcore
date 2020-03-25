@@ -253,7 +253,7 @@ class Manager
 
         if ($saveSubject && $subject instanceof AbstractElement) {
             if (method_exists($subject, 'getPublished')
-                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::NO_CHANGE)) {
+                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION)) {
                 $subject->saveVersion();
             } else {
                 $subject->save();
