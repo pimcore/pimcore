@@ -2488,4 +2488,168 @@ class DataObjectHelperController extends AdminController
             }
         }
     }
+    
+    /**
+     * @Route("/export-json-config", methods={"GET"})
+     *
+     * @param Request $request
+     * 
+     * @return Response
+     */
+    public function exportJsonConfigAction(Request $request)
+    {
+        $importConfigId = $request->get('importConfigId');
+        
+        if($importConfigId == null || empty($importConfigId)){
+            throw new \Exception("Please provide a valid import configuration Id");
+        }
+
+        try {
+            $importConfig = ImportConfig::getById($importConfigId);
+        
+            $configData = $importConfig->getConfig();
+            $configName = $importConfig->getName();
+            
+            $response = new Response();
+
+            $response->setContent($configData);
+
+            $disposition = $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $configName.".json"
+            );
+
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
+            
+        } catch (\Exception $e) {
+            throw new \Exception("Error retrieving import configuration - ".$e->getMessage());
+        }
+    }
+    
+    /**
+     * @Route("/import-json-config", methods={"POST"})
+     *
+     * @param Request $request
+     * @param ImportService $importService
+     *
+     * @return JsonResponse
+     */
+    public function importJsonConfigAction(Request $request, ImportService $importService)
+    {
+        $importConfigId = $request->get('importConfigId');
+        
+        $tmpName = $_FILES['Filedata']['tmp_name'];
+        $json = file_get_contents($tmpName);
+
+        $configData = json_decode($json, true);
+
+        $selectedGridColumns = $configData['selectedGridColumns'];
+        $resolverSettings = $configData['resolverSettings'];
+        $shareSettings = $configData['shareSettings'];
+        $dialect = json_decode(json_encode($configData['csvSettings']), false);
+        
+        $success = true;
+        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geopolyline', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
+
+        $classId = $request->get('classId');
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+
+        $originalFile = $file . '_original';
+        // determine type
+        if (empty($dialect)) {
+            $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        }
+
+        $count = 0;
+        $data = [];
+        if (($handle = fopen($originalFile, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                $tmpData = [];
+
+                foreach ($rowData as $key => $value) {
+                    $tmpData['field_' . $key] = $value;
+                }
+
+                $tmpData['rowId'] = $count + 1;
+                $data[] = $tmpData;
+                $cols = count($rowData);
+
+                $count++;
+
+                if ($count > 18) {
+                    break;
+                }
+            }
+            fclose($handle);
+        }
+
+        // get class data
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
+        $fields = $class->getFieldDefinitions();
+
+        $availableFields = [];
+
+        foreach ($fields as $key => $field) {
+            $config = null;
+            $title = $field->getName();
+            if (method_exists($field, 'getTitle')) {
+                if ($field->getTitle()) {
+                    $title = $field->getTitle();
+                }
+            }
+
+            if (in_array($field->getFieldType(), $supportedFieldTypes)) {
+                $availableFields[] = [$field->getName(), $title . '(' . $field->getFieldType() . ')'];
+            }
+        }
+
+        $csv = new \SplFileObject($originalFile);
+        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+        $rows = 0;
+        $nbFields = 0;
+        foreach ($csv as $fields) {
+            if (0 === $rows) {
+                $nbFields = count($fields);
+                $rows++;
+            } elseif ($nbFields == count($fields)) {
+                $rows++;
+            }
+        }
+
+        $importConfig = null;
+        try {
+            $importConfig = ImportConfig::getById($importConfigId);
+        } catch (\Exception $e) {
+        }
+        
+        //ignore if lineterminator is already hex otherwise generate hex for string
+        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
+            $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        }
+
+        $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
+
+        return $this->adminJson([
+            'success' => $success,
+            'config' => [
+                'importConfigId' => $importConfigId,
+                'dataPreview' => $data,
+                'dataFields' => array_keys($data[0]),
+                'targetFields' => $availableFields,
+                'selectedGridColumns' => $selectedGridColumns,
+                'resolverSettings' => $resolverSettings ?? null,
+                'shareSettings' => $shareSettings ?? null,
+                'csvSettings' => $dialect,
+                'rows' => $rows,
+                'cols' => $cols ?? null,
+                'classId' => $classId,
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
+            ],
+            'availableConfigs' => $availableConfigs
+        ]);
+    }
 }
