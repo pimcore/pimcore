@@ -162,6 +162,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->$setter($clonedWorkspaces);
                         }
 
+                        $user->setPerspectives($rObject->getPerspectives());
                         $user->setPermissions($rObject->getPermissions());
 
                         if ($type == 'user') {
