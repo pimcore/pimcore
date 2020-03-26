@@ -162,6 +162,11 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
+    public $compositeIndices = [];
+
+    /**
+     * @var array
+     */
     public $propertyVisibility = [
         'grid' => [
             'id' => true,
@@ -1356,4 +1361,25 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getCompositeIndices(): array
+    {
+        return $this->compositeIndices;
+    }
+
+    /**
+     * @param array $compositeIndices
+     *
+     * @return $this
+     */
+    public function setCompositeIndices($compositeIndices)
+    {
+        $this->compositeIndices = $compositeIndices ?? [];
+
+        return $this;
+    }
+
 }
