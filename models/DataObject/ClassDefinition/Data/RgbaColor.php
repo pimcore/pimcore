@@ -345,6 +345,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
             return $color;
         }
+        return null;
     }
 
     /**
