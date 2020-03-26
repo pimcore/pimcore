@@ -206,7 +206,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                     $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
                 }
                 else {
-                    $url = $schemeAuthority.$this->context->getBaseUrl().$url;
+                    $url = $this->context->getBaseUrl().$url;
                 }
             }
 
