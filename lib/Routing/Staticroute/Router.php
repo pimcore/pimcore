@@ -198,6 +198,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 if (self::RELATIVE_PATH === $referenceType) {
                     $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
                 }
+                else {
+                    $url = $this->context->getBaseUrl().$url;
+                }
             }
 
             return $url;
