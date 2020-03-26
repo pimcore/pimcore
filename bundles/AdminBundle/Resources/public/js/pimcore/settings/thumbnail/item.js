@@ -1351,7 +1351,7 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    item1x1Placeholder: function (panel, data, getName) {
+    item1x1_pixel: function (panel, data, getName) {
 
         var niceName = t("1x1_pixel_placeholder");
         if (typeof getName != "undefined" && getName) {
