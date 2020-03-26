@@ -75,10 +75,10 @@ class NewsletterController extends DocumentControllerBase
         $email->setElements(null);
         $email->setChildren(null);
 
-        $this->addTranslationsData($email);
-        $this->minimizeProperties($email);
-
         $data = $email->getObjectVars();
+
+        $this->addTranslationsData($email, $data);
+        $this->minimizeProperties($email, $data);
 
         $this->preSendDataActions($data, $email);
 
