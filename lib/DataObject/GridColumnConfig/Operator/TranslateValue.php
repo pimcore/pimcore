@@ -47,7 +47,7 @@ class TranslateValue extends AbstractOperator
     public function getLabeledValue($element)
     {
         $childs = $this->getChilds();
-        if ($childs[0]) {
+        if (isset($childs[0])) {
             $value = $childs[0]->getLabeledValue($element);
             if (strval($value->value) != '') {
                 $currentLocale = $this->translator->getLocale();
