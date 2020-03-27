@@ -325,7 +325,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [] , $data['marker'] ?? [], $data['crop'] ?? []);
+        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
     }
 
     /**

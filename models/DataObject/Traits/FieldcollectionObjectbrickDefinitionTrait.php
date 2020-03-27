@@ -201,7 +201,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
             $fieldDefinition = null;
             if (array_key_exists($key, $this->fieldDefinitions)) {
                 $fieldDefinition = $this->fieldDefinitions[$key];
-            } else if (array_key_exists('localizedfields', $this->fieldDefinitions)) {
+            } elseif (array_key_exists('localizedfields', $this->fieldDefinitions)) {
                 /** @var Data\Localizedfields $lfDef */
                 $lfDef = $this->fieldDefinitions['localizedfields'];
                 $fieldDefinition = $lfDef->getFieldDefinition($key);
