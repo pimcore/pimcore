@@ -2501,7 +2501,7 @@ class DataObjectHelperController extends AdminController
     {
         $importConfigId = $request->get('importConfigId');
         
-        if($importConfigId == null || empty($importConfigId)){
+        if(!isset($importConfigId)){
             throw new \Exception("Please provide a valid import configuration Id");
         }
 
@@ -2576,6 +2576,9 @@ class DataObjectHelperController extends AdminController
 
                 $count++;
 
+                /**
+                 * Reached the number or rows for the preview
+                 */
                 if ($count > 18) {
                     break;
                 }
