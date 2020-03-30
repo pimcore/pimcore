@@ -26,6 +26,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             var value = data;
             var options = record.data[key + "%options"];
 
+            if (data && typeof data.options !== "undefined") {
+                options = data.options;
+                value = data.value;
+            }
+
             this.applyPermissionStyle(key, value, metaData, record);
 
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -44,7 +49,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {
@@ -74,7 +81,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {

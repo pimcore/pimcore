@@ -99,7 +99,7 @@ class Frontend
     /**
      * @param Document $document
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getSiteForDocument($document)
     {
@@ -119,7 +119,7 @@ class Frontend
             }
         }
 
-        return;
+        return null;
     }
 
     /**

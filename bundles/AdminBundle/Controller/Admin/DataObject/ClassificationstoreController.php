@@ -1531,7 +1531,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             return;
         }
 
-        $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'addGroupsAction', 'addCollectionsAction'];
+        $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'relationsActionGet', 'addGroupsAction', 'addCollectionsAction', 'searchRelationsAction'];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
 

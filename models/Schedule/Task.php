@@ -68,7 +68,7 @@ class Task extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return Task
+     * @return self|null
      */
     public static function getById($id)
     {

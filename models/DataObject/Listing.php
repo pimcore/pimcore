@@ -66,7 +66,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * @param array $objects
      *
-     * @return $this
+     * @return static
      */
     public function setObjects($objects)
     {

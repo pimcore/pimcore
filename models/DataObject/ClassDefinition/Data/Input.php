@@ -176,7 +176,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {

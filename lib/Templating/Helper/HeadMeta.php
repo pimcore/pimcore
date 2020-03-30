@@ -241,7 +241,7 @@ class HeadMeta extends AbstractHelper
             throw new Exception('Invalid value passed to append; please use appendMeta()');
         }
 
-        return $this->getContainer()->append($value);
+        $this->getContainer()->append($value);
     }
 
     /**
@@ -278,7 +278,7 @@ class HeadMeta extends AbstractHelper
             throw new Exception('Invalid index passed to offsetUnset()');
         }
 
-        return $this->getContainer()->offsetUnset($index);
+        $this->getContainer()->offsetUnset($index);
     }
 
     /**
@@ -296,7 +296,7 @@ class HeadMeta extends AbstractHelper
             throw new Exception('Invalid value passed to prepend; please use prependMeta()');
         }
 
-        return $this->getContainer()->prepend($value);
+        $this->getContainer()->prepend($value);
     }
 
     /**

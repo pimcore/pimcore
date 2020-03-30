@@ -35,7 +35,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     protected $unitId;
 
     /**
-     * @var \Pimcore\Model\DataObject\QuantityValue\Unit
+     * @var \Pimcore\Model\DataObject\QuantityValue\Unit|null
      */
     protected $unit;
 
@@ -49,7 +49,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     {
         $this->value = $value;
         $this->unitId = $unitId;
-        $this->unit = '';
+        $this->unit = null;
 
         if ($unitId instanceof Unit) {
             $this->unit = $unitId;

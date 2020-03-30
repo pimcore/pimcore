@@ -106,8 +106,6 @@ class Dao extends Model\Element\Dao
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
 
-        $this->model->setModificationDate(time());
-
         $document = $this->model->getObjectVars();
 
         $dataDocument = [];
@@ -525,7 +523,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return string
+     * @return int
      */
     public function getNextIndex()
     {

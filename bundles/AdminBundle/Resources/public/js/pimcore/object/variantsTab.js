@@ -168,6 +168,16 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         var plugins = [this.cellEditing, 'gridfilters'];
 
+        let tbar = this.getToolbar(fromConfig, save);
+        tbar.insert(0,{
+            text: t('add_variant'),
+            handler: this.onAdd.bind(this),
+            iconCls: "pimcore_icon_add"
+        });
+
+        tbar.insert(1, '-');
+
+
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
             store: this.store,
@@ -186,7 +196,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
-            tbar: this.getToolbar(fromConfig, save),
+            tbar: tbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
 

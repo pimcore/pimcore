@@ -212,7 +212,7 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public function setMandatory($mandatory)
     {
-        $this->mandatory = intval($mandatory);
+        $this->mandatory = (bool)$mandatory;
     }
 
     /**
