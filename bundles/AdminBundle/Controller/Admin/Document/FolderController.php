@@ -56,10 +56,10 @@ class FolderController extends DocumentControllerBase
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
-        $this->addTranslationsData($folder);
-        $this->minimizeProperties($folder);
-
         $data = $folder->getObjectVars();
+
+        $this->addTranslationsData($folder, $data);
+        $this->minimizeProperties($folder, $data);
 
         $this->preSendDataActions($data, $folder);
 

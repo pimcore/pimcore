@@ -57,16 +57,15 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page->getScheduledTasks();
         $page->setLocked($page->isLocked());
 
-        $this->addTranslationsData($page);
-
         // unset useless data
         $page->setElements(null);
         $page->setChildren(null);
 
-        // cleanup properties
-        $this->minimizeProperties($page);
-
         $data = $page->getObjectVars();
+
+        $this->addTranslationsData($page, $data);
+        $this->minimizeProperties($page, $data);
+
         $data['url'] = $page->getUrl();
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();

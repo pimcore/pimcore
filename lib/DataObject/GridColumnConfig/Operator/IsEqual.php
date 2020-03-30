@@ -19,15 +19,14 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class IsEqual extends AbstractOperator
 {
-    private $capitalization;
+    /** @var bool */
     private $skipNull;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->capitalization = $config->capitalization;
-        $this->skipNull = $config->skipNull;
+        $this->skipNull = $config->skipNull ?? false;
     }
 
     public function getLabeledValue($element)
@@ -78,7 +77,7 @@ class IsEqual extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getSkipNull()
     {
@@ -86,7 +85,7 @@ class IsEqual extends AbstractOperator
     }
 
     /**
-     * @param mixed $skipNull
+     * @param bool $skipNull
      */
     public function setSkipNull($skipNull)
     {

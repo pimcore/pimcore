@@ -277,7 +277,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                             } else if (key == "published") {
                                 return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
                             } else {
-                                var layout = record.data.layout;
+                                var layout = Ext.clone(record.data.layout);
                                 var fieldType = record.data.dataType;
 
                                 try {

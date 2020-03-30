@@ -113,7 +113,7 @@ pimcore.object.gridcolumn.operator.merge = Class.create(pimcore.object.gridcolum
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_merge_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

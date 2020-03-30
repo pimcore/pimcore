@@ -34,6 +34,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
+    use DataObject\Traits\CompositeIndexTrait;
+
     /**
      * @var array|null
      */
@@ -862,10 +864,15 @@ QUERY;
 
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
+
+                if ($container instanceof DataObject\ClassDefinition) {
+                    $this->updateCompositeIndices($queryTable, "localized_query", $this->model->getClass()->getCompositeIndices());
+                }
             }
         }
 
         if ($container instanceof DataObject\ClassDefinition) {
+            $this->updateCompositeIndices($table, "localized_store", $this->model->getClass()->getCompositeIndices());
             $this->createLocalizedViews();
         }
 

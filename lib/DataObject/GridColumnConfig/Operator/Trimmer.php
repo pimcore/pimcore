@@ -23,13 +23,14 @@ class Trimmer extends AbstractOperator
     const RIGHT = 2;
     const BOTH = 3;
 
+    /** @var int */
     private $trim;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->trim = $config->trim;
+        $this->trim = $config->trim ?? 0;
     }
 
     public function getLabeledValue($element)

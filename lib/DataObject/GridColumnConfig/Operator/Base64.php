@@ -28,7 +28,7 @@ class Base64 extends AbstractOperator
     {
         parent::__construct($config, $context);
 
-        $this->mode = $config->mode;
+        $this->mode = $config->mode ?? '';
     }
 
     public function getLabeledValue($element)

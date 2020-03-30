@@ -62,10 +62,11 @@ class EmailController extends DocumentControllerBase
         $email->setElements(null);
         $email->setChildren(null);
 
-        $this->addTranslationsData($email);
-        $this->minimizeProperties($email);
-
         $data = $email->getObjectVars();
+
+        $this->addTranslationsData($email, $data);
+        $this->minimizeProperties($email, $data);
+
         $data['url'] = $email->getUrl();
 
         $this->preSendDataActions($data, $email);

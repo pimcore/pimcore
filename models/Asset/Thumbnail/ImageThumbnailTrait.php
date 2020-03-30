@@ -229,14 +229,19 @@ trait ImageThumbnailTrait
     public function getMimeType()
     {
         if (!$this->mimetype) {
-            $fileExt = $this->getFileExtension();
-            $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
-
-            if (isset($mapping[$fileExt])) {
-                $this->mimetype = $mapping[$fileExt];
+            $filesystemPath = $this->getFileSystemPath(true);
+            if(strpos($filesystemPath, 'data:image/') === 0) {
+                $this->mimetype = substr($filesystemPath, 5, strpos($filesystemPath, ';')-5);
             } else {
-                // unknown
-                $this->mimetype = 'application/octet-stream';
+                $fileExt = $this->getFileExtension();
+                $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
+
+                if (isset($mapping[$fileExt])) {
+                    $this->mimetype = $mapping[$fileExt];
+                } else {
+                    // unknown
+                    $this->mimetype = 'application/octet-stream';
+                }
             }
         }
 
@@ -258,6 +263,11 @@ trait ImageThumbnailTrait
      */
     protected function convertToWebPath(string $filesystemPath): string
     {
+        if(strpos($filesystemPath, 'data:image/') === 0) {
+            // do not convert base64 encoded images
+            return $filesystemPath;
+        }
+
         $path = preg_replace([
             '@^' . preg_quote(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '@') . '@',
             '@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@',
