@@ -79,14 +79,13 @@ trait CompositeIndexTrait
         }
 
         foreach ($drop as $key) {
-            $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $key.'`;');
+            $this->db->query('ALTER TABLE `'.$table.'` DROP INDEX `'. $key.'`;');
         }
 
         foreach ($add as $key) {
             $columnName = $newIndicesMap[$key];
-            $this->db->queryIgnoreError(
-                'ALTER TABLE `'.$table.'` ADD INDEX `' . $key.'` ('.$columnName.');',
-                [UniqueConstraintViolationException::class]
+            $this->db->query(
+                'ALTER TABLE `'.$table.'` ADD INDEX `' . $key.'` ('.$columnName.');'
             );
         }
     }
