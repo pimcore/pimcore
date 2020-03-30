@@ -71,7 +71,7 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
 
 		-
-			message: "#^Cannot call method getUser\\(\\) on object\\|string\\.$#"
+			message: "#^Call to method getUser\\(\\) on an unknown class Stringable\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
@@ -81,7 +81,7 @@ parameters:
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
 		-
-			message: "#^Cannot call method getUsername\\(\\) on object\\|string\\.$#"
+			message: "#^Call to method getUsername\\(\\) on an unknown class Stringable\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php
 
@@ -1581,16 +1581,6 @@ parameters:
 			path: lib/Maintenance/Tasks/ScheduledTasksTask.php
 
 		-
-			message: "#^Property Pimcore\\\\Migrations\\\\Version\\:\\:\\$connection \\(Pimcore\\\\Db\\\\ConnectionInterface\\) does not accept Doctrine\\\\DBAL\\\\Connection\\.$#"
-			count: 1
-			path: lib/Migrations/Version.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabasePlatform\\(\\)\\.$#"
-			count: 1
-			path: lib/Migrations/Version.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:load\\(\\)\\.$#"
 			count: 1
 			path: lib/Model/Listing/AbstractListing.php
@@ -1854,4 +1844,3 @@ parameters:
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\\\DataObject\\\\Element\\:\\:\\$fieldcollection\\.$#"
 			count: 1
 			path: models/Webservice/Data/DataObject/Concrete.php
-
