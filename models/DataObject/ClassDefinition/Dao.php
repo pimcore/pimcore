@@ -27,6 +27,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
+    use DataObject\Traits\CompositeIndexTrait;
+
     /**
      * @var DataObject\ClassDefinition
      */
@@ -211,6 +213,10 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             Logger::debug($e);
         }
+
+
+        $this->updateCompositeIndices($objectDatastoreTable, "store", $this->model->getCompositeIndices());
+        $this->updateCompositeIndices($objectTable, "query", $this->model->getCompositeIndices());
 
         $this->tableDefinitions = null;
     }
