@@ -233,6 +233,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.saveAndSharePanel.rebuildPanel();
         this.containerPanel.setTitle(this.getWindowTitle());
         this.deleteButton.setDisabled(!this.importConfigId || this.config.isShared);
+        this.exportConfigButton.setDisabled(!this.importConfigId || this.config.isShared);
     },
 
 
