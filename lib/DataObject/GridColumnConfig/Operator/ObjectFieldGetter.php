@@ -22,15 +22,18 @@ use Pimcore\Model\Element\ElementInterface;
 
 class ObjectFieldGetter extends AbstractOperator
 {
+    /** @var string */
     private $attribute;
+
+    /** @var string */
     private $forwardAttribute;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->attribute = $config->attribute;
-        $this->forwardAttribute = $config->forwardAttribute;
+        $this->attribute = $config->attribute ?? '';
+        $this->forwardAttribute = $config->forwardAttribute ?? '';
     }
 
     public function getLabeledValue($element)

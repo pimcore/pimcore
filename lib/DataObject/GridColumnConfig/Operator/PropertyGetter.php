@@ -20,19 +20,20 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class PropertyGetter extends AbstractOperator
 {
+    /** @var string */
     private $propertyName;
 
     /**
-     * AnyPropertyGetter constructor.
+     * PropertyGetter constructor.
      *
      * @param \stdClass $config
-     * @param null      $context
+     * @param array|null $context
      */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->propertyName = $config->propertyName;
+        $this->propertyName = $config->propertyName ?? '';
     }
 
     /**
@@ -54,7 +55,7 @@ class PropertyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPropertyName()
     {
@@ -62,7 +63,7 @@ class PropertyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $propertyName
+     * @param string $propertyName
      */
     public function setPropertyName($propertyName)
     {
