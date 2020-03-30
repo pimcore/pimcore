@@ -310,6 +310,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                             this.availableConfigs = rdata.availableConfigs;
                             this.config.isShared = false;
                             this.deleteButton.setDisabled(false);
+                            this.exportConfigButton.setDisabled(false);
                             this.containerPanel.setTitle(this.getWindowTitle());
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         }
