@@ -383,29 +383,31 @@ class Video extends Model\Document\Tag
 
                 if ($thumbnail['status'] === 'finished') {
                     return $this->getHtml5Code($thumbnail['formats'], $image);
-                } elseif ($thumbnail['status'] === 'inprogress') {
+                }
+
+                if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
                     $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode($image);
-                } else {
-                    return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
-            } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
+
+                return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
             }
-        } else {
-            return $this->getEmptyCode();
+
+            return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
         }
+
+        return $this->getEmptyCode();
     }
 
     /**
-     * @param Video $asset
+     * @param Asset\Video $asset
      *
      * @return Asset\Image\Thumbnail|null
      */
-    private function getPosterThumbnailImage(Video $asset) {
+    private function getPosterThumbnailImage(Asset\Video $asset) {
         $options = $this->getOptions();
         if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
             // try to get the dimensions out ouf the video thumbnail
