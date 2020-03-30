@@ -10,6 +10,16 @@ You can delete all existing `.pjpeg` and `.jpeg` thumbnails as they are not gett
 You can use the following command to delete the obsolete files: `find web/var/tmp/image-thumbnails/ -type f \( -iname \*.jpeg -o -iname \*.pjpeg \) -delete`   
 If you're using pre-generation for your thumbnails, don't forget to run the command (e.g. `./bin/console pimcore:thumbnails:image ...`). 
 
+- [Workflows] Added new option `save_version` to changePublishedState under transitions configuration for documents and objects to save only version while transition from places. e.g.
+    ```yml
+    transitions:
+        start_work:
+            from: 'todo'
+            to: ['edit_text', 'edit_images']
+            options:
+                label: 'Start Work'
+                changePublishedState: save_version
+    ```
 ## 6.5.2
 - Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
 
