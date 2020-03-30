@@ -1,46 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\CustomLayout\\:\\:\\$className\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/ClassController.php
-
-		-
-			message: "#^Access to an undefined property object\\:\\:\\$key\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectHelperController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$translations\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Document\\:\\:\\$unlinkTranslations\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\Admin\\\\Document\\\\DocumentControllerBase\\:\\:getFromSession\\(\\) should return Pimcore\\\\Model\\\\Document\\|null but returns bool\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\AdminBundle\\\\Controller\\\\Admin\\\\Document\\\\DocumentControllerBase\\:\\:getLatestVersion\\(\\) should return Pimcore\\\\Model\\\\Document\\\\PageSnippet but returns Pimcore\\\\Model\\\\Document\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/Document/DocumentControllerBase.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getDatabase\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Admin/IndexController.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Extension\\\\Document\\\\Areabrick\\\\AreabrickManagerInterface\\:\\:setState\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/ExtensionManager/ExtensionManagerController.php
-
-		-
 			message: "#^Cannot access property \\$thumbnail on array\\|string\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
