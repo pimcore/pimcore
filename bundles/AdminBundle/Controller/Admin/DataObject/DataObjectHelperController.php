@@ -552,8 +552,8 @@ class DataObjectHelperController extends AdminController
                                 /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                                 $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                            } else {
-                                $fd = $brickClass->getFieldDefinition($fieldname);
+                            } elseif ($brickClass instanceof DataObject\Objectbrick\Definition) {
+                                    $fd = $brickClass->getFieldDefinition($fieldname);
                             }
 
                             if (!empty($fd)) {
