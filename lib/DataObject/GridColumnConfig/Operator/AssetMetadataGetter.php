@@ -22,16 +22,18 @@ use Pimcore\Model\DataObject\Data\Hotspotimage;
 
 class AssetMetadataGetter extends AbstractOperator
 {
+    /** @var string */
     private $metaField;
 
+    /** @var string|null */
     private $locale;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->metaField = $config->metaField;
-        $this->locale = $config->locale;
+        $this->metaField = $config->metaField ?? '';
+        $this->locale = $config->locale ?? null;
     }
 
     public function getLabeledValue($element)

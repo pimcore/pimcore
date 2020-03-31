@@ -49,6 +49,8 @@
   "select_presetting": "Select a presetting",
   "good": "Good",
   "best": "Best",
+  "1x1_pixel_placeholder": "1x1 Pixel Placeholder",
+  "1x1_pixel_placeholder_description": "Just returns a 1x1 pixel GIF base64 encoded, in case you don't want to display an image for a certain condition",
   "average": "Average",
   "enter_media_query": "Please enter a valid CSS media query",
   "add_media_query": "Add Media Query",

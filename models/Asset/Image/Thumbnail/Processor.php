@@ -102,6 +102,10 @@ class Processor
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
+        if(self::containsTransformationType($config, '1x1_pixel')) {
+            return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        }
+
         if (!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
@@ -124,17 +128,8 @@ class Processor
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontendRequestByAdmin()
-            } elseif ($format == 'tiff') {
-                $transformations = $config->getItems();
-                if (is_array($transformations) && count($transformations) > 0) {
-                    foreach ($transformations as $transformation) {
-                        if (!empty($transformation)) {
-                            if ($transformation['method'] == 'tifforiginal') {
-                                return self::returnPath($fileSystemPath, $returnAbsolutePath);
-                            }
-                        }
-                    }
-                }
+            } elseif ($format == 'tiff' && self::containsTransformationType($config, 'tifforiginal')) {
+                return self::returnPath($fileSystemPath, $returnAbsolutePath);
             } elseif ($format == 'svg') {
                 return $asset->getFullPath();
             }
@@ -386,6 +381,27 @@ class Processor
         }
 
         return self::returnPath($fsPath, $returnAbsolutePath);
+    }
+
+    /**
+     * @param Config $config
+     * @param string $transformationType
+     * @return bool
+     */
+    protected static function containsTransformationType(Config $config, string $transformationType): bool
+    {
+        $transformations = $config->getItems();
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    if ($transformation['method'] == $transformationType) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

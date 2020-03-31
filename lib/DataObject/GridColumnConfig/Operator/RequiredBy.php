@@ -22,16 +22,18 @@ use Pimcore\Model\Element\Service;
 
 class RequiredBy extends AbstractOperator
 {
+    /** @var string|null */
     private $elementType;
 
+    /** @var bool */
     private $onlyCount;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->elementType = $config->elementType;
-        $this->onlyCount = $config->onlyCount;
+        $this->elementType = $config->elementType ?? null;
+        $this->onlyCount = $config->onlyCount ?? false;
     }
 
     public function getLabeledValue($element)
@@ -72,7 +74,7 @@ class RequiredBy extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getElementType()
     {
@@ -80,7 +82,7 @@ class RequiredBy extends AbstractOperator
     }
 
     /**
-     * @param mixed $elementType
+     * @param string|null $elementType
      */
     public function setElementType($elementType)
     {
@@ -88,7 +90,7 @@ class RequiredBy extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getOnlyCount()
     {
@@ -96,7 +98,7 @@ class RequiredBy extends AbstractOperator
     }
 
     /**
-     * @param mixed $onlyCount
+     * @param bool $onlyCount
      */
     public function setOnlyCount($onlyCount)
     {

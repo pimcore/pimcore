@@ -254,4 +254,9 @@ interface ConnectionInterface extends Connection
      * @param string $where
      */
     public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '');
+
+    /**
+     * @return string
+     */
+    public function getDatabase();
 }
