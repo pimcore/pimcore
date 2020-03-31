@@ -1525,28 +1525,10 @@ class DataObjectHelperController extends AdminController
             $dialect = Tool\Admin::determineCsvDialect($file . '_original');
         }
 
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
-
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-                $cols = count($rowData);
-
-                $count++;
-
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
+        $data = $this->getDataPreview($originalFile, $dialect);
+        
+        //Count CSV Columns
+        $cols = isset($data[0]) ? count($data[0]) -1 : 0;
 
         // get class data
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
@@ -1623,6 +1605,35 @@ class DataObjectHelperController extends AdminController
             ],
             'availableConfigs' => $availableConfigs
         ]);
+    }
+    
+    private function getDataPreview($originalFile, $dialect){
+        $count = 0;
+        $data = [];
+        if (($handle = fopen($originalFile, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                $tmpData = [];
+
+                foreach ($rowData as $key => $value) {
+                    $tmpData['field_' . $key] = $value;
+                }
+
+                $tmpData['rowId'] = $count + 1;
+                $data[] = $tmpData;
+
+                $count++;
+
+                /**
+                 * Reached the number or rows for the preview
+                 */
+                if ($count > 18) {
+                    break;
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $data;
     }
 
     /**
@@ -2571,32 +2582,9 @@ class DataObjectHelperController extends AdminController
          * Reload data form original CSV to properly refresh 
          * the data preview on the import interface
          */
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
-
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-
-                $count++;
-
-                /**
-                 * Reached the number or rows for the preview
-                 */
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
+        $data = $this->getDataPreview($originalFile, $dialect);
         
-        $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
+        $availableConfigs = $this->getImportConfigs($importService, Tool\Admin::getCurrentUser(), $classId);
 
         return $this->adminJson([
             'success' => $success,
