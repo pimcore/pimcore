@@ -141,7 +141,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     this.showLoadDialog();
                 }.bind(this),
                 menu: [
-                    this.exportConfigButton,
                     {
                         text: t("import_configuration"),
                         iconCls: "pimcore_icon_upload",
@@ -171,7 +170,10 @@ pimcore.object.helpers.import.configDialog = Class.create({
             handler: function () {
                 this.saveConfig(false);
             }.bind(this),
-            menu: [this.saveAsCopyButton]
+            menu: [
+                this.exportConfigButton,
+                this.saveAsCopyButton
+            ]
         });
 
         buttons.push(this.saveButton);
