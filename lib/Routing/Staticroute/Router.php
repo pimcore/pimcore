@@ -187,16 +187,26 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
+            $port = '';
+            $scheme = $this->context->getScheme() ;
+
+            if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
+                $port = ':'.$this->context->getHttpPort();
+            } elseif ('https' === $scheme && 443 !== $this->context->getHttpsPort()) {
+                $port = ':'.$this->context->getHttpsPort();
+            }
+
+            $schemeAuthority = self::NETWORK_PATH === $referenceType || '' === $scheme ? '//' : "$scheme://";
+            $schemeAuthority .= $hostname.$port;
 
             if ($needsHostname) {
-                if (self::ABSOLUTE_URL === $referenceType) {
-                    $url = $this->context->getScheme() . '://' . $hostname . $url;
-                } else {
-                    $url = '//' . $hostname . $url;
-                }
+                $url = $schemeAuthority.$this->context->getBaseUrl().$url;
             } else {
                 if (self::RELATIVE_PATH === $referenceType) {
                     $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
+                }
+                else {
+                    $url = $this->context->getBaseUrl().$url;
                 }
             }
 
@@ -211,7 +221,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        return $this->doMatch($request->getPathInfo(), $request);
+        return $this->doMatch($request->getPathInfo());
     }
 
     /**
@@ -224,11 +234,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
-     * @param Request $request
      *
      * @return array
      */
-    protected function doMatch($pathinfo, Request $request = null)
+    protected function doMatch($pathinfo)
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -236,14 +245,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
-            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
-                $method = $request->getMethod();
-
-                if (!in_array($method, $route->getMethods(), true)) {
-                    continue;
-                }
-            }
-
             if ($routeParams = $route->match($pathinfo, $params)) {
                 Staticroute::setCurrentRoute($route);
 
