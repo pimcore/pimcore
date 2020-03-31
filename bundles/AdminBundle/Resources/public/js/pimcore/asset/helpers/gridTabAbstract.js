@@ -43,6 +43,9 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
                 if (field.fieldConfig.width) {
                     fc.width = field.fieldConfig.width;
                 }
+                if (field.fieldConfig.locked) {
+                    fc.locked = field.fieldConfig.locked;
+                }
 
                 if (field.isOperator) {
                     fc.isOperator = true;
@@ -114,7 +117,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
             columns: {}
         };
 
-        var cm = this.grid.getView().getHeaderCt().getGridColumns();
+        var cm = this.grid.getView().getGridColumns();
 
         for (var i = 0; i < cm.length; i++) {
             if (cm[i].dataIndex) {
@@ -124,6 +127,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
                     position: i,
                     hidden: cm[i].hidden,
                     width: cm[i].width,
+                    locked: cm[i].locked,
                     fieldConfig: this.fieldObject[name],
                     //isOperator: this.fieldObject[name].isOperator
                 };

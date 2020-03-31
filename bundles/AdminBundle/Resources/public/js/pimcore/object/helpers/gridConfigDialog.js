@@ -85,6 +85,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     }
                 }
 
+                if (child.data.locked) {
+                    obj.locked = child.data.locked;
+                }
+
                 this.data.columns.push(obj);
             }.bind(this));
         }
@@ -201,6 +205,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                         continue;
                     }
                     child = child[0];
+
                 } else {
                     var text = t(nodeConf.label);
 
@@ -221,6 +226,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                         child.width = nodeConf.width;
                     }
                 }
+
+                if (nodeConf.locked) {
+                    child.locked = nodeConf.locked;
+                }
+
                 childs.push(child);
             }
 

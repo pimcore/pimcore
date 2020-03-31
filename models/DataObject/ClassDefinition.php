@@ -185,6 +185,11 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
+     * @var bool
+     */
+    public $enableGridLocking = false;
+
+    /**
      * @param string $id
      * @param bool $force
      *
@@ -1348,6 +1353,22 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
     }
 
     /**

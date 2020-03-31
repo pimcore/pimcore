@@ -500,6 +500,7 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
+                            'locked' => $sc['locked'],
                             'position' => $sc['position']];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
@@ -525,6 +526,9 @@ class DataObjectHelperController extends AdminController
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
+                                            if (isset($sc['locked'])) {
+                                                $fieldConfig['locked'] = $sc['locked'];
+                                            }
                                             $availableFields[] = $fieldConfig;
                                         }
                                     }
@@ -562,6 +566,9 @@ class DataObjectHelperController extends AdminController
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
                                     }
+                                    if (isset($sc['locked'])) {
+                                        $fieldConfig['locked'] = $sc['locked'];
+                                    }
                                     $availableFields[] = $fieldConfig;
                                 }
                             }
@@ -590,6 +597,7 @@ class DataObjectHelperController extends AdminController
                                             $fieldConfig['width'] = $sc['width'];
                                         }
 
+                                        $fieldConfig['locked'] = $sc['locked'];
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
@@ -794,6 +802,7 @@ class DataObjectHelperController extends AdminController
                 $calculatedColumnConfig['isOperator'] = true;
                 $calculatedColumnConfig['attributes'] = $config['fieldConfig']['attributes'];
                 $calculatedColumnConfig['width'] = $config['width'];
+                $calculatedColumnConfig['locked'] = $config['locked'];
 
                 $existingColumns = $session->get('helpercolumns', []);
 
