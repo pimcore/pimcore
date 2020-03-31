@@ -214,9 +214,8 @@ class Dao extends Model\Dao\AbstractDao
             Logger::debug($e);
         }
 
-
-        $this->updateCompositeIndices($objectDatastoreTable, "store", $this->model->getCompositeIndices());
-        $this->updateCompositeIndices($objectTable, "query", $this->model->getCompositeIndices());
+        $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
+        $this->updateCompositeIndices($objectTable, 'query', $this->model->getCompositeIndices());
 
         $this->tableDefinitions = null;
     }

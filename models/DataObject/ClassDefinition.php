@@ -1389,5 +1389,4 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
-
 }

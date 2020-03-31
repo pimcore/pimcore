@@ -382,7 +382,7 @@ class Thumbnail
                     $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
                     if ($isAutoFormat) {
                         $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
-                        if($sourceHtmlWebP != $sourceHtml) {
+                        if ($sourceHtmlWebP != $sourceHtml) {
                             $html .= "\t" . $sourceHtmlWebP . "\n";
                         }
                     }

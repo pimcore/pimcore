@@ -407,12 +407,13 @@ class Video extends Model\Document\Tag
      *
      * @return Asset\Image\Thumbnail|null
      */
-    private function getPosterThumbnailImage(Asset\Video $asset) {
+    private function getPosterThumbnailImage(Asset\Video $asset)
+    {
         $options = $this->getOptions();
         if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
             $thumbnailConfig = $asset->getThumbnailConfig($options['thumbnail'] ?? null);
 
-            if($thumbnailConfig instanceof Asset\Video\Thumbnail\Config) {
+            if ($thumbnailConfig instanceof Asset\Video\Thumbnail\Config) {
                 // try to get the dimensions out ouf the video thumbnail
                 $imageThumbnailConf = $thumbnailConfig->getEstimatedDimensions();
                 $imageThumbnailConf['format'] = 'JPEG';

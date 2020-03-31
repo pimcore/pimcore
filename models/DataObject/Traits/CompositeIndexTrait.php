@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Db\ConnectionInterface;
 
 /**
@@ -33,11 +32,12 @@ trait CompositeIndexTrait
      * @param array $compositeIndices
      *
      */
-    public function updateCompositeIndices(string $table, string $type, array $compositeIndices) {
+    public function updateCompositeIndices(string $table, string $type, array $compositeIndices)
+    {
         // fetch existing indices
         $existingMap = [];
         // prefix with "c_"
-        $existingIndicesRaw = $this->db->fetchAll("SHOW INDEXES FROM " . $this->db->quoteIdentifier($table) . " WHERE Key_Name LIKE 'c\_%'");
+        $existingIndicesRaw = $this->db->fetchAll('SHOW INDEXES FROM ' . $this->db->quoteIdentifier($table) . " WHERE Key_Name LIKE 'c\_%'");
         foreach ($existingIndicesRaw as $item) {
             $key = $item['Key_name'];
             $column = $item['Column_name'];
@@ -51,7 +51,7 @@ trait CompositeIndexTrait
             $existingMap[$key] = implode(',', $columns);
         }
 
-        $newIndicesFilteredByType = array_filter($compositeIndices, function($item) use ($type) {
+        $newIndicesFilteredByType = array_filter($compositeIndices, function ($item) use ($type) {
             // query or localized_query
             return $item['index_type'] === $type;
         });
@@ -89,5 +89,4 @@ trait CompositeIndexTrait
             );
         }
     }
-
 }

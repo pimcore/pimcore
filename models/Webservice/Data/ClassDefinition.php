@@ -140,5 +140,4 @@ class ClassDefinition extends Model\Webservice\Data
      * @var array
      */
     public $compositeIndices;
-
 }
