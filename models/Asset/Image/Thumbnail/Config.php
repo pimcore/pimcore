@@ -670,6 +670,11 @@ class Config extends Model\AbstractModel
                         if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                             $dimensions['width'] = $arg['width'];
                             $dimensions['height'] = $arg['height'];
+                        } elseif ($transformation['method'] == '1x1_pixel') {
+                            return [
+                                'width' => 1,
+                                'height' => 1
+                            ];
                         } elseif ($transformation['method'] == 'scaleByWidth') {
                             if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);

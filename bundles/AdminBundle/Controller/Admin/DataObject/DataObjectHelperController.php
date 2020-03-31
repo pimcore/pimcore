@@ -843,6 +843,7 @@ class DataObjectHelperController extends AdminController
     {
         $helperColumns = [];
         $newData = [];
+        /** @var \stdClass[] $data */
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {

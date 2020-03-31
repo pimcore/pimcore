@@ -140,7 +140,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         var componentCfg = {
             fieldLabel:this.fieldConfig.title,
             layout: 'hbox',
-            border: true,
             items: [
                 this.checkbox,
                 this.emptyButton

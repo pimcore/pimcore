@@ -1652,7 +1652,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout->className = $class->getName();
+                $customLayout = $customLayout->getObjectVars();
+                $customLayout['className'] = $class->getName();
                 $result['customlayout'][] = $customLayout;
             }
         }

@@ -68,10 +68,10 @@ class PageController extends DocumentControllerBase
         $page->setElements(null);
         $page->setChildren(null);
 
-        $this->addTranslationsData($page);
-        $this->minimizeProperties($page);
-
         $data = $page->getObjectVars();
+
+        $this->addTranslationsData($page, $data);
+        $this->minimizeProperties($page, $data);
 
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
