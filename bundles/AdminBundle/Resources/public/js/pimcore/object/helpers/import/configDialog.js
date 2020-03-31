@@ -804,6 +804,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
     },
     
     getImportConfigUrl: function(){
-        return '/admin/object-helper/import-json-config?importId=' + this.uniqueImportId + "&importConfigId="+this.importConfigId + "&classId=" + this.classId;
+        return '/admin/object-helper/import-csv-import-config-from-json?importId=' + this.uniqueImportId + "&importConfigId="+this.importConfigId + "&classId=" + this.classId;
     }
 });
