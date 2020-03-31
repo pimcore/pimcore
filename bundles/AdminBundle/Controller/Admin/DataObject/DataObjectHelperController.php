@@ -2499,19 +2499,18 @@ class DataObjectHelperController extends AdminController
      */
     public function exportJsonConfigAction(Request $request)
     {
-        $importConfigId = $request->get('importConfigId');
+        $classId = $request->get("classId");
+        $configData = json_decode($request->get('config'), true);
         
-        if(!isset($importConfigId)){
-            throw new \Exception("Please provide a valid import configuration Id");
-        }
-
         try {
-            $importConfig = ImportConfig::getById($importConfigId);
-        
-            $configData = $importConfig->getConfig();
-            $configName = $importConfig->getName();
             
-            $jsonResponse = new JsonResponse($configData, 200, [
+            $configName = $configData['shareSettings']['configName'];
+            
+            if(empty($configName)){
+                $configName = date("YmdHis")."_".$classId."_configuration";
+            }
+            
+            $jsonResponse = new JsonResponse(json_encode($configData), 200, [
                 'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
             ], true);
             
