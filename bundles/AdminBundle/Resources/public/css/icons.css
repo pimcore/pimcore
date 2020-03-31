@@ -96,16 +96,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
 }
 
-
-
-
-
-.................... overlay-error.svg
-
-
-
-
-
 .pimcore_icon_overlay_reading:before {
     position: absolute;
     width: 14px;
