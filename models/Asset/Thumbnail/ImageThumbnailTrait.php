@@ -230,8 +230,8 @@ trait ImageThumbnailTrait
     {
         if (!$this->mimetype) {
             $filesystemPath = $this->getFileSystemPath(true);
-            if(strpos($filesystemPath, 'data:image/') === 0) {
-                $this->mimetype = substr($filesystemPath, 5, strpos($filesystemPath, ';')-5);
+            if (strpos($filesystemPath, 'data:image/') === 0) {
+                $this->mimetype = substr($filesystemPath, 5, strpos($filesystemPath, ';') - 5);
             } else {
                 $fileExt = $this->getFileExtension();
                 $mapping = \Pimcore::getContainer()->getParameter('pimcore.mime.extensions');
@@ -263,7 +263,7 @@ trait ImageThumbnailTrait
      */
     protected function convertToWebPath(string $filesystemPath): string
     {
-        if(strpos($filesystemPath, 'data:image/') === 0) {
+        if (strpos($filesystemPath, 'data:image/') === 0) {
             // do not convert base64 encoded images
             return $filesystemPath;
         }

@@ -185,6 +185,11 @@ class ClassDefinition extends Model\AbstractModel
     ];
 
     /**
+     * @var bool
+     */
+    public $enableGridLocking = false;
+
+    /**
      * @param string $id
      * @param bool $force
      *
@@ -1351,6 +1356,22 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
+    }
+
+    /**
      * @return string|null
      */
     public function getImplementsInterfaces(): ?string
@@ -1389,5 +1410,4 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
-
 }

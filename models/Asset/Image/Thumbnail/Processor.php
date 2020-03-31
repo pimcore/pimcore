@@ -102,7 +102,7 @@ class Processor
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
-        if(self::containsTransformationType($config, '1x1_pixel')) {
+        if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         }
 
@@ -386,6 +386,7 @@ class Processor
     /**
      * @param Config $config
      * @param string $transformationType
+     *
      * @return bool
      */
     protected static function containsTransformationType(Config $config, string $transformationType): bool

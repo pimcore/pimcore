@@ -866,13 +866,13 @@ QUERY;
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
 
                 if ($container instanceof DataObject\ClassDefinition) {
-                    $this->updateCompositeIndices($queryTable, "localized_query", $this->model->getClass()->getCompositeIndices());
+                    $this->updateCompositeIndices($queryTable, 'localized_query', $this->model->getClass()->getCompositeIndices());
                 }
             }
         }
 
         if ($container instanceof DataObject\ClassDefinition) {
-            $this->updateCompositeIndices($table, "localized_store", $this->model->getClass()->getCompositeIndices());
+            $this->updateCompositeIndices($table, 'localized_store', $this->model->getClass()->getCompositeIndices());
             $this->createLocalizedViews();
         }
 
