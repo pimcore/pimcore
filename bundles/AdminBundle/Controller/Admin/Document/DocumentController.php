@@ -1190,10 +1190,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
+        }
 
-            if ($childDocument->getProperty('navigation_exclude')) {
-                $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
-            }
+        if ($childDocument->getProperty('navigation_exclude')) {
+            $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
         }
 
         if (!$childDocument->isPublished()) {
