@@ -128,7 +128,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.exportConfigButton = new Ext.menu.Item({
             text: t("export_configuration"),
             iconCls: "pimcore_icon_download",
-            disabled: !this.config.importConfigId,
             handler: function () {
                 pimcore.helpers.download(this.getExportConfigUrl());
             }.bind(this)
@@ -233,7 +232,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.saveAndSharePanel.rebuildPanel();
         this.containerPanel.setTitle(this.getWindowTitle());
         this.deleteButton.setDisabled(!this.importConfigId || this.config.isShared);
-        this.exportConfigButton.setDisabled(!this.importConfigId || this.config.isShared);
     },
 
 
@@ -310,7 +308,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
                             this.availableConfigs = rdata.availableConfigs;
                             this.config.isShared = false;
                             this.deleteButton.setDisabled(false);
-                            this.exportConfigButton.setDisabled(false);
                             this.containerPanel.setTitle(this.getWindowTitle());
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         }
@@ -799,7 +796,11 @@ pimcore.object.helpers.import.configDialog = Class.create({
     },
     
     getExportConfigUrl: function(){
-        return "/admin/object-helper/export-json-config?importConfigId="+this.importConfigId;
+        this.commitEverything();
+        var config = this.prepareSaveData();
+        config = Ext.encode(config);
+        
+        return "/admin/object-helper/export-json-config?classId="+this.classId+"&config="+config;
     },
     
     getImportConfigUrl: function(){
