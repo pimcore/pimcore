@@ -75,7 +75,7 @@ trait Relation
      */
     public function getClasses()
     {
-        return [];
+        return $this->classes ?: [];
     }
 
     /**
