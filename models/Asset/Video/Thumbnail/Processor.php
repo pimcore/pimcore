@@ -64,7 +64,7 @@ class Processor
      * @param Config $config
      * @param array $onlyFormats
      *
-     * @return Processor
+     * @return Processor|null
      *
      * @throws \Exception
      */
@@ -86,7 +86,7 @@ class Processor
         if (is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
             if ($customSetting[$config->getName()]['status'] == 'inprogress') {
                 if (TmpStore::get($instance->getJobStoreId($customSetting[$config->getName()]['processId']))) {
-                    return;
+                    return null;
                 }
             } elseif ($customSetting[$config->getName()]['status'] == 'finished') {
                 // check if the files are there
@@ -102,7 +102,7 @@ class Processor
                 if (!empty($formatsToConvert)) {
                     $formats = $formatsToConvert;
                 } else {
-                    return;
+                    return null;
                 }
             } elseif ($customSetting[$config->getName()]['status'] == 'error') {
                 throw new \Exception('Unable to convert video, see logs for details.');

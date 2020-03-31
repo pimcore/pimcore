@@ -124,7 +124,7 @@ public function startPaymentAction() {
     ];
     
     $response = $payment->initPayment($cart->getPriceCalculator()->getGrandTotal(), $config);
-    return $this->json((array)$response);
+    return new \Symfony\Component\HttpFoundation\JsonResponse($response);
 
 } 
 

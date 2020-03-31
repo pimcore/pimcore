@@ -53,14 +53,14 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public $labelFirstCell;
 
     /**
-     * @var object
+     * @var array
      */
-    public $cols;
+    public $cols = [];
 
     /**
-     * @var object
+     * @var array
      */
-    public $rows;
+    public $rows = [];
 
     /**
      * Type for the generated phpdoc
@@ -150,7 +150,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return object
+     * @return array
      */
     public function getCols()
     {
@@ -158,7 +158,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param object $cols
+     * @param array $cols
      *
      * @return $this
      */
@@ -180,7 +180,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return object
+     * @return array
      */
     public function getRows()
     {
@@ -254,7 +254,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -421,7 +421,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -429,20 +429,18 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public function getForCsvExport($object, $params = [])
     {
         $value = $this->getDataFromObjectParam($object, $params);
+        $string = '';
 
         if ($value instanceof DataObject\Data\StructuredTable) {
-            $string = '';
             $dataArray = $value->getData();
             foreach ($this->getRows() as $r) {
                 foreach ($this->getCols() as $c) {
                     $string .= $dataArray[$r['key']][$c['key']] . '##';
                 }
             }
-
-            return $string;
-        } else {
-            return null;
         }
+
+        return $string;
     }
 
     /**
@@ -475,10 +473,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -495,9 +493,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             }
 
             return $webserviceArray;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

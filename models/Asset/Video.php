@@ -187,7 +187,7 @@ class Video extends Model\Asset
     /**
      * @param string|null $filePath
      *
-     * @return int|null
+     * @return float|null
      *
      * @throws \Exception
      */

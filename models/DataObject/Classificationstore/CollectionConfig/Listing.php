@@ -50,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\Classificationstore\CollectionConfig[]|null $theList
      *
-     * @return $this
+     * @return static
      */
     public function setList($theList)
     {

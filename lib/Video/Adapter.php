@@ -191,7 +191,7 @@ abstract class Adapter
     }
 
     /**
-     * @return int
+     * @return float
      *
      * @throws \Exception
      */

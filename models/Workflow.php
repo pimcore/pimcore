@@ -109,7 +109,7 @@ class Workflow extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Workflow
+     * @return Workflow|null
      */
     public static function getById($id)
     {
@@ -522,7 +522,7 @@ class Workflow extends AbstractModel
      * @param string $actionName
      * @param string|null $statusName
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditionalFieldsForAction($actionName, $statusName = null)
     {

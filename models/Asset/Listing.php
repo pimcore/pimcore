@@ -55,7 +55,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * @param Model\Asset[] $assets
      *
-     * @return $this
+     * @return static
      */
     public function setAssets($assets)
     {

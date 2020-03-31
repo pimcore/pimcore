@@ -65,7 +65,7 @@
     "league/csv": "^9.1",
     "linfo/linfo": "^4.0.0",
     "mjaschen/phpgeo": "^2.0",
-    "mpratt/embera": "^1.9.3",
+    "mpratt/embera": "^2.0.3",
     "myclabs/deep-copy": "^1.3",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
@@ -92,7 +92,8 @@
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
-    "phpoffice/phpspreadsheet": "^1.9"
+    "phpoffice/phpspreadsheet": "^1.9",
+    "html2text/html2text": "^4.2.1"
   },
   "conflict": {
     "monolog/monolog": ">=2"
@@ -100,7 +101,7 @@
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
     "codeception/codeception": "~2.4.5",
-    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan": "^0.12.18",
     "phpstan/phpstan-symfony": "^0.12",
     "heidelpay/heidelpay-php": "^1.2.5.1",
     "klarna/checkout": "^3.0.0",

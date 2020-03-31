@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
@@ -32,7 +33,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     use Model\Element\ElementDumpStateTrait;
 

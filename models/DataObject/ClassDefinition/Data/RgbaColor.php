@@ -239,7 +239,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @deprecated
      *
-     * @param string $object
+     * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -250,9 +250,9 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -281,7 +281,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return string|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -293,7 +293,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -317,10 +317,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value) {
+        if ($value instanceof Model\DataObject\Data\RgbaColor) {
+            $rgb = sprintf('%02x%02x%02x', $value->getR(), $value->getG(), $value->getB());
+            $a = sprintf('%02x', $value->getA());
+
             return [
-                'value' => $value[$this->getName() . '__rgb'],
-                'value2' => $value[$this->getName() . '__a']
+                'value' => $rgb,
+                'value2' => $a
             ];
         }
     }
@@ -330,17 +333,21 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
         if ($value) {
-            $result = [];
-            $result[$this->getName() . '__rgb'] = $value['value'];
-            $result[$this->getName() . '__a'] = $value['value2'];
+            $rgb = $value['value'];
+            $a = $value['value2'];
+            list($r, $g, $b) = sscanf($rgb, '%02x%02x%02x');
+            $a = hexdec($a);
+            $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
-            return $result;
+            return $color;
         }
+
+        return null;
     }
 
     /**

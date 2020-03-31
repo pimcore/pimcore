@@ -18,7 +18,7 @@ class Version20191114123638 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         // we have to run the migrations of Version20200226102938 here, otherwise saving the documents will fail
-        if($schema->getTable('dependencies')->hasIndex('sourceid')) {
+        if ($schema->getTable('dependencies')->hasIndex('sourceid')) {
             $this->addSql('ALTER TABLE `dependencies`
                 DROP INDEX `sourceid`,
                 DROP INDEX `targetid`,
@@ -55,6 +55,5 @@ class Version20191114123638 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-
     }
 }

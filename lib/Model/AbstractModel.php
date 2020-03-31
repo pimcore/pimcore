@@ -29,7 +29,7 @@ abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao
+     * @var \Pimcore\Model\Dao\AbstractDao|null
      */
     protected $dao;
 

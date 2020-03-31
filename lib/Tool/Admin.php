@@ -268,7 +268,7 @@ class Admin
      * @param string|array $languages
      * @param bool $returnLanguageArray
      *
-     * @return string
+     * @return string|array
      */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {

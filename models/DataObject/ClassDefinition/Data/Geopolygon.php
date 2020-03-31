@@ -186,7 +186,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             }
         }
 
-        return null;
+        return '';
     }
 
     /**

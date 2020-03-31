@@ -81,7 +81,7 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param float $data
+     * @param array $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *

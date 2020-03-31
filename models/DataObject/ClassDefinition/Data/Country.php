@@ -30,7 +30,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public $fieldtype = 'country';
 
     /** Restrict selection to comma-separated list of countries.
-     * @var null
+     * @var string|null
      */
     public $restrictTo = null;
 
@@ -69,7 +69,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param string $restrictTo
+     * @param string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {
@@ -84,7 +84,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRestrictTo()
     {

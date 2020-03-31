@@ -61,6 +61,6 @@ class Admin extends AbstractTranslation
             $language = $config['language'] ?? null;
         }
 
-        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
+        return parent::getByKeyLocalized($id, $create, $returnIdIfEmpty, $language);
     }
 }

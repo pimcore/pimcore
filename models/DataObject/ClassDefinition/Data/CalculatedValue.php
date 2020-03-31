@@ -35,9 +35,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public $elementType = 'input';
 
     /**
-     * @var float
+     * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var string
@@ -158,7 +158,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Model\DataObject\Data\CalculatedValue $data
+     * @param Model\DataObject\Data\CalculatedValue|null $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -180,7 +180,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -194,11 +194,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        return (string)$this->getDataForEditmode($data, $object, $params);
     }
 
     /**

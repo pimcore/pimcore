@@ -50,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Version[]|null $versions
      *
-     * @return $this
+     * @return static
      */
     public function setVersions($versions)
     {

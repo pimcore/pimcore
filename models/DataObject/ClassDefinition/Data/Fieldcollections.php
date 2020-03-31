@@ -40,7 +40,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Fieldcollection';
 
     /**
-     * @var string
+     * @var array
      */
     public $allowedTypes = [];
 
@@ -160,7 +160,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Fieldcollection
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -250,7 +250,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -632,7 +632,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
             $data = $this->load($object);
-            if ($data instanceof DataObject\DirtyIndicatorInterface) {
+            if ($data instanceof Model\Element\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 
@@ -651,7 +651,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Fieldcollection|null $data
      * @param array $params
      *
-     * @return array
+     * @return DataObject\Fieldcollection|null
      */
     public function preSetData($object, $data, $params = [])
     {

@@ -53,7 +53,7 @@ class Product implements OrderListFilterInterface
             $ids[] = $db->quote($variant->getId());
         }
 
-        $orderList->addCondition('orderItem.product__id IN (' . implode(',',  $ids) . ')');
+        $orderList->addCondition('orderItem.product__id IN (' . implode(',', $ids) . ')');
 
         return $this;
     }

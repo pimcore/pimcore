@@ -19,7 +19,7 @@
     "classid": "Klassen ID",
     "parentid": "Eltern ID",
     "mimetype": "MIME-Typ",
-    "creationdate": "Datum der Erstellung",
+    "creationdate": "Erstellungsdatum",
     "usermodification": "Benutzer bearbeiten",
     "userowner": "Eigentümer des Benutzers",
     "languages": "Sprachen",
@@ -919,8 +919,8 @@
     "email_log_forward": "E-Mail weiterleiten",
     "sum": "Addieren",
     "area_brick_assign_info_message": "Bitte ordnen Sie dem gewünschten Block per Drag & Drop einen Baustein zu",
-    "batch_remove_all": "Batch remove from all",
-    "batch_remove_selected": "Batch remove from selected",
+    "batch_remove_all": "Batch von Allen entfernen",
+    "batch_remove_selected": "Batch von allen Ausgewählten entfernen",
     "batch_remove_from": "Daten von allen Elementen entfernen",
     "batch_remove_selected_from": "Daten von ausgewählten Elementen entfernen",
     "force_picture_html_tag": "Erzwinge &lt;picture&gt; HTML tag",
@@ -939,5 +939,11 @@
     "redirect_performance_warning": "Die Verwendung dieser Funktion hat sehr negative Auswirkungen auf die Leistung der gesamten Anwendung. Möchten Sie wirklich fortfahren?",
     "test_url": "Test URL",
     "create_redirects": "Weiterleitungen erstellen, damit URLs funktionieren (einschließlich Kinder)?",
-    "auto_create": "Automatisch erstellen"
+    "auto_create": "Automatisch erstellen",
+    "methods": "Methoden",
+    "batch_operation": "Stapelverarbeitung",
+    "move": "Verschieben",
+    "property_name": "Property name",
+    "force_value": "Force value",
+    "enable_grid_locking": "Enable grid locking"
 }

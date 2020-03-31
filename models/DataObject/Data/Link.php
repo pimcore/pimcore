@@ -38,12 +38,12 @@ class Link implements OwnerAwareFieldInterface
     protected $text;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $internalType;
 
     /**
-     * @var string
+     * @var int
      */
     protected $internal;
 
@@ -145,7 +145,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getInternal()
     {
@@ -153,7 +153,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param string $internal
+     * @param int $internal
      *
      * @return $this
      */

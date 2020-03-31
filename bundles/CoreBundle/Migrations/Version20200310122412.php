@@ -8,7 +8,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchPro
 use Pimcore\Bundle\EcommerceFrameworkBundle\PimcoreEcommerceFrameworkBundle;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-
 class Version20200310122412 extends AbstractPimcoreMigration
 {
     /**
@@ -30,12 +29,11 @@ class Version20200310122412 extends AbstractPimcoreMigration
 
                     $table = $schema->getTable($tableName);
                     if (!$table->hasIndex('in_preparation_queue_index')) {
-                        $table->addIndex(['tenant','in_preparation_queue'], 'in_preparation_queue_index');
+                        $table->addIndex(['tenant', 'in_preparation_queue'], 'in_preparation_queue_index');
                     }
                 }
             }
         }
-
     }
 
     /**

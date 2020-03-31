@@ -83,7 +83,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_parentId;
 
     /**
-     * @var self
+     * @var self|null
      */
     protected $o_parent;
 
@@ -152,7 +152,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency[]
+     * @var Model\Dependency|null
      */
     protected $o_dependencies;
 
@@ -297,10 +297,9 @@ class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
+                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Service::recursiveResetDirtyMap($object);
-
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     // force loading of relation data
                     if ($object instanceof Concrete) {
@@ -369,6 +368,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if ($className) {
                 $listClass = $className . '\\Listing';
+                /** @var DataObject\Listing $list */
                 $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
@@ -493,9 +493,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -503,7 +503,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $o_locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $o_locked
      *
      * @return $this
      */
@@ -556,7 +558,9 @@ class AbstractObject extends Model\Element\AbstractElement
             if (Runtime::isRegistered($parentCacheKey)) {
                 /** @var AbstractObject $parent * */
                 $parent = Runtime::get($parentCacheKey);
-                $parent->setChildren(null);
+                if ($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
             }
         } catch (\Exception $e) {
             $this->rollBack();
@@ -994,7 +998,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
+        if ($o_parentId != $this->o_parentId) {
             $this->markFieldDirty('o_parentId');
         }
         $this->o_parentId = $o_parentId;
@@ -1084,6 +1088,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setModificationDate($o_modificationDate)
     {
+        $this->markFieldDirty('o_modificationDate');
+
         $this->o_modificationDate = (int) $o_modificationDate;
 
         return $this;
@@ -1108,6 +1114,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setUserModification($o_userModification)
     {
+        $this->markFieldDirty('o_userModification');
+
         $this->o_userModification = (int) $o_userModification;
 
         return $this;

@@ -283,7 +283,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {

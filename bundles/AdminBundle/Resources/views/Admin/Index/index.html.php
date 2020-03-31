@@ -531,6 +531,7 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/PHPCode.js",
     "pimcore/object/gridcolumn/operator/Base64.js",
     "pimcore/object/gridcolumn/operator/TranslateValue.js",
+    "pimcore/object/gridcolumn/operator/PropertyGetter.js",
     "pimcore/object/gridcolumn/operator/RequiredBy.js",
     "pimcore/object/gridcolumn/operator/StringContains.js",
     "pimcore/object/gridcolumn/operator/StringReplace.js",

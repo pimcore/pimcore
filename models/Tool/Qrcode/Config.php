@@ -69,7 +69,7 @@ class Config extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return Config
+     * @return self|null
      *
      * @throws \Exception
      */

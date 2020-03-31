@@ -302,7 +302,7 @@ class AssetHelperController extends AdminController
      * @param string $language
      * @param string|null $keyPrefix
      *
-     * @return array
+     * @return array|null
      */
     protected function getFieldGridConfig($field, $language = '', $keyPrefix = null)
     {
@@ -346,6 +346,10 @@ class AssetHelperController extends AdminController
             'language' => $field['fieldConfig']['language'] ?? null,
             'layout' => $field['fieldConfig']['layout'] ?? null,
         ];
+
+        if (isset($field['locked'])) {
+            $result['locked'] = $field['locked'];
+        }
 
         if ($type === 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();

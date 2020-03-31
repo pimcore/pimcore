@@ -36,7 +36,7 @@ is not handled via Pimcore's classes but is just a plain DB table you'll use in 
 a first migration which defines the basic table structure. 
 
 Start off by looking at the basic migration configuration. If you don't pass a migration set name via `--set`, it will
-default to the `app` migration set which creates migration classes in `app/Resources/migrations`.
+default to the `app` migration set which creates migration classes in `app/Migrations`.
 
 ```bash
 $ bin/console pimcore:migrations:status
@@ -50,7 +50,7 @@ $ bin/console pimcore:migrations:status
     >> Version Table Name:                                 pimcore_migrations
     >> Version Column Name:                                version
     >> Migrations Namespace:                               App\Migrations
-    >> Migrations Directory:                               app/Resources/migrations
+    >> Migrations Directory:                               app/Migrations
     >> Previous Version:                                   Already at first version
     >> Current Version:                                    0
     >> Next Version:                                       Already at latest version
@@ -67,7 +67,7 @@ Migrations can be generated with the `pimcore:migrations:generate` command:
 
 ```bash
 $ bin/console pimcore:migrations:generate
-Generated new migration class to "app/Resources/migrations/Version20171005123020.php"
+Generated new migration class to "app/Migrations/Version20171005123020.php"
 ```
 
 As you can see, the migration class defines an `up` and a `down` method which will be executed when migrating in one
@@ -150,7 +150,7 @@ $ bin/console pimcore:migrations:status
     >> Version Table Name:                                 pimcore_migrations
     >> Version Column Name:                                version
     >> Migrations Namespace:                               App\Migrations
-    >> Migrations Directory:                               app/Resources/migrations
+    >> Migrations Directory:                               app/Migrations
     >> Previous Version:                                   Already at first version
     >> Current Version:                                    0
     >> Next Version:                                       2017-10-05 12:30:20 (20171005123020)
@@ -231,7 +231,7 @@ $ bin/console pimcore:migrations:status
      >> Version Table Name:                                 pimcore_migrations
      >> Version Column Name:                                version
      >> Migrations Namespace:                               App\Migrations
-     >> Migrations Directory:                               app/Resources/migrations
+     >> Migrations Directory:                               app/Migrations
      >> Previous Version:                                   0
      >> Current Version:                                    2017-10-05 12:30:20 (20171005123020)
      >> Next Version:                                       2017-10-05 12:48:53 (20171005124853)
@@ -277,7 +277,7 @@ which are valid for the whole application.
 
 By default Pimcore defines the following migration sets:
 
-* A global `app` migration set which looks for migrations in `app/Resources/migrations`. This is the default migration set
+* A global `app` migration set which looks for migrations in `app/Migrations`. This is the default migration set
   for all migrate commands if no specific set name was passed as option. All examples on this page refer to the `app` migration
   set.
 * One migration set for every bundle which implements a `MigrationInstaller`.

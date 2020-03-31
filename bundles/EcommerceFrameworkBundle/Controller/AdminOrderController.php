@@ -278,7 +278,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 $field = $order->getClass()->getFieldDefinition('customer');
                 if ($field instanceof ManyToOneRelation) {
                     $classes = $field->getClasses();
-                    if (count($classes) == 1) {
+                    if (count($classes) === 1) {
                         $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
                         /* @var \Pimcore\Model\DataObject\Concrete $class */
 

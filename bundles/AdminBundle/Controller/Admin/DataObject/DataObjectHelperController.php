@@ -81,7 +81,7 @@ class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -99,9 +99,8 @@ class DataObjectHelperController extends AdminController
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
-        $configListing = $configListing->load();
 
-        return $configListing;
+        return $configListing->load();
     }
 
     /**
@@ -501,6 +500,7 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
+                            'locked' => $sc['locked'],
                             'position' => $sc['position']];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
@@ -526,6 +526,9 @@ class DataObjectHelperController extends AdminController
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
+                                            if (isset($sc['locked'])) {
+                                                $fieldConfig['locked'] = $sc['locked'];
+                                            }
                                             $availableFields[] = $fieldConfig;
                                         }
                                     }
@@ -548,13 +551,15 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
-                            if ($brickDescriptor) {
-                                $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                                $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                                $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                            } else {
-                                $fd = $brickClass->getFieldDefinition($fieldname);
+                            if ($brickClass instanceof DataObject\Objectbrick\Definition) {
+                                if ($brickDescriptor) {
+                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
+                                    /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
+                                    $localizedFields = $brickClass->getFieldDefinition($innerContainer);
+                                    $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                                } else {
+                                    $fd = $brickClass->getFieldDefinition($fieldname);
+                                }
                             }
 
                             if (!empty($fd)) {
@@ -562,6 +567,9 @@ class DataObjectHelperController extends AdminController
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
+                                    }
+                                    if (isset($sc['locked'])) {
+                                        $fieldConfig['locked'] = $sc['locked'];
                                     }
                                     $availableFields[] = $fieldConfig;
                                 }
@@ -591,6 +599,7 @@ class DataObjectHelperController extends AdminController
                                             $fieldConfig['width'] = $sc['width'];
                                         }
 
+                                        $fieldConfig['locked'] = $sc['locked'];
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
@@ -795,6 +804,7 @@ class DataObjectHelperController extends AdminController
                 $calculatedColumnConfig['isOperator'] = true;
                 $calculatedColumnConfig['attributes'] = $config['fieldConfig']['attributes'];
                 $calculatedColumnConfig['width'] = $config['width'];
+                $calculatedColumnConfig['locked'] = $config['locked'];
 
                 $existingColumns = $session->get('helpercolumns', []);
 
@@ -835,6 +845,7 @@ class DataObjectHelperController extends AdminController
     {
         $helperColumns = [];
         $newData = [];
+        /** @var \stdClass[] $data */
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {

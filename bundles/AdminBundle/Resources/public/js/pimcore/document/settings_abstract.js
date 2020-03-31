@@ -241,10 +241,6 @@ pimcore.document.settings_abstract = Class.create({
             collapsible: true,
             collapsed: collapsed,
             autoHeight:true,
-            defaults: {
-                labelWidth: 320,
-                width: 700
-            },
             defaultType: 'textfield',
             items :[
                 {
@@ -385,6 +381,8 @@ pimcore.document.settings_abstract = Class.create({
                 }
             ],
             defaults: {
+                labelWidth: 300,
+                width: 700,
                 listeners: {
                     "change": function (field, checked) {
                         Ext.getCmp("pimcore_document_settings_" + this.document.id).dirty = true;

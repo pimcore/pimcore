@@ -54,7 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $translations
      *
-     * @return $this
+     * @return static
      */
     public function setTranslations($translations)
     {

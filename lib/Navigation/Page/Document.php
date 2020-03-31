@@ -128,7 +128,7 @@ class Document extends Url
     }
 
     /**
-     * @return Model\Document
+     * @return Model\Document|null
      */
     public function getDocument()
     {

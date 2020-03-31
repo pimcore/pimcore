@@ -127,7 +127,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param DataObject\Data\Geopoint[]|null $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -150,7 +150,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -166,7 +166,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -186,7 +186,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
             }
         }
 
-        return null;
+        return '';
     }
 
     /**

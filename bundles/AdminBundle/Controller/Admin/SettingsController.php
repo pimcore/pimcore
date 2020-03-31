@@ -1943,7 +1943,7 @@ class SettingsController extends AdminController
      *
      * @param Request $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function testWeb2printAction(Request $request)
     {

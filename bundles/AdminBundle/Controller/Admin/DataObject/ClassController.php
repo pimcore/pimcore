@@ -118,7 +118,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
-                'propertyVisibility' => $class->getPropertyVisibility()
+                'propertyVisibility' => $class->getPropertyVisibility(),
+                'enableGridLocking' => $class->isEnableGridLocking()
             ];
         };
 
@@ -1179,6 +1180,8 @@ class ClassController extends AdminController implements EventedControllerInterf
         $fieldname = null;
         $className = null;
 
+        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
             $fieldname = $request->get('field_name');
@@ -1218,7 +1221,10 @@ class ClassController extends AdminController implements EventedControllerInterf
                     ];
                 }
                 if ($forObjectEditor) {
-                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
                     [
@@ -1246,8 +1252,6 @@ class ClassController extends AdminController implements EventedControllerInterf
                         'containerKey' => $item->getKey(),
                         'outerFieldname' => $request->get('field_name')
                     ];
-
-                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
 
@@ -1648,7 +1652,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout->className = $class->getName();
+                $customLayout = $customLayout->getObjectVars();
+                $customLayout['className'] = $class->getName();
                 $result['customlayout'][] = $customLayout;
             }
         }

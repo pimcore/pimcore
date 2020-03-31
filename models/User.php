@@ -135,7 +135,7 @@ class User extends User\UserRole
     public $keyBindings;
 
     /**
-     * @var string
+     * @var array
      */
     public $twoFactorAuthentication;
 

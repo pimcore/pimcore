@@ -38,7 +38,7 @@ class ProductType implements OrderListFilterInterface
         foreach ($this->getTypes() as $type) {
             $types[] = $db->quote($type);
         }
-        $orderList->getQuery()->where('orderItemObjects.o_className IN (' . implode(',',  $types) . ')');
+        $orderList->getQuery()->where('orderItemObjects.o_className IN (' . implode(',', $types) . ')');
 
         return $this;
     }

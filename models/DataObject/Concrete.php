@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -47,7 +48,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_published;
 
     /**
-     * @var ClassDefinition
+     * @var ClassDefinition|null
      */
     protected $o_class;
 
@@ -62,14 +63,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_className;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $o_versions = null;
 
     /**
      * Contains all scheduled tasks
      *
-     * @var array
+     * @var array|null
      */
     protected $scheduledTasks = null;
 

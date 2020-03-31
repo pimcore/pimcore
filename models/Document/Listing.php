@@ -141,7 +141,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return Listing
+     * @return Document[]
      */
     public function getItems($offset, $itemCountPerPage)
     {

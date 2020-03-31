@@ -59,8 +59,6 @@ class LinkController extends DocumentControllerBase
         $link->setObject(null);
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-        $this->addTranslationsData($link);
-        $this->minimizeProperties($link);
         $link->getScheduledTasks();
 
         $serializer = $this->get('pimcore_admin.serializer');
@@ -68,6 +66,9 @@ class LinkController extends DocumentControllerBase
         $data = $serializer->serialize($link->getObjectVars(), 'json', []);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
+
+        $this->addTranslationsData($link, $data);
+        $this->minimizeProperties($link, $data);
 
         $this->preSendDataActions($data, $link);
 

@@ -42,7 +42,7 @@ class Document extends Model\Asset
         $this->clearThumbnails();
 
         if ($this->getDataChanged() && \Pimcore\Document::isAvailable()) {
-            if(php_sapi_name() === 'cli') {
+            if (php_sapi_name() === 'cli') {
                 // on CLI we directly process the page count / document conversion
                 $this->processPageCount();
             } else {
@@ -134,7 +134,7 @@ class Document extends Model\Asset
     public function getText($page = null)
     {
         if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
-            if($this->getCustomSetting('document_page_count')) {
+            if ($this->getCustomSetting('document_page_count')) {
                 $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
                 if (!$text = Cache::load($cacheKey)) {
                     $document = \Pimcore\Document::getInstance();
@@ -144,7 +144,7 @@ class Document extends Model\Asset
 
                 return $text;
             } else {
-                Logger::info("Unable to fetch text of " . $this->getRealFullPath() . ' as it was not processed yet by the maintenance script');
+                Logger::info('Unable to fetch text of ' . $this->getRealFullPath() . ' as it was not processed yet by the maintenance script');
             }
         } else {
             Logger::warning("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');

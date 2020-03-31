@@ -33,7 +33,7 @@ class Ffmpeg extends Adapter
     protected $processId;
 
     /**
-     * @var string
+     * @var array
      */
     protected $arguments = [];
 
@@ -207,7 +207,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return int
+     * @return float
      *
      * @throws \Exception
      */

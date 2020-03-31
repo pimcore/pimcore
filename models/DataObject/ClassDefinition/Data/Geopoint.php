@@ -35,7 +35,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = [
         'longitude' => 'double',
@@ -45,7 +45,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = [
         'longitude' => 'double',
@@ -195,7 +195,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -206,9 +206,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\Geopoint) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             return $data->getLatitude() . ',' . $data->getLongitude();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**

@@ -174,7 +174,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Geobounds
+     * @return DataObject\Data\Geobounds|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -185,7 +185,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             return new DataObject\Data\Geobounds($ne, $sw);
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -211,7 +211,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -221,9 +221,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Geobounds) {
             return  $data->getNorthEast()->getLongitude().','.$data->getNorthEast()->getLatitude().'|'.$data->getSouthWest()->getLongitude().','.$data->getSouthWest()->getLatitude();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -264,10 +264,10 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -279,9 +279,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 'SWlongitude' => $data->getSouthWest()->getLongitude(),
                 'SWlatitude' => $data->getSouthWest()->getLatitude()
             ];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**

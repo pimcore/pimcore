@@ -162,6 +162,11 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
+    public $compositeIndices = [];
+
+    /**
+     * @var array
+     */
     public $propertyVisibility = [
         'grid' => [
             'id' => true,
@@ -178,6 +183,11 @@ class ClassDefinition extends Model\AbstractModel
             'creationDate' => true
         ]
     ];
+
+    /**
+     * @var bool
+     */
+    public $enableGridLocking = false;
 
     /**
      * @param string $id
@@ -347,6 +357,34 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->save($isUpdate);
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        // empty object cache
+        try {
+            Cache::clearTag('class_'.$this->getId());
+        } catch (\Exception $e) {
+        }
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_UPDATE,
+                new ClassDefinitionEvent($this)
+            );
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_ADD,
+                new ClassDefinitionEvent($this)
+            );
+        }
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     *
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
         $infoDocBlock = $this->getInfoDocBlock();
 
         // create class for object
@@ -403,16 +441,14 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+        $implementsParts = [];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $useParts = [
-            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
-        ];
+        $useParts = [];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
@@ -532,7 +568,7 @@ class ClassDefinition extends Model\AbstractModel
             );
         }
 
-        if ($saveDefinitionFile) {
+        if ($generateDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
@@ -549,24 +585,6 @@ class ClassDefinition extends Model\AbstractModel
             $data .= "\nreturn ".$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
-        }
-
-        // empty object cache
-        try {
-            Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
-        }
-
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
-            );
         }
     }
 
@@ -1338,6 +1356,22 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
+    }
+
+    /**
      * @return string|null
      */
     public function getImplementsInterfaces(): ?string
@@ -1353,6 +1387,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCompositeIndices(): array
+    {
+        return $this->compositeIndices;
+    }
+
+    /**
+     * @param array $compositeIndices
+     *
+     * @return $this
+     */
+    public function setCompositeIndices($compositeIndices)
+    {
+        $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;
     }

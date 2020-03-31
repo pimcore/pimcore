@@ -55,14 +55,14 @@ class Redirect extends AbstractModel
     public $source;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $sourceSite;
 
     /**
      * @var bool
      */
-    public $passThroughParameters;
+    public $passThroughParameters = false;
 
     /**
      * @var string
@@ -70,22 +70,22 @@ class Redirect extends AbstractModel
     public $target;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $targetSite;
 
     /**
-     * @var string
+     * @var int
      */
     public $statusCode = 301;
 
     /**
-     * @var string
+     * @var int
      */
     public $priority = 1;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     public $regex;
 
@@ -137,7 +137,7 @@ class Redirect extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Redirect
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -156,7 +156,7 @@ class Redirect extends AbstractModel
      * @param Site|null $site
      * @param bool $override
      *
-     * @return static|null
+     * @return self|null
      */
     public static function getByExactMatch(Request $request, ?Site $site = null, bool $override = false): ?self
     {
@@ -396,11 +396,7 @@ class Redirect extends AbstractModel
      */
     public function setActive($active)
     {
-        if ($active) {
-            $this->active = (bool) $active;
-        } else {
-            $this->active = null;
-        }
+        $this->active = (bool) $active;
 
         return $this;
     }
@@ -460,11 +456,7 @@ class Redirect extends AbstractModel
      */
     public function setPassThroughParameters($passThroughParameters)
     {
-        if ($passThroughParameters) {
-            $this->passThroughParameters = (bool) $passThroughParameters;
-        } else {
-            $this->passThroughParameters = null;
-        }
+        $this->passThroughParameters = (bool) $passThroughParameters;
 
         return $this;
     }

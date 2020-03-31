@@ -220,7 +220,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -335,7 +335,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -345,9 +345,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             return implode(',', $data);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**

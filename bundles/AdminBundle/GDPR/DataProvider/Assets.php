@@ -30,7 +30,7 @@ class Assets extends Elements implements DataProviderInterface
     protected $service;
 
     /**
-     * @var string[]
+     * @var bool[]
      */
     protected $exportIds = [];
 
