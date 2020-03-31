@@ -2544,14 +2544,14 @@ class DataObjectHelperController extends AdminController
     }
     
     /**
-     * @Route("/import-json-config", methods={"POST"})
+     * @Route("/import-csv-import-config-from-json", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
      *
      * @return JsonResponse
      */
-    public function importJsonConfigAction(Request $request, ImportService $importService)
+    public function importCSVImportConfigFromJsonAction(Request $request, ImportService $importService)
     {
         $importConfigId = $request->get('importConfigId');
         
