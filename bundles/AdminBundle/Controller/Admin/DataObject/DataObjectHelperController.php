@@ -2554,7 +2554,7 @@ class DataObjectHelperController extends AdminController
         $originalFile = $file . '_original';
         // determine type
         if (empty($dialect)) {
-            $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+            $dialect = Tool\Admin::determineCsvDialect($originalFile);
         }
 
         /**
