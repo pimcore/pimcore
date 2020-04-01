@@ -218,6 +218,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $pimcoreUser = Authentication::authenticateToken($credentials['token']);
 
                 if ($pimcoreUser) {
+                    //disable two factor authentication for token based credentials e.g. reset password, admin access links
+                    $pimcoreUser->setTwoFactorAuthentication('required', false);
                     $user = new User($pimcoreUser);
                 } else {
                     throw new AuthenticationException('Failed to authenticate with username and token');
@@ -243,7 +245,9 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                     $adminSession->set('user', $pimcoreUser);
 
                     // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener
-                    $adminSession->set('2fa_required', true);
+                    if ($pimcoreUser->getTwoFactorAuthentication('required') && $pimcoreUser->getTwoFactorAuthentication('enabled')) {
+                        $adminSession->set('2fa_required', true);
+                    }
                 });
             }
         }
