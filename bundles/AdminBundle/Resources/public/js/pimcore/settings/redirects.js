@@ -505,7 +505,7 @@ pimcore.settings.redirects = Class.create({
                             var record = data.records[0];
                             var data = record.data;
 
-                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                         } catch (e) {
@@ -521,7 +521,7 @@ pimcore.settings.redirects = Class.create({
                         try {
                             var record = data.records[0];
                             var data = record.data;
-                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
                                 var rec = this.grid.getStore().getAt(myRowIndex);
                                 rec.set("target", data.path);
                                 this.updateRows();

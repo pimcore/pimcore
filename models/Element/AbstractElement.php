@@ -20,13 +20,16 @@ namespace Pimcore\Model\Element;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 
 /**
  * @method Model\Document\Dao|Model\Asset|Dao|Model\DataObject\AbstractObject\Dao getDao()
  */
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface
+abstract class AbstractElement extends Model\AbstractModel implements ElementInterface, ElementDumpStateInterface, DirtyIndicatorInterface
 {
     use ElementDumpStateTrait;
+    use DirtyIndicatorTrait;
 
     /**
      * @var int
@@ -44,23 +47,29 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->setVersionCount(1);
         }
 
-        $updateTime = time();
-        $this->setModificationDate($updateTime);
+        $modificationDateKey = $this instanceof AbstractObject ? 'o_modificationDate' : 'modificationDate';
+        if (!$this->isFieldDirty($modificationDateKey)) {
+            $updateTime = time();
+            $this->setModificationDate($updateTime);
+        }
 
         if (!$this->getCreationDate()) {
-            $this->setCreationDate($updateTime);
+            $this->setCreationDate($this->getModificationDate());
         }
 
-        // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
-        $userId = 0;
-        $user = \Pimcore\Tool\Admin::getCurrentUser();
-        if ($user instanceof Model\User) {
-            $userId = $user->getId();
+        // auto assign user if possible, if not changed explicitly, if no user present, use ID=0 which represents the "system" user
+        $userModificationKey = $this instanceof AbstractObject ? 'o_userModification' : 'userModification';
+        if (!$this->isFieldDirty($userModificationKey)) {
+            $userId = 0;
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+            if ($user instanceof Model\User) {
+                $userId = $user->getId();
+            }
+            $this->setUserModification($userId);
         }
-        $this->setUserModification($userId);
 
         if ($this->getUserOwner() === null) {
-            $this->setUserOwner($userId);
+            $this->setUserOwner($this->getUserModification());
         }
     }
 

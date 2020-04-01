@@ -91,10 +91,10 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return;
                     }
                 } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
@@ -173,7 +173,7 @@ abstract class AbstractRelations extends Data implements
         });
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof DataObject\DirtyIndicatorInterface && $data['dirty']) {
+        if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
             $object->markFieldDirty($this->getName(), true);
         }
 
@@ -433,7 +433,7 @@ abstract class AbstractRelations extends Data implements
     {
         if (
             (!is_array($data) || count($data) < 2)
-            || !$container instanceof DataObject\DirtyIndicatorInterface
+            || !$container instanceof Element\DirtyIndicatorInterface
             || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
             || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
                 || $container instanceof DataObject\Localizedfield

@@ -4,6 +4,7 @@ On class level, there are multiple additional settings and features available wh
 backend or via code by a developer. 
 
 #### These features include: 
+* [Composite Indices](./05_Composite_Indices.md)
 * [Data Inheritance and Parent Class](./25_Inheritance.md)
 * [Object Variants](./70_Variants.md)
 * [Object Preview](./55_Preview.md)

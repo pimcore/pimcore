@@ -147,17 +147,17 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document $document
+     * @param array $data
      */
-    protected function addTranslationsData(Model\Document $document)
+    protected function addTranslationsData(Model\Document $document, array &$data)
     {
         $service = new Model\Document\Service;
         $translations = $service->getTranslations($document);
         $unlinkTranslations = $service->getTranslations($document, 'unlink');
         $language = $document->getProperty('language');
-        unset($translations[$language]);
-        unset($unlinkTranslations[$language]);
-        $document->translations = $translations;
-        $document->unlinkTranslations = $unlinkTranslations;
+        unset($translations[$language], $unlinkTranslations[$language]);
+        $data['translations'] = $translations;
+        $data['unlinkTranslations'] = $unlinkTranslations;
     }
 
     /**
@@ -214,8 +214,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
             // outdated and unused data elements in this document (eg. entries of area-blocks)
 
-            if ($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())
-                            && $documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave')) {
+            if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())) &&
+                ($documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave'))) {
                 Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
             }
         }
@@ -239,11 +239,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document $document
+     * @param array $data
      */
-    protected function minimizeProperties($document)
+    protected function minimizeProperties($document, array &$data)
     {
-        $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
-        $document->setProperties($properties);
+        $data['properties'] = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
     }
 
     /**
@@ -272,7 +272,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
-            if ($latestDoc instanceof Model\Document) {
+            if ($latestDoc instanceof Model\Document\PageSnippet) {
                 $latestDoc->setModificationDate($document->getModificationDate()); // set de modification-date from published version to compare it in js-frontend
                 return $latestDoc;
             }

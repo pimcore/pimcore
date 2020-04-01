@@ -55,12 +55,12 @@ class HardlinkController extends DocumentControllerBase
         $link = clone $link;
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-
-        $this->addTranslationsData($link);
-        $this->minimizeProperties($link);
         $link->getScheduledTasks();
 
         $data = $link->getObjectVars();
+
+        $this->addTranslationsData($link, $data);
+        $this->minimizeProperties($link, $data);
 
         if ($link->getSourceDocument()) {
             $data['sourcePath'] = $link->getSourceDocument()->getRealFullPath();

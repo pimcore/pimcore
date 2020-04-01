@@ -135,4 +135,9 @@ class ClassDefinition extends Model\Webservice\Data
      * @var string
      */
     public $linkGeneratorReference;
+
+    /**
+     * @var array
+     */
+    public $compositeIndices;
 }

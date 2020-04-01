@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method array delete(Concrete $object, $saveMode = false)
@@ -26,7 +27,7 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]

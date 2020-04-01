@@ -88,8 +88,6 @@ class Dao extends Model\Element\Dao
 
     public function update()
     {
-        $this->model->setModificationDate(time());
-
         $asset = $this->model->getObjectVars();
 
         foreach ($asset as $key => $value) {

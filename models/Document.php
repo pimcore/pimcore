@@ -300,6 +300,8 @@ class Document extends Element\AbstractElement
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
+                $document->resetDirtyMap();
+
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
@@ -827,7 +829,9 @@ class Document extends Element\AbstractElement
             if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
                 /** @var Document $parent * */
                 $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
-                $parent->setChildren(null);
+                if ($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
             }
         } catch (\Exception $e) {
             $this->rollBack();
@@ -1114,6 +1118,8 @@ class Document extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
+        $this->markFieldDirty('modificationDate');
+
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
@@ -1227,6 +1233,8 @@ class Document extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
+        $this->markFieldDirty('userModification');
+
         $this->userModification = (int) $userModification;
 
         return $this;
