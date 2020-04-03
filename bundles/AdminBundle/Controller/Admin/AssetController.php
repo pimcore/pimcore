@@ -121,10 +121,21 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
-            $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
+            $previewUrl = $this->generateUrl('pimcore_admin_asset_getimagethumbnail', [
+                'id' => $asset->getId(),
+                'treepreview' => true,
+                'hdpi' => true,
+                '_dc' => time()
+            ]);
+
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset?id=%d&_dc=%d', $asset->getId(), time());
+                $previewUrl = $this->generateUrl('pimcore_admin_asset_getasset', [
+                    'id' => $asset->getId(),
+                    '_dc' => time()
+                ]);
             }
+
+            $imageInfo['previewUrl'] = $previewUrl;
 
             if ($asset->getWidth() && $asset->getHeight()) {
                 $imageInfo['dimensions'] = [];
@@ -740,22 +751,35 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @param Asset $asset
      * @param bool $hdpi
+     * @param bool $grid
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset, $hdpi = false)
+    protected function getThumbnailUrl(Asset $asset, $hdpi = false, $grid = false)
     {
-        $suffix = '';
+        $params = [
+            'id' => $asset->getId(),
+            'treepreview' => true
+        ];
+
         if ($hdpi) {
-            $suffix .= '&hdpi=true';
+            $params['hdpi'] = true;
+        }
+
+        if ($grid) {
+            $params['grid'] = true;
         }
 
         if ($asset instanceof Asset\Image) {
-            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
-        } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true'. $suffix;
-        } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
+            return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
+        }
+
+        if ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
+            return $this->generateUrl('pimcore_admin_asset_getvideothumbnail', $params);
+        }
+
+        if ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
+            return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
         return null;
@@ -858,7 +882,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri('/admin/asset/webdav/');
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav'));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
@@ -1664,7 +1688,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
                         'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true&grid=true',
+                        'url' => $this->getThumbnailUrl($asset, true, true),
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];
                 }
@@ -1710,7 +1734,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/asset/copy',
+                'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -1732,7 +1756,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/asset/copy',
+                            'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
@@ -1748,7 +1772,7 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/asset/copy',
+                'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -1889,7 +1913,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
                 $jobs[] = [[
-                    'url' => '/admin/asset/download-as-zip-add-files',
+                    'url' => $this->generateUrl('pimcore_admin_asset_downloadaszipaddfiles'),
                     'method' => 'GET',
                     'params' => [
                         'id' => $asset->getId(),
@@ -2047,7 +2071,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $jobAmount = ceil($zip->numFiles / $filesPerJob);
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
-                    'url' => '/admin/asset/import-zip-files',
+                    'url' => $this->generateUrl('pimcore_admin_asset_importzipfiles'),
                     'method' => 'POST',
                     'params' => [
                         'parentId' => $asset->getId(),
@@ -2171,7 +2195,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
                     $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
                     $jobs[] = [[
-                        'url' => '/admin/asset/import-server-files',
+                        'url' => $this->generateUrl('pimcore_admin_asset_importserverfiles'),
                         'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),

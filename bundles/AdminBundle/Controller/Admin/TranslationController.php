@@ -95,7 +95,7 @@ class TranslationController extends AdminController
                 $lg = $item['lg'];
                 $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
                 $item['lgname'] = \Locale::getDisplayLanguage($lg, $currentLocale);
-                $item['icon'] = '/admin/misc/get-language-flag?language=' . $lg;
+                $item['icon'] = $this->generateUrl('pimcore_admin_misc_getlanguageflag', ['language' => $lg]);
                 $item['current'] = $item['text'];
                 $enrichedDelta[] = $item;
             }
@@ -765,7 +765,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => '/admin/translation/' . $type . '-export',
+                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/translation/' . $type . '-export',
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,
@@ -858,7 +858,7 @@ class TranslationController extends AdminController
 
         for ($i = 0; $i < $steps; $i++) {
             $jobs[] = [[
-                'url' => '/admin/translation/xliff-import-element',
+                'url' => $this->generateUrl('pimcore_admin_translation_xliffimportelement'),
                 'method' => 'POST',
                 'params' => [
                     'id' => $id,

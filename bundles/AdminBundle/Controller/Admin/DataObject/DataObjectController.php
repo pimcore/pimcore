@@ -1826,7 +1826,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/object/copy',
+                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -1849,7 +1849,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/object/copy',
+                            'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
@@ -1866,7 +1866,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($request->get('type') == 'recursive-update-references') {
                     for ($i = 0; $i < (count($childIds) + 1); $i++) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/object/copy-rewrite-ids',
+                            'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copyrewriteids'),
                             'method' => 'PUT',
                             'params' => [
                                 'transactionId' => $transactionId,
@@ -1879,7 +1879,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/object/copy',
+                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copyrewriteids'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),

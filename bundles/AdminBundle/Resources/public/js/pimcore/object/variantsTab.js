@@ -53,7 +53,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
     getTableDescription: function () {
         Ext.Ajax.request({
-            url: "/admin/object-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
             params: {
                 id: this.classId,
                 objectId:
@@ -101,7 +101,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
-            "/admin/variants/get-variants",
+            Routing.generate('pimcore_admin_dataobject_variants_getvariants'),
             baseParams,
             false
         );
@@ -265,7 +265,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     editKey: function (id, button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
-                url: "/admin/variants/update-key",
+                url: Routing.generate('pimcore_admin_dataobject_variants_updatekey'),
                 method: 'PUT',
                 params: {id: id, key: value},
                 success: function (response) {
@@ -288,7 +288,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     doAdd: function (button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 method: 'POST',
                 params: {
                     className: this.element.data.general.o_className,
@@ -322,7 +322,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             }
 
             Ext.Ajax.request({
-                url: "/admin/object/delete",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_delete'),
                 method: 'DELETE',
                 params: {
                     id: id

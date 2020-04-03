@@ -56,7 +56,7 @@ pimcore.settings.redirects = Class.create({
         var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/redirects/list?';
+        var url = Routing.generate('pimcore_admin_redirects_redirects');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -307,7 +307,7 @@ pimcore.settings.redirects = Class.create({
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
                     handler: function () {
-                        pimcore.helpers.download('/admin/redirects/csv-export');
+                        pimcore.helpers.download(Routing.generate('pimcore_admin_redirects_csvexport'));
                     }
                 },
                 {
@@ -315,7 +315,7 @@ pimcore.settings.redirects = Class.create({
                     iconCls: "pimcore_icon_import",
                     handler: function () {
                         pimcore.helpers.uploadDialog(
-                            '/admin/redirects/csv-import', 'redirects',
+                            Routing.generate('pimcore_admin_redirects_csvimport'), 'redirects',
                             function (res) {
                                 that.store.reload();
 
@@ -469,7 +469,7 @@ pimcore.settings.redirects = Class.create({
 
     cleanupExpiredRedirects: function () {
         Ext.Ajax.request({
-            url: '/admin/redirects/cleanup',
+            url: Routing.generate('pimcore_admin_redirects_cleanup'),
             method: 'DELETE',
             success: function (response) {
                 try{

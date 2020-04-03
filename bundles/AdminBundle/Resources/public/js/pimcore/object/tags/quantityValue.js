@@ -84,7 +84,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             Ext.Ajax.request({
-                url: "/admin/quantity-value/convert-all",
+                url: Routing.generate('pimcore_admin_dataobject_quantityvalue_convertall'),
                 params: {
                     value: this.inputField.value,
                     unit: this.unitField.value,
@@ -162,7 +162,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                 change: function( combo, newValue, oldValue) {
                     if(this.fieldConfig.autoConvert && (oldValue !== '' || oldValue !== null) && (newValue !== '' && newValue !== null)) {
                         Ext.Ajax.request({
-                            url: "/admin/quantity-value/convert",
+                            url: Routing.generate('pimcore_admin_dataobject_quantityvalue_convert'),
                             params: {
                                 value: this.inputField.value,
                                 fromUnit: oldValue,

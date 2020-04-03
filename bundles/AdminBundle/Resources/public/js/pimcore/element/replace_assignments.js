@@ -26,7 +26,7 @@ pimcore.element.replace_assignments = Class.create({
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/element/find-usages",
+                    url: Routing.generate('pimcore_admin_element_findusages'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
@@ -286,7 +286,7 @@ pimcore.element.replace_assignments = Class.create({
         var selectedRows = this.panel.getComponent("result").getSelection();
         for (var i = 0; i < selectedRows.length; i++) {
             jobs.push({
-                url: "/admin/element/replace-assignments",
+                url: Routing.generate('pimcore_admin_element_replaceassignments'),
                 method: 'POST',
                 params: array_merge(params, {
                     id: selectedRows[i].get("id"),

@@ -52,7 +52,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
                         var item = value[i];
 
-                        var baseUrl = '<img style="padding-left: 3px" src="/admin/asset/get-image-thumbnail?id=' + item.id;
                         var params = {
                             width: 88,
                             height: 88,

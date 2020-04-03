@@ -55,7 +55,7 @@ pimcore.settings.httpErrorLog = Class.create({
     getGrid: function () {
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/misc/http-error-log?';
+        var url = Routing.generate('pimcore_admin_misc_httperrorlog');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -125,14 +125,16 @@ pimcore.settings.httpErrorLog = Class.create({
             listeners: {
                 "rowdblclick": function (grid, record, tr, rowIndex, e, eOpts ) {
                     var data = grid.getStore().getAt(rowIndex);
+                    var path = Routing.generate('pimcore_admin_misc_httperrorlogdetail', {
+                        uri: data.get("uri"),
+                    });
                     var win = new Ext.Window({
                         closable: true,
                         width: 810,
                         autoDestroy: true,
                         height: 430,
                         modal: true,
-                        html: '<iframe src="/admin/misc/http-error-log-detail?uri=' + encodeURIComponent(data.get("uri"))
-                                + '" frameborder="0" width="100%" height="390"></iframe>'
+                        html: '<iframe src="' + path + '" frameborder="0" width="100%" height="390"></iframe>'
                     });
                     win.show();
                 }
@@ -159,7 +161,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     text: t('flush'),
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/misc/http-error-log-flush",
+                            url: Routing.generate('pimcore_admin_misc_httperrorlogflush'),
                             method: "DELETE",
                             success: function () {
                                 var proxy = this.store.getProxy();

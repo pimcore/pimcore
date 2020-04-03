@@ -129,7 +129,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getTableDescription: function () {
         Ext.Ajax.request({
-            url: "/admin/object-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
             params: {
                 id: this.classId,
                 objectId:
@@ -214,7 +214,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
-            "/admin/object/grid-proxy?classId=" + this.classId + "&folderId=" + this.object.id,
+            Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.classId, folderId: this.object.id}),
             baseParams,
             false
         );

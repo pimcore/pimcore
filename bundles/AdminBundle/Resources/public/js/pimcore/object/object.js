@@ -59,7 +59,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var options = this.options || {};
 
         Ext.Ajax.request({
-            url: "/admin/object/get",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_get'),
             params: params,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -196,7 +196,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
+                url: Routing.generate('pimcore_admin_element_unlockelement'),
                 method: 'PUT',
                 params: {
                     id: this.id,
@@ -512,7 +512,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     scale: "medium",
                     handler: function () {
                         var date = new Date();
-                        var path = "/admin/object/preview?id=" + this.data.general.o_id + "&time=" + date.getTime();
+                        var path = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.data.general.o_id, time: date.getTime()});
                         this.saveToSession(function () {
                             window.open(path);
                         });
@@ -756,7 +756,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             Ext.Ajax.request({
-                url: '/admin/object/save?task=' + task,
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_save', {task: task}),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {

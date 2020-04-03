@@ -53,7 +53,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             readerFields.push(columnConfig);
         }
 
-        var url = "/admin/classificationstore/collection-relations?";
+        var url = Routing.generate('pimcore_admin_dataobject_classificationstore_collectionrelations');
         var proxy = {
             batchActions: false,
             type: 'ajax',
@@ -140,7 +140,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         var groupId = data.data.groupId;
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/delete-collection-relation",
+                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollectionrelation'),
                             method: 'DELETE',
                             params: {
                                 colId: colId,
@@ -222,7 +222,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         }
 
         var proxy = {
-            url: "/admin/classificationstore/collections",
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_collectionsactionget'),
             batchActions: false,
             type: 'ajax',
             reader: {
@@ -308,7 +308,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         this.relationsPanel.disable();
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/delete-collection",
+                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollection'),
                             method: 'DELETE',
                             params: {
                                 id: id
@@ -402,7 +402,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         value = value.trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
-                url: "/admin/classificationstore/create-collection",
+                url: Routing.generate('pimcore_admin_dataobject_classificationstore_createcollection'),
                 method: 'POST',
                 params: {
                     name: value,

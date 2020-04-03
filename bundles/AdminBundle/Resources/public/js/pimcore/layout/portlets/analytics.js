@@ -39,7 +39,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/reports/analytics/chartmetricdata?metric[]=visits&metric[]=pageviews&site=' + site,
+                url: Routing.generate('pimcore_admin_reports_analytics_chartmetricdata', {metric: ['visits', 'pageviews'], site: site}),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -69,7 +69,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: '/admin/portal/portlet-analytics-sites',
+                            url: Routing.generate('pimcore_admin_portal_portletanalyticssites'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -90,7 +90,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                                 }
                             });
                             Ext.Ajax.request({
-                                url: "/admin/portal/update-portlet-config",
+                                url: Routing.generate('pimcore_admin_portal_updateportletconfig'),
                                 method: 'PUT',
                                 params: {
                                     key: this.portal.key,

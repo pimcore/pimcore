@@ -7,13 +7,28 @@
 
     $previewImage = null;
     try {
-        $suffix = '&hdpi=true';
         if ($element instanceof \Pimcore\Model\Asset\Image) {
-            $previewImage = '/admin/asset/get-image-thumbnail?id=' . $element->getId() . '&treepreview=true' . $suffix;
-        } elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
-            $previewImage = '/admin/asset/get-video-thumbnail?id=' . $element->getId() . '&treepreview=true'. $suffix;
-        } elseif ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
-            $previewImage = '/admin/asset/get-document-thumbnail?id=' . $element->getId() . '&treepreview=true' . $suffix;
+             $previewImage =$this->generateUrl('pimcore_admin_asset_getimagethumbnail', [
+                'id' => $element->getId(),
+                'treepreview' => true,
+                'hdpi' => true,
+            ]);
+        }
+
+        elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
+            $previewImage = $this->generateUrl('pimcore_admin_asset_getvideothumbnail', [
+                'id' => $element->getId(),
+                'treepreview' => true,
+                'hdpi' => true,
+            ]);
+        }
+
+        if ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
+            $previewImage = $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', [
+                'id' => $element->getId(),
+                'treepreview' => true,
+                'hdpi' => true,
+            ]);
         }
     } catch (\Exception $e) {
 

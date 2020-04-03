@@ -827,7 +827,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/document/copy',
+                'url' => $this->generateUrl('pimcore_admin_document_document_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -853,7 +853,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/document/copy',
+                            'url' => $this->generateUrl('pimcore_admin_document_document_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
@@ -873,7 +873,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($request->get('type') == 'recursive-update-references') {
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
-                        'url' => '/admin/document/copy-rewrite-ids',
+                        'url' => $this->generateUrl('pimcore_admin_document_document_copyrewriteids'),
                         'method' => 'PUT',
                         'params' => [
                             'transactionId' => $transactionId,
@@ -886,7 +886,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/document/copy',
+                'url' => $this->generateUrl('pimcore_admin_document_document_copyrewriteids'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),

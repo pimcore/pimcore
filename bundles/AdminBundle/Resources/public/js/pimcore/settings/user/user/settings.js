@@ -132,7 +132,7 @@ pimcore.settings.user.user.settings = Class.create({
                 hidden: !this.currentUser['twoFactorAuthentication']['isActive'],
                 handler: function () {
                     Ext.Ajax.request({
-                        url: "/admin/user/reset-2fa-secret",
+                        url: Routing.generate('pimcore_admin_user_reset2fasecret'),
                         method: 'PUT',
                         params: {
                             id: this.currentUser.id
@@ -147,7 +147,9 @@ pimcore.settings.user.user.settings = Class.create({
 
         var getPreviewImageHTML = function () {
             var date = new Date();
-            return '<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc=' + date.getTime() + '" style="width: 46px" />'
+            var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
+
+            return '<img src="'+image+'" style="width: 46px" />'
         }.bind(this);
 
         generalItems.push({
@@ -161,7 +163,7 @@ pimcore.settings.user.user.settings = Class.create({
                 xtype: "button",
                 text: t("upload"),
                 handler: function () {
-                    pimcore.helpers.uploadDialog("/admin/user/upload-image?id=" + this.currentUser.id, null,
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_user_uploadimage', {id: this.currentUser.id}), null,
                         function () {
                             var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
                             cont.update(getPreviewImageHTML());
@@ -206,7 +208,7 @@ pimcore.settings.user.user.settings = Class.create({
                     hidden: (this.currentUser.lastLogin > 0) || (user.id == this.currentUser.id),
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/user/invitationlink",
+                            url: Routing.generate('pimcore_admin_user_invitationlink'),
                             method: 'POST',
                             ignoreErrors: true,
                             params: {
@@ -428,7 +430,7 @@ pimcore.settings.user.user.settings = Class.create({
             disabled: user.id == this.currentUser.id,
             handler: function () {
                 Ext.Ajax.request({
-                    url: "/admin/user/get-token-login-link",
+                    url: Routing.generate('pimcore_admin_user_gettokenloginlink'),
                     ignoreErrors: true,
                     params: {
                         id: this.currentUser.id

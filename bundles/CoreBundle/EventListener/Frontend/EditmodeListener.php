@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Modifies responses for editmode
@@ -58,6 +59,11 @@ class EditmodeListener implements EventSubscriberInterface
     protected $bundleManager;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
@@ -69,17 +75,20 @@ class EditmodeListener implements EventSubscriberInterface
      * @param DocumentResolver $documentResolver
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
+     * @param RouterInterface $router
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         UserLoader $userLoader,
-        PimcoreBundleManager $bundleManager
+        PimcoreBundleManager $bundleManager,
+        RouterInterface $router
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->userLoader = $userLoader;
         $this->bundleManager = $bundleManager;
+        $this->router = $router;
     }
 
     /**
@@ -258,8 +267,12 @@ class EditmodeListener implements EventSubscriberInterface
 
             $headHtml .= '<script src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
+        $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
+            'language' => $language,
+            '_dc' => Version::getRevision()
+        ]);
 
-        $headHtml .= '<script src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::getRevision() . '"></script>' . "\n";
+        $headHtml .= '<script src="'.$path.'"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()

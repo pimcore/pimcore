@@ -148,7 +148,7 @@ class ElementControllerBase extends AdminController
                 ];
 
                 $recycleJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
+                    'url' => $this->generateUrl('pimcore_admin_recyclebin_add'),
                     'method' => 'POST',
                     'params' => [
                         'type' => $type,
@@ -174,7 +174,7 @@ class ElementControllerBase extends AdminController
                         $deleteObjectsPerRequest = 5;
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
-                                'url' => '/admin/' . $type . '/delete',
+                                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
@@ -189,7 +189,7 @@ class ElementControllerBase extends AdminController
 
                 // the asset itself is the last one
                 $deleteJobs[] = [[
-                    'url' => '/admin/' . $type . '/delete',
+                    'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
                         'id' => $element->getId()

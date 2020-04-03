@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.report.analytics.elementexplorer");
 pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract, {
 
-    matchType: function (type) {        
+    matchType: function (type) {
         var types = ["document_page","global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
                                                     && pimcore.settings.google_analytics_enabled) {
@@ -39,7 +39,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             layout: "border",
             items: [this.getFilterPanel(),this.getContentPanel()]
         });
-        
+
         panel.on("afterrender", function (panel) {
             this.loadMask = new Ext.LoadMask(
                 {
@@ -47,15 +47,15 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                     msg: t("please_wait")
                 });
             //this.loadMask.show();
-            
-            
+
+
         }.bind(this));
-        
+
         return panel;
     },
-    
+
     getContentPanel: function () {
-        
+
         var path = "";
         var id = "";
         var type = "";
@@ -64,12 +64,12 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             path = this.reference.data.path + this.reference.data.key;
             type = "document";
         }
-        
+
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/reports/analytics/data-explorer',
+                url: Routing.generate('pimcore_admin_reports_analytics_dataexplorer'),
                 extraParams: {
                     type: type,
                     id: id,
@@ -83,7 +83,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             fields: ['dimension','metric']
         });
         this.store.load();
-        
+
         var panel = new Ext.Panel({
             scrollable: "y",
             region: "center",
@@ -122,10 +122,10 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                 stripeRows: true
             }]
         });
-        
-        return panel;  
+
+        return panel;
     },
-    
+
     getFilterPanel: function () {
 
         if (!this.filterPanel) {
@@ -165,7 +165,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: "/admin/reports/analytics/get-dimensions",
+                                    url: Routing.generate('pimcore_admin_reports_analytics_getdimensions'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
@@ -190,7 +190,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: "/admin/reports/analytics/get-metrics",
+                                    url: Routing.generate('pimcore_admin_reports_analytics_getmetrics'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",

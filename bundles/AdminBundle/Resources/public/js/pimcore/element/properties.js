@@ -11,7 +11,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
- 
+
 pimcore.registerNS("pimcore.element.properties");
 pimcore.element.properties = Class.create({
 
@@ -20,14 +20,14 @@ pimcore.element.properties = Class.create({
     initialize: function(element, type) {
         this.element = element;
         this.type = type;
- 
+
         this.definedFieldTypes = {};
     },
- 
+
     getLayout: function () {
- 
+
         if (this.layout == null) {
- 
+
             var predefinedPropertiesStore = new Ext.data.Store({
                 fields: [
                     "id","name","description","key","type","data","config","inheritable",
@@ -41,7 +41,7 @@ pimcore.element.properties = Class.create({
                 ],
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/element/get-predefined-properties?elementType=' + this.type,
+                    url: Routing.generate('pimcore_admin_element_getpredefinedproperties', {elementType: this.type}),
                     reader: {
                         type: 'json',
                         rootProperty: "properties"
@@ -102,12 +102,12 @@ pimcore.element.properties = Class.create({
             var keys = Object.keys(this.element.data.properties);
             var key = null;
             var storeData = [];
- 
+
             if (keys.length > 0) {
                 for (var i = 0; i < keys.length; i++) {
                     key = keys[i];
                     property = this.element.data.properties[key];
- 
+
                     if (property && typeof property == "object") {
                         storeData.push({
                             name: property.name,
@@ -348,16 +348,16 @@ pimcore.element.properties = Class.create({
             });
 
             this.propertyGrid.on("rowcontextmenu", function ( grid, record, tr, rowIndex, e, eOpts ) {
-                
+
                 var propertyData = grid.getStore().getAt(rowIndex).data;
-                
+
                 if (propertyData.inherited) {
                     e.stopEvent();
                     return;
                 }
 
                 var menu = new Ext.menu.Menu();
- 
+
                 menu.add(new Ext.menu.Item({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete",
@@ -365,7 +365,7 @@ pimcore.element.properties = Class.create({
                         grid.getStore().removeAt(index);
                     }.bind(this, grid, rowIndex)
                 }));
-                
+
                 if(propertyData.type == "object" || propertyData.type == "document" || propertyData.type == "asset") {
                     if(propertyData.data) {
                         menu.add(new Ext.menu.Item({
@@ -386,7 +386,7 @@ pimcore.element.properties = Class.create({
                         }));
                     }
                 }
- 
+
                 e.stopEvent();
                 menu.showAt(e.pageX, e.pageY);
             }.bind(this));
@@ -399,17 +399,17 @@ pimcore.element.properties = Class.create({
                 items: [this.propertyGrid]
             });
         }
- 
+
         return this.layout;
     },
- 
+
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
- 
+
         return '<div class="pimcore_icon_' + value + '" name="' + record.data.name + '">&nbsp;</div>';
     },
- 
+
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
- 
+
         var data = store.getAt(rowIndex).data;
         var type = data.type;
 
@@ -431,14 +431,14 @@ pimcore.element.properties = Class.create({
                 return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
             }
         }
- 
+
         return value;
     },
 
     cellMousedown: function (view, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
-        
+
         var store = this.propertyGrid.getStore();
         var record = store.getAt(rowIndex);
         var data = record.data;
@@ -448,12 +448,12 @@ pimcore.element.properties = Class.create({
             record.set("data", !record.data.data);
         }
     },
- 
+
     getCellEditor: function (record, defaultField ) {
         var data = record.data;
         var type = data.type;
         var property;
- 
+
         if (type == "text") {
             property = new Ext.form.TextField();
         }
@@ -474,16 +474,16 @@ pimcore.element.properties = Class.create({
 
         return property;
     },
- 
+
     updateRows: function (event) {
         var rows = Ext.get(this.propertyGrid.getEl().dom).query(".x-grid-row");
 
         for (var i = 0; i < rows.length; i++) {
- 
+
             try {
                 var propertyName = Ext.get(rows[i]).query(".x-grid-cell-first div div")[0].getAttribute("name");
                 var storeIndex = this.propertyGrid.getStore().findExact("name", propertyName);
- 
+
                 var data = this.propertyGrid.getStore().getAt(storeIndex).data;
 
                 // hide checkcolumn at inherited properties
@@ -493,14 +493,14 @@ pimcore.element.properties = Class.create({
 
                 if (data.type == "document" || data.type == "asset" || data.type == "object") {
                     if (data.inherited == false) {
-                        // add dnd support 
+                        // add dnd support
                         var dd = new Ext.dd.DropZone(rows[i], {
                             ddGroup: "element",
- 
+
                             getTargetFromEvent: function(e) {
                                 return this.getEl();
                             },
- 
+
                             onNodeOver : function(dataRow, target, dd, e, data) {
                                 if(data.records.length === 1 && dataRow.type == data.records[0].data.elementType) {
                                     return Ext.dd.DropZone.prototype.dropAllowed;
@@ -508,7 +508,7 @@ pimcore.element.properties = Class.create({
                                 return Ext.dd.DropZone.prototype.dropNotAllowed;
 
                             }.bind(this, data),
- 
+
                             onNodeDrop : function(myRowIndex, target, dd, e, data) {
 
                                 if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
@@ -548,7 +548,7 @@ pimcore.element.properties = Class.create({
             }
         }
     },
- 
+
     addSetFromPredefined: function (data, combo) {
         try {
             var id = combo.getValue();
@@ -564,7 +564,7 @@ pimcore.element.properties = Class.create({
             console.log(e);
         }
     },
- 
+
     addSetFromUserDefined: function (customKey, customType) {
         try {
             if (in_array(customKey.getValue(), this.disallowedKeys)) {
@@ -575,7 +575,7 @@ pimcore.element.properties = Class.create({
             console.log(e);
         }
     },
- 
+
     add: function (key, type, value, config, inherited, inheritable, description) {
 
         if(in_array(key, this.disallowedKeys)) {
@@ -587,7 +587,7 @@ pimcore.element.properties = Class.create({
         }
 
         var store = this.propertyGrid.getStore();
- 
+
         // check for duplicate name
         var dublicateIndex = store.findBy(function (key, record, id) {
             if (record.data.name.toLowerCase() == key.toLowerCase()) {
@@ -595,22 +595,22 @@ pimcore.element.properties = Class.create({
             }
             return false;
         }.bind(this, key));
- 
- 
+
+
         if (dublicateIndex >= 0) {
             if (store.getAt(dublicateIndex).data.inherited == false) {
                 Ext.MessageBox.alert(t("error"), t("name_already_in_use"));
                 return;
             }
         }
- 
+
         // check for empty key & type
         if (key.length < 2 || type.length < 1) {
             Ext.MessageBox.alert(t("error"), t("name_and_key_must_be_defined"));
             return;
         }
- 
- 
+
+
         if (!value) {
             if (type == "bool") {
                 value = true;
@@ -623,7 +623,7 @@ pimcore.element.properties = Class.create({
             }
             value = "";
         }
- 
+
         if (typeof inheritable != "boolean") {
             inheritable = true;
         }
@@ -641,23 +641,23 @@ pimcore.element.properties = Class.create({
 
 
         store.add(newRecord);
- 
+
         this.propertyGrid.getStore().group("inherited");
         this.propertyGrid.getView().refresh();
     },
- 
+
     getValues : function () {
- 
+
         if (!this.propertyGrid.rendered) {
             throw "properties not available";
         }
- 
+
         var values = {};
         var store = this.propertyGrid.getStore();
         store.commitChanges();
- 
+
         var records = store.getRange();
- 
+
         for (var i = 0; i < records.length; i++) {
             var currentData = records[i];
             if (currentData) {
@@ -670,9 +670,9 @@ pimcore.element.properties = Class.create({
                 }
             }
         }
- 
- 
+
+
         return values;
     }
- 
+
 });

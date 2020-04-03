@@ -90,7 +90,7 @@ pimcore.settings.videothumbnail.item = Class.create({
                 autoHeight: true,
                 border: false,
                 loader: {
-                    url: "/admin/settings/video-thumbnail-adapter-check",
+                    url: Routing.generate('pimcore_admin_settings_videothumbnailadaptercheck'),
                     autoLoad: true
                 }
             }, {
@@ -184,7 +184,7 @@ pimcore.settings.videothumbnail.item = Class.create({
 
         var m = Ext.encode(this.panel.getForm().getFieldValues());
         Ext.Ajax.request({
-            url: "/admin/settings/video-thumbnail-update",
+            url: Routing.generate('pimcore_admin_settings_videothumbnailupdate'),
             method: "PUT",
             params: {
                 configuration: m,

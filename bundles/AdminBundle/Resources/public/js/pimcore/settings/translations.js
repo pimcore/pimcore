@@ -13,10 +13,14 @@
 
 pimcore.registerNS("pimcore.settings.translations");
 pimcore.settings.translations = Class.create({
-
-
     filterField: null,
     preconfiguredFilter: "",
+    dataUrl: '',
+    exportUrl: '',
+    uploadImportUrl: '',
+    importUrl: '',
+    mergeUrl: '',
+    cleanupUrl: '',
 
     initialize: function (filter) {
 

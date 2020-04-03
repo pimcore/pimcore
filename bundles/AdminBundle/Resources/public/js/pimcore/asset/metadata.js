@@ -524,7 +524,7 @@ pimcore.asset.metadata = Class.create({
     addSetFromPredefinedDefined: function() {
 
         Ext.Ajax.request({
-            url: "/admin/settings/get-predefined-metadata",
+            url: Routing.generate('pimcore_admin_settings_getpredefinedmetadata'),
             params: {
                 type: "asset",
                 subType: this.asset.type

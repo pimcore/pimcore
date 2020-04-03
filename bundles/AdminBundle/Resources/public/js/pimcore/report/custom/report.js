@@ -139,7 +139,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     createGrid: function() {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/reports/custom-report/data?';
+        var url = Routing.generate('pimcore_admin_reports_customreport_data');
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, this.storeFields, itemsPerPage
         );
@@ -204,7 +204,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }
             }
 
-            var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
+            var downloadUrl = Routing.generate('pimcore_admin_reports_customreport_downloadcsv') + '?' + query;
             pimcore.helpers.download(downloadUrl);
         };
 
@@ -258,7 +258,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             });
 
             var drillDownStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/drill-down-options?',
+                Routing.generate('pimcore_admin_reports_customreport_drilldownoptions'),
                 ['value'],
                 400
             );
@@ -335,7 +335,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart?',
+                Routing.generate('pimcore_admin_reports_customreport_chart'),
                 storeFields,
                 400000000
             );
@@ -408,7 +408,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart?',
+                Routing.generate('pimcore_admin_reports_customreport_chart'),
                 chartFields,
                 400000000
             );
@@ -503,7 +503,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
 
             Ext.Ajax.request({
-                url: "/admin/reports/custom-report/get",
+                url: Routing.generate('pimcore_admin_reports_customreport_get'),
                 params: {
                     name: this.config.name
                 },
