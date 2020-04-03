@@ -2513,13 +2513,13 @@ class DataObjectHelperController extends AdminController
     }
     
     /**
-     * @Route("/export-json-config", methods={"GET"})
+     * @Route("/export-csv-import-config-as-json", methods={"GET"})
      *
      * @param Request $request
      * 
      * @return Response
      */
-    public function exportJsonConfigAction(Request $request)
+    public function exportCsvImportConfigAsJsonAction(Request $request)
     {
         $classId = $request->get("classId");
         $configData = json_decode($request->get('config'), true);
