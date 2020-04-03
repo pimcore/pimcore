@@ -1525,28 +1525,10 @@ class DataObjectHelperController extends AdminController
             $dialect = Tool\Admin::determineCsvDialect($file . '_original');
         }
 
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
-
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-                $cols = count($rowData);
-
-                $count++;
-
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
+        $data = $this->getDataPreview($originalFile, $dialect);
+        
+        //Count CSV Columns
+        $cols = isset($data[0]) ? count($data[0]) -1 : 0;
 
         // get class data
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
@@ -1623,6 +1605,35 @@ class DataObjectHelperController extends AdminController
             ],
             'availableConfigs' => $availableConfigs
         ]);
+    }
+    
+    private function getDataPreview($originalFile, $dialect){
+        $count = 0;
+        $data = [];
+        if (($handle = fopen($originalFile, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                $tmpData = [];
+
+                foreach ($rowData as $key => $value) {
+                    $tmpData['field_' . $key] = $value;
+                }
+
+                $tmpData['rowId'] = $count + 1;
+                $data[] = $tmpData;
+
+                $count++;
+
+                /**
+                 * Reached the number or rows for the preview
+                 */
+                if ($count > 18) {
+                    break;
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $data;
     }
 
     /**
@@ -2499,5 +2510,99 @@ class DataObjectHelperController extends AdminController
                 $commonFields[$fd->getName()] = $fd;
             }
         }
+    }
+    
+    /**
+     * @Route("/export-csv-import-config-as-json", methods={"GET"})
+     *
+     * @param Request $request
+     * 
+     * @return Response
+     */
+    public function exportCsvImportConfigAsJsonAction(Request $request)
+    {
+        $classId = $request->get("classId");
+        $configData = json_decode($request->get('config'), true);
+        
+        try {
+            
+            $configName = $configData['shareSettings']['configName'];
+            
+            if(empty($configName)){
+                $configName = date("YmdHis")."_".$classId."_configuration";
+            }
+            
+            $jsonResponse = new JsonResponse(json_encode($configData), 200, [
+                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
+            ], true);
+            
+            return $jsonResponse;
+            
+        } catch (\Exception $e) {
+            throw new \Exception("Error retrieving import configuration - ".$e->getMessage());
+        }
+    }
+    
+    /**
+     * @Route("/import-csv-import-config-from-json", methods={"POST"})
+     *
+     * @param Request $request
+     * @param ImportService $importService
+     *
+     * @return JsonResponse
+     */
+    public function importCSVImportConfigFromJsonAction(Request $request, ImportService $importService)
+    {
+        $importConfigId = $request->get('importConfigId');
+        
+        $tmpName = $_FILES['Filedata']['tmp_name'];
+        $json = file_get_contents($tmpName);
+
+        $configData = json_decode($json, true);
+
+        $dataFields = $configData['dataFields'];
+        $targetFields = $configData['targetFields'];
+        $selectedGridColumns = $configData['selectedGridColumns'];
+        $resolverSettings = $configData['resolverSettings'];
+        $shareSettings = $configData['shareSettings'];
+        $dialect = json_decode(json_encode($configData['csvSettings']), false);
+        
+        $success = true;
+        $classId = $request->get('classId');
+        
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+
+        $originalFile = $file . '_original';
+        // determine type
+        if (empty($dialect)) {
+            $dialect = Tool\Admin::determineCsvDialect($originalFile);
+        }
+
+        /**
+         * Reload data form original CSV to properly refresh 
+         * the data preview on the import interface
+         */
+        $data = $this->getDataPreview($originalFile, $dialect);
+        
+        $availableConfigs = $this->getImportConfigs($importService, Tool\Admin::getCurrentUser(), $classId);
+
+        return $this->adminJson([
+            'success' => $success,
+            'config' => [
+                'importConfigId' => $importConfigId,
+                'dataPreview' => $data,
+                'dataFields' => $dataFields,
+                'targetFields' => $targetFields,
+                'selectedGridColumns' => $selectedGridColumns,
+                'resolverSettings' => $resolverSettings ?? null,
+                'shareSettings' => $shareSettings ?? null,
+                'csvSettings' => $dialect,
+                'rows' => $configData["rows"],
+                'cols' => $configData["cols"] ?? null,
+                'classId' => $classId,
+                'isShared' => $configData["isShared"]
+            ],
+            'availableConfigs' => $availableConfigs
+        ]);
     }
 }
