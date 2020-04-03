@@ -802,7 +802,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         var config = this.prepareSaveData();
         config = Ext.encode(config);
         
-        return "/admin/object-helper/export-json-config?classId="+this.classId+"&config="+config;
+        return "/admin/object-helper/export-csv-import-config-as-json?classId="+this.classId+"&config="+config;
     },
     
     getImportConfigUrl: function(){
