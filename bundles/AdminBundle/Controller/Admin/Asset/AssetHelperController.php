@@ -347,6 +347,10 @@ class AssetHelperController extends AdminController
             'layout' => $field['fieldConfig']['layout'] ?? null,
         ];
 
+        if (isset($field['locked'])) {
+            $result['locked'] = $field['locked'];
+        }
+
         if ($type === 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];

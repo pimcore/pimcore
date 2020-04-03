@@ -320,8 +320,6 @@ class Thumbnail
         // $this->getConfig() can be empty, the original image is returned
         if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
-            // mobile first => fallback image is the smallest possible image
-            $fallBackImageThumb = null;
             $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
             $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
             $webpSupportBackup = null;
@@ -351,10 +349,6 @@ class Thumbnail
                     $thumbConfigRes->setHighResolution($highRes);
                     $thumb = $image->getThumbnail($thumbConfigRes, true);
                     $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $highRes . 'x', $options, $image);
-
-                    if (!$fallBackImageThumb) {
-                        $fallBackImageThumb = $thumb;
-                    }
 
                     if ($isAutoFormat) {
                         $thumbConfigWebP = clone $thumbConfigRes;
@@ -388,7 +382,9 @@ class Thumbnail
                     $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
                     if ($isAutoFormat) {
                         $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
-                        $html .= "\t" . $sourceHtmlWebP . "\n";
+                        if ($sourceHtmlWebP != $sourceHtml) {
+                            $html .= "\t" . $sourceHtmlWebP . "\n";
+                        }
                     }
 
                     $html .= "\t" . $sourceHtml . "\n";
@@ -396,7 +392,7 @@ class Thumbnail
             }
 
             $attrCleanedForPicture = $attributes;
-            $attrCleanedForPicture['src'] = $this->addCacheBuster((string) $fallBackImageThumb, $options, $image);
+            $attrCleanedForPicture['src'] = $this->addCacheBuster($path, $options, $image);
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
 

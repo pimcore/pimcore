@@ -118,7 +118,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
-                'propertyVisibility' => $class->getPropertyVisibility()
+                'propertyVisibility' => $class->getPropertyVisibility(),
+                'enableGridLocking' => $class->isEnableGridLocking()
             ];
         };
 
@@ -1651,7 +1652,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout->className = $class->getName();
+                $customLayout = $customLayout->getObjectVars();
+                $customLayout['className'] = $class->getName();
                 $result['customlayout'][] = $customLayout;
             }
         }

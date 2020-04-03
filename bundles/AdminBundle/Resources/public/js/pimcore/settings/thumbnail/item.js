@@ -1349,5 +1349,34 @@ pimcore.settings.thumbnail.items = {
         });
 
         return item;
+    },
+
+    item1x1_pixel: function (panel, data, getName) {
+
+        var niceName = t("1x1_pixel_placeholder");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            html: t("1x1_pixel_placeholder_description"),
+            items: [{
+                xtype: "hidden",
+                name: "type",
+                value: "1x1_pixel"
+            }]
+        });
+
+        return item;
     }
 };

@@ -61,13 +61,14 @@ class SnippetController extends DocumentControllerBase
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
-        $this->addTranslationsData($snippet);
-        $this->minimizeProperties($snippet);
-
         // unset useless data
         $snippet->setElements(null);
 
         $data = $snippet->getObjectVars();
+
+        $this->addTranslationsData($snippet, $data);
+        $this->minimizeProperties($snippet, $data);
+
         $data['url'] = $snippet->getUrl();
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();

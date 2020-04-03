@@ -19,16 +19,18 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class BooleanFormatter extends AbstractOperator
 {
+    /** @var string */
     private $yesValue;
 
+    /** @var string */
     private $noValue;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->yesValue = $config->yesValue;
-        $this->noValue = $config->noValue;
+        $this->yesValue = $config->yesValue ?? '';
+        $this->noValue = $config->noValue ?? '';
     }
 
     public function getLabeledValue($element)

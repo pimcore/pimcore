@@ -162,6 +162,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->$setter($clonedWorkspaces);
                         }
 
+                        $user->setPerspectives($rObject->getPerspectives());
                         $user->setPermissions($rObject->getPermissions());
 
                         if ($type == 'user') {
@@ -175,6 +176,9 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->setMemorizeTabs($rObject->getMemorizeTabs());
                             $user->setCloseWarning($rObject->getCloseWarning());
                         }
+
+                        $user->setWebsiteTranslationLanguagesView($rObject->getWebsiteTranslationLanguagesView());
+                        $user->setWebsiteTranslationLanguagesEdit($rObject->getWebsiteTranslationLanguagesEdit());
 
                         $user->save();
                     }

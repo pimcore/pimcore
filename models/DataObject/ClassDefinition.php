@@ -162,6 +162,11 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
+    public $compositeIndices = [];
+
+    /**
+     * @var array
+     */
     public $propertyVisibility = [
         'grid' => [
             'id' => true,
@@ -178,6 +183,11 @@ class ClassDefinition extends Model\AbstractModel
             'creationDate' => true
         ]
     ];
+
+    /**
+     * @var bool
+     */
+    public $enableGridLocking = false;
 
     /**
      * @param string $id
@@ -1346,6 +1356,22 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
+    }
+
+    /**
      * @return string|null
      */
     public function getImplementsInterfaces(): ?string
@@ -1361,6 +1387,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCompositeIndices(): array
+    {
+        return $this->compositeIndices;
+    }
+
+    /**
+     * @param array $compositeIndices
+     *
+     * @return $this
+     */
+    public function setCompositeIndices($compositeIndices)
+    {
+        $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;
     }

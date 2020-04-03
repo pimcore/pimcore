@@ -118,6 +118,8 @@ input.cke_dialog_ui_input_tel {
 }
 
 .pimcore_area_buttons_inner{
+    height: 34px;
+    overflow:hidden;
     background: #3c3f41;
     border-left: 1px solid #000;
 }

@@ -937,7 +937,13 @@
     "skip_if_exists": "Ignorer la ligne si elle existe",
     "php_class_or_service": "Nom de la classe ou du service",
     "redirect_performance_warning": "L'utilisation de cette fonctionnalité a de très mauvais effets sur les performances de l'ensemble de l'application, voulez-vous vraiment continuer ?",
-    "test_url": "Test URL",
-    "create_redirects": "Create redirects to keep URLs working (incl. children)?",
-    "auto_create": "Auto create"
+    "test_url": "URL de test",
+    "create_redirects": "Créer des redirections pour que les URLs fonctionnent (y compris les enfants) ?",
+    "auto_create": "Création automatique",
+    "methods": "Méthodes",
+    "batch_operation": "Opération par lots",
+    "move": "Déplacer",
+    "property_name": "Property name",
+    "force_value": "Force value",
+    "enable_grid_locking": "Enable grid locking"
 }

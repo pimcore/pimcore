@@ -22,7 +22,6 @@
     "good": "Gut",
     "best": "Beste(r)",
     "average": "Durchschnitt",
-    "please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail": "Bitte gegen Sie die maximal erlaubte Viewport-Breite (in Pixel) für dieses Thumbnail ein.",
     "example": "Beispiel",
     "add_media_query": "Media Query hinzfügen",
     "send_as_html_mime": "Als HTML/Mime senden",
@@ -717,5 +716,8 @@
     "url_slug": "URL Slug",
     "url_slug_datatype_info": "Geben Sie den Controller und die Aktion in folgendem Format ein: \n<br>AppBundle\\Controller\\ProductController: slugAction",
     "controller_action": "Controller & Aktion",
-    "implements_interfaces": "Implementiert(e) Schnittstelle(n)"
+    "implements_interfaces": "Implementiert(e) Schnittstelle(n)",
+    "enter_media_query": "Bitte geben Sie eine gültige CSS-Medienabfrage ein",
+    "1x1_pixel_placeholder": "1x1 Pixel Placeholder",
+    "1x1_pixel_placeholder_description": "Just returns a 1x1 pixel GIF base64 encoded, in case you don't want to display an image for a certain condition"
 }

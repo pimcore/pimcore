@@ -94,6 +94,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         obj.width = child.data.width;
                     }
                 }
+
+                if (child.data.locked) {
+                    obj.locked = child.data.locked;
+                }
+
                 this.data.columns.push(obj);
             }.bind(this));
         }
@@ -161,7 +166,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         }
 
         Ext.Ajax.request({
-            url: Routing.genearte('pimcore_admin_asset_gridproxy'),
+            url: Routing.generate('pimcore_admin_asset_gridproxy'),
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,
@@ -237,6 +242,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         child.width = nodeConf.width;
                     }
                 }
+
+                if (nodeConf.locked) {
+                    child.locked = nodeConf.locked;
+                }
+
                 childs.push(child);
             }
 
