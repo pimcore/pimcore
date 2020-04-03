@@ -41,6 +41,8 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
     exit(1);
 }
 
+define('PIMCORE_PROJECT_ROOT', $projectRoot);
+
 Bootstrap::setProjectRoot();
 Bootstrap::defineConstants();
 
