@@ -1526,9 +1526,9 @@ class DataObjectHelperController extends AdminController
         }
 
         $data = $this->getDataPreview($originalFile, $dialect);
-        
+
         //Count CSV Columns
-        $cols = isset($data[0]) ? count($data[0]) -1 : 0;
+        $cols = isset($data[0]) ? count($data[0]) - 1 : 0;
 
         // get class data
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
@@ -1606,8 +1606,9 @@ class DataObjectHelperController extends AdminController
             'availableConfigs' => $availableConfigs
         ]);
     }
-    
-    private function getDataPreview($originalFile, $dialect){
+
+    private function getDataPreview($originalFile, $dialect)
+    {
         $count = 0;
         $data = [];
         if (($handle = fopen($originalFile, 'r')) !== false) {
@@ -1632,7 +1633,7 @@ class DataObjectHelperController extends AdminController
             }
             fclose($handle);
         }
-        
+
         return $data;
     }
 
@@ -2511,38 +2512,36 @@ class DataObjectHelperController extends AdminController
             }
         }
     }
-    
+
     /**
      * @Route("/export-csv-import-config-as-json", methods={"GET"})
      *
      * @param Request $request
-     * 
+     *
      * @return Response
      */
     public function exportCsvImportConfigAsJsonAction(Request $request)
     {
-        $classId = $request->get("classId");
+        $classId = $request->get('classId');
         $configData = json_decode($request->get('config'), true);
-        
+
         try {
-            
             $configName = $configData['shareSettings']['configName'];
-            
-            if(empty($configName)){
-                $configName = date("YmdHis")."_".$classId."_configuration";
+
+            if (empty($configName)) {
+                $configName = date('YmdHis').'_'.$classId.'_configuration';
             }
-            
+
             $jsonResponse = new JsonResponse(json_encode($configData), 200, [
                 'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
             ], true);
-            
+
             return $jsonResponse;
-            
         } catch (\Exception $e) {
-            throw new \Exception("Error retrieving import configuration - ".$e->getMessage());
+            throw new \Exception('Error retrieving import configuration - '.$e->getMessage());
         }
     }
-    
+
     /**
      * @Route("/import-csv-import-config-from-json", methods={"POST"})
      *
@@ -2554,7 +2553,7 @@ class DataObjectHelperController extends AdminController
     public function importCSVImportConfigFromJsonAction(Request $request, ImportService $importService)
     {
         $importConfigId = $request->get('importConfigId');
-        
+
         $tmpName = $_FILES['Filedata']['tmp_name'];
         $json = file_get_contents($tmpName);
 
@@ -2566,10 +2565,10 @@ class DataObjectHelperController extends AdminController
         $resolverSettings = $configData['resolverSettings'];
         $shareSettings = $configData['shareSettings'];
         $dialect = json_decode(json_encode($configData['csvSettings']), false);
-        
+
         $success = true;
         $classId = $request->get('classId');
-        
+
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
 
         $originalFile = $file . '_original';
@@ -2579,11 +2578,11 @@ class DataObjectHelperController extends AdminController
         }
 
         /**
-         * Reload data form original CSV to properly refresh 
+         * Reload data form original CSV to properly refresh
          * the data preview on the import interface
          */
         $data = $this->getDataPreview($originalFile, $dialect);
-        
+
         $availableConfigs = $this->getImportConfigs($importService, Tool\Admin::getCurrentUser(), $classId);
 
         return $this->adminJson([
@@ -2597,10 +2596,10 @@ class DataObjectHelperController extends AdminController
                 'resolverSettings' => $resolverSettings ?? null,
                 'shareSettings' => $shareSettings ?? null,
                 'csvSettings' => $dialect,
-                'rows' => $configData["rows"],
-                'cols' => $configData["cols"] ?? null,
+                'rows' => $configData['rows'],
+                'cols' => $configData['cols'] ?? null,
                 'classId' => $classId,
-                'isShared' => $configData["isShared"]
+                'isShared' => $configData['isShared']
             ],
             'availableConfigs' => $availableConfigs
         ]);
