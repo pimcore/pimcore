@@ -66,6 +66,18 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 decimalPrecision: 0,
                 minValue: 1,
                 incrementValue: 1
+            }, {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("height"),
+                name: "height",
+                minValue: 180,
+                value: this.datax.height
             }
         ];
     }
