@@ -33,7 +33,13 @@ class Version20191114123638 extends AbstractPimcoreMigration
                 ADD PRIMARY KEY (`id`);
             ');
         }
+    }
 
+    /**
+     * @param Schema $schema
+     */
+    public function postUp(Schema $schema)
+    {
         //save all documents to update language property inheritance
         $listing = new \Pimcore\Model\Document\Listing();
         $listing->setCondition("id IN (SELECT cid FROM properties WHERE ctype='document' AND name='language')");
@@ -43,7 +49,7 @@ class Version20191114123638 extends AbstractPimcoreMigration
                 if ($document->getParent()) {
                     if ($document->getParent()->getProperty('language') == $languageProperty->getData()) {
                         $languageProperty->setInherited(true);
-                        $document->save();
+                        $document->save(["versionNote" => "Migration: 20191114123638"]);
                     }
                 }
             }
