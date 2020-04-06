@@ -386,13 +386,13 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws \Exception
      */
-    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData &$item)
     {
         if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
-                $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
+                $container->loadLazyField($item->getObject(), $item, $this->getName());
             } else {
                 // if container is not available we assume that it is a newly set item
                 $item->markLazyKeyAsLoaded($this->getName());

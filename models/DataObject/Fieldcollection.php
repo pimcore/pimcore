@@ -275,15 +275,17 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @param Concrete $object
-     * @param string $type
-     * @param string $fcField
-     * @param int $index
+     * @param Model\DataObject\Fieldcollection\Data\AbstractData $item
      * @param string $field
      *
      * @throws \Exception
      */
-    public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
+    public function loadLazyField(Concrete $object, Model\DataObject\Fieldcollection\Data\AbstractData &$item, $field)
     {
+        $type = $item->getType();
+        $fcField = $item->getFieldname();
+        $index = $item->getIndex();
+
         // lazy loading existing can be data if the item already had an index
         $item = $this->getByOriginalIndex($index);
         if ($item && !$item->isLazyKeyLoaded($field)) {
