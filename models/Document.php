@@ -852,7 +852,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the document including the key (path+key)
+     * Returns the frontend path to the document respecting the current site and pretty-URLs
      *
      * @param bool $force
      *
@@ -1056,7 +1056,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns the full real path of the document.
+     * Returns the internal real full path of the document. (not for frontend use!)
      *
      * @return string
      */

@@ -514,11 +514,13 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
+        $value = is_array($value) ? current($value) : $value;
+        $name = $params['name'] ?: $this->name;
+        
         if ($operator === '=') {
-            $value = is_array($value) ? current($value) : $value;
-            $name = $params['name'] ?: $this->name;
-
-            return '`'.$name.'` LIKE '."'$value'".' ';
+            return '`'.$name.'` = '."'$value'".' ';
+        } else if ($operator === 'LIKE') {
+            return '`'.$name.'` LIKE '."'%$value%'".' ';
         }
 
         return null;
