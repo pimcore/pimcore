@@ -118,19 +118,15 @@ class Bootstrap
 
     public static function bootstrap()
     {
-        /** @var \Composer\Autoload\ClassLoader $loader */
-        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
+            // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
+            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+        } elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../vendor/autoload.php';
         } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
             $loader = include __DIR__ . '/../../../../vendor/autoload.php';
-        } elseif (getenv('PIMCORE_PROJECT_ROOT') != '' && file_exists(getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php')) {
-            $loader = include getenv('PIMCORE_PROJECT_ROOT') . '/vendor/autoload.php';
-        } elseif (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
-            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
-        } elseif (getenv('PIMCORE_PROJECT_ROOT') != '') {
-            throw new \Exception('Invalid Pimcore project root "' . getenv('PIMCORE_PROJECT_ROOT') . '"');
         } else {
-            throw new \Exception('Unknown configuration! Pimcore project root not found, please set env variable PIMCORE_PROJECT_ROOT.');
+            throw new \Exception('Unable to locate autoloader! Pimcore project root not found or invalid, please set/check env variable PIMCORE_PROJECT_ROOT.');
         }
 
         Config::initDebugDevMode();
@@ -138,6 +134,7 @@ class Bootstrap
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
+        /** @var \Composer\Autoload\ClassLoader $loader */
         \Pimcore::setAutoloader($loader);
         self::autoload();
 
@@ -176,8 +173,9 @@ class Bootstrap
     {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+        $dotEnvLocalPhpFile = PIMCORE_PROJECT_ROOT .'/.env.local.php';
 
-        if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
+        if (file_exists($dotEnvLocalPhpFile) && is_array($env = include $dotEnvLocalPhpFile)) {
             foreach ($env as $k => $v) {
                 $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
             }
