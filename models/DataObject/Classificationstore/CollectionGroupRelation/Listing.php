@@ -23,18 +23,20 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\CollectionGroupRelation[] load()
  * @method Model\DataObject\Classificationstore\CollectionGroupRelation current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\Classificationstore\CollectionGroupRelation[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $list = null;
 
     public function __construct()
     {
-        $this->list =& $this->data;
+        $this->list = & $this->data;
     }
 
     /**
@@ -46,9 +48,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array
+     * @param Model\DataObject\Classificationstore\CollectionGroupRelation[]|null $theList
      *
-     * @return $this
+     * @return static
      */
     public function setList($theList)
     {

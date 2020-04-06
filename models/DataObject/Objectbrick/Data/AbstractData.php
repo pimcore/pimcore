@@ -19,17 +19,22 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method Dao getDao()
+ * @method void save(Concrete $object, $params = [])
+ * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     use Model\Element\ElementDumpStateTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * Will be overriden by the actual ObjectBrick
@@ -75,7 +80,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -87,7 +92,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getType()
     {
@@ -105,7 +110,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $doDelete
+     * @param bool $doDelete
      *
      * @return $this
      */
@@ -134,7 +139,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      */
     public function delete($object)
     {
@@ -160,7 +165,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      *
@@ -237,7 +242,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -254,7 +259,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

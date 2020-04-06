@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Element extends Model\Webservice\Data
 {
     /**
@@ -27,7 +30,7 @@ class Element extends Model\Webservice\Data
     public $type;
 
     /**
-     * @var object[]
+     * @var object
      */
     public $value;
 

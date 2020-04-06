@@ -21,17 +21,22 @@ use Pimcore\Model\DataObject\Objectbrick;
 
 class ObjectBrickGetter extends AbstractOperator
 {
+    /** @var string */
     private $brickAttr;
+
+    /** @var string */
     private $brickType;
+
+    /** @var string */
     private $attr;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->attr = $config->attr;
-        $this->brickType = $config->brickType;
-        $this->brickAttr = $config->brickAttr;
+        $this->attr = $config->attr ?? '';
+        $this->brickType = $config->brickType ?? '';
+        $this->brickAttr = $config->brickAttr ?? '';
     }
 
     public function getLabeledValue($element)

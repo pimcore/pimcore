@@ -75,7 +75,7 @@ class VariantsController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             // save
-            $object = DataObject::getById($data['id']);
+            $object = DataObject\Concrete::getById($data['id']);
 
             if ($object->isAllowed('publish')) {
                 $objectData = [];

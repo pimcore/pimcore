@@ -1,4 +1,8 @@
-# REST Webservice API
+# REST Webservice API (deprecated)
+
+> **Important**  
+> The REST API is deprecated as of Pimcore 6.4 and will be removed in Pimcore 7. 
+> If you're using this API, please consider migrating to the [Pimcore Data-Hub](https://github.com/pimcore/data-hub)
 
 Pimcore provides a REST web service interface to many entities of the system, such as assets, documents, objects, class definitions, translations, etc. 
 The webservices are not enabled by default, you have to do this in *Settings* > *System Settings* > *Web Service API*.
@@ -7,8 +11,11 @@ Once the web service API is enabled, there is an API key displayed in *Settings*
 Please be aware that the API Key changes when the user changes his/her password.
 
 The webservices also support session authentication, this means that it's not necessary to 
-add the `apikey` to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
-  
+add the `X-API-Key` HTTP header or the `apikey` parameter to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
+
+> **Important: API Key**  
+> The recommended way of passing API Key for webservice is through HTTP header `X-API-Key` however you can still use query parameter method mentioned in the examples (which is logged as INFO level information in `var/logs`). [please see #4240](https://github.com/pimcore/pimcore/issues/4240)
+    
   
 > **Important: Import/export topics**  
 > The webservice API is not always the preferred way for importing/syncing data out of or into Pimcore. Often it's much more efficient to use the PHP API in custom scripts (CLI) or in a custom service endpoint. 
@@ -17,7 +24,7 @@ add the `apikey` to the request if you have a valid user session from the admin 
   
 > **Important: Frontend Applications**  
 > The Pimcore REST API is not intended to be used as a data provider for frontend applications (Vue.js, React, Angular, ...), 
-> please build your own actions for that purpose or use any existing bundles. 
+> please use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) (GraphQL interface) or build your own actions for that purpose or use any existing bundles. 
   
 [TOC]
 

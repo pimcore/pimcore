@@ -243,12 +243,10 @@ Ext.onReady(function () {
                     pimcore.viewport.add(pimcore.maintenanceWindow);
                     pimcore.maintenanceWindow.show();
                 }
+            } else if(jsonData && jsonData['type'] === 'ValidationException') {
+                pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
             } else if (response.status === 403) {
-                if(jsonData && jsonData['type'] === 'ValidationException') {
-                    pimcore.helpers.showNotification(t("validation_failed"), jsonData['message'], "error", errorMessage);
-                } else {
-                    pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
-                }
+                pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
             } else {
                 var message = t("error_general");
                 if(jsonData && jsonData['message']) {
@@ -291,8 +289,9 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return t(rec.get("name"));
-                }
+                    return t(rec.data.name);
+                },
+                depends : ['name']
             },
             'module',
             'controller',
@@ -339,9 +338,9 @@ Ext.onReady(function () {
     }
 
     //translation admin keys
-    pimcore.globalmanager.add("translations_admin_missing", new Array());
-    pimcore.globalmanager.add("translations_admin_added", new Array());
-    pimcore.globalmanager.add("translations_admin_translated_values", new Array());
+    pimcore.globalmanager.add("translations_admin_missing", []);
+    pimcore.globalmanager.add("translations_admin_added", []);
+    pimcore.globalmanager.add("translations_admin_translated_values", []);
 
 
     var objectClassFields = [
@@ -349,7 +348,7 @@ Ext.onReady(function () {
         {name: 'text', allowBlank: false},
         {
             name: "translatedText", convert: function (v, rec) {
-                return ts(rec.data.text);
+                return t(rec.data.text);
             }
         },
         {name: 'icon'},
@@ -715,7 +714,6 @@ Ext.onReady(function () {
             var treeConfig = elementTree[i];
             var type = treeConfig["type"];
             var side = treeConfig["position"] ? treeConfig["position"] : "left";
-            var expanded = treeConfig["expanded"];
             var treepanel = null;
             var tree = null;
             var treetype = null;
@@ -770,7 +768,7 @@ Ext.onReady(function () {
                                 rootVisible: treeConfig.showroot,
                                 treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
                                 treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " pimcore_icon_material",
-                                treeTitle: ts(treeConfig.name),
+                                treeTitle: t(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}
                             }, treeConfig);

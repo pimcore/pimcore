@@ -388,7 +388,7 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
     }
 
     /**
-     * @param $response
+     * @param array $response
      *
      * @return array
      */
@@ -828,5 +828,7 @@ XML;
 
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
         $orderListing->setOrder('DESC');
+
+        return $orderListing;
     }
 }

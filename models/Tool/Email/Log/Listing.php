@@ -23,18 +23,20 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Tool\Email\Log\Listing\Dao getDao()
  * @method Model\Tool\Email\Log[] load()
  * @method Model\Tool\Email\Log current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $emailLogs = null;
 
     public function __construct()
     {
-        $this->emailLogs =& $this->data;
+        $this->emailLogs = & $this->data;
     }
 
     /**
@@ -50,7 +52,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @param array $emailLogs
      *
-     * @return $this
+     * @return static
      */
     public function setEmailLogs($emailLogs)
     {

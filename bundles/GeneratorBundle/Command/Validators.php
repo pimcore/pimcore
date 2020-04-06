@@ -15,7 +15,7 @@ class Validators
      * If $requireVendorNamespace is true, then we require you to have a vendor
      * namespace (e.g. Acme).
      *
-     * @param $namespace
+     * @param string $namespace
      * @param bool $requireVendorNamespace
      *
      * @return string
@@ -64,22 +64,6 @@ class Validators
         return $bundle;
     }
 
-    public static function validateControllerName($controller)
-    {
-        try {
-            self::validateEntityName($controller);
-        } catch (\InvalidArgumentException $e) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The controller name must contain a : ("%s" given, expecting something like AcmeBlogBundle:Post)',
-                    $controller
-                )
-            );
-        }
-
-        return $controller;
-    }
-
     public static function validateFormat($format)
     {
         if (!$format) {
@@ -98,24 +82,6 @@ class Validators
         }
 
         return $format;
-    }
-
-    /**
-     * Performs basic checks in entity name.
-     *
-     * @param string $entity
-     *
-     * @return string
-     *
-     * @throws \InvalidArgumentException
-     */
-    public static function validateEntityName($entity)
-    {
-        if (!preg_match('{^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*:[a-zA-Z0-9_\x7f-\xff\\\/]+$}', $entity)) {
-            throw new \InvalidArgumentException(sprintf('The entity name isn\'t valid ("%s" given, expecting something like AcmeBlogBundle:Blog/Post)', $entity));
-        }
-
-        return $entity;
     }
 
     public static function getReservedWords()

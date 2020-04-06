@@ -170,7 +170,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                             $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$attribute->getName()])) {
+                        if (isset($data[$attribute->getName()]) && is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {

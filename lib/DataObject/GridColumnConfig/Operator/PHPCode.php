@@ -39,7 +39,7 @@ class PHPCode extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->config = $config;
-        $this->phpClass = (string)$config->phpClass;
+        $this->phpClass = $config->phpClass ?? '';
     }
 
     public function getPhpClass(): string
@@ -62,7 +62,7 @@ class PHPCode extends AbstractOperator
     {
         try {
             return $this->getInstance()->getLabeledValue($element);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }

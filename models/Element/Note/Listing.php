@@ -29,20 +29,21 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Element\Note[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $notes = null;
 
     public function __construct()
     {
-        $this->notes =& $this->data;
+        $this->notes = & $this->data;
     }
 
     /**
-     * @param $notes
+     * @param Model\Element\Note[]|null $notes
      *
-     * @return $this
+     * @return static
      */
     public function setNotes($notes)
     {

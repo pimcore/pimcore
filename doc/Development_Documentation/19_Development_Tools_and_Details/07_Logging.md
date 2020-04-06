@@ -27,14 +27,14 @@ In this log you can find every action done within the Pimcore Backend Interface.
 
 ##### Explanation
 
-| Value (from the example above) | Description |
-| ------------------------------ | ----------- |
-| 2013-07-25T18:26:30+02:00 | Timestamp |
-| 2 | User-ID |
-| admin | Module (MVC) |
-| page | Controller (MVC) |
-| save | Action (MVC) |
-| {"task":"pub .... | Request Parameters (shortened & censored) |
+| Value (from the example above) | Description                               |
+|--------------------------------|-------------------------------------------|
+| 2013-07-25T18:26:30+02:00      | Timestamp                                 |
+| 2                              | User-ID                                   |
+| admin                          | Module (MVC)                              |
+| page                           | Controller (MVC)                          |
+| save                           | Action (MVC)                              |
+| {"task":"pub ....              | Request Parameters (shortened & censored) |
 
 
 ## redirect.log

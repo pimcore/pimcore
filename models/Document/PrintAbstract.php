@@ -73,7 +73,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @param $lastGenerated
+     * @param int $lastGenerated
      */
     public function setLastGenerated($lastGenerated)
     {
@@ -89,7 +89,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @param $lastGenerateMessage
+     * @param string $lastGenerateMessage
      */
     public function setLastGenerateMessage($lastGenerateMessage)
     {
@@ -105,9 +105,9 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
-     * @return mixed
+     * @return bool
      */
     public function generatePdf($config)
     {
@@ -115,7 +115,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return string
      */

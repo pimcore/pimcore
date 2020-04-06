@@ -35,7 +35,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * Type for the column to query
      *
-     * @var string
+     * @var array
      */
     public $queryColumnType = [
         'longitude' => 'double',
@@ -45,7 +45,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * Type for the column
      *
-     * @var string
+     * @var array
      */
     public $columnType = [
         'longitude' => 'double',
@@ -175,8 +175,8 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Geopoint|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -195,7 +195,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -206,14 +206,14 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\Geopoint) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             return $data->getLatitude() . ',' . $data->getLongitude();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geopoint
@@ -232,7 +232,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -245,7 +245,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -265,10 +267,12 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -289,7 +293,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -301,7 +305,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -318,7 +322,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -333,8 +337,8 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param DataObject\Data\Geopoint|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array

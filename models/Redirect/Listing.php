@@ -23,18 +23,20 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Redirect\Listing\Dao getDao()
  * @method Model\Redirect[] load()
  * @method Model\Redirect current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $redirects = null;
 
     public function __construct()
     {
-        $this->redirects =& $this->data;
+        $this->redirects = & $this->data;
     }
 
     /**
@@ -48,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $redirects
      *
-     * @return $this
+     * @return static
      */
     public function setRedirects($redirects)
     {

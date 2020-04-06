@@ -44,7 +44,7 @@ if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
 Bootstrap::setProjectRoot();
 Bootstrap::defineConstants();
 
-Debug::enable();
+Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);

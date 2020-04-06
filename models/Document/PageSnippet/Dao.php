@@ -84,7 +84,7 @@ abstract class Dao extends Model\Document\Dao
      *
      * @param bool $force
      *
-     * @return array
+     * @return Version|null
      */
     public function getLatestVersion($force = false)
     {
@@ -96,7 +96,7 @@ abstract class Dao extends Model\Document\Dao
             return $version;
         }
 
-        return;
+        return null;
     }
 
     /**

@@ -433,7 +433,6 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
 
     recalculateButtonStatus: function () {
         var conditions = this.conditionsContainer.items.getRange();
-        var tb;
         for (var i=0; i<conditions.length; i++) {
             var tb = conditions[i].getDockedItems()[0];
             if(i==0) {

@@ -79,7 +79,7 @@ EOF
     /**
      * Finds the last imported resource path in the YAML file.
      *
-     * @param $yamlContents
+     * @param string $yamlContents
      *
      * @return bool|string
      */

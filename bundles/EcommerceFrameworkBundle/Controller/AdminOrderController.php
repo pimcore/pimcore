@@ -29,6 +29,7 @@ use Pimcore\Controller\TemplateControllerInterface;
 use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -153,6 +154,18 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
         $list->addFilter($filterDate);
 
+        if (!empty($request->get('pricingRule'))) {
+            $pricingRuleId = $request->get('pricingRule');
+
+            //apply filter on PricingRule(OrderItem)
+            $list->joinPricingRule();
+            $list->getQuery()->where('pricingRule.ruleId = ?', $pricingRuleId);
+
+            //apply filter on PriceModifications
+            $list->joinPriceModifications();
+            $list->getQuery()->orWhere('OrderPriceModifications.pricingRuleId = ?', $pricingRuleId);
+        }
+
         // set default order
         $list->setOrder('order.orderDate desc');
 
@@ -263,9 +276,10 @@ class AdminOrderController extends AdminController implements EventedControllerI
             $addOrderCount = function () use ($customer, &$arrCustomerAccount) {
                 $order = new OnlineShopOrder();
                 $field = $order->getClass()->getFieldDefinition('customer');
-                if ($field instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Href) {
-                    if (count($field->getClasses()) == 1) {
-                        $class = 'Pimcore\Model\DataObject\\' . reset($field->getClasses())['classes'];
+                if ($field instanceof ManyToOneRelation) {
+                    $classes = $field->getClasses();
+                    if (count($classes) === 1) {
+                        $class = 'Pimcore\Model\DataObject\\' . reset($classes)['classes'];
                         /* @var \Pimcore\Model\DataObject\Concrete $class */
 
                         $orderList = $this->orderManager->createOrderList();

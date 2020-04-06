@@ -302,7 +302,7 @@ class CustomReportController extends ReportsControllerBase
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
-        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
+        $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
         return $this->adminJson([
             'success' => true,

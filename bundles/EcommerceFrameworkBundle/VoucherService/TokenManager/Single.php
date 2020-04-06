@@ -54,6 +54,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function cleanUpCodes($filter = [])
     {
+        return true;
     }
 
     public function cleanupReservations($duration = 0, $seriesId = null)
@@ -62,7 +63,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params
      *
      * @return string

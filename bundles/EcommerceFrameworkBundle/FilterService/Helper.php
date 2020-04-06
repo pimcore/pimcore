@@ -27,7 +27,7 @@ class Helper
     /**
      * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
      * @param ProductListInterface $productList
-     * @param $params
+     * @param array $params
      * @param ViewModel $viewModel
      * @param FilterService $filterService
      * @param bool $loadFullPage
@@ -139,7 +139,7 @@ class Helper
     }
 
     /**
-     * @param $page
+     * @param int $page
      *
      * @return string
      */
@@ -164,9 +164,9 @@ class Helper
     }
 
     /**
-     * @param $conditions
+     * @param array $conditions
      *
-     * @return AbstractCategory
+     * @return AbstractCategory|null
      */
     public static function getFirstFilteredCategory($conditions)
     {
@@ -177,5 +177,7 @@ class Helper
                 }
             }
         }
+
+        return null;
     }
 }

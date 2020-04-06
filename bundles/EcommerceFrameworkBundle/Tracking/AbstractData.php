@@ -75,8 +75,8 @@ abstract class AbstractData implements \JsonSerializable
     /**
      * Add an additional attribute.
      *
-     * @param $attribute
-     * @param $value
+     * @param string $attribute
+     * @param mixed $value
      *
      * @return $this
      */
@@ -90,9 +90,9 @@ abstract class AbstractData implements \JsonSerializable
     /**
      * Get an additional attribute.
      *
-     * @param $attribute
+     * @param string $attribute
      *
-     * @return
+     * @return mixed
      */
     public function getAdditionalAttribute($attribute)
     {

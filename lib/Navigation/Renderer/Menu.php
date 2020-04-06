@@ -359,7 +359,7 @@ class Menu extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param $partial
+     * @param array|string $partial
      *
      * @return $this
      */
@@ -1006,7 +1006,7 @@ class Menu extends AbstractRenderer
      * <code>echo 'Number of pages: ', count($this->container);</code>.
      *
      * @param  Container $container
-     * @param  string|array             $partial     [optional] partial view
+     * @param  string|array|null $partial     [optional] partial view
      *                                               script to use. Default is to
      *                                               use the partial registered
      *                                               in the helper. If an array
@@ -1042,7 +1042,7 @@ class Menu extends AbstractRenderer
      * Alias of renderTemplate()
      *
      * @param Container $container
-     * @param null $partial
+     * @param string|array|null $partial
      *
      * @return string
      */

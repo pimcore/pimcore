@@ -78,7 +78,7 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param int $storeId
      *
      * @return self|null
@@ -208,7 +208,7 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -228,7 +228,7 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */

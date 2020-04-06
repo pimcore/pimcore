@@ -136,6 +136,7 @@ class Sold extends AbstractOrder implements ConditionInterface
     protected function getCart()
     {
         // use this in your own implementation
+        return null;
     }
 
     /**

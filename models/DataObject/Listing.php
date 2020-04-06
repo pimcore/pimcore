@@ -35,6 +35,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $objects = null;
@@ -51,7 +52,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     public function __construct()
     {
-        $this->objects =& $this->data;
+        $this->objects = & $this->data;
     }
 
     /**
@@ -65,7 +66,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * @param array $objects
      *
-     * @return $this
+     * @return static
      */
     public function setObjects($objects)
     {
@@ -81,24 +82,28 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $unpublished
+     * @param bool $unpublished
      *
      * @return $this
      */
     public function setUnpublished($unpublished)
     {
+        $this->setData(null);
+
         $this->unpublished = (bool) $unpublished;
 
         return $this;
     }
 
     /**
-     * @param  $objectTypes
+     * @param array $objectTypes
      *
      * @return $this
      */
     public function setObjectTypes($objectTypes)
     {
+        $this->setData(null);
+
         $this->objectTypes = $objectTypes;
 
         return $this;
@@ -113,8 +118,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $key
-     * @param null $value
+     * @param string $key
+     * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
@@ -133,8 +138,8 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $condition
-     * @param null $conditionVariables
+     * @param string $condition
+     * @param array|null $conditionVariables
      *
      * @return $this
      */
@@ -144,13 +149,15 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     }
 
     /**
-     * @param $groupBy
+     * @param string $groupBy
      * @param bool $qoute
      *
      * @return $this
      */
     public function setGroupBy($groupBy, $qoute = true)
     {
+        $this->setData(null);
+
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
@@ -172,7 +179,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      */
     public function count()
     {
-        return $this->getTotalCount();
+        return $this->getDao()->getTotalCount();
     }
 
     /**
@@ -203,5 +210,23 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     public function addDistinct()
     {
         return false;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $field database column to use for WHERE condition
+     * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     *
+     * @return static
+     */
+    public function addFilterByField($field, $operator, $data)
+    {
+        if (strpos($operator, '?') === false) {
+            $operator .= ' ?';
+        }
+
+        return $this->addConditionParam('`'.$field.'` '.$operator, $data);
     }
 }

@@ -99,7 +99,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param int $storeId
      *
      * @return self|null
@@ -261,7 +261,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -281,7 +281,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -300,8 +300,10 @@ class GroupConfig extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    /** Returns all keys belonging to this group
-     * @return KeyGroupRelation
+    /**
+     * Returns all keys belonging to this group
+     *
+     * @return KeyGroupRelation[]
      */
     public function getRelations()
     {

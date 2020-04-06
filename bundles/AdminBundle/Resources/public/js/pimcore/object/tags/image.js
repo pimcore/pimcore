@@ -30,7 +30,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field, forGridConfigPreview) {
 
         return {
-            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record, rowIndex, colIndex, store, view) {
                 this.applyPermissionStyle(key, value, metaData, record);

@@ -191,7 +191,7 @@
     position: absolute;
     color: #FFFFFF;
     background: #2A2D30;
-    height: 30px;
+    min-height: 30px;
     line-height: 30px;
     text-align: center;
     border-radius: 6px;
@@ -241,19 +241,9 @@
     text-decoration: underline;
 }
 
-
-/* TODO to be removed */
-.pimcore_unpublished .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #777;
+.pimcore_navigation_exclude .x-tree-node-text {
+    color: #8e8e8e !important;
 }
-
-/* TODO to be removed */
-.pimcore_delete .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #ff0000;
-}
-
 
 .pimcore_unpublished span.x-tree-node-text{
     text-decoration: line-through;
@@ -273,6 +263,10 @@
 
 .pimcore_treenode_lockOwner .x-tree-node-text  {
     color: #0091f8 !important;
+}
+
+.pimcore_treenode_hide_plus_button .x-tree-expander {
+    visibility: hidden;
 }
 
 .pimcore_overflow_scrolling {

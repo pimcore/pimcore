@@ -151,6 +151,7 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         $this->addGeneralNode($rootNode);
+        $this->addMaintenanceNode($rootNode);
         $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
@@ -175,6 +176,30 @@ class Configuration implements ConfigurationInterface
         $this->addApplicationLogNode($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Add maintenance config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addMaintenanceNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('maintenance')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('housekeeping')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('cleanup_tmp_files_atime_older_than')
+                        ->defaultValue(7776000) // 90 days
+                    ->end()
+                    ->integerNode('cleanup_profiler_files_atime_older_than')
+                        ->defaultValue(1800)
+                    ->end()
+        ;
     }
 
     /**
@@ -249,6 +274,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
                 ->booleanNode('show_cookie_notice')
+                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -570,6 +596,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('create_redirect_when_moved')
+                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -622,6 +649,14 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('defaultUrlPrefix')
                             ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('web_to_print')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('pdf_creation_php_memory_limit')
+                            ->defaultValue('2048M')
                         ->end()
                     ->end()
                 ->end()
@@ -892,7 +927,7 @@ class Configuration implements ConfigurationInterface
      * Add a route prototype child
      *
      * @param ArrayNodeDefinition $parent
-     * @param $name
+     * @param string $name
      */
     private function addRoutesChild(ArrayNodeDefinition $parent, $name)
     {
@@ -926,16 +961,22 @@ class Configuration implements ConfigurationInterface
         $defaultOptions = ConnectionFactory::getDefaultOptions();
 
         $rootNode->children()
-            ->arrayNode('cache')
-            ->ignoreExtraKeys()
-            ->canBeDisabled()
-            ->addDefaultsIfNotSet()
+            ->arrayNode('full_page_cache')
+                ->ignoreExtraKeys()
+                ->canBeDisabled()
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('lifetime')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('exclude_patterns')->end()
                     ->scalarNode('exclude_cookie')->end()
+                ->end()
+            ->end()
+            ->arrayNode('cache')
+                ->ignoreExtraKeys()
+                ->addDefaultsIfNotSet()
+                ->children()
                     ->scalarNode('pool_service_id')
                         ->defaultValue(null)
                     ->end()
@@ -1425,7 +1466,21 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->scalarNode('initial_place')
                                     ->defaultNull()
+                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
                                     ->info('Will be applied when the current place is empty.')
+                                ->end()
+                                ->arrayNode('initial_markings')
+                                    ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                            ->then(function ($v) {
+                                                return [$v];
+                                            })
+                                        ->end()
+                                        ->requiresAtLeastOneElement()
+                                        ->prototype('scalar')
+                                        ->cannotBeEmpty()
+                                    ->end()
                                 ->end()
                                 ->arrayNode('places')
                                     ->prototype('array')
@@ -1578,24 +1633,23 @@ class Configuration implements ConfigurationInterface
                                                         ->end()
                                                     ->end()
                                                     ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                                    ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the transition was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
 
                                                     ->arrayNode('notificationSettings')
                                                         ->prototype('array')
                                                             ->children()
                                                                 ->scalarNode('condition')->info('A symfony expression can be configured here. All sets of notification which are matching the condition will be used.')->end()
                                                                 ->arrayNode('notifyUsers')
-                                                                    ->requiresAtLeastOneElement()
                                                                     ->prototype('scalar')
                                                                         ->cannotBeEmpty()
                                                                     ->end()
-                                                                    ->info('Send a email notification to a list of users (user names) when the transition get\'s applied')
+                                                                    ->info('Send an email notification to a list of users (user names) when the transition get\'s applied')
                                                                 ->end()
                                                                 ->arrayNode('notifyRoles')
-                                                                    ->requiresAtLeastOneElement()
                                                                     ->prototype('scalar')
                                                                         ->cannotBeEmpty()
                                                                     ->end()
-                                                                    ->info('Send a email notification to a list of user roles (role names) when the transition get\'s applied')
+                                                                    ->info('Send an email notification to a list of user roles (role names) when the transition get\'s applied')
                                                                 ->end()
                                                                 ->arrayNode('channelType')
                                                                     ->requiresAtLeastOneElement()
@@ -1621,7 +1675,7 @@ class Configuration implements ConfigurationInterface
                                                     ->end()
 
                                                     ->enumNode('changePublishedState')
-                                                        ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED])
+                                                        ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
                                                     ->end()
@@ -1670,6 +1724,7 @@ class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
                                             ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                            ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the global action was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')

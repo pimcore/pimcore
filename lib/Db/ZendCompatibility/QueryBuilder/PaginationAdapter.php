@@ -110,8 +110,7 @@ class PaginationAdapter implements AdapterInterface
      * Users are therefore encouraged to profile their queries to find
      * the solution that best meets their needs.
      *
-     * @param  QueryBuilder|int $totalRowCount Total row count integer
-     *                                               or query
+     * @param  QueryBuilder|int $rowCount Total row count integer or query
      *
      * @return PaginationAdapter $this
      *
@@ -242,16 +241,16 @@ class PaginationAdapter implements AdapterInterface
                 $part = $columnParts[0];
 
                 if ($part[1] !== QueryBuilder::SQL_WILDCARD && !($part[1] instanceof Expression)) {
-                    $column = $db->quoteIdentifier($part[1], true);
+                    $column = $db->quoteIdentifier($part[1]);
 
                     if (!empty($part[0])) {
-                        $column = $db->quoteIdentifier($part[0], true) . '.' . $column;
+                        $column = $db->quoteIdentifier($part[0]) . '.' . $column;
                     }
 
                     $groupPart = $column;
                 }
             } elseif (!empty($groupParts)) {
-                $groupPart = $db->quoteIdentifier($groupParts[0], true);
+                $groupPart = $db->quoteIdentifier($groupParts[0]);
             }
 
             /**

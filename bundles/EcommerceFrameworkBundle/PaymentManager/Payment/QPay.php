@@ -546,7 +546,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *
@@ -644,7 +644,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     /**
      * Compute MD5 fingerprint
      *
-     * @param $data
+     * @param string $data
      *
      * @return string
      */
@@ -656,7 +656,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     /**
      * Calculate HMAC_SHA512 fingerprint
      *
-     * @param $data
+     * @param string $data
      *
      * @return string
      */
@@ -666,8 +666,8 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     }
 
     /**
-     * @param $url
-     * @param $params
+     * @param string $url
+     * @param array $params
      *
      * @return string[]
      */

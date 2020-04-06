@@ -35,7 +35,7 @@ class ImportConfigListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $event ClassDefinitionEvent
+     * @param ClassDefinitionEvent $event
      */
     public function onClassDelete($event)
     {
@@ -53,7 +53,7 @@ class ImportConfigListener implements EventSubscriberInterface
     }
 
     /**
-     * @param $event UserRoleEvent
+     * @param UserRoleEvent $event
      */
     public function onUserDelete($event)
     {

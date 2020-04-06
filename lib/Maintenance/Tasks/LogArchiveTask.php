@@ -27,11 +27,18 @@ final class LogArchiveTask implements TaskInterface
     private $db;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @var Config
      */
-    public function __construct(Db\ConnectionInterface $db)
+    private $config;
+
+    /**
+     * @param Db\ConnectionInterface $db
+     * @param Config $config
+     */
+    public function __construct(Db\ConnectionInterface $db, Config $config)
     {
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
@@ -39,19 +46,16 @@ final class LogArchiveTask implements TaskInterface
      */
     public function execute()
     {
-        $conf = Config::getSystemConfig();
-        $config = $conf->applicationlog;
-
         $db = $this->db;
 
         $date = new \DateTime('now');
         $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
 
-        if ($config->archive_alternative_database) {
-            $tablename = $db->quoteIdentifier($config->archive_alternative_database).'.'.$tablename;
+        if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
+            $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
         }
 
-        $archive_treshold = (int)$config->archive_treshold ?: 30;
+        $archive_treshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
 
         $timestamp = time();
         $sql = ' SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';

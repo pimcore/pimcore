@@ -159,7 +159,7 @@ class EmailController extends AdminController
 
     /**
      * @param array $data
-     * @param $fullEntry
+     * @param array $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
@@ -498,12 +498,14 @@ class EmailController extends AdminController
                 'total' => $list->getTotalCount()
             ]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
      * @param array $params
      *
-     * @return $data
+     * @return array
      */
     protected function parseLoggingParamObject($params)
     {

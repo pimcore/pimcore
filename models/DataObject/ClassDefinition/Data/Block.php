@@ -21,10 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -91,7 +92,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $childs = [];
 
     /**
-     * @var string
+     * @var array|null
      */
     public $layout;
 
@@ -103,7 +104,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     protected $referencedFields = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     public $fieldDefinitionsCache;
 
@@ -126,13 +127,34 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
                         continue;
                     }
                     $elementData = $blockElement->getData();
+                    //TODO: move validation to checkValidity & throw exception in Pimcore 7
+                    if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
+                        foreach ($elementData->getInternalData() as $language => $fields) {
+                            foreach ($fields as $fieldName => $values) {
+                                $lfd = $fd->getFieldDefinition($fieldName);
+                                if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
+                                    if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
+                                        $contextParams['language'] = $language;
+                                        $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
+                                        $updateParams = array_merge($params, $contextParams);
+                                        $lfd->filterMultipleAssignments($values, $elementData, $updateParams);
+                                        $elementData = $blockElement->getData();
+                                    }
+                                }
+                            }
+                        }
+                    } elseif ($fd instanceof ManyToManyRelation || $fd instanceof ManyToManyObjectRelation) {
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                            $elementData = $fd->filterMultipleAssignments($elementData, $object, $params);
+                        }
+                    }
                     $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
 
@@ -155,7 +177,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -171,7 +193,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             foreach ($unserializedData as $blockElements) {
                 $items = [];
                 foreach ($blockElements as $elementName => $blockElementRaw) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -238,7 +260,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -263,7 +285,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -328,9 +350,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
-     * @param int $dataIndex
      *
      * @return mixed
      *
@@ -399,8 +420,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -415,22 +436,22 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        return null;
+        return '';
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -440,10 +461,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -458,7 +481,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -478,12 +501,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $value
-     * @param null $relatedObject
-     * @param mixed $params
-     * @param null $idMapper
+     * @deprecated
      *
-     * @return mixed|void
+     * @param mixed $value
+     * @param Element\AbstractElement $relatedObject
+     * @param mixed $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
+     *
+     * @return array
      *
      * @throws \Exception
      */
@@ -496,7 +521,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $resultElement = [];
 
                 foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-                    $fd = $this->getFielddefinition($elementName);
+                    $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
                         Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -516,7 +541,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -526,24 +552,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return true;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either HTML or
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             return 'not supported';
         }
+
+        return '';
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -601,7 +629,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -610,7 +638,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $layout
+     * @param array|null $layout
      *
      * @return $this
      */
@@ -622,31 +650,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return string
+     * @return array|null
      */
     public function getLayout()
     {
         return $this->layout;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
-    public function setValues($data = [], $blockedKeys = [])
-    {
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
-                }
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -721,7 +729,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return DataObject\ClassDefinition\Data|null
      */
-    public function getFielddefinition($name, $context = [])
+    public function getFieldDefinition($name, $context = [])
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
@@ -756,7 +764,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @return array
+     * @return Data[]
      */
     public function getReferencedFields()
     {
@@ -764,7 +772,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $field
+     * @param Data $field
      */
     public function addReferencedField($field)
     {
@@ -784,7 +792,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $data
+     * @param array|null $data
      *
      * @return array
      */
@@ -798,7 +806,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {
-                $fd = $this->getFielddefinition($elementName);
+                $fd = $this->getFieldDefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -835,7 +843,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         foreach ($data as $blockElements) {
             foreach ($blockElements as $elementName => $blockElement) {
-                $fd = $this->getFielddefinition($elementName);
+                $fd = $this->getFieldDefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
                     Logger::warn('class definition seems to have changed, element name: ' . $elementName);
@@ -911,7 +919,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param  $lazyLoading
+     * @param int|bool|null $lazyLoading
      *
      * @return $this
      */
@@ -923,8 +931,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete $object
+     * @param null|DataObject\Data\BlockElement[] $data
      * @param array $params
      *
      * @return mixed
@@ -933,7 +941,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $this->markLazyloadedFieldAsLoaded($object);
 
-        $lf = $this->getFielddefinition('localizedfields');
+        $lf = $this->getFieldDefinition('localizedfields');
         if ($lf && is_array($data)) {
             /** @var DataObject\Data\BlockElement $item */
             foreach ($data as $item) {
@@ -960,7 +968,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -968,10 +976,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($container, $params = [])
     {
@@ -980,11 +988,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
 
         if ($container instanceof DataObject\Concrete) {
-            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
-                $data = $db->fetchOne($query);
-                $data = $this->getDataFromResource($data, $container, $params);
-            }
+            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
@@ -1025,7 +1031,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -1033,7 +1039,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array|mixed|null
@@ -1044,7 +1050,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -1061,14 +1067,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         return is_array($data) ? $data : [];
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return false;
     }
 
     /**
@@ -1174,7 +1172,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * This method is called in DataObject\ClassDefinition::save()
      *
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      * @param array $params
      */
     public function classSaved($class, $params = [])
@@ -1183,8 +1181,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
-                    $field->setLazyLoading(false);
+                if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                                                        && $field->getLazyLoading()) {
+
+                    // Lazy loading inside blocks isn't supported, turn it off if possible
+                    if (method_exists($field, 'setLazyLoading')) {
+                        $field->setLazyLoading(false);
+                    }
                 }
             }
         }

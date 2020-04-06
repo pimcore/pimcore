@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Model\DataObject\Concrete $object
      * @param array $params
-     * @param $saveRelationalData
+     * @param bool $saveRelationalData
      *
      * @throws \Exception
      */

@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
@@ -50,7 +51,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $tenantName;
 
     /**
-     * @var ElasticSearchConfigInterface
+     * @var ElasticSearch
      */
     protected $tenantConfig;
 
@@ -256,9 +257,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Reset condition for fieldname
      *
-     * @param $fieldname
-     *
-     * @return mixed
+     * @param string $fieldname
      */
     public function resetCondition($fieldname)
     {
@@ -297,7 +296,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param $condition
+     * @param string $condition
      * @param string $fieldname - must be set for elastic search
      */
     public function addQueryCondition($condition, $fieldname = '')
@@ -310,9 +309,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Reset query condition for fieldname
      *
-     * @param $fieldname
-     *
-     * @return mixed
+     * @param string $fieldname
      */
     public function resetQueryCondition($fieldname)
     {
@@ -358,7 +355,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * sets order direction
      *
-     * @param $order
+     * @param string $order
      *
      * @return void
      */
@@ -381,7 +378,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * sets order key
      *
-     * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
+     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      *
      * @return void
      */
@@ -408,7 +405,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Pass "unlimited" to do da Scroll Request
      *
-     * @param $limit int
+     * @param int $limit
      *
      * @return void
      */
@@ -436,7 +433,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @param $offset int
+     * @param int $offset
      *
      * @return void
      */
@@ -457,7 +454,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @param $category
+     * @param AbstractCategory $category
      *
      * @return void
      */
@@ -477,7 +474,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @param $variantMode
+     * @param string $variantMode
      *
      * @return void
      */
@@ -759,8 +756,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * builds relation conditions of user specific query conditions
      *
-     * @param $boolFilters
-     * @param $excludedFieldnames
+     * @param array $boolFilters
+     * @param array $excludedFieldnames
      *
      * @return array
      */
@@ -784,8 +781,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * builds filter condition of user specific conditions
      *
-     * @param $boolFilters
-     * @param $excludedFieldnames
+     * @param array $boolFilters
+     * @param array $excludedFieldnames
      *
      * @return array
      */
@@ -809,8 +806,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * builds query condition of query filters
      *
-     * @param $queryFilters
-     * @param $excludedFieldnames
+     * @param array $queryFilters
+     * @param array $excludedFieldnames
      *
      * @return array
      */
@@ -847,7 +844,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads element by id
      *
-     * @param $elementId
+     * @param int $elementId
      *
      * @return array|IndexableInterface
      */
@@ -873,7 +870,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      * @param array $aggregationConfig
@@ -941,7 +938,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads group by values based on system either from local variable if prepared or directly from product index
      *
-     * @param $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -957,7 +954,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads group by values based on fieldname either from local variable if prepared or directly from product index
      *
-     * @param $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -973,7 +970,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
      *
-     * @param      $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
@@ -989,7 +986,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * checks if group by values are loaded and returns them
      *
-     * @param $fieldname
+     * @param string $fieldname
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      *
@@ -1029,9 +1026,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         // create general filters and queries
         $toExcludeFieldnames = [];
+        /** @var ElasticSearch $tenantConfig */
+        $tenantConfig = $this->getTenantConfig();
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
             if ($config['fieldnameShouldBeExcluded']) {
-                $toExcludeFieldnames[$this->getTenantConfig()->getReverseMappedFieldName($fieldname)] = $fieldname;
+                $toExcludeFieldnames[$tenantConfig->getReverseMappedFieldName($fieldname)] = $fieldname;
             }
         }
 
@@ -1210,9 +1209,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
         if (!empty($bucket)) {
             $subAggregationField = array_key_first($bucket);
             $subAggregationBuckets = $bucket[$subAggregationField];
+            $reverseAggregationField = array_key_last($bucket);
+            $reverseAggregationBucket = $bucket[$reverseAggregationField];
 
             if (array_key_exists('key_as_string', $bucket)) {          // date aggregations
                 $data['key_as_string'] = $bucket['key_as_string'];
+            } elseif (is_array($reverseAggregationBucket) && array_key_exists('doc_count', $reverseAggregationBucket)) { // reverse aggregation
+                $data['reverse_count'] = $reverseAggregationBucket['doc_count'];
             } elseif (is_array($subAggregationBuckets['buckets'])) {        // sub aggregations
                 foreach ($subAggregationBuckets['buckets'] as $bucket) {
                     $data[$subAggregationField][] = $this->convertBucketValues($bucket);

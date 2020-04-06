@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
 /**
@@ -28,6 +27,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
      * @var array
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     public $cartItems;
@@ -44,7 +44,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     public function __construct()
     {
-        $this->cartItems =& $this->data;
+        $this->cartItems = & $this->data;
     }
 
     /**

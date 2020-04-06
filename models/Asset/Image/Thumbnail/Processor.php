@@ -59,7 +59,7 @@ class Processor
     protected static $hasWebpSupport = null;
 
     /**
-     * @param $format
+     * @param string $format
      * @param array $allowed
      * @param string $fallback
      *
@@ -88,7 +88,7 @@ class Processor
     /**
      * @param Asset $asset
      * @param Config $config
-     * @param null $fileSystemPath
+     * @param string|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @param bool $returnAbsolutePath
      * @param bool $generated
@@ -102,6 +102,10 @@ class Processor
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
+        if (self::containsTransformationType($config, '1x1_pixel')) {
+            return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        }
+
         if (!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
@@ -111,7 +115,7 @@ class Processor
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
-            if($format === 'jpeg') {
+            if ($format === 'jpeg') {
                 $format = 'pjpeg';
             }
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
@@ -124,17 +128,8 @@ class Processor
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontendRequestByAdmin()
-            } elseif ($format == 'tiff') {
-                $transformations = $config->getItems();
-                if (is_array($transformations) && count($transformations) > 0) {
-                    foreach ($transformations as $transformation) {
-                        if (!empty($transformation)) {
-                            if ($transformation['method'] == 'tifforiginal') {
-                                return self::returnPath($fileSystemPath, $returnAbsolutePath);
-                            }
-                        }
-                    }
-                }
+            } elseif ($format == 'tiff' && self::containsTransformationType($config, 'tifforiginal')) {
+                return self::returnPath($fileSystemPath, $returnAbsolutePath);
             } elseif ($format == 'svg') {
                 return $asset->getFullPath();
             }
@@ -167,7 +162,10 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+        } elseif ($format === 'pjpeg' || $format === 'jpeg') {
+            $fileExtension = 'jpg';
         }
+
         $filename .= '.' . $fileExtension;
 
         $fsPath = $thumbDir . '/' . $filename;
@@ -386,10 +384,32 @@ class Processor
     }
 
     /**
-     * @param $path
-     * @param $absolute
+     * @param Config $config
+     * @param string $transformationType
      *
-     * @return mixed
+     * @return bool
+     */
+    protected static function containsTransformationType(Config $config, string $transformationType): bool
+    {
+        $transformations = $config->getItems();
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    if ($transformation['method'] == $transformationType) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $path
+     * @param bool $absolute
+     *
+     * @return string
      */
     protected static function returnPath($path, $absolute)
     {
@@ -402,19 +422,23 @@ class Processor
 
     /**
      * @param bool|null $webpSupport
+     *
      * @return bool|null
      */
-    public static function setHasWebpSupport(?bool $webpSupport):?bool {
+    public static function setHasWebpSupport(?bool $webpSupport): ?bool
+    {
         $prevValue = self::$hasWebpSupport;
         self::$hasWebpSupport = $webpSupport;
+
         return $prevValue;
     }
 
     /**
      * @return bool
      */
-    protected static function hasWebpSupport(): bool {
-        if(self::$hasWebpSupport !== null) {
+    protected static function hasWebpSupport(): bool
+    {
+        if (self::$hasWebpSupport !== null) {
             return self::$hasWebpSupport;
         }
 

@@ -1,6 +1,6 @@
 # Filter Classification Store
 
-With Elastic Search it is possible to index all attributes of [Classification Store](../../../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md) 
+With Elastic Search it is possible to index all attributes of [Classification Store](../../../05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
 data without defining an attribute for each single classification store key.   
 
 To do so, follow these steps

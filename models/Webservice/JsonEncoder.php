@@ -19,10 +19,13 @@ namespace Pimcore\Model\Webservice;
 
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @deprecated
+ */
 class JsonEncoder
 {
     /**
-     * @param $data
+     * @param mixed $data
      * @param bool $returnData
      *
      * @return string
@@ -43,7 +46,7 @@ class JsonEncoder
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return mixed
      */

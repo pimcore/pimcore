@@ -34,8 +34,8 @@ class ImageThumbnail
     protected $page = 1;
 
     /**
-     * @param $asset
-     * @param $config
+     * @param Model\Asset\Document $asset
+     * @param string|array|Image\Thumbnail\Config $config
      * @param int $page
      * @param bool $deferred
      */
@@ -50,7 +50,7 @@ class ImageThumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
@@ -69,8 +69,6 @@ class ImageThumbnail
 
     /**
      * @param bool $deferredAllowed
-     *
-     * @return string
      */
     public function generate($deferredAllowed = true)
     {
@@ -102,7 +100,9 @@ class ImageThumbnail
                         $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
-                        return '/bundles/pimcoreadmin/img/please-wait.png';
+                        $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
+
+                        return;
                     }
                 }
 
@@ -137,9 +137,9 @@ class ImageThumbnail
     }
 
     /**
-     * @param $selector
+     * @param string|array|Image\Thumbnail\Config $selector
      *
-     * @return bool|static
+     * @return Image\Thumbnail\Config
      */
     protected function createConfig($selector)
     {

@@ -22,6 +22,8 @@ use Pimcore\Tool\Session;
 
 /**
  * @method \Pimcore\Model\Element\Editlock\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Editlock extends Model\AbstractModel
 {
@@ -61,8 +63,8 @@ class Editlock extends Model\AbstractModel
     public $cpath;
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool
      */
@@ -83,8 +85,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return null|Editlock
      */
@@ -101,7 +103,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $sessionId
+     * @param string $sessionId
      *
      * @return bool|null
      */
@@ -118,8 +120,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool|Editlock
      */
@@ -143,8 +145,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
-     * @param $ctype
+     * @param int $cid
+     * @param string $ctype
      *
      * @return bool
      */

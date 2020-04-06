@@ -63,8 +63,8 @@ abstract class AbstractBlockItem
     }
 
     /**
-     * @param $func
-     * @param $args
+     * @param string $func
+     * @param array $args
      *
      * @return Document\Tag|null
      */
@@ -76,5 +76,7 @@ abstract class AbstractBlockItem
         if (!strcasecmp(get_class($element), $class)) {
             return $element;
         }
+
+        return null;
     }
 }

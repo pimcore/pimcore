@@ -68,8 +68,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
 
     showWindow: function (data) {
-        var config = data.config;
-
         if (!this.importConfigId) {
             this.buildDefaultSelection();
         }
@@ -127,6 +125,14 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         buttons.push(this.deleteButton);
 
+        this.exportConfigButton = new Ext.menu.Item({
+            text: t("export_configuration"),
+            iconCls: "pimcore_icon_download",
+            handler: function () {
+                pimcore.helpers.download(this.getExportConfigUrl());
+            }.bind(this)
+        });
+        
         this.loadButton = new Ext.button.Split({
 
                 text: t("load"),
@@ -135,6 +141,17 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     this.showLoadDialog();
                 }.bind(this),
                 menu: [
+                    {
+                        text: t("import_configuration"),
+                        iconCls: "pimcore_icon_upload",
+                        handler: function(){
+                            pimcore.helpers.uploadDialog(this.getImportConfigUrl(), "Filedata", function (res) {
+                                this.getFileInfoComplete(true, res.response);
+                            }.bind(this), function () {
+                                Ext.MessageBox.alert(t("error"), t("error"));
+                            });
+                        }.bind(this)
+                    },
                     {
                         text: t("import_export_configuration"),
                         iconCls: "pimcore_icon_import",
@@ -153,7 +170,10 @@ pimcore.object.helpers.import.configDialog = Class.create({
             handler: function () {
                 this.saveConfig(false);
             }.bind(this),
-            menu: [this.saveAsCopyButton]
+            menu: [
+                this.exportConfigButton,
+                this.saveAsCopyButton
+            ]
         });
 
         buttons.push(this.saveButton);
@@ -738,7 +758,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata) {
-                        this.reportPanel.logData(rdata.rowId, rdata.message, rdata.success, rdata.objectId);
+                        this.reportPanel.logData(rdata);
                         if (!rdata.success) {
                             this.importErrors.push({
                                 job: rdata.message
@@ -775,5 +795,17 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 pimcore.helpers.showNotification(t("error"), message, "error");
             }.bind(this)
         });
+    },
+    
+    getExportConfigUrl: function(){
+        this.commitEverything();
+        var config = this.prepareSaveData();
+        config = Ext.encode(config);
+        
+        return "/admin/object-helper/export-csv-import-config-as-json?classId="+this.classId+"&config="+config;
+    },
+    
+    getImportConfigUrl: function(){
+        return '/admin/object-helper/import-csv-import-config-from-json?importId=' + this.uniqueImportId + "&importConfigId="+this.importConfigId + "&classId=" + this.classId;
     }
 });

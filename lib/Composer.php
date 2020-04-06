@@ -101,8 +101,8 @@ class Composer
     }
 
     /**
-     * @param $event
-     * @param $consoleDir
+     * @param Event $event
+     * @param string $consoleDir
      */
     public static function clearDataCache($event, $consoleDir)
     {

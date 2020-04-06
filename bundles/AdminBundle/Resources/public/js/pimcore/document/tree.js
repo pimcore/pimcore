@@ -23,7 +23,6 @@ Ext.define('documentreemodel', {
     }]
 });
 
-
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
@@ -163,7 +162,7 @@ pimcore.document.tree = Class.create({
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("document", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -231,10 +230,7 @@ pimcore.document.tree = Class.create({
             index += newParent.pagingData.offset;
         }
 
-        pimcore.elementservice.updateDocument(node.data.id, {
-            parentId: newParent.data.id,
-            index: index
-        }, function (newParent, oldParent, tree, response) {
+        var moveCallback = function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
@@ -276,7 +272,28 @@ pimcore.document.tree = Class.create({
             }
             tree.loadMask.hide();
 
-        }.bind(this, newParent, oldParent, tree));
+        }.bind(this, newParent, oldParent, tree);
+
+        var params = {
+            parentId: newParent.data.id,
+            index: index
+        };
+
+        if(
+            newParent.data.id !== oldParent.data.id &&
+            (node.data.type === 'page' || node.data.type === 'hardlink') &&
+            pimcore.globalmanager.get("user").isAllowed('redirects')
+        ) {
+            // ask the user if redirects should be created, if node was moved to a new parent
+            Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
+                if (buttonValue == "yes") {
+                    params['create_redirects'] = 'true';
+                }
+                pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+            }.bind(this));
+        } else {
+            pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+        }
     },
 
 
@@ -315,6 +332,10 @@ pimcore.document.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("document", record.data.id)) {
+            return;
+        }
 
         var menu = new Ext.menu.Menu();
         var perspectiveCfg = this.perspectiveCfg;
@@ -1051,7 +1072,7 @@ pimcore.document.tree = Class.create({
     },
 
     pasteInfo: function (tree, record, type, enableInheritance, language) {
-        pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+        pimcore.helpers.addTreeNodeLoadingIndicator("document", record.get('id'));
 
         if (typeof language !== "string") {
             language = false;
@@ -1088,12 +1109,12 @@ pimcore.document.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();
@@ -1308,10 +1329,10 @@ pimcore.document.tree = Class.create({
                 bodyStyle: "padding: 10px;",
                 items: [{
                     xtype: "textfield",
+                    itemId: "title",
+                    fieldLabel: t('title'),
+                    name: 'title',
                     width: "100%",
-                    fieldLabel: t('key'),
-                    itemId: "key",
-                    name: 'key',
                     enableKeyEvents: true,
                     listeners: {
                         afterrender: function () {
@@ -1321,7 +1342,8 @@ pimcore.document.tree = Class.create({
                         },
                         keyup: function (el) {
                             pageForm.getComponent("name").setValue(el.getValue());
-                        }
+                            pageForm.getComponent("key").setValue(el.getValue());
+                        }.bind(this)
                     }
                 },{
                     xtype: "textfield",
@@ -1331,10 +1353,10 @@ pimcore.document.tree = Class.create({
                     width: "100%"
                 },{
                     xtype: "textfield",
-                    itemId: "title",
-                    fieldLabel: t('title'),
-                    name: 'title',
-                    width: "100%"
+                    width: "100%",
+                    fieldLabel: t('key'),
+                    itemId: "key",
+                    name: 'key'
                 }]
             });
 

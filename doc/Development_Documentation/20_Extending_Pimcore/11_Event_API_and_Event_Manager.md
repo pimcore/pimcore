@@ -141,7 +141,7 @@ allows you to dynamically modify the target path depending on the object it will
 Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
 support the decision.
 
-The contextual info provided is the same as described [here](../05_Objects/01_Object_Classes/01_Data_Types/33_Calculated_Value_Type.md):
+The contextual info provided is the same as described [here](../05_Objects/01_Object_Classes/01_Data_Types/10_Calculated_Value_Type.md):
 
 Example Code: For the demo instance, this sample code would place an image which is dragged onto the image_1 field of object 6 (in-enim-justo_2)
 into the /news/in-enim-justo_2/image_1 asset folder.

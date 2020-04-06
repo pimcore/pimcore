@@ -175,6 +175,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function enable()
     {
         $this->enabled = true;
+
+        return $this;
     }
 
     /**
@@ -183,6 +185,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function disable()
     {
         $this->enabled = false;
+
+        return $this;
     }
 
     /**
@@ -256,7 +260,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Load data from cache (retrieves data from cache item)
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool|mixed
      */
@@ -281,7 +285,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Get PSR-6 cache item
      *
-     * @param $key
+     * @param string $key
      *
      * @return PimcoreCacheItemInterface
      */
@@ -403,7 +407,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return false;
             }
         } else {
-            $this->logger->warning(
+            $this->logger->info(
                 'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
                 [
                     'key' => $item->getKey(),
@@ -469,7 +473,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Create tags for cache item - do this as late as possible as this is potentially expensive (nested items, dependencies)
      *
      * @param PimcoreCacheItemInterface $cacheItem
-     * @param $data
+     * @param mixed $data
      * @param array $tags
      *
      * @return null|PimcoreCacheItemInterface
@@ -581,7 +585,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Remove a cache item
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */

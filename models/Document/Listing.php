@@ -30,6 +30,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method array loadIdPathList()
  */
 class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
@@ -42,6 +43,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $documents = null;
@@ -53,7 +55,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 
     public function __construct()
     {
-        $this->documents =& $this->data;
+        $this->documents = & $this->data;
     }
 
     /**
@@ -87,9 +89,9 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * Set the unpublished flag for the document.
      *
-     * @param $unpublished
+     * @param bool $unpublished
      *
-     * @return bool
+     * @return $this
      */
     public function setUnpublished($unpublished)
     {
@@ -139,7 +141,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return Listing
+     * @return Document[]
      */
     public function getItems($offset, $itemCountPerPage)
     {

@@ -26,14 +26,15 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\ClassDefinition[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $classes = null;
 
     public function __construct()
     {
-        $this->classes =& $this->data;
+        $this->classes = & $this->data;
     }
 
     /**
@@ -45,9 +46,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $classes
+     * @param Model\DataObject\ClassDefinition[]|null $classes
      *
-     * @return $this
+     * @return static
      */
     public function setClasses($classes)
     {

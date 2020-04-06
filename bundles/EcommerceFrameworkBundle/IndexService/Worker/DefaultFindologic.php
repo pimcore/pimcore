@@ -94,9 +94,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
     }
 
     /**
-     * @param      $objectId
-     * @param null $data
-     * @param null $metadata
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
@@ -131,8 +131,8 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
          * Adds a child with $value inside CDATA
          *
          * @param \SimpleXMLElement $parent
-         * @param string           $name
-         * @param null             $value
+         * @param string $name
+         * @param string|null $value
          *
          * @return \SimpleXMLElement
          */
@@ -261,6 +261,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
 
     /**
      * @param int $objectId
+     * @param IndexableInterface|null $object
      */
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {

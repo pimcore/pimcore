@@ -81,7 +81,7 @@ class VoucherController extends FrontendController
         } else {
             $paramsBag['errors'] = ['bundle_ecommerce_voucherservice_msg-error-config-missing'];
 
-            return $this->render('PimcoreEcommerceFrameworkBundle:voucher:voucherCodeTabError.html.twig', $paramsBag);
+            return $this->render('PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_error.html.twig', $paramsBag);
         }
     }
 

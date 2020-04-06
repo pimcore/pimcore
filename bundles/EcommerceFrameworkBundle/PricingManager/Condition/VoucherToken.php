@@ -121,7 +121,7 @@ class VoucherToken implements ConditionInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return Concrete|null
      */

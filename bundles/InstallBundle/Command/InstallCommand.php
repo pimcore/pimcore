@@ -385,9 +385,11 @@ class InstallCommand extends Command
             $this->io->listing($installErrors);
 
             return 2;
-        } else {
-            $this->io->success('Pimcore was successfully installed');
         }
+
+        $this->io->success('Pimcore was successfully installed');
+
+        return 0;
     }
 
     private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput)

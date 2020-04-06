@@ -17,8 +17,8 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      * ** fieldname - name of the field upon which the classification store is saved on the specific object [defaults to attributes]
      * note that this getter does not support localization at the moment
      *
-     * @param $object
-     * @param null $config
+     * @param object $object
+     * @param array|null $config
      *
      * @return mixed
      */

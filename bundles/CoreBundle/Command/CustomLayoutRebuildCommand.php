@@ -111,5 +111,7 @@ class CustomLayoutRebuildCommand extends AbstractCommand
                 }
             }
         }
+
+        return 0;
     }
 }

@@ -34,13 +34,14 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $assets = null;
 
     public function __construct()
     {
-        $this->assets =& $this->data;
+        $this->assets = & $this->data;
     }
 
     /**
@@ -54,7 +55,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
     /**
      * @param Model\Asset[] $assets
      *
-     * @return $this
+     * @return static
      */
     public function setAssets($assets)
     {

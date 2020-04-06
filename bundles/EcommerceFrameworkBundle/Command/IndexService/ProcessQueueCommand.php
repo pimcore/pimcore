@@ -63,7 +63,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             Lock::release($this->getLockName($input));
             $output->writeln(sprintf('<info>UNLOCKED "%s". Please start over again.</info>', $this->getLockname($input)));
 
-            return;
+            return 1;
         }
 
         $this->checkLock($input);
@@ -83,6 +83,8 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
         if (!filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN)) {
             Lock::release($this->getLockname($input));
         }
+
+        return 0;
     }
 
     /**

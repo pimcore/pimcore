@@ -23,7 +23,7 @@ trait Text
     /**
      * Checks if data is valid for current data field
      *
-     * @param mixed $data
+     * @param string $data
      * @param bool $omitMandatoryCheck
      *
      * @throws \Exception
@@ -36,7 +36,7 @@ trait Text
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return bool
      */
@@ -45,9 +45,11 @@ trait Text
         return strlen($data) < 1;
     }
 
-    /** True if change is allowed in edit mode.
-     * @param string $object
-     * @param mixed $params
+    /**
+     * True if change is allowed in edit mode.
+     *
+     * @param Model\DataObject\AbstractObject $object
+     * @param array $params
      *
      * @return bool
      */
@@ -61,7 +63,7 @@ trait Text
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */

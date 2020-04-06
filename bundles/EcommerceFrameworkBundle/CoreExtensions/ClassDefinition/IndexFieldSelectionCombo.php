@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select
@@ -42,21 +43,25 @@ class IndexFieldSelectionCombo extends Select
         $options = [];
 
         if (\Pimcore::getContainer()->has(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY)) {
-            $indexService = Factory::getInstance()->getIndexService();
-            $indexColumns = $indexService->getIndexAttributes(true);
+            try {
+                $indexService = Factory::getInstance()->getIndexService();
+                $indexColumns = $indexService->getIndexAttributes(true);
 
-            foreach ($indexColumns as $c) {
-                $options[] = [
-                    'key' => $c,
-                    'value' => $c
-                ];
-            }
+                foreach ($indexColumns as $c) {
+                    $options[] = [
+                        'key' => $c,
+                        'value' => $c
+                    ];
+                }
 
-            if ($this->getSpecificPriceField()) {
-                $options[] = [
-                    'key' => ProductListInterface::ORDERKEY_PRICE,
-                    'value' => ProductListInterface::ORDERKEY_PRICE
-                ];
+                if ($this->getSpecificPriceField()) {
+                    $options[] = [
+                        'key' => ProductListInterface::ORDERKEY_PRICE,
+                        'value' => ProductListInterface::ORDERKEY_PRICE
+                    ];
+                }
+            } catch (\Exception $e) {
+                Logger::error($e);
             }
         }
 

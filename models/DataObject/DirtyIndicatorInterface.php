@@ -17,29 +17,19 @@
 
 namespace Pimcore\Model\DataObject;
 
-interface DirtyIndicatorInterface
-{
-    /**
-     * @return bool
-     */
-    public function hasDirtyFields();
+@trigger_error(
+    'Interface Pimcore\Model\DataObject\DirtyIndicatorInterface is deprecated since version 6.6.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Model\Element\DirtyIndicatorInterface::class . ' interface instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isFieldDirty($key);
+class_exists(\Pimcore\Model\Element\DirtyIndicatorInterface::class);
 
+if (false) {
     /**
-     * marks the given field as dirty
-     *
-     * @param $field
-     * @param bool $dirty
-     *
-     * @return mixed
+     * @deprecated use \Pimcore\Model\Element\DirtyIndicatorInterface instead.
      */
-    public function markFieldDirty($field, $dirty = true);
-
-    public function resetDirtyMap();
+    interface DirtyIndicatorInterface extends \Pimcore\Model\Element\DirtyIndicatorInterface
+    {
+    }
 }

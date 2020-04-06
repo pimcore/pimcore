@@ -350,9 +350,9 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider immutableOperationProvider
      *
-     * @param $input
-     * @param $expected
-     * @param $operation
+     * @param int $input
+     * @param int $expected
+     * @param string $operation
      * @param array ...$arguments
      */
     public function testImmutableOperations(int $input, int $expected, $operation, ...$arguments)
@@ -639,7 +639,7 @@ class DecimalTest extends TestCase
     /**
      * Pairs for price operations (add, sub)
      *
-     * @param $expected
+     * @param int $expected
      *
      * @return array
      */
@@ -666,7 +666,7 @@ class DecimalTest extends TestCase
     /**
      * Pairs for scalar operations (mul, div)
      *
-     * @param $expected
+     * @param int|float $expected
      *
      * @return array
      */
@@ -698,7 +698,7 @@ class DecimalTest extends TestCase
      * Mixes pairs (creates one pair per possible combination)
      *
      * @param array $input
-     * @param $expected
+     * @param int|float $expected
      *
      * @return array
      */

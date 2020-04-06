@@ -27,8 +27,9 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
-     * @var string[]
+     * @var array
      */
     public $columns;
 
@@ -186,8 +187,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Data\ElementMetadata[]|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -196,7 +197,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -228,7 +228,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -306,6 +306,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     } else {
                         $className = $elementData['className'];
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
+                        /** @var DataObject\Concrete $obj */
                         $obj = Element\Service::getElementById('object', $id);
                         $itemData['published'] = $obj->getPublished();
                     }
@@ -338,6 +339,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return $return;
         }
+
+        return null;
     }
 
     /**
@@ -347,7 +350,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -369,6 +372,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 }
 
                 if ($e instanceof Element\ElementInterface) {
+                    /** @var DataObject\Data\ElementMetadata $metaData */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build(
                             'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -406,8 +410,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array
@@ -420,11 +424,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
-     * @param null|DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array|null $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -453,6 +457,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return implode('<br />', $items);
         }
+
+        return null;
     }
 
     /**
@@ -500,7 +506,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -518,14 +524,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -543,6 +549,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $el = Element\Service::getElementByPath($type, $path);
 
             if ($el) {
+                /** @var DataObject\Data\ElementMetadata $metaObject */
                 $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
                     ->build(
                         'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -562,35 +569,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
+     * @deprecated
      *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $metaObject) {
-                $element = $metaObject->getElement();
-                if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {
-                    $tags = $element->getCacheTags($tags);
-                }
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -622,10 +603,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null $relatedObject
+     * @param Element\AbstractElement $relatedObject
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -680,14 +663,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -702,6 +685,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
+        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
 
         $classId = null;
         $objectId = null;
@@ -727,7 +712,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
-        $this->enrichRelation($object, $params, $classId, $relation);
+        $this->enrichDataRow($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
         $context = $params['context'] ?? null;
@@ -755,7 +740,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
@@ -787,7 +772,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return array
@@ -797,8 +782,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+            if (!$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
@@ -858,7 +843,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];
                     }
@@ -870,7 +855,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $columns
+     * @param array $columns
      *
      * @return $this
      */
@@ -884,7 +869,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
@@ -893,7 +877,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getColumns()
     {
@@ -914,8 +898,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $a
-     * @param $b
+     * @param array|null $a
+     * @param array|null $b
      *
      * @return int
      */
@@ -929,10 +913,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      */
     public function classSaved($class)
     {
+        /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build(
                 'Pimcore\Model\DataObject\Data\ElementMetadata',
@@ -959,7 +944,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return DataObject\Data\ElementMetadata[]
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
@@ -984,7 +969,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -993,7 +978,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1002,7 +987,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\ElementMetadata[]|null $data
      *
      * @return array
      */
@@ -1028,7 +1013,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1062,7 +1047,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -1163,8 +1148,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -1189,7 +1174,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param $item
+     * @param DataObject\Data\ElementMetadata $item
      *
      * @return string
      */
@@ -1227,11 +1212,15 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @param bool $allowMultipleAssignments
+     * @param int|bool|null $allowMultipleAssignments
+     *
+     * @return $this
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+
+        return $this;
     }
 
     /**

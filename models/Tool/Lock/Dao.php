@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $key
+     * @param string $key
      * @param int $expire
      *
      * @return bool
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param int $expire
      * @param int $refreshInterval
      *
@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function release($key)
     {
@@ -94,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param bool $force
      */
     public function lock($key, $force = true)
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public function getById($key)
     {

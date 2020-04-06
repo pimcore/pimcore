@@ -911,7 +911,7 @@ pimcore.layout.toolbar = Class.create({
                         cacheSubItems.push({
                             text: t("all_caches") + ' (Symfony + Data)',
                             iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'env[]': ['dev','prod']})
+                            handler: this.clearCache.bind(this, {'env[]': pimcore.settings['cached_environments']})
                         });
                     }
 
@@ -924,22 +924,22 @@ pimcore.layout.toolbar = Class.create({
                     }
 
                     if (perspectiveCfg.inToolbar("settings.cache.clearSymfony")) {
-                        cacheSubItems.push({
-                            text: 'Symfony ' + t('environment') + ": prod",
-                            iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': 'prod'})
-                        });
 
-                        cacheSubItems.push({
-                            text: 'Symfony ' + t('environment') + ": " + pimcore.settings['environment'],
-                            iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['environment']})
-                        });
+                        pimcore.settings['cached_environments'].forEach(function(environment) {
+                            cacheSubItems.push({
+                                text: 'Symfony ' + t('environment') + ": " + environment,
+                                iconCls: "pimcore_nav_icon_clear_cache",
+                                handler: this.clearCache.bind(this, {
+                                    'only_symfony_cache': true,
+                                    'env[]': environment
+                                })
+                            });
+                        }.bind(this));
 
                         cacheSubItems.push({
                             text: 'Symfony ' + t('environment') + ": " + t('all'),
                             iconCls: "pimcore_nav_icon_clear_cache",
-                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': ['dev','prod']})
+                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['cached_environments']})
                         });
                     }
 
@@ -1056,7 +1056,7 @@ pimcore.layout.toolbar = Class.create({
         if (perspectiveCfg.inToolbar("search")) {
             var searchItems = [];
 
-            if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
+            if ((user.isAllowed("documents") || user.isAllowed("assets") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
                 searchItems.push({
                     text: t("quicksearch"),
                     iconCls: "pimcore_nav_icon_quicksearch",
@@ -1071,7 +1071,8 @@ pimcore.layout.toolbar = Class.create({
                 pimcore.helpers.itemselector(false, function (selection) {
                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
                     }, {type: [type]},
-                    {moveToTab: true,
+                    {
+                        asTab: true,
                         context: {
                             scope: "globalSearch"
                         }
@@ -1162,7 +1163,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("maintenance_not_active"),
                     iconCls: "pimcore_nav_icon_maintenance",
                     handler: function () {
-                        window.open('https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
+                        window.open('https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
                     }
                 });
                 pimcore.notification.helper.incrementCount();
@@ -1174,7 +1175,7 @@ pimcore.layout.toolbar = Class.create({
                     text: t("mail_settings_incomplete"),
                     iconCls: "pimcore_nav_icon_email",
                     handler: function () {
-                        window.open('https://pimcore.com/docs/5.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
+                        window.open('https://pimcore.com/docs/6.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
                     }
                 });
                 pimcore.notification.helper.incrementCount();
@@ -1386,12 +1387,12 @@ pimcore.layout.toolbar = Class.create({
                     var progressWin = new Ext.Window({
                         title: t("generate_page_previews"),
                         layout:'fit',
-                        width:500,
+                        width:200,
                         bodyStyle: "padding: 10px;",
                         closable:false,
                         plain: true,
-                        modal: false,
-                        items: [progressBar]
+                        items: [progressBar],
+                        listeners: pimcore.helpers.getProgressWindowListeners()
                     });
 
                     progressWin.show();

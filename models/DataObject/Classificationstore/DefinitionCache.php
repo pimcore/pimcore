@@ -25,10 +25,10 @@ class DefinitionCache
     public static $cache = [];
 
     /**
-     * @param $id
+     * @param int $id
      * @param string $type
      *
-     * @return mixed|KeyConfig
+     * @return KeyConfig|null
      */
     public static function get($id, $type = 'key')
     {
@@ -41,7 +41,7 @@ class DefinitionCache
         $config = KeyConfig::getById($id);
 
         if (!$config) {
-            return;
+            return null;
         }
         self::put($config);
 
@@ -49,7 +49,7 @@ class DefinitionCache
     }
 
     /**
-     * @param $config
+     * @param KeyConfig|GroupConfig $config
      */
     public static function put($config)
     {
@@ -62,7 +62,7 @@ class DefinitionCache
     }
 
     /**
-     * @param $config
+     * @param KeyConfig|GroupConfig $config
      */
     public static function clear($config)
     {

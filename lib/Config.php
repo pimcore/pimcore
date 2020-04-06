@@ -16,13 +16,14 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
+use Pimcore\Model\User\UserRole;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
-class Config
+class Config implements \ArrayAccess
 {
     /**
      * @var array
@@ -40,7 +41,59 @@ class Config
     private static $environmentConfig;
 
     /**
-     * @param $name - name of configuration file. slash is allowed for subdirectories.
+     * @var array|null
+     */
+    protected static $systemConfig = null;
+
+    /**
+     * @see    ArrayAccess::offsetExists()
+     *
+     * @param  mixed $offset
+     *
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return self::getSystemConfiguration($offset) !== null;
+    }
+
+    /**
+     * @see    ArrayAccess::offsetSet()
+     *
+     * @param  mixed $offset
+     * @param  mixed $value
+     *
+     * @throws \Exception
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new \Exception("modifying the config isn't allowed");
+    }
+
+    /**
+     * @see    ArrayAccess::offsetUnset()
+     *
+     * @param  mixed $offset
+     *
+     * @throws \Exception
+     */
+    public function offsetUnset($offset)
+    {
+        throw new \Exception("modifying the config isn't allowed");
+    }
+
+    /**
+     * @param string $offset
+     *
+     * @return array|null
+     */
+    public function offsetGet($offset)
+    {
+        return self::getSystemConfiguration($offset);
+    }
+
+    /**
+     * @param string $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return mixed
      */
@@ -92,18 +145,38 @@ class Config
     /**
      * @internal
      *
+     * @param null|mixed $offset
+     *
      * @return null|array
      */
-    public static function getSystemConfiguration()
+    public static function getSystemConfiguration($offset = null)
     {
-        $config = null;
-        if ($container = \Pimcore::getContainer()) {
+        if (null === static::$systemConfig && $container = \Pimcore::getContainer()) {
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
-            $config = array_merge_recursive($config, $adminConfig);
+
+            //add email settings
+            foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
+                if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
+                    $config[$key]['smtp'] = [
+                        'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
+                        'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
+                        'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
+                        'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
+                        'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
+                        'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
+                    ];
+                }
+            }
+
+            static::$systemConfig = array_merge_recursive($config, $adminConfig);
         }
 
-        return $config;
+        if (null !== $offset) {
+            return static::$systemConfig[$offset] ?? null;
+        }
+
+        return static::$systemConfig;
     }
 
     /**
@@ -120,7 +193,7 @@ class Config
     /**
      * @internal
      *
-     * @param null $languange
+     * @param string|null $languange
      *
      * @return string
      */
@@ -237,7 +310,7 @@ class Config
      * @internal
      *
      * @param Config\Config $config
-     * @param null $language
+     * @param string|null $language
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
@@ -280,7 +353,7 @@ class Config
     }
 
     /**
-     * @param $config
+     * @param array $config
      *
      * @return array|Config\Config
      */
@@ -312,7 +385,6 @@ class Config
                         'steps' => self::getArrayValue(['documents', 'versions', 'steps'], $config)
                     ],
                     'error_pages' => self::getArrayValue(['documents', 'error_pages'], $config),
-                    'createredirectwhenmoved' => self::getArrayValue(['documents', 'create_redirect_when_moved'], $config),
                     'allowtrailingslash' => self::getArrayValue(['documents', 'allow_trailing_slash'], $config),
                     'generatepreview' => self::getArrayValue(['documents', 'generate_preview'], $config)
                 ],
@@ -340,11 +412,11 @@ class Config
                         'browserapikey' => self::getArrayValue(['services', 'google', 'browser_api_key'], $config)
                     ]
                 ],
-                'cache' => [
-                    'enabled' => self::getArrayValue(['cache', 'enabled'], $config),
-                    'lifetime' => self::getArrayValue(['cache', 'lifetime'], $config),
-                    'excludePatterns' => self::getArrayValue(['cache', 'exclude_patterns'], $config),
-                    'excludeCookie' => self::getArrayValue(['cache', 'exclude_cookie'], $config)
+                'full_page_cache' => [
+                    'enabled' => self::getArrayValue(['full_page_cache', 'enabled'], $config),
+                    'lifetime' => self::getArrayValue(['full_page_cache', 'lifetime'], $config),
+                    'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
+                    'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config)
                 ],
                 'webservice' => [
                     'enabled' => self::getArrayValue(['webservice', 'enabled'], $config)
@@ -426,6 +498,9 @@ class Config
     }
 
     /**
+     * @deprecated use getSystemConfiguration()/Pimcore\Config service instead
+     * to be removed in v7.0
+     *
      * @return mixed|null|\Pimcore\Config\Config
      *
      * @throws \Exception
@@ -439,21 +514,6 @@ class Config
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
             if ($config = self::getSystemConfiguration()) {
-                $container = \Pimcore::getContainer();
-                //add email settings
-                foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                    if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
-                        $config[$key]['smtp'] = [
-                            'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
-                            'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
-                            'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
-                            'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
-                            'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
-                            'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
-                        ];
-                    }
-                }
-
                 $systemConfig = self::mapLegacyConfiguration($config);
                 self::setSystemConfig($systemConfig);
             }
@@ -622,7 +682,7 @@ class Config
                 'treeContextMenu' => [
                     'document' => [
                         'items' => [
-                            'addPrintPage' => self::getWeb2PrintConfig()->enableInDefaultView ? true : false // hide add print documents by default
+                            'addPrintPage' => self::getWeb2PrintConfig()->get('enableInDefaultView') ? true : false // hide add print documents by default
                         ]
                     ]
                 ]
@@ -735,7 +795,7 @@ class Config
     /**
      * @internal
      *
-     * @param $name
+     * @param string $name
      *
      * @return array
      */
@@ -865,12 +925,14 @@ class Config
                     } else {
                         $userOrRoleToCheck = Model\User::getById($userId);
                     }
-                    $perspectives = $userOrRoleToCheck ? $userOrRoleToCheck->getPerspectives() : null;
-                    if ($perspectives) {
-                        foreach ($perspectives as $perspectiveName) {
-                            $masterDef = $masterConfig[$perspectiveName];
-                            if ($masterDef) {
-                                $config[$perspectiveName] = $masterDef;
+                    if ($userOrRoleToCheck instanceof UserRole) {
+                        $perspectives = $userOrRoleToCheck->getPerspectives();
+                        if ($perspectives) {
+                            foreach ($perspectives as $perspectiveName) {
+                                $masterDef = $masterConfig[$perspectiveName] ?? null;
+                                if ($masterDef) {
+                                    $config[$perspectiveName] = $masterDef;
+                                }
                             }
                         }
                     }
@@ -923,8 +985,8 @@ class Config
     /**
      * @internal
      *
-     * @param $runtimeConfig
-     * @param $key
+     * @param array $runtimeConfig
+     * @param string $key
      *
      * @return bool
      */

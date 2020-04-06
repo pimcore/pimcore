@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Pimcore\Event\DocumentEvents;
 
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)

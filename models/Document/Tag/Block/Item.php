@@ -27,8 +27,8 @@ class Item extends AbstractBlockItem
     }
 
     /**
-     * @param $func
-     * @param $args
+     * @param string $func
+     * @param array $args
      *
      * @return Document\Tag|null
      */
@@ -42,5 +42,7 @@ class Item extends AbstractBlockItem
         } elseif ($element === null) {
             return new $class;
         }
+
+        return null;
     }
 }

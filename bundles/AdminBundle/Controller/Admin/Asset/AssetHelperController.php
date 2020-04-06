@@ -30,7 +30,6 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,11 +43,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetHelperController extends AdminController
 {
     /**
-     * @param $userId
-     * @param $classId
-     * @param $searchType
+     * @param int $userId
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -72,22 +71,15 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $user User
-     * @param $classId
-     * @param $searchType
+     * @param User $user
+     * @param string $classId
+     * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
         $db = Db::get();
-        $configListingConditionParts = [];
-        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
-
-        if ($searchType) {
-            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
-        }
 
         $configListing = [];
 
@@ -306,9 +298,9 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $field
-     * @param $language
-     * @param null $keyPrefix
+     * @param array $field
+     * @param string $language
+     * @param string|null $keyPrefix
      *
      * @return array|null
      */
@@ -355,6 +347,10 @@ class AssetHelperController extends AdminController
             'layout' => $field['fieldConfig']['layout'] ?? null,
         ];
 
+        if (isset($field['locked'])) {
+            $result['locked'] = $field['locked'];
+        }
+
         if ($type === 'select') {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
@@ -367,10 +363,10 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $noSystemColumns
-     * @param $fields
-     * @param $context
-     * @param $types
+     * @param bool $noSystemColumns
+     * @param array $fields
+     * @param array $context
+     * @param array $types
      *
      * @return array
      */
@@ -392,9 +388,6 @@ class AssetHelperController extends AdminController
             }
         }
 
-        if (is_array($fields)) { //TODO required?
-        }
-
         return $availableFields;
     }
 
@@ -410,6 +403,7 @@ class AssetHelperController extends AdminController
         $helperColumns = [];
         $newData = [];
         $data = json_decode($request->get('columns'));
+        /** @var \stdClass $item */
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {
                 $itemKey = '#' . uniqid();
@@ -475,7 +469,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfigId
+     * @param int $gridConfigId
      *
      * @return array
      */
@@ -593,8 +587,8 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $gridConfig GridConfig
-     * @param $metadata
+     * @param GridConfig $gridConfig
+     * @param array $metadata
      *
      * @throws \Exception
      */
@@ -637,7 +631,7 @@ class AssetHelperController extends AdminController
      * @Route("/get-export-jobs", methods={"GET"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -646,7 +640,7 @@ class AssetHelperController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
         $list = $gridHelperService->prepareAssetListingForGrid($allParams, $this->getAdminUser());
 
-        if (empty($ids = $allParams['ids'])) {
+        if (empty($ids = $allParams['ids'] ?? '')) {
             $ids = $list->loadIdList();
         }
 
@@ -719,12 +713,12 @@ class AssetHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param $list
-     * @param $fields
+     * @param string $language
+     * @param Asset\Listing $list
+     * @param array $fields
      * @param bool $addTitles
      *
-     * @return string
+     * @return array
      */
     protected function getCsvData(Request $request, $language, $list, $fields, $addTitles = true)
     {
@@ -791,7 +785,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @param $fileHandle
+     * @param string $fileHandle
      *
      * @return string
      */
@@ -819,6 +813,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -850,6 +846,8 @@ class AssetHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('XLSX file not found');
     }
 
     /**

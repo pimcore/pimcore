@@ -22,19 +22,20 @@ use Pimcore\Model\Listing\AbstractListing;
 /**
  * @method Listing\Dao getDao()
  * @method Model\Notification[] load()
- * @method Model\Notification current()
+ * @method int count()
  */
 class Listing extends AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $notifications = null;
 
     public function __construct()
     {
-        $this->notifications =& $this->data;
+        $this->notifications = & $this->data;
     }
 
     /**

@@ -26,7 +26,7 @@ class CustomerObject implements OrderListFilterInterface
     protected $customer;
 
     /**
-     * @param string $paymentState
+     * @param ElementInterface $customer
      */
     public function __construct(ElementInterface $customer)
     {

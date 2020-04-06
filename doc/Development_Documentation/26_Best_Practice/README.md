@@ -7,3 +7,5 @@ The Pimcore core team will release new articles on a regular basis as well.
 
 -----
 If you would like to contribute, just submit a new article as a pull request.
+See the [contribution guideslines](https://github.com/pimcore/pimcore/blob/master/CONTRIBUTING.md)
+on how to do that.

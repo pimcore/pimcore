@@ -391,6 +391,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $indexAttributeData = [];
             $indexRelationData = [];
 
+            $data = $this->doPreIndexDataModification($data);
+
             //add system and index attributes
             foreach ($data['data'] as $dataKey => $dataEntry) {
                 if (array_key_exists($dataKey, $systemAttributeKeys)) {
@@ -411,8 +413,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $indexRelationData[$relation['fieldname']][] = $relation['dest'];
             }
 
-            $data = $this->doPreIndexDataModification($data);
-
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
@@ -422,7 +422,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             }
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
-            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
+            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
+                return $value !== null;
+            }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
             if ($indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];
@@ -441,7 +443,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * override this method if you need to add custom data
      * which should not be stored in the store data
      *
-     * @param $data
+     * @param array|string $data
      *
      * @return mixed
      */
@@ -472,7 +474,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
-                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
+                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
+                                json_decode($data['update_error'], true)
+                                 );
                 }
 
                 $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote($response['index']['_id']));
@@ -648,7 +652,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      *
      * return array in this case
      *
-     * @param $data
+     * @param array|string $data
      *
      * @return string
      */

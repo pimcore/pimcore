@@ -50,7 +50,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
     /**
      * @param Request $request
-     * @param $config
+     * @param array $config
      */
     protected function saveConfiguration(Request $request, $config)
     {

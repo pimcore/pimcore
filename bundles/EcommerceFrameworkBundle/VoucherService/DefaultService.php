@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
 use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -81,7 +82,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, CartInterface  $cart)
+    public function checkToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
@@ -95,7 +96,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function reserveToken($code, CartInterface  $cart)
+    public function reserveToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -110,7 +111,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function releaseToken($code, CartInterface  $cart)
+    public function releaseToken($code, CartInterface $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -126,7 +127,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function applyToken($code, CartInterface  $cart, AbstractOrder $order)
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
@@ -193,7 +194,9 @@ class DefaultService implements VoucherServiceInterface
         }
 
         // get all valid rules configured in system
-        $validRules = Factory::getInstance()->getPricingManager()->getValidRules();
+        /** @var PricingManager $pricingManager */
+        $pricingManager = Factory::getInstance()->getPricingManager();
+        $validRules = $pricingManager->getValidRules();
         $validRulesAssoc = [];
         foreach ($validRules as $rule) {
             $validRulesAssoc[$rule->getId()] = $rule;
@@ -271,7 +274,7 @@ class DefaultService implements VoucherServiceInterface
     }
 
     /**
-     * @param null $seriesId
+     * @param string|null $seriesId
      *
      * @return bool
      */
@@ -309,7 +312,7 @@ class DefaultService implements VoucherServiceInterface
     }
 
     /**
-     * @param $code
+     * @param string $code
      *
      * @return bool|TokenManager\TokenManagerInterface
      */

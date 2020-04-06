@@ -32,7 +32,7 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
                 pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), transition.label, "success");
 
-                elementEditor.reload({layoutId: false});
+                elementEditor.reload({layoutId: transition.objectLayout});
 
             } else {
                 Ext.MessageBox.alert(data.message, data.reason);

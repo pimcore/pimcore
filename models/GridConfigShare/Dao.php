@@ -25,8 +25,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $gridConfigId
-     * @param $sharedWithUserId
+     * @param int $gridConfigId
+     * @param int $sharedWithUserId
      *
      * @throws \Exception
      */

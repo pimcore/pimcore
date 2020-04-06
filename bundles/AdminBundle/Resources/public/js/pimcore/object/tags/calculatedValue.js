@@ -98,7 +98,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             return value;
         }.bind(this, field.key);
 
-        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+        return {text: t(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
             editor:this.getGridColumnEditor(field)};
     }
 });

@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 
@@ -151,7 +152,7 @@ class DefaultService implements ServiceInterface
 
     /**
      * @param CartItemInterface $item
-     * @param $parent
+     * @param AbstractObject $parent
      *
      * @return AbstractOfferItem
      */

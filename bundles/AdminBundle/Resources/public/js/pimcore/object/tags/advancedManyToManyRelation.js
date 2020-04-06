@@ -122,42 +122,64 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 cellEditor = function () {
                     return new Ext.form.TextField({});
                 };
-            } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
-                var selectData = [];
-                if (this.fieldConfig.columns[i].value) {
-                    var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
-                    for (var j = 0; j < selectDataRaw.length; j++) {
-                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+            } else if (this.fieldConfig.columns[i].type == "select") {
+                if(!readOnly) {
+                    var selectData = [];
+                    if (this.fieldConfig.columns[i].value) {
+                        var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
+                        for (var j = 0; j < selectDataRaw.length; j++) {
+                            selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
+                        }
                     }
+
+                    cellEditor = function (selectData) {
+                        return new Ext.form.ComboBox({
+                            typeAhead: true,
+                            queryDelay: 0,
+                            queryMode: "local",
+                            forceSelection: true,
+                            triggerAction: 'all',
+                            lazyRender: false,
+                            mode: 'local',
+
+                            store: new Ext.data.ArrayStore({
+                                fields: [
+                                    'value',
+                                    'label'
+                                ],
+                                data: selectData
+                            }),
+                            valueField: 'value',
+                            displayField: 'label'
+                        });
+                    }.bind(this, selectData);
                 }
 
-                cellEditor = function (selectData) {
-                    return new Ext.form.ComboBox({
-                        typeAhead: true,
-                        queryDelay: 0,
-                        queryMode: "local",
-                        forceSelection: true,
-                        triggerAction: 'all',
-                        lazyRender: false,
-                        mode: 'local',
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    return t(value);
+                }
+            } else if (this.fieldConfig.columns[i].type == "multiselect") {
+                if(!readOnly) {
+                    cellEditor = function (fieldInfo) {
+                        return new pimcore.object.helpers.metadataMultiselectEditor({
+                            fieldInfo: fieldInfo
+                        });
+                    }.bind(this, this.fieldConfig.columns[i]);
+                }
 
-                        store: new Ext.data.ArrayStore({
-                            fields: [
-                                'value',
-                                'label'
-                            ],
-                            data: selectData
-                        }),
-                        valueField: 'value',
-                        displayField: 'label'
-                    });
-                }.bind(this, selectData);
-            } else if (this.fieldConfig.columns[i].type == "multiselect" && !readOnly) {
-                cellEditor = function (fieldInfo) {
-                    return new pimcore.object.helpers.metadataMultiselectEditor({
-                        fieldInfo: fieldInfo
-                    });
-                }.bind(this, this.fieldConfig.columns[i]);
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (Ext.isString(value)) {
+                        value = value.split(',');
+                    }
+
+                    if (Ext.isArray(value)) {
+                        return value.map(function (str) {
+                            return t(str);
+                        }).join(',')
+                    } else {
+                        return value;
+                    }
+                }
             } else if (this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
@@ -169,7 +191,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
-                        text: ts(this.fieldConfig.columns[i].label),
+                        text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -202,14 +224,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 }.bind(this, this.fieldConfig.columns[i].type, readOnly);
             }
 
-            if (this.fieldConfig.columns[i].type == "select") {
-                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    return ts(value);
-                }
-            }
-
             var columnConfig = {
-                text: ts(this.fieldConfig.columns[i].label),
+                text: t(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -233,6 +249,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('up'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('up'),
@@ -251,6 +268,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('down'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('down'),
@@ -271,6 +289,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('open'),
@@ -293,6 +312,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 xtype: 'actioncolumn',
                 menuText: t('remove'),
                 width: 40,
+                hideable: false,
                 items: [
                     {
                         tooltip: t('remove'),
@@ -389,7 +409,10 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",
             plugins: [
                 this.cellEditing
-            ]
+            ],
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
+            }
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu.bind(this));
@@ -900,7 +923,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path")
         };

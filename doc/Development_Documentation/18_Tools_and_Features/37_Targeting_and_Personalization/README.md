@@ -4,6 +4,21 @@ The following section describes the technical concepts and aspects of the Pimcor
 description and feature listing see your [user docs](../../../User_Documentation/05_Targeting_and_Personalization/README.md)
 first. 
 
+## Setup
+
+Basically the targeting engine works out of the box, however if you'd like to use geo-related conditions in your 
+targeting rules it's necessary to configure the underlying data provider first. 
+
+### Configuring the MaxMind GeoIP Data Provider
+
+Follow the [official instructions](https://dev.maxmind.com/geoip/geoipupdate/) for obtaining and updating the GeoIP database.
+Store the database file at the location of your choice, the default location used by _geoipupdate_ is `/usr/share/GeoIP/GeoLite2-City.mmdb`
+
+Set the path to the database file in your `parameters.yml` to enable the geo support in Pimcore: 
+```yaml
+pimcore.geoip.db_file: /usr/share/GeoIP/GeoLite2-City.mmdb
+``` 
+
  
 ## Basic concepts
 

@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Qrcode\Config\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Config extends Model\AbstractModel
 {
@@ -67,7 +69,7 @@ class Config extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return Config
+     * @return self|null
      *
      * @throws \Exception
      */

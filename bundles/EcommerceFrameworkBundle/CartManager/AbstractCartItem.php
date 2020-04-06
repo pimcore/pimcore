@@ -35,10 +35,22 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var CheckoutableInterface
      */
     protected $product;
-    protected $productId = null;
+
+    /**
+     * @var int
+     */
+    protected $productId;
+
+    /**
+     * @var string
+     */
     protected $itemKey;
     protected $count;
     protected $comment;
+
+    /**
+     * @var string
+     */
     protected $parentItemKey = '';
 
     protected $subItems = null;
@@ -113,7 +125,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     abstract public function getCart();
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCartId()
     {
@@ -121,7 +133,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param $cartId
+     * @param int $cartId
      */
     public function setCartId($cartId)
     {
@@ -141,7 +153,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param $productId
+     * @param int $productId
      */
     public function setProductId($productId)
     {
@@ -153,7 +165,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param $parentItemKey
+     * @param string $parentItemKey
      */
     public function setParentItemKey($parentItemKey)
     {
@@ -169,7 +181,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param $itemKey
+     * @param string $itemKey
      */
     public function setItemKey($itemKey)
     {
@@ -177,7 +189,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getItemKey()
     {

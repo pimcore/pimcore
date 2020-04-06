@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Webservice;
 
+/**
+ * @deprecated
+ */
 class Tool
 {
     /**
@@ -65,9 +68,9 @@ class Tool
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
-     * @return array
+     * @return mixed
      */
     public static function keyValueReverseMapping($data)
     {
@@ -93,5 +96,7 @@ class Tool
         } else {
             return $data;
         }
+
+        return null;
     }
 }

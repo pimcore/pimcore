@@ -27,7 +27,6 @@ use Pimcore\Model\Redirect;
 class Hardlink extends Document
 {
     use Document\Traits\ScheduledTasksTrait;
-    use Document\Traits\RedirectHelperTrait;
 
     /**
      * static type of this object
@@ -52,7 +51,7 @@ class Hardlink extends Document
     protected $childrenFromSource;
 
     /**
-     * @return Document\PageSnippet
+     * @return Document|null
      */
     public function getSourceDocument()
     {
@@ -107,7 +106,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $childrenFromSource
+     * @param bool $childrenFromSource
      *
      * @return Hardlink
      */
@@ -127,7 +126,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $sourceId
+     * @param int $sourceId
      *
      * @return $this
      */
@@ -147,7 +146,7 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $propertiesFromSource
+     * @param bool $propertiesFromSource
      *
      * @return $this
      */
@@ -200,18 +199,19 @@ class Hardlink extends Document
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return Document[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
-            $children = parent::getChildren($unpublished);
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+        if (!isset($this->children[$cacheKey])) {
+            $children = parent::getChildren($includingUnpublished);
 
             $sourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren($unpublished);
+                $sourceChildren = $this->getSourceDocument()->getChildren($includingUnpublished);
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
@@ -220,10 +220,10 @@ class Hardlink extends Document
             }
 
             $children = array_merge($sourceChildren, $children);
-            $this->setChildren($children);
+            $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children;
+        return $this->children[$cacheKey] ?? [];
     }
 
     /**
@@ -231,7 +231,7 @@ class Hardlink extends Document
      */
     public function hasChildren($unpublished = false)
     {
-        return count($this->getChildren()) > 0;
+        return count($this->getChildren($unpublished)) > 0;
     }
 
     /**
@@ -239,10 +239,6 @@ class Hardlink extends Document
      */
     public function delete(bool $isNested = false)
     {
-
-        // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
-        $this->children = [];
-
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
         $redirects->setCondition('target = ?', $this->getId());
@@ -253,10 +249,6 @@ class Hardlink extends Document
         }
 
         parent::delete($isNested);
-
-        // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
-        $this->children = null;
     }
 
     /**
@@ -266,12 +258,7 @@ class Hardlink extends Document
      */
     protected function update($params = [])
     {
-        $oldPath = $this->getDao()->getCurrentFullPath();
-        $oldDocument = self::getById($this->getId(), true);
-
         parent::update($params);
-
-        $this->createRedirectForFormerPath($oldPath, $oldDocument);
         $this->saveScheduledTasks();
     }
 }

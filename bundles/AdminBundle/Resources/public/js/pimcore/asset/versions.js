@@ -233,7 +233,16 @@ pimcore.asset.versions = Class.create({
             url: "/admin/asset/publish-version",
             method: 'post',
             params: {id: versionId},
-            success: this.asset.reload.bind(this.asset)
+            success: function(response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success) {
+                    this.asset.reload();
+                    pimcore.helpers.updateTreeElementStyle('asset', this.asset.id, rdata.treeData);
+                } else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
+                }
+            }.bind(this)
         });
     },
 

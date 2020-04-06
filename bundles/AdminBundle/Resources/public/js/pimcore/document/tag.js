@@ -18,6 +18,8 @@ pimcore.document.tag = Class.create({
     name: null,
     realName: null,
     inherited: false,
+    required: false,
+    requiredError: false,
 
     setupWrapper: function (styleOptions) {
 
@@ -126,6 +128,27 @@ pimcore.document.tag = Class.create({
             fieldname: this.name
         }
         return context;
+    },
+
+    validateRequiredValue: function(value, el, parent, mark) {
+        let valueLength = 1;
+        if (typeof value === "string") {
+            valueLength = trim(strip_tags(value)).length;
+        } else if (value == null) {
+            valueLength = 0;
+        }
+
+        if (valueLength < 1) {
+            parent.requiredError = true;
+            if (mark) {
+                el.addCls('editable-error');
+            }
+        } else {
+            parent.requiredError = false;
+            if (mark) {
+                el.removeCls('editable-error');
+            }
+        }
     }
 });
 

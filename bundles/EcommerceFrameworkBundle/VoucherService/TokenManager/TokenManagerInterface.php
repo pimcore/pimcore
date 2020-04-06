@@ -46,7 +46,7 @@ interface TokenManagerInterface
      *
      * @param array|null $filter Associative with the indices: "usage" and "olderThan".
      *
-     * @return mixed
+     * @return bool
      */
     public function cleanUpCodes($filter = []);
 
@@ -147,7 +147,7 @@ interface TokenManagerInterface
      * Gets the codes according to paging and filter params and sets
      * error/success messages, settings and statistics for view.
      *
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params All params, especially for filtering and ordering token codes.
      *
      * @return string The path of the template to display.

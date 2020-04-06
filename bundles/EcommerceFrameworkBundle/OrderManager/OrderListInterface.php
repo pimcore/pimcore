@@ -155,7 +155,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     public function addCondition($condition, $value = null);
 
     /**
-     * @param $field
+     * @param string $field
      *
      * @return $this
      */

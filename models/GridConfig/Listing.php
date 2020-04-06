@@ -27,14 +27,15 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\GridConfig[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $gridConfigs = null;
 
     public function __construct()
     {
-        $this->gridConfigs =& $this->data;
+        $this->gridConfigs = & $this->data;
     }
 
     /**
@@ -46,9 +47,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $gridConfigs
+     * @param Model\GridConfig[]|null $gridConfigs
      *
-     * @return $this
+     * @return static
      */
     public function setGridConfigs($gridConfigs)
     {

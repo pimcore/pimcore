@@ -27,7 +27,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $cid
      * @param string $ctype
-     * @param string $workflowId
+     * @param string $workflow
      *
      * @throws \Exception
      */

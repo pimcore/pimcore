@@ -99,7 +99,7 @@ pimcore.settings.videothumbnail.item = Class.create({
                 value: this.data.name,
                 fieldLabel: t("name"),
                 width: 450,
-                disabled: true
+                readOnly: true
             }, {
                 xtype: "textarea",
                 name: "description",

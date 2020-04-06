@@ -20,13 +20,14 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
 class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var array
@@ -97,7 +98,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param $items
+     * @param array $items
      *
      * @return $this
      */
@@ -118,7 +119,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -252,7 +253,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      *
      * @return $this
      */
@@ -349,7 +350,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -358,10 +359,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->{'set'.ucfirst($fieldName)}($value);
     }
 
-    /** @internal
-     * @param $brick
-     * @param $brickField
-     * @param $field
+    /**
+     * @internal
+     *
+     * @param string $brick
+     * @param string $brickField
+     * @param string $field
      *
      * @throws \Exception
      */

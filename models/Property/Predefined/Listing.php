@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Property\Predefined\Listing\Dao getDao()
+ * @method \Pimcore\Model\Property\Predefined[] load()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\JsonListing
 {

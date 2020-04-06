@@ -27,6 +27,13 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     private $db;
 
+    /**
+     * ApplicationLoggerDb constructor.
+     *
+     * @param Db\ConnectionInterface $db
+     * @param string $level
+     * @param bool $bubble
+     */
     public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
     {
         $this->db = $db;

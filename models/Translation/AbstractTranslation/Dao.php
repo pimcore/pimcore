@@ -25,7 +25,7 @@ use Pimcore\Model;
 abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
 {
     /**
-     * @param $key
+     * @param string $key
      *
      * @throws \Exception
      */

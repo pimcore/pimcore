@@ -32,17 +32,17 @@ class UserRole extends AbstractUser
     public $permissions = [];
 
     /**
-     * @var array
+     * @var Asset[]
      */
     public $workspacesAsset = [];
 
     /**
-     * @var array
+     * @var DataObject[]
      */
     public $workspacesObject = [];
 
     /**
-     * @var array
+     * @var Document[]
      */
     public $workspacesDocument = [];
 
@@ -100,8 +100,8 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $permissionName
-     * @param null $value
+     * @param string $permissionName
+     * @param bool|null $value
      *
      * @return $this
      */
@@ -126,7 +126,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $permissionName
+     * @param string $permissionName
      *
      * @return bool
      */
@@ -161,7 +161,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $permissions
+     * @param string|array $permissions
      *
      * @return $this
      */
@@ -177,7 +177,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $workspacesAsset
+     * @param Asset[] $workspacesAsset
      *
      * @return $this
      */
@@ -197,7 +197,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $workspacesDocument
+     * @param Document[] $workspacesDocument
      *
      * @return $this
      */
@@ -217,7 +217,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param $workspacesObject
+     * @param DataObject[] $workspacesObject
      *
      * @return $this
      */
@@ -281,7 +281,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param mixed $perspectives
+     * @param array|string $perspectives
      */
     public function setPerspectives($perspectives)
     {
@@ -330,9 +330,9 @@ class UserRole extends AbstractUser
      * checks if given parameter is string and if so splits it creates array
      * returns empty array if empty parameter is given
      *
-     * @param $array
+     * @param array|string $array
      *
-     * @return array|string
+     * @return array
      */
     protected function prepareArray($array)
     {

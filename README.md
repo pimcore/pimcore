@@ -5,7 +5,7 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
+[![Build Status](https://travis-ci.com/pimcore/pimcore.svg)](https://travis-ci.com/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
@@ -76,8 +76,8 @@ cd ./my-project
 ```
 
 This will install an empty skeleton application, 
-but we're also offering 3 different demo packages for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html)
+but we're also offering a demo package for your convenience - of course also with 3 commands 💪
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  

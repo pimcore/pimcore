@@ -32,7 +32,12 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
             $request = $this->getCurrentRequest();
         }
 
-        return $request->get(DynamicRouter::CONTENT_KEY, null);
+        $content = $request->get(DynamicRouter::CONTENT_KEY, null);
+        if ($content instanceof Document) {
+            return $content;
+        }
+
+        return null;
     }
 
     /**

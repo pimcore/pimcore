@@ -70,7 +70,7 @@ class Currency
     /**
      * Currency constructor.
      *
-     * @param $currencyShortName string
+     * @param string $currencyShortName
      */
     public function __construct($currencyShortName)
     {

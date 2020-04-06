@@ -4,7 +4,7 @@
  */
 $element = $this->element;
 $previewImage = null;
-if ($element instanceof \Pimcore\Model\Document\Page && \Pimcore\Config::getSystemConfig()->documents->generatepreview) {
+if ($element instanceof \Pimcore\Model\Document\Page && $this->config['documents']['generate_preview']) {
     $thumbnailFileHdpi = $element->getPreviewImageFilesystemPath(true);
     if (file_exists($thumbnailFileHdpi)) {
         $previewImage = $this->path('pimcore_admin_page_display_preview_image', ['id' => $element->getId(), 'hdpi' => true]);

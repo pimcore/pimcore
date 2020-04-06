@@ -22,8 +22,6 @@ use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 
 class BundleGenerator extends BaseBundleGenerator
 {
-    private $filesystem;
-
     public function generateBundle(Bundle $bundle)
     {
         parent::generateBundle($bundle);

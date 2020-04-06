@@ -49,6 +49,7 @@ class AssetsInstaller
     public function install(array $options = []): Process
     {
         $process = $this->buildProcess($options);
+        $process->setTimeout(240);
         $process->run($this->runCallback);
 
         if (!$process->isSuccessful()) {

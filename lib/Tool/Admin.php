@@ -63,7 +63,7 @@ class Admin
                         $parts = explode('.', $file);
 
                         $languageCode = $parts[0];
-                        if($parts[0] === 'admin') {
+                        if ($parts[0] === 'admin') {
                             // this is for the app specific translations
                             $languageCode = $parts[1];
                         }
@@ -86,7 +86,7 @@ class Admin
     /**
      * @static
      *
-     * @param  $scriptContent
+     * @param string $scriptContent
      *
      * @return mixed
      */
@@ -107,7 +107,7 @@ class Admin
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @return \stdClass
      */
@@ -155,7 +155,7 @@ class Admin
     }
 
     /**
-     * @param null $sessionId
+     * @param string|null $sessionId
      *
      * @throws \Exception
      */
@@ -268,7 +268,7 @@ class Admin
      * @param string|array $languages
      * @param bool $returnLanguageArray
      *
-     * @return string
+     * @return string|array
      */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {

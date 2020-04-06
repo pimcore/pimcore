@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 interface OrderManagerInterface extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface
 {
     /**
-     * @param AbstractOrder $sourceOrder
+     * @param CartInterface $cart
      *
      * @return AbstractOrder
      */

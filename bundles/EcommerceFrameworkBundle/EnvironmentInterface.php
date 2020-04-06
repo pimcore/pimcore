@@ -48,8 +48,8 @@ interface EnvironmentInterface extends ComponentInterface
      * Sets custom item to environment - which is saved to the session then
      * save()-call is needed to save the custom items
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setCustomItem($key, $value);
 
@@ -57,15 +57,15 @@ interface EnvironmentInterface extends ComponentInterface
      * Removes custom item from the environment
      * save()-call is needed to save the custom items
      *
-     * @param $key
+     * @param string $key
      */
     public function removeCustomItem($key);
 
     /**
      * Returns custom saved item from environment
      *
-     * @param $key
-     * @param $defaultValue
+     * @param string $key
+     * @param mixed $defaultValue
      *
      * @return mixed
      */

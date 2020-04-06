@@ -73,7 +73,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
         for (i = 0; i < visibleFields.length; i++) {
-            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
+            columns.push({header: t(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
                                                                     renderer: renderer});
         }
 
@@ -119,7 +119,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 if(!readOnly) {
                     columns.push(new Ext.grid.CheckColumn({
-                        header: ts(this.fieldConfig.columns[i].label),
+                        header: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width
                     }));
@@ -137,7 +137,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             }
 
             columns.push({
-                header: ts(this.fieldConfig.columns[i].label),
+                header: t(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 editor: editor,
                 renderer: renderer,

@@ -68,7 +68,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: t(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
@@ -215,6 +215,18 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     urlField.getParent().getParent().getParent().show();
                 }
             });
+
+            // force paste dialog to prevent security message on various browsers
+            this.ckeditor.on('beforeCommandExec', function(event) {
+                if (event.data.name === 'paste') {
+                    event.editor._.forcePasteDialog = true;
+                }
+
+                if (event.data.name === 'pastetext' && event.data.commandData.from === 'keystrokeHandler') {
+                    event.cancel();
+                }
+            });
+
         } catch (e) {
             console.log(e);
         }

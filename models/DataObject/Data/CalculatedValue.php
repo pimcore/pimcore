@@ -52,7 +52,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     /**
      * CalculatedValue constructor.
      *
-     * @param $fieldname
+     * @param string $fieldname
      */
     public function __construct($fieldname)
     {
@@ -60,14 +60,16 @@ class CalculatedValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /** Sets contextual information.
-     * @param $ownerType
-     * @param $ownerName
-     * @param $index
-     * @param $position
-     * @param null $groupId
-     * @param null $keyId
-     * @param null $keyDefinition
+    /**
+     * Sets contextual information.
+     *
+     * @param string $ownerType
+     * @param string $ownerName
+     * @param int $index
+     * @param string $position
+     * @param int $groupId
+     * @param int $keyId
+     * @param mixed $keyDefinition
      */
     public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null)
     {

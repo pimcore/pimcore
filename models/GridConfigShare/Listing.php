@@ -28,13 +28,14 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @var array|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $gridConfigShares = null;
 
     public function __construct()
     {
-        $this->gridConfigShares =& $this->data;
+        $this->gridConfigShares = & $this->data;
     }
 
     /**

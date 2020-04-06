@@ -27,20 +27,21 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\User\Permission\Definition[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $definitions = null;
 
     public function __construct()
     {
-        $this->definitions =& $this->data;
+        $this->definitions = & $this->data;
     }
 
     /**
-     * @param $definitions
+     * @param Model\User\Permission\Definition[] $definitions
      *
-     * @return $this
+     * @return static
      */
     public function setDefinitions($definitions)
     {

@@ -27,6 +27,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
     /**
      * @TODO abstract method to be activated in Pimcore 7
+     *
      * @return array
      */
     /*abstract public function load();*/
@@ -135,6 +136,8 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                 $select->order(new Expression(implode(', ', $parts)));
             }
         }
+
+        return $this;
     }
 
     /**
@@ -142,7 +145,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      *
      * @return $this
      *
-     * @internal param $QueryBuilder
+     * @internal
      *
      */
     protected function addGroupBy(QueryBuilder $select)

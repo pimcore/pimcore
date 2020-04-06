@@ -29,7 +29,7 @@ class AssetTest extends RestTestCase
 
         $asset = TestHelper::createImageAsset('', $originalContent, false);
 
-        // object not saved, asset count must still be one
+        // asset not saved, asset count must still be one
         $this->assertEquals(1, TestHelper::getAssetCount());
 
         $time = time();

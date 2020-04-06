@@ -51,10 +51,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Asset|Asset\Folder $target
-     * @param  Asset|Asset\Folder $source
+     * @param Asset $target
+     * @param Asset $source
      *
-     * @return Asset copied asset
+     * @return Asset|null copied asset
+     *
+     * @throws \Exception
      */
     public function copyRecursive($target, $source)
     {
@@ -64,13 +66,14 @@ class Service extends Model\Element\Service
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
 
+        /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
-        $new->id = null;
+        $new->setObjectVar('id', null);
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
         }
@@ -109,11 +112,14 @@ class Service extends Model\Element\Service
      * @param  Asset $source
      *
      * @return Asset copied asset
+     *
+     * @throws \Exception
      */
     public function copyAsChild($target, $source)
     {
         $source->getProperties();
 
+        /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
 
@@ -143,8 +149,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Asset $target
+     * @param Asset $source
      *
      * @return mixed
      *
@@ -172,9 +178,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $asset
-     * @param null $fields
-     * @param null $requestedLanguage
+     * @param Asset $asset
+     * @param array|null $fields
+     * @param string|null $requestedLanguage
      * @param array $params
      *
      * @return array
@@ -201,7 +207,7 @@ class Service extends Model\Element\Service
                 $fieldDef = explode('~', $field);
                 if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
                     if ($fieldDef[0] === 'preview') {
-                        $data[$field] = self::getPreviewThumbnail($asset, ['width' => 108, 'height' => 70, 'frame' => true]);
+                        $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
                     } elseif ($fieldDef[0] === 'size') {
                         /** @var Asset $asset */
                         $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
@@ -229,7 +235,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $asset
+     * @param Asset $asset
      * @param array $params
      * @param bool $onlyMethod
      *
@@ -265,8 +271,8 @@ class Service extends Model\Element\Service
     /**
      * @static
      *
-     * @param $path
-     * @param null $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -313,14 +319,13 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $asset
-     * @param $rewriteConfig
+     * @param Asset $asset
+     * @param array $rewriteConfig
      *
      * @return Asset
      */
     public static function rewriteIds($asset, $rewriteConfig)
     {
-
         // rewriting properties
         $properties = $asset->getProperties();
         foreach ($properties as &$property) {
@@ -332,7 +337,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -369,7 +374,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -416,7 +421,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $item \Pimcore\Model\Asset
+     * @param Model\Asset $item
      * @param int $nr
      *
      * @return string

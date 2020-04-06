@@ -243,7 +243,6 @@ pimcore.notification.modal = Class.create({
         var allowedTypes = ['object', 'asset', 'document'];
         var allowedSpecific = {};
         var allowedSubtypes = {};
-        var i;
 
         allowedSubtypes.object = ["object", "variant"];
 

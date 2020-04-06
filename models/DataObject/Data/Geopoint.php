@@ -35,8 +35,8 @@ class Geopoint implements OwnerAwareFieldInterface
     protected $latitude;
 
     /**
-     * @param null $longitude
-     * @param null $latitude
+     * @param float|null $longitude
+     * @param float|null $latitude
      */
     public function __construct($longitude = null, $latitude = null)
     {
@@ -58,7 +58,7 @@ class Geopoint implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $longitude
+     * @param float $longitude
      *
      * @return $this
      */
@@ -83,7 +83,7 @@ class Geopoint implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $latitude
+     * @param float $latitude
      *
      * @return $this
      */

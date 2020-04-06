@@ -179,7 +179,7 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
     /**
      * Get payment redirect URL after payment form has been submitted with a post.
      *
-     * @param $config
+     * @param array $config
      *
      * @return string[] first parameter contains redirect URL, second parameter contains error message if there is any.
      * if there is an error message is it up to you to redirect to the suggested URL, which might not
@@ -309,6 +309,8 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
                 return [$forwardUrl, $errorText];
             }
         }
+
+        return [];
     }
 
     private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional): array
@@ -465,7 +467,7 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *

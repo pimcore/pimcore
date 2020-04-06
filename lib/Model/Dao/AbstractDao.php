@@ -78,8 +78,10 @@ abstract class AbstractDao implements DaoInterface
         return $columns;
     }
 
-    /** Clears the column information for the given table.
-     * @param $table
+    /**
+     * Clears the column information for the given table.
+     *
+     * @param string $table
      */
     public function resetValidTableColumnsCache($table)
     {

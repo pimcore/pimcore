@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class KeyGroupRelation extends Model\AbstractModel
 {
@@ -210,7 +212,7 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public function setMandatory($mandatory)
     {
-        $this->mandatory = intval($mandatory);
+        $this->mandatory = (bool)$mandatory;
     }
 
     /**
@@ -230,8 +232,8 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @param $groupId
-     * @param $keyId
+     * @param int $groupId
+     * @param int $keyId
      *
      * @return KeyGroupRelation|null
      */

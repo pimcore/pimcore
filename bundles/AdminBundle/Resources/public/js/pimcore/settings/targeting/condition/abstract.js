@@ -27,5 +27,9 @@ pimcore.settings.targeting.condition.abstract = Class.create({
 
     getPanel: function () {
         console.error('You have to implement the getPanel() method in condition', this);
+    },
+
+    isAvailable: function () {
+        return true;
     }
 });

@@ -323,9 +323,15 @@ pimcore.document.versions = Class.create({
             url: "/admin/document/publish-version",
             method: "POST",
             params: {id: versionId},
-            success: function () {
-                // reload document
-                this.document.reload();
+            success: function(response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success) {
+                    this.document.reload();
+                    pimcore.helpers.updateTreeElementStyle('document', this.document.id, rdata.treeData);
+                } else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
+                }
             }.bind(this)
         });
     },

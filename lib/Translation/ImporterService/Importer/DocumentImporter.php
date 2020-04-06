@@ -27,7 +27,7 @@ class DocumentImporter extends AbstractElementImporter
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
-        if ($attribute->getType() === Attribute::TYPE_TAG && method_exists($element, 'getElement')) {
+        if ($attribute->getType() === Attribute::TYPE_TAG && $element instanceof Document\PageSnippet) {
             $tag = $element->getElement($attribute->getName());
             if ($tag) {
                 if (in_array($tag->getType(), ['image', 'link'])) {
@@ -41,10 +41,13 @@ class DocumentImporter extends AbstractElementImporter
             }
         }
 
-        if ($attribute->getType() === Attribute::TYPE_SETTINGS && $element instanceof Document\Page) {
+        if ($element instanceof Document\Page && ($attribute->getType() === Attribute::TYPE_SETTINGS || $attribute->getType() === Attribute::TYPE_ELEMENT_KEY)) {
             $setter = 'set' . ucfirst($attribute->getName());
             if (method_exists($element, $setter)) {
-                $element->$setter($attribute->getContent());
+                $content = $attribute->getContent();
+                $content = $attribute->getType() === Attribute::TYPE_ELEMENT_KEY ? Element\Service::getValidKey($content, 'document') : $content;
+
+                $element->$setter($content);
             }
         }
     }

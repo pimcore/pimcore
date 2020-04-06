@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Db;
 
+/**
+ * @deprecated
+ */
 class Helper
 {
     public static function buildSqlCondition($q, $op = null, $subject = null)
@@ -61,9 +64,11 @@ class Helper
                 $childOp = strtolower($key) == '$and' ? 'AND' : 'OR';
 
                 if (is_array($value)) {
+                    $childParts = [];
                     foreach ($value as $arrItem) {
-                        $parts[] = self::buildSqlCondition($arrItem, $childOp);
+                        $childParts[] = self::buildSqlCondition($arrItem, $childOp);
                     }
+                    $parts[] = implode(' ' . $childOp . ' ', $childParts);
                 } else {
                     $parts[] = self::buildSqlCondition($value, $childOp);
                 }

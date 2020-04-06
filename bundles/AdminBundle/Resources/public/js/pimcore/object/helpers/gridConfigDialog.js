@@ -85,6 +85,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     }
                 }
 
+                if (child.data.locked) {
+                    obj.locked = child.data.locked;
+                }
+
                 this.data.columns.push(obj);
             }.bind(this));
         }
@@ -201,8 +205,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                         continue;
                     }
                     child = child[0];
+
                 } else {
-                    var text = ts(nodeConf.label);
+                    var text = t(nodeConf.label);
 
                     if (nodeConf.dataType !== "system" && this.showFieldname && nodeConf.key) {
                         text = text + " (" + nodeConf.key.replace("~", ".") + ")";
@@ -221,6 +226,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                         child.width = nodeConf.width;
                     }
                 }
+
+                if (nodeConf.locked) {
+                    child.locked = nodeConf.locked;
+                }
+
                 childs.push(child);
             }
 
@@ -277,6 +287,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                             } else if (key == "published") {
                                 return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
                             } else {
+                                var layout = Ext.clone(record.data.layout);
                                 var fieldType = record.data.dataType;
 
                                 try {
@@ -288,11 +299,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     }
 
                                     if (tag) {
+                                        layout.noteditable = true;
                                         var fc = tag.prototype.getGridColumnConfig({
                                             key: key,
-                                            layout: {
-                                                noteditable: true
-                                            }
+                                            layout: layout
                                         }, true);
 
                                         value = fc.renderer(value, null, record);
@@ -422,8 +432,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                     realOverModel = realOverModel.parentNode;
                                 }
 
-                                var sourceType = this.getNodeTypeAndClass(sourceNode);
-                                var targetType = this.getNodeTypeAndClass(realOverModel);
                                 var allowed = true;
 
 
@@ -492,9 +500,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
-
-            var items = [];
-
             this.brickKeys = [];
             this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
                 this.config.classid, this.config.objectId);

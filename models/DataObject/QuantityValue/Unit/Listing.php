@@ -23,22 +23,24 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\QuantityValue\Unit\Listing\Dao getDao()
  * @method Model\DataObject\QuantityValue\Unit[] load()
  * @method Model\DataObject\QuantityValue\Unit current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\DataObject\QuantityValue\Unit[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $units = null;
 
     public function __construct()
     {
-        $this->units =& $this->data;
+        $this->units = & $this->data;
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -56,7 +58,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $units
+     * @param Model\DataObject\QuantityValue\Unit[]|null $units
      *
      * @return static
      */

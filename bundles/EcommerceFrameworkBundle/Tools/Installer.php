@@ -68,7 +68,8 @@ class Installer extends MigrationInstaller
               `comment` LONGTEXT ASCII,
               `addedDateTimestamp` int(10) NOT NULL,
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
-              PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`)
+              PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`),
+              KEY `cartId_parentItemKey` (`cartId`,`parentItemKey`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;",
         'ecommerceframework_vouchertoolkit_statistics' =>
             "CREATE TABLE IF NOT EXISTS `ecommerceframework_vouchertoolkit_statistics` (

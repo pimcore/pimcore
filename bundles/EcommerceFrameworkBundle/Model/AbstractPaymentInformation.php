@@ -37,7 +37,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fiel
     abstract public function getPaymentFinish();
 
     /**
-     * @param \DateTime $paymentStart
+     * @param \DateTime $paymentFinish
      *
      * @return void
      */

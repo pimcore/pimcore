@@ -22,7 +22,7 @@ trait ControllerTypeTrait
      * Get controller of specified type
      *
      * @param FilterControllerEvent $event
-     * @param $type
+     * @param string $type
      *
      * @return mixed
      */
@@ -44,7 +44,7 @@ trait ControllerTypeTrait
      * Test if event controller is of the given type
      *
      * @param FilterControllerEvent $event
-     * @param $type
+     * @param string $type
      *
      * @return bool
      */

@@ -97,14 +97,14 @@ CREATE TABLE `custom_layouts` (
 
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
-  `sourcetype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `sourceid` int(11) unsigned NOT NULL DEFAULT '0',
-  `targettype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `targetid` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`sourcetype`,`sourceid`,`targetid`,`targettype`),
-  KEY `sourceid` (`sourceid`),
-  KEY `targetid` (`targetid`),
-  KEY `targettype` (`targettype`)
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`sourcetype` ENUM('document','asset','object') NOT NULL DEFAULT 'document',
+	`sourceid` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+	`targettype` ENUM('document','asset','object') NOT NULL DEFAULT 'document',
+	`targetid` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `combi` (`sourcetype`, `sourceid`, `targettype`, `targetid`),
+	INDEX `targettype_targetid` (`targettype`, `targetid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents` ;
@@ -151,6 +151,7 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -169,6 +170,7 @@ CREATE TABLE `documents_newsletter` (
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
   `plaintext` LONGTEXT NULL DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -205,6 +207,7 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -217,6 +220,7 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -240,6 +244,7 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -377,7 +382,8 @@ CREATE TABLE `objects` (
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
-  KEY `o_modificationDate` (`o_modificationDate`)
+  KEY `o_modificationDate` (`o_modificationDate`),
+  KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -410,7 +416,7 @@ CREATE TABLE `recyclebin` (
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(100) NOT NULL,
+  `type` ENUM('entire_uri','path_query','path','auto_create') NOT NULL,
   `source` varchar(255) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
@@ -427,8 +433,8 @@ CREATE TABLE `redirects` (
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
-  KEY `active` (`active`)
-) DEFAULT CHARSET=utf8mb4;
+  INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sanitycheck`;
 CREATE TABLE `sanitycheck` (
@@ -446,6 +452,7 @@ CREATE TABLE `schedule_tasks` (
   `action` enum('publish','unpublish','delete','publish-version') DEFAULT NULL,
   `version` bigint(20) unsigned DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '0',
+  `userId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
@@ -498,8 +505,9 @@ CREATE TABLE `tags` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
-  KEY `parentid` (`parentId`)
-) DEFAULT CHARSET=utf8mb4;
+  KEY `parentid` (`parentId`),
+  KEY `name` (`name`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
 CREATE TABLE `tags_assignment` (
@@ -759,8 +767,7 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
-  KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `binaryFileId` (`binaryFileId`)
+  KEY `binaryFileHash` (`binaryFileHash`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
@@ -957,7 +964,31 @@ CREATE TABLE `notifications` (
   `creationDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `modificationDate` TIMESTAMP NULL,
   `linkedElementType` ENUM('document', 'asset', 'object') NULL,
-  `linkedElement` INT(11) NULL
+  `linkedElement` INT(11) NULL,
+  INDEX `recipient` (`recipient`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
+
+DROP TABLE IF EXISTS `object_url_slugs`;
+CREATE TABLE `object_url_slugs` (
+      `objectId` INT(11) NOT NULL DEFAULT '0',
+	    `classId` VARCHAR(50) NOT NULL DEFAULT '0',
+      `fieldname` VARCHAR(70) NOT NULL DEFAULT '0',
+      `index` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+      `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+      `ownername` VARCHAR(70) NOT NULL DEFAULT '',
+      `position` VARCHAR(70) NOT NULL DEFAULT '0',
+      `slug` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, /* slug in utf8 (3-byte) using the full key length of 3072 bytes */
+      `siteId` INT(11) NOT NULL DEFAULT '0',
+      PRIMARY KEY (`slug`, `siteId`),
+      INDEX `index` (`index`),
+      INDEX `objectId` (`objectId`),
+      INDEX `classId` (`classId`),
+      INDEX `fieldname` (`fieldname`),
+      INDEX `position` (`position`),
+      INDEX `ownertype` (`ownertype`),
+      INDEX `ownername` (`ownername`),
+      INDEX `slug` (`slug`),
+      INDEX `siteId` (`siteId`)
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

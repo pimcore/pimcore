@@ -305,7 +305,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * TemplateAreabrickInterface fall back to auto-resolving the template reference. See interface for examples.
      *
      * @param AreabrickInterface $brick
-     * @param $type
+     * @param string $type
      *
      * @return mixed|null|string
      */

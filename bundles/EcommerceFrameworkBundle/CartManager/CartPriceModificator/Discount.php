@@ -73,6 +73,7 @@ class Discount implements DiscountInterface
         }
 
         $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+        $modificatedPrice->setRule($this->rule);
 
         $taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
         if ($taxClass) {

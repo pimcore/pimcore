@@ -95,7 +95,7 @@ class Cache
     /**
      * Remove an item from the cache
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */

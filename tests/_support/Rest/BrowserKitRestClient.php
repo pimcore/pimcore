@@ -9,6 +9,9 @@ use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\BrowserKit\Request as BrowserKitRequest;
 use Symfony\Component\BrowserKit\Response as BrowserKitResponse;
 
+/**
+ * @deprecated
+ */
 class BrowserKitRestClient extends AbstractRestClient
 {
     /**

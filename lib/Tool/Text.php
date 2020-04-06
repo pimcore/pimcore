@@ -35,9 +35,10 @@ class Text
     }
 
     /**
-     * @param $text
+     * @param string $text
+     * @param array $params
      *
-     * @return mixed
+     * @return string
      */
     public static function wysiwygText($text, $params = [])
     {
@@ -267,7 +268,7 @@ class Text
     /**
      * @static
      *
-     * @param $text
+     * @param string $text
      *
      * @return array
      */
@@ -334,7 +335,7 @@ class Text
     }
 
     /**
-     * @param $text
+     * @param string $text
      * @param array $tags
      *
      * @return array
@@ -357,7 +358,7 @@ class Text
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return string
      */
@@ -372,7 +373,7 @@ class Text
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return string
      */
@@ -456,7 +457,7 @@ class Text
     }
 
     /**
-     * @param $string
+     * @param string $string
      *
      * @return string
      */
@@ -472,8 +473,8 @@ class Text
     }
 
     /**
-     * @param $string
-     * @param $length
+     * @param string $string
+     * @param int $length
      *
      * @return string
      */

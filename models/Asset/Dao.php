@@ -29,7 +29,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -88,8 +88,6 @@ class Dao extends Model\Element\Dao
 
     public function update()
     {
-        $this->model->setModificationDate(time());
-
         $asset = $this->model->getObjectVars();
 
         foreach ($asset as $key => $value) {
@@ -153,7 +151,7 @@ class Dao extends Model\Element\Dao
     /**
      * @internal
      *
-     * @param $oldPath
+     * @param string $oldPath
      *
      * @return array
      */
@@ -283,7 +281,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return string retrieves the current full set path from DB
+     * @return string|null retrieves the current full set path from DB
      */
     public function getCurrentFullPath()
     {
@@ -383,6 +381,9 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->model->getRealFullPath() . '/%') . ' OR id = ' . $this->model->getId());
@@ -414,7 +415,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @param Model\User $user
      *
      * @return bool

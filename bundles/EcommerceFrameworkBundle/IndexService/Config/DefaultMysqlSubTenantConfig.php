@@ -139,7 +139,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      * This method extracts assigned tenants and returns an array of [object-ID, subtenant-ID]
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return mixed $subTenantData
      */

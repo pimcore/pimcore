@@ -11,6 +11,7 @@ The numeric editable is very similar to the [input editable](./16_Input.md), but
 | `minValue` | float   | Define a minimum value                                                             |
 | `width`    | integer | Width of the field in pixel                                                        |
 | `class`    | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required` | boolean | set to true to make field value required for publish                       |
 
 ## Methods
 

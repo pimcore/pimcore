@@ -43,7 +43,7 @@ trait ObjectVarTrait
     }
 
     /**
-     * @param $var
+     * @param string $var
      *
      * @return mixed
      */
@@ -57,11 +57,13 @@ trait ObjectVarTrait
     }
 
     /**
-     * @param $var mixed
-     * @param $value mixed
-     * @param $silent bool
+     * @param string $var
+     * @param mixed $value
+     * @param bool $silent
      *
      * @return $this
+     *
+     * @throws \Exception
      */
     public function setObjectVar($var, $value, bool $silent = false)
     {

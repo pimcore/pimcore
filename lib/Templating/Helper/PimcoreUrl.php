@@ -43,7 +43,7 @@ class PimcoreUrl extends Helper
 
     /**
      * @param array $urlOptions
-     * @param null $name
+     * @param string|null $name
      * @param bool $reset
      * @param bool $encode
      * @param bool $relative

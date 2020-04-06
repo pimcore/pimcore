@@ -20,6 +20,9 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @deprecated
+ */
 class ImageController extends AbstractRestController
 {
     /**

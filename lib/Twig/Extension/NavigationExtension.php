@@ -57,26 +57,34 @@ class NavigationExtension extends AbstractExtension
      * with a callback, build the navigation externally, pass it to the
      * view and just call render through the extension.
      *
-     * @param Document $activeDocument
+     * @param mixed $params config array or active document (legacy mode)
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuPrefix
      * @param bool|string $cache
      *
      * @return Container
+     *
+     * @throws \Exception
      */
     public function buildNavigation(
-        Document $activeDocument,
+        $params = null,
         Document $navigationRootDocument = null,
         string $htmlMenuPrefix = null,
         $cache = true
     ): Container {
-        return $this->navigationHelper->buildNavigation(
-            $activeDocument,
-            $navigationRootDocument,
-            $htmlMenuPrefix,
-            null,
-            $cache
-        );
+        if (is_array($params)) {
+            // using param configuration
+            return $this->navigationHelper->build($params);
+        } else {
+            // using deprecated argument configuration ($params = navigation root document)
+            return $this->navigationHelper->buildNavigation(
+                $params,
+                $navigationRootDocument,
+                $htmlMenuPrefix,
+                null,
+                $cache
+            );
+        }
     }
 
     /**
@@ -97,7 +105,7 @@ class NavigationExtension extends AbstractExtension
      * @param Container $container
      * @param string $rendererName
      * @param string|null $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
-     * @param array $rendererArguments      Option arguments to pass to the render method after the container
+     * @param array<int, mixed> $rendererArguments      Option arguments to pass to the render method after the container
      *
      * @return string
      */

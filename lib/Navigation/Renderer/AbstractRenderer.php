@@ -131,7 +131,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param null $maxDepth
+     * @param int|null $maxDepth
      *
      * @return $this
      */
@@ -155,7 +155,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param $indent
+     * @param string $indent
      *
      * @return $this
      */
@@ -183,7 +183,7 @@ abstract class AbstractRenderer implements RendererInterface
     }
 
     /**
-     * @param $prefix
+     * @param string $prefix
      *
      * @return $this
      */
@@ -247,7 +247,7 @@ abstract class AbstractRenderer implements RendererInterface
 
     /**
      * @param Container $container
-     * @param null $minDepth
+     * @param int|null $minDepth
      * @param int $maxDepth
      *
      * @return array

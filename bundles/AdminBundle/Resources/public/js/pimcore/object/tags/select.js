@@ -17,12 +17,6 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     type: "select",
 
     initialize: function (data, fieldConfig) {
-        this.defaultValue = null;
-        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
-            data = fieldConfig.defaultValue;
-            this.defaultValue = data;
-        }
-
         this.data = data;
         this.fieldConfig = fieldConfig;
     },
@@ -31,6 +25,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var renderer = function (key, data, metaData, record) {
             var value = data;
             var options = record.data[key + "%options"];
+
+            if (data && typeof data.options !== "undefined") {
+                options = data.options;
+                value = data.value;
+            }
 
             this.applyPermissionStyle(key, value, metaData, record);
 
@@ -50,11 +49,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {
-            text:ts(field.label),
+            text: t(field.label),
             sortable:true,
             dataIndex:field.key,
             renderer: renderer,
@@ -80,11 +81,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            if (value) {
+                return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+            }
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label),
+            text: t(field.label),
             sortable: true,
             dataIndex: field.key,
             renderer: renderer,
@@ -141,9 +144,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             )
         });
 
-        var combo = new Ext.form.ComboBox(editorConfig);
-        var currentValue = combo.getValue();
-        return combo;
+        return new Ext.form.ComboBox(editorConfig);
     },
 
     getGridColumnEditor: function(field) {
@@ -190,7 +191,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         if (options) {
             for (var i = 0; i < options.length; i++) {
 
-                var label = ts(options[i].key);
+                var label = t(options[i].key);
                 if(label.indexOf('<') >= 0) {
                     label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
                 }
@@ -245,7 +246,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                var label = ts(this.fieldConfig.options[i].key);
+                var label = t(this.fieldConfig.options[i].key);
                 if(label.indexOf('<') >= 0) {
                     hasHTMLContent = true;
                     label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
@@ -360,6 +361,15 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
+    },
+
+    applyDefaultValue: function() {
+
+        this.defaultValue = null;
+        if ((typeof this.data === "undefined" || this.data === null) && this.fieldConfig.defaultValue) {
+            this.data = this.fieldConfig.defaultValue;
+            this.defaultValue = this.data;
+        }
     }
 
 });

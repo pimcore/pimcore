@@ -92,7 +92,7 @@ class Optimizer implements ImageOptimizerInterface
     }
 
     /**
-     * @param null $type
+     * @param string|null $type
      *
      * @return string
      */
@@ -107,7 +107,7 @@ class Optimizer implements ImageOptimizerInterface
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
     public static function optimize($path)
     {

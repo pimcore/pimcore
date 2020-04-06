@@ -123,6 +123,7 @@ pimcore:
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
+                    urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
                     manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
@@ -220,7 +221,6 @@ pimcore:
         session:
             attribute_bags:
                 - pimcore_admin
-                - pimcore_documents
                 - pimcore_objects
                 - pimcore_copy
                 - pimcore_gridconfig
@@ -246,13 +246,13 @@ pimcore:
             app:
                 name: Migrations
                 namespace: App\Migrations
-                directory: "%kernel.root_dir%/Resources/migrations"
+                directory: "%kernel.root_dir%/Migrations"
 
             # this is the core migration set used for Composer post-package-update event
             pimcore_core:
                 name: Pimcore Core Migrations
                 namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Resources/migrations"
+                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
 
     sitemaps:
         generators:

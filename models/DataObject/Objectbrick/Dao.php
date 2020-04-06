@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
@@ -35,6 +36,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      */
     public function load(DataObject\Concrete $object, $params = [])
     {
+        /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
 
         $values = [];
@@ -64,8 +66,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                        if ($fd instanceof LazyLoadingSupportInterface) {
+                            if ($fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
                         }
@@ -107,7 +109,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if ($brick instanceof DataObject\DirtyIndicatorInterface) {
+                if ($brick instanceof Model\Element\DirtyIndicatorInterface) {
                     $brick->markFieldDirty('_self', false);
                 }
 
@@ -122,11 +124,13 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
     /**
      * @param DataObject\Concrete $object
-     * @param $saveMode true if called from save method
+     * @param bool $saveMode true if called from save method
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // this is to clean up also the inherited values
+
+        /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
             if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {

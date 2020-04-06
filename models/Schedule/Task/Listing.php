@@ -27,14 +27,15 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
+     * @var Model\Schedule\Task[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $tasks = null;
 
     public function __construct()
     {
-        $this->tasks =& $this->data;
+        $this->tasks = & $this->data;
     }
 
     /**
@@ -46,9 +47,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $tasks
+     * @param Model\Schedule\Task[]|null $tasks
      *
-     * @return $this
+     * @return static
      */
     public function setTasks($tasks)
     {

@@ -497,7 +497,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             return;
         }
 
-        var self = this;
         var menu = new Ext.menu.Menu();
 
         if(element != false) {

@@ -76,7 +76,7 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return mixed
      */
@@ -86,8 +86,8 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -95,7 +95,7 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return bool
      */

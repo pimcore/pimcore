@@ -471,10 +471,12 @@ class TranslationController extends AdminController
 
             return $this->adminJson(['data' => $translations, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @param $translations
+     * @param array $translations
      *
      * @return array
      */
@@ -493,10 +495,10 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @param $joins
-     * @param $list
-     * @param $tableName
-     * @param $filters
+     * @param array $joins
+     * @param Translation\AbstractTranslation\Listing $list
+     * @param string $tableName
+     * @param array $filters
      */
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
@@ -543,7 +545,7 @@ class TranslationController extends AdminController
 
     /**
      * @param Request $request
-     * @param $tableName
+     * @param string $tableName
      * @param bool $languageMode
      *
      * @return array|null|string
@@ -721,10 +723,11 @@ class TranslationController extends AdminController
                             'id' => $childId,
                             'type' => $element['type'],
                         ];
-                        if ($element['relations']) {
+
+                        if (isset($element['relations']) && $element['relations']) {
                             $childDependencies = $child->getDependencies()->getRequires();
                             foreach ($childDependencies as $cd) {
-                                if ($cd['type'] == "object" || $cd['type'] == "document") {
+                                if ($cd['type'] == 'object' || $cd['type'] == 'document') {
                                     $elements[$cd['type'] . '_' . $cd['id']] = $cd;
                                 }
                             }
@@ -732,14 +735,14 @@ class TranslationController extends AdminController
                     }
                 }
 
-                if ($element['relations']) {
+                if (isset($element['relations']) && $element['relations']) {
                     if (!$el instanceof Element\AbstractElement) {
                         $el = Element\Service::getElementById($element['type'], $element['id']);
                     }
 
                     $dependencies = $el->getDependencies()->getRequires();
                     foreach ($dependencies as $dependency) {
-                        if ($dependency['type'] == "object" || $dependency['type'] == "document") {
+                        if ($dependency['type'] == 'object' || $dependency['type'] == 'document') {
                             $elements[$dependency['type'] . '_' . $dependency['id']] = $dependency;
                         }
                     }
@@ -894,12 +897,17 @@ class TranslationController extends AdminController
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
-            $importerService->import($attributeSet);
+            if ($attributeSet) {
+                $importerService->import($attributeSet);
+            } else {
+                Logger::warning(sprintf('Could not resolve element %s', $id));
+            }
         } catch (\Exception $e) {
             Logger::err($e->getMessage());
 
             return $this->adminJson([
-                'success' => false
+                'success' => false,
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -1066,8 +1074,10 @@ class TranslationController extends AdminController
                 } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
-                    if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
-                        $definitions = $fd->getFielddefinitions();
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $fd */
+                    $fd = $element->getClass()->getFieldDefinition('localizedfields');
+                    if ($fd) {
+                        $definitions = $fd->getFieldDefinitions();
 
                         $locale = str_replace('-', '_', $source);
                         if (!Tool::isValidLanguage($locale)) {

@@ -133,12 +133,12 @@ class MultiCartManager implements CartManagerInterface
     /**
      * @param CheckoutableInterface $product
      * @param float $count
-     * @param null $key
-     * @param null $itemKey
+     * @param string|null $key
+     * @param string|null $itemKey
      * @param bool $replace
      * @param array $params
      * @param array $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return null|string
      *
@@ -181,7 +181,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      */
     public function deleteCart($key = null)
     {
@@ -221,7 +221,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @throws InvalidConfigException
      */
@@ -240,7 +240,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @return CartInterface
      *
@@ -308,7 +308,7 @@ class MultiCartManager implements CartManagerInterface
 
     /**
      * @param string $itemKey
-     * @param null $key
+     * @param string|null $key
      *
      * @throws InvalidConfigException
      */

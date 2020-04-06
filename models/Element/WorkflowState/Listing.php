@@ -27,20 +27,21 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var Model\Element\WorkflowState[]|null
+     *
      * @deprecated use getter/setter methods or $this->data
      */
     protected $workflowStates = null;
 
     public function __construct()
     {
-        $this->workflowStates =& $this->data;
+        $this->workflowStates = & $this->data;
     }
 
     /**
-     * @param $workflowStates
+     * @param Model\Element\WorkflowState[]|null $workflowStates
      *
-     * @return $this
+     * @return static
      */
     public function setWorkflowStates($workflowStates)
     {

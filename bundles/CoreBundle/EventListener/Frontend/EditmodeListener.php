@@ -16,13 +16,11 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
-use Pimcore\Model\User;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -218,14 +216,12 @@ class EditmodeListener implements EventSubscriberInterface
 
     /**
      * @param Document $document
-     * @param User $user
      * @param string $language
      *
      * @return string
      */
     protected function buildHeadHtml(Document $document, $language)
     {
-        $config = Config::getSystemConfig();
         $libraries = $this->getEditmodeLibraries();
         $scripts = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();
@@ -268,7 +264,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // set var for editable configurations which is filled by Document\Tag::admin()
         $headHtml .= '<script>
-            var editableConfigurations = new Array();
+            var editableConfigurations = [];
             var pimcore_document_id = ' . $document->getId() . ';
         </script>';
 

@@ -153,7 +153,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 }, {
                 xtype: "displayfield",
                 hideLabel:true,
-                html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
+                html:'<span class="object_field_setting_warning">' +t('inherited_default_value_warning')+'</span>'
             },
                 columnTypeField
             ]);

@@ -168,7 +168,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             'email' => $order->getCustomer()->getEmail()
         ];
         $orderData['currencyCode'] = $price->getCurrency()->getShortName();
-        $orderData['totalAmount'] = (string) round($price->getAmount()->asNumeric(), 2) * 100;
+        $orderData['totalAmount'] = (string) (round($price->getAmount()->asNumeric(), 2) * 100);
         $orderData['products'] = $this->setProducts($order->getItems());
 
         $orderData = $this->setAdditionalData($orderData);
@@ -195,7 +195,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             $product = $item->getProduct();
 
             $products[$key]['name'] = $product->getName();
-            $products[$key]['unitPrice'] = (string) round($product->getOSPrice()->getAmount()->asNumeric(), 2) * 100;
+            $products[$key]['unitPrice'] = (string) (round($product->getOSPrice()->getAmount()->asNumeric(), 2) * 100);
             $products[$key]['quantity'] = $item->getAmount();
         }
 

@@ -617,6 +617,9 @@ class Installer
         return $errors;
     }
 
+    /**
+     * @return array
+     */
     protected function getDataFiles()
     {
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
@@ -633,13 +636,12 @@ class Installer
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
-        /**
-         * @var User $user
-         */
         if ($user = User::getByName($settings['username'])) {
+            /** @var User $user */
             $user->delete();
         }
 
+        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
@@ -651,7 +653,7 @@ class Installer
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @throws \Exception
      */

@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Exception;
 use Pimcore;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed;
@@ -29,7 +29,6 @@ use Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -50,8 +49,11 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        /** @var Document\Newsletter $email */
         $email = Document\Newsletter::getById($request->get('id'));
+
+        if (!$email) {
+            throw $this->createNotFoundException('Document not found');
+        }
 
         // check for lock
         if ($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
@@ -65,9 +67,7 @@ class NewsletterController extends DocumentControllerBase
         $email = $this->getLatestVersion($email);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
-        $email->setVersions(array_splice($versions, 0, 1));
-        $email->idPath = Element\Service::getIdPath($email);
-        $email->setUserPermissions($email->getUserPermissions());
+        $email->setVersions(array_splice($versions, -1, 1));
         $email->setLocked($email->isLocked());
         $email->setParent(null);
 
@@ -75,26 +75,12 @@ class NewsletterController extends DocumentControllerBase
         $email->setElements(null);
         $email->setChildren(null);
 
-        $this->addTranslationsData($email);
-        $this->minimizeProperties($email);
-
-        // Hook for modifying return value - e.g. for changing permissions based on object data
-        // data need to wrapped into a container in order to pass parameter to event listeners by reference
-        // so that they can change the values
         $data = $email->getObjectVars();
-        $data['versionDate'] = $email->getModificationDate();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($email)], array_values(class_parents($email))),
-            'interfaces' => array_values(class_implements($email))
-        ];
+        $this->addTranslationsData($email, $data);
+        $this->minimizeProperties($email, $data);
 
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $email
-        ]);
-        Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $this->preSendDataActions($data, $email);
 
         if ($email->isAllowed('view')) {
             return $this->adminJson($data);
@@ -114,46 +100,49 @@ class NewsletterController extends DocumentControllerBase
      */
     public function saveAction(Request $request): JsonResponse
     {
-        if ($request->get('id')) {
-            /** @var Document\Newsletter $page */
-            $page = Document\Newsletter::getById($request->get('id'));
-            $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getAdminUser()->getId());
+        $page = Document\Newsletter::getById($request->get('id'));
 
-            if ($request->get('task') === 'unpublish') {
-                $page->setPublished(false);
-            }
-
-            if ($request->get('task') === 'publish') {
-                $page->setPublished(true);
-            }
-            // only save when publish or unpublish
-            if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
-                ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
-                $this->setValuesToDocument($request, $page);
-
-                $page->save();
-                $this->saveToSession($page);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $page->getModificationDate(),
-                        'versionCount' => $page->getVersionCount()
-                    ]
-                ]);
-            } elseif ($page->isAllowed('save')) {
-                $this->setValuesToDocument($request, $page);
-                $page->saveVersion();
-                $this->saveToSession($page);
-
-                return $this->adminJson(['success' => true]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$page) {
+            throw $this->createNotFoundException('Document not found');
         }
 
-        throw $this->createNotFoundException();
+        $page = $this->getLatestVersion($page);
+        $page->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') === 'unpublish') {
+            $page->setPublished(false);
+        }
+
+        if ($request->get('task') === 'publish') {
+            $page->setPublished(true);
+        }
+        // only save when publish or unpublish
+        if (($request->get('task') === 'publish' && $page->isAllowed('publish')) ||
+            ($request->get('task') === 'unpublish' && $page->isAllowed('unpublish'))) {
+            $this->setValuesToDocument($request, $page);
+
+            $page->save();
+            $this->saveToSession($page);
+
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => [
+                    'versionDate' => $page->getModificationDate(),
+                    'versionCount' => $page->getVersionCount()
+                ],
+                'treeData' => $treeData
+            ]);
+        } elseif ($page->isAllowed('save')) {
+            $this->setValuesToDocument($request, $page);
+            $page->saveVersion();
+            $this->saveToSession($page);
+
+            return $this->adminJson(['success' => true]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -187,7 +176,7 @@ class NewsletterController extends DocumentControllerBase
 
         try {
             $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($request->get('class')) . '\\Listing';
-            /** @var Pimcore\Model\Listing\AbstractListing $list */
+            /** @var Pimcore\Model\DataObject\Listing $list */
             $list = new $className();
 
             $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
@@ -284,6 +273,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getSendStatusAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
@@ -302,6 +292,7 @@ class NewsletterController extends DocumentControllerBase
      */
     public function stopSendAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
@@ -321,12 +312,14 @@ class NewsletterController extends DocumentControllerBase
      */
     public function sendAction(Request $request): JsonResponse
     {
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new RuntimeException('Newsletter sending already in progress, need to finish first.');
         }
 
+        /** @var Document\Newsletter $document */
         $document = Document\Newsletter::getById($request->get('id'));
 
         Tool\TmpStore::add($document->getTmpStoreId(), [

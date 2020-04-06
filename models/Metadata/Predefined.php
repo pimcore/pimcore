@@ -58,7 +58,7 @@ class Predefined extends Model\AbstractModel
     public $targetSubtype;
 
     /**
-     * @var string
+     * @var mixed
      */
     public $data;
 
@@ -108,7 +108,7 @@ class Predefined extends Model\AbstractModel
      * @param string $name
      * @param string $language
      *
-     * @return self
+     * @return self|null
      */
     public static function getByName($name, $language = '')
     {
@@ -235,7 +235,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -255,7 +255,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */

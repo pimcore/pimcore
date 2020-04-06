@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\DataObjectEvents;
@@ -79,8 +80,8 @@ class UUIDListener implements EventSubscriberInterface
      */
     protected function isEnabled()
     {
-        $conf = \Pimcore\Config::getSystemConfig();
-        if ($conf->general->instanceIdentifier) {
+        $config = Config::getSystemConfiguration('general');
+        if (!empty($config['instance_identifier'])) {
             return true;
         }
 

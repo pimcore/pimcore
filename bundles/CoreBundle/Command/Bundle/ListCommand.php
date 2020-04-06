@@ -94,6 +94,8 @@ class ListCommand extends AbstractBundleCommand
             '<comment>UI?</comment>: Can be uninstalled?',
             '<comment>UP?</comment>: Can be updated?',
         ]));
+
+        return 0;
     }
 
     private function formatBool($state): string

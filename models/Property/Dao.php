@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @return null
+     * @return mixed
      */
     public function getRawData()
     {

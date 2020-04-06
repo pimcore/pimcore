@@ -19,14 +19,13 @@ class Transliteration
     /**
      * @static
      *
-     * @param $value
-     * @param null $language
+     * @param string $value
+     * @param string|null $language
      *
      * @return string
      */
     public static function toASCII($value, $language = null)
     {
-
         // the transliteration is based on the locale
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
@@ -60,9 +59,9 @@ class Transliteration
     /**
      * @static
      *
-     * @param $string
+     * @param string $string
      * @param string $unknown
-     * @param null $source_langcode
+     * @param string|null $source_langcode
      *
      * @return string
      */
@@ -192,9 +191,9 @@ class Transliteration
     /**
      * @static
      *
-     * @param $ord
+     * @param int $ord
      * @param string $unknown
-     * @param null $langcode
+     * @param string|null $langcode
      *
      * @return string
      */
@@ -202,7 +201,7 @@ class Transliteration
     {
         $map = [];
 
-        if (!isset($langcode)) {
+        if (!$langcode) {
             $langcode = 'en';
         }
 

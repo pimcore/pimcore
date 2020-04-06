@@ -26,15 +26,15 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
 {
     /**
      * @param DataObject\Concrete $source
-     * @param $destinationId
-     * @param $fieldname
-     * @param $ownertype
-     * @param $ownername
-     * @param $position
-     * @param $index
-     * @param $destinationType
+     * @param int $destinationId
+     * @param string $fieldname
+     * @param string $ownertype
+     * @param string $ownername
+     * @param string $position
+     * @param int $index
+     * @param string $destinationType
      *
-     * @return null|DataObject\AbstractObject
+     * @return DataObject\Data\ElementMetadata|null
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType = 'object')
     {

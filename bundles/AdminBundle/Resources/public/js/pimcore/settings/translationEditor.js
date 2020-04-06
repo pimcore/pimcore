@@ -167,8 +167,6 @@ Ext.define('pimcore.settings.translationEditor', {
 
     completeEdit: function (remainVisible) {
         var me = this,
-            field = me.field,
-            fieldInfo = me.config.fieldInfo,
             startValue = me.startValue,
             value;
 

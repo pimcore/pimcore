@@ -22,6 +22,9 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Rule extends AbstractModel implements RuleInterface
 {
     /**
@@ -99,8 +102,8 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * load model with serializes data from db
      *
-     * @param  $key
-     * @param  $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return AbstractModel
      */
@@ -136,7 +139,7 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this|RuleInterface
      */
@@ -187,8 +190,8 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param $name
-     * @param string $locale
+     * @param string $name
+     * @param string|null $locale
      *
      * @return RuleInterface
      */
@@ -270,6 +273,8 @@ class Rule extends AbstractModel implements RuleInterface
     public function setCondition(ConditionInterface $condition)
     {
         $this->condition = $condition;
+
+        return $this;
     }
 
     /**
@@ -404,7 +409,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * gets current language
      *
-     * @param $language
+     * @param string|null $language
      *
      * @return string
      */

@@ -270,13 +270,13 @@ final class ElementTree
                 $this->document,
                 $exception
             );
-        } elseif (count($editables) > 1) {
-            return $this->conflictResolver->resolveEditableConflict(
-                $this->document,
-                $exception,
-                $editables
-            );
         }
+
+        return $this->conflictResolver->resolveEditableConflict(
+            $this->document,
+            $exception,
+            $editables
+        );
     }
 
     private function buildBlocks(array $blockNames, array $parentCandidates): array

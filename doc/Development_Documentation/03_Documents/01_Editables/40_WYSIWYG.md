@@ -14,6 +14,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required`      | boolean | set to true to make field value required for publish                               |
 
 ## Methods
 
@@ -108,6 +109,15 @@ There is also an additional way to specify the configuration by adding `customCo
     ]); ?>
 </section>
 ```
+```twig
+<section id="marked-content">
+    {{  pimcore_wysiwyg('specialContent', {
+            height: 200,
+            customConfig: '/custom/ckeditor_config.js'
+        })
+    }}
+</section>
+```
 
 The `custom_config.js` file could look like the following (please refer to the [CKEditor documentation](https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_configuration-section-using-a-custom-configuration-file) for further details):
 
@@ -199,6 +209,15 @@ With the following code you can get the text even in editmode:
         <?= $this->wysiwyg("specialContent")->getData(); ?>
     </div>
 <?php endif; ?>
+```
+
+```twig
+{{ pimcore_wysiwyg('specialContent') }}
+
+<h4>Preview</h4>
+<div style="border: 1px solid #000;" class="preview">
+    {{ pimcore_wysiwyg('specialContent').getData() }}
+</div>
 ```
 
 ![WYSIWYG with preview - editmode](../../img/editables_wysiwyg_with_preview_editmode.png)

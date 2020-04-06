@@ -22,6 +22,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Tag\Config\Dao getDao()
+ * @method void save()
  */
 class Config extends Model\AbstractModel
 {
@@ -87,9 +88,9 @@ class Config extends Model\AbstractModel
     public $creationDate;
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return Config
+     * @return self|null
      *
      * @throws \Exception
      */
@@ -117,7 +118,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $parameters
+     * @param array $parameters
      *
      * @return bool
      */
@@ -129,8 +130,8 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $position
-     * @param $parameters
+     * @param int $position
+     * @param array $parameters
      *
      * @return bool
      */
@@ -147,7 +148,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $description
+     * @param string $description
      *
      * @return $this
      */
@@ -167,7 +168,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $items
+     * @param array $items
      *
      * @return $this
      */
@@ -187,7 +188,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return $this
      */
@@ -207,7 +208,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $httpMethod
+     * @param string $httpMethod
      *
      * @return $this
      */
@@ -227,7 +228,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $urlPattern
+     * @param string $urlPattern
      *
      * @return $this
      */
@@ -263,7 +264,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $params
+     * @param array $params
      *
      * @return $this
      */
@@ -283,7 +284,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param $textPattern
+     * @param string $textPattern
      *
      * @return $this
      */

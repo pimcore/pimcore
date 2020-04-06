@@ -405,6 +405,6 @@ EOT
 
     protected function createGenerator()
     {
-        return new BundleGenerator($this->getContainer()->get('filesystem'));
+        return new BundleGenerator();
     }
 }

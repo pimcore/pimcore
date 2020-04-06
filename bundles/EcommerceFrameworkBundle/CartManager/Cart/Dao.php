@@ -14,6 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
+
+/**
+ * @property Cart $model
+ */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_cart';

@@ -374,7 +374,7 @@ class Container extends \ArrayObject
     /**
      * Render the placeholder
      *
-     * @param null $indent
+     * @param int|string|null $indent
      *
      * @return string
      */

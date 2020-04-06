@@ -60,7 +60,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $lat
+     * @param float $lat
      *
      * @return $this
      */
@@ -80,7 +80,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $lng
+     * @param float $lng
      *
      * @return $this
      */
@@ -100,7 +100,7 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $zoom
+     * @param int $zoom
      *
      * @return $this
      */
@@ -152,8 +152,8 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $value
-     * @param null $object
+     * @param mixed $value
+     * @param Model\DataObject\AbstractObject|null $object
      * @param array $params
      *
      * @return string
@@ -164,8 +164,8 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $value
-     * @param null $object
+     * @param string $value
+     * @param Model\DataObject\AbstractObject|null $object
      * @param array $params
      *
      * @return mixed

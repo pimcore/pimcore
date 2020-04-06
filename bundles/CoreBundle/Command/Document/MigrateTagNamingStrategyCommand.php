@@ -272,6 +272,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" naming strategy and clear the cache.',
             $namingStrategy->getName()
         ));
+
+        return 0;
     }
 
     private function dumpQueries()

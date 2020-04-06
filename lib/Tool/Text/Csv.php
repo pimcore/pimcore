@@ -19,7 +19,7 @@ namespace Pimcore\Tool\Text;
 class Csv
 {
     /**
-     * @param $data
+     * @param string $data
      *
      * @return \stdClass
      *
@@ -56,7 +56,7 @@ class Csv
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return string
      */
@@ -84,7 +84,7 @@ class Csv
     }
 
     /**
-     * @param $data
+     * @param string $data
      *
      * @return array
      */
@@ -125,9 +125,9 @@ class Csv
     }
 
     /**
-     * @param $data
-     * @param $linefeed
-     * @param $quotechar
+     * @param string $data
+     * @param string $linefeed
+     * @param string $quotechar
      *
      * @return bool|string
      */
@@ -225,7 +225,7 @@ class Csv
     }
 
     /**
-     * @param $array
+     * @param array $array
      *
      * @return float
      */
