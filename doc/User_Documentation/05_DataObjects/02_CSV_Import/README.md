@@ -45,6 +45,14 @@ Load a saved configuration.
 Load a export configuration and create a rudimentary import configuration. Please note that a complete import configuration cannot be automatically generated on the fly.
 But there are at least certain basic options that can be automatically set.   
 
+## Export Configuration As JSON
+
+Export the current configuration as a JSON file. You can use this file to import the same configuration in a different Pimcore installation
+
+## Import Configuration From JSON
+
+Import the configuration from a JSON file that you have previously exported.
+
 ## Import Report
 
 Lists all errors.
