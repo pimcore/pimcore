@@ -42,7 +42,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TranslationController extends AdminController
 {
     /**
-     * @Route("/import", methods={"POST"})
+     * @Route("/import", name="pimcore_admin_translation_import", methods={"POST"})
      *
      * @param Request $request
      *
@@ -112,7 +112,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/upload-import", methods={"POST"})
+     * @Route("/upload-import", name="pimcore_admin_translation_uploadimportfile", methods={"POST"})
      *
      * @param Request $request
      *
@@ -145,7 +145,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/export", methods={"GET"})
+     * @Route("/export", name="pimcore_admin_translation_export", methods={"GET"})
      *
      * @param Request $request
      *
@@ -280,7 +280,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/add-admin-translation-keys", methods={"POST"})
+     * @Route("/add-admin-translation-keys", name="pimcore_admin_translation_addadmintranslationkeys", methods={"POST"})
      *
      * @param Request $request
      *
@@ -324,7 +324,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/translations", methods={"POST"})
+     * @Route("/translations", name="pimcore_admin_translation_translations", methods={"POST"})
      *
      * @param Request $request
      * @param Translator $translator
@@ -640,7 +640,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/cleanup", methods={"DELETE"})
+     * @Route("/cleanup", name="pimcore_admin_translation_cleanup", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -669,7 +669,7 @@ class TranslationController extends AdminController
      */
 
     /**
-     * @Route("/content-export-jobs", methods={"POST"})
+     * @Route("/content-export-jobs", name="pimcore_admin_translation_contentexportjobs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -786,7 +786,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-export", methods={"POST"})
+     * @Route("/xliff-export", name="pimcore_admin_translation_xliffexport", methods={"POST"})
      *
      * @param Request $request
      * @param ExportServiceInterface $exportService
@@ -817,7 +817,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-export-download", methods={"GET"})
+     * @Route("/xliff-export-download", name="pimcore_admin_translation_xliffexportdownload", methods={"GET"})
      *
      * @param Request $request
      * @param ExporterInterface $translationExporter
@@ -838,7 +838,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-import-upload", methods={"POST"})
+     * @Route("/xliff-import-upload", name="pimcore_admin_translation_xliffimportupload", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -880,7 +880,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-import-element", methods={"POST"})
+     * @Route("/xliff-import-element", name="pimcore_admin_translation_xliffimportelement", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -917,7 +917,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/word-export", methods={"POST"})
+     * @Route("/word-export", name="pimcore_admin_translation_wordexport", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1142,7 +1142,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/word-export-download", methods={"GET"})
+     * @Route("/word-export-download", name="pimcore_admin_translation_wordexportdownload", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1205,7 +1205,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/merge-item", methods={"PUT"})
+     * @Route("/merge-item", name="pimcore_admin_translation_mergeitem", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1234,7 +1234,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/get-website-translation-languages", methods={"GET"})
+     * @Route("/get-website-translation-languages", name="pimcore_admin_translation_getwebsitetranslationlanguages", methods={"GET"})
      *
      * @param Request $request
      *

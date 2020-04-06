@@ -45,8 +45,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/tree-get-root", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -73,8 +71,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/delete-info", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse

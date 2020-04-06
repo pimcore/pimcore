@@ -161,8 +161,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @Route("/save-to-session", methods={"POST"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -224,8 +222,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @Route("/remove-from-session", methods={"DELETE"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -283,8 +279,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
-     *
-     * @Route("/change-master-document", methods={"PUT"})
      *
      * @param Request $request
      *

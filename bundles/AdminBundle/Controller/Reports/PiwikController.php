@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PiwikController extends ReportsControllerBase
 {
     /**
-     * @Route("/reports", methods={"GET"})
+     * @Route("/reports", name="pimcore_admin_reports_piwik_reports", methods={"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -49,7 +49,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/reports/{report}", methods={"GET"})
+     * @Route("/reports/{report}", name="pimcore_admin_reports_piwik_report", methods={"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -69,7 +69,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/iframe-integration", methods={"GET"})
+     * @Route("/iframe-integration", name="pimcore_admin_reports_piwik_iframeintegration", methods={"GET"})
      *
      * @param ConfigProvider $configProvider
      *
@@ -96,7 +96,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/config/configured-sites", methods={"GET"})
+     * @Route("/config/configured-sites", name="pimcore_admin_reports_piwik_sites", methods={"GET"})
      *
      * @param SiteIdProvider $siteConfigProvider
      * @param ConfigProvider $configProvider
@@ -130,7 +130,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/portal-widgets/{configKey}", methods={"GET"})
+     * @Route("/portal-widgets/{configKey}", name="pimcore_admin_reports_piwik_portalwidgets", methods={"GET"})
      *
      * @param WidgetBroker $widgetBroker
      * @param string $configKey
@@ -147,7 +147,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/portal-widgets/{configKey}/{widgetId}", methods={"GET"})
+     * @Route("/portal-widgets/{configKey}/{widgetId}", name="pimcore_admin_reports_piwik_portalwidget", methods={"GET"})
      *
      * @param Request $request
      * @param WidgetBroker $widgetBroker
@@ -180,7 +180,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/api/site/{configKey}", methods={"POST"})
+     * @Route("/api/site/{configKey}", name="pimcore_admin_reports_piwik_apisitecreate", methods={"POST"})
      *
      * @param string $configKey
      * @param SiteIdProvider $siteConfigProvider
@@ -204,7 +204,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/api/site/{configKey}", methods={"PUT"})
+     * @Route("/api/site/{configKey}", name="pimcore_admin_reports_piwik_apisiteupdate", methods={"PUT"})
      *
      * @param string $configKey
      * @param SiteIdProvider $siteConfigProvider
