@@ -226,7 +226,7 @@ class Info
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param string $type
      *
      * @return Tag|null
