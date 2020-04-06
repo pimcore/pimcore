@@ -268,7 +268,7 @@ class GridHelperService
                     if ($brickDescriptor) {
                         $brickFilterField = $brickDescriptor['fieldname'];
                     } else {
-                        $brickFilterField = $filterField;
+                        $brickFilterField = $field->getName();
                     }
 
                     $db = \Pimcore\Db::get();
