@@ -1,4 +1,7 @@
 # Adding Object Layout types
+
+> Note: This feature is available since v6.6.1 
+
 With plugins, it is also possible to add individual layout types for Pimcore Objects. 
 Following steps are necessary to do so: 
 
