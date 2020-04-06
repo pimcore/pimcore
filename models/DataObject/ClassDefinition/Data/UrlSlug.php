@@ -722,7 +722,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 /** @var Model\DataObject\Fieldcollection $container */
                 $container = $object->getObject()->getObjectVar($object->getFieldname());
                 if ($container) {
-                    $container->loadLazyField($object->getObject(), $object->getType(), $object->getFieldname(), $object->getIndex(), $this->getName());
+                    $container->loadLazyField($object->getObject(), $object, $this->getName());
                 } else {
                     // if container is not available we assume that it is a newly set item
                     $object->markLazyKeyAsLoaded($this->getName());
