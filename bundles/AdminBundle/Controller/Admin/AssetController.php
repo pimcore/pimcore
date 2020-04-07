@@ -2030,6 +2030,14 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($request->get('parentId'));
+
+        if (!is_file($_FILES['Filedata']['tmp_name'])) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => 'Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR
+            ]);
+        }
+
         if (!$asset) {
             throw $this->createNotFoundException('Parent asset not found');
         }
