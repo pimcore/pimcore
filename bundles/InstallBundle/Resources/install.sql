@@ -746,7 +746,7 @@ CREATE TABLE `uuids` (
   `itemId` int(11) unsigned NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`itemId`, `type`, `uuid`)
+  PRIMARY KEY (`uuid`, `itemId`, `type`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `versions`;
