@@ -16,6 +16,8 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\User\UserRole;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -241,7 +243,9 @@ class Config implements \ArrayAccess
                 $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
-            if (!$config = Cache::load($cacheKey)) {
+            /** @var \Pimcore\Config\Config $config */
+            $config = Cache::load($cacheKey);
+            if (!$config) {
                 $settingsArray = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
@@ -298,6 +302,17 @@ class Config implements \ArrayAccess
                 $config = new \Pimcore\Config\Config($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
+            } else {
+                $data = $config->toArray();
+                foreach ($data as $key => $setting) {
+                    if ($setting instanceof AbstractElement) {
+                        $type = Service::getType($setting);
+                        $renewedElement = Service::getElementById($type, $setting->getId());
+                        if ($renewedElement) {
+                            $config->offsetSet($key, $renewedElement);
+                        }
+                    }
+                }
             }
 
             self::setWebsiteConfig($config, $language);
