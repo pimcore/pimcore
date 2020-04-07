@@ -398,7 +398,7 @@ class InheritanceHelper
     {
         $filteredResult = [];
         foreach ($result as $row) {
-            $rowId = $row['id'];
+            $rowId = $row['id'] ?? null;
             if ((!isset($filteredResult[$rowId]) && $row[$column] === null) || $row[$column] === $language) {
                 $filteredResult[$rowId] = $row;
             }
