@@ -223,9 +223,9 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            if (l.fieldtype == "iframe") {
-                var iframe = new pimcore.object.layout.iframe(l, context);
-                newConfig = iframe.getLayout();
+            if (pimcore.object.layout[l.fieldtype] !== undefined) {
+                var layout = new pimcore.object.layout[l.fieldtype](l, context);
+                newConfig = layout.getLayout();
             } else {
                 newConfig = Object.assign(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
                 if (typeof newConfig.labelWidth != "undefined") {

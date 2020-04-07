@@ -49,7 +49,7 @@ class Version20191114123638 extends AbstractPimcoreMigration
                 if ($document->getParent()) {
                     if ($document->getParent()->getProperty('language') == $languageProperty->getData()) {
                         $languageProperty->setInherited(true);
-                        $document->save(["versionNote" => "Migration: 20191114123638"]);
+                        $document->save(['versionNote' => 'Migration: 20191114123638']);
                     }
                 }
             }

@@ -84,7 +84,6 @@ class ElementControllerBase extends AdminController
         $hasDependency = false;
         $errors = false;
         $deleteJobs = [];
-        $recycleJobs = [];
         $itemResults = [];
 
         $totalChilds = 0;
@@ -147,7 +146,7 @@ class ElementControllerBase extends AdminController
                     'allowed' => true,
                 ];
 
-                $recycleJobs[] = [[
+                $deleteJobs[] = [[
                     'url' => '/admin/recyclebin/add',
                     'method' => 'POST',
                     'params' => [
@@ -207,8 +206,6 @@ class ElementControllerBase extends AdminController
                 $elementKey = $element->getKey();
             }
         }
-
-        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
 
         return $this->adminJson([
             'hasDependencies' => $hasDependency,

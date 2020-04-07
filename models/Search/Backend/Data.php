@@ -448,7 +448,11 @@ class Data extends \Pimcore\Model\AbstractModel
                 try {
                     $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
                     foreach ($metaData as $key => $value) {
-                        $this->data .= ' ' . $key . ' : ' . $value;
+                        if (is_array($value)) {
+                            $this->data .= ' ' . $key . ' : ' . implode(' - ', $value);
+                        } else {
+                            $this->data .= ' ' . $key . ' : ' . $value;
+                        }
                     }
                 } catch (\Exception $e) {
                     Logger::error($e);

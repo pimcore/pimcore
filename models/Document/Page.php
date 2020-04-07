@@ -150,11 +150,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * Returns the full path of the document including the key (path+key)
-     *
-     * @param bool $force
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getFullPath(bool $force = false)
     {
