@@ -307,9 +307,10 @@ class Config implements \ArrayAccess
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
                     if ($setting instanceof AbstractElement) {
-                        $type = Service::getType($setting);
-                        $elementCacheKey = $type . "_" . $setting->getId();
-                        Runtime::set($elementCacheKey, $setting);
+                        $elementCacheKey = $setting->getCacheTag();
+                        if (!Runtime::isRegistered($elementCacheKey)) {
+                            Runtime::set($elementCacheKey, $setting);
+                        }
                     }
                 }
             }
