@@ -947,5 +947,6 @@
   "export_configuration": "Export Configuration As JSON",
   "import_configuration": "Import Configuration From JSON",
   "property_name": "Property name",
-  "force_value": "Force value"
+  "force_value": "Force value",
+  "composite_indices": "Composite indices"
 }
