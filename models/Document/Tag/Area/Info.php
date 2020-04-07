@@ -238,7 +238,7 @@ class Info
         $element = null;
         $document = $this->getDocument();
 
-        if($document) {
+        if ($document instanceof Document\PageSnippet) {
             $name = Tag::buildTagName($type, $name, $document);
             $element = $document->getElement($name);
         }
