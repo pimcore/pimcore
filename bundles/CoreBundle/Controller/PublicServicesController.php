@@ -116,7 +116,7 @@ class PublicServicesController extends Controller
                     }
 
                     // check if a media query thumbnail was requested
-                    if (preg_match("#~\-~([\d]+w)#", $matches[1], $mediaQueryResult)) {
+                    if (preg_match("#~\-~media\-\-(.*)\-\-query#", $matches[1], $mediaQueryResult)) {
                         $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                     }
 
