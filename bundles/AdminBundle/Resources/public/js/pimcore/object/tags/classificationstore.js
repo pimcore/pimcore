@@ -411,8 +411,12 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
             }
 
-            var childItem = this.getRecursiveLayout(definition, !editable);
-            // index++;
+            var context = this.getContext();
+            if (isNew) {
+                context["applyDefaults"] = true;
+            }
+
+            var childItem = this.getRecursiveLayout(definition, !editable, context);
 
             groupedChildItems.push(childItem);
         }
