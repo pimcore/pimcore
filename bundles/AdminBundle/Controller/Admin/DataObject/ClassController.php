@@ -1085,6 +1085,12 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $brickDef->setLayoutDefinitions($layout);
             }
 
+            $event = new GenericEvent($this, [
+                'brickDefinition' => $brickDef
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_UPDATE_DEFINITION, $event);
+            $brickDef = $event->getArgument('brickDefinition');
+
             $brickDef->save();
 
             return $this->adminJson(['success' => true, 'id' => $brickDef->getKey()]);
