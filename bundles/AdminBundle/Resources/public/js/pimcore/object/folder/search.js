@@ -202,14 +202,20 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
-        var baseParams = {
-            language: this.gridLanguage,
-        };
+
+        var baseParams;
+
         var existingFilters;
         if (this.store) {
             existingFilters = this.store.getFilters();
             baseParams = this.store.getProxy().getExtraParams();
+        } else {
+            baseParams = {};
         }
+
+        Ext.apply(baseParams, {
+            language: this.gridLanguage,
+        });
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
