@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('pimcore_admin');
-        $rootNode = $treeBuilder->getRootNode();
+        $rootNode = $treeBuilder->root();
 
         $rootNode->append($this->buildGdprDataExtractorNode());
         $rootNode->append($this->buildObjectsNode());
@@ -87,7 +87,7 @@ class Configuration implements ConfigurationInterface
     protected function buildGdprDataExtractorNode()
     {
         $dataObjectsTreeBuilder = new TreeBuilder('dataObjects');
-        $dataObjects = $dataObjectsTreeBuilder->getRootNode();
+        $dataObjects = $dataObjectsTreeBuilder->root();
         $dataObjects
             ->addDefaultsIfNotSet()
             ->info('Settings for DataObjects DataProvider');
@@ -125,12 +125,12 @@ class Configuration implements ConfigurationInterface
         ;
 
         $gdprTreeBuilder = new TreeBuilder('gdpr_data_extractor');
-        $gdprDataExtractor = $gdprTreeBuilder->getRootNode();
+        $gdprDataExtractor = $gdprTreeBuilder->root();
         $gdprDataExtractor->addDefaultsIfNotSet();
         $gdprDataExtractor->append($dataObjects);
 
         $assetsTreeBuilder = new TreeBuilder('assets');
-        $assets = $assetsTreeBuilder->getRootNode();
+        $assets = $assetsTreeBuilder->root();
         $assets
             ->addDefaultsIfNotSet()
             ->info('Settings for Assets DataProvider');
@@ -155,7 +155,7 @@ class Configuration implements ConfigurationInterface
     protected function buildEventsNode()
     {
         $treeBuilder = new TreeBuilder('notes_events');
-        $notesEvents = $treeBuilder->getRootNode();
+        $notesEvents = $treeBuilder->root();
 
         $notesEvents
             ->addDefaultsIfNotSet()
@@ -177,7 +177,7 @@ class Configuration implements ConfigurationInterface
     protected function buildObjectsNode()
     {
         $treeBuilder = new TreeBuilder('objects');
-        $objectsNode = $treeBuilder->getRootNode();
+        $objectsNode = $treeBuilder->root();
 
         $objectsNode
             ->addDefaultsIfNotSet()
@@ -192,7 +192,7 @@ class Configuration implements ConfigurationInterface
     protected function buildAssetsNode()
     {
         $treeBuilder = new TreeBuilder('assets');
-        $assetsNode = $treeBuilder->getRootNode();
+        $assetsNode = $treeBuilder->root();
 
         $assetsNode
             ->addDefaultsIfNotSet()
@@ -207,7 +207,7 @@ class Configuration implements ConfigurationInterface
     protected function buildDocumentsNode()
     {
         $treeBuilder = new TreeBuilder('documents');
-        $documentsNode = $treeBuilder->getRootNode();
+        $documentsNode = $treeBuilder->root();
 
         $documentsNode
             ->addDefaultsIfNotSet()

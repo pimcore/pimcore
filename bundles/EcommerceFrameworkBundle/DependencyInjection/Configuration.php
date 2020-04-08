@@ -88,7 +88,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore_ecommerce_framework');
 
-        $rootNode = $treeBuilder->getRootNode();
+        $rootNode = $treeBuilder->root();
         $rootNode->addDefaultsIfNotSet();
 
         $this->addRootNodeChildren($rootNode);
@@ -129,7 +129,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pimcore');
 
-        $pimcore = $builder->getRootNode();
+        $pimcore = $builder->root();
         $pimcore
             ->addDefaultsIfNotSet()
             ->info('Configuration of Pimcore backend menu entries');
@@ -168,7 +168,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('factory');
 
-        $factory = $builder->getRootNode();
+        $factory = $builder->root();
         $factory
             ->addDefaultsIfNotSet()
             ->info('Configuration of e-commerce framework factory');
@@ -193,7 +193,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('environment');
 
-        $environment = $builder->getRootNode();
+        $environment = $builder->root();
         $environment
             ->addDefaultsIfNotSet()
             ->info('Configuration of environment');
@@ -212,7 +212,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('cart_manager');
 
-        $cartManager = $builder->getRootNode();
+        $cartManager = $builder->root();
         $cartManager
             ->addDefaultsIfNotSet()
             ->info('Settings for cart manager');
@@ -327,7 +327,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('order_manager');
 
-        $orderManager = $builder->getRootNode();
+        $orderManager = $builder->root();
         $orderManager
             ->info('Configuration of Order Manager')
             ->addDefaultsIfNotSet();
@@ -412,7 +412,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('pricing_manager');
 
-        $pricingManager = $builder->getRootNode();
+        $pricingManager = $builder->root();
         $pricingManager
             ->info('Configuration of Pricing Manager')
             ->addDefaultsIfNotSet();
@@ -556,7 +556,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('price_systems');
 
-        $priceSystems = $builder->getRootNode();
+        $priceSystems = $builder->root();
         $priceSystems
             ->info('Configuration of price systems - key is name of price system.')
             ->useAttributeAsKey('name')
@@ -582,7 +582,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('availability_systems');
 
-        $availabilitySystems = $builder->getRootNode();
+        $availabilitySystems = $builder->root();
         $availabilitySystems
             ->useAttributeAsKey('name')
             ->info('Configuration of availability systems - key is name of price system.')
@@ -608,7 +608,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('checkout_manager');
 
-        $checkoutManager = $builder->getRootNode();
+        $checkoutManager = $builder->root();
         $checkoutManager
             ->info('Configuration of checkout manager')
             ->addDefaultsIfNotSet();
@@ -685,7 +685,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('payment_manager');
 
-        $paymentManager = $builder->getRootNode();
+        $paymentManager = $builder->root();
         $paymentManager
             ->info('Configuration of payment manager and payment providers')
             ->addDefaultsIfNotSet();
@@ -739,7 +739,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('index_service');
 
-        $indexService = $builder->getRootNode();
+        $indexService = $builder->root();
         $indexService
             ->addDefaultsIfNotSet()
             ->info('Configuration of index service');
@@ -941,7 +941,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('filter_service');
 
-        $filterService = $builder->getRootNode();
+        $filterService = $builder->root();
         $filterService
             ->info('Configuration of filter service')
             ->addDefaultsIfNotSet();
@@ -1010,7 +1010,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('voucher_service');
 
-        $voucherService = $builder->getRootNode();
+        $voucherService = $builder->root();
         $voucherService
             ->info('Configuration of voucher service')
             ->addDefaultsIfNotSet();
@@ -1063,7 +1063,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('offer_tool');
 
-        $offerTool = $builder->getRootNode();
+        $offerTool = $builder->root();
         $offerTool
             ->info('Configuration of offer tool')
             ->addDefaultsIfNotSet();
@@ -1104,7 +1104,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('tracking_manager');
 
-        $trackingManager = $builder->getRootNode();
+        $trackingManager = $builder->root();
         $trackingManager
             ->info('Configuration of Tracking Manager')
             ->addDefaultsIfNotSet();

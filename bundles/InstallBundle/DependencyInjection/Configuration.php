@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('pimcore_install');
 
-        $rootNode = $treeBuilder->getRootNode();
+        $rootNode = $treeBuilder->root();
         $rootNode->addDefaultsIfNotSet();
 
         $rootNode
