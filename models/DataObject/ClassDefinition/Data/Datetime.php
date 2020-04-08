@@ -443,7 +443,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             $db = Db::get();
 
             if ($this->getColumnType() == 'datetime') {
-                $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
+                $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
                 $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
 
                 return $condition;
