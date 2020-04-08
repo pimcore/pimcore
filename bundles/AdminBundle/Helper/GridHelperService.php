@@ -258,7 +258,9 @@ class GridHelperService
                         $brickClassDefinitions = $brickClass->getFieldDefinitions();
                         if (array_key_exists($brickFieldKey, $brickClassDefinitions)) {
                             $brickField = $brickClass->getFieldDefinition($brickFieldKey);
-                        } elseif ($localizedFields = $brickClass->getFieldDefinition('localizedfields')) {
+                        } else {
+                            /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
+                            $localizedFields = $brickClass->getFieldDefinition('localizedfields');
                             if ($localizedFields) {
                                 $brickField = $localizedFields->getFieldDefinition($brickFieldKey);
                                 $isLocalized = true;
