@@ -346,17 +346,18 @@ class Config extends Model\AbstractModel
      */
     public function selectMedia($name)
     {
-        if(preg_match('/^[0-9a-f]{8}$/', $name)) {
+        if (preg_match('/^[0-9a-f]{8}$/', $name)) {
             $hash = $name;
         } else {
-            $hash = hash("crc32b", $name);
+            $hash = hash('crc32b', $name);
         }
 
         foreach ($this->medias as $key => $value) {
-            $currentHash = hash("crc32b", $key);
-            if($key === $name || $currentHash === $hash) {
+            $currentHash = hash('crc32b', $key);
+            if ($key === $name || $currentHash === $hash) {
                 $this->setItems($value);
                 $this->setFilenameSuffix('media--' . $currentHash . '--query');
+
                 return true;
             }
         }
