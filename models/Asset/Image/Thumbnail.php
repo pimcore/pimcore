@@ -350,6 +350,10 @@ class Thumbnail
                     $thumb = $image->getThumbnail($thumbConfigRes, true);
                     $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $highRes . 'x', $options, $image);
 
+                    if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                        break;
+                    }
+
                     if ($isAutoFormat) {
                         $thumbConfigWebP = clone $thumbConfigRes;
                         $thumbConfigWebP->setFormat('webp');

@@ -43,8 +43,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         });
 
         this.component = new Ext.Panel({
-            height: 370,
-            width: 650,
+            height: this.fieldConfig.height,
+            width: this.fieldConfig.width,
             border: true,
             style: "margin-bottom: 10px",
             componentCls: 'object_field object_geo_field',

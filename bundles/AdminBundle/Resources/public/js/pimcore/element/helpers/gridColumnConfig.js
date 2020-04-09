@@ -253,9 +253,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_change"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, false, false);
             }.bind(this, grid)
         });
         menu.add(batchAllMenu);
@@ -264,9 +264,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_change_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, false, false);
             }.bind(this, grid)
         });
         menu.add(batchSelectedMenu);
@@ -275,9 +275,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_append_all"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, true, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendAllMenu);
@@ -286,9 +286,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_append_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, true, false);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, true, false);
             }.bind(this, grid)
         });
         menu.add(batchAppendSelectedMenu);
@@ -298,9 +298,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_remove_all"),
             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false, true);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, false, false, true);
             }.bind(this, grid)
         });
         menu.add(batchRemoveAllMenu);
@@ -309,9 +309,9 @@ pimcore.element.helpers.gridColumnConfig = {
             text: t("batch_remove_selected"),
             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
-                menu = grid.headerCt.getMenu();
-                var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false, true);
+                var menu = grid.headerCt.getMenu();
+                var column = menu.activeHeader;
+                this.batchPrepare(column, true, false, true);
             }.bind(this, grid)
         });
         menu.add(batchRemoveSelectedMenu);
@@ -348,9 +348,24 @@ pimcore.element.helpers.gridColumnConfig = {
         }.bind(this, batchAllMenu, batchSelectedMenu, grid));
     },
 
-    batchPrepare: function (columnIndex, onlySelected, append, remove) {
+    batchPrepare: function (column, onlySelected, append, remove) {
+        var dataIndexName = column.dataIndex
+        var gridColumns = this.grid.getColumns();
+        var columnIndex = -1;
+        for (let i = 0; i < gridColumns.length; i++) {
+            let dataIndex = gridColumns[i].dataIndex;
+            if (dataIndex == dataIndexName) {
+                columnIndex = i;
+                break;
+            }
+        }
+        if (columnIndex < 0) {
+            return;
+        }
+
         // no batch for system properties
-        if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
+
+        if (this.systemColumns.indexOf(gridColumns[columnIndex].dataIndex) > -1) {
             return;
         }
 

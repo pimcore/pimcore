@@ -48,6 +48,18 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanupBrickTables }
 
+    Pimcore\Maintenance\Tasks\CleanupClassificationstoreTablesTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupClassificationstoreTables }
+
+    Pimcore\Maintenance\Tasks\CleanupFieldcollectionTablesTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupFieldcollectionTables }
+
     Pimcore\Maintenance\Tasks\VersionsCleanupTask:
         arguments:
             - '@logger'

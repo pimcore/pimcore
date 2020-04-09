@@ -338,7 +338,7 @@ require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();
-
+\Pimcore\Bootstrap::kernel();
 
 // add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section
 // but is done here for demonstration purpose
