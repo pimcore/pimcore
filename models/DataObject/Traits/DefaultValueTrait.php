@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 trait DefaultValueTrait
@@ -93,7 +94,39 @@ trait DefaultValueTrait
                 $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
 
                 if($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
-                    return $defaultValueGenerator->getValue($object, $this, $params);
+                    if (!isset($params['context'])) {
+                        $params['context'] = [];
+                    }
+
+                    if ($owner instanceof Concrete) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'object',
+                            'fieldname' => $this->getName()
+                        ]);
+                    } else if ($owner instanceof Localizedfield) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'localizedfield',
+                            'ownerName' => 'localizedfields',
+                            'position' => $params['language'],
+                            'fieldname' => $this->getName()
+                        ]);
+                    } else if ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'object',
+                            'ownerName' => $owner->getFieldname(),
+                            'fieldname' => $this->getName(),
+                            'index' => $owner->getIndex()
+                        ]);
+                    } else if ($owner instanceof AbstractData) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'objectbrick',
+                            'ownerName' => $owner->getFieldname(),
+                            'fieldname' => $this->getName(),
+                            'index' => $owner->getType()
+                        ]);
+                    }
+
+                    return $defaultValueGenerator->getValue($object, $this, $params['context']);
                 }
             }
 
