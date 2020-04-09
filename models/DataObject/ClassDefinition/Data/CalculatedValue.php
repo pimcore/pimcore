@@ -478,7 +478,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($brickClass->getKey()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
 
@@ -503,7 +503,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\FieldCollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
 
