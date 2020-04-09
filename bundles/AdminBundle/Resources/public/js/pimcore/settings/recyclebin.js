@@ -246,18 +246,18 @@ pimcore.settings.recyclebin = Class.create({
         if (offset == ids.length) {
             // refresh all trees
             try {
-               var treeNames = ["document_tree", "asset_tree", "object_tree"];
+               Object.keys( pimcore.globalmanager.store).forEach(function (treeName, key) {
+					if(treeName.includes("layout_")){
+						var treeLayout = pimcore.globalmanager.get(treeName);
 
-                treeNames.forEach(function (treeName) {
-                    var treeLayout = pimcore.globalmanager.get("layout_" + treeName);
-
-                    if (treeLayout && treeLayout.tree.rendered) {
-                        var tree = treeLayout.tree;
-                        tree.getStore().load({
-                            node: tree.getRootNode()
-                        });
-                    }
-                });
+						if (treeLayout && treeLayout.tree.rendered) {
+							var tree = treeLayout.tree;
+							tree.getStore().load({
+								node: tree.getRootNode()
+							});
+						}
+					}
+				});
             }
             catch (e) {
                 console.log(e);
