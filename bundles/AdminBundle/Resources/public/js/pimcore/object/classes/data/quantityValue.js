@@ -139,6 +139,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                     defaultValue: source.datax.defaultValue,
                     decimalPrecision: source.datax.decimalPrecision,
                     autoConvert: source.datax.autoConvert,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     }

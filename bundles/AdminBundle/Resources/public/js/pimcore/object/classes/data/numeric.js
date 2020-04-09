@@ -154,7 +154,8 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                     minValue: source.datax.minValue,
                     maxValue: source.datax.maxValue,
                     decimalSize: source.datax.decimalSize,
-                    decimalPrecision: source.datax.decimalPrecision
+                    decimalPrecision: source.datax.decimalPrecision,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     },

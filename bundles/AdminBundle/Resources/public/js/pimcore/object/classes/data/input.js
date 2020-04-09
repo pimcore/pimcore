@@ -166,7 +166,9 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     width: source.datax.width,
                     columnLength: source.datax.columnLength,
                     regex: source.datax.regex,
-                    unique: source.datax.unique
+                    unique: source.datax.unique,
+                    defaultValue: source.datax.defaultValue,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     },

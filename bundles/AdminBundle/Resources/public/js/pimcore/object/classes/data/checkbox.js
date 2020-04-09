@@ -106,8 +106,8 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
             }
             Ext.apply(this.datax,
                 {
-                    defaultValue: source.datax.defaultValue
-
+                    defaultValue: source.datax.defaultValue,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     }
