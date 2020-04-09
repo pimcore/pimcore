@@ -313,7 +313,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param Model\DataObject\Concrete $object
      * @param array $context
      *
-     * @return null|int
+     * @return null|string
      */
     protected function doGetDefaultValue($object, $context = [])
     {
