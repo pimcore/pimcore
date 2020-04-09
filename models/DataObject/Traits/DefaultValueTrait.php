@@ -112,7 +112,7 @@ trait DefaultValueTrait
                         ]);
                     } else if ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
                         $params['context'] = array_merge($params['context'], [
-                            'ownerType' => 'object',
+                            'ownerType' => 'fieldcollection',
                             'ownerName' => $owner->getFieldname(),
                             'fieldname' => $this->getName(),
                             'index' => $owner->getIndex()
