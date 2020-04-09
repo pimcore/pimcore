@@ -18,10 +18,11 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Tool;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
 
@@ -145,9 +146,9 @@ class Snippet extends Model\Document\Tag
                 $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            if (Frontend::hasWebpSupport()) {
-                $cacheParams['webp'] = true;
-            }
+            $cacheParams['webp'] = Frontend::hasWebpSupport();
+            $cacheParams['frontend'] = Tool::isFrontend();
+            $cacheParams['siteRequest'] = Site::isSiteRequest();
 
             $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
