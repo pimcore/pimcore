@@ -141,7 +141,7 @@ pimcore.object.fieldlookup.helper = Class.create(pimcore.object.helpers.classTre
                     var pre = text.substring(0, idx);
                     var post = text.substring(idx + currentFilterValue.length);
                     var match = text.substring(idx, idx + currentFilterValue.length);
-                    text = pre + "<strong style=\"color: #00AA00\"> " + match + "</strong>" + post;
+                    text = pre + "<strong style=\"color: #008040\"> " + match + "</strong>" + post;
                     item.set("text", text);
                 } else {
                     item.set("text", item.data.originalText)
