@@ -16,6 +16,7 @@ namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
 {
@@ -26,12 +27,16 @@ class RequestHelper
      */
     protected $requestStack;
 
+    protected $requestContent;
+
     /**
      * @param RequestStack $requestStack
+     * @param RequestContext $requestContext
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, RequestContext $requestContext)
     {
         $this->requestStack = $requestStack;
+        $this->requestContext = $requestContext;
     }
 
     public function hasCurrentRequest(): bool
@@ -186,5 +191,23 @@ class RequestHelper
         $aip .= '255';
 
         return $aip;
+    }
+
+    /**
+     * @param string $uri
+     * @return Request
+     */
+    public function createRequestWithContext($uri = '/') {
+        $request =  Request::create(
+            $this->requestContext->getScheme().'://'.$this->requestContext->getHost().$this->requestContext->getBaseUrl().$uri,
+            $this->requestContext->getMethod(),
+            $this->requestContext->getParameters(), [], [],
+            [
+            'SCRIPT_FILENAME' => $this->requestContext->getBaseUrl(),
+            'SCRIPT_NAME' => $this->requestContext->getBaseUrl(),
+            ]
+        );
+
+        return $request;
     }
 }

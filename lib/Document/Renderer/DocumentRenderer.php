@@ -27,7 +27,6 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer implements DocumentRendererInterface
@@ -132,7 +131,7 @@ class DocumentRenderer implements DocumentRendererInterface
         try {
             $request = $this->requestHelper->getCurrentRequest();
         } catch (\Exception $e) {
-            $request = new Request();
+            $request = $this->requestHelper->createRequestWithContext();
         }
 
         $documentLocale = $document->getProperty('language');
