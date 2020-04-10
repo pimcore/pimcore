@@ -396,9 +396,7 @@ CREATE TABLE `properties` (
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
-  KEY `cpath` (`cpath`),
-  KEY `inheritable` (`inheritable`),
-  KEY `ctype` (`ctype`)
+  KEY `getall` (`cpath`, `ctype`, `inheritable`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
