@@ -24,22 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @return mixed
-     */
-    public function getRawData()
-    {
-        $cid = $this->model->getCid();
-        $type = $this->model->getType();
-        $name = $this->model->getName();
-        $raw = null;
-        if ($cid) {
-            $data = $this->db->fetchRow('SELECT * FROM properties WHERE type=? AND cid = ? AND name=?', [$type, $cid, $name]);
-            $raw = $data['data'];
-        }
-
-        return $raw;
-    }
 
     /**
      * Save object to database
