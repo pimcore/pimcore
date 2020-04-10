@@ -239,9 +239,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     /**

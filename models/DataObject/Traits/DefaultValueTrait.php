@@ -17,12 +17,18 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 trait DefaultValueTrait
 {
+    /** @var string */
+    public $defaultValueGenerator = '';
+
     /**
      * @param \Pimcore\Model\DataObject\Concrete $object
      * @param array $context
@@ -54,7 +60,7 @@ trait DefaultValueTrait
          * 2. if inheritance is enabled and there is no parent value then take the default value.
          * 3. if inheritance is disabled, take the default value.
          */
-        if ($this->isEmpty($data) && $this->doGetDefaultValue($object, $context)) {
+        if ($this->isEmpty($data)) {
             $class = null;
             $owner = isset($params['owner']) ? $params['owner'] : null;
             if ($owner instanceof Concrete) {
@@ -83,9 +89,66 @@ trait DefaultValueTrait
                     // no data from parent available, use the default value
                 }
             }
+
+            if($object !== null && !empty($this->defaultValueGenerator)) {
+                $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
+
+                if($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
+                    if (!isset($params['context'])) {
+                        $params['context'] = [];
+                    }
+
+                    if ($owner instanceof Concrete) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'object',
+                            'fieldname' => $this->getName()
+                        ]);
+                    } else if ($owner instanceof Localizedfield) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'localizedfield',
+                            'ownerName' => 'localizedfields',
+                            'position' => $params['language'],
+                            'fieldname' => $this->getName()
+                        ]);
+                    } else if ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'fieldcollection',
+                            'ownerName' => $owner->getFieldname(),
+                            'fieldname' => $this->getName(),
+                            'index' => $owner->getIndex()
+                        ]);
+                    } else if ($owner instanceof AbstractData) {
+                        $params['context'] = array_merge($params['context'], [
+                            'ownerType' => 'objectbrick',
+                            'ownerName' => $owner->getFieldname(),
+                            'fieldname' => $this->getName(),
+                            'index' => $owner->getType()
+                        ]);
+                    }
+
+                    return $defaultValueGenerator->getValue($object, $this, $params['context']);
+                }
+            }
+
             $data = $this->doGetDefaultValue($object, $context);
         }
 
         return $data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultValueGenerator(): string
+    {
+        return $this->defaultValueGenerator;
+    }
+
+    /**
+     * @param string $defaultValueGenerator
+     */
+    public function setDefaultValueGenerator($defaultValueGenerator)
+    {
+        $this->defaultValueGenerator = (string)$defaultValueGenerator;
     }
 }

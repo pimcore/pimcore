@@ -885,7 +885,7 @@ QUERY;
      *
      * @return array
      */
-    private function getFieldDefinitionParams(string $fieldname, string $language)
+    public function getFieldDefinitionParams(string $fieldname, string $language)
     {
         return [
             'owner' => $this->model,
