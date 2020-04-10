@@ -204,7 +204,11 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        if (is_null($data)) {
+            return '';
+        } else {
+            return boolval($data) ? '1' : '0';
+        }
     }
 
     /** True if change is allowed in edit mode.
