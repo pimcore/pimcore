@@ -316,6 +316,7 @@ class ElementController extends AdminController
         $results = [];
         $success = false;
         $hasHidden = false;
+        $total = 0;
 
         if ($element instanceof Element\AbstractElement) {
             $elements = $element->getDependencies()->getRequiredBy();
@@ -330,11 +331,37 @@ class ElementController extends AdminController
                     }
                 }
             }
+            $total = count($results);
+            $sort = $request->get('sort');
+
+            if ($sort) {
+                $sort = json_decode($sort)[0];
+                usort(
+                    $results,
+                    function ($a, $b) use ($sort) {
+                        $aValue = $a[$sort->property] ?? '';
+                        $bValue = $b[$sort->property] ?? '';
+                        if ($sort->direction === 'ASC') {
+                            return $aValue <=> $bValue;
+                        } else {
+                            return $bValue <=> $aValue;
+                        }
+                    }
+                );
+            }
+
+            $results = array_slice(
+                $results,
+                $request->get('start', 0),
+                $request->get('limit', 50)
+            );
+
             $success = true;
         }
 
         return $this->adminJson([
             'data' => $results,
+            'total' => $total,
             'hasHidden' => $hasHidden,
             'success' => $success
         ]);

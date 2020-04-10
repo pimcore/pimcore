@@ -24,15 +24,24 @@ pimcore.element.replace_assignments = Class.create({
 
             this.store = new Ext.data.Store({
                 autoDestroy: true,
+                remoteSort: true,
+                pageSize: pimcore.helpers.grid.getDefaultPageSize(),
                 proxy: {
                     type: 'ajax',
                     url: "/admin/element/find-usages",
                     reader: {
                         type: 'json',
-                        rootProperty: 'data'
+                        rootProperty: 'data',
+                        totalProperty: 'total'
                     }
                 },
                 listeners: {
+                    beforeload: function (store, operation, eOpts) {
+                        let params = this.panel.getComponent("form").getForm().getFieldValues();
+                        for (let key of Object.keys(params)) {
+                            store.proxy.setExtraParam(key, params[key]);
+                        }
+                    }.bind(this),
                     load: function (store, records, success, operation) {
                         var responseText = operation.getResponse().responseText;
                         var response = Ext.decode(responseText);
@@ -250,7 +259,8 @@ pimcore.element.replace_assignments = Class.create({
                                 text: t("replace_assignments_in_selected_elements"),
                                 iconCls: "pimcore_icon_apply",
                                 handler: this.update.bind(this)
-                            }]
+                            }],
+                            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.store)
                         }
                     ]
                 }
