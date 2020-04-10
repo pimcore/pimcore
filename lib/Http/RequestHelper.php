@@ -27,7 +27,10 @@ class RequestHelper
      */
     protected $requestStack;
 
-    protected $requestContent;
+    /**
+     * @var requestContext
+     */
+    protected $requestContext;
 
     /**
      * @param RequestStack $requestStack
