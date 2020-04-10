@@ -503,6 +503,23 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 menu: this.getMetaInfoMenuItems()
             });
 
+            if (this.data.general.showFieldLookup) {
+                buttons.push({
+                    xtype: "button",
+                    tooltip: t("fieldlookup"),
+                    iconCls: "pimcore_material_fieldlookup pimcore_material_icon",
+                    scale: "medium",
+                    handler: function() {
+                        var object = this.edit.object;
+                        var config = {
+                            classid: object.data.general.o_classId
+                        }
+                        var dialog = new pimcore.object.fieldlookup.filterdialog(config, null, object);
+                        dialog.show();
+                    }.bind(this)
+                });
+            }
+
 
             if (this.data.hasPreview) {
                 buttons.push("-");

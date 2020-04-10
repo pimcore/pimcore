@@ -1773,6 +1773,10 @@
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-info-24px.svg) center center no-repeat;
 }
 
+.pimcore_material_fieldlookup {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat;
+}
+
 .pimcore_material_icon_translation {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-translate-24px.svg) center center no-repeat;
 }

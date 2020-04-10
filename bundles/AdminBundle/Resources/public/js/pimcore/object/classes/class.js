@@ -892,6 +892,12 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "checkbox",
+                    fieldLabel: t("show_fieldlookup"),
+                    name: "showFieldLookup",
+                    checked: this.data.showFieldLookup
+                },
+                {
+                    xtype: "checkbox",
                     fieldLabel: t("enable_grid_locking"),
                     name: "enableGridLocking",
                     checked: this.data.enableGridLocking
