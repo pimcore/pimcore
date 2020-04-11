@@ -90,10 +90,10 @@ trait DefaultValueTrait
                 }
             }
 
-            if($object !== null && !empty($this->defaultValueGenerator)) {
+            if ($object !== null && !empty($this->defaultValueGenerator)) {
                 $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
 
-                if($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
+                if ($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
                     if (!isset($params['context'])) {
                         $params['context'] = [];
                     }
@@ -103,21 +103,21 @@ trait DefaultValueTrait
                             'ownerType' => 'object',
                             'fieldname' => $this->getName()
                         ]);
-                    } else if ($owner instanceof Localizedfield) {
+                    } elseif ($owner instanceof Localizedfield) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'localizedfield',
                             'ownerName' => 'localizedfields',
                             'position' => $params['language'],
                             'fieldname' => $this->getName()
                         ]);
-                    } else if ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
+                    } elseif ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'fieldcollection',
                             'ownerName' => $owner->getFieldname(),
                             'fieldname' => $this->getName(),
                             'index' => $owner->getIndex()
                         ]);
-                    } else if ($owner instanceof AbstractData) {
+                    } elseif ($owner instanceof AbstractData) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'objectbrick',
                             'ownerName' => $owner->getFieldname(),

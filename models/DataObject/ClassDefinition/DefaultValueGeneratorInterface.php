@@ -1,4 +1,5 @@
 <?php
+
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model\DataObject\Concrete;

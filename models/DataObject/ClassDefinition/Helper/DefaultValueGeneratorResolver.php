@@ -8,7 +8,7 @@ class DefaultValueGeneratorResolver extends ClassResolver
 {
     public static function resolveGenerator($generatorClass)
     {
-        return self::resolve($generatorClass, static function($generator) {
+        return self::resolve($generatorClass, static function ($generator) {
             return $generator instanceof DefaultValueGeneratorInterface;
         });
     }
