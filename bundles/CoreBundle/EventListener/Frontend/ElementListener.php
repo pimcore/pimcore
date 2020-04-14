@@ -142,7 +142,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $this->applyTargetGroups($request, $document);
 
                 $this->documentResolver->setDocument($request, $document);
-                if($locale = $document->getProperty('language')) {
+                if ($locale = $document->getProperty('language')) {
                     $this->localeService->setLocaleIfNull($locale);
                 }
             }
