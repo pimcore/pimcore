@@ -1333,6 +1333,7 @@ class SettingsController extends AdminController
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
+        $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
 
         foreach ($settingsData as $key => $value) {
             $setter = 'set' . ucfirst($key);
@@ -1342,6 +1343,14 @@ class SettingsController extends AdminController
         }
 
         $pipe->resetItems();
+
+        uksort($mediaData, function ($a, $b) use ($mediaOrder) {
+            if($a === 'default') {
+                return -1;
+            }
+
+            return ($mediaOrder[$a] < $mediaOrder[$b]) ? -1 : 1;
+        });
 
         foreach ($mediaData as $mediaName => $items) {
             foreach ($items as $item) {
