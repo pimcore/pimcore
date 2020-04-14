@@ -151,7 +151,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedField->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
                 }
             }
         }

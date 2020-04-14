@@ -886,7 +886,7 @@ QUERY;
      *
      * @return array
      */
-    private function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
+    public function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
     {
         return array_merge(
             [

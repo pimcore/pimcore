@@ -224,4 +224,25 @@ class Info
 
         return $document;
     }
+
+    /**
+     * @param string $name
+     * @param string $type
+     *
+     * @return Tag|null
+     *
+     * @throws \Exception
+     */
+    public function getDocumentElement($name, $type = '')
+    {
+        $element = null;
+        $document = $this->getDocument();
+
+        if ($document instanceof Document\PageSnippet) {
+            $name = Tag::buildTagName($type, $name, $document);
+            $element = $document->getElement($name);
+        }
+
+        return $element;
+    }
 }
