@@ -146,7 +146,10 @@ class Snippet extends Model\Document\Tag
             }
 
             $cacheParams['webp'] = Frontend::hasWebpSupport();
-            $cacheParams['siteId'] = Site::getCurrentSite()->getId();
+
+            if (Site::isSiteRequest()) {
+                $cacheParams['siteId'] = Site::getCurrentSite()->getId();
+            }
 
             $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
