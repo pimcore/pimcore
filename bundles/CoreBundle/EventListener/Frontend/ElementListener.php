@@ -20,6 +20,7 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
@@ -66,6 +67,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected $userLoader;
 
     /**
+     * @var LocaleService
+     */
+    protected $localeService;
+
+    /**
      * @var DocumentTargetingConfigurator
      */
     private $targetingConfigurator;
@@ -75,13 +81,15 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
         UserLoader $userLoader,
-        DocumentTargetingConfigurator $targetingConfigurator
+        DocumentTargetingConfigurator $targetingConfigurator,
+        LocaleService $localeService
     ) {
         $this->documentResolver = $documentResolver;
         $this->editmodeResolver = $editmodeResolver;
         $this->requestHelper = $requestHelper;
         $this->userLoader = $userLoader;
         $this->targetingConfigurator = $targetingConfigurator;
+        $this->localeService = $localeService;
     }
 
     /**
@@ -134,6 +142,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $this->applyTargetGroups($request, $document);
 
                 $this->documentResolver->setDocument($request, $document);
+                if($locale = $document->getProperty('language')) {
+                    $this->localeService->setLocaleIfNull($locale);
+                }
             }
         }
     }
