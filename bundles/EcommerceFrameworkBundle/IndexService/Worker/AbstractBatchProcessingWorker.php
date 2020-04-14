@@ -231,7 +231,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                             $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$attribute->getName()])) {
+                        if (array_key_exists($attribute->getName(), $data) && is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Throwable $e) {
@@ -242,9 +242,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         if ($event->doSkipAttribute()) {
                             Logger::err(
                                 sprintf(
-                                    'Exception in IndexService when processing the attribute "%s": %s',
+                                    'Exception in IndexService when processing the attribute "%s": %s, %s',
                                     $event->getAttribute()->getName(),
-                                    $event->getException()->getMessage()
+                                    $event->getException()->getMessage(), $event->getException()
                                 )
                             );
                         } elseif ($event->doThrowException()) {
