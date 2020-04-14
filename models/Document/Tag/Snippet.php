@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
 
@@ -147,8 +146,7 @@ class Snippet extends Model\Document\Tag
             }
 
             $cacheParams['webp'] = Frontend::hasWebpSupport();
-            $cacheParams['frontend'] = Tool::isFrontend();
-            $cacheParams['siteRequest'] = Site::isSiteRequest();
+            $cacheParams['siteId'] = Site::getCurrentSite()->getId();
 
             $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
