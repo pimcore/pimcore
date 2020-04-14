@@ -19,7 +19,7 @@ class File
     /**
      * @var int
      */
-    public static $defaultMode = 0775;
+    public static $defaultMode = 0664;
 
     /**
      * @var array

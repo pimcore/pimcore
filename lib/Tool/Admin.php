@@ -173,7 +173,7 @@ class Admin
             'sessionId' => $sessionId
         ]));
 
-        @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeFile(), 0666); // so it can be removed also via FTP, ...
 
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
@@ -231,7 +231,7 @@ class Admin
             'schedule' => true
         ]));
 
-        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0666); // so it can be removed also via FTP, ...
 
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
