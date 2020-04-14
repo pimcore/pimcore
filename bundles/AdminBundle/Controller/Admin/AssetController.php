@@ -2034,7 +2034,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if (!is_file($_FILES['Filedata']['tmp_name'])) {
             return $this->adminJson([
                 'success' => false,
-                'message' => 'Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR
+                'message' => 'Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions on the file system'
             ]);
         }
 
