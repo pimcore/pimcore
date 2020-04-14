@@ -344,9 +344,9 @@ CREATE TABLE `notes` (
   `title` varchar(255) DEFAULT NULL,
   `description` longtext,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
-  KEY `date` (`date`)
+  KEY `cid_ctype` (`cid`, `ctype`),
+  KEY `date` (`date`),
+  KEY `user` (`user`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
