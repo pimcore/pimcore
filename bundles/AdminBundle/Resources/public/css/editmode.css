@@ -119,9 +119,15 @@ input.cke_dialog_ui_input_tel {
 
 .pimcore_area_buttons_inner{
     height: 34px;
-    overflow:hidden;
+    display: flex;
     background: #3c3f41;
     border-left: 1px solid #000;
+}
+
+.pimcore_area_buttons.right .pimcore_area_buttons_inner,
+.pimcore_area_buttons.left .pimcore_area_buttons_inner {
+    height: auto;
+    flex-direction: column;
 }
 
 .pimcore_area_buttons:after {
@@ -138,6 +144,10 @@ input.cke_dialog_ui_input_tel {
     left: 100%;
     border-left: 8px solid #000000;
     border-right: 0px solid #000000;
+}
+
+.pimcore_area_buttons.left:after {
+    left: 34px;
 }
 
 .pimcore_area_buttons.right:after {
