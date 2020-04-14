@@ -1307,7 +1307,7 @@ abstract class Data
     {
         $data = null;
 
-        if (isset($params['injectedData'])) {
+        if (array_key_exists('injectedData', $params)) {
             return $params['injectedData'];
         }
 
