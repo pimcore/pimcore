@@ -174,24 +174,40 @@ class RedirectHandler implements LoggerAwareInterface
             $url = replace_pcre_backreferences($url, $matches);
         }
 
-        if ($redirect->getTargetSite() && !preg_match('@http(s)?://@i', $url)) {
-            if ($targetSite = Site::getById($redirect->getTargetSite())) {
-                // if the target site is specified and and the target-path is starting at root (not absolute to site)
-                // the root-path will be replaced so that the page can be shown
-                $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
-                $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
-            } else {
-                $this->logger->error('Site with ID {targetSite} not found', [
-                    'redirect' => $redirect->getId(),
-                    'targetSite' => $redirect->getTargetSite()
-                ]);
+        if(!preg_match('@http(s)?://@i', $url)) {
+            if ($redirect->getTargetSite()) {
+                if ($targetSite = Site::getById($redirect->getTargetSite())) {
+                    // if the target site is specified and and the target-path is starting at root (not absolute to site)
+                    // the root-path will be replaced so that the page can be shown
+                    $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
+                    $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
+                } else {
+                    $this->logger->error('Site with ID {targetSite} not found', [
+                        'redirect' => $redirect->getId(),
+                        'targetSite' => $redirect->getTargetSite()
+                    ]);
 
-                return null;
+                    return null;
+                }
+            } else {
+                $redirectDomain = $this->config['general']['domain'];
+                $sites = new Site\Listing();
+                foreach ($sites as $site) {
+                    foreach ($site->getDomains() as $siteDomain) {
+                        if ($request->getHost() === $siteDomain) {
+                            $redirectDomain = $siteDomain;
+                            break 2;
+                        }
+                    }
+                }
+
+                if ($redirectDomain) {
+                    // prepend the host and scheme to avoid infinite loops when using "domain" redirects
+                    $url = $request->getScheme().'://'.$redirectDomain.$url;
+                }
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $this->config['general']['domain']) {
-            // prepend the host and scheme to avoid infinite loops when using "domain" redirects
-            $url = $request->getScheme() . '://' . $this->config['general']['domain'] . $url;
         }
+
 
         // pass-through parameters if specified
         $queryString = $request->getQueryString();
