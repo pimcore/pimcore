@@ -600,10 +600,6 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
-        }
-
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
             $description = str_replace("\n", "\n* ", $description);
