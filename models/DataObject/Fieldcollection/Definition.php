@@ -285,7 +285,6 @@ class Definition extends Model\AbstractModel
 
         $cd .= '/** ';
         $cd .= "\n";
-        $cd .= '* Generated at: ' . date('c') . "\n";
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $cd .= '* IP: ' . $_SERVER['REMOTE_ADDR'] . "\n";

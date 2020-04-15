@@ -597,14 +597,8 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= '/** ';
         $cd .= "\n";
-        $cd .= '* Generated at: '.date('c')."\n";
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
-
-        $user = Model\User::getById($this->getUserModification());
-        if ($user) {
-            $cd .= '* Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
-        }
 
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
