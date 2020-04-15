@@ -166,6 +166,8 @@ Currently following Payment Providers are integrated into the framework:
 - [Klarna](./05_Klarna.md)
 - [OGone](./06_OGone.md)
 - [MPay24](./07_MPay24.md)
+- [PayU](./08_PayU.md)
+- [Heidelpay](./09_Heidelpay.md)
 
 
 ## Further Payment Aspects
