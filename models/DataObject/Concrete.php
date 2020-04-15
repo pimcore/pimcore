@@ -625,6 +625,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
+        $defaultCondition = '';
         foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
@@ -682,10 +683,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 if (!$field instanceof AbstractRelations) {
                     $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
-                    $listConfig = [
-                        'condition' => $defaultCondition
-                    ];
                 }
+                $listConfig = [
+                    'condition' => $defaultCondition
+                ];
             }
 
             if (!is_array($limit)) {
@@ -697,7 +698,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $listConfig = array_merge($listConfig, $limit);
-                $listConfig['condition'] = $defaultCondition . $limit['condition'];
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition . $limitCondition;
             }
 
             $list = static::getList($listConfig);
