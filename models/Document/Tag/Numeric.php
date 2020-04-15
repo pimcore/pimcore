@@ -29,7 +29,7 @@ class Numeric extends Model\Document\Tag
      *
      * @var string
      */
-    public $number = '';
+    protected $number = '';
 
     /**
      * @see TagInterface::getType
@@ -49,6 +49,16 @@ class Numeric extends Model\Document\Tag
     public function getData()
     {
         return $this->number;
+    }
+
+    /**
+     * @see TagInterface::getData
+     *
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->getData();
     }
 
     /**

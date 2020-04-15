@@ -36,28 +36,28 @@ class Renderlet extends Model\Document\Tag
      *
      * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
      * Contains the object
      *
      * @var Document|Asset|DataObject|null
      */
-    public $o;
+    protected $o;
 
     /**
      * Contains the type
      *
      * @var string|null
      */
-    public $type;
+    protected $type;
 
     /**
      * Contains the subtype
      *
      * @var string|null
      */
-    public $subtype;
+    protected $subtype;
 
     /**
      * @see Document\Tag\TagInterface::getType

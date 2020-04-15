@@ -31,12 +31,12 @@ class Relations extends Model\Document\Tag implements \Iterator
     /**
      * @var array
      */
-    public $elements = [];
+    protected $elements = [];
 
     /**
      * @var array
      */
-    public $elementIds = [];
+    protected $elementIds = [];
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -64,6 +64,14 @@ class Relations extends Model\Document\Tag implements \Iterator
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getElementIds()
+    {
+        return $this->elementIds;
     }
 
     /**

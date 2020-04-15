@@ -29,7 +29,7 @@ class Checkbox extends Model\Document\Tag
      *
      * @var bool
      */
-    public $value = false;
+    protected $value = false;
 
     /**
      * @see TagInterface::getType
@@ -44,11 +44,21 @@ class Checkbox extends Model\Document\Tag
     /**
      * @see TagInterface::getData
      *
-     * @return mixed
+     * @return bool
      */
     public function getData()
     {
         return $this->value;
+    }
+
+    /**
+     * @see TagInterface::getData
+     *
+     * @return bool
+     */
+    public function getValue()
+    {
+        return $this->getData();
     }
 
     /**

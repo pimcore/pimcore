@@ -29,7 +29,7 @@ class Multiselect extends Model\Document\Tag
      *
      * @var array
      */
-    public $values = [];
+    protected $values = [];
 
     /**
      * @see TagInterface::getType
@@ -49,6 +49,14 @@ class Multiselect extends Model\Document\Tag
     public function getData()
     {
         return $this->values;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->getData();
     }
 
     /**

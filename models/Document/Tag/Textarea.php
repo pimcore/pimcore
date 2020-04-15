@@ -29,7 +29,7 @@ class Textarea extends Model\Document\Tag
      *
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
      * @see TagInterface::getType
@@ -49,6 +49,14 @@ class Textarea extends Model\Document\Tag
     public function getData()
     {
         return $this->text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->getData();
     }
 
     /**

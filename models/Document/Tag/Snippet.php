@@ -35,14 +35,14 @@ class Snippet extends Model\Document\Tag
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Contains the object for the snippet
      *
      * @var Document\Snippet
      */
-    public $snippet;
+    protected $snippet;
 
     /**
      * @see Document\Tag\TagInterface::getType

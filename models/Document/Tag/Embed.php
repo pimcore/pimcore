@@ -27,7 +27,7 @@ class Embed extends Model\Document\Tag
     /**
      * @var string
      */
-    public $url;
+    protected $url;
 
     /**
      * @see TagInterface::getType
@@ -49,6 +49,16 @@ class Embed extends Model\Document\Tag
         return [
             'url' => $this->url
         ];
+    }
+
+    /**
+     * @see TagInterface::getData
+     *
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**

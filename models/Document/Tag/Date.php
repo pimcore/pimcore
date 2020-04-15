@@ -29,7 +29,7 @@ class Date extends Model\Document\Tag
      *
      * @var \Carbon\Carbon|null
      */
-    public $date;
+    protected $date;
 
     /**
      * @see TagInterface::getType
@@ -49,6 +49,11 @@ class Date extends Model\Document\Tag
     public function getData()
     {
         return $this->date;
+    }
+
+    public function getDate()
+    {
+        return $this->getData();
     }
 
     /**

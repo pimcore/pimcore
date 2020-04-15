@@ -32,7 +32,7 @@ class Link extends Model\Document\Tag
      *
      * @var array
      */
-    public $data;
+    protected $data;
 
     /**
      * @see Document\Tag\TagInterface::getType

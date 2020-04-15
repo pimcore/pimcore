@@ -29,7 +29,7 @@ class Table extends Model\Document\Tag
      *
      * @var array
      */
-    public $data;
+    protected $data;
 
     /**
      * @see TagInterface::getType

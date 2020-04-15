@@ -30,7 +30,7 @@ class Pdf extends Model\Document\Tag
     /**
      * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
      * @see Document\Tag\TagInterface::getType
