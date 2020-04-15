@@ -155,7 +155,8 @@ pimcore.object.helpers.import.reportTab = Class.create({
                 autoScroll: true,
                 title: t("import_report"),
                 iconCls: 'pimcore_icon_import_report',
-                items: [this.statusBar, dataGrid]
+                items: [this.statusBar, dataGrid],
+                overflowY: 'scroll'
             });
         }
 
