@@ -161,12 +161,16 @@ class LocaleService implements LocaleServiceInterface
      * @internal
      *
      * @param string $locale
+     * @return bool
      */
-    public function setLocaleIfNull(string $locale)
+    public function setLocaleIfNull(string $locale): bool
     {
         if (null === $this->locale) {
             $this->setLocale($locale);
+            return true;
         }
+
+        return false;
     }
 
     /**
