@@ -73,6 +73,25 @@ class Tag extends Model\AbstractModel
             return null;
         }
     }
+    
+        /**
+     * @param string $name
+     *
+     * @return self|null
+     */
+    public static function getByName($name)
+    {
+        try {
+            $class = new self();
+            $id = $class->getDao()->getIdByName($name);
+            if ($id) {
+                return self::getById($id);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return null;
+    }
 
     /**
      * returns all assigned tags for element
