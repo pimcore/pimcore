@@ -402,9 +402,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         if ($lfData instanceof DataObject\Localizedfield) {
             foreach ($lfData->getInternalData(true) as $language => $values) {
-                foreach ($values as $lData) {
-                    if (is_string($lData)) {
-                        $dataString .= $lData.' ';
+                foreach ($values as $fieldname => $lData) {
+                    $fd = $this->getFieldDefinition($fieldname);
+                    if ($fd) {
+                        $forSearchIndex = $fd->getDataForSearchIndex($lfData, [
+                            'injectedData' => $lData
+                        ]);
+                        if ($forSearchIndex) {
+                            $dataString .= $forSearchIndex . ' ';
+                        }
                     }
                 }
             }
