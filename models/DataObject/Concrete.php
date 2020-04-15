@@ -22,6 +22,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -679,10 +680,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $arguments = array_pad($arguments, 3, 0);
                 [$value, $limit, $offset] = $arguments;
 
-                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
-                $listConfig = [
-                    'condition' => $defaultCondition
-                ];
+                if (!$field instanceof AbstractRelations) {
+                    $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                    $listConfig = [
+                        'condition' => $defaultCondition
+                    ];
+                }
             }
 
             if (!is_array($limit)) {
@@ -698,6 +701,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             }
 
             $list = static::getList($listConfig);
+
+            if ($field instanceof AbstractRelations && $field->isFilterable()) {
+                $list = $field->addListingFilter($list, $value);
+            }
 
             if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
