@@ -1345,7 +1345,7 @@ class SettingsController extends AdminController
         $pipe->resetItems();
 
         uksort($mediaData, function ($a, $b) use ($mediaOrder) {
-            if($a === 'default') {
+            if ($a === 'default') {
                 return -1;
             }
 

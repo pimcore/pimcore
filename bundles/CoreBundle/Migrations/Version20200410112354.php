@@ -30,8 +30,6 @@ class Version20200410112354 extends AbstractPimcoreMigration
             // https://github.com/pimcore/pimcore/blob/1f9fca52eacf4fcc8b8c7899b65c0b1900db9124/models/Document/Dao.php#L259
             $table->addIndex(['cpath', 'ctype', 'inheritable'], 'getall');
         }
-
-
     }
 
     /**

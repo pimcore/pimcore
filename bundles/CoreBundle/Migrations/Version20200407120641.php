@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-
 class Version20200407120641 extends AbstractPimcoreMigration
 {
     /**
@@ -27,11 +26,11 @@ class Version20200407120641 extends AbstractPimcoreMigration
                 }
 
                 if ($currentTable->hasIndex('o_id')) {
-                    $currentTable->dropIndex("o_id");
+                    $currentTable->dropIndex('o_id');
                 }
 
                 if ($currentTable->hasIndex('fieldname')) {
-                    $currentTable->dropIndex("fieldname");
+                    $currentTable->dropIndex('fieldname');
                 }
 
                 $currentTable->setPrimaryKey(['o_id', 'fieldname', 'groupId', 'keyId', 'language']);
@@ -53,11 +52,11 @@ class Version20200407120641 extends AbstractPimcoreMigration
                 }
 
                 if ($currentTable->hasIndex('o_id')) {
-                    $currentTable->dropIndex("o_id");
+                    $currentTable->dropIndex('o_id');
                 }
 
                 if ($currentTable->hasIndex('fieldname')) {
-                    $currentTable->dropIndex("fieldname");
+                    $currentTable->dropIndex('fieldname');
                 }
 
                 $currentTable->setPrimaryKey(['o_id', 'fieldname', 'groupId']);
@@ -87,14 +86,12 @@ class Version20200407120641 extends AbstractPimcoreMigration
                 $currentTable->setPrimaryKey(['groupId', 'keyId', 'o_id', 'fieldname', 'language']);
 
                 if (!$currentTable->hasIndex('o_id')) {
-                    $currentTable->addIndex(['o_id'], "o_id");
+                    $currentTable->addIndex(['o_id'], 'o_id');
                 }
 
                 if (!$currentTable->hasIndex('fieldname')) {
-                    $currentTable->addIndex(['fieldname'], "fieldname");
+                    $currentTable->addIndex(['fieldname'], 'fieldname');
                 }
-
-
             } catch (\Exception $e) {
                 $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
             }
@@ -111,19 +108,17 @@ class Version20200407120641 extends AbstractPimcoreMigration
                 }
 
                 if (!$currentTable->hasIndex('o_id')) {
-                    $currentTable->addIndex(['o_id'], "o_id");
+                    $currentTable->addIndex(['o_id'], 'o_id');
                 }
 
                 if (!$currentTable->hasIndex('fieldname')) {
-                    $currentTable->addIndex(['fieldname'], "fieldname");
+                    $currentTable->addIndex(['fieldname'], 'fieldname');
                 }
-
 
                 $currentTable->setPrimaryKey(['groupId', 'o_id', 'fieldname']);
             } catch (\Exception $e) {
                 $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
             }
         }
-
     }
 }
