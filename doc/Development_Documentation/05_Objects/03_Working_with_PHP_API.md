@@ -200,10 +200,10 @@ Often it's very useful to get a listing of objects or a single object where a pr
 This is especially useful to get an object matching a foreign key, or get a list of objects with only one condition.
 
 ```php
-$result = DataObject\ClassName::getByMyfieldname($value, [int $limit, int $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset]);
 
 // or for localized fields
-$result = DataObject\ClassName::getByMyfieldname($value, [string locale, int $limit, int $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => locale, 'limit' => $limit, 'offset' => $offset]);
 ```
 If you set no limit, a list object containing all matching objects is returned. If the limit is set to 1 
 the first matching object is returned directly (without listing). Only published objects are return.
