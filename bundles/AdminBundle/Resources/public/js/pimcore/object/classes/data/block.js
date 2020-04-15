@@ -32,6 +32,8 @@ pimcore.object.classes.data.block = Class.create(pimcore.object.classes.data.dat
 
         this.initData(initData);
         this.treeNode = treeNode;
+
+        this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
     },
 
     getTypeName: function () {
