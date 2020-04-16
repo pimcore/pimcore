@@ -40,6 +40,21 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param string $name
+     *
+     * @throws \Exception
+     */
+    public function getByName($name)
+    {
+        $name = trim($name);
+        $data = $this->db->fetchRow('SELECT * FROM tags WHERE name = ?', $name);
+        if (!$data['id']) {
+            throw new \Exception('Tag item with name ' . $name . ' not found');
+        }
+        $this->assignVariablesToModel($data);
+    }
+
+    /**
      * Save object to database
      *
      * @return bool|null
