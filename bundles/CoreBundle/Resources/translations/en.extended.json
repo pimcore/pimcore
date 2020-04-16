@@ -551,7 +551,7 @@
   "piwik_url": "Matomo\/Piwik URL (including protocol)",
   "piwik_api_settings": "API Integration",
   "piwik_api_client_options": "API Client Options",
-  "piwik_api_client_options_description": "You can define custom Guzzle client options as JSON string which will be used when issuing API requests. Please see the <a target='_blank' href='{{guzzleLink}}'>Guzzle Documentation<\/a> for a list of available options.",
+  "piwik_api_client_options_description": "You can define custom Guzzle client options as JSON string which will be used when issuing API requests. Please see the <a target='_blank' href='{guzzleLink}'>Guzzle Documentation<\/a> for a list of available options.",
   "piwik_tokens": "Authentication Tokens",
   "piwik_api_token": "API Token",
   "piwik_api_token_info": "Authentication token used send API requests (e.g. when updating site settings). If this token is not set, Matomo\/Piwik updates from within Pimcore will not be possible.",
