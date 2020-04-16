@@ -17,9 +17,14 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use DeepCopy\DeepCopy;
+use DeepCopy\TypeMatcher\TypeMatcher;
+use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Service;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
@@ -39,6 +44,11 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      * @var mixed
      */
     protected $data;
+
+    /**
+     * @var bool
+     */
+    protected $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
@@ -98,6 +108,13 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function getData()
     {
+
+        if ($this->needsRenewReferences) {
+            $container = null;
+            $this->needsRenewReferences = false;
+            $this->renewReferences();
+        }
+
         return $this->data;
     }
 
@@ -110,6 +127,32 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
+    protected function renewReferences()
+    {
+        $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof AbstractElement) {
+                        if (Runtime::isRegistered($currentValue->getCacheTag())) {
+                            // we don't want the copy from the runtime but cache is fine
+                            Runtime::getInstance()->offsetUnset($currentValue->getCacheTag());
+                        }
+
+                        $renewedElement = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                        return $renewedElement;
+                    } else {
+                        return $currentValue;
+                    }
+                }
+            ),
+            new TypeMatcher(AbstractElement::class)
+        );
+        $this->data = $copier->copy($this->data);
+    }
+
     /**
      * @return string
      */
@@ -117,4 +160,29 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     {
         return $this->name . '; ' . $this->type;
     }
+
+    public function __wakeup()
+    {
+        $this->needsRenewReferences = true;
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $vars = parent::__sleep();
+
+        $blockedVars = ['needsRenewReferences'];
+
+        $finalVars = [];
+        foreach ($vars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
+
 }
