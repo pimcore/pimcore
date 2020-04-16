@@ -36,7 +36,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
         <?php } ?>
 
         <input type="text" name="username" autocomplete="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus>
-        <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required>
+        <input type="password" name="password" autocomplete="current-password" placeholder="<?= $this->translate("Password"); ?>" required>
         <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
 
         <button type="submit"><?= $this->translate("Login"); ?></button>
@@ -93,4 +93,3 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 <?php $view->slots()->stop() ?>
 
 <?= $this->breachAttackRandomContent(); ?>
-
