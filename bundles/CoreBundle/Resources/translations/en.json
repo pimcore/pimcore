@@ -492,6 +492,7 @@
   "add_variant": "Add variant",
   "delete_message_dependencies": "There are dependencies, delete anyway?",
   "delete_message": "Do you really want to delete this item?",
+  "delete_class_message": "Do you really want to delete class '%s' ?",
   "delete_message_batch": "Do you really want to delete these elements?",
   "delete_error_batch": "Following items cannot be deleted, do you wanna proceed with deleting the remaining?",
   "delete_error": "The item cannot be deleted. Reason:",
