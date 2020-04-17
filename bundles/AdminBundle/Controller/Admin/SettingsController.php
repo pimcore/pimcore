@@ -1777,11 +1777,7 @@ class SettingsController extends AdminController
                         case 'asset':
                         case 'object':
                             if (isset($data['data'])) {
-                                $path = $data['data'];
-                                $element = null;
-                                if ($path != null) {
-                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
-                                }
+                                $element = Element\Service::getElementByPath($setting->getType(), $data['data']);
                                 $data['data'] = $element;
                             }
                             break;
