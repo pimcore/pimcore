@@ -156,10 +156,7 @@ class Dao extends Model\Dao\AbstractDao
                         $context['subContainerType'] = 'localizedfield';
                     }
 
-                    $childParams = [
-                        'context' => $context,
-                        'language' => $language,
-                    ];
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ((isset($params['saveRelationalData'])
