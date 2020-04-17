@@ -235,6 +235,16 @@ class AbstractUser extends Model\AbstractModel
             }
         }
 
+        $roleList = new Model\User\Role\Listing();
+        $roleList->setCondition('parentId = ?', $this->getId());
+        $roleList->load();
+
+        if (is_array($roleList->getRoles())){
+            foreach ($roleList->getRoles() as $role){
+                $role->delete();
+            }
+        }
+        
         // now delete the current user
         $this->getDao()->delete();
         \Pimcore\Cache::clearAll();
