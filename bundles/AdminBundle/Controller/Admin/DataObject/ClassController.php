@@ -19,6 +19,8 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Log\ApplicationLogger;
+use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -38,6 +40,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ClassController extends AdminController implements EventedControllerInterface
 {
+    public const LOGGER_INSTANCE = 'dataobject-classes';
+
     /**
      * @Route("/get-document-types", methods={"GET"})
      *
@@ -373,6 +377,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function saveAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
+        $logger = ApplicationLogger::getInstance(self::LOGGER_INSTANCE, true);
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -429,6 +434,10 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             // set the fielddefinitions to [] because we don't need them in the response
             $class->setFieldDefinitions([]);
+
+            $logger->info("{$this->getUser()->getUsername()} saved {$class->getName()}", [
+                'fileObject' => new FileObject(file_get_contents($class->getDefinitionFile())),
+            ]);
 
             return $this->adminJson(['success' => true, 'class' => $class]);
         } catch (\Exception $e) {
