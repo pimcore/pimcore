@@ -1,3 +1,6 @@
+<?php
+/** @var \Pimcore\Templating\PhpEngine $view */
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +42,6 @@
 
 
 <?php
-    /** @var \Pimcore\Templating\PhpEngine $view */
     $previewImage = "";
     if(\Pimcore\Video::isAvailable()) {
         $previewImage = $view->router()->path('pimcore_admin_asset_getvideothumbnail', [
