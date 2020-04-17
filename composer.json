@@ -114,6 +114,7 @@
     "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
+    "friendsofphp/php-cs-fixer": "Suggested for automatically formatted PHP files (Classes, Fielddefinitions, etc.)",
     "heidelpay/heidelpay-php": "Required for Heidelpay payment",
     "klarna/checkout": "Required for Klarna payment",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",

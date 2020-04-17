@@ -1435,6 +1435,7 @@ pimcore.object.classes.klass = Class.create({
                         values: n,
                         id: this.data.id
                     },
+                    timeout: 120000, // Longer than usual timout due to complex classes taking a long time if PHP CS Fixer runs
                     success: this.saveOnComplete.bind(this),
                     failure: this.saveOnError.bind(this)
                 });

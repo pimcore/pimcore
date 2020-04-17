@@ -503,7 +503,7 @@ class ClassDefinition extends Model\AbstractModel
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
         }
-        File::put($classFile, $cd);
+        File::putPhpFile($classFile, $cd);
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -558,7 +558,7 @@ class ClassDefinition extends Model\AbstractModel
                 'Cannot write class file in '.$classListFile.' please check the rights on this directory'
             );
         }
-        File::put($classListFile, $cd);
+        File::putPhpFile($classListFile, $cd);
 
         // save definition as a php file
         $definitionFile = $this->getDefinitionFile();
@@ -584,7 +584,7 @@ class ClassDefinition extends Model\AbstractModel
 
             $data .= "\nreturn ".$exportedClass.";\n";
 
-            \Pimcore\File::putPhpFile($definitionFile, $data);
+            File::putPhpFile($definitionFile, $data);
         }
     }
 

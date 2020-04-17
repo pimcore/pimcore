@@ -139,9 +139,45 @@ class File
     public static function putPhpFile($path, $data)
     {
         self::put($path, $data);
+        self::fixPhpCs($path);
 
         if (function_exists('opcache_reset')) {
             opcache_reset();
+        }
+    }
+
+    /**
+     * Used to invoke PHP CS Fixer to clean and re-flow PHP files, if installed.
+     *
+     * @param string $path Full path to PHP file
+     * @return void
+     */
+    public static function fixPhpCs(string $path)
+    {
+        $configFile = PIMCORE_PROJECT_ROOT . '/.php_cs.dist';
+        if (file_exists($configFile) && class_exists('PhpCsFixer\\Runner\\Runner')) {
+            /** @var \PhpCsFixer\Config $config */
+            $config = require $configFile;
+            $config->setFinder(new \ArrayIterator([new \SplFileInfo($path)]));
+            $resolver = new \PhpCsFixer\Console\ConfigurationResolver(
+                $config,
+                [],
+                \dirname($path),
+                new \PhpCsFixer\ToolInfo()
+            );
+            $runner = new \PhpCsFixer\Runner\Runner(
+                $config->getFinder(),
+                $resolver->getFixers(),
+                $resolver->getDiffer(),
+                null,
+                new \PhpCsFixer\Error\ErrorsManager(),
+                $resolver->getLinter(),
+                $resolver->isDryRun(),
+                $resolver->getCacheManager(),
+                $resolver->getDirectory(),
+                $resolver->shouldStopOnViolation()
+            );
+            $runner->fix();
         }
     }
 
