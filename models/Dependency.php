@@ -126,6 +126,17 @@ class Dependency extends AbstractModel
     }
 
     /**
+     * @param string|null $orderBy
+     * @param string|null $orderDirection
+     * @param int|null $offset
+     * @param int|null $limit
+     * @return array
+     */
+    public function getRequiredByWithPath($orderBy = null, $orderDirection = null, $offset = null, $limit = null) {
+        return $this->getDao()->getRequiredByWithPath($orderBy, $orderDirection, $offset, $limit);
+    }
+
+    /**
      * @param int $sourceId
      *
      * @return $this

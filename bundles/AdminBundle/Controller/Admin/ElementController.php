@@ -317,44 +317,43 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
         $total = 0;
+        $limit = intval($request->get('limit', 50));
+        $offset = intval($request->get('start', 0));
 
         if ($element instanceof Element\AbstractElement) {
-            $elements = $element->getDependencies()->getRequiredBy();
-            foreach ($elements as $el) {
-                $item = Element\Service::getElementById($el['type'], $el['id']);
-                if ($item instanceof Element\ElementInterface) {
-                    if ($item->isAllowed('list')) {
-                        $el['path'] = $item->getRealFullPath();
-                        $results[] = $el;
-                    } else {
-                        $hasHidden = true;
-                    }
-                }
-            }
-            $total = count($results);
-            $sort = $request->get('sort');
+            $total = $element->getDependencies()->getRequiredByTotalCount();
 
-            if ($sort) {
-                $sort = json_decode($sort)[0];
-                usort(
-                    $results,
-                    function ($a, $b) use ($sort) {
-                        $aValue = $a[$sort->property] ?? '';
-                        $bValue = $b[$sort->property] ?? '';
-                        if ($sort->direction === 'ASC') {
-                            return $aValue <=> $bValue;
+            if ($request->get('sort')) {
+                $sort = json_decode($request->get('sort'))[0];
+                $orderBy = $sort->property;
+                $orderDirection = $sort->direction;
+            } else {
+                $orderBy = null;
+                $orderDirection = null;
+            }
+
+            $queryOffset = $offset;
+            $queryLimit = $limit;
+
+            while (count($results) < min($limit, $total) && $queryOffset < $total) {
+                $elements = $element->getDependencies()
+                    ->getRequiredByWithPath($orderBy, $orderDirection, $queryOffset, $queryLimit);
+
+                foreach ($elements as $el) {
+                    $item = Element\Service::getElementById($el['type'], $el['id']);
+
+                    if ($item instanceof Element\ElementInterface) {
+                        if ($item->isAllowed('list')) {
+                            $results[] = $el;
                         } else {
-                            return $bValue <=> $aValue;
+                            $hasHidden = true;
                         }
                     }
-                );
-            }
+                }
 
-            $results = array_slice(
-                $results,
-                $request->get('start', 0),
-                $request->get('limit', 50)
-            );
+                $queryOffset += count($elements);
+                $queryLimit = $limit - count($results);
+            }
 
             $success = true;
         }
