@@ -62,6 +62,9 @@ parameters:
         - '~^Unsafe usage of new static\(\)~'
         - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
         - '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+        -
+            message: '/^(PHPDoc tag .*|Instantiated|Call to method \w*\(\) on an unknown) class PhpCsFixer\\\w*/'
+            path: lib/File.php
 
     # see https://github.com/phpstan/phpstan#universal-object-crates
     universalObjectCratesClasses:
