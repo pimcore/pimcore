@@ -18,6 +18,7 @@ namespace Pimcore;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -98,6 +99,52 @@ class Composer
         } else {
             $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
         }
+    }
+
+
+    /**
+     * @param Event $event
+     */
+    public static function executeBundleMigrationsUp(Event $event)
+    {
+        $consoleDir = static::getConsoleDir($event, 'bundle migrations');
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $bundles = include('var/config/extensions.php'); // path is based on composer.json's path
+
+        $installedBundles = array_map(static function($bundleClassName, $active) {
+            if($active) {
+                return substr($bundleClassName, strrpos($bundleClassName, "\\")+1);
+            }
+            return null;
+        }, array_keys($bundles['bundle']), $bundles['bundle']);
+
+        $installedBundles = array_filter($installedBundles);
+
+        foreach($installedBundles as $bundle) {
+            try {
+                try {
+                    $process = static::executeCommand($event, $consoleDir,
+                        'pimcore:migrations:status -b '.$bundle.' -o number_available_migrations', 30, false);
+                    $availableMigrations = (int)trim($process->getOutput());
+                } catch(\RuntimeException $e) {
+                    continue;
+                }
+
+                if ($availableMigrations) {
+                    static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle);
+                } else {
+                    $event->getIO()->write('<comment>Not found non-executed bundle migrations for "'.$bundle.'</comment>', true);
+                }
+            } catch (\Throwable $e) {
+                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
+            }
+        }
+
+        self::clearDataCache($event, $consoleDir);
     }
 
     /**
