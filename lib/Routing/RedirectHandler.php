@@ -193,11 +193,12 @@ class RedirectHandler implements LoggerAwareInterface
                 $redirectDomain = $this->config['general']['domain'];
                 $sites = new Site\Listing();
                 foreach ($sites as $site) {
-                    foreach ($site->getDomains() as $siteDomain) {
-                        if ($request->getHost() === $siteDomain) {
-                            $redirectDomain = $siteDomain;
-                            break 2;
-                        }
+                    $siteDomains = $site->getDomains();
+                    $siteDomains[] = $site->getMainDomain();
+                    $siteIndex = \array_searchi($request->getHost(), $siteDomains);
+                    if($siteIndex !== false) {
+                        $redirectDomain = $siteDomains[$siteIndex];
+                        break;
                     }
                 }
 
