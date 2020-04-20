@@ -30,6 +30,8 @@ Remove plugins:
 Delete: samples/
 
 # EXT JS
+current version: 6.0.0.640
+
 needed components:
 \build\ext-all.js
 \build\ext-all-debug.js
@@ -56,3 +58,6 @@ current version: 2.24.0
 
 # Leaflet JS
 current version: 1.6.0
+
+# miniPaint
+current version: 4.2.4
