@@ -50,3 +50,6 @@ needed components:
 # fixes the problem with font-rendering in chrome (gray instead of black)
 fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
 fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf
+
+# Leaflet JS
+current version: 1.6.0
