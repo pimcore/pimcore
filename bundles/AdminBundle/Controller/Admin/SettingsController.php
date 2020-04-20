@@ -1764,34 +1764,32 @@ class SettingsController extends AdminController
             if ($request->get('xaction') == 'destroy') {
                 $id = $data['id'];
                 $setting = WebsiteSetting::getById($id);
-                $setting->delete();
-
-                return $this->adminJson(['success' => true, 'data' => []]);
+                if ($setting instanceof WebsiteSetting) {
+                    $setting->delete();
+                    return $this->adminJson(['success' => true, 'data' => []]);
+                }
             } elseif ($request->get('xaction') == 'update') {
                 // save routes
                 $setting = WebsiteSetting::getById($data['id']);
-
-                switch ($setting->getType()) {
-                    case 'document':
-                    case 'asset':
-                    case 'object':
-                        if (isset($data['data'])) {
-                            $path = $data['data'];
-                            $element = null;
-                            if ($path != null) {
-                                $element = Element\Service::getElementByPath($setting->getType(), $path);
+                if ($setting instanceof WebsiteSetting) {
+                    switch ($setting->getType()) {
+                        case 'document':
+                        case 'asset':
+                        case 'object':
+                            if (isset($data['data'])) {
+                                $element = Element\Service::getElementByPath($setting->getType(), $data['data']);
+                                $data['data'] = $element;
                             }
-                            $data['data'] = $element;
-                        }
-                        break;
+                            break;
+                    }
+
+                    $setting->setValues($data);
+                    $setting->save();
+
+                    $data = $this->getWebsiteSettingForEditMode($setting);
+
+                    return $this->adminJson(['data' => $data, 'success' => true]);
                 }
-
-                $setting->setValues($data);
-                $setting->save();
-
-                $data = $this->getWebsiteSettingForEditMode($setting);
-
-                return $this->adminJson(['data' => $data, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
