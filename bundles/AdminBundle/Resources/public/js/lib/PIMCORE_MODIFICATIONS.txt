@@ -51,5 +51,8 @@ needed components:
 fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
 fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf
 
+# Moment JS
+current version: 2.24.0
+
 # Leaflet JS
 current version: 1.6.0
