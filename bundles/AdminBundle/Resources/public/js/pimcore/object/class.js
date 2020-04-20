@@ -327,7 +327,7 @@ pimcore.object.klass = Class.create({
 
     deleteClass: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), t('delete_message'), function (btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_class_message'), record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: "/admin/class/delete",
