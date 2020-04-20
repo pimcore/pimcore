@@ -1,7 +1,7 @@
 
 
 # CKEDITOR (use builder: http://ckeditor.com/builder);
-
+current version: 4.14.0
 upload build-config.js
 
 OR:
@@ -14,7 +14,6 @@ Add plugins:
 
 Remove plugins:
 - About CKEditor
-- Clipboard
 - Content Templates
 - File Browser
 - Flash Dialog
