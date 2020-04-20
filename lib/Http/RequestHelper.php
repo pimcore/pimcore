@@ -197,18 +197,24 @@ class RequestHelper
     }
 
     /**
+     * @internal
      * @param string $uri
      * @return Request
      */
     public function createRequestWithContext($uri = '/') {
+        $port = '';
+        $scheme = $this->requestContext->getScheme();
+
+        if ('http' === $scheme && 80 !== $this->requestContext->getHttpPort()) {
+            $port = ':'.$this->requestContext->getHttpPort();
+        } elseif ('https' === $scheme && 443 !== $this->requestContext->getHttpsPort()) {
+            $port = ':'.$this->requestContext->getHttpsPort();
+        }
+
         $request =  Request::create(
-            $this->requestContext->getScheme().'://'.$this->requestContext->getHost().$this->requestContext->getBaseUrl().$uri,
+            $scheme .'://'. $this->requestContext->getHost().$port.$this->requestContext->getBaseUrl().$uri,
             $this->requestContext->getMethod(),
-            $this->requestContext->getParameters(), [], [],
-            [
-            'SCRIPT_FILENAME' => $this->requestContext->getBaseUrl(),
-            'SCRIPT_NAME' => $this->requestContext->getBaseUrl(),
-            ]
+            $this->requestContext->getParameters()
         );
 
         return $request;
