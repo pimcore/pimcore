@@ -115,18 +115,14 @@ class Composer
 
         $bundles = include('var/config/extensions.php'); // path is based on composer.json's path
 
-        $installedBundles = array_map(static function($bundleClassName, $active) {
-            if($active) {
-                try {
-                    $reflectionClass = new \ReflectionClass($bundleClassName);
-                    return $reflectionClass->getShortName();
-                } catch(\Exception $e) {
-                }
+        $installedBundles = array_map(static function($bundleClassName) {
+            try {
+                $reflectionClass = new \ReflectionClass($bundleClassName);
+                return $reflectionClass->getShortName();
+            } catch(\Exception $e) {
             }
             return null;
-        }, array_keys($bundles['bundle']), $bundles['bundle']);
-
-        $installedBundles = array_filter($installedBundles);
+        }, array_keys(array_filter($bundles['bundle'])));
 
         foreach($installedBundles as $bundle) {
             try {
