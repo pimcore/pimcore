@@ -190,16 +190,11 @@ class RedirectHandler implements LoggerAwareInterface
                     return null;
                 }
             } else {
-                $redirectDomain = $this->config['general']['domain'];
-                $sites = new Site\Listing();
-                foreach ($sites as $site) {
-                    $siteDomains = $site->getDomains();
-                    $siteDomains[] = $site->getMainDomain();
-                    $siteIndex = \array_searchi($request->getHost(), $siteDomains);
-                    if($siteIndex !== false) {
-                        $redirectDomain = $siteDomains[$siteIndex];
-                        break;
-                    }
+                $site = Site::getByDomain($request->getHost());
+                if($site instanceof Site) {
+                    $redirectDomain = $request->getHost();
+                } else {
+                    $redirectDomain = $this->config['general']['domain'];
                 }
 
                 if ($redirectDomain) {
