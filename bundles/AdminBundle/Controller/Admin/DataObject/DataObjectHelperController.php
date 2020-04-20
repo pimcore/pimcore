@@ -1274,7 +1274,7 @@ class DataObjectHelperController extends AdminController
                 $object = DataObject\AbstractObject::getById($objectId);
                 $context['object'] = $object;
             }
-            DataObject\Service::enrichLayoutDefinition($field, null, $context);
+            DataObject\Service::enrichLayoutDefinition($field, $context['object'] ?? null, $context);
 
             $result = [
                 'key' => $key,
