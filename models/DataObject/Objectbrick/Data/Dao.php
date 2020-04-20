@@ -97,6 +97,16 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
+            if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
+                // if this is a fresh object, then we don't need the check
+                $isBrickUpdate = false; // used to indicate whether we want to consider the default value
+            } else {
+                // or brick has been added
+                $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
+                $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
+            }
+
+
             if ($fd instanceof CustomResourcePersistingInterface) {
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
@@ -112,22 +122,9 @@ class Dao extends Model\Dao\AbstractDao
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
                             'fieldname' => $this->model->getFieldname()
-                        ]
+                        ],
+                        'isUpdate' => $isBrickUpdate,
                     ]));
-            }
-
-            $isBrickUpdate = true;          // used to indicate whether we want to consider the default value
-
-            // only relevant if inheritance is enabled
-            if ($this->model->getObject()->getClass()->getAllowInherit()) {
-                if (isset($params['isUpdate']) && $params['isUpdate'] === false) {
-                    // either this is a fresh object, then we don't need the check
-                    $isBrickUpdate = false;
-                } else {
-                    // or brick has been added
-                    $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
-                    $isBrickUpdate = $existsResult ? true : false;
-                }
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
@@ -390,7 +387,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND o.o_id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='object'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index, "null" as published
@@ -399,7 +396,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='asset'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index, d.published as published
