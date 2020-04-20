@@ -121,7 +121,29 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$event->isMasterRequest() && !$this->documentResolver->getDocument($request)) {
+        if($this->documentResolver->getDocument($request)) {
+            return;
+        }
+
+        if ($event->isMasterRequest()) {
+            // no document found yet - try to find the nearest document by request path
+            // this is only done on the master request as a sub-request's pathInfo is _fragment when
+            // rendered via actions helper
+            $path = null;
+            if ($this->siteResolver->isSiteRequest($request)) {
+                $path = $this->siteResolver->getSitePath($request);
+            } else {
+                $path = urldecode($request->getPathInfo());
+            }
+
+            $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
+            if ($document) {
+                $this->fallbackDocument = $document;
+                if ($document->getProperty('language')) {
+                    $request->setLocale($document->getProperty('language'));
+                }
+            }
+        } else {
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
             $parentRequest = $this->requestStack->getParentRequest();
@@ -142,26 +164,6 @@ class DocumentFallbackListener implements EventSubscriberInterface
                     $this->documentResolver->setDocument($request, $document);
 
                     return;
-                }
-            }
-        }
-
-        // no document found yet - try to find the nearest document by request path
-        // this is only done on the master request as a sub-request's pathInfo is _fragment when
-        // rendered via actions helper
-        if ($event->isMasterRequest()) {
-            $path = null;
-            if ($this->siteResolver->isSiteRequest($request)) {
-                $path = $this->siteResolver->getSitePath($request);
-            } else {
-                $path = urldecode($request->getPathInfo());
-            }
-
-            $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
-            if ($document) {
-                $this->fallbackDocument = $document;
-                if ($document->getProperty('language')) {
-                    $request->setLocale($document->getProperty('language'));
                 }
             }
         }
