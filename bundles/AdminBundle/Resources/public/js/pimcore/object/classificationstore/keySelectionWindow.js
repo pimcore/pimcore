@@ -127,7 +127,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 method: 'POST',
                 params: {
                     collectionIds: Ext.util.JSON.encode(collectionIds),
-                    oid: this.config.objec ? this.config.object.id : null,
+                    oid: this.config.object ? this.config.object.id : null,
                     fieldname: this.config ? this.config.fieldname : null
                 },
                 success: function (response) {
@@ -156,7 +156,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 method: 'POST',
                 params: {
                     groupIds: Ext.util.JSON.encode(groupIds),
-                    oid: this.config.objec ? this.config.object.id : null,
+                    oid: this.config.object ? this.config.object.id : null,
                     fieldname: this.config ? this.config.fieldname : null
                 },
                 success: function (response) {

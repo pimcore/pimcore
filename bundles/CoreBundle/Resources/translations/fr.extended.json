@@ -718,6 +718,7 @@
     "controller_action": "Contrôleur et action",
     "implements_interfaces": "Implémente interface(s)",
     "enter_media_query": "Veuillez saisir une requête média CSS valide",
-    "1x1_pixel_placeholder": "1x1 Pixel Placeholder",
-    "1x1_pixel_placeholder_description": "Just returns a 1x1 pixel GIF base64 encoded, in case you don't want to display an image for a certain condition"
+    "1x1_pixel_placeholder": "Pixel 1x1 Placeholder",
+    "1x1_pixel_placeholder_description": "Renvoie simplement un GIF de 1x1 pixel encodé en base64, au cas où vous ne voudriez pas afficher une image pour une certaine condition",
+    "you_can_drag_the_tabs_to_reorder_the_media_queries": "Vous pouvez faire glisser les onglets pour réorganiser la priorité des requêtes \nmédias"
 }

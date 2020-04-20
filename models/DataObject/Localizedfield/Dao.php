@@ -181,14 +181,14 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']])
                         );
                     }
                 }
@@ -882,15 +882,19 @@ QUERY;
     /**
      * @param string $fieldname
      * @param string $language
+     * @param array $extraParams
      *
      * @return array
      */
-    public function getFieldDefinitionParams(string $fieldname, string $language)
+    public function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
     {
-        return [
-            'owner' => $this->model,
-            'fieldname' => $fieldname,
-            'language' => $language,
-        ];
+        return array_merge(
+            [
+                'owner' => $this->model,
+                'fieldname' => $fieldname,
+                'language' => $language,
+            ],
+            $extraParams
+        );
     }
 }

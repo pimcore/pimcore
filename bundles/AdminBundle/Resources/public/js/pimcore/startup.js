@@ -483,7 +483,7 @@ Ext.onReady(function () {
 
         // use vanilla javascript instead of ExtJS to bypass default error handling
         var request = new XMLHttpRequest();
-        request.open('POST', "https://liveupdate.pimcore.org/update-check", false);
+        request.open('POST', "https://liveupdate.pimcore.org/update-check");
 
         request.onload = function() {
             if (this.status >= 200 && this.status < 400) {

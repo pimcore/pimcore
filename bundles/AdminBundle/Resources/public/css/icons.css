@@ -465,6 +465,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/bar_chart.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_asset_unknown, .pimcore_icon_asset_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_site {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/home.svg) center center no-repeat !important;
 }
@@ -616,10 +620,6 @@
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
 .pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_asset_unknown, .pimcore_icon_asset_default {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg) center center no-repeat !important;
 }
 
 .x-tree-icon-custom.pimcore_icon_asset_default {

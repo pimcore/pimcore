@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-function t(key, defaultValue) {
+function t(key, defaultValue, placeholders) {
     if(!key) {
         return "";
     }
@@ -36,6 +36,21 @@ function t(key, defaultValue) {
 
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
+
+        //find and replace placeholders, if provided
+        if (placeholders) {
+            let pKeys = Object.keys(placeholders);
+
+            for (let i = 0; i < pKeys.length; i++) {
+                let regExp = new RegExp('\{(' + pKeys[i] + ')\}', 'gi');
+                let replace = placeholders[pKeys[i]];
+
+                if (trans.match(regExp)) {
+                    trans = trans.replace(regExp, replace);
+                }
+            }
+        }
+
         pimcore.globalmanager.get("translations_admin_translated_values").push(trans);
         return trans;
     }

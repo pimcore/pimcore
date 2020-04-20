@@ -1023,6 +1023,15 @@ pimcore.asset.tree = Class.create({
                 jobs: res.jobs
             });
         }.bind(this), function (res) {
+            var response = Ext.decode(res.response.responseText);
+            if (response && response.success === false) {
+                pimcore.helpers.showNotification(t("error"), response.message, "error",
+                    res.response.responseText);
+            } else {
+                pimcore.helpers.showNotification(t("error"), res, "error",
+                    res.response.responseText);
+            }
+
             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.get("id"));
         }.bind(this));
     },

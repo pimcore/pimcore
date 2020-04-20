@@ -505,7 +505,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
-                        $item[$c['key']] = $metaObject->$getter();
+                        $value = $metaObject->$getter();
+
+                        if ($c['type'] == 'bool' || $c['type'] == 'columnbool') {
+                            $value = (int)$value;
+                        }
+
+                        $item[$c['key']] = $value;
                     }
                     $items[] = $item;
                 }
