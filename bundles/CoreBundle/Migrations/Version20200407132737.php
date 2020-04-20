@@ -14,8 +14,15 @@ class Version20200407132737 extends AbstractPimcoreMigration
     {
         $table = $schema->getTable('uuids');
 
-        $table->dropPrimaryKey();
+        if ($table->hasPrimaryKey()) {
+            $table->dropPrimaryKey();
+        }
+
         $table->setPrimaryKey(['uuid', 'itemId', 'type']);
+
+        if ($table->hasIndex('itemId_type_uuid')) {
+            $table->dropIndex('itemId_type_uuid');
+        }
     }
 
     /**
