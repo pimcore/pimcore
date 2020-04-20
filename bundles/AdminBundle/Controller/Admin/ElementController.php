@@ -120,7 +120,7 @@ class ElementController extends AdminController
      */
     protected function processNoteTypesFromParameters(string $parameterName)
     {
-        $config = $this->container->getParameter($parameterName);
+        $config = $this->getParameter($parameterName);
         $result = [];
         foreach ($config as $configEntry) {
             $result[] = [
