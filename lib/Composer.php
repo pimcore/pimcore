@@ -117,7 +117,11 @@ class Composer
 
         $installedBundles = array_map(static function($bundleClassName, $active) {
             if($active) {
-                return substr($bundleClassName, strrpos($bundleClassName, "\\")+1);
+                try {
+                    $reflectionClass = new \ReflectionClass($bundleClassName);
+                    return $reflectionClass->getShortName();
+                } catch(\Exception $e) {
+                }
             }
             return null;
         }, array_keys($bundles['bundle']), $bundles['bundle']);
