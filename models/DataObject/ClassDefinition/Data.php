@@ -1554,6 +1554,11 @@ abstract class Data
         }
     }
 
+    /**
+     * Returns if datatype supports listing filters: getBy, filterBy
+     *
+     * @return bool
+     */
     public function isFilterable(): bool
     {
         return false;
