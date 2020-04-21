@@ -112,32 +112,16 @@ class Composer
             return;
         }
 
-        $bundles = include('var/config/extensions.php'); // path is based on composer.json's path
+        $process = static::executeCommand($event, $consoleDir, 'pimcore:bundle:list --json', 30, false);
+        $bundles = \json_decode($process->getOutput(), true);
 
-        $installedBundles = array_map(static function($bundleClassName) {
+        $updatableBundles = array_filter($bundles, static function($bundle) {
+            return $bundle['Updatable'];
+        });
+
+        foreach($updatableBundles as $bundle) {
             try {
-                $reflectionClass = new \ReflectionClass($bundleClassName);
-                return $reflectionClass->getShortName();
-            } catch(\Exception $e) {
-            }
-            return null;
-        }, array_keys(array_filter($bundles['bundle'])));
-
-        foreach($installedBundles as $bundle) {
-            try {
-                try {
-                    $process = static::executeCommand($event, $consoleDir,
-                        'pimcore:migrations:status -b '.$bundle.' -o number_available_migrations', 30, false);
-                    $availableMigrations = (int)trim($process->getOutput());
-                } catch(\RuntimeException $e) {
-                    continue;
-                }
-
-                if ($availableMigrations) {
-                    static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle);
-                } else {
-                    $event->getIO()->write('<comment>Not found non-executed bundle migrations for "'.$bundle.'</comment>', true);
-                }
+                static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
             } catch (\Throwable $e) {
                 $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
             }
