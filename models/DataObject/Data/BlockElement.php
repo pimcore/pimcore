@@ -18,13 +18,15 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use DeepCopy\DeepCopy;
-use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Version\ElementDescriptor;
+use Pimcore\Model\Version\MarshalMatcher;
+use Pimcore\Model\Version\UnmarshalMatcher;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
@@ -134,21 +136,22 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
-                    if ($currentValue instanceof AbstractElement) {
-                        if (Runtime::isRegistered($currentValue->getCacheTag())) {
+                    if ($currentValue instanceof ElementDescriptor) {
+                        $cacheTag = $currentValue->getType() . "_" . $currentValue->getId();
+                        if (Runtime::isRegistered($cacheTag)) {
                             // we don't want the copy from the runtime but cache is fine
-                            Runtime::getInstance()->offsetUnset($currentValue->getCacheTag());
+                            Runtime::getInstance()->offsetUnset($cacheTag);
                         }
 
                         $renewedElement = Service::getElementById($currentValue->getType(), $currentValue->getId());
 
                         return $renewedElement;
-                    } else {
-                        return $currentValue;
                     }
+
+                    return $currentValue;
                 }
             ),
-            new TypeMatcher(AbstractElement::class)
+            new UnmarshalMatcher()
         );
         $this->data = $copier->copy($this->data);
     }
@@ -171,18 +174,45 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function __sleep()
     {
-        $vars = parent::__sleep();
 
-        $blockedVars = ['needsRenewReferences'];
+        $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof ElementInterface) {
+                        $elementType = Service::getType($currentValue);
+                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
 
-        $finalVars = [];
-        foreach ($vars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
+                        return $descriptor;
+                    }
 
-        return $finalVars;
+                    return $currentValue;
+                }
+            ),
+            new MarshalMatcher(null, null)
+        );
+
+        $this->needsRenewReferences = true;
+        $this->data = $copier->copy($this->data);
+
+        return parent::__sleep();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getNeedsRenewReferences(): bool
+    {
+        return $this->needsRenewReferences;
+    }
+
+    /**
+     * @param bool $needsRenewReferences
+     */
+    public function setNeedsRenewReferences(bool $needsRenewReferences)
+    {
+        $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
 
 }
