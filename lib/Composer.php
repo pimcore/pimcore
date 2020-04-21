@@ -18,7 +18,6 @@ namespace Pimcore;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
