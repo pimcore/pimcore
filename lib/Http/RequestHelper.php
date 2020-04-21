@@ -198,10 +198,13 @@ class RequestHelper
 
     /**
      * @internal
+     *
      * @param string $uri
+     *
      * @return Request
      */
-    public function createRequestWithContext($uri = '/') {
+    public function createRequestWithContext($uri = '/')
+    {
         $port = '';
         $scheme = $this->requestContext->getScheme();
 
@@ -211,7 +214,7 @@ class RequestHelper
             $port = ':'.$this->requestContext->getHttpsPort();
         }
 
-        $request =  Request::create(
+        $request = Request::create(
             $scheme .'://'. $this->requestContext->getHost().$port.$this->requestContext->getBaseUrl().$uri,
             $this->requestContext->getMethod(),
             $this->requestContext->getParameters()

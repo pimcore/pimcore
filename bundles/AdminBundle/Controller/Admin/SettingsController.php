@@ -1766,6 +1766,7 @@ class SettingsController extends AdminController
                 $setting = WebsiteSetting::getById($id);
                 if ($setting instanceof WebsiteSetting) {
                     $setting->delete();
+
                     return $this->adminJson(['success' => true, 'data' => []]);
                 }
             } elseif ($request->get('xaction') == 'update') {

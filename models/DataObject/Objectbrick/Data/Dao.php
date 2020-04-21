@@ -106,7 +106,6 @@ class Dao extends Model\Dao\AbstractDao
                 $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
             }
 
-
             if ($fd instanceof CustomResourcePersistingInterface) {
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff

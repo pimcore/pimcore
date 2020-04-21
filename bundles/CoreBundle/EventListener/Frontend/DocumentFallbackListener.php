@@ -121,7 +121,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             return;
         }
 
-        if($this->documentResolver->getDocument($request)) {
+        if ($this->documentResolver->getDocument($request)) {
             return;
         }
 
