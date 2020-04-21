@@ -27,7 +27,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\ElementDescriptor;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
