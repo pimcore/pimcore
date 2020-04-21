@@ -740,7 +740,13 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
+            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . "self::setGetInheritedValues(false);\n";
+            }
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . "self::setGetInheritedValues(true);\n";
+            }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
