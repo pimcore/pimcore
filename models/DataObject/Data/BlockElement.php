@@ -137,7 +137,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     if ($currentValue instanceof ElementDescriptor) {
-                        $cacheTag = $currentValue->getType() . "_" . $currentValue->getId();
+                        $cacheTag = $currentValue->getCacheTag();
                         if (Runtime::isRegistered($cacheTag)) {
                             // we don't want the copy from the runtime but cache is fine
                             Runtime::getInstance()->offsetUnset($cacheTag);
