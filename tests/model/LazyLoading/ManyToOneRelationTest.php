@@ -102,10 +102,9 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $object = LazyLoading::getById($id, true);
 
             // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
-            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
-
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
@@ -113,7 +112,8 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
         }
     }
 
