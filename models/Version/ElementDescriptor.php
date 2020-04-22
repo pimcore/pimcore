@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -8,28 +9,83 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Element
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Version;
 
-@trigger_error(
-    'Pimcore\Model\Version\ElementDescriptor is deprecated since version 6.6.2 and will be removed in 7.0.0. ' .
-    ' Use ' . \Pimcore\Model\Element\ElementDescriptor::class . ' instead.',
-    E_USER_DEPRECATED
-);
+use Pimcore\Model\Element\Service;
 
-class_exists(\Pimcore\Model\Element\ElementDescriptor::class);
+class ElementDescriptor
+{
+    /** @var string */
+    protected $type;
 
-if (false) {
+    /** @var int */
+    protected $id;
+
     /**
-     * @deprecated use \Pimcore\Model\Element\ElementDescriptor instead.
+     * ElementDescriptor constructor.
+     *
+     * @param string $type
+     * @param int $id
      */
-    class ElementDescriptor extends \Pimcore\Model\Element\ElementDescriptor
+    public function __construct($type, $id)
     {
+        $this->type = $type;
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * get the cache tag for the element
+     *
+     * @return string
+     */
+    public function getCacheKey()
+    {
+        $elementType = Service::getElementType($this->getType());
+
+        return $elementType . '_' . $this->getId();
     }
 }

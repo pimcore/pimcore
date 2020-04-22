@@ -100,6 +100,40 @@ class Composer
         }
     }
 
+
+    /**
+     * @param Event $event
+     */
+    public static function executeBundleMigrationsUp(Event $event)
+    {
+        $consoleDir = static::getConsoleDir($event, 'bundle migrations');
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $process = static::executeCommand($event, $consoleDir, 'pimcore:bundle:list --json', 30, false);
+        $bundles = \json_decode($process->getOutput(), true);
+
+        usort($bundles, static function($bundle1, $bundle2) {
+            return $bundle1['Priority'] <=> $bundle2['Priority'];
+        });
+
+        $updatableBundles = array_filter($bundles, static function($bundle) {
+            return $bundle['Updatable'];
+        });
+
+        foreach($updatableBundles as $bundle) {
+            try {
+                static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
+            } catch (\Throwable $e) {
+                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
+            }
+        }
+
+        self::clearDataCache($event, $consoleDir);
+    }
+
     /**
      * @param Event $event
      * @param string $consoleDir
