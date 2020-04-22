@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\Version;
 
+use Pimcore\Model\Element\Service;
+
 class ElementDescriptor
 {
     /** @var string */
@@ -73,5 +75,17 @@ class ElementDescriptor
         $this->id = $id;
 
         return $this;
+    }
+
+    /**
+     * get the cache tag for the element
+     *
+     * @return string
+     */
+    public function getCacheKey()
+    {
+        $elementType = Service::getElementType($this->getType());
+
+        return $elementType . '_' . $this->getId();
     }
 }
