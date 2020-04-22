@@ -174,7 +174,7 @@ class RedirectHandler implements LoggerAwareInterface
             $url = replace_pcre_backreferences($url, $matches);
         }
 
-        if(!preg_match('@http(s)?://@i', $url)) {
+        if (!preg_match('@http(s)?://@i', $url)) {
             if ($redirect->getTargetSite()) {
                 if ($targetSite = Site::getById($redirect->getTargetSite())) {
                     // if the target site is specified and and the target-path is starting at root (not absolute to site)
@@ -191,7 +191,7 @@ class RedirectHandler implements LoggerAwareInterface
                 }
             } else {
                 $site = Site::getByDomain($request->getHost());
-                if($site instanceof Site) {
+                if ($site instanceof Site) {
                     $redirectDomain = $request->getHost();
                 } else {
                     $redirectDomain = $this->config['general']['domain'];
@@ -203,7 +203,6 @@ class RedirectHandler implements LoggerAwareInterface
                 }
             }
         }
-
 
         // pass-through parameters if specified
         $queryString = $request->getQueryString();
