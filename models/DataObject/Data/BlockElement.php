@@ -137,10 +137,10 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     if ($currentValue instanceof ElementDescriptor) {
-                        $cacheTag = $currentValue->getCacheTag();
-                        if (Runtime::isRegistered($cacheTag)) {
+                        $cacheKey = $currentValue->getKey();
+                        if (Runtime::isRegistered($cacheKey)) {
                             // we don't want the copy from the runtime but cache is fine
-                            Runtime::getInstance()->offsetUnset($cacheTag);
+                            Runtime::getInstance()->offsetUnset($cacheKey);
                         }
 
                         $renewedElement = Service::getElementById($currentValue->getType(), $currentValue->getId());

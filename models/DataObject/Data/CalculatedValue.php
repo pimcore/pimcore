@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Model\DataObject\ContextChain\OwnerChain;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -23,26 +24,51 @@ class CalculatedValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string */
+    //TODO in a second step properties can be derived from the ownerChain
+    /**
+     * @deprecated
+     * @var string
+     */
     protected $fieldname;
 
-    /** @var string */
+    /**
+     * @deprecated
+     * @var string
+     */
     protected $ownerType = 'object';
 
-    /** @var string */
+    /**
+     * @deprecated
+     * @var string
+     */
     protected $ownerName;
 
-    /** @var int */
+    /**
+     * @deprecated
+     * @var int
+     */
     protected $index;
 
-    /** @var string */
+    /**
+     * @deprecated
+     * @var string
+     */
     protected $position;
 
-    /** @var int */
+    /**
+     * @deprecated
+     * @var int
+     */
     protected $groupId;
 
-    /** @var int */
+    /**
+     * @deprecated
+     * @var int
+     */
     protected $keyId;
+
+    /** @var OwnerChain */
+    protected $ownerChain;
 
     /**
      * @var mixed
@@ -81,6 +107,21 @@ class CalculatedValue implements OwnerAwareFieldInterface
         $this->keyId = $keyId;
         $this->keyDefinition = $keyDefinition;
         $this->markMeDirty();
+    }
+
+    /**
+     * @param OwnerChain $ownerChain
+     */
+    public function setOwnerChain(OwnerChain $ownerChain) {
+        $this->ownerChain = $ownerChain;
+    }
+
+    /**
+     * @return OwnerChain
+     */
+    public function getOwnerChain()
+    {
+        return $this->ownerChain;
     }
 
     /**
