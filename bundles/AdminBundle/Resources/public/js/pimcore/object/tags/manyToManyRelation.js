@@ -328,7 +328,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             },
             {
                 xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
+                text: "<b>" + this.fieldConfig.title +  " (" + this.store.data.items.length + ")</b>"
             },
             "->"
         ];
