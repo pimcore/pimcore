@@ -409,6 +409,12 @@ Migrating up to 00000001 from 0
  [OK] Bundle "AppBundle" was successfully installed
 ```
 
+### Automatic migration on updating bundle
+
+When a bundle gets updated via Composer, the bundle migrations can be automatically executed by adding `"Pimcore\\Composer::executeBundleMigrationsUp"` to the `post-update-cmd` section of your `composer.json` `scripts` section. 
+
+In the same way you can disable this feature just remove the mentioned call from your `composer.json`.
+
 ### Uninstallations
 
 The `MigrationInstaller` by default does **NOT** revert any migrations besides the install migration on uninstallation. As

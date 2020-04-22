@@ -6,6 +6,8 @@
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 
 Composer update runs Pimcore migrations automatically. 
+If you do not want to run Pimcore migrations automatically please remove `"Pimcore\\Composer::executeMigrationsUp"` from the `post-update-cmd` scripts in your `composer.json`.
+
 To run core migrations manually (e.g. when using composer install), 
 use: `bin/console pimcore:migrations:migrate -s pimcore_core -n`
 
