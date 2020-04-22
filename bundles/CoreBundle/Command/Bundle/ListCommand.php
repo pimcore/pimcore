@@ -50,6 +50,7 @@ class ListCommand extends AbstractBundleCommand
                 $input->hasOption('json')?'Installable':'I?',
                 $input->hasOption('json')?'Uninstallable':'UI?',
                 $input->hasOption('json')?'Updatable':'UP?',
+                'Priority'
             ]
         ];
 
@@ -77,11 +78,15 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
                 $row[] = $this->bundleManager->canBeUpdated($bundle);
+
+                $bundleState = $this->bundleManager->getState($bundle);
+                $row[] = $bundleState['priority'];
             } else {
                 $row[] = false;
                 $row[] = false;
                 $row[] = false;
                 $row[] = false;
+                $row[] = 0;
             }
 
             $returnData['rows'][] = $row;
