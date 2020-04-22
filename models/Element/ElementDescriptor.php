@@ -74,6 +74,18 @@ class ElementDescriptor
 
         return $this;
     }
+
+    /**
+     * get the cache tag for the element
+     *
+     * @return string
+     */
+    public function getCacheKey()
+    {
+        $elementType = Service::getElementType($this->getType());
+
+        return $elementType . '_' . $this->getId();
+    }
 }
 
 
