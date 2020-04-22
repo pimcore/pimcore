@@ -244,19 +244,12 @@ pimcore.settings.recyclebin = Class.create({
         this.grid.getView().refresh();
 
         if (offset == ids.length) {
-            // refresh all trees
             try {
-               var treeNames = ["document_tree", "asset_tree", "object_tree"];
-
-                treeNames.forEach(function (treeName) {
-                    var treeLayout = pimcore.globalmanager.get("layout_" + treeName);
-
-                    if (treeLayout && treeLayout.tree.rendered) {
-                        var tree = treeLayout.tree;
-                        tree.getStore().load({
-                            node: tree.getRootNode()
-                        });
-                    }
+                // would be nice if /admin/recyclebin/restore could return the affected types
+                // so that we don't have to refresh all types
+               const elementTypes = ["document", "asset", "object"];
+               elementTypes.forEach(function(elementType, index) {
+                   pimcore.elementservice.refreshRootNodeAllTrees(elementType);
                 });
             }
             catch (e) {
