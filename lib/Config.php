@@ -1026,7 +1026,7 @@ class Config implements \ArrayAccess
                     return false;
                 }
 
-                if (!$menuItem['items']) {
+                if (!($menuItem['items'] ?? null)) {
                     break;
                 }
                 $menuItems = $menuItem['items'];
