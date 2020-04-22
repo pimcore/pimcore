@@ -21,7 +21,7 @@ function t(key, defaultValue, placeholders) {
         pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
-    //make sure 'key' is a string
+    // make sure 'key' is a string
     key = String(key);
 
     // remove plus at the start and the end to avoid double translations
@@ -34,10 +34,17 @@ function t(key, defaultValue, placeholders) {
         key = key.toLocaleLowerCase();
     }
 
+    // translation keys may contain a maximum of 190 characters
+    // if the characters are overwritten, the key will be shortened
+    // to avoid double translations an md5 hash of the complete key is appended
+    if (key.length > 190) {
+        key = key.substr(0, 158) + md5(key);
+    }
+
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
 
-        //find and replace placeholders, if provided
+        // find and replace placeholders, if provided
         if (placeholders) {
             let pKeys = Object.keys(placeholders);
 
