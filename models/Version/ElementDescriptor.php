@@ -82,7 +82,7 @@ class ElementDescriptor
      *
      * @return string
      */
-    public function getCacheTag()
+    public function getCacheKey()
     {
         $elementType = Service::getElementType($this->getType());
 
