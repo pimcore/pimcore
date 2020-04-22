@@ -311,13 +311,11 @@ class IndexController extends AdminController implements EventedControllerInterf
     private function getInstanceId()
     {
         $instanceId = 'not-set';
-        if ($this->container->hasParameter('secret')) {
+        try {
             $instanceId = $this->getParameter('secret');
-            try {
-                $instanceId = sha1(substr($instanceId, 3, -3));
-            } catch (\Exception $e) {
-                // noting to do
-            }
+            $instanceId = sha1(substr($instanceId, 3, -3));
+        } catch (\Exception $e) {
+            // nothing to do
         }
 
         return $instanceId;

@@ -19,7 +19,7 @@ class File
     /**
      * @var int
      */
-    public static $defaultMode = 0775;
+    public static $defaultMode = 0664;
 
     /**
      * @var array
@@ -152,17 +152,13 @@ class File
      *
      * @return bool
      */
-    public static function mkdir($path, $mode = null, $recursive = true)
+    public static function mkdir($path, $mode = 0775, $recursive = true)
     {
         if (is_dir($path)) {
             return true;
         }
 
         $return = true;
-
-        if (!$mode) {
-            $mode = self::$defaultMode;
-        }
 
         $oldMask = umask(0);
 
