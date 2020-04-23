@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pimcore
  *
@@ -17,15 +16,17 @@ namespace Pimcore\Model\Element;
 
 class ElementDescriptor
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $type;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $id;
 
     /**
-     * ElementDescriptor constructor.
-     *
      * @param string $type
      * @param int $id
      */
@@ -82,11 +83,9 @@ class ElementDescriptor
      */
     public function getCacheKey()
     {
-        $elementType = Service::getElementType($this->getType());
-
-        return $elementType . '_' . $this->getId();
+        return $this->getType() . '_' . $this->getId();
     }
 }
 
-
+//TODO: remove in Pimcore 7
 class_alias(ElementDescriptor::class, 'Pimcore\Model\Version\ElementDescriptor');
