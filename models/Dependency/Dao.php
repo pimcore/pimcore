@@ -175,7 +175,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredBy($offset = null, $limit = null)
     {
-        $query = 'SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?';
+        $query = 'SELECT sourceid, sourcetype FROM dependencies WHERE targetid = ? AND targettype = ?';
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
@@ -204,7 +204,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param null $limit
      * @return array
      */
-    public function getRequiredByWithPath($orderBy = null, $orderDirection = null, $offset = null, $limit = null)
+    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
     {
         $targetId = intval($this->model->getSourceId());
 

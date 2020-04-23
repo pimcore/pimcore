@@ -26,6 +26,7 @@
   "OK": "OK",
   "search_replace_assignments_error": "Please select items where to replace and a new target item.",
   "replace_assignments_in_selected_elements": "Replace assignments in selected elements",
+  "replace_assignments_in_all_elements": "Replace assignments in all elements",
   "search_replace_assignments": "Search & Replace Assignments",
   "imageadvanced": "Image Advanced",
   "filter_active_message": "Do you want to export only the filtered values?",

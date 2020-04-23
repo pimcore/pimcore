@@ -337,7 +337,7 @@ class ElementController extends AdminController
 
             while (count($results) < min($limit, $total) && $queryOffset < $total) {
                 $elements = $element->getDependencies()
-                    ->getRequiredByWithPath($orderBy, $orderDirection, $queryOffset, $queryLimit);
+                    ->getRequiredByWithPath($queryOffset, $queryLimit, $orderBy, $orderDirection);
 
                 foreach ($elements as $el) {
                     $item = Element\Service::getElementById($el['type'], $el['id']);
@@ -367,6 +367,34 @@ class ElementController extends AdminController
     }
 
     /**
+     * @Route("/element/get-replace-assignments-batch-jobs", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    public function getReplaceAssignmentsBatchJobsAction(Request $request)
+    {
+        $element = null;
+
+        if ($request->get('id')) {
+            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        } elseif ($request->get('path')) {
+            $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
+        }
+
+        if ($element instanceof Element\AbstractElement) {
+            return $this->adminJson([
+                'success' => true,
+                'jobs' => $element->getDependencies()->getRequiredBy()
+            ]);
+        } else {
+            return $this->adminJson(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+    }
+
+    /**
      * @Route("/element/replace-assignments", methods={"POST"})
      *
      * @param Request $request
@@ -384,6 +412,7 @@ class ElementController extends AdminController
         if ($element && $sourceEl && $targetEl
             && $request->get('sourceType') == $request->get('targetType')
             && $sourceEl->getType() == $targetEl->getType()
+            && $element->isAllowed('save')
         ) {
             $rewriteConfig = [
                 $request->get('sourceType') => [

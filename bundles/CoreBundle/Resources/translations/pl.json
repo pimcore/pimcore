@@ -10,6 +10,7 @@
     "optional": "opcjonalne",
     "search_replace_assignments_error": "Zaznacz elementy do zmiany i wybierz nowy cel",
     "replace_assignments_in_selected_elements": "Zmień przypisania w zaznaczonych elementach",
+    "replace_assignments_in_all_elements": "Zmień przypisania we wszystkich elementach",
     "search_replace_assignments": "Szukaj i zamień",
     "imageadvanced": "Obraz zaawansowane",
     "filter_active_message": "Czy chcesz wyeksportować tylko przefiltrowane wartości?",

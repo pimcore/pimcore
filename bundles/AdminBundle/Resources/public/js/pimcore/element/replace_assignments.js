@@ -255,11 +255,18 @@ pimcore.element.replace_assignments = Class.create({
                             autoExpandColumn: "path",
                             stripeRows: true,
                             autoScroll: true,
-                            buttons: [{
-                                text: t("replace_assignments_in_selected_elements"),
-                                iconCls: "pimcore_icon_apply",
-                                handler: this.update.bind(this)
-                            }],
+                            buttons: [
+                                {
+                                    text: t("replace_assignments_in_selected_elements"),
+                                    iconCls: "pimcore_icon_apply",
+                                    handler: this.updateSelected.bind(this)
+                                },
+                                {
+                                    text: t("replace_assignments_in_all_elements"),
+                                    iconCls: "pimcore_icon_apply",
+                                    handler: this.updateAll.bind(this)
+                                }
+                            ],
                             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.store)
                         }
                     ]
@@ -284,16 +291,16 @@ pimcore.element.replace_assignments = Class.create({
         });
     },
 
-    update: function () {
+    updateSelected: function () {
 
         var params = this.panel.getComponent("form").getForm().getFieldValues();
         params["sourceType"] = params["type"];
         params["sourceId"] = params["id"];
 
-
         // get selected elements
         var jobs = [];
         var selectedRows = this.panel.getComponent("result").getSelection();
+
         for (var i = 0; i < selectedRows.length; i++) {
             jobs.push({
                 url: "/admin/element/replace-assignments",
@@ -305,7 +312,47 @@ pimcore.element.replace_assignments = Class.create({
             });
         }
 
-        if (jobs.length && params["targetId"]) {
+        this.processUpdateJobs(jobs, params["targetId"]);
+    },
+
+    updateAll: function () {
+
+        var params = this.panel.getComponent("form").getForm().getFieldValues();
+        params["sourceType"] = params["type"];
+        params["sourceId"] = params["id"];
+
+        Ext.Ajax.request({
+            url: '/admin/element/get-replace-assignments-batch-jobs',
+            params: params,
+            success: function (params, response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success && rdata.jobs) {
+                    var jobs = [];
+
+                    for (var i = 0; i < rdata.jobs.length; i++) {
+                        jobs.push({
+                            url: "/admin/element/replace-assignments",
+                            method: 'POST',
+                            params: array_merge(params, {
+                                id: rdata.jobs[i]["id"],
+                                type: rdata.jobs[i]["type"]
+                            })
+                        });
+                    }
+
+                    this.processUpdateJobs(jobs, params["targetId"]);
+                } else {
+                    Ext.MessageBox.alert(t("error"), t("search_replace_assignments_error"));
+                }
+
+            }.bind(this, params)
+        });
+    },
+
+    processUpdateJobs: function (jobs, targetId) {
+
+        if (jobs.length && targetId) {
             this.progressBar = new Ext.ProgressBar({
                 text: t('initializing')
             });
