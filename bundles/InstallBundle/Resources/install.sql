@@ -692,7 +692,8 @@ CREATE TABLE `users_workspaces_asset` (
   `versions` tinyint(1) DEFAULT '0',
   `properties` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
@@ -712,7 +713,8 @@ CREATE TABLE `users_workspaces_document` (
   `versions` tinyint(1) unsigned DEFAULT '0',
   `properties` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
@@ -735,7 +737,8 @@ CREATE TABLE `users_workspaces_object` (
   `lView` text,
   `layouts` text,
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `uuids`;
