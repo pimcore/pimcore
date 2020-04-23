@@ -337,7 +337,21 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab.mask();
 
-        pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
+        try {
+            pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
+        } catch (e) {
+            if (e instanceof pimcore.error.ValidationException) {
+                this.tab.unmask();
+                pimcore.helpers.showPrettyError('asset', t("error"), t("saving_failed"), e.message);
+                return false;
+            }
+
+            if (e instanceof pimcore.error.ActionCancelledException) {
+                this.tab.unmask();
+                pimcore.helpers.showNotification(t("Info"), 'Asset not saved: ' + e.message, 'info');
+                return false;
+            }
+        }
 
         Ext.Ajax.request({
             url: '/admin/asset/save',
