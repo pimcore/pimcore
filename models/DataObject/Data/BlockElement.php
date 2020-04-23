@@ -22,9 +22,9 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\ElementDescriptor;
 use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\UnmarshalMatcher;
 
