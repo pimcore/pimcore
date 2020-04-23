@@ -372,7 +372,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
     createGroupFieldset: function (language, group, groupedChildItems, isNew) {
         var groupId = group.id;
-        var groupTitle = group.description ? group.name + " - " + group.description : group.name;
+        var groupTitle = group.description ? t(group.name) + " - " + t(group.description) : t(group.name);
         var invisibleItems = [];
 
         var editable = !this.fieldConfig.noteditable &&
@@ -421,9 +421,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             groupedChildItems.push(childItem);
         }
 
-
         var config = {
-            title: t(groupTitle),
+            title: groupTitle,
             items: groupedChildItems,
             collapsible: true
         };

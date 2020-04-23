@@ -19,6 +19,7 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Translation\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -308,6 +309,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $name,
                 'description' => $config->getDescription()
             ];
+
+            if ($request->get('oid')) {
+                $item = $this->translateClassificationData($item);
+            }
+
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
             }
@@ -459,6 +465,11 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $name,
                 'description' => $config->getDescription()
             ];
+
+            if ($request->get('oid')) {
+                $item = $this->translateClassificationData($item);
+            }
+
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
             }
@@ -753,15 +764,19 @@ class ClassificationstoreController extends AdminController implements EventedCo
             $item = [
                 'keyId' => $config->getKeyId(),
                 'groupId' => $config->getGroupId(),
-                'keyName' => $config->getName(),
-                'keyDescription' => $config->getDescription(),
+                'keyName' => $config->getName() ? Admin::getByKeyLocalized($config->getName(), true, true) : '',
+                'keyDescription' => $config->getDescription() ? Admin::getByKeyLocalized($config->getDescription(), true, true) : '',
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
                 'sorter' => $config->getSorter()
             ];
 
             $groupConfig = Classificationstore\GroupConfig::getById($config->getGroupId());
             if ($groupConfig) {
-                $item['groupName'] = $groupConfig->getName();
+                $item['groupName'] = $groupConfig->getName() ? Admin::getByKeyLocalized($groupConfig->getName(), true, true) : '';
+            }
+
+            if ($request->get('oid')) {
+                $item = $this->translateClassificationData($item);
             }
 
             $data[] = $item;
@@ -992,6 +1007,10 @@ class ClassificationstoreController extends AdminController implements EventedCo
                         'keys' => [],
                         'collectionId' => $mappedData[$groupId]['colId']
                     ];
+
+                    if ($request->get('oid')) {
+                        $data[$groupData->getId()] = $this->translateClassificationData($data[$groupData->getId()]);
+                    }
                 }
 
                 foreach ($keyList as $keyData) {
@@ -1097,12 +1116,18 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 $definition = $definition->enrichLayoutDefinition($object, $context);
             }
 
-            $keyList[] = [
+            $item = [
                 'name' => $keyData->getName(),
                 'id' => $keyData->getKeyId(),
                 'description' => $keyData->getDescription(),
                 'definition' => $definition
             ];
+
+            if ($request->get('oid')) {
+                $item = $this->translateClassificationData($item);
+            }
+
+            $keyList[] = $item;
             $data[$groupId]['keys'] = $keyList;
         }
 
@@ -1540,5 +1565,22 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    private function translateClassificationData(array $item): array
+    {
+        if (!empty($item['name'])) {
+            $item['name'] = Admin::getByKeyLocalized($item['name'], true, true);
+        }
+
+        if (!empty($item['description'])) {
+            $item['description'] = Admin::getByKeyLocalized($item['description'], true, true);
+        }
+
+        return $item;
     }
 }
