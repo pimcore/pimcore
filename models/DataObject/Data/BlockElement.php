@@ -110,7 +110,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function getData()
     {
-
         if ($this->needsRenewReferences) {
             $container = null;
             $this->needsRenewReferences = false;
@@ -174,7 +173,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function __sleep()
     {
-
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
         $copier->addTypeFilter(
@@ -214,5 +212,4 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
-
 }

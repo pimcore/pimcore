@@ -100,7 +100,6 @@ class Composer
         }
     }
 
-
     /**
      * @param Event $event
      */
@@ -115,15 +114,15 @@ class Composer
         $process = static::executeCommand($event, $consoleDir, 'pimcore:bundle:list --json', 30, false);
         $bundles = \json_decode($process->getOutput(), true);
 
-        usort($bundles, static function($bundle1, $bundle2) {
+        usort($bundles, static function ($bundle1, $bundle2) {
             return $bundle1['Priority'] <=> $bundle2['Priority'];
         });
 
-        $updatableBundles = array_filter($bundles, static function($bundle) {
+        $updatableBundles = array_filter($bundles, static function ($bundle) {
             return $bundle['Updatable'];
         });
 
-        foreach($updatableBundles as $bundle) {
+        foreach ($updatableBundles as $bundle) {
             try {
                 static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
             } catch (\Throwable $e) {
