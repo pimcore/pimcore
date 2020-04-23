@@ -2,7 +2,7 @@
 
 ## 6.6.2
 - class `ElementDescriptor` has been moved from 'Pimcore\Model\Version' to 'Pimcore\Model\Element'.
-The BC layer will be removed in 7. Use the following [migration script](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version files
+The BC layer will be removed in 7. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
 if necessary.   
 
 ## 6.6.0
