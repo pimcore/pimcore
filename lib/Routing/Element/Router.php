@@ -76,7 +76,11 @@ class Router implements RequestMatcherInterface, VersatileGeneratorInterface
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
-        return sprintf('Element (Type: %s, ID: %d)', $name->getType(), $name->getId());
+        if ($name instanceof ElementInterface) {
+            return sprintf('Element (Type: %s, ID: %d)', $name->getType(), $name->getId());
+        }
+
+        return 'No element';
     }
 
     /**
@@ -84,10 +88,7 @@ class Router implements RequestMatcherInterface, VersatileGeneratorInterface
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
-        if ($name instanceof Document) {
-            return $name->getFullPath();
-        }
-        if ($name instanceof Asset) {
+        if ($name instanceof Document || $name instanceof Asset) {
             return $name->getFullPath();
         }
         if ($name instanceof Concrete) {
@@ -102,7 +103,17 @@ class Router implements RequestMatcherInterface, VersatileGeneratorInterface
             }
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for element (Type: %s, ID: %d)', $name->getType(), $name->getId()));
+        if ($name instanceof ElementInterface) {
+            throw new RouteNotFoundException(
+                sprintf(
+                    'Could not generate URL for element (Type: %s, ID: %d)',
+                    $name->getType(),
+                    $name->getId()
+                )
+            );
+        }
+
+        throw new RouteNotFoundException('Could not generate URL for non elements');
     }
 
     /**
