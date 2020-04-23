@@ -108,7 +108,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                         this.tab.unmask();
-                        pimcore.helpers.showPrettyError('document', t("error"), e.message);
+                        pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
                         return false;
                     }
 
