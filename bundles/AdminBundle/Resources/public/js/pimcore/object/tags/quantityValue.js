@@ -106,6 +106,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             });
         }.bind(this);
 
+        if (typeof this.store === "undefined") {
+            this.finishSetup();
+        }
+
         this.store.on('datachanged', function() {
             updateCompatibleUnitsToolTipContent();
         });
