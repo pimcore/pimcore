@@ -242,7 +242,8 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
             var layout = new Ext.form.TextField({
                 fieldLabel: fieldname,
                 labelWidth: 100,
-                value: data
+                value: data,
+                readOnly: true
             });
         } else {
             var tag = new pimcore.object.tags[dataType](data, layout);
