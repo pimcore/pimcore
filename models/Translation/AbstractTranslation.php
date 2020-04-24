@@ -71,7 +71,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public function setKey($key)
     {
-        $this->key = self::prepareTranslationKey($key);
+        $this->key = $key;
 
         return $this;
     }
@@ -191,8 +191,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {
-        $id = self::prepareTranslationKey($id);
-
         $cacheKey = 'translation_' . $id;
         if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             return \Pimcore\Cache\Runtime::get($cacheKey);
@@ -439,23 +437,5 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         unset($data['dao']);
 
         return $data;
-    }
-
-    /**
-     * Translation keys may contain a maximum of 190 characters.
-     * If the characters are overwritten, the key will be shortened.
-     * To avoid double translations an md5 hash of the complete key is appended
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    private static function prepareTranslationKey($key)
-    {
-        if (strlen($key) > 190) {
-            return substr($key, 0, 158) . md5($key);
-        }
-
-        return $key;
     }
 }

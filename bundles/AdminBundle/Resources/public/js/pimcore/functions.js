@@ -34,13 +34,6 @@ function t(key, defaultValue, placeholders) {
         key = key.toLocaleLowerCase();
     }
 
-    // translation keys may contain a maximum of 190 characters
-    // if the characters are overwritten, the key will be shortened
-    // to avoid double translations an md5 hash of the complete key is appended
-    if (key.length > 190) {
-        key = key.substr(0, 158) + md5(key);
-    }
-
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
 
