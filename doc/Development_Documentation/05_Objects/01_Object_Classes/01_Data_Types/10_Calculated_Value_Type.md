@@ -77,7 +77,7 @@ $valueEn =  $object->getSum("en");   // => 11
 ## Context Information for Calculation Class
 As said before, the richness of the context information depends on the location of the calculated-value field.
 
-### Context Information (old deprecated style)
+### Context Information (old deprecated style - since 6.7.0 Lambic)
 
 > Do not use this anymore. Use the context chain described below.
 
@@ -137,7 +137,7 @@ As said before, the richness of the context information depends on the location 
 
 > Not supported with old style. Use new style instead.
 
-### Context Information (new style)
+### Context Information (new style  - since 6.7.0 Lambic)
 
 The owner chain is a doubly linked list describing every container starting from field level up to the
 object owning the data.

@@ -1103,16 +1103,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             }
 
             $childDefinitions = $this->doGetFieldDefinitions();
-            foreach ($data as $idx => $blockElementData) {
-                foreach ($childDefinitions as $fd) {
-                    if ($fd instanceof CalculatedValue) {
-                        $calcContext = new DataObject\Data\CalculatedValue($fd->getName());
-                        $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
-                        $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
-                        $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
-                        $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
-                        $calcContext->setOwnerChain($ownerChain);
-                        $data[$idx][$fd->getName()] = Service::getCalculatedFieldValue($object, $calcContext);
+            if (is_array($data)) {
+                foreach ($data as $idx => $blockElementData) {
+                    foreach ($childDefinitions as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            $calcContext = new DataObject\Data\CalculatedValue($fd->getName());
+                            $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
+                            $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
+                            $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
+                            $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
+                            $calcContext->setOwnerChain($ownerChain);
+                            $data[$idx][$fd->getName()] = Service::getCalculatedFieldValue($object, $calcContext);
+                        }
                     }
                 }
             }
