@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
@@ -220,11 +221,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElementRaw['data'] = $data;
                         }
                     }
-                    $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+                    $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data'], $this->getName(), $count);
                     $blockElement->setNeedsRenewReferences(true);
 
                     if (isset($params['owner'])) {
-                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                        $blockElement->setOwner($params['owner'], $params['fieldname'] ?? null, $params['language'] ?? null);
                     }
 
                     $items[$elementName] = $blockElement;
@@ -272,6 +273,45 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $dataForEditMode = $fd->getDataForEditmode($elementData, $object, $params);
                     $resultElement[$elementName] = $dataForEditMode;
                 }
+
+                if ($object instanceof DataObject\Concrete) {
+                    $owner = $params["owner"] ?? null;
+                    /** @var Block $blockDefinition */
+                    if ($owner instanceof DataObject\Localizedfield) {
+                        $blockDefinition = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($this->getName());
+                    } else if ($owner instanceof DataObject\Objectbrick\Data\AbstractData) {
+                        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($owner->getType());
+                        $blockDefinition = $brickDefinition->getFieldDefinition($this->getName());
+                    } else if ($owner instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                        $fcDefinition = DataObject\Fieldcollection\Definition::getByKey($owner->getType());
+                        $blockDefinition = $fcDefinition->getFieldDefinition(($this->getName()));
+                    } else {
+                        $blockDefinition = $object->getClass()->getFieldDefinition($this->getName());
+                    }
+                    $fieldDefinitions = $blockDefinition->getFieldDefinitions();
+                    foreach ($fieldDefinitions as $fd) {
+                        if ($fd instanceof CalculatedValue) {
+                            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+
+                            $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
+                            $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
+                            $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
+                            if ($owner instanceof DataObject\Localizedfield) {
+                                $ownerChain->push(new DataObject\ContextChain\LocalizedfieldNode($params['language']));
+                            } else if ($owner instanceof DataObject\Objectbrick\Data\AbstractData) {
+                                $ownerChain->push(new DataObject\ContextChain\ObjectbrickNode($owner->getType(), $owner->getFieldname()));
+                            } else if ($owner instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                                $ownerChain->push(new DataObject\ContextChain\FieldcollectionItemNode($owner->getType(), $owner->getIndex()));
+                                $ownerChain->push(new DataObject\ContextChain\FieldcollectionNode($owner->getFieldname()));
+                            }
+                            $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
+                            $fieldData->setOwnerChain($ownerChain);
+
+                            $resultElement[$fd->getName()] = $fd->getDataForEditmode($fieldData, $object, $params);
+                        }
+                    }
+                }
+
                 $result[] = [
                     'oIndex' => $idx,
                     'data' => $resultElement
@@ -988,6 +1028,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $db = Db::get();
         $data = null;
 
+        $params = array_merge($params, ['owner' => $container, 'fieldname' => $this->getName()]);
+
         if ($container instanceof DataObject\Concrete) {
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
             $data = $db->fetchOne($query);
@@ -1057,6 +1099,21 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 if (method_exists($object, $setter)) {
                     $object->$setter($data);
                     $this->markLazyloadedFieldAsLoaded($object);
+                }
+            }
+
+            $childDefinitions = $this->doGetFieldDefinitions();
+            foreach ($data as $idx => $blockElementData) {
+                foreach ($childDefinitions as $fd) {
+                    if ($fd instanceof CalculatedValue) {
+                        $calcContext = new DataObject\Data\CalculatedValue($fd->getName());
+                        $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
+                        $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
+                        $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
+                        $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
+                        $calcContext->setOwnerChain($ownerChain);
+                        $data[$idx][$fd->getName()] = Service::getCalculatedFieldValue($object, $calcContext);
+                    }
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

@@ -303,7 +303,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("object", null, null, null);' . "\n";
+        $code .= "\t" . '$ownerChain = \\Pimcore\\Model\\DataObject\\Service::createOwnerChain(null, $this->getClass()->getFieldDefinition(\'' . $this->getName() . '\'), $this);' . "\n";
+        $code .= "\t" . '$data->setOwnerChain($ownerChain);' . "\n";
 
         if ($class instanceof DataObject\Objectbrick\Definition) {
             $code .= "\t" . '$object = $this->getObject();'  . "\n";
@@ -367,7 +368,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         }
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("'.$ownerType.'", ' . $ownerName . ', '.($index === null ? 'null' : '"'.$index.'"').', $language, null, null, $fieldDefinition);' . "\n";
+
+        $code .= "\t" . '$ownerChain = \\Pimcore\\Model\\DataObject\\Service::createOwnerChain(null, $fieldDefinition, $this->getLocalizedfields(), [\'language\' => $locale]);' . "\n";
+        $code .= "\t" . '$data->setOwnerChain($ownerChain);' . "\n";
 
         $code .= "\t" . '$data = \\Pimcore\\Model\\DataObject\\Service::getCalculatedFieldValue($object, $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
@@ -397,7 +400,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$fd = $brickDefinition->getFieldDefinition("' . $key . '");' . "\n";
 
         $code .= "\t" . '$data' . ' = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue($fd->getName());' . "\n";
-        $code .= "\t" . '$data->setContextualData("objectbrick", $this->getFieldName() , $this->getType(), $fd->getName(), null, null, $fd);' . "\n";
+        $code .= "\t" . '$ownerChain = DataObject\Service::createOwnerChain(null, $fd, $this, []);' . "\n";
+        $code .= "\t" . '$data->setOwnerChain($ownerChain);' . "\n";
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
@@ -429,7 +433,8 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= "\t" . '$fcDef = DataObject\Fieldcollection\Definition::getByKey($this->getType());' . "\n";
         $code .= "\t" . '$definition = $fcDef->getFieldDefinition(\'' . $this->getName() . '\');' . "\n";
 
-        $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null, null, null, $definition);' . "\n";
+        $code .= "\t" . '$ownerChain = DataObject\Service::createOwnerChain(null, $definition, $this, []);' . "\n";
+        $code .= "\t" . '$data->setOwnerChain($ownerChain);' . "\n";
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
         $code .= "\t return " . '$data' . ";\n";

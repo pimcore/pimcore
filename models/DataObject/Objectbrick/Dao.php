@@ -58,9 +58,13 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {
+                /** @var DataObject\Objectbrick\Data\AbstractData $brick */
                 $brick = new $brickClass($object);
                 $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
+
+                $params['owner'] = $brick;
+                $params['fieldname'] = $brick->getFieldname();
 
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface) {
@@ -96,12 +100,12 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                             }
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($multidata)
+                                $fd->getDataFromResource($multidata, $object, $params)
                             );
                         } else {
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($result[$key])
+                                $fd->getDataFromResource($result[$key], $object, $params)
                             );
                         }
                     }

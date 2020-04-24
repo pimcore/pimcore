@@ -148,6 +148,8 @@ class Dao extends Model\Dao\AbstractDao
                 $insertData['index'] = $context['index'];
             }
 
+            $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
+
             foreach ($fieldDefinitions as $fd) {
                 if ($fd instanceof CustomResourcePersistingInterface) {
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
@@ -156,7 +158,6 @@ class Dao extends Model\Dao\AbstractDao
                         $context['subContainerType'] = 'localizedfield';
                     }
 
-                    $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
                     $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
@@ -179,14 +180,14 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate])
                         );
                     }
                 }

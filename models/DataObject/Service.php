@@ -1685,4 +1685,127 @@ class Service extends Model\Element\Service
 
         return $conditionParts;
     }
+
+
+    /**
+     * @internal
+     *
+     * @param Model\DataObject\ClassDefinition\Data $fieldDefinition
+     * @return ContextChain\FieldNode
+     */
+    public static function createContextFieldNode(Model\DataObject\ClassDefinition\Data $fieldDefinition) {
+        $node = new Model\DataObject\ContextChain\FieldNode($fieldDefinition);
+        return $node;
+    }
+
+
+    /**
+     * @param Model\DataObject\ContextChain\OwnerChain $ownerChain
+     * @param ClassDefinition\Data|null $fieldDefinition the data attribute's fielddefinition
+     * @param Localizedfield | Concrete | Model\DataObject\Objectbrick\Data\AbstractData | Model\DataObject\Objectbrick\Data\AbstractData $innerOwner
+     * @param array $params
+     *
+     * @return Model\DataObject\ContextChain\OwnerChain
+     */
+    public static function createOwnerChain($ownerChain, $fieldDefinition, $innerOwner, $params = [])
+    {
+        if (!$ownerChain) {
+            $ownerChain = new Model\DataObject\ContextChain\OwnerChain();
+        }
+
+        if ($fieldDefinition) {
+            $fieldNode = Service::createContextFieldNode($fieldDefinition);
+            $ownerChain->unshift($fieldNode);
+        }
+
+        if ($innerOwner instanceof Classificationstore) {
+            $node = new Model\DataObject\ContextChain\ClassificationstoreFieldNode($params['groupId'], $params['keyId'], $params['language']);
+            $ownerChain->push($node);
+            $csContainer = new Model\DataObject\ContextChain\ClassificationstoreNode($innerOwner->getFieldname());
+            $ownerChain->push($csContainer);
+            $ownerChain = self::createOwnerChain($ownerChain, null, $innerOwner->getObject(), $params);
+        } else if ($innerOwner instanceof Localizedfield) {
+            $node = new Model\DataObject\ContextChain\LocalizedfieldNode($params['language']);
+            $ownerChain->push($node);
+            $localizedFieldContext = $innerOwner->getContext();
+
+            $containerType = $localizedFieldContext['containerType'] ?? null;
+
+            if ($containerType == 'objectbrick') {
+                $brickNode = new Model\DataObject\ContextChain\ObjectbrickNode($localizedFieldContext['containerKey'], $localizedFieldContext['fieldname']);
+                $ownerChain->push($brickNode);
+                $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($innerOwner->getObject()->getId()));
+            } else if ($containerType == "fieldcollection") {
+                $fieldcollectionItemNode = new Model\DataObject\ContextChain\FieldcollectionItemNode($localizedFieldContext['containerKey'], $localizedFieldContext['index']);
+                $ownerChain->push($fieldcollectionItemNode);
+                $fieldcollectionNode = new Model\DataObject\ContextChain\FieldcollectionNode($localizedFieldContext['fieldname']);
+                $ownerChain->push($fieldcollectionNode);
+                $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($innerOwner->getObject()->getId()));
+            } else if ($containerType == "block") {
+                $blockNode = new Model\DataObject\ContextChain\BlockNode($localizedFieldContext['fieldname']);
+                $blockElementNode = new Model\DataObject\ContextChain\BlockElementNode($localizedFieldContext['index']);
+                $ownerChain->push($blockElementNode);
+                $ownerChain->push($blockNode);
+                $objectNode = new Model\DataObject\ContextChain\ObjectNode($innerOwner->getObject()->getId());
+                $ownerChain->push($objectNode);
+            } else if ($innerOwner->getObject()) {
+                $ownerChain = self::createOwnerChain($ownerChain, null, $innerOwner->getObject(), $params);
+            }
+        } else if ($innerOwner instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+            $node = new Model\DataObject\ContextChain\ObjectbrickNode($innerOwner->getType(), $innerOwner->getFieldname());
+            $ownerChain->push($node);
+            $ownerChain = self::createOwnerChain($ownerChain, null, $innerOwner->getObject(), $params);
+        } else if ($innerOwner instanceof  Model\DataObject\Fieldcollection\Data\AbstractData) {
+            $ownerChain->push(new Model\DataObject\ContextChain\FieldcollectionItemNode($innerOwner->getType(), $innerOwner->getIndex()));
+            $ownerChain->push(new Model\DataObject\ContextChain\FieldcollectionNode($innerOwner->getFieldname()));
+            $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($innerOwner->getObject()->getId()));
+        } else if ($innerOwner instanceof Concrete) {
+            $node = new Model\DataObject\ContextChain\ObjectNode($innerOwner->getId());
+            $ownerChain->push($node);
+        }
+        return $ownerChain;
+    }
+
+    /**
+     * @internal
+     *
+     * Determines the attribute's fielddefinition from the owner chain
+     *
+     * @param ContextChain\OwnerChain $ownerChain
+     * @param string $fieldname
+     * @return ClassDefinition\Data|null
+     *
+     * @throws \Exception
+     */
+    public static function getFieldDefinitionFromOwnerChain(Model\DataObject\ContextChain\OwnerChain $ownerChain, $fieldname) {
+        $count = $ownerChain->count();
+        $currentNode = $ownerChain->offsetGet($count - 1);
+
+        $fieldDefinitions = null;
+
+        if ($currentNode instanceof Model\DataObject\ContextChain\ObjectNode) {
+            $object = Concrete::getById($currentNode->getId());
+            $fieldDefinitions = $object->getClass()->getFieldDefinitions();
+
+            for ($i = $count - 2; $i >= 0; $i--) {
+
+                $currentNode = $ownerChain->offsetGet($i);
+                if ($currentNode instanceof Model\DataObject\ContextChain\LocalizedfieldNode) {
+                    $fieldDefinitions = $fieldDefinitions['localizedfields']->getFieldDefinitions();
+                } else if ($currentNode instanceof Model\DataObject\ContextChain\FieldcollectionItemNode) {
+                    $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($currentNode->getFieldcollectionKey());
+                    $fieldDefinitions = $fcDef->getFieldDefinitions();
+                } else if ($currentNode instanceof Model\DataObject\ContextChain\ObjectbrickNode) {
+                    $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($currentNode->getBrickKey());
+                    $fieldDefinitions = $brickDef->getFieldDefinitions();
+                } else if ($currentNode instanceof Model\DataObject\ContextChain\BlockNode) {
+                    $fieldDefinitions = $fieldDefinitions[$currentNode->getFieldname()];
+                }
+            }
+        }
+        if (isset($fieldDefinitions[$fieldname])) {
+            return $fieldDefinitions[$fieldname];
+        }
+        return null;
+    }
 }

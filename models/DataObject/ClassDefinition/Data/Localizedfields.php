@@ -145,10 +145,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                 $fieldDefinition = $this->getFieldDefinition($key);
                 if ($fieldDefinition instanceof CalculatedValue) {
                     $childData = new DataObject\Data\CalculatedValue($fieldDefinition->getName());
-                    $ownerType = $params['context']['containerType'] ?? 'localizedfield';
-                    $ownerName = $params['fieldname'] ?? $this->getName();
-                    $index = $params['context']['containerKey'] ?? null;
-                    $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
+
+                    $ownerChain = DataObject\Service::createOwnerChain(null, $fieldDefinition, $localizedField, ['language' => $language]);
+                    $childData->setOwnerChain($ownerChain);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
                     $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedField->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));

@@ -16,6 +16,18 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ContextChain\BlockElementNode;
+use Pimcore\Model\DataObject\ContextChain\BlockNode;
+use Pimcore\Model\DataObject\ContextChain\ClassificationstoreFieldNode;
+use Pimcore\Model\DataObject\ContextChain\ClassificationstoreNode;
+use Pimcore\Model\DataObject\ContextChain\FieldcollectionItemNode;
+use Pimcore\Model\DataObject\ContextChain\FieldcollectionNode;
+use Pimcore\Model\DataObject\ContextChain\FieldNode;
+use Pimcore\Model\DataObject\ContextChain\LocalizedfieldNode;
+use Pimcore\Model\DataObject\ContextChain\ObjectbrickNode;
+use Pimcore\Model\DataObject\ContextChain\ObjectNode;
+use Pimcore\Model\DataObject\ContextChain\OwnerChain;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -23,26 +35,57 @@ class CalculatedValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string */
+    /**
+     * @deprecated
+     *
+     * @var string
+     */
     protected $fieldname;
 
-    /** @var string */
+    /**
+     * @deprecated
+     *
+     * @var string
+     */
     protected $ownerType = 'object';
 
-    /** @var string */
+    /**
+     * @deprecated
+     *
+     * @var string
+     */
     protected $ownerName;
 
-    /** @var int */
+    /**
+     * @deprecated
+     *
+     * @var int
+     */
     protected $index;
 
-    /** @var string */
+    /**
+     * @deprecated
+     *
+     * @var string
+     */
     protected $position;
 
-    /** @var int */
+    /**
+     * @deprecated
+     *
+     * @var int
+     */
     protected $groupId;
 
-    /** @var int */
+    /**
+     * @deprecated
+     *
+     * @var int
+     */
     protected $keyId;
+
+    /** @var OwnerChain */
+    protected $ownerChain;
 
     /**
      * @var mixed
@@ -50,100 +93,215 @@ class CalculatedValue implements OwnerAwareFieldInterface
     protected $keyDefinition;
 
     /**
+     * @internal
+     *
      * CalculatedValue constructor.
      *
      * @param string $fieldname
      */
-    public function __construct($fieldname)
+    public function __construct($fieldname = null)
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
     }
 
     /**
-     * Sets contextual information.
+     * @param OwnerChain $ownerChain
      *
-     * @param string $ownerType
-     * @param string $ownerName
-     * @param int $index
-     * @param string $position
-     * @param int $groupId
-     * @param int $keyId
-     * @param mixed $keyDefinition
+     * @return $this
      */
-    public function setContextualData($ownerType, $ownerName, $index, $position, $groupId = null, $keyId = null, $keyDefinition = null)
-    {
-        $this->ownerType = $ownerType;
-        $this->ownerName = $ownerName;
-        $this->index = $index;
-        $this->position = $position;
-        $this->groupId = $groupId;
-        $this->keyId = $keyId;
-        $this->keyDefinition = $keyDefinition;
+    public function setOwnerChain(OwnerChain $ownerChain) {
+        $this->ownerChain = $ownerChain;
         $this->markMeDirty();
+        return $this;
     }
 
     /**
-     * @return string
+     * @return OwnerChain
+     */
+    public function getOwnerChain()
+    {
+        return $this->ownerChain;
+    }
+
+    /**
+     * @deprecated use owner chain instead
+     *
+     * @return string|null
      */
     public function getFieldname()
     {
-        return $this->fieldname;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            /** @var FieldNode $current */
+            $current = $chain->current();
+            return $current->getFieldname();
+        }
+        return null;
     }
 
     /**
-     * @return int
+     * @deprecated use owner chain instead
+     *
+     * @return int|null
      */
     public function getIndex()
     {
-        return $this->index;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ($chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof BlockElementNode || $current instanceof FieldcollectionItemNode) {
+                    return $current->getIndex();
+                }
+                $chain->next();;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @deprecated use owner chain instead
+     *
+     * @return string|null
      */
     public function getOwnerName()
     {
-        return $this->ownerName;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ($chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof LocalizedfieldNode || $current instanceof ObjectbrickNode
+                    || $current instanceof FieldcollectionNode || $current instanceof ClassificationstoreNode
+                    || $current instanceof BlockNode) {
+                    return $current->getFieldname();
+                }
+
+                $chain->next();
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @deprecated use owner chain instead
+     *
+     * @return string|null
      */
     public function getOwnerType()
     {
-        return $this->ownerType;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ($chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof LocalizedfieldNode) {
+                    return "localizedfield";
+                } else if ($current instanceof ObjectbrickNode) {
+                    return "objectbrick";
+                } else if ($current instanceof FieldcollectionItemNode) {
+                    return "fieldcollection";
+                } else if ($current instanceof ClassificationstoreNode) {
+                    return "classificationstore";
+                } else if ($current instanceof BlockNode) {
+                    return "block";
+                } else if ($current instanceof ObjectNode) {
+                    return "object";
+                }
+                $chain->next();
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @deprecated use owner chain instead
+     *
+     * @return string|null
      */
     public function getPosition()
     {
-        return $this->position;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ($chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof LocalizedfieldNode) {
+                    return $current->getLanguage();
+                } else if ($current instanceof ClassificationstoreFieldNode) {
+                    return $current->getLanguage();
+                }
+                $chain->next();
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return int
+     * @deprecated use owner chain instead
+     *
+     * @return int|null
      */
     public function getGroupId()
     {
-        return $this->groupId;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ($chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof ClassificationstoreFieldNode) {
+                    return $current->getGroupId();
+                }
+                $chain->next();
+            }
+        }
+        return null;
     }
 
     /**
-     * @return mixed
+     * @deprecated use owner chain instead
+     *
+     * @return Data|null
      */
     public function getKeyDefinition()
     {
-        return $this->keyDefinition;
+        $chain = $this->getOwnerChain();
+
+        if ($chain) {
+            $chain->rewind();
+            $current = $chain->current();
+            if ($current instanceof FieldNode) {
+                return $current->getFieldDefinition();
+            }
+        }
+        return null;
     }
 
     /**
-     * @return int
+     * @deprecated use owner chain instead
+     *
+     * @return int|null
      */
     public function getKeyId()
     {
-        return $this->keyId;
+        $chain = $this->getOwnerChain();
+        if ($chain) {
+            $chain->rewind();
+            while ( $chain->valid()) {
+                $current = $chain->current();
+                if ($current instanceof ClassificationstoreFieldNode) {
+                    return $current->getKeyId();
+                }
+                $chain->next();
+            }
+        }
+        return null;
     }
 }

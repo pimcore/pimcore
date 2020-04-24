@@ -168,17 +168,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 if ($fieldData->metaData['inherited'] == true) {
                     $inherited = true;
                 }
+            } else {
+                $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+                $ownerChain = DataObject\Service::createOwnerChain(null, $fd, $item, []);
+                $fieldData->setOwnerChain($ownerChain);
+
+                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
+                $brickData[$fd->getName()] = $fieldData;
             }
-        }
-
-        $calculatedChilds = [];
-        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
-
-        foreach ($calculatedChilds as $fd) {
-            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
-            $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
-            $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
-            $brickData[$fd->getName()] = $fieldData;
         }
 
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
@@ -209,6 +206,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
     {
+        $params['owner'] = $item;
         $result = new \stdClass();
         if ($baseObject) {
             $parent = DataObject\Service::hasInheritableParentObject($baseObject);
@@ -1047,22 +1045,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     }
 
                     $definition->getDao()->classSaved($class);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param DataObject\ClassDefinition\Data[] $container
-     * @param CalculatedValue[] $list
-     */
-    public static function collectCalculatedValueItems($container, &$list = [])
-    {
-        if (is_array($container)) {
-            /** @var DataObject\ClassDefinition\Data $childDef */
-            foreach ($container as $childDef) {
-                if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-                    $list[] = $childDef;
                 }
             }
         }

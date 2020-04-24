@@ -39,6 +39,11 @@ class CalculatorDemo implements CalculatorClassInterface
             \Logger::error("unknown field");
         }
     }
+
+    public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string
+    {
+        return $this->getCalculatedValueForEditMode($object, $context);
+    }
 } 
 ```
 
@@ -72,56 +77,106 @@ $valueEn =  $object->getSum("en");   // => 11
 ## Context Information for Calculation Class
 As said before, the richness of the context information depends on the location of the calculated-value field.
 
+### Context Information (old deprecated style)
+
+> Do not use this anymore. Use the context chain described below.
 
 #### Object (top-level)
 
-| Name | Description |
-| --- | ---- |
-| ownerType | `"object"` |
+| Name      | Description                                        |
+|-----------|----------------------------------------------------|
+| ownerType | `"object"`                                         |
 | fieldName | the name of the calcuated-value field (e.g. `sum`) |
 
 
 #### Localizedfields
 
-| Name | Description |
-| --- | ---- |
-| position | the language ("en", "de", ...) |
-| ownerType | `"localizedfield"` |
-| ownerName | the name of the localized field ("localizedfields") | 
+| Name      | Description                                         |
+|-----------|-----------------------------------------------------|
+| position  | the language ("en", "de", ...)                      |
+| ownerType | `"localizedfield"`                                  |
+| ownerName | the name of the localized field ("localizedfields") |
 
 
 #### Objectbricks
 
-| Name | Description |
-| --- | ---- |
-| ownerType | `"objectbrick"` |
-| ownerName | the name of the objectbrick field inside the object |
-| fieldName | the name of the attribute inside the brick |
-| index | the name of the brick |
-| keyDefinition | the calculated-value field definition |
-| position | the language ("en", "de", ...) if calculated field is localized |
+| Name          | Description                                                     |
+|---------------|-----------------------------------------------------------------|
+| ownerType     | `"objectbrick"`                                                 |
+| ownerName     | the name of the objectbrick field inside the object             |
+| fieldName     | the name of the attribute inside the brick                      |
+| index         | the name of the brick                                           |
+| keyDefinition | the calculated-value field definition                           |
+| position      | the language ("en", "de", ...) if calculated field is localized |
 
 
 #### Fieldcollections
 
-| Name | Description |
-| --- | ---- |
-| ownerType | `"fieldcollection"` |
-| ownerName | the name of the fieldcollection attribute |
-| fieldName | the name of the attribute inside the fieldcollection |
-| index | the index of the fieldcollection item |
-| keyDefinition | the calculated-value field definition |
+| Name          | Description                                          |
+|---------------|------------------------------------------------------|
+| ownerType     | `"fieldcollection"`                                  |
+| ownerName     | the name of the fieldcollection attribute            |
+| fieldName     | the name of the attribute inside the fieldcollection |
+| index         | the index of the fieldcollection item                |
+| keyDefinition | the calculated-value field definition                |
 
 
 #### Classification Store
 
-| Name | Description |
-| --- | ---- |
-| ownerType | `"classificationstore"` |
-| ownerName | the name of the fieldcollection attribute |
-| fieldName | the name of the attribute inside the fieldcollection |
-| position  | the language |
-| groupId   | group id |
-| keyId     | key id |
+| Name          | Description                                              |
+|---------------|----------------------------------------------------------|
+| ownerType     | `"classificationstore"`                                  |
+| ownerName     | the name of the fieldcollection attribute                |
+| fieldName     | the name of the attribute inside the fieldcollection     |
+| position      | the language                                             |
+| groupId       | group id                                                 |
+| keyId         | key id                                                   |
 | keyDefinition | the fielddefinition of the classificationstore attribute |
+
+#### Block
+
+> Not supported with old style. Use new style instead.
+
+### Context Information (new style)
+
+The owner chain is a doubly linked list describing every container starting from field level up to the
+object owning the data.
+
+#### Usage
+
+![Calculated Value Configuration](../../../img/context_ownerchain.png)
+
+```php
+$chain = $context->getOwnerChain();
+
+// returns the field node
+/** @var FieldNode $fieldNode */
+$fieldNode = $chain->getBottom();
+
+// returns the field node and gets the direct container
+$chain->rewind();               // reset iterator to start (i.e. the field node)
+$chain->next();                 // move pointer
+$container = $chain->current(); // get the container (for example LocalizedfieldNode) 
+```
+
+This dumped owner chain should give you an idea for a calculated value inside a block inside a fieldcollection.
+
+![Dump](../../../img/contextdump.png)
+
+#### Chain Nodes
+
+Possible Node Types (namespace `Pimcore\Model\DataObject\ContextChain`)
+
+| Name                         | Description                     |
+|------------------------------|---------------------------------|
+| FieldNode                    | The data attribute              |
+| LocalizedsfieldNode          | Localized fields container      |
+| ObjectNode                   | the object                      |
+| ObjectbrickNode              | Objectbrick container           |
+| FieldcollectionNode          | Field collection container      |
+| FieldcollectionItemNode      | Field collection item container |
+| BlockElementNode             | Block element on field level    |
+| BlockNode                    | Block container                 |
+| ClassificationstoreFieldNode | Classification store data node  |
+| ClassificationstoreNode      | Classification store container  |
 

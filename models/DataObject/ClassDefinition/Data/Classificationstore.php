@@ -177,7 +177,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     $childDef = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
                     $childData = new DataObject\Data\CalculatedValue($this->getName());
-                    $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
+                    $ownerChain = DataObject\Service::createOwnerChain(null, $childDef, $data, ['language' => $language,
+                            'groupId' => $groupId,
+                            'keyId' => $keyId]);
+                    $childData->setOwnerChain($ownerChain);
+
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
                     $result['data'][$language][$groupId][$keyId] = $childData;
                 }

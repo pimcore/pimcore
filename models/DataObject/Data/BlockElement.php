@@ -20,11 +20,17 @@ namespace Pimcore\Model\DataObject\Data;
 use DeepCopy\DeepCopy;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Block;
+use Pimcore\Model\DataObject\ContextChain\BlockElementNode;
+use Pimcore\Model\DataObject\ContextChain\BlockNode;
+use Pimcore\Model\DataObject\ContextChain\FieldNode;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\ElementDescriptor;
 use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\UnmarshalMatcher;
 
@@ -48,6 +54,16 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     protected $data;
 
     /**
+     * @var int
+     */
+    protected $index;
+
+    /**
+     * @var string
+     */
+    protected $blockname;
+
+    /**
      * @var bool
      */
     protected $needsRenewReferences = false;
@@ -58,12 +74,16 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      * @param string $name
      * @param string $type
      * @param mixed $data
+     * @param string $blockname
+     * @param int $index
      */
-    public function __construct($name, $type, $data)
+    public function __construct($name, $type, $data, $blockname = null, $index = 0)
     {
         $this->name = $name;
         $this->type = $type;
         $this->data = $data;
+        $this->blockname = $blockname;
+        $this->index = $index;
         $this->markMeDirty();
     }
 
@@ -106,15 +126,59 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     }
 
     /**
+     * @return int
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
+     * @param int $index
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+        $this->markMeDirty();
+    }
+
+
+
+
+    /**
      * @return mixed
      */
     public function getData()
     {
-
         if ($this->needsRenewReferences) {
             $container = null;
             $this->needsRenewReferences = false;
             $this->renewReferences();
+        }
+
+        if ($this->type == "calculatedValue" && $this->_owner) {
+            $calculatedContext = new CalculatedValue();
+
+            $ownerChain = \Pimcore\Model\DataObject\Service::createOwnerChain(null, null, $this->_owner,
+                    ['language'=> $this->_language]
+                );
+
+            /** @var Block $blockDefinition */
+            $blockDefinition = \Pimcore\Model\DataObject\Service::getFieldDefinitionFromOwnerChain($ownerChain, $this->blockname);
+            $fieldDefinition = $blockDefinition->getFieldDefinition($this->name);
+
+            $ownerChain->unshift(new BlockNode($this->_fieldname));
+            $ownerChain->unshift(new BlockElementNode($this->getIndex()));
+            $ownerChain->unshift(new FieldNode($fieldDefinition));
+
+            $object = $this->_owner;
+            if ($object instanceof Localizedfield || $object instanceof AbstractData || $object instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
+                $object = $object->getObject();
+            }
+            $calculatedContext->setOwnerChain($ownerChain);
+
+            $value = \Pimcore\Model\DataObject\Service::getCalculatedFieldValue($object, $calculatedContext);
+            return $value;
         }
 
         return $this->data;

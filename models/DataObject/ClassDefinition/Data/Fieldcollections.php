@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
@@ -114,6 +115,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             foreach ($data as $item) {
                 $idx++;
 
+                $params['owner'] = $item;
+
                 if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
@@ -125,17 +128,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         if (!$fd instanceof CalculatedValue) {
                             $value = $item->{'get' . $fd->getName()}();
                             $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
-                        }
-                    }
+                        } else {
+                            $calcContext = new DataObject\Data\CalculatedValue($fd->getName());
+                            $ownerChain = Service::createOwnerChain(null, $fd, $data);
+                            $calcContext->setOwnerChain($ownerChain);
 
-                    $calculatedChilds = [];
-                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
-
-                    if ($calculatedChilds) {
-                        foreach ($calculatedChilds as $fd) {
-                            $data = new DataObject\Data\CalculatedValue($fd->getName());
-                            $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
-                            $data = $fd->getDataForEditmode($data, $object, $params);
+                            $data = $fd->getDataForEditmode($calcContext, $object, $params);
                             $collectionData[$fd->getName()] = $data;
                         }
                     }
@@ -954,25 +952,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function setCollapsible($collapsible)
     {
         $this->collapsible = $collapsible;
-    }
-
-    /**
-     * @param DataObject\ClassDefinition\Data[] $container
-     * @param DataObject\ClassDefinition\Data[] $list
-     */
-    public static function collectCalculatedValueItems($container, &$list = [])
-    {
-        if (is_array($container)) {
-            foreach ($container as $childDef) {
-                if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
-                    $list[] = $childDef;
-                } else {
-                    if (method_exists($childDef, 'getFieldDefinitions')) {
-                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
-                    }
-                }
-            }
-        }
     }
 
     /**

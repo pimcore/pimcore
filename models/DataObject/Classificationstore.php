@@ -354,12 +354,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
 
         if ($keyConfig->getType() == 'calculatedValue') {
-            $data = new Model\DataObject\Data\CalculatedValue($this->getFieldname());
+            $calculatedContext = new Model\DataObject\Data\CalculatedValue($this->getFieldname());
             $childDef = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-            $data->setContextualData('classificationstore', $this->getFieldname(), null, $language, $groupId, $keyId, $childDef);
-            $data = Model\DataObject\Service::getCalculatedFieldValueForEditMode($this->getObject(), [], $data);
 
-            return $data;
+            $ownerChain = Service::createOwnerChain(null, $childDef, $this, ['groupId' => $groupId, 'keyId' => $keyId, 'language' => $language]);
+            $calculatedContext->setOwnerChain($ownerChain);
+
+            return Model\DataObject\Service::getCalculatedFieldValueForEditMode($this->getObject(), [], $calculatedContext);
         }
 
         $fieldDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);

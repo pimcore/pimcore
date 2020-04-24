@@ -95,7 +95,10 @@ class Dao extends Model\Dao\AbstractDao
                                         'containerKey' => $type,
                                         'fieldname' => $this->model->getFieldname(),
                                         'index' => $result['index']
-                                    ]]
+                                    ],
+                                    'owner' => $collection,
+                                    'fieldname' => $this->model->getFieldname()
+                                ]
                             );
 
                             if ($value === 0 || !empty($value)) {
@@ -107,15 +110,20 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         }
                     }
+                    $childParams =  [
+                        'owner' => $collection,
+                        'fieldname' => $this->model->getFieldname()
+                    ];
+
                     if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . '__' . $fkey] = $result[$key . '__' . $fkey];
                             }
-                            $collection->setValue($key, $fd->getDataFromResource($multidata));
+                            $collection->setValue($key, $fd->getDataFromResource($multidata, $object, $childParams));
                         } else {
-                            $collection->setValue($key, $fd->getDataFromResource($result[$key]));
+                            $collection->setValue($key, $fd->getDataFromResource($result[$key], $object, $childParams));
                         }
                     }
                 }

@@ -13,7 +13,8 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true
+        classificationstore : true,
+        block: true
     },
 
     initialize: function (treeNode, initData) {
@@ -23,8 +24,6 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
 
         this.treeNode = treeNode;
     },
-
-
 
     getTypeName: function () {
         return t("calculatedValue_field");
