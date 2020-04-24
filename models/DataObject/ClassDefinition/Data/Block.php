@@ -276,9 +276,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 if ($object instanceof DataObject\Concrete) {
                     $owner = $params["owner"] ?? null;
-                    /** @var Block $blockDefinition */
+
                     if ($owner instanceof DataObject\Localizedfield) {
-                        $blockDefinition = $object->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($this->getName());
+                        /** @var Localizedfields $lfDef */
+                        $lfDef = $object->getClass()->getFieldDefinition('localizedfields');
+                        $blockDefinition = $lfDef->getFieldDefinition($this->getName());
                     } else if ($owner instanceof DataObject\Objectbrick\Data\AbstractData) {
                         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($owner->getType());
                         $blockDefinition = $brickDefinition->getFieldDefinition($this->getName());
@@ -288,26 +290,29 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     } else {
                         $blockDefinition = $object->getClass()->getFieldDefinition($this->getName());
                     }
-                    $fieldDefinitions = $blockDefinition->getFieldDefinitions();
-                    foreach ($fieldDefinitions as $fd) {
-                        if ($fd instanceof CalculatedValue) {
-                            $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
 
-                            $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
-                            $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
-                            $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
-                            if ($owner instanceof DataObject\Localizedfield) {
-                                $ownerChain->push(new DataObject\ContextChain\LocalizedfieldNode($params['language']));
-                            } else if ($owner instanceof DataObject\Objectbrick\Data\AbstractData) {
-                                $ownerChain->push(new DataObject\ContextChain\ObjectbrickNode($owner->getType(), $owner->getFieldname()));
-                            } else if ($owner instanceof DataObject\Fieldcollection\Data\AbstractData) {
-                                $ownerChain->push(new DataObject\ContextChain\FieldcollectionItemNode($owner->getType(), $owner->getIndex()));
-                                $ownerChain->push(new DataObject\ContextChain\FieldcollectionNode($owner->getFieldname()));
+                    if ($blockDefinition instanceof Block) {
+                        $fieldDefinitions = $blockDefinition->getFieldDefinitions();
+                        foreach ($fieldDefinitions as $fd) {
+                            if ($fd instanceof CalculatedValue) {
+                                $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
+
+                                $ownerChain = DataObject\Service::createOwnerChain(null, $fd, null, []);
+                                $ownerChain->push(new DataObject\ContextChain\BlockElementNode($idx));
+                                $ownerChain->push(new DataObject\ContextChain\BlockNode($this->getName()));
+                                if ($owner instanceof DataObject\Localizedfield) {
+                                    $ownerChain->push(new DataObject\ContextChain\LocalizedfieldNode($params['language']));
+                                } else if ($owner instanceof DataObject\Objectbrick\Data\AbstractData) {
+                                    $ownerChain->push(new DataObject\ContextChain\ObjectbrickNode($owner->getType(), $owner->getFieldname()));
+                                } else if ($owner instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                                    $ownerChain->push(new DataObject\ContextChain\FieldcollectionItemNode($owner->getType(), $owner->getIndex()));
+                                    $ownerChain->push(new DataObject\ContextChain\FieldcollectionNode($owner->getFieldname()));
+                                }
+                                $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
+                                $fieldData->setOwnerChain($ownerChain);
+
+                                $resultElement[$fd->getName()] = $fd->getDataForEditmode($fieldData, $object, $params);
                             }
-                            $ownerChain->push(new Model\DataObject\ContextChain\ObjectNode($object->getId()));
-                            $fieldData->setOwnerChain($ownerChain);
-
-                            $resultElement[$fd->getName()] = $fd->getDataForEditmode($fieldData, $object, $params);
                         }
                     }
                 }
