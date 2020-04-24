@@ -42,7 +42,7 @@ class CalculatorDemo implements CalculatorClassInterface
 
     public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string
     {
-        return $this->getCalculatedValueForEditMode($object, $context);
+        return $this->compute($object, $context);
     }
 } 
 ```
