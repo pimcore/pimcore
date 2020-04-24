@@ -945,5 +945,8 @@
     "move": "Move",
     "property_name": "Property name",
     "force_value": "Force value",
-    "enable_grid_locking": "Enable grid locking"
+    "enable_grid_locking": "Enable grid locking",
+    "export_configuration": "Export Configuration As JSON",
+    "composite_indices": "Composite indices",
+    "default_value_generator": "Default value generator service / class"
 }

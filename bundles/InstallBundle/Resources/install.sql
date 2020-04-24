@@ -344,9 +344,9 @@ CREATE TABLE `notes` (
   `title` varchar(255) DEFAULT NULL,
   `description` longtext,
   PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
-  KEY `date` (`date`)
+  KEY `cid_ctype` (`cid`, `ctype`),
+  KEY `date` (`date`),
+  KEY `user` (`user`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
@@ -396,9 +396,7 @@ CREATE TABLE `properties` (
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
-  KEY `cpath` (`cpath`),
-  KEY `inheritable` (`inheritable`),
-  KEY `ctype` (`ctype`)
+  KEY `getall` (`cpath`, `ctype`, `inheritable`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
@@ -694,7 +692,8 @@ CREATE TABLE `users_workspaces_asset` (
   `versions` tinyint(1) DEFAULT '0',
   `properties` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
@@ -714,7 +713,8 @@ CREATE TABLE `users_workspaces_document` (
   `versions` tinyint(1) unsigned DEFAULT '0',
   `properties` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
@@ -737,7 +737,8 @@ CREATE TABLE `users_workspaces_object` (
   `lView` text,
   `layouts` text,
   PRIMARY KEY (`cid`, `userId`),
-  KEY `userId` (`userId`)
+  KEY `userId` (`userId`),
+  UNIQUE INDEX `cpath_userId` (`cpath`,`userId`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `uuids`;
@@ -746,7 +747,7 @@ CREATE TABLE `uuids` (
   `itemId` int(11) unsigned NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`itemId`, `type`, `uuid`)
+  PRIMARY KEY (`uuid`, `itemId`, `type`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `versions`;

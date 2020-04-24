@@ -1404,7 +1404,7 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             $user = AdminTool::getCurrentUser();
-            if (!$user->isAdmin()) {
+            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig') {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);

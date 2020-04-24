@@ -943,7 +943,10 @@
     "methods": "Methoden",
     "batch_operation": "Stapelverarbeitung",
     "move": "Verschieben",
-    "property_name": "Property name",
-    "force_value": "Force value",
-    "enable_grid_locking": "Enable grid locking"
+    "property_name": "Eigenschaftsname",
+    "force_value": "Wert erzwingen",
+    "enable_grid_locking": "Rastersperre aktivieren",
+    "export_configuration": "Konfiguration als JSON exportieren",
+    "composite_indices": "Zusammengesetzte Indizes",
+    "default_value_generator": "Standardwertgenerator-Service / Klasse"
 }

@@ -25,9 +25,9 @@ use Pimcore\Model;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of static routes for the specicifies parameters, returns an array of Element\Note elements
+     * Loads a list of static routes for the specified parameters, returns an array of Element\Note elements
      *
-     * @return array
+     * @return Model\Element\Note[]
      */
     public function load()
     {

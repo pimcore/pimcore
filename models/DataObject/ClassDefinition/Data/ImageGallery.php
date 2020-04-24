@@ -587,7 +587,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function marshal($value, $object = null, $params = [])
     {
         if ($value) {
-            if ($params['blockmode'] && $value instanceof Model\DataObject\Data\ImageGallery) {
+            if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\ImageGallery) {
                 $list = [];
                 $items = $value->getItems();
                 $def = new Hotspotimage();
@@ -620,7 +620,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && is_array($value)) {
+        if (($params['blockmode'] ?? false) && is_array($value)) {
             $items = [];
             $def = new Hotspotimage();
             foreach ($value as $rawValue) {

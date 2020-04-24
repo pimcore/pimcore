@@ -127,8 +127,8 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         if ($this->getUseTargetGroup()) {
             $targetGroupElementName = $this->getTargetGroupElementName($name);
 
-            if ($this->hasElement($targetGroupElementName)) {
-                $name = $targetGroupElementName;
+            if ($element = parent::getElement($targetGroupElementName)) {
+                return $element;
             } else {
                 // if there's no dedicated content for this target group, inherit from the "original" content (unprefixed)
                 // and mark it as inherited so it is clear in the ui that the content is not specific to the selected target group

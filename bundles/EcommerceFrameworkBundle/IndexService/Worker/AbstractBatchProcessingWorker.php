@@ -231,7 +231,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                             $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$attribute->getName()])) {
+                        if (array_key_exists($attribute->getName(), $data) && is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Throwable $e) {

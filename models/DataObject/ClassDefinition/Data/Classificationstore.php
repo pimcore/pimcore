@@ -432,6 +432,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     foreach ($values as $language => $value) {
                         $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                        if (is_array($value)) {
+                            $value = implode(',', $value);
+                        }
                         $dataString .= $value . ' ';
                     }
                 }

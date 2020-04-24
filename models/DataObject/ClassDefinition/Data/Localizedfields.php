@@ -151,7 +151,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedField->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
                 }
             }
         }
@@ -402,9 +402,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         if ($lfData instanceof DataObject\Localizedfield) {
             foreach ($lfData->getInternalData(true) as $language => $values) {
-                foreach ($values as $lData) {
-                    if (is_string($lData)) {
-                        $dataString .= $lData.' ';
+                foreach ($values as $fieldname => $lData) {
+                    $fd = $this->getFieldDefinition($fieldname);
+                    if ($fd) {
+                        $forSearchIndex = $fd->getDataForSearchIndex($lfData, [
+                            'injectedData' => $lData
+                        ]);
+                        if ($forSearchIndex) {
+                            $dataString .= $forSearchIndex . ' ';
+                        }
                     }
                 }
             }

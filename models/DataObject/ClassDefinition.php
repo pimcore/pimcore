@@ -424,7 +424,7 @@ class ClassDefinition extends Model\AbstractModel
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -433,14 +433,14 @@ class ClassDefinition extends Model\AbstractModel
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0) '."\n";
+                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
                     }
                 } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
                 }
             }
         }
@@ -602,18 +602,8 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= '/** ';
         $cd .= "\n";
-        $cd .= '* Generated at: '.date('c')."\n";
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
-
-        $user = Model\User::getById($this->getUserModification());
-        if ($user) {
-            $cd .= '* Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
-        }
-
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
-        }
 
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());

@@ -1,3 +1,7 @@
+.cke_dialog_open {
+	overflow: hidden;
+}
+
 .cke_dialog_container {
 	position: fixed;
 	overflow-y: auto;

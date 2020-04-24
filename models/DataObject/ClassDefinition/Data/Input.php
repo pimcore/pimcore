@@ -25,6 +25,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
      * Static type of this element
@@ -37,6 +38,11 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var int
      */
     public $width;
+
+    /**
+     * @var string|null
+     */
+    public $defaultValue;
 
     /**
      * Type for the column to query
@@ -112,6 +118,8 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $data = $this->handleDefaultValue($data, $object, $params);
+
         return $data;
     }
 
@@ -140,7 +148,7 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $data;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -299,5 +307,38 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param Model\DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return null|string
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        return $this->getDefaultValue();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
+     * @param string $defaultValue
+     *
+     * @return $this
+     */
+    public function setDefaultValue($defaultValue)
+    {
+        if ((string)$defaultValue !== '') {
+            $this->defaultValue = $defaultValue;
+        }
+
+        return $this;
     }
 }
