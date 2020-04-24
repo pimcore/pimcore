@@ -219,7 +219,8 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
                     for (let i = 0; i < bricks.length; i++) {
                         let brick = bricks[i];
                         if (brick.type == containerKey) {
-                            data = brick.data[fieldname];
+                            objectData = brick.data;
+                            data = objectData[fieldname];
                             break;
                         }
                     }
