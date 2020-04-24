@@ -447,12 +447,13 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * To avoid double translations an md5 hash of the complete key is appended
      *
      * @param string $key
+     *
      * @return string
      */
     private static function prepareTranslationKey($key)
     {
         if (strlen($key) > 190) {
-            return substr($key, 0 , 158) . md5($key);
+            return substr($key, 0, 158) . md5($key);
         }
 
         return $key;
