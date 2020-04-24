@@ -394,15 +394,21 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.currentData = blockData;
         }
 
-        var items =  this.getRecursiveLayout(this.layoutDefinitions[type], null,
+        var items =  this.getRecursiveLayout(
+            this.layoutDefinitions[type],
+            this.fieldConfig.noteditable,
             {
                 containerType: "fieldcollection",
                 containerName: this.fieldConfig.name,
                 containerKey: type,
                 index: index,
-                applyDefaults: true
-            }, false, false, this, true).items;
-
+                applyDefaults: true,
+            },
+            false,
+            false,
+            this,
+            true
+        ).items;
 
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
@@ -411,8 +417,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
             border: true,
-            items: items,
-            disabled: this.fieldConfig.noteditable
+            items: items
         });
 
         blockElement.insert(0, this.getControls(blockElement, title));
