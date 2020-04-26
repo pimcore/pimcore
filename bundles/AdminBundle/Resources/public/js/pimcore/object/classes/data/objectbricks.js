@@ -96,8 +96,8 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
             }
             Ext.apply(this.datax,
                 {
-                    allowedTypes: source.datax.allowedTypes,
-                    maxItems: source.datax.maxItems
+                    maxItems: source.datax.maxItems,
+                    border: source.datax.border
                 });
         }
     }
