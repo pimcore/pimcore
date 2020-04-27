@@ -25,11 +25,13 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * A custom router implementation handling pimcore elements.
  */
-class Router implements RequestMatcherInterface, VersatileGeneratorInterface
+class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
     /**
      * @var RequestContext
@@ -139,5 +141,21 @@ class Router implements RequestMatcherInterface, VersatileGeneratorInterface
     public function matchRequest(Request $request)
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function match($pathinfo)
+    {
+        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRouteCollection()
+    {
+        return new RouteCollection();
     }
 }
