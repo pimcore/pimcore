@@ -202,6 +202,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param string|null $orderDirection
      * @param int|null $offset
      * @param int|null $limit
+     *
      * @return array
      */
     public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
@@ -222,13 +223,13 @@ class Dao extends Model\Dao\AbstractDao
             $orderDirection = 'ASC';
         }
 
-        $query = "
+        $query = '
             SELECT id, type, path
             FROM (
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
                 FROM dependencies d
                 JOIN objects o ON o.o_id = d.sourceid
-                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "'
                 UNION
                 SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
                 FROM dependencies d
@@ -240,10 +241,10 @@ class Dao extends Model\Dao\AbstractDao
                 JOIN assets a ON a.id = d.sourceid
                 WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
             ) dep
-            ORDER BY " . $orderBy . " " . $orderDirection;
+            ORDER BY " . $orderBy . ' ' . $orderDirection;
 
         if (is_int($offset) && is_int($limit)) {
-            $query .= " LIMIT " . $offset . ", " . $limit;
+            $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
         $requiredBy = $this->db->fetchAll($query);

@@ -391,7 +391,6 @@ class ElementController extends AdminController
         } else {
             return $this->adminJson(['success' => false], Response::HTTP_NOT_FOUND);
         }
-
     }
 
     /**
