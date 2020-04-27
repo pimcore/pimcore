@@ -159,7 +159,7 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
     getClassTree: function (url, id) {
 
         var classTreeHelper = new pimcore.object.fieldlookup.helper(true, {}, this.object);
-        var tree = classTreeHelper.getClassTree(url, id);
+        var tree = classTreeHelper.getClassTree(url, id, this.object.id);
 
         tree.addListener("itemclick", function (tree, record, item, index, e, eOpts) {
             if (!record.data.root && record.data.type != "layout") {
