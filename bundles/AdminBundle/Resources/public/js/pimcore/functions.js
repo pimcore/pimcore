@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 function t(key, defaultValue, placeholders) {
-    if(!key) {
+    if (!key) {
         return "";
     }
 
@@ -32,6 +32,15 @@ function t(key, defaultValue, placeholders) {
     var originalKey = key;
     if(pimcore.system_i18n_case_insensitive && key){
         key = key.toLocaleLowerCase();
+    }
+
+    // the maximum length of a translation key are 190 characters
+    if (key.length > 190) {
+        if (!defaultValue) {
+            return key;
+        }
+
+        return defaultValue;
     }
 
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
