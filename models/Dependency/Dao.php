@@ -198,10 +198,10 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param null $orderBy
-     * @param null $orderDirection
-     * @param null $offset
-     * @param null $limit
+     * @param string|null $orderBy
+     * @param string|null $orderDirection
+     * @param int|null $offset
+     * @param int|null $limit
      * @return array
      */
     public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
