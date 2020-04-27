@@ -316,28 +316,82 @@ class ElementController extends AdminController
         $results = [];
         $success = false;
         $hasHidden = false;
+        $total = 0;
+        $limit = intval($request->get('limit', 50));
+        $offset = intval($request->get('start', 0));
 
         if ($element instanceof Element\AbstractElement) {
-            $elements = $element->getDependencies()->getRequiredBy();
-            foreach ($elements as $el) {
-                $item = Element\Service::getElementById($el['type'], $el['id']);
-                if ($item instanceof Element\ElementInterface) {
-                    if ($item->isAllowed('list')) {
-                        $el['path'] = $item->getRealFullPath();
-                        $results[] = $el;
-                    } else {
-                        $hasHidden = true;
+            $total = $element->getDependencies()->getRequiredByTotalCount();
+
+            if ($request->get('sort')) {
+                $sort = json_decode($request->get('sort'))[0];
+                $orderBy = $sort->property;
+                $orderDirection = $sort->direction;
+            } else {
+                $orderBy = null;
+                $orderDirection = null;
+            }
+
+            $queryOffset = $offset;
+            $queryLimit = $limit;
+
+            while (count($results) < min($limit, $total) && $queryOffset < $total) {
+                $elements = $element->getDependencies()
+                    ->getRequiredByWithPath($queryOffset, $queryLimit, $orderBy, $orderDirection);
+
+                foreach ($elements as $el) {
+                    $item = Element\Service::getElementById($el['type'], $el['id']);
+
+                    if ($item instanceof Element\ElementInterface) {
+                        if ($item->isAllowed('list')) {
+                            $results[] = $el;
+                        } else {
+                            $hasHidden = true;
+                        }
                     }
                 }
+
+                $queryOffset += count($elements);
+                $queryLimit = $limit - count($results);
             }
+
             $success = true;
         }
 
         return $this->adminJson([
             'data' => $results,
+            'total' => $total,
             'hasHidden' => $hasHidden,
             'success' => $success
         ]);
+    }
+
+    /**
+     * @Route("/element/get-replace-assignments-batch-jobs", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    public function getReplaceAssignmentsBatchJobsAction(Request $request)
+    {
+        $element = null;
+
+        if ($request->get('id')) {
+            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        } elseif ($request->get('path')) {
+            $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
+        }
+
+        if ($element instanceof Element\AbstractElement) {
+            return $this->adminJson([
+                'success' => true,
+                'jobs' => $element->getDependencies()->getRequiredBy()
+            ]);
+        } else {
+            return $this->adminJson(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
     }
 
     /**
@@ -358,6 +412,7 @@ class ElementController extends AdminController
         if ($element && $sourceEl && $targetEl
             && $request->get('sourceType') == $request->get('targetType')
             && $sourceEl->getType() == $targetEl->getType()
+            && $element->isAllowed('save')
         ) {
             $rewriteConfig = [
                 $request->get('sourceType') => [
