@@ -247,6 +247,7 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
                 readOnly: true
             });
         } else {
+            layout.noteditable = true;
             var tag = new pimcore.object.tags[dataType](data, layout);
             tag.setObject(this.object);
             var layout = tag.getLayoutShow();
