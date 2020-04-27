@@ -217,7 +217,9 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                     remoteOwner: source.datax.remoteOwner,
                     classes: source.datax.classes,
                     visibleFields: source.datax.visibleFields,
-                    optimizedAdminLoading: source.datax.optimizedAdminLoading
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading,
+                    pathFormatterClass: source.datax.pathFormatterClass,
+                    allowToCreateNewObject: source.datax.allowToCreateNewObject
                 });
         }
     }

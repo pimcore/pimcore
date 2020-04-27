@@ -379,7 +379,8 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     classes: source.datax.classes,
                     enableBatchEdit: source.datax.enableBatchEdit,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,
-                    optimizedAdminLoading: source.datax.optimizedAdminLoading
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading,
+                    pathFormatterClass: source.datax.pathFormatterClass
                 });
         }
     }

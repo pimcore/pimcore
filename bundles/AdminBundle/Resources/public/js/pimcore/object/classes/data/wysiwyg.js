@@ -102,7 +102,8 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 {
                     width: source.datax.width,
                     height: source.datax.height,
-                    toolbarConfig: source.datax.toolbarConfig
+                    toolbarConfig: source.datax.toolbarConfig,
+                    excludeFromSearchIndex : source.datax.excludeFromSearchIndex
                 });
         }
     }
