@@ -165,6 +165,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     getControls: function (blockElement, title) {
 
+        if(this.fieldConfig.noteditable) {
+            return new Ext.Toolbar();
+        }
+
         var menuData = this.fieldcollections;
         var collectionMenuBefore = this.buildMenu(menuData, blockElement, 'before');
         var collectionMenuAfter = this.buildMenu(menuData, blockElement, 'after');
