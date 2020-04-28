@@ -404,9 +404,25 @@ pimcore.object.helpers.edit = {
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
+                                    var tooltipHtml = field.tooltip;
+
+                                    // special rule for classification store keys
+                                    // in this context there is no way to refer to the description of a classification store keys
+                                    // therefore the fallback tootip provided by the api will be separated and translated correctly
+                                    if (dataProvider.component !== undefined &&
+                                        dataProvider.component.bodyCls == 'pimcore_object_tag_classification_store' &&
+                                        field.tooltip.indexOf(field.name + ' - ') == 0
+                                    ) {
+                                        tooltipHtml = t(field.name) + ' - ' + t(
+                                            field.tooltip.replace(field.name + ' - ', '')
+                                        );
+                                    } else {
+                                        tooltipHtml = t(tooltipHtml);
+                                    }
+
                                     new Ext.ToolTip({
                                         target: el,
-                                        html: nl2br(t(field.tooltip)),
+                                        html: nl2br(tooltipHtml),
                                         trackMouse:true,
                                         showDelay: 200,
                                         dismissDelay: 0

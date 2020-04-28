@@ -435,7 +435,37 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         this.store = new Ext.data.Store({
             remoteSort: true,
             proxy: proxy,
-            fields: readerFields
+            fields: readerFields,
+            filters: [
+                function(item) {
+                    // translate collection and group results
+                    if (item.get('name')) {
+                        item.set('name', t(item.get('name')));
+                    }
+
+                    if (item.get('description')) {
+                        item.set('description', t(item.get('description')));
+                    }
+
+                    // translate group by key results
+                    if (item.get('keyName')) {
+                        item.set('keyName', t(item.get('keyName')));
+                    }
+
+                    if (item.get('keyDescription')) {
+                        item.set('keyDescription', t(item.get('keyDescription')));
+                    }
+
+                    if (item.get('groupName')) {
+                        item.set('groupName', t(item.get('groupName')));
+                    }
+
+                    // remove modified state so there is no ui effect
+                    item.modified = {};
+
+                    return item;
+                }
+            ]
         });
 
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);

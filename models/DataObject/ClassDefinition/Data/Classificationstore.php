@@ -1242,6 +1242,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     continue;
                 }
                 $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
+
+                // changes here also have an effect to the tooltip here: "bundles/AdminBundle/Resources/public/js/pimcore/object/helpers/edit.js"
                 $fallbackTooltip = $definition->getName() . ' - ' . $keyGroupRelation->getDescription();
                 $definition->setTooltip($definition->getTooltip() ?: $fallbackTooltip);
 

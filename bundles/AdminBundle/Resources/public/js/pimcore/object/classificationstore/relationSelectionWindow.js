@@ -154,7 +154,6 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         this.store.getProxy().setExtraParam("searchfilter", formValue);
 
-
         var lastOptions = this.store.lastOptions;
         Ext.apply(lastOptions.params, {
             filter: this.encodedFilter
@@ -242,9 +241,29 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         this.store = new Ext.data.Store({
             remoteSort: true,
-            remoteFilter: true,
             proxy: proxy,
-            fields: readerFields
+            fields: readerFields,
+            filters: [
+                function(item) {
+                    // translate classification store keys
+                    if (item.get('keyName')) {
+                        item.set('keyName', t(item.get('keyName')));
+                    }
+
+                    if (item.get('keyDescription')) {
+                        item.set('keyDescription', t(item.get('keyDescription')));
+                    }
+
+                    if (item.get('groupName')) {
+                        item.set('groupName', t(item.get('groupName')));
+                    }
+
+                    // remove modified state so there is no ui effect
+                    item.modified = {};
+
+                    return item;
+                }
+            ]
         });
 
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
