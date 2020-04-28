@@ -81,6 +81,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                 }
 
                 $config['num'] = $perPage;
+                $config['q'] = $query;
 
                 $cacheKey = 'google_cse_' . md5($query . serialize($config));
 
@@ -89,7 +90,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                     $result = \Pimcore\Cache\Runtime::get($cacheKey);
                 } else {
                     if (!$result = Cache::load($cacheKey)) {
-                        $result = $search->cse->listCse($query, $config);
+                        $result = $search->cse->listCse($config);
                         Cache::save($result, $cacheKey, ['google_cse'], 3600, 999);
                         \Pimcore\Cache\Runtime::set($cacheKey, $result);
                     }
