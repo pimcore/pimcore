@@ -3,8 +3,11 @@
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
+use Pimcore\Model\DataObject\RelationTest;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -122,20 +125,71 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals('parenttext2', $two->getNormalInput());
 
         // TODO the following doesn't work as the catch catches the exception thrown in fail
-        /*
-        // invalid locale
-        $list = new Inheritance\Listing();
-        $list->setCondition("normalinput LIKE '%parenttext%'");
-        $list->setLocale("xx");
-
-        try {
-            $listItems = $list->load();
-            $this->fail("Excpected exception");
-        } catch (Exception $e) {
-        }
-        */
     }
 
+
+    /**
+     * Tests https://github.com/pimcore/pimcore/pull/6269
+     * [Data objects] Override inherited value with same value (break inheritance)
+     *
+     * @throws \Exception
+     */
+    public function testEqual()
+    {
+        // According to the bootstrap file en and de are valid website languages
+
+        $target = new RelationTest();
+        $target->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $target->setKey("relation-1");
+        $target->setPublished(true);
+        $target->setSomeAttribute("Some content 1");
+        $target->save();
+
+        /** @var Inheritance $one */
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(1);
+
+        $one->setNormalInput('parenttext');
+        $one->setRelation($target);
+        $one->save();
+
+        // create child "two", inherit relation from "one"
+
+        /** @var Inheritance $two */
+        $two = new Inheritance();
+        $two->setKey('one');
+        $two->setParentId($one->getId());
+        $two->setPublished(1);
+
+        $two->setNormalInput('parenttext');
+        $two->save();
+
+        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+
+        AbstractObject::setGetInheritedValues(true);
+        $fetchedTarget = $two->getRelation();
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), "expectected inherited target");
+
+        AbstractObject::setGetInheritedValues(false);
+        $fetchedTarget = $two->getRelation();
+        $this->assertNull($fetchedTarget, "target should not be inherited");
+
+        // enable inheritance and set the target
+        AbstractObject::setGetInheritedValues(true);
+        $two = Concrete::getById($two->getId(), true);
+        $two->setRelation($target);
+        $two->save();
+
+        // disable inheritance and check that the relation has been set on "two"
+        AbstractObject::setGetInheritedValues(false);
+        $two = Concrete::getById($two->getId(), true);
+        $fetchedTarget = $two->getRelation();
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), "expectected inherited target");
+
+        AbstractObject::setGetInheritedValues($inheritanceEnabled);
+    }
     /**
      * Tests the following scenario:
      *
