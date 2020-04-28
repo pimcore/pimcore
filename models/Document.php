@@ -954,6 +954,11 @@ class Document extends Element\AbstractElement
     protected function prepareFrontendPath($path)
     {
         if (\Pimcore\Tool::isFrontend()) {
+            
+            if ($site = \Pimcore\Tool\Frontend::getSiteForDocument($this)){
+                $path = "://" . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+            }
+            
             $path = urlencode_ignore_slash($path);
 
             $event = new GenericEvent($this, [
