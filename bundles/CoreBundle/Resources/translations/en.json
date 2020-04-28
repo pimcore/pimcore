@@ -248,6 +248,7 @@
   "main_site": "Main Site",
   "filename": "Filename",
   "unsupported_filetype": "Unsupported Filetype",
+  "different_number_of_columns": "Different number of columns",
   "email_log_resend_window_success_message": "The email has been sent successfully to all recipients.",
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "error_jobs": "The following jobs failed",
