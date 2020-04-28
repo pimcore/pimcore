@@ -49,6 +49,10 @@ final class CleanupBrickTablesTask implements TaskInterface
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
 
+                if (strpos($tableName, 'object_brick_localized_query_') === 0) {
+                    continue;
+                }
+
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $brickType = substr($fieldDescriptor, 0, $idx);
