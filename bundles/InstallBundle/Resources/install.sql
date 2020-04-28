@@ -324,7 +324,7 @@ CREATE TABLE `http_error_log` (
   KEY `code` (`code`),
   KEY `date` (`date`),
   KEY `count` (`count`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
