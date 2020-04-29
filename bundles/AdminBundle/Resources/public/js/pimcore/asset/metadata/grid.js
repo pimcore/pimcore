@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.asset.metadata");
-pimcore.asset.metadata = Class.create({
+pimcore.registerNS("pimcore.asset.metadata.grid");
+pimcore.asset.metadata.grid = Class.create({
 
     initialize: function(asset) {
         this.asset = asset;
