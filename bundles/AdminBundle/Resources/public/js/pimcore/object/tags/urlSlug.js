@@ -206,7 +206,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                         return;
                     }
 
-                    siteData.push([id, record.get("domain")]);
+                    siteData.push([siteId, record.get("domain")]);
                 }
             }.bind(this));
 
