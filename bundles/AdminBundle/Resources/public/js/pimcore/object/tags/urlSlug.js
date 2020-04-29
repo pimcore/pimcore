@@ -182,17 +182,19 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
         var containerItems = [text];
 
         if (siteData['siteId'] > 0) {
-            containerItems.push({
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: function (fieldContainer, siteId) {
-                    this.dirty = true;
-                    this.component.remove(fieldContainer);
-                    delete this.elements[siteId];
-                    this.updateSiteFilter();
+            if (!this.fieldConfig.noteditable) {
+                containerItems.push({
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (fieldContainer, siteId) {
+                        this.dirty = true;
+                        this.component.remove(fieldContainer);
+                        delete this.elements[siteId];
+                        this.updateSiteFilter();
 
-                }.bind(this, fieldContainer, siteData['siteId'])
-            });
+                    }.bind(this, fieldContainer, siteData['siteId'])
+                });
+            }
         } else {
             let siteData = [];
             let allSitesStore = pimcore.globalmanager.get("sites");
@@ -262,6 +264,11 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                 this.elements[key].setReadOnly(true);
             }
         }
+
+        if (this.siteCombo) {
+            this.siteCombo.hide();
+        }
+
         return layout;
     },
 
