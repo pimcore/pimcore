@@ -956,7 +956,7 @@ class Document extends Element\AbstractElement
         if (\Pimcore\Tool::isFrontend()) {
             
             if ($site = \Pimcore\Tool\Frontend::getSiteForDocument($this)){
-                $path = "://" . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+                $path = "http://" . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
             }
             
             $path = urlencode_ignore_slash($path);
