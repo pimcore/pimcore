@@ -235,7 +235,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             tbar: toolbar
         };
 
-        if (!(this.additionalConfig.gallery)) {
+        if (!this.additionalConfig.gallery) {
              conf.style = "padding-bottom: 10px;";
         }
 
