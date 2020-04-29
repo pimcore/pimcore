@@ -5839,6 +5839,7 @@
                             },
                             {
                                 "fieldtype":"user",
+                                "restrictTo":null,
                                 "options":[
                                     {
                                         "value":"3",

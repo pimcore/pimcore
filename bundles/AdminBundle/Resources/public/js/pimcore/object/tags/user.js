@@ -19,6 +19,9 @@ pimcore.object.tags.user = Class.create(pimcore.object.tags.select, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-        this.fieldConfig.width = 300;
+
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 300;
+        }
     }
 });

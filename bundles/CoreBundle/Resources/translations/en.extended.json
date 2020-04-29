@@ -173,6 +173,7 @@
   "save_error": "Cannot save data",
   "all_roles": "All Roles",
   "add_role": "Add Role",
+  "restrict_selection_to_roles": "Restrict selection to roles",
   "role_creation_error": "Could not create role",
   "workspaces": "Workspaces",
   "Username": "Username",

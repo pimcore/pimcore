@@ -32,6 +32,16 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      */
     public $unique;
 
+    /** Restrict selection to comma-separated list of roles.
+     * @var string|null
+     */
+    public $restrictTo = null;
+
+    /**
+     * @var int
+     */
+    public $width;
+
     /**
      * @return User
      */
@@ -94,6 +104,23 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public function configureOptions()
     {
         $list = new Model\User\Listing();
+
+        if (!empty($this->restrictTo)) {
+            $roles = explode(',', $this->restrictTo);
+            $expr = \Pimcore\Db::getConnection()->createQueryBuilder()->expr();
+
+            foreach ($roles as $roleId) {
+                $list->setCondition(
+                    $expr->orX(
+                        $expr->eq('roles', $expr->literal($roleId)),
+                        $expr->like('roles', $expr->literal($roleId . ',%')),
+                        $expr->like('roles', $expr->literal('%,' . $roleId . ',%')),
+                        $expr->like('roles', $expr->literal('%,' . $roleId))
+                    )
+                );
+            }
+        }
+
         $list->setOrder('asc');
         $list->setOrderKey('name');
         $users = $list->load();
@@ -178,5 +205,52 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public function setUnique($unique)
     {
         $this->unique = $unique;
+    }
+
+    /**
+     * @param string|null $restrictTo
+     *
+     * @return $this
+     */
+    public function setRestrictTo($restrictTo)
+    {
+        /**
+         * @extjs6
+         */
+        if (is_array($restrictTo)) {
+            $restrictTo = implode(',', $restrictTo);
+        }
+
+        $this->restrictTo = $restrictTo;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRestrictTo()
+    {
+        return $this->restrictTo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param string|int|null $width
+     *
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        $this->width = $this->getAsIntegerCast($width);
+
+        return $this;
     }
 }

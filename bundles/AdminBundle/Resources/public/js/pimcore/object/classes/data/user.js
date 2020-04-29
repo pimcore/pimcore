@@ -19,14 +19,14 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
      * define where this datatype is allowed
      */
     allowIn: {
-        object: true, 
+        object: true,
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
+        classificationstore: true,
         block: true,
         encryptedField: true
-    },        
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "user";
@@ -49,26 +49,82 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
         return this.layout;
     },
-    
-    applySpecialData: function(source) {
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var items = [],
+            possibleOptions,
+            roleStore = new Ext.data.Store({
+            proxy: {
+                type: 'ajax',
+                url: '/admin/user/role-tree-get-childs-by-id',
+                reader: {
+                    type: 'json'
+                }
+            },
+            fields: ['id', 'text'],
+            listeners: {
+                load: function() {
+                    if (datax.restrictTo) {
+                        possibleOptions.setValue(datax.restrictTo);
+                    }
+                }.bind(this)
+            }
+        });
+
+        roleStore.load();
+
+        var options = {
+            name: "restrictTo",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("restrict_selection_to_roles"),
+            store: roleStore,
+            componentCls: "object_field",
+            height: 200,
+            width: 300,
+            valueField: 'id',
+            displayField: 'text',
+            disabled: !inEncryptedField && this.isInCustomLayoutEditor()
+        };
+
+        possibleOptions = new Ext.ux.form.MultiSelect(options);
+        items.push(possibleOptions);
+        items.push(
+            {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            }
+        );
+
+        return items;
+    },
+
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
-            Ext.apply(this.datax,
+
+            Ext.apply(
+                this.datax,
                 {
                     unique: source.datax.unique
-                });
+                }
+            );
         }
     },
 
-    supportsUnique: function() {
+    supportsUnique: function () {
         return true;
     }
 

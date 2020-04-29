@@ -240,7 +240,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.options) {
             for (var i = 0; i < this.fieldConfig.options.length; i++) {
                 var value = this.fieldConfig.options[i].value;
-                if (restrictTo) {
+                if (restrictTo && this.fieldConfig.fieldtype !== 'user') {
                     if (!in_array(value, restrictTo)) {
                         continue;
                     }
