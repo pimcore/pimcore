@@ -110,7 +110,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'domain' => $site ? $site->getMainDomain() : null
                     ];
 
-                    $result[$siteId] = $resultItem;
+                    $result[] = $resultItem;
                 }
             }
         }
