@@ -78,7 +78,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
 
         this.specificPanel.add({
             xtype: "numberfield",
-            fieldLabel: t("maximum_items"),
+            fieldLabel: t("classificationstore_group_limitation"),
             name: "maxItems",
             value: this.datax.maxItems,
             minValue: 0
